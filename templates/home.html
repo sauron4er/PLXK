@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid">
+    <h1 class="text-center my-4 logo">
+      <a href="{% url 'home' %}">Головна сторінка</a>
+    </h1>
+
+  </div>
+{% endblock %}

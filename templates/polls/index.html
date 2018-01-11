@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Опитування{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Опитування</h5></li>
+{% endblock %}
+
+{% block content %}
+{% if latest_question_list %}
+    <table class="table card-header-tabs table-striped table-hover">
+        <thead >
+            <tr>
+                <th>Назва</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id, text,type,c in latest_question_list %}
+                <tr>
+                    <td> {{ text}} </td>
+                    <td>
+                    {% if user.is_authenticated %}
+
+
+                            {% if c > 0 %}
+       <a href="{% url 'polls:results' id %}">Результати </a>
+          {% else %}
+         <a href="{% url 'polls:detail' id %}"> Проголосувати </a>
+        {% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <p>Відсутні опитування</p>
+{% endif %}
+{% endblock %}

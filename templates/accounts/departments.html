@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Відділи{% endblock %}
+
+{% block breadcrumb %}
+
+  <li class="breadcrumb-item active">Підрозділи перечинського ЛХК.</li>
+{% endblock %}
+
+{% block content %}
+    <ul>
+    {% for depatment in depatments %}
+    <li>  <a href="{% url 'department' depatment.id %}">{{ depatment.name }}</a>  </li>
+    {% endfor %}
+
+    </ul>
+
+{% endblock %}

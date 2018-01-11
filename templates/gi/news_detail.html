@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Новина {{ pk }}{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'gi:news' %}">Новини</a></li>
+  <li class="breadcrumb-item active">{{ new1.title|truncatechars:100 }}</li>
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="container p-2 m-2">
+    {% if new1.img_file %}
+    <img src={{ new1.img_file.url }} alt="{{ new1.img_text }}" class="float-left m-3" style="max-width: 40%">
+    {% endif %}
+    {{ new1.text }}
+    <br>
+ {% if new1.text_url %}  <a href="{{ new1.text_url }}" >Link</a> {% endif %}
+    <br>
+ {% if new1.doc_file %} <a href="{{ new1.doc_file.url  }} "><img src="{% static 'img/doc.ico' %}" style="height: 70%"> </a> {% endif %}
+
+    </div>
+    <hr>
+    <div class="float-right">
+     {{ new1.author.userprofile.pip }}
+   <small> {{ new1.date_start|date:"d.m.Y H:i" }}</small>
+</div>
+{% endblock %}

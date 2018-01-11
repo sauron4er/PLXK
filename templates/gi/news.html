@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Новини{% endblock %}
+
+{% block second_nav %}
+
+{% endblock %}
+{% block content %}
+{% for news in newss %}
+<div class="row p-3 m-3 border">
+  <div class="col-sm-2">
+      {{ news.author.userprofile.pip }}
+      <br>
+      <small> {{ news.date_start|date:"d.m.Y H:i" }}</small>
+  </div>
+  <div class="col-sm-10">
+
+<h6><a href="{% url 'gi:news_detail' news.id %}" >{{ news.title}}</a></h6>
+
+{{ news.text |truncatechars:400 }}
+
+
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

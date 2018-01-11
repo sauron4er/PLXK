@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Опитування№ {{ question.id }}{% endblock %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><h5><a href="{% url 'polls:index' %}">Опитування</a></h5></li>
+  <li class="breadcrumb-item">{{ question.id }}</li>
+  <li class="breadcrumb-item active">Результати</li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center my-4"> {{ question.question_text }}</h1>
+   <table class="table card-header-tabs table-striped table-hover">
+        <thead >
+            <tr>
+                <th>Варіант</th>
+                <th style="text-align: center">Голосів</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for choice in question.choice_set.all %}
+                <tr>
+                    <td>{{ choice.choice_text }}</td>
+                    <td style="text-align: center">
+                       {{ choice.votes }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+  </div>
+{% endblock %}

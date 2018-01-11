@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Заявки ІТ</h5></li>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+         {% if user.is_authenticated %}
+            <a href="{% url 'tickets:new'  %}"> <button type="button" class="btn btn-outline-success">Нова заявка</button> </a>
+         {% endif %}
+
+            <div class="btn-group float-md-right">
+                <a href="{% url 'tickets:index_f' 0 %}" style="text-decoration: none;color:black" class="{% if fk == '0' %} btn btn-info {% else %}btn btn-outline-info{% endif %}" >Всі</a>
+                <a href="{% url 'tickets:index_f' 1 %}" style="text-decoration: none;color:black" class="{% if fk == '1' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">Нові</a>
+                <a href="{% url 'tickets:index_f' 24 %}" style="text-decoration: none;color:black"class="{% if fk == '24' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">В роботі</a>
+                <a href="{% url 'tickets:index_f' 3 %}" style="text-decoration: none;color:black" class="{% if fk == '3' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">Виконані</a>
+                <a href="{% url 'tickets:index_f' 5 %}" style="text-decoration: none;color:black" class="{% if fk == '5' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">Завершені</a>
+
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+     <table class="table table-sm">
+    <thead class="thead-inverse">
+      <tr>
+        <th>Група</th>
+        <th>Пріоритет</th>
+        <th>Повідомлення</th>
+        <th>Автор
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+            {% for ticket in tickets %}
+
+                <tr class="{% if ticket.state_id == 2 or ticket.state_id == 4  %} table-info
+                           {% elif ticket.state_id == 1 %}  table-warning
+                           {% elif ticket.state_id == 5 %}  table-secondary
+                           {% elif ticket.state_id == 3 %}  table-success
+                           {% endif %}
+                  ">
+                    <td class="align-middle">
+                    {{ ticket.group.name }}
+
+                    </td>
+                    <td class="align-middle" > <img src="{{ ticket.priority.ico.url }}" style="height: 20px" > {{ ticket.priority.name }}  </td>
+                    <td class="align-middle"><a href="{% url 'tickets:detail' ticket.id %}">{{ ticket.text|truncatechars:90 }} </a>
+                        {% if ticket.doc_file %} <a href="{{ ticket.doc_file.url  }} "><img src="{% static 'img/doc.ico' %}" style="height: 70%"> </a> {% endif %}
+                    </td>
+                    <td class="align-middle">{{ ticket.user.first_name }}
+                    <small class="text-muted d-block">{{ ticket.state.name }}</small>
+                    </td>
+
+                </tr>
+
+             {% endfor %}
+    </tbody>
+     </table>
+{% if ct > 25 %}
+      {% load bootstrap4 %}
+      {% bootstrap_pagination tickets  %}
+{% endif %}
+
+
+
+{% endblock %}

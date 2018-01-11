@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Співробітники{% endblock %}
+
+{% block second_nav %}
+
+{% endblock %}
+
+{% block content %}
+    {% if e %}
+     <table class="table table-sm card-header-tabs table-striped table-hover">
+        <thead >
+            <tr>
+                <th>№</th>
+                <th><a href="{% url 'crm:employee' 4 %}" style="text-decoration: none;color:black">Співробітник</a></th>
+                <th><a href="{% url 'crm:employee' 2 %}" style="text-decoration: none;color:black">IP</a></th>
+                <th><a href="{% url 'crm:employee' 3 %}" style="text-decoration: none;color:black">IP</a></th>
+                <th><a href="{% url 'crm:employee' 5 %}" style="text-decoration: none;color:black">Відділ</a></th>
+                <th><a href="{% url 'crm:employee' 6 %}" style="text-decoration: none;color:black">Тел.</a></th>
+                <th><a href="{% url 'crm:employee' 7 %}" style="text-decoration: none;color:black">ПК</a></th>
+                <th><a href="{% url 'crm:employee' 8 %}" style="text-decoration: none;color:black">Користувач</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id, ip, ip1, name1, department, phone, pc_name, pc_user in employees %}
+                <tr>
+                    <td> {{ forloop.counter }} </td>
+                    <td> {{ name1 }} </td>
+                    <td>{{ ip }} </td>
+                    <td>{{ ip1 }} </td>
+                    <td class="align-middle">   {% if department %} {{ department}} {% else %}  {% endif %} </td>
+                    <td class="align-middle">   {% firstof phone '' %}  </td>
+                    <td class="align-middle">   {% if pc_name %} {{ pc_name}} {% else %}  {% endif %} </td>
+                    <td class="align-middle">   {% if pc_user %} {{ pc_user}} {% else %}  {% endif %} </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+
+    {% if employees.count > 2500 %}
+        {% load bootstrap4 %}
+      {% bootstrap_pagination employees  %}
+    {% endif %}
+
+  </div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'tickets:index_f' 0 %}">Заявки</a></li>
+  <li class="breadcrumb-item active">{{ ticket.id }}</li>
+{% endblock %}
+
+{% block content %}
+ <div class="m-2 card border {% if ticket.state_id == 2 or ticket.state_id == 4  %} border-info
+                           {% elif ticket.state_id == 1 %}  border-warning
+                           {% elif ticket.state_id == 5 %}  border-secondary
+                           {% elif ticket.state_id == 3 %}  border-success
+                           {% endif %}">
+
+ <div class="container p-1 {% if ticket.state_id == 2 or ticket.state_id == 4  %} bg-info
+                           {% elif ticket.state_id == 1 %}  bg-warning
+                           {% elif ticket.state_id == 5 %}  bg-secondary
+                           {% elif ticket.state_id == 3 %}  bg-success
+                           {% endif %}" >
+        <div>
+        {{ ticket.user.first_name }} {{ ticket.user.last_name }}  <div class="float-right"><small class="pr-3"> {{ ticket.state.name|ljust:"55" }}</small>{{ ticket.created_at|date:"d.m.Y H:i"  }}  </div>
+        </div>
+ </div>
+ <h6 class="p-3">{{ ticket.text }}
+     {% if ticket.doc_file %} <a href="{{ ticket.doc_file.url  }} "><img src="{% static 'img/doc.ico' %}" style="height: 70%"> </a> {% endif %}
+ </h6>
+ </div>
+    {% if is_ticked_admin or ticket.state_id < 5 and is_author  %}
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  Коментувати
+</button>
+  {% endif %}
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Додати коментар</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+  <div class="modal-body">
+  </form>
+<form enctype="multipart/form-data" method="post" novalidate>
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="text">Коментар</label>
+        <textarea class="form-control" class="form-control" id="text" name="text"rows="2"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="state">Статус</label>
+     <select name="state">
+         {% for st1 in st %}
+         <option value="{{ st1.id }}" {% if st1.id == ticket.state_id %}
+         selected
+         {% endif %}>{{ st1.name }}</option>
+         {% endfor %}
+     </select>
+    </div>
+    <button type="submit" class="btn btn-success">Зберегти</button>
+  </form>
+           </div>
+
+    </div>
+  </div>
+</div>
+
+
+    {% for tc in ticket_content %}
+ <div class="container m-3" >
+ <div class="card border {% if tc.state_id == 2 or tc.state_id == 4  %} border-info
+                           {% elif tc.state_id == 1 %}  border-warning
+                           {% elif tc.state_id == 5 %}  border-secondary
+                           {% elif tc.state_id == 3 %}  border-success
+                           {% endif %}">
+
+ <div class="container p-1 {% if tc.state_id == 2 or tc.state_id == 4  %} bg-info
+                           {% elif tc.state_id == 1 %}  bg-warning
+                           {% elif tc.state_id == 5 %}  bg-secondary
+                           {% elif tc.state_id == 3 %}  bg-success
+                           {% endif %}" >
+        <small>
+        {{ tc.user.first_name }} {{ tc.user.last_name }} <div class="float-right"> <small class="pr-3"> {{ tc.state.name|ljust:"55" }}</small>  {{ tc.dt|date:"d.m.Y H:i"  }}  </div>
+        </small>
+ </div>
+ <div class="p-2">{{ tc.text }}   </div>
+ </div>
+
+ </div>
+
+    {% endfor %}
+
+
+{% endblock %}

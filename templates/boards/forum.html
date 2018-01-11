@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Форум{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Форум</li>
+{% endblock %}
+
+{% block content %}
+  <table class="table">
+    <thead class="thead-inverse">
+      <tr>
+        <th>Категорія</th>
+        <th>Постів</th>
+        <th>Тем</th>
+        <th>Останній</th>
+      </tr>
+    </thead>
+    <tbody>
+            {% for id, name, description, topics, posts in boards %}
+                <tr>
+                    <td>
+                     <a href="{% url 'boards:topics' id %}">{{ name }} </a>
+                        <small class="text-muted d-block">{{ description }}</small>
+                    </td>
+                    <td class="align-middle">{{ posts }}</td>
+                    <td class="align-middle">{{ topics }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

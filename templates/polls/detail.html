@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Опитування№ {{ question.id }}{% endblock %}
+
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><h5><a href="{% url 'polls:index' %}">Опитування</a></h5></li>
+  <li class="breadcrumb-item active">{{ question.id }}</li>
+{% endblock %}
+
+
+{% block content %}
+  <div class="container">
+    <h1 class="text-center my-4"> {{ question.question_text }}</h1>
+        {% if error_message %} <p><strong>{{ error_message }}</strong></p>{% endif %}
+        <form action="{% url 'polls:vote' question.id %}" method="post">
+        <div class="form-group">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+                <div class="radio">
+                      <label><input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"> {{ choice.choice_text }}</label>
+                </div>
+
+            {% endfor %}
+            <input type="submit" value="Проголосувати" class="btn btn-primary">
+         </div>
+        </form>
+
+  </div>
+{% endblock %}

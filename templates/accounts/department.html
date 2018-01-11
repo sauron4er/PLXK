@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+{% block title %}{{ depatment.name }}{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'departments' %}">Підрозділи</a></li>
+  <li class="breadcrumb-item active">{{ depatment.name }}</li>
+{% endblock %}
+
+{% block content %}
+   <div class="container p-3">
+   {{ depatment.text }}
+   </div>
+
+<table class="table">
+    <thead class="thead-inverse">
+      <tr>
+        <th colspan="3">Співробітники </th>
+      </tr>
+    </thead>
+    <tbody>
+            {% for e in employee %}
+                <tr>
+                    <td class="align-middle"> {% if e.userprofile.avatar %} <img src="{{ e.userprofile.avatar.url }}" style="height: 80px" class="rounded-circle"> {% endif %}</td>
+
+
+                    <td class="align-middle">{{ e.userprofile.pip }}</td>
+                    <td class="align-middle">{{ e.userprofile.work }}</td>
+                </tr>
+            {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

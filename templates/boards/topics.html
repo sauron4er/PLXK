@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ board.name }} - {{ block.super }}
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'boards:index' %}">Форум</a></li>
+  <li class="breadcrumb-item active">{{ board.name }}</li>
+{% endblock %}
+
+{% block content %}
+     {% if user.is_authenticated %}
+    <div class="mb-4">
+        <a href="{% url 'boards:new_topic' board.pk  %}" class="btn btn-primary">Нова тема</a>
+    </div>
+{% endif %}
+    <table class="table">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Тема</th>
+                <th>Розпочата</th>
+                <th>Відповідей</th>
+                <th>Переглядів</th>
+                <th>Останній</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for topic in board.topics.all %}
+        <tr>
+            <td>{{ topic.subject }}</td>
+            <td>{{ topic.starter.username }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>{{ topic.last_updated |date:"d.m.Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
