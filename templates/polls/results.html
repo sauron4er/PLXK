@@ -2,6 +2,35 @@
 {% load static %}
 {% block title %}Опитування№ {{ question.id }}{% endblock %}
 
+{% block script %}
+       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Варіант');
+        data.addColumn('number', 'голосів');
+        data.addRows([
+     {% for choice in question.choice_set.all %}
+
+     ['{{ choice.choice_text }}', {{ choice.votes }}],
+     {% endfor %}
+
+        ]);
+        var options = {'title':'Кількість голосів',
+                       'width':700,
+                       'height':500};
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+
+
+      }
+ </script>
+{% endblock %}
 
 {% block breadcrumb %}
   <li class="breadcrumb-item"><h5><a href="{% url 'polls:index' %}">Опитування</a></h5></li>
@@ -11,9 +40,9 @@
 
 
 {% block content %}
-  <div class="container">
+  <div class="container ">
     <h1 class="text-center my-4"> {{ question.question_text }}</h1>
-   <table class="table card-header-tabs table-striped table-hover">
+   <table class="table card-header-tabs table-striped table-hover table-sm">
         <thead >
             <tr>
                 <th>Варіант</th>
@@ -31,6 +60,12 @@
             {% endfor %}
         </tbody>
     </table>
+  <br>
 
   </div>
+  <div id="chart_div"></div>
+
+
+
+
 {% endblock %}

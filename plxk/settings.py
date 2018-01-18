@@ -39,14 +39,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bootstrap4',
+    'googlecharts',
+    'qsstats',
     'widget_tweaks',
+
     'accounts',
+    'boards',
+    'crm',
     'docs',
     'gi',
     'polls',
-    'crm',
     'tickets',
-    'boards'
+
 ]
 
 MIDDLEWARE_CLASSES = [

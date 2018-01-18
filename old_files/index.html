@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load googlecharts %}
+
+{% block script %}
+       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'vaga');
+        data.addColumn('number', 'ct');
+       var data = [
+             {% for row1, row2 in vaga %}
+                 [{{ row1 }}, {{ row2 }}],
+             {% endfor %}
+                    ];
+        var options = {'title':'How Much Pizza I Ate Last Night',
+                       'width':400,
+                       'height':300};
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+ </script>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>CRM</h5></li>
+{% endblock %}
+
+{% block content %}
+<div id="chart_div"></div>
+
+    <div id="graph1">
+        {% googlecharts %}
+            {% data vaga "count" %}
+		        {% col "string" "Вага" %}{{ val }}{% endcol %}
+                {% col "number" "Зважувань" %}{{ val }}{% endcol %}
+	{% enddata %}
+
+	{% options %}
+		kind: "LineChart",
+		options: {
+
+			legend: "none",
+			vAxis: {minValue: 0, title : 'К-ть зважувань'},
+			chartArea: {left: 40, top: 20, width: 480, height: 360},
+			width: 600,
+			height: 480,
+            isStacked: true
+		}
+	{% endoptions %}
+
+	{% graph "graph1" "count" %}
+        {% endgooglecharts %}
+    </div>
+
+{% endblock %}
