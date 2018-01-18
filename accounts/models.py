@@ -15,6 +15,13 @@ class UserProfile(models.Model):
     department = models.ForeignKey(Department,blank=True,null=True, on_delete='CASCADE',related_name='+', default=1)
     is_ticked_admin = models.BooleanField(default=False)
     is_it_admin = models.BooleanField(default=False)
+    is_graph = models.BooleanField(default=False)
+    is_wood = models.BooleanField(default=False)
+    is_coal = models.BooleanField(default=False)
+    is_etyl= models.BooleanField(default=False)
+    is_kfs = models.BooleanField(default=False)
+    is_broker = models.BooleanField(default=False)
+    is_sales = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True,null=True)
 
     n_main = models.CharField(max_length=4,null=True, blank=True)

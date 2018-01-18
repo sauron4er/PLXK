@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load googlecharts %}
+
+{% block script %}
+       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawChartVaga);
+      google.charts.setOnLoadCallback(drawChartVaga2);
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'vaga');
+        data.addColumn('number', 'ct');
+        data.addRows([
+     {% for r1, r2 in raw %}
+
+     ['{{ r1 }}', {{ r2 }}],
+     {% endfor %}
+
+        ]);
+        var options = {'title':'Кількість зважувань по видах сировини',
+                       'width':'100%',
+                       'height':400,
+                       sliceVisibilityThreshold: .01
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+
+
+      }
+      function drawChartVaga() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Вага');
+        data.addColumn('number', 'кількість');
+        data.addRows([
+     {% for r1, r2 in vaga %}
+     ['{{ r1 }}', {{ r2 }}],
+     {% endfor %}
+        ]);
+        var options = {'title':'Кількість зважувань по вагах',
+                       'width':'100%',
+                       'height':400,
+                       sliceVisibilityThreshold: .01
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div_vaga'));
+        chart.draw(data, options);
+      }
+      function drawChartVaga2() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'd');
+        data.addColumn('number', 'Вага (лісна біржа)     ');
+        data.addColumn('number', 'Залізнична вага');
+        data.addColumn('number', 'Вага(КВП)    ');
+         data.addRows([
+     {% for d, r1, r2, r3 in vaga2 %}
+
+     ['{{ d|date:"d.m" }}', {{ r1 }},{{ r2 }} , {{ r3 }}],
+     {% endfor %}
+
+        ]);
+
+         var options = {
+          'title':'Кількість зважувань в розрізі днів',
+        width: '100%',
+        height: '100%',
+        legend: { position: 'top', maxLines: 3 },
+        bar: { groupWidth: '75%' },
+        isStacked: true,
+      };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_wood'));
+        chart.draw(data, options);
+
+
+      }
+
+ </script>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Графіки</h5></li>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+        <button type="button" class="btn btn-outline-success disabled">Графіки</button>
+
+            <div class="btn-group float-md-right">
+                <a href="{% url 'crm:graph_scales' %}" style="text-decoration: none;color:black"class=" btn btn-info">Вага</a>
+               {% if user.userprofile.is_wood  %} <a href="{% url 'crm:graph_woods' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info">Деревина</a>{% endif %}
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+  <div class="col-sm-6" id="chart_div"> </div>
+  <div class="col-sm-6" id="chart_div_vaga"> </div>
+</div>
+
+ <div id="chart_div_wood" class="container-fluid"></div>
+
+
+
+
+{% endblock %}
