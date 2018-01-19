@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load googlecharts %}
+{% block title %}
+    Графіки. Зважування.
+{% endblock %}
 
 {% block script %}
-       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawChart);
@@ -77,24 +80,20 @@
 
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div_wood'));
         chart.draw(data, options);
-
-
       }
 
  </script>
 {% endblock %}
 
-{% block breadcrumb %}
-  <li class="breadcrumb-item active"><h5>Графіки</h5></li>
-{% endblock %}
-
 {% block second_nav %}
         <div class="container-fluid" style="padding: 10px">
-        <button type="button" class="btn btn-outline-success disabled">Графіки</button>
+        <button type="button" class="btn btn-outline-success disabled btn-sm">Графіки</button>
 
             <div class="btn-group float-md-right">
-                <a href="{% url 'crm:graph_scales' %}" style="text-decoration: none;color:black"class=" btn btn-info">Вага</a>
-               {% if user.userprofile.is_wood  %} <a href="{% url 'crm:graph_woods' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info">Деревина</a>{% endif %}
+                <a href="{% url 'crm:graph_scales' %}" style="text-decoration: none;color:black"class=" btn btn-info btn-sm">Вага</a>
+               {% if user.userprofile.is_wood  %} <a href="{% url 'crm:graph_woods' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info btn-sm">Деревина</a>{% endif %}
+               {% if user.userprofile.is_coal  %} <a href="{% url 'crm:graph_coals' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info btn-sm">Вугілля</a>{% endif %}
+
             </div>
         </div>
 {% endblock %}

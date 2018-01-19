@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.db import connections
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -36,16 +37,42 @@ def graph_scales(request):
     cursor.execute(text_sql2)
     wood1= cursor.fetchall()
 
-    return render(request, 'crm/gpaph_scales.html', {'vaga':vaga,'vaga2':vaga2, 'raw':raw, 'wood':wood1})
+    return render(request, 'crm/graph_scales.html', {'vaga':vaga, 'vaga2':vaga2, 'raw':raw, 'wood':wood1})
 
 def graph_woods(request):
     cursor = connections['fb1'].cursor()
 
-    text_sql2 = 'select *    from WOOD_IN_D'
-    cursor.execute(text_sql2)
+    text_sql1 = 'select *  from  WOOD_IN_D'
+    cursor.execute(text_sql1)
     wood1= cursor.fetchall()
 
-    return render(request, 'crm/gpaph_scales.html', { 'wood1':wood1})
+    text_sql2 = 'select *    from WOOD_CAGENT_IN_D'
+    cursor.execute(text_sql2)
+    wood2 = cursor.fetchall()
+
+    text_sql3 = 'select *    from SELECT_WOODS_MON_YEAR'
+    cursor.execute(text_sql3)
+    wood3 = cursor.fetchall()
+
+
+    return render(request, 'crm/graph_wood.html', {'wood1':wood1,'wood2':wood2 ,'wood3':wood3})
+
+def graph_coal(request):
+    cursor = connections['fb1'].cursor()
+    d = datetime.today()
+    d2 = d + timedelta(days=-1)
+    s2 = datetime.strftime(d2,"%d.%m.%Y")
+    d1 = d + timedelta(days=-15)
+    s1 = datetime.strftime(d1, "%d.%m.%Y")
+    text_sql1 = "select *  from  W_SELECT_MANUFACTURE_COAL('"+s1+"','"+s2+"')"
+    cursor.execute(text_sql1)
+    coal1= cursor.fetchall()
+
+
+
+
+    return render(request, 'crm/graph_coal.html', {'coal1':coal1})
+
 
 def employee(request,pk):
     cursor = connections['fb1'].cursor()

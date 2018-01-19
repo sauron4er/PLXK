@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load googlecharts %}
+{% block title %}
+    Графіки. Вугілля.
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawCoal1);
+      function drawCoal1() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'd');
+        data.addColumn('number', 'БДР1');
+        data.addColumn('number', 'БДР2');
+        data.addColumn('number', 'Одноразовий гриль');
+        data.addColumn('number', 'Фасовка');
+        data.addRows([
+     {% for d, r1, r2, r3, r4 in coal1 %}
+     ['{{ d|date:"d.m"}}',{{ r1 }}, {{ r2 }}, {{ r3 }},{{ r4 }} ],
+     {% endfor %}
+        ]);
+
+         var options = {
+             'title':'Виробництво ДВП (за 30 днів)',
+        width: '100%',
+        height: 240,
+
+        bar: { groupWidth: '75%' },
+
+
+      };
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_coal1'));
+        chart.draw(data, options);
+      }
+
+
+ </script>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+        <button type="button" class="btn btn-outline-success disabled btn-sm">Графіки</button>
+
+            <div class="btn-group float-md-right">
+                <a href="{% url 'crm:graph_scales' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info btn-sm">Вага</a>
+               {% if user.userprofile.is_wood  %} <a href="{% url 'crm:graph_woods' %}" style="text-decoration: none;color:black"class=" btn btn-outline-info btn-sm">Деревина</a>{% endif %}
+               {% if user.userprofile.is_coal  %} <a href="{% url 'crm:graph_coals' %}" style="text-decoration: none;color:black"class=" btn btn-info btn-sm">Вугілля</a>{% endif %}
+
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+
+  <div class="row">
+  <div class="col-sm-6" id="chart_coal2"> </div>
+  <div class="col-sm-6" id="chart_coal3"> </div>
+</div>
+
+ <div id="chart_coal1" class="container-fluid"></div>
+
+
+{% endblock %}
