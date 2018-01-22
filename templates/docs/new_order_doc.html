@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Новий документ{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'docs:index' %}">Документи</a></li>
+  <li class="breadcrumb-item active">{{ title }}</li>
+{% endblock %}
+
+{% block content %}
+  <form enctype="multipart/form-data" method="post" novalidate>
+    {% csrf_token %}
+    {% include 'includes/form.html' %}
+    <button type="submit" class="btn btn-success" value="post">Зберегти</button>
+  </form>
+{% endblock %}

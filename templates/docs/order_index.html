@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Документи{% endblock %}
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+         {% if user.userprofile.is_doc_order_add %}
+            <a href="{% url 'docs:new_order_doc'  %}"> <button type="button" class="btn  btn-sm  btn-outline-success">Новий документ</button> </a>
+         {% endif %}
+
+            <div class="btn-group float-md-right">
+                <a href="{% url 'docs:index_order_f' 1 %}" style="text-decoration: none;color:black"class=" btn btn-sm  {% if fk == '1' %}btn-info {% else %} btn-outline-info{% endif %}">Накази</a>
+                <a href="{% url 'docs:index_order_f' 2 %}" style="text-decoration: none;color:black"class=" btn btn-sm {% if fk == '2' %} btn-info {% else %}  btn-outline-info{% endif %} ">Розпорядження</a>
+                <a href="{% url 'docs:index_order_f' 3 %}" style="text-decoration: none;color:black"class="btn btn-sm {% if fk == '3' %}  btn-info {% else %}  btn-outline-info{% endif %} ">Інше</a>
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+    </div>
+    <div class="container-fluid p-2">
+        <table class="table table-sm">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Тип</th>
+                <th>Код</th>
+                <th>Назва</th>
+                <th>Автор</th>
+                <th>Відповідальний</th>
+                <th>Діє з<th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for doc in docs %}
+        <tr>
+            <td>{{ doc.doc_type.name }}</td>
+            <td>{{ doc.code}}</td>
+            <td> <a href="{{  doc.doc_file.url }}">{{ doc.name }} </a> </td>
+            <td>{{ doc.author }}</td>
+            <td>{{ doc.responsible }} </td>
+            <td>{{ doc.date_start|date:"d.m.Y" }}</td>
+            {% if edit %}
+            <td> <a href="{% url 'docs:edit_doc'  doc.pk  %}">Edit </a> </td>
+            {% endif %}
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

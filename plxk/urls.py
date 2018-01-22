@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^departments/$',  accounts_views.departments, name='departments'),
     url(r'^department/(?P<pk>\d+)/$', accounts_views.department,name='department'),
     #url(r'^media/', include('docs.urls', namespace='docsm')),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', admin.site.urls, name='sam_admin'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

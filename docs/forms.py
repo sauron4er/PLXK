@@ -1,5 +1,5 @@
 from django import forms
-from .models import Document
+from .models import Document, Order_doc
 
 class NewDocForm(forms.ModelForm):
 
@@ -12,6 +12,20 @@ class NewDocForm(forms.ModelForm):
                   'doc_group':'Група',
                   'doc_file':'',
                   'act':'Активність',
+                  'author':'Автор',
+                  'responsible':'Відповдальний',
+                  'date_start':'Діє з'}
+
+class NewDocOrderForm(forms.ModelForm):
+
+    class Meta:
+        model = Order_doc
+        fields = ['name','code','doc_type', 'doc_file','author','responsible','date_start']
+        labels = {'name':'Назва',
+                  'code':'Код',
+                  'doc_type':'Тип',
+                  'doc_file':'',
+
                   'author':'Автор',
                   'responsible':'Відповдальний',
                   'date_start':'Діє з'}
