@@ -20,7 +20,7 @@ class NewDocOrderForm(forms.ModelForm):
 
     class Meta:
         model = Order_doc
-        fields = ['name','code','doc_type', 'doc_file','author','responsible','date_start']
+        fields = ['name','code','doc_type', 'doc_file','author','responsible','date_start','is_act']
         labels = {'name':'Назва',
                   'code':'Код',
                   'doc_type':'Тип',
@@ -28,4 +28,6 @@ class NewDocOrderForm(forms.ModelForm):
 
                   'author':'Автор',
                   'responsible':'Відповдальний',
-                  'date_start':'Діє з'}
+                  'date_start':'Діє з',
+                  'is_act': 'Актуальний'
+                  }

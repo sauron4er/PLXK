@@ -100,3 +100,21 @@ def new_order_doc(request):
         form = NewDocOrderForm()
     return render(request,'docs/new_order_doc.html',{'form':form,'title':title})
 
+def edit_order_doc(request,pk):
+    doc = get_object_or_404(Order_doc,pk=pk)
+    title = 'Редагування'
+
+    if request.user:
+        user = request.user
+    else:
+        user = User.objects.first()
+    if request.method == 'POST':
+        form = NewDocOrderForm(request.POST,request.FILES,instance=doc)
+        if form.is_valid():
+            doc.updated_by = user
+            doc.updated_at = timezone.now()
+            form.save()
+        return redirect('docs:index_order_f',fk = 0 )
+    else:
+        form = NewDocOrderForm(instance=doc)
+    return render(request,'docs/new_order_doc.html',{'form':form,'title':title})

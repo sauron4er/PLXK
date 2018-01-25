@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block title %}Документи{% endblock %}
 {% block second_nav %}
         <div class="container-fluid" style="padding: 10px">
@@ -23,6 +25,7 @@
                 <th>Тип</th>
                 <th>Код</th>
                 <th>Назва</th>
+                <th>Актуальний</th>
                 <th>Автор</th>
                 <th>Відповідальний</th>
                 <th>Діє з<th>
@@ -34,11 +37,16 @@
             <td>{{ doc.doc_type.name }}</td>
             <td>{{ doc.code}}</td>
             <td> <a href="{{  doc.doc_file.url }}">{{ doc.name }} </a> </td>
+             <td><input type="checkbox" disabled {% if doc.is_act %}  checked {% endif %} "> </td>
             <td>{{ doc.author }}</td>
             <td>{{ doc.responsible }} </td>
             <td>{{ doc.date_start|date:"d.m.Y" }}</td>
-            {% if edit %}
-            <td> <a href="{% url 'docs:edit_doc'  doc.pk  %}">Edit </a> </td>
+            {% if user.userprofile.is_doc_order_add %}
+
+            <td>
+                <a href={% url 'docs:edit_order_doc' doc.pk  %}> <img src="{% static 'img/edit3.png' %}" style="height: 24px"> </a>
+
+            </td>
             {% endif %}
 
         </tr>

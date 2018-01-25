@@ -3,9 +3,12 @@
 
 {% block title %}Новини{% endblock %}
 
-{% block second_nav %}
-
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><a href="#">Новини</a></li>
 {% endblock %}
+
+
+
 {% block content %}
 {% for news in newss %}
 <div class="row p-3 m-3 border">
@@ -17,7 +20,9 @@
   <div class="col-sm-10">
 
 <h6><a href="{% url 'gi:news_detail' news.id %}" >{{ news.title}}</a></h6>
-
+  {% if news.img_file %}
+    <img src={{ news.img_file.url }} alt="{{ news.img_text }}" class="float-right " style="max-height: 100px">
+    {% endif %}
 {{ news.text |truncatechars:400 }}
 
 

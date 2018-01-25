@@ -9,7 +9,7 @@ urlpatterns = [
 
     url(r'^order/f(?P<fk>\d+)/$', views.index_order_f, name='index_order_f'),
     url(r'^order/new/$', views.new_order_doc, name='new_order_doc'),
-
+    url(r'^order/edit/(?P<pk>\d+)/$', views.edit_order_doc, name='edit_order_doc'),
     #url(r'^(?P<pk>\d+)/new/$', views.new_topics, name='new_topic'),
 ]
 
