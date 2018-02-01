@@ -12,3 +12,11 @@ class News(models.Model):
     text_url = models.URLField(max_length=500,null=True,blank=True)
     def __str__(self):
         return self.title
+
+class Country(models.Model):
+    name = models.CharField(max_length=200)
+    name_en = models.CharField(max_length=200, null=True, blank=True)
+    code = models.CharField(max_length=3, null=True, blank=True)
+    flag = models.ImageField(upload_to='country_flag', null=True, blank=True)
+    def __str__(self):
+        return self.name

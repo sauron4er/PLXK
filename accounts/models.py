@@ -24,6 +24,7 @@ class UserProfile(models.Model):
     is_sales = models.BooleanField(default=False)
     is_doc_add = models.BooleanField(default=False)
     is_doc_order_add = models.BooleanField(default=False)
+    is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True,null=True)
 
     n_main = models.CharField(max_length=4,null=True, blank=True)

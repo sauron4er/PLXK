@@ -19,7 +19,9 @@ urlpatterns = [
     url(r'^phones/sort/(?P<pk>[0-9]+)$', board_views.phones, name='phones'),
     url(r'^polls/', include('polls.urls',namespace='polls')),
     url(r'^crm/', include('crm.urls',namespace='crm')),
+    url(r'^bets/', include('bets.urls', namespace='bets')),
     url(r'^boards/', include('boards.urls', namespace='boards')),
+
     url(r'^docs/', include('docs.urls', namespace='docs')),
     url(r'^tickets/', include('tickets.urls', namespace='tickets')),
     url(r'^gi/', include('gi.urls', namespace='gi')),

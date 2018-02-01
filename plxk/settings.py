@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
 
     'accounts',
+    'bets',
     'boards',
     'crm',
     'docs',
