@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+#from pytz import timezone
+
 from gi.models import Country
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 class Season(models.Model):
     name = models.CharField(max_length=200)
@@ -26,13 +29,18 @@ class Team_in_season(models.Model):
 
 class Match(models.Model):
     dt = models.DateTimeField(null=True, blank=True)
+    season = models.ForeignKey(Season, related_name='season1', blank=True, null=True, on_delete='CASCADE',default=1)
     team1 = models.ForeignKey(Team, related_name='team1', blank=True, null=True, on_delete='CASCADE')
     team2 = models.ForeignKey(Team, related_name='team2', blank=True, null=True, on_delete='CASCADE')
     team1_result = models.IntegerField(null=True, blank=True)
     team2_result = models.IntegerField(null=True, blank=True)
     status = models.IntegerField(null=True, blank=True)
+    def txt(self):
+        return self.team1.name + " - " + self.team2.name
     def __str__(self):
         return self.team1.name + " - " + self.team2.name
+    def is_editing(self):
+        return timezone.now() < self.dt - timedelta(hours=1)
 
 class Bet(models.Model):
     player = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)

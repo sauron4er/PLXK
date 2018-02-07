@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Команди{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Команди</h5></li>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+            <div class="btn-group float-md-right">
+                <a href="{% url 'bets:teams'  %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-info ">Команди</a>
+                <a href="{% url 'bets:matches' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Матчі</a>
+                <a href="{% url 'bets:bets' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Ставки</a>
+                <a href="#" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Результати</a>
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+   </div>
+    <br>
+
+ <div class="container-fluid align-content-center" style="padding: 10px"; align="center">
+   <div class="d-flex justify-content-center">
+     {% for team in teams  %}
+    <div class="p-2">
+    <div class="card p-2 m-2 float-left" style="width:175px; heigth:175px">
+  <img class="card-img-top" style="width: 150px;height: 150px" src={{ team.logo.url }} >
+  <div class="card-body align-content-center">
+    <h6 class="card-title ">{{ team.name }}</h6>
+      <img class="card-img-top" style="max-height: 32px; width: auto" src={{ team.country.flag.url }} >
+  </div>
+</div>
+    </div>
+     {% endfor %}
+
+    </div>
+
+
+
+
+     
+</div>
+
+{% endblock %}

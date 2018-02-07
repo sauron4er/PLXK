@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Ставки{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Ставки</h5></li>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+            <div class="btn-group float-md-right">
+                <a href="{% url 'bets:teams'  %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info ">Команди</a>
+                <a href="{% url 'bets:matches' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Матчі</a>
+                <a href="{% url 'bets:bets' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-info">Ставки</a>
+                <a href="#" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Результати</a>
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+    <br>
+<div class="container p-2 m-2">
+<table class="table table-sm ">
+    <thead >
+    <th>Гравець</th>
+    <th>Дата</th>
+    <th colspan="2" style="text-align: center ">Матч</th>
+    <th>Ставка</th>
+     </thead>
+    <tbody>
+     {% for bet in bets  %}
+    <tr >
+    <td style="vertical-align: middle">
+        {{ bet.player.userprofile.pip }}
+    </td>
+    <td style="vertical-align: middle">
+       {{  bet.match.dt|date:"d.m.Y H:y"  }}
+      </td>
+       <td>
+       <img style="max-height: 40px; width: auto" src={{ bet.match.team1.logo.url }} >
+       {{ bet.match.team1.name }}
+       </td>
+    <td>
+       <img style="max-height: 40px; width: auto" src={{ bet.match.team2.logo.url }} >
+       {{ bet.match.team2.name }}
+    </td>
+     <td style="vertical-align: middle; font-size: x-large">
+          {% if bet.match.is_editing  %}
+         <a href="{% url 'bets:new_bet' bet.match.id %}">        {{ bet.team1_bet }} : {{ bet.team2_bet }}</a>
+         {% else %}
+          {{ bet.team1_bet }} : {{ bet.team2_bet }}
+         {% endif %}
+    </td>
+    </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% if ct > 16 %}
+      {% load bootstrap4 %}
+      {% bootstrap_pagination bets  %}
+{% endif %}
+
+ </div>
+
+{% endblock %}

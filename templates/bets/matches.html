@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Матчі{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item active"><h5>Матчі</h5></li>
+{% endblock %}
+
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+            <div class="btn-group float-md-right">
+                <a href="{% url 'bets:teams'  %}" style="text-decoration: none;color:black"class="btn btn-sm btn-outline-info ">Команди</a>
+                <a href="{% url 'bets:matches' %}" style="text-decoration: none;color:black"class="btn  btn-sm  btn-info">Матчі</a>
+                <a href="{% url 'bets:bets' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Ставки</a>
+                <a href="#" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Результати</a>
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+    <br>
+<div class="container p-2 m-2">
+<table class="table table-sm">
+    <thead>
+    <th>№</th>
+    <th>Дата</th>
+    <th>Господарі</th>
+    <th>Гості</th>
+    <th>Результат</th>
+    </thead>
+    <tbody>
+     {% for match in matches  %}
+    <tr>
+    <td style="vertical-align: middle">
+        {{ match.id }}
+    </td>
+    <td style="vertical-align: middle">
+       {{ match.dt|date:"d.m.Y H:y"  }}
+
+    </td>
+       <td>
+       <img style="max-height: 40px; width: auto" src={{ match.team1.logo.url }} >
+       {{ match.team1.name }}
+       </td>
+    <td>
+       <img style="max-height: 40px; width: auto" src={{ match.team2.logo.url }} >
+       {{ match.team2.name }}
+    </td>
+     <td style="vertical-align: middle">
+        {% if match.team1_result  %}
+        {{ match.team1_result }} : {{ match.team2_result }}
+         {% elif match.is_editing  %}
+            <a href="{% url 'bets:new_bet'  match.id %}"> Зробити ставку </a>
+
+        {% endif %}
+
+
+    </td>
+    </tr>
+      {% endfor %}
+
+    </tbody>
+</table>
+{% if ct > 16 %}
+      {% load bootstrap4 %}
+      {% bootstrap_pagination matches  %}
+{% endif %}
+ </div>
+
+{% endblock %}
