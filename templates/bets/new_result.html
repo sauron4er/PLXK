@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 
-{% block title %}Нова ставка{% endblock %}
+{% block title %}Новий результат{% endblock %}
 
 {% block breadcrumb %}
-  <li class="breadcrumb-item"><a href="{% url 'bets:matches' %}">Матчі</a></li>
+  <li class="breadcrumb-item"><a href="{% url 'bets:matches' %}">Результати</a></li>
   <li class="breadcrumb-item active">{{ title }}</li>
 {% endblock %}
 
@@ -14,12 +14,12 @@
       <div class="p-2 m-2 " >
 <span style="font-size: xx-large; align-content: center" >
         <img style="max-height: 100px; width: auto" src={{ match.team1.logo.url }} >
-         {{ match.team1.name }}
-         <input type="text" class="" style="width: 50px; text-align: center " id="team1_bet" name="team1_bet" value="{% if bet.team1_bet >= 0 %}{{ bet.team1_bet }} {% endif %}">
+        {{ match.team1.name }}
+         <input type="text" class="" style="width: 50px; text-align: center " id="team1_result" name="team1_result" value="{{ match.team1_result }}">
           :
          <img style="max-height: 100px; width: auto" src={{ match.team2.logo.url }} >
        {{ match.team2.name }}
-         <input type="text" class="" style="width: 50px; text-align: center" id="team2_bet" name="team2_bet" value="{% if bet.team2_bet >= 0 %}{{ bet.team2_bet }} {% endif %}">
+         <input type="text" class="" style="width: 50px; text-align: center" id="team2_result" name="team2_result" value="{{ match.team2_result  }}">
 
 </span>
       </div>

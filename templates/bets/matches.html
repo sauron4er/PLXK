@@ -12,7 +12,7 @@
                 <a href="{% url 'bets:teams'  %}" style="text-decoration: none;color:black"class="btn btn-sm btn-outline-info ">Команди</a>
                 <a href="{% url 'bets:matches' %}" style="text-decoration: none;color:black"class="btn  btn-sm  btn-info">Матчі</a>
                 <a href="{% url 'bets:bets' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Ставки</a>
-                <a href="#" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Результати</a>
+                <a href="{% url 'bets:results' %}" style="text-decoration: none;color:black"class="btn btn-sm  btn-outline-info">Результати</a>
             </div>
         </div>
 {% endblock %}
@@ -47,12 +47,13 @@
        {{ match.team2.name }}
     </td>
      <td style="vertical-align: middle">
-        {% if match.team1_result  %}
+        {% if match.team1_result >= 0  %}
         {{ match.team1_result }} : {{ match.team2_result }}
          {% elif match.is_editing  %}
-            <a href="{% url 'bets:new_bet'  match.id %}"> Зробити ставку </a>
-
+             <a href="{% url 'bets:new_bet'  match.id %}"> Зробити ставку </a>
+             <a href="{% url 'bets:new_result'  match.id %}"> Внести результат </a>
         {% endif %}
+
 
 
     </td>

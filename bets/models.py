@@ -34,7 +34,7 @@ class Match(models.Model):
     team2 = models.ForeignKey(Team, related_name='team2', blank=True, null=True, on_delete='CASCADE')
     team1_result = models.IntegerField(null=True, blank=True)
     team2_result = models.IntegerField(null=True, blank=True)
-    status = models.IntegerField(null=True, blank=True)
+    status = models.IntegerField(null=True, blank=True,default=0)
     def txt(self):
         return self.team1.name + " - " + self.team2.name
     def __str__(self):

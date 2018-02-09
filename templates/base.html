@@ -26,6 +26,7 @@
                         <a class="dropdown-item" href="{% url 'polls:index' %}">Опитування</a>
                         <a class="dropdown-item" href="{% url 'tickets:index_f' 0 %}">Заявки ІТ</a>
                         <a class="dropdown-item" href="{% url 'gi:news' %}">Новини</a>
+                        {% if user.userprofile.is_bets %}<a class="dropdown-item" href="{% url 'bets:index' %}">Ставки</a>{% endif %}
                     </div>
              </li>
              <li class="nav-item">
