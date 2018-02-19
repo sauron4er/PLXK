@@ -7,6 +7,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/templates/bets/teams.html" afterPath="$PROJECT_DIR$/templates/bets/teams.html" />
     </list>
     <ignored path="TEST.FDB" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -110,11 +111,13 @@
       <file leaf-file-name="teams.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="28" column="19" lean-forward="false" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+            <state relative-caret-position="339">
+              <caret line="29" column="47" lean-forward="false" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
               <folding>
-                <element signature="e#1277#1311#0#HTML" expanded="true" />
-                <element signature="e#1520#1557#0#HTML" expanded="true" />
+                <element signature="e#1010#1031#0#HTML" expanded="true" />
+                <element signature="e#1160#1193#0#HTML" expanded="true" />
+                <element signature="e#1415#1436#0#HTML" expanded="true" />
+                <element signature="e#1556#1593#0#HTML" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -554,7 +557,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519021754538</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="180218">
+      <created>1519021796818</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1519021796818</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1123,11 +1133,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="28" column="19" lean-forward="false" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+        <state relative-caret-position="339">
+          <caret line="29" column="47" lean-forward="false" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
           <folding>
-            <element signature="e#1277#1311#0#HTML" expanded="true" />
-            <element signature="e#1520#1557#0#HTML" expanded="true" />
+            <element signature="e#1010#1031#0#HTML" expanded="true" />
+            <element signature="e#1160#1193#0#HTML" expanded="true" />
+            <element signature="e#1415#1436#0#HTML" expanded="true" />
+            <element signature="e#1556#1593#0#HTML" expanded="true" />
           </folding>
         </state>
       </provider>

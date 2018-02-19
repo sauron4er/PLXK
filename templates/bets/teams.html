@@ -22,15 +22,15 @@
     <br>
 
  <div class="container-fluid align-content-center" style="padding: 10px"; align="center">
-   <div class="d-flex justify-content-center">
+   <div class="d-flex flex-wrap justify-content-center">
      {% for team in teams  %}
-    <div class="p-2">
-    <div class="card p-2 m-2 float-left" style="width:175px; heigth:175px">
+    <div class="p-2 m-2"style="width:190px; heigth:190px">
+    <div class="card p-2 m-2 float-left" >
     {% if team.logo %}
-    <img class="card-img-top" style="width: 150px;height: 150px" src={{ team.logo.url }} >
+    <img class="card-img-top" style="width: 180px;height: 175px" src={{ team.logo.url }} >
     {% endif %}
 
-  <div class="card-body align-content-center">
+  <div class="card-body align-content-center" style="height:100px ">
     <h6 class="card-title ">{{ team.name }}</h6>
       {% if team.country.flag %}
           <img class="card-img-top" style="max-height: 32px; width: auto" src={{ team.country.flag.url }} >
