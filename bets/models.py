@@ -20,6 +20,10 @@ class Team(models.Model):
     logo = models.ImageField(upload_to='teams_logo', null=True, blank=True)
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = 'Команда'
+        verbose_name_plural = 'Команди'
+        ordering = ('name',)
 
 class Team_in_season(models.Model):
     season = models.ForeignKey(Season, related_name='season', blank=True, null=True, on_delete='CASCADE')
