@@ -111,13 +111,13 @@
       <file leaf-file-name="teams.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="29" column="47" lean-forward="false" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
+            <state relative-caret-position="390">
+              <caret line="32" column="61" lean-forward="false" selection-start-line="32" selection-start-column="61" selection-end-line="32" selection-end-column="61" />
               <folding>
                 <element signature="e#1010#1031#0#HTML" expanded="true" />
                 <element signature="e#1160#1193#0#HTML" expanded="true" />
-                <element signature="e#1415#1436#0#HTML" expanded="true" />
-                <element signature="e#1556#1593#0#HTML" expanded="true" />
+                <element signature="e#1291#1325#0#HTML" expanded="true" />
+                <element signature="e#1569#1606#0#HTML" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -564,7 +564,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519021796818</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="180218">
+      <created>1519022489611</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1519022489611</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1133,13 +1140,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="29" column="47" lean-forward="false" selection-start-line="29" selection-start-column="47" selection-end-line="29" selection-end-column="47" />
+        <state relative-caret-position="390">
+          <caret line="32" column="61" lean-forward="false" selection-start-line="32" selection-start-column="61" selection-end-line="32" selection-end-column="61" />
           <folding>
             <element signature="e#1010#1031#0#HTML" expanded="true" />
             <element signature="e#1160#1193#0#HTML" expanded="true" />
-            <element signature="e#1415#1436#0#HTML" expanded="true" />
-            <element signature="e#1556#1593#0#HTML" expanded="true" />
+            <element signature="e#1291#1325#0#HTML" expanded="true" />
+            <element signature="e#1569#1606#0#HTML" expanded="true" />
           </folding>
         </state>
       </provider>
