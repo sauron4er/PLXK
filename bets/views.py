@@ -103,6 +103,7 @@ def results(request):
         for p in players:
             rt[m.id][p.id] = {}
             rt[m.id][p.id]['name'] = p.userprofile.pip
+            rt[m.id][p.id]['id'] = p.id
             rt[m.id][p.id]['p'] = 0
             rt[m.id][p.id]['rt1'] = -1
             rt[m.id][p.id]['rt2'] = -1

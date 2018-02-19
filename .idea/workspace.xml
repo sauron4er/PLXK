@@ -7,6 +7,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/bets/views.py" afterPath="$PROJECT_DIR$/bets/views.py" />
+      <change beforePath="$PROJECT_DIR$/templates/bets/results.html" afterPath="$PROJECT_DIR$/templates/bets/results.html" />
     </list>
     <ignored path="TEST.FDB" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -107,7 +109,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="teams.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="teams.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="390">
@@ -118,6 +120,26 @@
                 <element signature="e#1291#1325#0#HTML" expanded="true" />
                 <element signature="e#1569#1606#0#HTML" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="results.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/bets/results.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="62" column="66" lean-forward="false" selection-start-line="62" selection-start-column="66" selection-end-line="62" selection-end-column="66" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bets/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="358">
+              <caret line="111" column="55" lean-forward="true" selection-start-line="111" selection-start-column="55" selection-end-line="111" selection-end-column="55" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -195,11 +217,11 @@
         <option value="$PROJECT_DIR$/bets/templatetags/dict_tags.py" />
         <option value="$PROJECT_DIR$/templates/bets/new_result.html" />
         <option value="$PROJECT_DIR$/templates/bets/matches.html" />
-        <option value="$PROJECT_DIR$/templates/bets/results.html" />
-        <option value="$PROJECT_DIR$/bets/views.py" />
         <option value="$PROJECT_DIR$/terminal/q.py" />
         <option value="$PROJECT_DIR$/bets/models.py" />
         <option value="$PROJECT_DIR$/templates/bets/teams.html" />
+        <option value="$PROJECT_DIR$/templates/bets/results.html" />
+        <option value="$PROJECT_DIR$/bets/views.py" />
       </list>
     </option>
   </component>
@@ -577,7 +599,14 @@
       <option name="project" value="LOCAL" />
       <updated>1519022780309</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="180218">
+      <created>1519022785558</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1519022785558</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -988,6 +1017,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#27#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1030,16 +1062,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bets/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="358">
-          <caret line="108" column="44" lean-forward="false" selection-start-line="108" selection-start-column="44" selection-end-line="108" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#64#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/bets/new_result.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -1053,22 +1075,6 @@
         <state relative-caret-position="255">
           <caret line="51" column="17" lean-forward="false" selection-start-line="51" selection-start-column="17" selection-end-line="51" selection-end-column="34" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/results.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="91" column="0" lean-forward="false" selection-start-line="91" selection-start-column="0" selection-end-line="91" selection-end-column="0" />
-          <folding>
-            <element signature="e#1196#1222#0#HTML" expanded="false" />
-            <element signature="e#1362#1392#0#HTML" expanded="false" />
-            <element signature="e#1435#1465#0#HTML" expanded="false" />
-            <element signature="e#1542#1579#0#HTML" expanded="false" />
-            <element signature="e#1677#1714#0#HTML" expanded="false" />
-            <element signature="e#1797#1827#0#HTML" expanded="false" />
-            <element signature="e#2286#2312#0#HTML" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1154,6 +1160,22 @@
             <element signature="e#1291#1325#0#HTML" expanded="true" />
             <element signature="e#1569#1606#0#HTML" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bets/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="358">
+          <caret line="111" column="55" lean-forward="true" selection-start-line="111" selection-start-column="55" selection-end-line="111" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/bets/results.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="62" column="66" lean-forward="false" selection-start-line="62" selection-start-column="66" selection-end-line="62" selection-end-column="66" />
+          <folding />
         </state>
       </provider>
     </entry>

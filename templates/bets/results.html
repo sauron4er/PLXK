@@ -60,12 +60,13 @@
         {{ match.team1_result }} : {{ match.team2_result }}
             {% endif %}
          {% elif match.is_editing  %}
+            <a href="{% url 'bets:new_result'  match.id %}"> - : - </a>
         {% endif %}
 
     </td>
     {% for player in players %}
       <td style="text-align: center">
-      {% if match.is_editing and rt|get_item:match.id|get_item:player.id|get_item:"id"  = user.id  %}
+      {% if match.is_editing and rt|get_item:match.id|get_item:player.id|get_item:"id" = user.id  %}
       <a href="{% url 'bets:new_bet'  match.id %}" > {{ rt|get_item:match.id|get_item:player.id|get_item:"rt" }} </a>
       {% else %}
       {{ rt|get_item:match.id|get_item:player.id|get_item:"rt" }}
