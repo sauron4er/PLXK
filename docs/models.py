@@ -18,6 +18,7 @@ class Document(models.Model):
     code = models.CharField(max_length=100,null=True,blank=True)
     doc_file = models.FileField(upload_to='docs/%Y/%m')
     act = models.CharField(max_length=50, null=True,blank=True)
+    act0 = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True,blank=True)
     created_by = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)

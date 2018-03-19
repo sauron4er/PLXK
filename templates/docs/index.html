@@ -27,6 +27,7 @@
                 <th>Автор</th>
                 <th>Відповідальний</th>
                 <th>Діє з<th>
+                <th>Активність<th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +40,8 @@
             <td>{{ doc.author }}</td>
             <td>{{ doc.responsible }} </td>
             <td>{{ doc.date_start|date:"d.m.Y" }}</td>
+            <td><input type="checkbox" disabled {% if doc.act0 %}  checked {% endif %} "> </td>
+
             {% if edit %}
             <td> <a href="{% url 'docs:edit_doc'  doc.pk  %}">Edit </a> </td>
             {% endif %}

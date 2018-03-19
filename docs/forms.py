@@ -5,16 +5,17 @@ class NewDocForm(forms.ModelForm):
 
     class Meta:
         model = Document
-        fields = ['name','code','doc_type', 'doc_group', 'doc_file','act','author','responsible','date_start']
+        fields = ['name','code','doc_type', 'doc_group', 'doc_file','act','author','responsible','date_start','act0']
         labels = {'name':'Назва',
                   'code':'Код',
                   'doc_type':'Тип',
                   'doc_group':'Група',
                   'doc_file':'',
-                  'act':'Активність',
+                  'act':'Актуальність',
                   'author':'Автор',
                   'responsible':'Відповдальний',
-                  'date_start':'Діє з'}
+                  'date_start':'Діє з',
+                  'act0' :'Активність'}
 
 class NewDocOrderForm(forms.ModelForm):
 
