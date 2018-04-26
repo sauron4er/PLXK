@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'gi',
     'polls',
     'tickets',
+    'edms'
 
 ]
 

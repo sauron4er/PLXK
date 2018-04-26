@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PLXK-EDMS{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Відділ кадрів</li>
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> # adding vue.js script
+</head>
+<body>
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6" style="padding: 10px">
+                Користувачі
+            </div>
+            <div class="col-lg-6" style="padding: 10px">
+                <div style="padding: 10px">
+                    <p>Відділи:</p>
+
+<!--
+                    <table class="table table-sm">
+                        <thead >
+                            <tr>
+                                <th>Відділ</th>
+                                <th>Керівник</th>
+                                <th>Опис</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for phone in phones %}
+                                <tr>
+                                <td>
+                                     {{ phone.userprofile.pip }}  <br>
+                                    </td>
+                                    <td class="align-middle">{{ phone.userprofile.n_main }}</td>
+                                    <td class="align-middle">{{ phone.userprofile.n_second|default:"-" }}</td>
+                                    <td class="align-middle">{{ phone.userprofile.n_mobile|default:"-" }}</td>
+                                    <td class="align-middle">
+                                        {% if phone.userprofile.n_out %}
+                                            {{ phone.userprofile.n_out|slice:"0:1"}}-{{ phone.userprofile.n_out|slice:"1:3" }}-{{ phone.userprofile.n_out|slice:"3:6" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </td>
+                                    <td class="align-middle">({{ phone.userprofile.mobile1|slice:"3" }}) {{ phone.userprofile.mobile1|slice:"3:6" }}-{{ phone.userprofile.mobile1|slice:"6:8" }}-{{ phone.userprofile.mobile1|slice:"8:10" }}</td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+-->
+                </div>
+                <div style="padding: 10px">
+                    Посади
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

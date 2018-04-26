@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PLXK-EDMS{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Відділ кадрів</li>
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+{% block content %}
+    {% verbatim %}
+    <script src="hr.js"></script>
+    <div id="app">
+      <p>{{ message }}</p>
+    </div>
+
+    {% endverbatim %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+<script>
+    var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Привет, Vue!'
+  }
+})
+</script>
+{% endblock %}
+</body>
+</html>

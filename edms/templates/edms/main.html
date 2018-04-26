@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PLXK-EDMS{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Система електронного документообігу</li>
+{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+</head>
+<body>
+{% block content %}
+    <div class="container-fluid" style="padding: 10px">
+
+    <a href="{% url 'edms:hr'  %}" class="btn btn-outline-secondary" role="button" style="float: right">Відділ кадрів</a>
+    </div>
+{% endblock %}
+</body>
+</html>
