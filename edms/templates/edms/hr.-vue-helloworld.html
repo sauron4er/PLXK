@@ -15,13 +15,26 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-6" style="padding: 10px">
-                Користувачі:
+                Користувачі
+                    {% verbatim %}  <!-- to let Vue.js use '{{  }}' syntax -->
+                    <div id="app">
+                      <p>{{ message }}</p>
+                    </div>
+                    {% endverbatim %}
 
+                <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+                <script>
+                    var app = new Vue({
+                  el: '#app',
+                  data: {
+                    message: 'Привет, Vue!'
+                  }
+                })
+                </script>
             </div>
             <div class="col-lg-6" style="padding: 10px">
                 <div style="padding: 10px">
-                    Відділи:
-                    {% include 'edms/department_table.html' %}
+                    <p>Відділи:</p>
                 </div>
                 <div style="padding: 10px">
                     Посади
