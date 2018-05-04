@@ -8,7 +8,7 @@
       <jdbc-url>jdbc:mysql://10.10.10.22:3306/plxk</jdbc-url>
       <driver-properties>
         <property name="autoReconnect" value="true" />
-        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="zeroDateTimeBehavior" value="CONVERT_TO_NULL" />
         <property name="tinyInt1isBit" value="false" />
         <property name="characterEncoding" value="utf8" />
         <property name="characterSetResults" value="utf8" />

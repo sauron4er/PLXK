@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PLXK-EDMS{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Відділ кадрів</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6" style="padding: 10px">
+                Користувачі
+                <div class="bg-secondary" id="root">
+                    asd
+{#                    {% include 'edms/department_table.html' %}#}
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+            <div class="col-lg-6" style="padding: 10px">
+                <div style="padding: 10px">
+                    <p>Відділи:</p>
+                </div>
+                <div style="padding: 10px">
+                    Посади
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+    <script type="text/babel">
+
+      ReactDOM.render(
+        <h1>Hello, world!</h1>,
+        document.getElementById('root')
+      );
+    </script>
+
+{% endblock %}
+</body>
+</html>

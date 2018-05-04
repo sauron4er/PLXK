@@ -1,0 +1,112 @@
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+<script type="text/babel">
+
+class App extends React.Component {
+    constructor(props) {
+    super(props);
+  }
+
+    sortTable(column) {
+        let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+        table = document.getElementById("dep_table");
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+            // Start by saying: no switching is done:
+            switching = false;
+{#            rows = table.querySelectorAll("tr");#}
+            rows = table.props.children;
+            /* Loop through all table rows (except the first,
+            which contains table headers): */
+            for (i = 1; i < (rows.length - 1); i++) {
+                // Start by saying there should be no switching:
+                shouldSwitch = false;
+                /* Get the two elements you want to compare,
+                one from current row and one from the next: */
+                x = rows[i].getElementsByTagName("td")[n];
+                y = rows[i + 1].getElementsByTagName("td")[n];
+                /* Check if the two rows should switch place,
+                based on the direction, asc or desc: */
+                if (dir === "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+
+                if (shouldSwitch) {
+                    /* If a switch has been marked, make the switch
+                    and mark that a switch has been done: */
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    // Each time a switch is done, increase this count by 1:
+                    switchCount++;
+                } else {
+                    /* If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again. */
+                    if (switchCount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    }
+
+    sortTable2(num) {
+        console.log('asd_' + num)
+    }
+
+    render() {
+        let deps = {{ departments|safe }};
+        console.log(deps);
+{#        let depnames = deps.map(deps => <li key={deps.fields.name + 1}>{deps.fields.name}</li>);#}
+        const rowStyle = {
+            textDecoration: 'none',
+            color: 'black'
+        };
+
+        return (
+            <div>
+                <table className="table table-sm table-striped table-hover" id="dep_table">
+                    <thead>
+                        <tr>
+                            <th onClick={this.sortTable2(0)} style={ rowStyle }>Назва</th>
+                            <th onClick={this.sortTable2(1)} style={ rowStyle }>Опис</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { deps.map(deps =>
+                            <tr>
+                            <td className="align-middle" key={deps.fields.name + 1}>{deps.fields.name}</td>
+                            <td className="align-middle" key={deps.fields.name + 2}>{deps.fields.text}</td>
+                            </tr>)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <App />,
+    document.getElementById('root')
+);
+
+</script>

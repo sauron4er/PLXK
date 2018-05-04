@@ -5,16 +5,6 @@ from accounts import models as accounts  # import models Department, UserProfile
 # models, related with users
 
 
-'''class Department(models.Model):
-    department = models.CharField(max_length=100)
-    
-
-class Employee(models.Model):
-    name = models.CharField(max_length=50)
-    actual = models.BooleanField(default=True)
-    on_vacation = models.BooleanField(default=False)'''
-
-
 class Position(models.Model):
     position = models.CharField(max_length=100)
     department_id = models.ForeignKey(accounts.Department, related_name='department')
