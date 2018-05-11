@@ -13,7 +13,7 @@ class Department(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    pip =  models.CharField(max_length=100,blank=True,null=True)
+    pip = models.CharField(max_length=100,blank=True,null=True)
     avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар',blank=True,null=True)
     department = models.ForeignKey(Department,blank=True,null=True, on_delete='CASCADE',related_name='+', default=1)
     is_ticked_admin = models.BooleanField(default=False)
@@ -29,6 +29,8 @@ class UserProfile(models.Model):
     is_doc_order_add = models.BooleanField(default=False)
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True,null=True)
+    hired_date = models.DateField(null=True)
+    fired_date = models.DateField(null=True)
 
     n_main = models.CharField(max_length=4,null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)

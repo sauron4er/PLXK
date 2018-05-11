@@ -16,6 +16,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6.5 virtualenv at D:\Робота\EDMS\venv's\plxk_venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Griddle" level="application" />
+    <orderEntry type="library" name="require" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

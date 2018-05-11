@@ -8,12 +8,12 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0011_userprofile_is_bets'),
+        ('accounts', '0012_auto_20180504_1101'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CarryOutItems',
+            name='Carry_Out_Items',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('item_name', models.CharField(max_length=100)),
@@ -31,26 +31,26 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DocumentPath',
+            name='Document_Path',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
                 ('comment', models.CharField(max_length=200, blank=True)),
-                ('document_id', models.ForeignKey(related_name='document_path_doc', to='edms.Document')),
-                ('employee_id', models.ForeignKey(related_name='document_path_employee', to='accounts.UserProfile')),
+                ('document', models.ForeignKey(related_name='path', to='edms.Document')),
+                ('employee', models.ForeignKey(related_name='documents', to='accounts.UserProfile')),
             ],
         ),
         migrations.CreateModel(
-            name='DocumentPermission',
+            name='Document_Permission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('actual', models.BooleanField(default=True)),
-                ('document_id', models.ForeignKey(related_name='document_permission_doc', to='edms.Document')),
-                ('employee_id', models.ForeignKey(related_name='doc_permissions_employee', to='accounts.UserProfile')),
+                ('is_active', models.BooleanField(default=True)),
+                ('document', models.ForeignKey(related_name='with_permissions', to='edms.Document')),
+                ('employee', models.ForeignKey(related_name='doc_permissions', to='accounts.UserProfile')),
             ],
         ),
         migrations.CreateModel(
-            name='DocumentType',
+            name='Document_Type',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('document_type', models.CharField(max_length=50)),
@@ -58,59 +58,61 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DocumentTypePermission',
+            name='Document_Type_Permission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('actual', models.BooleanField(default=True)),
-                ('document_type_id', models.ForeignKey(related_name='type_permissions_document_type', to='edms.DocumentType')),
+                ('is_active', models.BooleanField(default=True)),
+                ('document_type', models.ForeignKey(related_name='with_permissions', to='edms.Document_Type')),
             ],
         ),
         migrations.CreateModel(
-            name='EmployeePosition',
+            name='Employee_Seat',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('begin_date', models.DateField(default=django.utils.timezone.now)),
                 ('end_date', models.DateField(null=True)),
-                ('employee_id', models.ForeignKey(related_name='employee', to='accounts.UserProfile')),
+                ('employee', models.ForeignKey(related_name='positions', to='accounts.UserProfile')),
             ],
         ),
         migrations.CreateModel(
-            name='FreeTimePeriods',
+            name='Free_Time_Periods',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('free_day', models.DateField(default=django.utils.timezone.now)),
                 ('begin_time', models.TimeField(default=django.utils.timezone.now)),
                 ('end_time', models.TimeField(default='17.00')),
-                ('document_id', models.ForeignKey(related_name='free_time_doc', to='edms.Document')),
+                ('document', models.ForeignKey(related_name='free_documents', to='edms.Document')),
             ],
         ),
         migrations.CreateModel(
-            name='MarkDemand',
+            name='Mark',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('mark', models.CharField(max_length=20)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Mark_Demand',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('deadline', models.DateTimeField(null=True)),
                 ('done', models.BooleanField(default=False)),
                 ('timestamp', models.DateTimeField(null=True)),
-                ('document_id', models.ForeignKey(related_name='document', to='edms.Document')),
-                ('employee_control_id', models.ForeignKey(related_name='employee_control', to='accounts.UserProfile')),
-                ('employee_to_mark_id', models.ForeignKey(related_name='employee_to_mark', to='accounts.UserProfile')),
+                ('document', models.ForeignKey(related_name='documents_with_demand', to='edms.Document')),
+                ('employee_control', models.ForeignKey(related_name='demands_controled', to='accounts.UserProfile')),
+                ('employee_to_mark', models.ForeignKey(related_name='demands_to_do', to='accounts.UserProfile')),
+                ('mark', models.ForeignKey(related_name='demands', to='edms.Mark')),
+                ('result_document', models.ForeignKey(null=True, related_name='result_document', to='edms.Document')),
             ],
         ),
         migrations.CreateModel(
-            name='MarkType',
+            name='Seat',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('mark_type', models.CharField(max_length=20)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Position',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('position', models.CharField(max_length=100)),
-                ('actual', models.BooleanField(default=True)),
-                ('chief_id', models.ForeignKey(null=True, related_name='chief', to='edms.Position')),
-                ('department_id', models.ForeignKey(related_name='department', to='accounts.Department')),
+                ('seat', models.CharField(max_length=100)),
+                ('is_active', models.BooleanField(default=True)),
+                ('chief', models.ForeignKey(null=True, related_name='subordinate', to='edms.Seat')),
+                ('department', models.ForeignKey(related_name='positions', to='accounts.Department')),
             ],
         ),
         migrations.CreateModel(
@@ -119,53 +121,43 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('begin_date', models.DateField(default=django.utils.timezone.now)),
                 ('end_date', models.DateField(null=True)),
-                ('acting_id', models.ForeignKey(null=True, related_name='acting', to='edms.Vacation')),
-                ('employee_id', models.ForeignKey(related_name='vacation_employee', to='accounts.UserProfile')),
+                ('acting', models.ForeignKey(null=True, related_name='acting_for', to='edms.Vacation')),
+                ('employee', models.ForeignKey(related_name='vacations', to='accounts.UserProfile')),
             ],
         ),
         migrations.AddField(
-            model_name='markdemand',
-            name='mark_id',
-            field=models.ForeignKey(related_name='mark_demand_mark', to='edms.MarkType'),
+            model_name='employee_seat',
+            name='seat',
+            field=models.ForeignKey(related_name='employees', to='edms.Seat'),
         ),
         migrations.AddField(
-            model_name='markdemand',
-            name='result_document_id',
-            field=models.ForeignKey(null=True, related_name='result_document', to='edms.Document'),
+            model_name='document_type_permission',
+            name='mark_type',
+            field=models.ForeignKey(related_name='type_permissions', to='edms.Mark'),
         ),
         migrations.AddField(
-            model_name='employeeposition',
-            name='position_id',
-            field=models.ForeignKey(related_name='employee_position', to='edms.Position'),
+            model_name='document_type_permission',
+            name='seat',
+            field=models.ForeignKey(related_name='type_permissions', to='edms.Seat'),
         ),
         migrations.AddField(
-            model_name='documenttypepermission',
-            name='mark_type_id',
-            field=models.ForeignKey(related_name='type_permissions_mark', to='edms.MarkType'),
+            model_name='document_permission',
+            name='mark_type',
+            field=models.ForeignKey(related_name='doc_permissions', to='edms.Mark'),
         ),
         migrations.AddField(
-            model_name='documenttypepermission',
-            name='position_id',
-            field=models.ForeignKey(related_name='type_permissions_position', to='edms.Position'),
-        ),
-        migrations.AddField(
-            model_name='documentpermission',
-            name='mark_type_id',
-            field=models.ForeignKey(related_name='doc_permissions_mark', to='edms.MarkType'),
-        ),
-        migrations.AddField(
-            model_name='documentpath',
-            name='mark_id',
-            field=models.ForeignKey(related_name='document_path_mark', to='edms.MarkType'),
+            model_name='document_path',
+            name='mark',
+            field=models.ForeignKey(related_name='documents_path', to='edms.Mark'),
         ),
         migrations.AddField(
             model_name='document',
             name='document_type_id',
-            field=models.ForeignKey(related_name='type', to='edms.DocumentType'),
+            field=models.ForeignKey(related_name='type', to='edms.Document_Type'),
         ),
         migrations.AddField(
-            model_name='carryoutitems',
-            name='document_id',
-            field=models.ForeignKey(related_name='carry_out_doc', to='edms.Document'),
+            model_name='carry_out_items',
+            name='document',
+            field=models.ForeignKey(related_name='carry_documents', to='edms.Document'),
         ),
     ]
