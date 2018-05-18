@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'gi',
     'polls',
     'tickets',
-
+    'edms',
+    'webpack_loader',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -167,6 +168,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media')
 MEDIA_URL = '/media/'

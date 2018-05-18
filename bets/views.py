@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Team,Match, Bet
+from .models import Team, Match, Bet
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.timezone import datetime
 from .forms import NewBetForm
 
 def is_int(val):
@@ -15,10 +16,10 @@ def index(request):
 
 def teams(request):
     teams = Team.objects.all()
-    return render(request, 'bets/teams.html',{'teams': teams})
+    return render(request, 'bets/teams.html', {'teams': teams})
 
 def matches(request):
-    matches = Match.objects.all().order_by('-dt')
+    matches = Match.objects.all().filter(dt__gte=datetime.today()).order_by('dt')
     bets = Bet.objects.all().filter(player=request.user).select_related('match')
     #m1 = matches.u
     paginator = Paginator(matches, 16)
@@ -33,7 +34,7 @@ def matches(request):
     return render(request, 'bets/matches.html', {'matches': matches, 'ct':ct,'bets':bets})
 
 def bets(request):
-    bets = Bet.objects.all().filter(player=request.user).order_by('-match__dt')
+    bets = Bet.objects.all().filter(player=request.user).order_by('match__dt')
     bv = bets.values()
     paginator = Paginator(bets, 16)
     ct = bets.count()

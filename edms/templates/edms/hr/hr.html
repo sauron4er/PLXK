@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}PLXK-EDMS{% endblock %}
+{% block breadcrumb %}
+  <li class="breadcrumb-item active">Відділ кадрів</li>
+{% endblock %}
+
+{% block content %}
+
+    <!-- HR page -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6" style="padding: 10px">
+                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewEmpolyee">Додати співробітника</button>
+                <div id="user_table"></div>
+                <script>
+                    window.emps = {{ emps|safe }}
+                    window.react_mount = document.getElementById('user_table');
+                </script>
+                <div id="user_table2"></div>
+            </div>
+            <div class="col-lg-6" style="padding: 10px">
+                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment">Додати відділ</button>
+                <div id="dep_table"></div>
+                <script>
+                    window.deps = {{ deps|safe }};
+                    window.react_mount = document.getElementById('dep_table');
+                </script>
+                <br/><br/>
+                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewSeat">Додати посаду</button>
+                <div id="seats_table"></div>
+                <script>
+                    window.seats = {{ seats|safe }};
+                    window.react_mount = document.getElementById('seats_table');
+                </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal page for adding new employee -->
+    <div class="container">
+      <div class="modal fade" id="modalNewEmpolyee">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Новий співробітник</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+              Форма...
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Відміна</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal page for adding new department -->
+    <div class="container">
+      <div class="modal fade" id="modalNewDepartment">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Новий відділ</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+              Форма...
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Відміна</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Modal page for adding new seat -->
+    <div class="container">
+      <div class="modal fade" id="modalNewSeat">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">Нова посада</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+              Форма...
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Відміна</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="new_user_modal"></div>
+
+
+    {% render_bundle 'main' %} <!-- Renders js files -->
+{% endblock %}
