@@ -3,13 +3,29 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTable from "react-table";
 import 'react-table/react-table.css';
+import Modal from 'react-responsive-modal';
+
 
 class UserTable extends React.Component {
     constructor(props) {
     super(props);
-  }
+    }
+
+    state = {
+        open: false,
+        clicked: null,
+    };
+
+    onOpenModal = () => {
+        this.setState({ open: true });
+    };
+
+    onCloseModal = () => {
+        this.setState({ open: false });
+    };
 
     render() {
+        const { open } = this.state;
         const columns = [{
             Header: 'Співробітники',
             columns: [
@@ -24,29 +40,33 @@ class UserTable extends React.Component {
         }];
 
         return (
-            <ReactTable
-                data = {window.emps}
-                columns={columns}
-                defaultPageSize={15}
-                className="-striped -highlight"
+            <div>
+                <ReactTable
+                    data = {window.emps}
+                    columns={columns}
+                    defaultPageSize={15}
+                    className="-striped -highlight"
 
-                getTdProps={(state, rowInfo, column, instance) => {
-                    return {
-                      onDoubleClick: (e, handleOriginal) => {
-                        console.log(rowInfo.row.emp);
-
-                        // IMPORTANT! React-Table uses onClick internally to trigger
-                        // events like expanding SubComponents and pivots.
-                        // By default a custom 'onClick' handler will override this functionality.
-                        // If you want to fire the original onClick handler, call the
-                        // 'handleOriginal' function.
-                        if (handleOriginal) {
-                          handleOriginal();
-                        }
-                      }
-                    };
-                  }}
-            />
+                    getTdProps={(state, rowInfo, column, instance) => {
+                        return {
+                          onDoubleClick: (e, handleOriginal) => {
+                            this.onOpenModal();
+                            this.clicked = rowInfo.original.emp;
+                            if (handleOriginal) {
+                              handleOriginal();
+                            }
+                          }
+                        };
+                      }}
+                />
+                <Modal open={open} onClose={this.onCloseModal} center>
+                    <br/>
+                    <p>{this.clicked}</p>
+                    <p>
+                        Форма для внесення змін
+                    </p>
+                </Modal>
+            </div>
         )
     }
 }

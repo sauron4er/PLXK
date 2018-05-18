@@ -8,8 +8,8 @@ module.exports = {
   entry: ['./static/js/index.js'], // entry point of our app. index.js should require other js modules and dependencies it needs
   output: {
       path: path.resolve(__dirname, './static/bundles/'),
-      // filename: "[name]-[hash].js",
-      filename: "main.js",
+      filename: "[name]-[hash].js",
+      // filename: "main.js",
   },
 
   plugins: [

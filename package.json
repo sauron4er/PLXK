@@ -10,6 +10,7 @@
     "react": "^16.3.2",
     "react-bootstrap-table-next": "^0.1.10",
     "react-dom": "^16.3.2",
+    "react-responsive-modal": "^3.0.1",
     "react-table": "^6.8.2"
   },
   "devDependencies": {

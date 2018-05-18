@@ -1,1 +1,1 @@
-{"status":"done","chunks":{"main":[{"name":"main.js","path":"D:\\Робота\\EDMS\\PLXK\\static\\bundles\\main.js"}]}}
+{"status":"done","chunks":{"main":[{"name":"main-c91b866ef07dcecfb449.js","path":"D:\\Робота\\EDMS\\PLXK\\static\\bundles\\main-c91b866ef07dcecfb449.js"}]},"error":"ModuleBuildError","message":"Module build failed: SyntaxError: D:\\Робота\\EDMS\\PLXK\\edms\\templates\\edms\\hr\\user_table.js: Unexpected token, expected , (76:4)\n\n  74 | ReactDOM.render(\n  75 |     <UserTable />\n> 76 |     document.getElementById('user_table')\n     |     ^\n  77 | );\n"}

@@ -19,6 +19,7 @@
                     window.emps = {{ emps|safe }}
                     window.react_mount = document.getElementById('user_table');
                 </script>
+                <div id="user_table2"></div>
             </div>
             <div class="col-lg-6" style="padding: 10px">
                 <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment">Додати відділ</button>
@@ -122,6 +123,8 @@
         </div>
       </div>
     </div>
+
+    <div id="new_user_modal"></div>
 
 
     {% render_bundle 'main' %} <!-- Renders js files -->
