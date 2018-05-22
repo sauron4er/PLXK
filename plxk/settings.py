@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'googlecharts',
     'qsstats',
     'widget_tweaks',
+    'webpack_loader',
 
     'accounts',
     'bets',
@@ -52,7 +53,6 @@ INSTALLED_APPS = [
     'polls',
     'tickets',
     'edms',
-    'webpack_loader',
 ]
 
 MIDDLEWARE_CLASSES = [

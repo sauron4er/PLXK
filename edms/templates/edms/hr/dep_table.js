@@ -49,7 +49,7 @@ class DepTable extends React.Component {
 
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
-                          onDoubleClick: (e, handleOriginal) => {
+                          onClick: (e, handleOriginal) => {
                             this.onOpenModal();
                             this.clicked = rowInfo.original.dep;
                             if (handleOriginal) {

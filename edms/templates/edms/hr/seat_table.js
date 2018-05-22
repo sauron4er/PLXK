@@ -51,7 +51,7 @@ class SeatsTable extends React.Component {
 
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
-                          onDoubleClick: (e, handleOriginal) => {
+                          onClick: (e, handleOriginal) => {
                             this.onOpenModal();
                             this.clicked = rowInfo.original.seat;
                             if (handleOriginal) {

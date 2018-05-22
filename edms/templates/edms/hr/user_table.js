@@ -45,11 +45,12 @@ class UserTable extends React.Component {
                     data = {window.emps}
                     columns={columns}
                     defaultPageSize={15}
+                    filterable
                     className="-striped -highlight"
 
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
-                          onDoubleClick: (e, handleOriginal) => {
+                          onClick: (e, handleOriginal) => {
                             this.onOpenModal();
                             this.clicked = rowInfo.original.emp;
                             if (handleOriginal) {
@@ -59,6 +60,7 @@ class UserTable extends React.Component {
                         };
                       }}
                 />
+
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
                     <p>{this.clicked}</p>

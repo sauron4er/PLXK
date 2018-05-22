@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat
+from .forms import DepartmentForm
 
 
 # Create your views here.
@@ -47,16 +49,20 @@ def edms_hr(request):
             'department': emp.department.name,
         } for emp in accounts.UserProfile.objects.only('user', 'department_id')]
 
-        # paginator = Paginator(seats, 16)
-        # page = request.GET.get('page')
-        # try:
-        #     seats = paginator.page(page)
-        # except PageNotAnInteger:
-        #     seats = paginator.page(1)
-        # except EmptyPage:
-        #     seats
+        new_dep_form = DepartmentForm()
 
-        # users = serializers.serialize('json', edms.EmployeePosition.objects.all())
-        return render(request, 'edms/hr/hr.html', {'deps': deps, 'seats': seats, 'emps': emps})
+        return render(request, 'edms/hr/hr.html',
+                      {'deps': deps,
+                       'seats': seats,
+                       'emps': emps,
+                       'new_dep_form': new_dep_form,
+                       }
+                      )
+    else: # GET method
+        if 'new_dep' in request.POST:
+            form = DepartmentForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('hr.html')
 
     return HttpResponse(status=405)

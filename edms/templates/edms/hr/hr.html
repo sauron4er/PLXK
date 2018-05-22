@@ -22,7 +22,7 @@
                 <div id="user_table2"></div>
             </div>
             <div class="col-lg-6" style="padding: 10px">
-                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment">Додати відділ</button>
+                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment" id="button_new_dep">Додати відділ</button>
                 <div id="dep_table"></div>
                 <script>
                     window.deps = {{ deps|safe }};
@@ -83,7 +83,14 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-              Форма...
+
+                <!-- Form -->
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    {{ new_dep_form.as_p }}
+                    <button type="submit" class="save btn btn-default" name="new_dep">Додати відділ</button>
+                </form>
+
             </div>
 
             <!-- Modal footer -->
