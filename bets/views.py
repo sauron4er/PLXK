@@ -97,10 +97,6 @@ def results(request):
     rt = {}
     for m in matches:
         rt[m.id] = {}
-        #rt[m.id]['dt'] = m.dt
-        #rt[m.id]['team1'] = m.team1.name
-        #rt[m.id]['team2'] = m.team2.name
-        #rt[m.id]['user_bets'] = {}
         for p in players:
             rt[m.id][p.id] = {}
             rt[m.id][p.id]['name'] = p.userprofile.pip
@@ -119,13 +115,13 @@ def results(request):
             rt[b.match.id][b.player.id]['rt'] = "%s - %s" % (b.team1_bet , b.team2_bet)
 
 
-    paginator = Paginator(bets, 16)
-    ct = bets.count()
+    paginator = Paginator(matches, 16)
+    ct = matches.count()
     page = request.GET.get('page')
     try:
-        bets = paginator.page(page)
+        matches = paginator.page(page)
     except PageNotAnInteger:
-        bets = paginator.page(1)
+        matches = paginator.page(1)
     except EmptyPage:
-        bets
+        matches
     return render(request, 'bets/results.html', {'bets': bets, 'ct':ct,'rt' : rt,'players': players, 'matches' :matches})
