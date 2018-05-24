@@ -33,7 +33,8 @@ def edms_hr(request):
         deps = [{
             'id': dep.pk,
             'dep': dep.name,
-            'manager': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
+            'text': dep.text,
+            'chief': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
         } for dep in accounts.Department.objects.only('name', 'manager_id')]
 
         seats = [{
@@ -47,18 +48,19 @@ def edms_hr(request):
             'id': emp.pk,
             'emp': emp.user.last_name + ' ' + emp.user.first_name,
             'department': emp.department.name,
+            'username': emp.user.username,
         } for emp in accounts.UserProfile.objects.only('user', 'department_id')]
 
         new_dep_form = DepartmentForm()
 
-        return render(request, 'edms/hr/hr.html',
-                      {'deps': deps,
-                       'seats': seats,
-                       'emps': emps,
-                       'new_dep_form': new_dep_form,
-                       }
-                      )
-    else: # GET method
+        return render(request, 'edms/hr/hr.html', {
+            'deps': deps,
+            'seats': seats,
+            'emps': emps,
+            'new_dep_form': new_dep_form,
+        })
+
+    else:  # POST method
         if 'new_dep' in request.POST:
             form = DepartmentForm(request.POST)
             if form.is_valid():

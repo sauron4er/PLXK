@@ -16,7 +16,7 @@
                 <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewEmpolyee">Додати співробітника</button>
                 <div id="user_table"></div>
                 <script>
-                    window.emps = {{ emps|safe }}
+                    window.emps = {{ emps|safe }};
                     window.react_mount = document.getElementById('user_table');
                 </script>
                 <div id="user_table2"></div>
@@ -25,6 +25,7 @@
                 <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment" id="button_new_dep">Додати відділ</button>
                 <div id="dep_table"></div>
                 <script>
+                    window.emps = {{ emps|safe }};
                     window.deps = {{ deps|safe }};
                     window.react_mount = document.getElementById('dep_table');
                 </script>
@@ -49,7 +50,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-              <h4 class="modal-title">Новий співробітник</h4>
+              <h4 class="modal-title">Додати</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
@@ -88,7 +89,7 @@
                 <form method="POST" class="post-form">
                     {% csrf_token %}
                     {{ new_dep_form.as_p }}
-                    <button type="submit" class="save btn btn-default" name="new_dep">Додати відділ</button>
+                    <button type="submit" class="save btn btn-default" name="new_dep">Додати</button>
                 </form>
 
             </div>
@@ -112,7 +113,7 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-              <h4 class="modal-title">Нова посада</h4>
+              <h4 class="modal-title">Додати</h4>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
 
