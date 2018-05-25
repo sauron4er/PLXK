@@ -26,13 +26,14 @@ class DepTable extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
      state = {
-        open: false,
-        id: '',                      // id відділу для форми
-        dep: '',                    // назва відділу для форми
-        index: '',                  // індекс в масиві відділів для форми
-        text: '',                   // опис відділу для форми
-        chief: '',                  // керівник відділу для форми
-        chief_id: '',               // id керівника відділу
+        open: false,                // початковий стан модульного вікна
+        index: '',                  // індекс в масиві працівників для форми
+        id: '',                     // id працівника для форми
+        emp: '',                    // ім’я працівника для форми
+        dep: '',                    // відділ для форми
+        dep_id: '',                 // id відділу
+        chief: '',                  // керівник
+        chief_id: '',               // id керівника
     };
 
     deps = window.deps;             // підтягуємо з django необхідні словники
@@ -48,7 +49,11 @@ class DepTable extends React.Component {
 
     onChange(event, id) {
         this.setState({[event.target.name]:event.target.value});
-        if (event.target.name === 'chief') { // беремо ід керівника із <select>
+        if (event.target.name === 'dep') { // беремо ід відділу із <select>
+            const selectedIndex = event.target.options.selectedIndex;
+            this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
+        }
+        else if (event.target.name === 'chief') { // беремо ід керівника із <select>
             const selectedIndex = event.target.options.selectedIndex;
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
         }
@@ -57,12 +62,11 @@ class DepTable extends React.Component {
     handleSubmit(e) {
         e.preventDefault();
 
-        let new_deps = this.deps;   // Отримує значення із форми і змінює масив deps
-        new_deps[this.state.index].id = this.state.id;
-        new_deps[this.state.index].dep = this.state.dep;
-        new_deps[this.state.index].text = this.state.text;
-        new_deps[this.state.index].chief = this.state.chief;
-        new_deps[this.state.index].chief_id = this.state.chief_id;
+        let new_emps = this.emps;   // Отримує значення із форми і змінює масив emps
+        new_emps[this.state.index].id = this.state.id;
+        new_emps[this.state.index].emp = this.state.emp;
+        new_emps[this.state.index].chief = this.state.chief;
+        new_emps[this.state.index].chief_id = this.state.chief_id;
         this.deps = new_deps;
 
         axios({
@@ -156,7 +160,7 @@ class DepTable extends React.Component {
                         </label><br /><br />
 
                             <label>Опис:</label><br />
-                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/><br />
+                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/><br /><br />
 
 
                             <label>Керівник:</label><br />

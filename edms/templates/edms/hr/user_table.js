@@ -6,6 +6,7 @@ import 'react-table/react-table.css';
 import Modal from 'react-responsive-modal';
 
 
+
 class UserTable extends React.Component {
     constructor(props) {
     super(props);
@@ -13,7 +14,6 @@ class UserTable extends React.Component {
 
     state = {
         open: false,
-        clicked: null,
     };
 
     onOpenModal = () => {

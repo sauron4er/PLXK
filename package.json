@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "js-cookie": "^2.2.0",
+    "querystring": "^0.2.0",
     "react": "^16.3.2",
     "react-bootstrap-table-next": "^0.1.10",
     "react-dom": "^16.3.2",
