@@ -54,15 +54,17 @@ class DepTable extends React.Component {
         }
     }
 
-    handleSubmit(e) {
+    handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-
         let new_deps = this.deps;   // Отримує значення із форми і змінює масив deps
         new_deps[this.state.index].id = this.state.id;
         new_deps[this.state.index].dep = this.state.dep;
         new_deps[this.state.index].text = this.state.text;
         new_deps[this.state.index].chief = this.state.chief;
         new_deps[this.state.index].chief_id = this.state.chief_id;
+
+        console.log('update');
+
         this.deps = new_deps;
 
         axios({
@@ -73,16 +75,17 @@ class DepTable extends React.Component {
                 name: this.state.dep,
                 text: this.state.text,
                 manager: this.state.chief_id,
+                is_active: true,
             }),
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
             // console.log('responsepost: ' + response);
-          })
-          .catch(function (error) {
+        })
+            .catch(function (error) {
             // console.log('errorpost: ' + error);
-          });
+        });
 
         this.setState({ open: false }); // закриває модальне вікно
     }
@@ -94,6 +97,38 @@ class DepTable extends React.Component {
     onCloseModal = () => {
         this.setState({ open: false });
     };
+
+    handleDelete(e) {                   // робить відділ неактивним
+        e.preventDefault();
+
+        let new_deps = this.deps;       // видаляємо запис з масиву
+        new_deps.splice(this.state.index, 1);
+        this.deps = new_deps;
+
+        console.log('delete');
+
+        axios({
+            method: 'post',
+            url: 'dep/' + this.state.id + '/',
+            data: querystring.stringify({
+                id: this.state.id,
+                name: this.state.dep,
+                text: this.state.text,
+                manager: this.state.chief_id,
+                is_active: false,
+            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        }).then(function (response) {
+            console.log('responsepost: ' + response);
+        })
+            .catch(function (error) {
+            console.log('errorpost: ' + error);
+        });
+
+        this.setState({ open: false }); // закриває модальне вікно
+    }
 
     render() {
         const { open } = this.state;    // для модального вікна
@@ -151,8 +186,8 @@ class DepTable extends React.Component {
 
                     <Form onSubmit={this.handleSubmit}>
 
-                        <label>Назва:
-                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} validations={[required]}/>
+                        <label>Назва відділу:
+                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
                         </label><br /><br />
 
                             <label>Опис:</label><br />
@@ -170,7 +205,8 @@ class DepTable extends React.Component {
                                 }
                             </Select>
                         <br/><br/>
-                        <Button>Підтвердити</Button>
+                        <Button className="float-sm-left">Підтвердити</Button>
+                        <Button className="float-sm-right" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
 
                 </Modal>

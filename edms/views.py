@@ -32,7 +32,7 @@ def edms_hr(request):
             'text': dep.text,
             'chief': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
             'chief_id': 0 if dep.manager is None else dep.manager.id,
-        } for dep in accounts.Department.objects.only('name', 'manager_id').order_by('name')]
+        } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
 
         seats = [{
             'id': seat.pk,
