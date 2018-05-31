@@ -12,7 +12,7 @@ import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import {required} from '../validations.js'
+import {required} from '../validations.js';
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -38,7 +38,6 @@ class DepTable extends React.Component {
     deps = window.deps;             // підтягуємо з django необхідні словники
     emps = window.emps;
 
-
     styles = {
         textarea_style : {
             width: 400,
@@ -46,11 +45,11 @@ class DepTable extends React.Component {
         },
     };
 
-    onChange(event, id) {
-        this.setState({[event.target.name]:event.target.value});
+    onChange(event) {
         if (event.target.name === 'chief') { // беремо ід керівника із <select>
             const selectedIndex = event.target.options.selectedIndex;
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
+            this.state.chief = event.target.options[selectedIndex].getAttribute('value');
         }
     }
 
@@ -62,10 +61,10 @@ class DepTable extends React.Component {
         new_deps[this.state.index].text = this.state.text;
         new_deps[this.state.index].chief = this.state.chief;
         new_deps[this.state.index].chief_id = this.state.chief_id;
-
-        console.log('update');
-
         this.deps = new_deps;
+
+        // переводимо в null не обрані поля
+        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
 
         axios({
             method: 'post',
@@ -74,7 +73,7 @@ class DepTable extends React.Component {
                 id: this.state.id,
                 name: this.state.dep,
                 text: this.state.text,
-                manager: this.state.chief_id,
+                manager: chief_id,
                 is_active: true,
             }),
             headers: {
@@ -84,7 +83,40 @@ class DepTable extends React.Component {
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
-            // console.log('errorpost: ' + error);
+            console.log('errorpost: ' + error);
+        });
+
+        this.setState({ open: false }); // закриває модальне вікно
+    }
+
+    handleDelete(e) {                   // робить відділ неактивним
+        e.preventDefault();
+
+        let new_deps = this.deps;       // видаляємо запис з масиву
+        new_deps.splice(this.state.index, 1);
+        this.deps = new_deps;
+
+        // переводимо в null не обрані поля
+        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
+
+        axios({
+            method: 'post',
+            url: 'dep/' + this.state.id + '/',
+            data: querystring.stringify({
+                id: this.state.id,
+                name: this.state.dep,
+                text: this.state.text,
+                manager: chief_id,
+                is_active: false,
+            }),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        }).then(function (response) {
+            // console.log('responsepost: ' + response);
+        })
+            .catch(function (error) {
+            console.log('errorpost: ' + error);
         });
 
         this.setState({ open: false }); // закриває модальне вікно
@@ -98,53 +130,16 @@ class DepTable extends React.Component {
         this.setState({ open: false });
     };
 
-    handleDelete(e) {                   // робить відділ неактивним
-        e.preventDefault();
-
-        let new_deps = this.deps;       // видаляємо запис з масиву
-        new_deps.splice(this.state.index, 1);
-        this.deps = new_deps;
-
-        console.log('delete');
-
-        axios({
-            method: 'post',
-            url: 'dep/' + this.state.id + '/',
-            data: querystring.stringify({
-                id: this.state.id,
-                name: this.state.dep,
-                text: this.state.text,
-                manager: this.state.chief_id,
-                is_active: false,
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then(function (response) {
-            console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
-
-        this.setState({ open: false }); // закриває модальне вікно
-    }
 
     render() {
         const { open } = this.state;    // для модального вікна
         const { chief } = this.state;   // для <select>
 
-        const employees = [];
-        this.emps.map((emp) => employees.push({ // формування списка працівників для <select>
-            value: emp.id,
-            label: emp.emp
-        }));
-
         const columns = [{              // для таблиці
             Header: 'Відділи',
             columns: [
                 {
-                    Header: 'Назва',
+                    Header: 'Відділ',
                     accessor: 'dep' // String-based value accessors!
                 }, {
                     Header: 'Керівник',
@@ -158,20 +153,21 @@ class DepTable extends React.Component {
                 <ReactTable
                     data = {this.deps}
                     columns={columns}
-                    defaultPageSize={5}
+                    defaultPageSize={14}
+                    filterable
                     className="-striped -highlight"
 
                     getTdProps={(state, rowInfo, column, instance) => {
                         return {
                           onClick: (event, handleOriginal) => {
-                            this.setState({
+                            this.setState({         // інформація про натиснутий рядок
                                 index: rowInfo.index,
                                 id: rowInfo.original.id,
                                 dep: rowInfo.original.dep,
                                 text: rowInfo.original.text,
                                 chief: rowInfo.original.chief,
                                 chief_id: rowInfo.original.chief_id,
-                            }); // відправляє інформацію про відділ у форму
+                            });
                             this.onOpenModal();
                             if (handleOriginal) {
                               handleOriginal();
@@ -190,13 +186,14 @@ class DepTable extends React.Component {
                             <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
                         </label><br /><br />
 
-                            <label>Опис:</label><br />
-                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/><br />
+                        <label>Опис:
+                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/>
+                        </label>
+                        <br /><br />
 
-
-                            <label>Керівник:</label><br />
-                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange} validations={[required]}>
-                                <option value='Не внесено' disabled>------------</option>
+                        <label>Керівник:
+                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                                <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.emps.map(emp => {
                                     return <option key={emp.id} data-key={emp.id}
@@ -204,11 +201,12 @@ class DepTable extends React.Component {
                                   })
                                 }
                             </Select>
+                        </label>
                         <br/><br/>
+
                         <Button className="float-sm-left">Підтвердити</Button>
                         <Button className="float-sm-right" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
-
                 </Modal>
             </div>
         )

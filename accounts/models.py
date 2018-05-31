@@ -30,9 +30,9 @@ class UserProfile(models.Model):
     is_doc_order_add = models.BooleanField(default=False)
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True,null=True)
-    hired_date = models.DateField(null=True)
-    fired_date = models.DateField(null=True)
-    chief = models.ForeignKey('self', null=True)
+    on_vacation = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    acting = models.ForeignKey('self', blank=True, null=True)
 
     n_main = models.CharField(max_length=4,null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)

@@ -32,10 +32,7 @@ class UserTable extends React.Component {
                 {
                     Header: 'Ф.І.О.',
                     accessor: 'emp' // String-based value accessors!
-                }, {
-                    Header: 'Відділ',
-                    accessor: 'department',
-                }
+                },
             ]
         }];
 
@@ -44,7 +41,7 @@ class UserTable extends React.Component {
                 <ReactTable
                     data = {window.emps}
                     columns={columns}
-                    defaultPageSize={15}
+                    defaultPageSize={14}
                     filterable
                     className="-striped -highlight"
 
@@ -65,7 +62,7 @@ class UserTable extends React.Component {
                     <br/>
                     <p>{this.clicked}</p>
                     <p>
-                        Форма для внесення змін
+                        Форма для внесення змін.
                     </p>
                 </Modal>
             </div>

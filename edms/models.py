@@ -7,9 +7,9 @@ from accounts import models as accounts  # import models Department, UserProfile
 
 class Seat(models.Model):
     seat = models.CharField(max_length=100)
-    department = models.ForeignKey(accounts.Department, related_name='positions')
-    chief = models.ForeignKey('self', related_name='subordinate', null=True)
-    is_active = models.BooleanField(default=True)  # is false when user fired or on vacation
+    department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
+    chief = models.ForeignKey('self', related_name='subordinate', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.seat
@@ -20,6 +20,7 @@ class Employee_Seat(models.Model):
     seat = models.ForeignKey(Seat, related_name='employees')
     begin_date = models.DateField(default=timezone.now)
     end_date = models.DateField(null=True)
+    is_active = models.BooleanField(default=True)
 
 
 class Vacation(models.Model):
