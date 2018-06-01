@@ -95,6 +95,7 @@ def edms_hr(request):
 
 @login_required(login_url='login')
 def edms_hr_dep(request, pk):       # changes in department
+    print('change_dep')
     post = get_object_or_404(accounts.Department, pk=pk)
     if request.method == 'POST':
         form = DepartmentForm(request.POST, instance=post)

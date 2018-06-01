@@ -46,27 +46,31 @@ class SeatsTable extends React.Component {
     };
 
     onChange(event) {
-        const selectedIndex = event.target.options.selectedIndex;
          if (event.target.name === 'chief') { // беремо ід керівника із <select>
+            const selectedIndex = event.target.options.selectedIndex;
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.chief = event.target.options[selectedIndex].getAttribute('value');
         }
         else if (event.target.name === 'dep') { // беремо ід відділу із <select>
+            const selectedIndex = event.target.options.selectedIndex;
             this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.dep = event.target.options[selectedIndex].getAttribute('value');
         }
+        else {
+             this.setState({[event.target.name]:event.target.value});
+         }
     }
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let new_seats = this.seats;   // Отримує значення із форми і змінює масив deps
+        let success = false;
+        let new_seats = this.seats;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
         new_seats[this.state.index].id = this.state.id;
         new_seats[this.state.index].seat = this.state.seat;
         new_seats[this.state.index].dep = this.state.dep;
         new_seats[this.state.index].dep_id = this.state.dep_id;
         new_seats[this.state.index].chief = this.state.chief;
         new_seats[this.state.index].chief_id = this.state.chief_id;
-        this.seats = new_seats;
 
         // переводимо в null не обрані поля
         let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
@@ -86,21 +90,25 @@ class SeatsTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
+            success = true;
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
             console.log('errorpost: ' + error);
         });
 
+        if (success === true) {
+            this.seats = new_seats;
+        }
+
         this.setState({ open: false }); // закриває модальне вікно
     }
 
     handleDelete(e) {                   // робить відділ неактивним
         e.preventDefault();
-
+        let success = false;
         let new_seats = this.seats;       // видаляємо запис з масиву
         new_seats.splice(this.state.index, 1);
-        this.seats = new_seats;
 
         // переводимо в null не обрані поля
         let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
@@ -120,11 +128,16 @@ class SeatsTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
+            success = true;
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
             console.log('errorpost: ' + error);
         });
+
+        if (success === true) {
+            this.seats = new_seats;
+        }
 
         this.setState({ open: false }); // закриває модальне вікно
     }
@@ -138,9 +151,7 @@ class SeatsTable extends React.Component {
     };
 
     render() {
-        const { open } = this.state;
-        const { chief } = this.state;   // для <select>
-        const { dep } = this.state;   // для <select>
+        const { open, chief, dep } = this.state;
 
         const columns = [{
             Header: 'Посади',
@@ -153,10 +164,10 @@ class SeatsTable extends React.Component {
                     Header: 'Відділ',
                     accessor: 'dep' // String-based value accessors!
                 },
-                {
-                    Header: 'Керівник',
-                    accessor: 'chief',
-                }
+                // {
+                //     Header: 'Керівник',
+                //     accessor: 'chief',
+                // }
             ]
         }];
 

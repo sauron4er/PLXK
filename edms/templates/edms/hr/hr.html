@@ -87,14 +87,16 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-
                 <!-- Form -->
-                <form method="POST" class="post-form">
-                    {% csrf_token %}
-                    {{ new_dep_form.as_p }}
-                    <button type="submit" class="save btn btn-default" name="new_dep">Додати</button>
-                </form>
-
+{#                <form method="POST" class="post-form">#}
+{#                    {% csrf_token %}#}
+{#                    {{ new_dep_form.as_p }}#}
+{#                    <button type="submit" class="save btn btn-default" name="new_dep">Додати</button>#}
+{#                </form>#}
+                <div id="new_dep"></div>
+                <script>
+                    window.react_mount = document.getElementById('new_dep_form');
+                </script>
             </div>
 
             <!-- Modal footer -->
@@ -122,11 +124,15 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-              <form method="POST" class="post-form">
-                  {% csrf_token %}
-                  {{ new_seat_form.as_p }}
-                  <button type="submit" class="save btn btn-default" name="new_seat">Додати</button>
-              </form>
+{#              <form method="POST" class="post-form">#}
+{#                  {% csrf_token %}#}
+{#                  {{ new_seat_form.as_p }}#}
+{#                  <button type="submit" class="save btn btn-default" name="new_seat">Додати</button>#}
+{#              </form>#}
+                <div id="new_seat"></div>
+                <script>
+                    window.react_mount = document.getElementById('new_seat_form');
+                </script>
             </div>
 
             <!-- Modal footer -->
