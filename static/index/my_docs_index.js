@@ -1,0 +1,1 @@
+import '../../edms/templates/edms/my_docs/my_docs.js'

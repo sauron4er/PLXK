@@ -46,6 +46,7 @@ class DepTable extends React.Component {
     };
 
     onChange(event) {
+        console.log(this.emps);
         if (event.target.name === 'chief') { // беремо ід керівника із <select>
             const selectedIndex = event.target.options.selectedIndex;
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
@@ -167,8 +168,7 @@ class DepTable extends React.Component {
                 <ReactTable
                     data = {this.deps}
                     columns={columns}
-                    defaultPageSize={14}
-                    filterable
+                    defaultPageSize={16}
                     className="-striped -highlight"
 
                     getTdProps={(state, rowInfo, column, instance) => {
@@ -218,8 +218,8 @@ class DepTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="float-sm-left">Підтвердити</Button>
-                        <Button className="float-sm-right" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
+                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
                 </Modal>
             </div>

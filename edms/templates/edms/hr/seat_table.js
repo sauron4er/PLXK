@@ -30,7 +30,7 @@ class SeatsTable extends React.Component {
         seat: '',                   // назва посади для форми
         index: '',                  // індекс в масиві посад для форми
         dep: '',                    // назва відділу для форми
-        dep_id: '',                 // id віддлу
+        dep_id: '',                 // id відділу
         chief: '',                  // керівник посади для форми
         chief_id: '',               // id керівника посади
     };
@@ -176,8 +176,7 @@ class SeatsTable extends React.Component {
                 <ReactTable
                     data = {window.seats}
                     columns={columns}
-                    defaultPageSize={14}
-                    filterable
+                    defaultPageSize={16}
                     className="-striped -highlight"
 
                     getTdProps={(state, rowInfo, column, instance) => {
@@ -236,8 +235,8 @@ class SeatsTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="float-sm-left">Підтвердити</Button>
-                        <Button className="float-sm-right" onClick={this.handleDelete.bind(this)}>Видалити посаду</Button>
+                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити посаду</Button>
                     </Form>
                 </Modal>
             </div>

@@ -1,0 +1,17 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/gridforms.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-3" id="my_docs"></div>
+{#    <script>#}
+{#        window.react_mount = document.getElementById('my_docs');#}
+{#    </script>#}
+
+    <script src="{% static 'js/gridforms.js' %}"></script>
+    {% render_bundle 'my_docs' %} <!-- Renders js files -->
+{% endblock %}

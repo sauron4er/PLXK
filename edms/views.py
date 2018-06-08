@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat
-from .forms import DepartmentForm, SeatForm, UserForm, UserProfileForm, EmployeeSeatForm
+from .models import Seat, Employee_Seat
+from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm
 
 
 # Create your views here.
@@ -14,11 +14,14 @@ from .forms import DepartmentForm, SeatForm, UserForm, UserProfileForm, Employee
 @login_required(login_url='login')
 def edms_main(request):
     if request.method == 'GET':
-        # documents = Document.object.all()
-        # return render(request, 'edms/main.html', {'documents': documents})
-
-        # return HttpResponse('edms')
         return render(request, 'edms/main.html')
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_my_docs(request):
+    if request.method == 'GET':
+        return render(request, 'edms/my_docs/my_docs.html')
     return HttpResponse(status=405)
 
 
@@ -45,27 +48,42 @@ def edms_hr(request):
 
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
             'id': emp.user.pk,
+            'emp_id': emp.pk,
             'emp': emp.pip,
-        } for emp in accounts.UserProfile.objects.only('pip').filter(user__is_active=True).order_by('pip')]
+            'on_vacation': 'true' if emp.on_vacation else 'false',
+            'acting': 0 if emp.acting is None else emp.acting.pip,
+            'acting_id': 0 if emp.acting is None else emp.acting.id,
+        } for emp in accounts.UserProfile.objects.only(
+            'id', 'pip', 'on_vacation', 'acting').filter(is_active=True).order_by('pip')]
+
+        emps_seats = [{
+            'id': empSeat.pk,
+            'emp_seat': empSeat.seat.seat,
+            'emp_seat_id': empSeat.seat.pk,
+            'emp_id': empSeat.employee.pk,
+        } for empSeat in
+            Employee_Seat.objects.only('id', 'seat', 'employee').filter(is_active=True)]
 
         new_dep_form = DepartmentForm()  # django форма додачі нового відділу
         new_seat_form = SeatForm()  # django форма додачі нової посади
 
-        users_with_profile = (user.user.id for user in accounts.UserProfile.objects.only(
-            'user__id').filter(user__is_active=True))  # список юзерів, для яких створено профіль
-        new_users = [{  # список юзерів, для яких не створено профіль
-            'id': user.id,
-            'name': user.last_name + ' ' + user.first_name,
-        } for user in accounts.User.objects.all().filter(
-            is_active=True).exclude(id__in=users_with_profile).order_by('last_name')]
+        # users_with_profile = (user.user.id for user in accounts.UserProfile.objects.only(
+        #     'user__id').filter(user__is_active=True))  # список юзерів, для яких створено профіль
+        # new_users = [{  # список юзерів, для яких не створено профіль
+        #     'id': user.id,
+        #     'name': user.last_name + ' ' + user.first_name,
+        # } for user in accounts.User.objects.all().filter(
+        #     is_active=True).exclude(id__in=users_with_profile).order_by('last_name')]
 
         return render(request, 'edms/hr/hr.html', {
             'deps': deps,
             'seats': seats,
             'emps': emps,
+            'emps_seats': emps_seats,
+
             'new_dep_form': new_dep_form,
             'new_seat_form': new_seat_form,
-            'new_users': new_users,
+            # 'new_users': new_users,
         })
 
     elif request.method == 'POST':
@@ -82,20 +100,33 @@ def edms_hr(request):
                 form.save()
                 return redirect('hr.html')
 
-        if 'new_user' in request.POST:
-            form_user_profile = UserProfileForm(request.POST)
+        if 'new_emp_seat' in request.POST:
             form_employee_seat = EmployeeSeatForm(request.POST)
-
-            if form_user_profile.is_valid() and form_employee_seat.is_valid():
-                form_user_profile.save()
+            if form_employee_seat.is_valid():
                 form_employee_seat.save()
                 return redirect('hr.html')
+
     return HttpResponse(status=405)
 
 
 @login_required(login_url='login')
-def edms_hr_dep(request, pk):       # changes in department
-    print('change_dep')
+def edms_hr_emp(request, pk):       # changes in employee row
+    post = get_object_or_404(accounts.UserProfile, pk=pk)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('hr.html')
+    elif request.method == 'GET':
+        emp_seats = [{  # список зв’язків посада-співробітник
+            'id': empSeat.pk,
+            'seat': empSeat.seat.seat,
+        } for empSeat in Employee_Seat.objects.only('id', 'seat').filter(employee_id=pk).filter(is_active=True).order_by('seat')]
+        return HttpResponse(emp_seats)
+
+
+@login_required(login_url='login')
+def edms_hr_dep(request, pk):       # changes in department row
     post = get_object_or_404(accounts.Department, pk=pk)
     if request.method == 'POST':
         form = DepartmentForm(request.POST, instance=post)
@@ -105,7 +136,7 @@ def edms_hr_dep(request, pk):       # changes in department
 
 
 @login_required(login_url='login')
-def edms_hr_seat(request, pk):       # changes in seat
+def edms_hr_seat(request, pk):       # changes in seat row
     post = get_object_or_404(Seat, pk=pk)
     if request.method == 'POST':
         form = SeatForm(request.POST, instance=post)
@@ -114,3 +145,11 @@ def edms_hr_seat(request, pk):       # changes in seat
             return redirect('hr.html')
 
 
+@login_required(login_url='login')
+def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
+    post = get_object_or_404(Employee_Seat, pk=pk)
+    if request.method == 'POST':
+        form = EmployeeSeatForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('hr.html')

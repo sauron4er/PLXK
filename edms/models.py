@@ -18,8 +18,8 @@ class Seat(models.Model):
 class Employee_Seat(models.Model):
     employee = models.ForeignKey(accounts.UserProfile, related_name='positions')
     seat = models.ForeignKey(Seat, related_name='employees')
-    begin_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True)
+    begin_date = models.DateField(null=True, blank=True, default=timezone.now)
+    end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 

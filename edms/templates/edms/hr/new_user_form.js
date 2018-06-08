@@ -12,7 +12,7 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-class NewUserProfile extends React.Component {
+class NewUser extends React.Component {
     constructor(props) {
     super(props);
 
@@ -106,6 +106,6 @@ class NewUserProfile extends React.Component {
 }
 
 ReactDOM.render(
-    <NewUserProfile />,
-    document.getElementById('new_user_profile')
+    <NewUser />,
+    document.getElementById('new_user')
 );
