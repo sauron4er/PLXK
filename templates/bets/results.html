@@ -28,9 +28,10 @@
     <th>Господарі</th>
     <th>Гості</th>
     <th>Результат</th>
+
         {% for player in players %}
       <th style="text-align: center">
-     {{ player.userprofile.pip }}
+     {{ player.userprofile.pip }} <br> (Вього: {{ player.points }})
       </th>
     {% endfor %}
     </thead>

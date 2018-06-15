@@ -93,6 +93,12 @@ def new_result(request,mid):
 def results(request):
     bets = Bet.objects.all().order_by('-match__dt')
     players = User.objects.filter(userprofile__is_bets=True)
+    players = User.objects.raw('select *, (select sum(b.points) from bets_bet b where b.player_id = u.id ) as points from auth_user u left join accounts_userprofile au on u.id = au.user_id where au.is_bets >0')
+    # players1 ={}
+    # for p in players:
+    #     players1['id'] = p.id
+    #     players1['name'] = p.userprofile.pip
+    #     players1['point'] = 0
     matches = Match.objects.all().order_by('-dt')
     rt = {}
     for m in matches:
