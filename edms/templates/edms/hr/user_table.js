@@ -378,7 +378,7 @@ class UserTable extends React.Component {
                         <br/>
 
                         <div>
-                            <label>Посади користувача__:
+                            <label>Посади користувача:
                                 <Select id='emp-seat-select' name='emp_seat' value={emp_seat_id} onChange={this.onChange}>
                                     <option data-key={0} value=''>------------</option>
                                     {

@@ -1,14 +1,7 @@
 from django import forms
 
-from django.contrib.auth.models import User
 from accounts import models as accounts
-from .models import Seat, Employee_Seat
-
-
-# class UserForm(forms.ModelForm):
-#     class Meta:
-#         model = User
-#         fields = ('last_name', 'first_name', 'is_active')
+from .models import Seat, Employee_Seat, Document, Free_Time_Periods
 
 
 class UserProfileForm(forms.ModelForm):
@@ -53,3 +46,17 @@ class SeatForm(forms.ModelForm):
             'chief': 'Керівник'
         }
         widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
+
+
+# Форми для створення нової звільнюючої відпустки.
+# Три окремі форми об’єднано в одну велику.
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = {'document_type', 'text', 'employee'}
+
+
+class FreeTimeForm(forms.ModelForm):
+    class Meta:
+        model = Free_Time_Periods
+        fields = {'document', 'free_day'}

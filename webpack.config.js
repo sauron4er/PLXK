@@ -9,7 +9,7 @@ module.exports = {
   entry: {
       hr: './static/index/hr_index.js',
       my_docs: './static/index/my_docs_index.js',
-      // stats: './static/index/stats_index.js',
+      // sub_docs: './static/index/sub_docs_index.js',
   },
   output: {
       path: path.resolve(__dirname, './static/bundles/'),

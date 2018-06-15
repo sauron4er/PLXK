@@ -16,7 +16,7 @@ export const lt = (value, props) => {
   }
 };
 
-export const first_option = (value, props) => {
+export const first_blank_option = (value, props) => {
     if (props.value === '') {
         return <span className="error text-danger"> Оберіть, будь ласка, {props.select_name}.</span>
     }

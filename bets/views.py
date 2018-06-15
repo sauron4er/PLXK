@@ -19,7 +19,7 @@ def teams(request):
     return render(request, 'bets/teams.html', {'teams': teams})
 
 def matches(request):
-    matches = Match.objects.all().filter(dt__gte=datetime.today()).order_by('dt')
+    matches = Match.objects.all().order_by('dt')
     bets = Bet.objects.all().filter(player=request.user).select_related('match')
     #m1 = matches.u
     paginator = Paginator(matches, 16)

@@ -46,7 +46,6 @@ class DepTable extends React.Component {
     };
 
     onChange(event) {
-        console.log(this.emps);
         if (event.target.name === 'chief') { // беремо ід керівника із <select>
             const selectedIndex = event.target.options.selectedIndex;
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');

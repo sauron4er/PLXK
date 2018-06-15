@@ -13,14 +13,13 @@
                             <a class="nav-link" href="{% url 'edms:my_docs' %}">Мої документи</a>
                         </li>
                         <li class="nav-item">
-    {#                      <a class="nav-link" href="{% url 'scheduler:lists' %}">Документи підлеглих</a>#}
+{#                          <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>#}
                         </li>
-                        <li class="nav-item">
-    {#                      <a class="nav-link" href="{% url 'scheduler:stats' %}">Архів</a>#}
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
-                        </li>
+                        {% if user.userprofile.is_it_admin or user.userprofile.is_hr  %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
+                            </li>
+                        {% endif %}
                       </ul>
               </div>
             </nav>

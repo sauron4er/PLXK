@@ -1,27 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, get_object_or_404
 
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat, Employee_Seat
+from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm
-
-
-# Create your views here.
+from .forms import DocumentForm, FreeTimeForm
 
 
 @login_required(login_url='login')
 def edms_main(request):
     if request.method == 'GET':
         return render(request, 'edms/main.html')
-    return HttpResponse(status=405)
-
-
-@login_required(login_url='login')
-def edms_my_docs(request):
-    if request.method == 'GET':
-        return render(request, 'edms/my_docs/my_docs.html')
     return HttpResponse(status=405)
 
 
@@ -153,3 +143,49 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
         if form.is_valid():
             form.save()
             return redirect('hr.html')
+
+
+@login_required(login_url='login')
+def edms_my_docs(request):
+
+    if request.method == 'GET':
+        my_docs = [{  # Список документів, створених даним юзером
+            '№': doc.id,
+            'type': doc.description,
+            'date': doc.date,
+        } for doc in Active_Docs_View.objects.filter(employee_id=request.user.userprofile.id)]
+
+        return render(request, 'edms/my_docs/my_docs.html', {
+            'my_docs': my_docs,
+        })
+
+    elif request.method == 'POST':
+
+        if 'new_free_time' in request.POST:
+            # копіюємо запит, щоб зробити його мутабельним
+            doc_request = request.POST.copy()
+            doc_request.update({'employee': request.user.userprofile.id})
+
+            doc_form = DocumentForm(doc_request)
+            if doc_form.is_valid():
+                new_doc = doc_form.save()
+
+                # Додаємо в запит ід нового документу:
+                doc_request.update({'document': new_doc.pk})
+
+                # вносимо запис у таблицю Free_Time_Periods
+                free_periods_form = FreeTimeForm(doc_request)
+                # TODO: придумати, як перевірити обидві форми на валідність перед збереженням першої
+                free_periods_form.save()
+
+                # Повертаємо ід нового документу в реакт
+                return HttpResponse(new_doc.pk)
+
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_sub_docs(request):
+    if request.method == 'GET':
+        return render(request, 'edms/sub_docs/sub_docs.html')
+    return HttpResponse(status=405)

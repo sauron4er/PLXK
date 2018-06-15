@@ -8,7 +8,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0012_auto_20180504_1101'),
+        ('accounts', '0015_userprofile_is_hr'),
     ]
 
     operations = [
@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
             name='Document',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('title', models.CharField(max_length=100)),
-                ('text', models.CharField(max_length=1000)),
+                ('title', models.CharField(max_length=100, blank=True, null=True)),
+                ('text', models.CharField(max_length=1000, blank=True, null=True)),
                 ('image', models.BinaryField(null=True)),
                 ('closed', models.BooleanField(default=False)),
             ],
@@ -69,8 +69,9 @@ class Migration(migrations.Migration):
             name='Employee_Seat',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('begin_date', models.DateField(default=django.utils.timezone.now)),
-                ('end_date', models.DateField(null=True)),
+                ('begin_date', models.DateField(blank=True, null=True, default=django.utils.timezone.now)),
+                ('end_date', models.DateField(blank=True, null=True)),
+                ('is_active', models.BooleanField(default=True)),
                 ('employee', models.ForeignKey(related_name='positions', to='accounts.UserProfile')),
             ],
         ),
@@ -79,8 +80,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('free_day', models.DateField(default=django.utils.timezone.now)),
-                ('begin_time', models.TimeField(default=django.utils.timezone.now)),
-                ('end_time', models.TimeField(default='17.00')),
+                ('begin_time', models.TimeField(blank=True, null=True)),
+                ('end_time', models.TimeField(blank=True, null=True)),
                 ('document', models.ForeignKey(related_name='free_documents', to='edms.Document')),
             ],
         ),
@@ -111,8 +112,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('seat', models.CharField(max_length=100)),
                 ('is_active', models.BooleanField(default=True)),
-                ('chief', models.ForeignKey(null=True, related_name='subordinate', to='edms.Seat')),
-                ('department', models.ForeignKey(related_name='positions', to='accounts.Department')),
+                ('chief', models.ForeignKey(blank=True, null=True, related_name='subordinate', to='edms.Seat')),
+                ('department', models.ForeignKey(blank=True, null=True, related_name='positions', to='accounts.Department')),
             ],
         ),
         migrations.CreateModel(
@@ -152,8 +153,13 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='document',
-            name='document_type_id',
+            name='document_type',
             field=models.ForeignKey(related_name='type', to='edms.Document_Type'),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='employee',
+            field=models.ForeignKey(related_name='initiated_documents', to='accounts.UserProfile'),
         ),
         migrations.AddField(
             model_name='carry_out_items',
