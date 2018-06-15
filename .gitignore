@@ -3,4 +3,6 @@ node_modules
 venv/
 *iml
 __pycache__/
-py[cod]
+*.py[cod]
+.idea/workspace.xml
+*.pyc
