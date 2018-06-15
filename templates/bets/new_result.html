@@ -15,11 +15,11 @@
 <span style="font-size: xx-large; align-content: center" >
         <img style="max-height: 100px; width: auto" src={{ match.team1.logo.url }} >
         {{ match.team1.name }}
-         <input type="text" class="" style="width: 50px; text-align: center " id="team1_result" name="team1_result" value="{{ match.team1_result }}">
+         <input type="text" class="" style="width: 50px; text-align: center " id="team1_result" name="team1_result" value="{{ match.team2_result|default_if_none:'' }}">
           :
          <img style="max-height: 100px; width: auto" src={{ match.team2.logo.url }} >
        {{ match.team2.name }}
-         <input type="text" class="" style="width: 50px; text-align: center" id="team2_result" name="team2_result" value="{{ match.team2_result  }}">
+         <input type="text" class="" style="width: 50px; text-align: center" id="team2_result" name="team2_result" value="{{ match.team2_result|default_if_none:'' }}">
 
 </span>
       </div>

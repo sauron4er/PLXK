@@ -183,6 +183,6 @@ LOGOUT_REDIRECT_URL = 'home'
 
 LOGIN_REDIRECT_URL = 'home'
 
-CSRF_COOKIE_NAME = "csrftoken"  # for Axios
+# CSRF_COOKIE_NAME = "csrftoken"  # for Axios
 
-CSRF_COOKIE_SECURE = True  # for Axios
+# CSRF_COOKIE_SECURE = True  # for Axios

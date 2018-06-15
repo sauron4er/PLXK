@@ -33,6 +33,7 @@ class UserProfile(models.Model):
     on_vacation = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     acting = models.ForeignKey('self', blank=True, null=True)
+    is_hr = models.BooleanField(default=False)  # Для відображення вкладки "Відділ кадрів" в EDMS
 
     n_main = models.CharField(max_length=4,null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)

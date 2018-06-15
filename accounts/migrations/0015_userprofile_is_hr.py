@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('edms', '0002_auto_20180530_1051'),
+        ('accounts', '0014_auto_20180530_1452'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='employee_seat',
-            name='is_active',
-            field=models.BooleanField(default=True),
+            model_name='userprofile',
+            name='is_hr',
+            field=models.BooleanField(default=False),
         ),
     ]

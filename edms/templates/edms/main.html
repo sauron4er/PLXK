@@ -1,23 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}PLXK-EDMS{% endblock %}
-{% block breadcrumb %}
-    <li class="breadcrumb-item active">Система електронного документообігу</li>
+
+{% block content_fluid %}
+
+    {% block second_nav %}
+        <div class="breadcrumb my-1">
+            <nav class="navbar navbar-expand-sm navbar-light sticky-top " style="padding-top: 2px; padding-bottom: 1px">
+                <div class="container" >
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'edms:my_docs' %}">Мої документи</a>
+                        </li>
+                        <li class="nav-item">
+{#                          <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>#}
+                        </li>
+                        {% if user.userprofile.is_it_admin or user.userprofile.is_hr  %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
+                            </li>
+                        {% endif %}
+                      </ul>
+              </div>
+            </nav>
+        </div>
+    {% endblock %}
+
+    {% block content %}
+    {% endblock %}
+
 {% endblock %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-
-</head>
-<body>
-{% block content %}
-    <div class="container-fluid" style="padding: 10px">
-
-    <a href="{% url 'edms:hr'  %}" class="btn btn-outline-secondary" role="button" style="float: right">Відділ кадрів</a>
-    </div>
-    <div id="app"></div>
-{% endblock %}
-</body>
-</html>

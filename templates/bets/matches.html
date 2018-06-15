@@ -51,8 +51,8 @@
         {{ match.team1_result }} : {{ match.team2_result }}
          {% elif match.is_editing  %}
              <a href="{% url 'bets:new_bet'  match.id %}"> Зробити ставку </a>
-             <a href="{% url 'bets:new_result'  match.id %}"> Внести результат </a>
         {% endif %}
+     <a href="{% url 'bets:new_result'  match.id %}"> Внести результат </a>
 
 
 

@@ -3,4 +3,4 @@ node_modules
 venv/
 *iml
 __pycache__/
-.idea/
+py[cod]

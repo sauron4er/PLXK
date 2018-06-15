@@ -59,7 +59,7 @@
             {%  else %}
         {{ match.team1_result }} : {{ match.team2_result }}
             {% endif %}
-         {% elif match.is_editing  %}
+         {% else  %}
             <a href="{% url 'bets:new_result'  match.id %}"> - : - </a>
         {% endif %}
 

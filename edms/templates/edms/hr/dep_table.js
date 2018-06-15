@@ -51,17 +51,20 @@ class DepTable extends React.Component {
             this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.chief = event.target.options[selectedIndex].getAttribute('value');
         }
+        else {
+            this.setState({[event.target.name]:event.target.value});
+        }
     }
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let new_deps = this.deps;   // Отримує значення із форми і змінює масив deps
+        let success = false;
+        let new_deps = this.deps;   // Створюємо змінений масив deps, який призначимо this.deps у разі успіху post
         new_deps[this.state.index].id = this.state.id;
         new_deps[this.state.index].dep = this.state.dep;
         new_deps[this.state.index].text = this.state.text;
         new_deps[this.state.index].chief = this.state.chief;
         new_deps[this.state.index].chief_id = this.state.chief_id;
-        this.deps = new_deps;
 
         // переводимо в null не обрані поля
         let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
@@ -80,18 +83,23 @@ class DepTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
+            success = true;
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
             console.log('errorpost: ' + error);
         });
 
+        if (success === true) {
+            this.deps = new_deps;
+        }
+
         this.setState({ open: false }); // закриває модальне вікно
     }
 
     handleDelete(e) {                   // робить відділ неактивним
         e.preventDefault();
-
+        let success = false;
         let new_deps = this.deps;       // видаляємо запис з масиву
         new_deps.splice(this.state.index, 1);
         this.deps = new_deps;
@@ -113,11 +121,16 @@ class DepTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
+            success = true;
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
             console.log('errorpost: ' + error);
         });
+
+        if (success === true) {
+            this.deps = new_deps;
+        }
 
         this.setState({ open: false }); // закриває модальне вікно
     }
@@ -141,10 +154,11 @@ class DepTable extends React.Component {
                 {
                     Header: 'Відділ',
                     accessor: 'dep' // String-based value accessors!
-                }, {
-                    Header: 'Керівник',
-                    accessor: 'chief',
-                }
+                },
+                // {
+                //     Header: 'Керівник',
+                //     accessor: 'chief',
+                // }
             ]
         }];
 
@@ -153,8 +167,7 @@ class DepTable extends React.Component {
                 <ReactTable
                     data = {this.deps}
                     columns={columns}
-                    defaultPageSize={14}
-                    filterable
+                    defaultPageSize={16}
                     className="-striped -highlight"
 
                     getTdProps={(state, rowInfo, column, instance) => {
@@ -204,8 +217,8 @@ class DepTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="float-sm-left">Підтвердити</Button>
-                        <Button className="float-sm-right" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
+                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
                 </Modal>
             </div>

@@ -18,8 +18,8 @@ class Seat(models.Model):
 class Employee_Seat(models.Model):
     employee = models.ForeignKey(accounts.UserProfile, related_name='positions')
     seat = models.ForeignKey(Seat, related_name='employees')
-    begin_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True)
+    begin_date = models.DateField(null=True, blank=True, default=timezone.now)
+    end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -37,16 +37,20 @@ class Document_Type(models.Model):
     document_type = models.CharField(max_length=50)
     description = models.CharField(max_length=1000)
 
+    def __str__(self):
+        return self.description
+
 
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
 
 
 class Document(models.Model):
-    document_type_id = models.ForeignKey(Document_Type, related_name='type')
-    title = models.CharField(max_length=100)
-    text = models.CharField(max_length=1000)
+    document_type = models.ForeignKey(Document_Type, related_name='type')
+    title = models.CharField(max_length=100, null=True, blank=True)
+    text = models.CharField(max_length=1000, null=True, blank=True)
     image = models.BinaryField(editable=True, null=True)
+    employee = models.ForeignKey(accounts.UserProfile, related_name='initiated_documents')
     closed = models.BooleanField(default=False)
 
 
@@ -65,8 +69,6 @@ class Document_Permission(models.Model):
 
 
 # Document path models
-
-
 class Document_Path(models.Model):
     document = models.ForeignKey(Document, related_name='path')
     employee = models.ForeignKey(accounts.UserProfile, related_name='documents')
@@ -87,15 +89,26 @@ class Mark_Demand(models.Model):
 
 
 # Models, related to specific types of documents
-
 class Free_Time_Periods(models.Model):
     document = models.ForeignKey(Document, related_name='free_documents')
     free_day = models.DateField(default=timezone.now)
-    begin_time = models.TimeField(default=timezone.now)
-    end_time = models.TimeField(default='17.00')
+    begin_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
 
 
 class Carry_Out_Items(models.Model):
     document = models.ForeignKey(Document, related_name='carry_documents')
     item_name = models.CharField(max_length=100)
     quantity = models.IntegerField()
+
+
+# SQL Views models
+class Active_Docs_View(models.Model):
+    employee_id = models.IntegerField()
+    id = models.IntegerField(primary_key=True)
+    date = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'edms_active_docs'

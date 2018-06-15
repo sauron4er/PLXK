@@ -1,0 +1,13 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+
+
+{% block stylesheet %}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-3" id="sub_docs"></div>
+    {% render_bundle 'sub_docs' %} <!-- Renders js files -->
+{% endblock %}
