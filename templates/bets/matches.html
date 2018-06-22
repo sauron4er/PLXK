@@ -34,10 +34,7 @@
     <td style="vertical-align: middle">
         {{ match.id }}
     </td>
-    <td style="vertical-align: middle">
-       {{ match.dt|date:"d.m.Y H:i"  }}
-
-    </td>
+    <td style="vertical-align: middle">{{ match.dt|date:"d.m.Y H:i"  }}</td>
        <td>
        <img style="max-height: 40px; width: auto" src={{ match.team1.logo.url }} >
        {{ match.team1.name }}
