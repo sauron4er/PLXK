@@ -7,18 +7,11 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-3" style="padding: 10px">
-                <div id="new_doc"></div>
-            </div>
-            <div class="col-md-4" style="padding: 10px">
-                <div id="my_docs"></div>
-                <script>
-                    window.my_docs = {{ my_docs|safe }};
-                </script>
-            </div>
-        </div>
+    <div class="container-fluid" id="my_docs">
+        <script>
+            window.my_docs = {{ my_docs|safe }};
+            window.my_seats = {{ my_seats|safe }};
+        </script>
     </div>
 
     {% render_bundle 'my_docs' %} <!-- Renders js files -->

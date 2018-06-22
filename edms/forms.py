@@ -53,7 +53,7 @@ class SeatForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee'}
+        fields = {'document_type', 'text', 'employee_seat'}
 
 
 class FreeTimeForm(forms.ModelForm):

@@ -50,7 +50,7 @@ class Document(models.Model):
     title = models.CharField(max_length=100, null=True, blank=True)
     text = models.CharField(max_length=1000, null=True, blank=True)
     image = models.BinaryField(editable=True, null=True)
-    employee = models.ForeignKey(accounts.UserProfile, related_name='initiated_documents')
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
     closed = models.BooleanField(default=False)
 
 
@@ -71,10 +71,15 @@ class Document_Permission(models.Model):
 # Document path models
 class Document_Path(models.Model):
     document = models.ForeignKey(Document, related_name='path')
-    employee = models.ForeignKey(accounts.UserProfile, related_name='documents')
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_path')
     mark = models.ForeignKey(Mark, related_name='documents_path')
     timestamp = models.DateTimeField(default=timezone.now)
     comment = models.CharField(max_length=200, blank=True)
+
+
+class Document_Flow(models.Model):
+    document = models.ForeignKey(Document, related_name='flow')
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_in_flow')
 
 
 class Mark_Demand(models.Model):
@@ -103,12 +108,15 @@ class Carry_Out_Items(models.Model):
 
 
 # SQL Views models
+
+# Модель, створена для обробки view в бд, яка показує список активних документів
 class Active_Docs_View(models.Model):
     employee_id = models.IntegerField()
     id = models.IntegerField(primary_key=True)
     date = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
+    employee_seat_id = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
         db_table = 'edms_active_docs'

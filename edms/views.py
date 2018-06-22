@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import datetime
 
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View
@@ -150,13 +151,19 @@ def edms_my_docs(request):
 
     if request.method == 'GET':
         my_docs = [{  # Список документів, створених даним юзером
-            '№': doc.id,
+            'id': doc.id,
             'type': doc.description,
             'date': doc.date,
+            'emp_seat_id': doc.employee_seat_id
         } for doc in Active_Docs_View.objects.filter(employee_id=request.user.userprofile.id)]
 
+        my_seats = [{  # Список документів, створених даним юзером
+            'id': seat.id,
+            'seat': seat.seat.seat,
+        } for seat in Employee_Seat.objects.filter(employee_id=request.user.userprofile.id)]
+
         return render(request, 'edms/my_docs/my_docs.html', {
-            'my_docs': my_docs,
+            'my_docs': my_docs, 'my_seats': my_seats,
         })
 
     elif request.method == 'POST':
@@ -168,6 +175,8 @@ def edms_my_docs(request):
 
             doc_form = DocumentForm(doc_request)
             if doc_form.is_valid():
+
+                # Зберігаємо документ в edms_document
                 new_doc = doc_form.save()
 
                 # Додаємо в запит ід нового документу:
@@ -179,6 +188,13 @@ def edms_my_docs(request):
                 free_periods_form.save()
 
                 # Повертаємо ід нового документу в реакт
+                # return_new_doc = {
+                #     'date': str(datetime.today().day) + '.' + str(datetime.today().month) + '.' + str(datetime.today().year),
+                #     'emp_seat_id': new_doc.employee_seat_id,
+                #     'id': new_doc.pk,
+                #     'type': new_doc.document_type.description,
+                # }
+                # print(return_new_doc)
                 return HttpResponse(new_doc.pk)
 
     return HttpResponse(status=405)
