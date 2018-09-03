@@ -140,10 +140,10 @@ def results(request):
     page = request.GET.get('page')
 
     try:
-        page = (old_matches_count // 16) + 1
+        # page = (old_matches_count // 16) + 1
         matches1 = paginator.page(page)
     except PageNotAnInteger:
-        matches1 = paginator.page(1)
+        matches1 = paginator.page((old_matches_count // 16) + 1)
     except EmptyPage:
         matches1
     return render(request, 'bets/results.html', {'bets': bets, 'ct': ct,'rt' : rt, 'players': players, 'matches' :matches1})
