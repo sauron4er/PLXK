@@ -9,6 +9,8 @@ class Seat(models.Model):
     seat = models.CharField(max_length=100)
     department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
     chief = models.ForeignKey('self', related_name='subordinate', null=True, blank=True)
+    is_free_time_chief = models.BooleanField(default=False)
+    is_carry_out_chief = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -21,6 +23,8 @@ class Employee_Seat(models.Model):
     begin_date = models.DateField(null=True, blank=True, default=timezone.now)
     end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_main = models.BooleanField(default=True)  # false = в.о.
+    acting_for = models.ForeignKey('self', related_name='acting_for_me', null=True, blank=True)  # в.о. якої людинопосади ця конкретна посада
 
 
 class Vacation(models.Model):
@@ -74,12 +78,14 @@ class Document_Path(models.Model):
     employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_path')
     mark = models.ForeignKey(Mark, related_name='documents_path')
     timestamp = models.DateTimeField(default=timezone.now)
-    comment = models.CharField(max_length=200, blank=True)
+    comment = models.CharField(max_length=1000, blank=True)
 
 
 class Document_Flow(models.Model):
     document = models.ForeignKey(Document, related_name='flow')
     employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_in_flow')
+    expected_mark = models.ForeignKey(Mark, related_name='in_flow', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
 
 class Mark_Demand(models.Model):
@@ -104,7 +110,14 @@ class Free_Time_Periods(models.Model):
 class Carry_Out_Items(models.Model):
     document = models.ForeignKey(Document, related_name='carry_documents')
     item_name = models.CharField(max_length=100)
-    quantity = models.IntegerField()
+    quantity = models.CharField(max_length=100)
+    measurement = models.CharField(max_length=100)
+
+
+class Carry_Out_Info(models.Model):
+    document = models.ForeignKey(Document, related_name='info_documents')
+    carry_out_day = models.DateField(default=timezone.now)
+    gate = models.IntegerField(default=1)
 
 
 # SQL Views models
@@ -115,8 +128,23 @@ class Active_Docs_View(models.Model):
     id = models.IntegerField(primary_key=True)
     date = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
+    type_id = models.IntegerField()
     employee_seat_id = models.IntegerField()
 
     class Meta:
         managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
         db_table = 'edms_active_docs'
+
+
+# Модель, створена для обробки view в бд, яка показує список документів в архіві
+class Archive_Docs_View(models.Model):
+    employee_id = models.IntegerField()
+    id = models.IntegerField(primary_key=True)
+    date = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    type_id = models.IntegerField()
+    employee_seat_id = models.IntegerField()
+
+    class Meta:
+        managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
+        db_table = 'edms_my_archive_docs'

@@ -3,7 +3,9 @@ from .models import Team, Match, Bet
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils.timezone import datetime
+from datetime import date
 from .forms import NewBetForm
+from django.db.models import Sum
 
 def is_int(val):
     if type(val) == int:
@@ -19,7 +21,7 @@ def teams(request):
     return render(request, 'bets/teams.html', {'teams': teams})
 
 def matches(request):
-    matches = Match.objects.all().order_by('dt')
+    matches = Match.objects.all().order_by('dt').filter(dt__gte=date.today())
     bets = Bet.objects.all().filter(player=request.user).select_related('match')
     #m1 = matches.u
     paginator = Paginator(matches, 16)
@@ -91,17 +93,29 @@ def new_result(request,mid):
     return render(request,'bets/new_result.html',{'title':title,'match':match})
 
 def results(request):
-    bets = Bet.objects.all().order_by('-match__dt')
-    players = User.objects.filter(userprofile__is_bets=True)
-    players = User.objects.raw('select *, (select sum(b.points) from bets_bet b where b.player_id = u.id ) as points from auth_user u left join accounts_userprofile au on u.id = au.user_id where au.is_bets >0')
+    bets = Bet.objects.all().order_by('match__dt').filter(match__season=4)
+    # players = User.objects.filter(userprofile__is_bets=True)
+    players = User.objects.raw('select *, '
+                               '(select sum(b.points) '
+                               'from bets_bet b '
+                               'left join bets_match bm on b.match_id = bm.id '
+                               'where b.player_id = u.id '
+                               'and bm.season_id = 4 '
+                               ') as points '
+                               'from auth_user u '
+                               'left join accounts_userprofile au on u.id = au.user_id '                                  
+                               'where au.is_bets >0')
     # players1 ={}
     # for p in players:
     #     players1['id'] = p.id
     #     players1['name'] = p.userprofile.pip
     #     players1['point'] = 0
-    matches = Match.objects.all().order_by('-dt')
+
+    matches1 = Match.objects.all().order_by('dt').filter(season=4)
+    td = datetime.now()
+    old_matches_count = Match.objects.all().order_by('dt').filter(season=4).filter(dt__lte=td).count()
     rt = {}
-    for m in matches:
+    for m in matches1:
         rt[m.id] = {}
         for p in players:
             rt[m.id][p.id] = {}
@@ -121,13 +135,15 @@ def results(request):
             rt[b.match.id][b.player.id]['rt'] = "%s - %s" % (b.team1_bet , b.team2_bet)
 
 
-    paginator = Paginator(matches, 16)
-    ct = matches.count()
+    paginator = Paginator(matches1, 16)
+    ct = matches1.count()
     page = request.GET.get('page')
+
     try:
-        matches = paginator.page(page)
+        page = (old_matches_count // 16) + 1
+        matches1 = paginator.page(page)
     except PageNotAnInteger:
-        matches = paginator.page(1)
+        matches1 = paginator.page(1)
     except EmptyPage:
-        matches
-    return render(request, 'bets/results.html', {'bets': bets, 'ct':ct,'rt' : rt,'players': players, 'matches' :matches})
+        matches1
+    return render(request, 'bets/results.html', {'bets': bets, 'ct': ct,'rt' : rt, 'players': players, 'matches' :matches1})

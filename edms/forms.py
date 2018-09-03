@@ -1,7 +1,7 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Free_Time_Periods
+from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Document_Flow, Carry_Out_Items, Carry_Out_Info
 
 
 class UserProfileForm(forms.ModelForm):
@@ -19,37 +19,28 @@ class EmployeeSeatForm(forms.ModelForm):
 class DepartmentForm(forms.ModelForm):
     class Meta:
         model = accounts.Department
-        fields = ('name', 'text', 'manager', 'is_active')
+        fields = ('name', 'text', 'is_active')
         labels = {
             'name': 'Назва відділу',
-            'text': 'Опис',
-            'manager': 'Керівник'
+            'text': 'Опис'
         }
         widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
-
-    # def __init__(self, *args, **kwargs):                # поле "керівник"
-    #     super(DepartmentForm, self).__init__(*args, **kwargs)
-    #     manager_list = accounts.User.objects.all()
-    #     managers = [(i.id, (i.last_name + ' ' + i.first_name)) for i in manager_list]
-    #     self.fields['manager'] = forms.ChoiceField(choices=managers)
-    #     self.fields['manager'].label = 'Керівник'
-    #     self.fields['manager'].required = False
 
 
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Seat
-        fields = ('seat', 'department', 'chief', 'is_active')
+        fields = ('seat', 'department', 'chief', 'is_active', 'is_free_time_chief', 'is_carry_out_chief')
         labels = {
             'seat': 'Назва посади',
             'department': 'Відділ',
-            'chief': 'Керівник'
+            'chief': 'Керівник',
+            'is_free_time_chief': 'Право підписувати звільнюючі перепустки',
+            'is_carry_out_chief': 'Право підписувати матеріальні пропуски'
         }
         widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
 
-# Форми для створення нової звільнюючої відпустки.
-# Три окремі форми об’єднано в одну велику.
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
@@ -60,3 +51,27 @@ class FreeTimeForm(forms.ModelForm):
     class Meta:
         model = Free_Time_Periods
         fields = {'document', 'free_day'}
+
+
+class CarryOutItemsForm(forms.ModelForm):
+    class Meta:
+        model = Carry_Out_Items
+        fields = {'document', 'item_name', 'quantity', 'measurement'}
+
+
+class CarryOutInfoForm(forms.ModelForm):
+    class Meta:
+        model = Carry_Out_Info
+        fields = {'document', 'carry_out_day', 'gate'}
+
+
+class DocumentPathForm(forms.ModelForm):
+    class Meta:
+        model = Document_Path
+        fields = {'document', 'employee_seat', 'mark', 'comment'}
+
+
+class DocumentFlowForm(forms.ModelForm):  # Для деактивації записів у flow
+    class Meta:
+        model = Document_Flow
+        fields = {'is_active'}

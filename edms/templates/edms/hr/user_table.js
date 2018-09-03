@@ -1,8 +1,6 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactTable from "react-table";
-import 'react-table/react-table.css';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -11,7 +9,8 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import {required} from '../validations.js';
+import MyTable from '../my_table';
+
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -24,8 +23,7 @@ class UserTable extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.onTableClick = this.onTableClick.bind(this);
-    // this.onEmpSeatClick = this.onEmpSeatClick.bind(this);
+    this.onRowClick = this.onRowClick.bind(this);
     }
 
     state = {
@@ -160,13 +158,8 @@ class UserTable extends React.Component {
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let success = false;
-        let new_emps = this.state.emps;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
-        new_emps[this.state.index].profile_id = this.state.emp_id;
-        new_emps[this.state.index].emp = this.state.emp;
-        new_emps[this.state.index].on_vacation = this.state.on_vacation;
-        new_emps[this.state.index].acting = this.state.acting;
-        new_emps[this.state.index].acting_id = this.state.acting_id;
+
+        // TODO реалізувати можливість прийняти людину відразу в статусі в.о., тепер вона заступає на посаду як основну
 
         // переводимо в null не обрані поля
         let acting_id = this.state.acting_id == 0 ? null : this.state.acting_id;
@@ -185,18 +178,13 @@ class UserTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then(function (response) {
-            success = true;
             window.location.reload();
+            // TODO переробити з window.reload на автоматичну зміну state компонента
             // console.log('responsepost: ' + response);
         })
             .catch(function (error) {
             console.log('errorpost: ' + error);
         });
-
-        if (success === true) {
-            this.state.emps = new_emps;
-
-        }
 
         this.setState({ open: false }); // закриває модальне вікно
     }
@@ -238,48 +226,26 @@ class UserTable extends React.Component {
         this.setState({ open: false }); // закриває модальне вікно
     }
 
-    onTableClick(rowInfo) {
-        if (rowInfo !== null) {
-            this.setState({         // інформація про натиснутий рядок
-                index: rowInfo.index,
-                emp_id: rowInfo.original.emp_id,
-                emp: rowInfo.original.emp,
-                on_vacation: rowInfo.original.on_vacation === 'true',
-                acting: rowInfo.original.acting,
-                acting_id: rowInfo.original.acting_id,
-                vacation_checked: rowInfo.original.on_vacation === 'true',
-            });
+    onRowClick(row) {
+        this.setState({         // інформація про натиснутий рядок
+            emp_id: row.emp_id,
+            emp: row.emp,
+            on_vacation: row.on_vacation === 'true',
+            acting: row.acting,
+            acting_id: row.acting_id,
+            vacation_checked: row.on_vacation === 'true',
+        });
 
-            this.state.emp_seats_list = [];         // створюємо список посад конкретного користувача
-            this.state.emps_seats.map(emp_seat => {
-               if (emp_seat.emp_id === rowInfo.original.emp_id) {
-                    this.state.emp_seats_list = [...this.state.emp_seats_list, emp_seat];
-               }
-            });
-        }
+        this.state.emp_seats_list = [];         // створюємо список посад конкретного користувача
+        // TODO отримувати у сервера кожен раз список посад для людини, а не тримати весь список в пам’яті!
+        this.state.emps_seats.map(emp_seat => {
+           if (emp_seat.emp_id === row.emp_id) {
+                this.state.emp_seats_list = [...this.state.emp_seats_list, emp_seat];
+           }
+        });
 
-        // axios({                 // запрошуємо у сервера список посад користувача
-        //     method: 'get',
-        //     url: 'emp/' + rowInfo.original.emp_id + '/',
-        //     headers: {
-        //       'Content-Type': 'application/x-www-form-urlencoded'
-        //     },
-        // }).then((response) => {
-        //     this.setState({emp_seats_list: response.data});
-        //     // for (i = 1; i<=this.state.emp_seats_list.length; i++) {
-        //     //
-        //     // }
-        //     // console.log('responsepost: ' + response);
-        // })
-        //   .catch(function (error) {
-        //       console.log('errorpost: ' + error);
-        // });
+        this.onOpenModal();
     }
-
-    // onEmpSeatClick(rowInfo, data) {          // для таблиці EmpSeat
-    //     this.setState({selected_emp_seat: rowInfo.original.seat});
-    //     console.log(this.state.selected_emp_seat);
-    // }
 
     onOpenModal = () => {
         this.setState({ open: true });
@@ -291,22 +257,10 @@ class UserTable extends React.Component {
 
     render() {
         const { open, acting, seat, emp_seat_id } = this.state;
-        const columns = [{
-            columns: [
-                {
-                    Header: 'Співробітники',
-                    accessor: 'emp' // String-based value accessors!
-                },
-            ]
-        }];
-        const emp_seats_columns = [{
-            columns: [
-                {
-                    Header: 'Посади',
-                    accessor: 'emp_seat' // String-based value accessors!
-                },
-            ]
-        }];
+
+        const users_columns = [
+            { name: 'emp', title: 'П.І.Б.' },
+        ];
 
         const acting_select = this.state.vacation_checked  // відображення селекту для в.о.
         ? <div className="d-flex">
@@ -328,24 +282,12 @@ class UserTable extends React.Component {
 
         return (
             <div>
-                <ReactTable
-                    data = {this.state.emps}
-                    columns={columns}
-                    defaultPageSize={16}
-                    filterable
-                    className="-striped -highlight"
-
-                    getTdProps={(state, rowInfo, column, instance) => {
-                        return {
-                          onClick: (e, handleOriginal) => {
-                            this.onTableClick(rowInfo);
-                            this.onOpenModal();
-                            if (handleOriginal) {
-                              handleOriginal();
-                            }
-                          }
-                        };
-                      }}
+                <MyTable
+                    rows={this.state.emps}
+                    columns={users_columns}
+                    defaultSorting={[{ columnName: "emp", direction: "asc" }]}
+                    onRowClick={this.onRowClick}
+                    filter
                 />
 
                 <Modal open={open} onClose={this.onCloseModal} center>
@@ -388,25 +330,6 @@ class UserTable extends React.Component {
                                       })
                                     }
                                 </Select>
-                                {/*<ReactTable        // таблиця EmpSeat*/}
-                                    {/*data = {this.state.emp_seats_list}*/}
-                                    {/*columns={emp_seats_columns}*/}
-                                    {/*defaultPageSize={3}*/}
-                                    {/*className="-striped -highlight"*/}
-                                    {/*showPageSizeOptions={false}*/}
-                                    {/*// showPageJump={false}*/}
-
-                                    {/*getTdProps={(state, rowInfo, column, instance) => {*/}
-                                        {/*return {*/}
-                                          {/*onClick: (e, handleOriginal) => {*/}
-                                            {/*this.onEmpSeatClick(rowInfo);*/}
-                                            {/*if (handleOriginal) {*/}
-                                              {/*handleOriginal();*/}
-                                            {/*}*/}
-                                          {/*}*/}
-                                        {/*};*/}
-                                      {/*}}*/}
-                                {/*/>*/}
                                 <Button className="mt-1" onClick={this.delEmpSeat.bind(this)}>Звільнити з посади</Button>
                             </label>
                         </div>

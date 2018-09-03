@@ -1,35 +1,49 @@
 {% extends 'edms/main.html' %}
 {% load static %}
+{% block title %}EDMS - Відділ кадрів{% endblock %}
 {% load render_bundle from webpack_loader %}
 
 {% block content %}
+    <script>
+        window.emps = {{ emps|safe }};
+        window.emps_seats = {{ emps_seats|safe }};
+        window.deps = {{ deps|safe }};
+        window.seats = {{ seats|safe }};
+    </script>
+
     <!-- HR page -->
     <div class="container-fluid px-3">
+        <!-- Кнопки -->
+        <div class="row">
+            <div class="col-lg-4">
+                Співробітники:
+            </div>
+            <div class="col-lg-4">
+                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment" id="button_new_dep">Додати відділ</button>
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewSeat">Додати посаду</button>
+                    </div>
+                    <div class="col">
+                        <div>Посади без працівників виділяються червоним</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Таблиці -->
         <div class="row">
             <div class="col-lg-4" style="padding: 10px">
-{#                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewEmployee">Додати співробітника</button>#}
                 <div id="user_table"></div>
-                <script>
-                    window.emps = {{ emps|safe }};
-                    window.emps_seats = {{ emps_seats|safe }};
-                    window.react_mount = document.getElementById('user_table');
-                </script>
             </div>
             <div class="col-lg-4" style="padding: 10px">
-                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewDepartment" id="button_new_dep">Додати відділ</button>
+
                 <div id="dep_table"></div>
-                <script>
-                    window.deps = {{ deps|safe }};
-                    window.react_mount = document.getElementById('dep_table');
-                </script>
             </div>
             <div class="col-lg-4" style="padding: 10px">
-                <button type="button" class="btn btn-outline-secondary mb-1" data-toggle="modal" data-target="#modalNewSeat">Додати посаду</button>
+
                 <div id="seats_table"></div>
-                <script>
-                    window.seats = {{ seats|safe }};
-                    window.react_mount = document.getElementById('seats_table');
-                </script>
             </div>
         </div>
     </div>

@@ -1,13 +1,17 @@
 {% extends 'edms/main.html' %}
 {% load static %}
+{% block title %}EDMS - Документи підлеглих{% endblock %}
 {% load render_bundle from webpack_loader %}
 
-
-
 {% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid px-3" id="sub_docs"></div>
-    {% render_bundle 'sub_docs' %} <!-- Renders js files -->
+    <div class="container-fluid" id="sub_docs">
+        <script>
+            window.my_seats = {{ my_seats|safe }};
+        </script>
+    </div>
+    {% render_bundle 'sub_docs' %}
 {% endblock %}

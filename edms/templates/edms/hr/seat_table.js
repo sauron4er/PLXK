@@ -11,7 +11,10 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
+import MyTable from '../my_table';
 import {required} from '../validations.js';
+import {getIndex} from '../my_extras.js';
+
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -23,6 +26,8 @@ class SeatsTable extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.onRowClick = this.onRowClick.bind(this);
   }
     state = {
         open: false,
@@ -33,6 +38,9 @@ class SeatsTable extends React.Component {
         dep_id: '',                 // id відділу
         chief: '',                  // керівник посади для форми
         chief_id: '',               // id керівника посади
+        is_free_time_chief: false,  // право підписувати звільнюючі
+        is_carry_out_chief: false,  // право підписувати мат.пропуски
+        is_vacant: true,            // чи є посада вакантною
     };
 
     deps = window.deps;             // підтягуємо з django необхідні словники
@@ -56,6 +64,16 @@ class SeatsTable extends React.Component {
             this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.dep = event.target.options[selectedIndex].getAttribute('value');
         }
+        else if (event.target.name === 'is_free_time_chief') {
+            this.setState({
+                is_free_time_chief: event.target.checked,
+            });
+        }
+        else if (event.target.name === 'is_carry_out_chief') {
+            this.setState({
+                is_carry_out_chief: event.target.checked,
+            });
+        }
         else {
              this.setState({[event.target.name]:event.target.value});
          }
@@ -65,6 +83,7 @@ class SeatsTable extends React.Component {
         e.preventDefault();
         let success = false;
         let new_seats = this.seats;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
+        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
         new_seats[this.state.index].id = this.state.id;
         new_seats[this.state.index].seat = this.state.seat;
         new_seats[this.state.index].dep = this.state.dep;
@@ -82,6 +101,8 @@ class SeatsTable extends React.Component {
             data: querystring.stringify({
                 id: this.state.id,
                 seat: this.state.seat,
+                is_free_time_chief: this.state.is_free_time_chief,
+                is_carry_out_chief:this.state.is_carry_out_chief,
                 department: dep_id,
                 chief: chief_id,
                 is_active: true,
@@ -92,8 +113,7 @@ class SeatsTable extends React.Component {
         }).then(function (response) {
             success = true;
             // console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
+        }).catch(function (error) {
             console.log('errorpost: ' + error);
         });
 
@@ -108,6 +128,7 @@ class SeatsTable extends React.Component {
         e.preventDefault();
         let success = false;
         let new_seats = this.seats;       // видаляємо запис з масиву
+        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
         new_seats.splice(this.state.index, 1);
 
         // переводимо в null не обрані поля
@@ -120,6 +141,8 @@ class SeatsTable extends React.Component {
             data: querystring.stringify({
                 id: this.state.id,
                 seat: this.state.seat,
+                is_free_time_chief: this.state.is_free_time_chief,
+                is_carry_out_chief:this.state.is_carry_out_chief,
                 department: dep_id,
                 chief: chief_id,
                 is_active: false,
@@ -130,16 +153,30 @@ class SeatsTable extends React.Component {
         }).then(function (response) {
             success = true;
             // console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
+        }).catch(function (error) {
             console.log('errorpost: ' + error);
         });
-
         if (success === true) {
             this.seats = new_seats;
+            window.location.reload();
         }
 
         this.setState({ open: false }); // закриває модальне вікно
+    }
+
+    onRowClick(row) {
+        this.setState({         // інформація про натиснутий рядок
+            id: row.id,
+            seat: row.seat,
+            dep: row.dep,
+            dep_id: row.dep_id,
+            chief: row.chief,
+            chief_id: row.chief_id,
+            is_free_time_chief: row.is_free_time_chief === 'true',
+            is_carry_out_chief: row.is_carry_out_chief === 'true',
+            is_vacant: row.is_vacant === 'true',
+        });
+        this.onOpenModal();
     }
 
     onOpenModal = () => {
@@ -153,51 +190,20 @@ class SeatsTable extends React.Component {
     render() {
         const { open, chief, dep } = this.state;
 
-        const columns = [{
-            Header: 'Посади',
-            columns: [
-                {
-                    Header: 'Посада',
-                    accessor: 'seat',
-                },
-                {
-                    Header: 'Відділ',
-                    accessor: 'dep' // String-based value accessors!
-                },
-                // {
-                //     Header: 'Керівник',
-                //     accessor: 'chief',
-                // }
-            ]
-        }];
+        const seats_columns = [
+            { name: 'seat', title: 'Посада' },
+            { name: 'dep', title: 'Відділ' },
+        ];
 
         return (
             <div>
-                <ReactTable
-                    data = {window.seats}
-                    columns={columns}
-                    defaultPageSize={16}
-                    className="-striped -highlight"
-
-                    getTdProps={(state, rowInfo, column, instance) => {
-                        return {
-                          onClick: (e, handleOriginal) => {
-                            this.setState({         // інформація про натиснутий рядок
-                                index: rowInfo.index,
-                                id: rowInfo.original.id,
-                                seat: rowInfo.original.seat,
-                                dep: rowInfo.original.dep,
-                                dep_id: rowInfo.original.dep_id,
-                                chief: rowInfo.original.chief,
-                                chief_id: rowInfo.original.chief_id,
-                            });
-                            this.onOpenModal();
-                            if (handleOriginal) {
-                              handleOriginal();
-                            }
-                          }
-                        };
-                      }}
+                <MyTable
+                    rows={this.seats}
+                    columns={seats_columns}
+                    defaultSorting={[{ columnName: "seat", direction: "asc" }]}
+                    onRowClick={this.onRowClick}
+                    redRow="is_vacant"
+                    filter
                 />
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
@@ -207,6 +213,14 @@ class SeatsTable extends React.Component {
 
                         <label>Назва посади:
                             <Input type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                            <div className="d-flex">
+                                <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
+                                <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
+                            </div>
+                            <div className="d-flex">
+                                <Input name='is_carry_out_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_carry_out_chief} id="is_carry_out_chief" />
+                                <label htmlFor="is_carry_out_chief"> право підписувати мат.пропуски</label>
+                            </div>
                         </label><br /><br />
 
                         <label>Відділ:
@@ -236,7 +250,7 @@ class SeatsTable extends React.Component {
                         <br/><br/>
 
                         <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
-                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити посаду</Button>
+                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete}>Видалити посаду</Button>
                     </Form>
                 </Modal>
             </div>

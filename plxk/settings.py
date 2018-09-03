@@ -156,7 +156,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = True  # підтримка часових поясів
 
 
 # Static files (CSS, JavaScript, Images)
@@ -182,7 +182,3 @@ MEDIA_URL = '/media/'
 LOGOUT_REDIRECT_URL = 'home'
 
 LOGIN_REDIRECT_URL = 'home'
-
-# CSRF_COOKIE_NAME = "csrftoken"  # for Axios
-
-# CSRF_COOKIE_SECURE = True  # for Axios

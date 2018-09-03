@@ -1,18 +1,18 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactTable from "react-table";
-import 'react-table/react-table.css';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
-import Select from 'react-validation/build/select';
 import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
+import MyTable from '../my_table';
 import {required} from '../validations.js';
+import {getIndex} from '../my_extras.js';
+
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -24,6 +24,7 @@ class DepTable extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.onRowClick = this.onRowClick.bind(this);
   }
      state = {
         open: false,
@@ -31,8 +32,6 @@ class DepTable extends React.Component {
         dep: '',                    // назва відділу для форми
         index: '',                  // індекс в масиві відділів для форми
         text: '',                   // опис відділу для форми
-        chief: '',                  // керівник відділу для форми
-        chief_id: '',               // id керівника відділу
     };
 
     deps = window.deps;             // підтягуємо з django необхідні словники
@@ -60,14 +59,9 @@ class DepTable extends React.Component {
         e.preventDefault();
         let success = false;
         let new_deps = this.deps;   // Створюємо змінений масив deps, який призначимо this.deps у разі успіху post
-        new_deps[this.state.index].id = this.state.id;
+        this.state.index = getIndex(this.state.id, this.deps);  // шукаємо індекс запису, в якому треба внести зміни
         new_deps[this.state.index].dep = this.state.dep;
         new_deps[this.state.index].text = this.state.text;
-        new_deps[this.state.index].chief = this.state.chief;
-        new_deps[this.state.index].chief_id = this.state.chief_id;
-
-        // переводимо в null не обрані поля
-        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
 
         axios({
             method: 'post',
@@ -76,7 +70,6 @@ class DepTable extends React.Component {
                 id: this.state.id,
                 name: this.state.dep,
                 text: this.state.text,
-                manager: chief_id,
                 is_active: true,
             }),
             headers: {
@@ -85,8 +78,7 @@ class DepTable extends React.Component {
         }).then(function (response) {
             success = true;
             // console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
+        }).catch(function (error) {
             console.log('errorpost: ' + error);
         });
 
@@ -101,6 +93,7 @@ class DepTable extends React.Component {
         e.preventDefault();
         let success = false;
         let new_deps = this.deps;       // видаляємо запис з масиву
+        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
         new_deps.splice(this.state.index, 1);
         this.deps = new_deps;
 
@@ -130,9 +123,20 @@ class DepTable extends React.Component {
 
         if (success === true) {
             this.deps = new_deps;
+            window.location.reload();
         }
 
         this.setState({ open: false }); // закриває модальне вікно
+    }
+
+    onRowClick(row) {
+        this.setState({        // інформація про натиснутий рядок
+            id: row.id,
+            dep: row.dep,
+            text: row.text,
+        });
+
+        this.onOpenModal();
     }
 
     onOpenModal = () => {
@@ -146,48 +150,19 @@ class DepTable extends React.Component {
 
     render() {
         const { open } = this.state;    // для модального вікна
-        const { chief } = this.state;   // для <select>
 
-        const columns = [{              // для таблиці
-            Header: 'Відділи',
-            columns: [
-                {
-                    Header: 'Відділ',
-                    accessor: 'dep' // String-based value accessors!
-                },
-                // {
-                //     Header: 'Керівник',
-                //     accessor: 'chief',
-                // }
-            ]
-        }];
+        const deps_columns = [
+            { name: 'dep', title: 'Відділ' },
+        ];
 
         return (
             <div>
-                <ReactTable
-                    data = {this.deps}
-                    columns={columns}
-                    defaultPageSize={16}
-                    className="-striped -highlight"
-
-                    getTdProps={(state, rowInfo, column, instance) => {
-                        return {
-                          onClick: (event, handleOriginal) => {
-                            this.setState({         // інформація про натиснутий рядок
-                                index: rowInfo.index,
-                                id: rowInfo.original.id,
-                                dep: rowInfo.original.dep,
-                                text: rowInfo.original.text,
-                                chief: rowInfo.original.chief,
-                                chief_id: rowInfo.original.chief_id,
-                            });
-                            this.onOpenModal();
-                            if (handleOriginal) {
-                              handleOriginal();
-                            }
-                          }
-                        };
-                      }}
+                <MyTable
+                    rows={this.deps}
+                    columns={deps_columns}
+                    defaultSorting={[{ columnName: "dep", direction: "asc" }]}
+                    onRowClick={this.onRowClick}
+                    filter
                 />
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
@@ -203,19 +178,6 @@ class DepTable extends React.Component {
                             <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/>
                         </label>
                         <br /><br />
-
-                        <label>Керівник:
-                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
-                                <option data-key={0} value='Не внесено'>------------</option>
-                                {
-                                  this.emps.map(emp => {
-                                    return <option key={emp.id} data-key={emp.id}
-                                      value={emp.emp}>{emp.emp}</option>;
-                                  })
-                                }
-                            </Select>
-                        </label>
-                        <br/><br/>
 
                         <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>

@@ -27,7 +27,8 @@ class NewSeat extends React.Component {
         dep_id: '',                 // id віддлу
         chief: '',                  // керівник відділу для форми
         chief_id: '',               // id керівника відділу
-        redirect: false
+        is_free_time_chief: false,  // право підписувати звільнюючі
+        is_carry_out_chief: false,  // право підписувати мат.пропуски
     };
 
     deps = window.deps;             // підтягуємо з django необхідні словники
@@ -51,9 +52,19 @@ class NewSeat extends React.Component {
             this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.dep = event.target.options[selectedIndex].getAttribute('value');
         }
+        else if (event.target.name === 'is_free_time_chief') {
+            this.setState({
+                is_free_time_chief: event.target.checked,
+            });
+        }
+        else if (event.target.name === 'is_carry_out_chief') {
+            this.setState({
+                is_carry_out_chief: event.target.checked,
+            });
+        }
         else {
              this.setState({[event.target.name]:event.target.value});
-         }
+        }
     }
 
 
@@ -70,6 +81,8 @@ class NewSeat extends React.Component {
             data: querystring.stringify({
                 new_seat: '',
                 seat: this.state.seat,
+                is_free_time_chief: this.state.is_free_time_chief,
+                is_carry_out_chief:this.state.is_carry_out_chief,
                 department: dep_id,
                 chief: chief_id,
                 is_active: true,
@@ -90,36 +103,46 @@ class NewSeat extends React.Component {
             <Form onSubmit={this.handleSubmit}>
 
                     <label>Назва посади:
-                            <Input type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
-                        </label><br /><br />
+                        <Input type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                        <div className="d-flex">
+                            <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
+                            <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
+                        </div>
+                        <div className="d-flex">
+                            <Input name='is_carry_out_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_carry_out_chief} id="is_carry_out_chief" />
+                            <label htmlFor="is_carry_out_chief"> право підписувати мат.пропуски</label>
+                        </div>
+                    </label><br /><br />
 
-                        <label>Відділ:
-                            <Select id='dep-select' name='dep' value={dep} onChange={this.onChange}>
-                                <option data-key={0} value='Не внесено'>------------</option>
-                                {
-                                  this.deps.map(dep => {
-                                    return <option key={dep.id} data-key={dep.id}
-                                      value={dep.dep}>{dep.dep}</option>;
-                                  })
-                                }
-                            </Select>
-                        </label>
-                        <br /><br/>
 
-                        <label>Керівник:
-                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
-                                <option data-key={0} value='Не внесено'>------------</option>
-                                {
-                                  this.seats.map(seat => {
-                                    return <option key={seat.id} data-key={seat.id}
-                                      value={seat.seat}>{seat.seat}</option>;
-                                  })
-                                }
-                            </Select>
-                        </label>
-                        <br/><br/>
 
-                        <Button className="float-sm-left">Підтвердити</Button>
+                    <label>Відділ:
+                        <Select id='dep-select' name='dep' value={dep} onChange={this.onChange}>
+                            <option data-key={0} value='Не внесено'>------------</option>
+                            {
+                              this.deps.map(dep => {
+                                return <option key={dep.id} data-key={dep.id}
+                                  value={dep.dep}>{dep.dep}</option>;
+                              })
+                            }
+                        </Select>
+                    </label>
+                    <br /><br/>
+
+                    <label>Керівник:
+                        <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                            <option data-key={0} value='Не внесено'>------------</option>
+                            {
+                              this.seats.map(seat => {
+                                return <option key={seat.id} data-key={seat.id}
+                                  value={seat.seat}>{seat.seat}</option>;
+                              })
+                            }
+                        </Select>
+                    </label>
+                    <br/><br/>
+
+                    <Button className="float-sm-left">Підтвердити</Button>
                 </Form>
         )
     }

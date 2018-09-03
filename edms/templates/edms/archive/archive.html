@@ -1,0 +1,20 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}EDMS - Архів{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="archive">
+        <script>
+                window.my_seats = {{ my_seats|safe }};
+                window.my_archive = {{ my_archive|safe }};
+                window.work_archive = {{ work_archive|safe }};
+        </script>
+    </div>
+
+    {% render_bundle 'archive' %} <!-- Renders js files -->
+{% endblock %}
