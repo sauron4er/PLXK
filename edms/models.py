@@ -24,7 +24,8 @@ class Employee_Seat(models.Model):
     end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_main = models.BooleanField(default=True)  # false = в.о.
-    acting_for = models.ForeignKey('self', related_name='acting_for_me', null=True, blank=True)  # в.о. якої людинопосади ця конкретна посада
+    acting_for = models.ForeignKey('self', related_name='acting_for_me', null=True, blank=True)  # в.о. замість...
+    successor = models.ForeignKey('self', related_name='heir', null=True, blank=True)  # кому передаються активні документи
 
 
 class Vacation(models.Model):

@@ -1,13 +1,8 @@
 'use strict';
 import React from 'react';
-import axios from 'axios';
 
 import MyTable from '../my_table';
 import DocInfo from '../my_docs/doc_info';
-
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 
 class DocsList extends React.Component {
@@ -44,57 +39,11 @@ class DocsList extends React.Component {
       // seat_docs: [], // список документів, закріплених за конкретною посадою користувача
       row: '',
       doc_info: '',
+      carry_out_items: [],
     };
 
-    // внутрішні настройки рядка ReactGrid
-    TableRow = ({ row, ...restProps }) => (
-      <Table.Row
-        {...restProps}
-        // eslint-disable-next-line no-alert
-        onClick={() => this.onRowClick(row)}
-        style={{
-          cursor: 'pointer',
-          // ...styles[row.sector.toLowerCase()],
-        }}
-      />
-    );
-
-    // Виклик історії документу
     onRowClick(clicked_row) {
         this.setState({row:clicked_row});
-        axios({
-            method: 'get',
-            url: 'get_doc/' + clicked_row.id + '/',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then((response) => {
-            // console.log(response);
-            if (clicked_row.type_id === 1) {
-                this.setState({
-                    doc_info: {
-                        free_time: response.data.free_time,
-                        path: response.data.path,
-                        flow: response.data.flow,
-                        destination: response.data.destination,
-                    }
-                })
-            }
-            else if (clicked_row.type_id === 2) {
-                this.setState({
-                    doc_info: {
-                        carry_out_day: response.data.carry_out_day,
-                        gate: response.data.gate,
-                        path: response.data.path,
-                        flow: response.data.flow,
-                        destination: response.data.destination,
-                    }
-                })
-            }
-
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
     }
 
     // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закрити й документ в MyDocs
@@ -149,6 +98,7 @@ class DocsList extends React.Component {
                             defaultSorting={[{ columnName: "id", direction: "asc" }]}
                             colWidth={work_docs_col_width}
                             onRowClick={this.onRowClick}
+                            pageSize={5}
                             filter
                         />
                     </div><br/>
@@ -159,12 +109,18 @@ class DocsList extends React.Component {
                             defaultSorting={[{ columnName: "date", direction: "desc" }]}
                             colWidth={my_docs_col_width}
                             onRowClick={this.onRowClick}
+                            pageSize={5}
                             filter
                         />
                     </div>
                 </div>
                 <div className="col-lg-7">Обраний документ:
-                    <DocInfo doc={this.state.row} my_seat_id={this.props.my_seat_id} doc_info={this.state.doc_info} removeRow={this.removeRow} closed={false} />
+                    <DocInfo
+                        doc={this.state.row}
+                        my_seat_id={this.props.my_seat_id}
+                        removeRow={this.removeRow}
+                        closed={false}
+                    />
                 </div>
             </div>
         )

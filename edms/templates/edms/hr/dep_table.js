@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -9,6 +8,7 @@ import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
+import NewDep from './new_dep_form';
 import MyTable from '../my_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
@@ -24,18 +24,18 @@ class DepTable extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.onRowClick = this.onRowClick.bind(this);
+    this.addDep = this.addDep.bind(this);
   }
-     state = {
+    state = {
         open: false,
-        id: '',                      // id відділу для форми
+        id: '',                     // id відділу для форми
         dep: '',                    // назва відділу для форми
-        index: '',                  // індекс в масиві відділів для форми
+        index: '',                  // індекс обраного відділу у списку
         text: '',                   // опис відділу для форми
+        deps: window.deps,          // підтягуємо з django необхідні словники
     };
-
-    deps = window.deps;             // підтягуємо з django необхідні словники
-    emps = window.emps;
 
     styles = {
         textarea_style : {
@@ -45,60 +45,47 @@ class DepTable extends React.Component {
     };
 
     onChange(event) {
-        if (event.target.name === 'chief') { // беремо ід керівника із <select>
-            const selectedIndex = event.target.options.selectedIndex;
-            this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
-            this.state.chief = event.target.options[selectedIndex].getAttribute('value');
-        }
-        else {
-            this.setState({[event.target.name]:event.target.value});
-        }
+        this.setState({[event.target.name]:event.target.value});
     }
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let success = false;
-        let new_deps = this.deps;   // Створюємо змінений масив deps, який призначимо this.deps у разі успіху post
-        this.state.index = getIndex(this.state.id, this.deps);  // шукаємо індекс запису, в якому треба внести зміни
-        new_deps[this.state.index].dep = this.state.dep;
-        new_deps[this.state.index].text = this.state.text;
+        let new_deps = this.state.deps;   // Створюємо змінений масив deps, який призначимо this.deps у разі успіху post
+        this.state.index = getIndex(this.state.id, this.state.deps);  // шукаємо індекс запису, в якому треба внести зміни
 
-        axios({
-            method: 'post',
-            url: 'dep/' + this.state.id + '/',
-            data: querystring.stringify({
-                id: this.state.id,
-                name: this.state.dep,
-                text: this.state.text,
-                is_active: true,
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then(function (response) {
-            success = true;
-            // console.log('responsepost: ' + response);
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
+        // якщо хоча б одна зміна відбулася:
+        if (new_deps[this.state.index].dep !== this.state.dep ||
+            new_deps[this.state.index].text !== this.state.text) {
 
-        if (success === true) {
-            this.deps = new_deps;
+            new_deps[this.state.index].dep = this.state.dep;
+            new_deps[this.state.index].text = this.state.text;
+
+            axios({
+                method: 'post',
+                url: 'dep/' + this.state.id + '/',
+                data: querystring.stringify({
+                    id: this.state.id,
+                    name: this.state.dep,
+                    text: this.state.text,
+                    is_active: true,
+                }),
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+            }).then((response) => {
+                this.setState({
+                    deps: new_deps,
+                })
+                // console.log('responsepost: ' + response);
+            }).catch((error) => {
+                console.log('errorpost: ' + error);
+            });
         }
-
-        this.setState({ open: false }); // закриває модальне вікно
+        this.setState({open: false}); // закриває модальне вікно
     }
 
     handleDelete(e) {                   // робить відділ неактивним
         e.preventDefault();
-        let success = false;
-        let new_deps = this.deps;       // видаляємо запис з масиву
-        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
-        new_deps.splice(this.state.index, 1);
-        this.deps = new_deps;
-
-        // переводимо в null не обрані поля
-        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
 
         axios({
             method: 'post',
@@ -107,25 +94,19 @@ class DepTable extends React.Component {
                 id: this.state.id,
                 name: this.state.dep,
                 text: this.state.text,
-                manager: chief_id,
                 is_active: false,
             }),
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-        }).then(function (response) {
-            success = true;
+        }).then((response) => {
+            this.setState(prevState => ({
+                deps: prevState.deps.filter(dep => dep.id !== this.state.id)
+            }));
             // console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
+        }).catch((error) => {
             console.log('errorpost: ' + error);
         });
-
-        if (success === true) {
-            this.deps = new_deps;
-            window.location.reload();
-        }
-
         this.setState({ open: false }); // закриває модальне вікно
     }
 
@@ -147,6 +128,12 @@ class DepTable extends React.Component {
         this.setState({ open: false });
     };
 
+    // Приймає з компоненту NewDepForm новий відділ і додає у state
+    addDep(new_dep) {
+        this.setState(prevState => ({
+            deps: [...prevState.deps, new_dep],
+        }));
+    }
 
     render() {
         const { open } = this.state;    // для модального вікна
@@ -157,8 +144,9 @@ class DepTable extends React.Component {
 
         return (
             <div>
+                <NewDep addDep={this.addDep}/>
                 <MyTable
-                    rows={this.deps}
+                    rows={this.state.deps}
                     columns={deps_columns}
                     defaultSorting={[{ columnName: "dep", direction: "asc" }]}
                     onRowClick={this.onRowClick}
@@ -188,8 +176,4 @@ class DepTable extends React.Component {
     }
 }
 
-
-ReactDOM.render(
-    <DepTable />,
-    document.getElementById('dep_table')
-);
+export default DepTable

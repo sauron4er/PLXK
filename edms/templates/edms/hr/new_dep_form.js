@@ -1,10 +1,9 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
-import Select from 'react-validation/build/select';
 import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
@@ -23,15 +22,11 @@ class NewDep extends React.Component {
     }
 
     state = {
+        open: false,
         dep: '',                    // назва відділу для форми
         text: '',                   // опис відділу для форми
-        chief: '',                  // керівник відділу для форми
-        chief_id: '',               // id керівника відділу
-        redirect: false
+        redirect: false,
     };
-
-    deps = window.deps;             // підтягуємо з django необхідні словники
-    emps = window.emps;
 
     styles = {
         textarea_style : {
@@ -41,22 +36,12 @@ class NewDep extends React.Component {
     };
 
     onChange(event) {
-        if (event.target.name === 'chief') { // беремо ід керівника із <select>
-            const selectedIndex = event.target.options.selectedIndex;
-            this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
-            this.state.chief = event.target.options[selectedIndex].getAttribute('value');
-        }
-        else {
-            this.setState({[event.target.name]:event.target.value});
-        }
+        this.setState({[event.target.name]:event.target.value});
     }
 
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-
-        // переводимо в null не обрані поля
-        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
 
         axios({
             method: 'post',
@@ -65,53 +50,65 @@ class NewDep extends React.Component {
                 new_dep: '',
                 name: this.state.dep,
                 text: this.state.text,
-                manager: chief_id,
                 is_active: true,
             }),
-        }).then(function (response) {
-            window.location.reload();
+        }).then((response) => {
+            this.props.addDep({
+                id: response.data,
+                dep: this.state.dep,
+                text: this.state.text
+            });
+
+            this.setState({
+                dep: '',
+                text: '',
+                open: false,
+            })
             // console.log('responsepost: ' + response);
-        })
-            .catch(function (error) {
+        }).catch((error) => {
             console.log('errorpost: ' + error);
         });
     }
 
+    onOpenModal = () => {
+        this.setState({ open: true });
+    };
+
+    onCloseModal = () => {
+        this.setState({ open: false });
+    };
+
     render() {
-        const { chief, } = this.state;   // для <select>
+        const { open } = this.state;   // для <select>
 
         return (
-            <Form onSubmit={this.handleSubmit}>
+            <div>
+                <div className="col-lg-4">
+                    <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModal}>Додати відділ</button>
+                </div>
 
-                    <label>Назва відділу:
-                        <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
-                    </label><br /><br />
+                <Modal open={open} onClose={this.onCloseModal} center>
+                    <br/>
+                    <p>Новий відділ</p>
 
-                    <label>Опис:
-                        <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/>
-                    </label>
-                    <br /><br />
+                    <Form onSubmit={this.handleSubmit}>
 
-                    <label>Керівник:
-                        <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
-                            <option data-key={0} value='Не внесено'>------------</option>
-                            {
-                              this.emps.map(emp => {
-                                return <option key={emp.id} data-key={emp.id}
-                                  value={emp.emp}>{emp.emp}</option>;
-                              })
-                            }
-                        </Select>
-                    </label>
-                    <br/><br/>
+                        <label>Назва відділу:
+                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
+                        </label><br /><br />
 
-                    <Button className="float-sm-left" name="new_dep">Підтвердити</Button>
-                </Form>
+                        <label>Опис:
+                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/>
+                        </label>
+                        <br /><br />
+
+                        <Button className="float-sm-left" name="new_dep">Підтвердити</Button>
+                    </Form>
+                </Modal>
+            </div>
+
         )
     }
 }
 
-ReactDOM.render(
-    <NewDep />,
-    document.getElementById('new_dep')
-);
+export default NewDep;

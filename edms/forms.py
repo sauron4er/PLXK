@@ -13,7 +13,7 @@ class UserProfileForm(forms.ModelForm):
 class EmployeeSeatForm(forms.ModelForm):
     class Meta:
         model = Employee_Seat
-        fields = ('employee', 'seat', 'end_date', 'is_active')
+        fields = ('employee', 'seat', 'end_date', 'is_active', 'successor', 'is_main')
 
 
 class DepartmentForm(forms.ModelForm):

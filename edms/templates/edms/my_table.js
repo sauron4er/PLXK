@@ -17,8 +17,6 @@ const styles = {
 const getRowId = row => row.id;
 
 
-
-
 class MyTable extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -139,7 +137,9 @@ class MyTable extends React.PureComponent {
                     <SortingState
                         defaultSorting={this.props.defaultSorting}
                     />
-                    <PagingState />
+                    <PagingState
+                        pageSize={this.props.pageSize ? this.props.pageSize : 10}
+                    />
                     <IntegratedSorting />
                     <IntegratedPaging />
                     <Table rowComponent={this.TableRow} columnExtensions={this.props.colWidth} messages={{noData: 'Немає даних',}} />

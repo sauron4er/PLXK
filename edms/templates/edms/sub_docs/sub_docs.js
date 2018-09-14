@@ -26,6 +26,7 @@ class SubDocs extends React.Component {
         sub_archive: [],
         row: '',
         doc_info: '',
+        carry_out_items: [],
 
         // налаштування колонок для таблиць
         sub_columns: [
@@ -76,10 +77,10 @@ class SubDocs extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then((response) => {
-            // console.log(response);
             // розносимо документи у списки закритих та відкритих
-            this.docListArrange(response.data);
-            // this.setState({sub_docs: response.data});
+            if (response.data) {
+                this.docListArrange(response.data);
+            }
         }).catch(function (error) {
             console.log('errorpost: ' + error);
         });
@@ -111,27 +112,9 @@ class SubDocs extends React.Component {
     }
 
     // Виклик історії документу
+    // TODO створити окремий компонент для отримання через нього інфи про документ з різних сторінок сайту.
     onRowClick(clicked_row) {
-        this.setState({row:clicked_row});
-        axios({
-            method: 'get',
-            url: 'get_doc/' + clicked_row.id + '/',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then((response) => {
-            console.log(response);
-            this.setState({
-                doc_info: {
-                    free_time: response.data.free_time,
-                    path: response.data.path,
-                    flow: response.data.flow,
-                    destination: response.data.destination,
-                }
-            })
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
+        this.setState({row: clicked_row});
     }
 
     render() {
@@ -180,7 +163,10 @@ class SubDocs extends React.Component {
                         />
                     </div>
                     <div className="col-lg-4">
-                        <DocInfo doc={this.state.row} my_seat_id={this.state.seat_id} doc_info={this.state.doc_info} closed={true}/>
+                        <DocInfo doc={this.state.row}
+                                 my_seat_id={this.state.seat_id}
+                                 closed={true}
+                        />
                     </div>
                 </div>
             </div>

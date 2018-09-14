@@ -1,8 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ReactTable from "react-table";
-import 'react-table/react-table.css';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -11,6 +8,7 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
+import NewSeat from './new_seat_form';
 import MyTable from '../my_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
@@ -19,8 +17,8 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-// seats table with modal change_dep window
-class SeatsTable extends React.Component {
+
+class SeatTable extends React.Component {
     constructor(props) {
     super(props);
 
@@ -28,12 +26,13 @@ class SeatsTable extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onRowClick = this.onRowClick.bind(this);
+    this.addSeat = this.addSeat.bind(this);
   }
     state = {
         open: false,
         id: '',                     // id посади для форми
         seat: '',                   // назва посади для форми
-        index: '',                  // індекс в масиві посад для форми
+        index: '',                  // індекс обраної посади у списку
         dep: '',                    // назва відділу для форми
         dep_id: '',                 // id відділу
         chief: '',                  // керівник посади для форми
@@ -41,10 +40,9 @@ class SeatsTable extends React.Component {
         is_free_time_chief: false,  // право підписувати звільнюючі
         is_carry_out_chief: false,  // право підписувати мат.пропуски
         is_vacant: true,            // чи є посада вакантною
+        deps: window.deps,          // підтягуємо з django необхідні словники
+        seats: window.seats,
     };
-
-    deps = window.deps;             // підтягуємо з django необхідні словники
-    seats = window.seats;
 
     styles = {
         textarea_style : {
@@ -64,14 +62,9 @@ class SeatsTable extends React.Component {
             this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
             this.state.dep = event.target.options[selectedIndex].getAttribute('value');
         }
-        else if (event.target.name === 'is_free_time_chief') {
+        else if (event.target.name === 'is_free_time_chief' || event.target.name === 'is_carry_out_chief') {
             this.setState({
-                is_free_time_chief: event.target.checked,
-            });
-        }
-        else if (event.target.name === 'is_carry_out_chief') {
-            this.setState({
-                is_carry_out_chief: event.target.checked,
+                [event.target.name]: event.target.checked,
             });
         }
         else {
@@ -81,44 +74,48 @@ class SeatsTable extends React.Component {
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let success = false;
-        let new_seats = this.seats;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
-        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
-        new_seats[this.state.index].id = this.state.id;
-        new_seats[this.state.index].seat = this.state.seat;
-        new_seats[this.state.index].dep = this.state.dep;
-        new_seats[this.state.index].dep_id = this.state.dep_id;
-        new_seats[this.state.index].chief = this.state.chief;
-        new_seats[this.state.index].chief_id = this.state.chief_id;
+        let new_seats = this.state.seats;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
+        this.state.index = getIndex(this.state.id, this.state.seats);  // шукаємо індекс запису, в якому треба внести зміни
 
-        // переводимо в null не обрані поля
-        let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
-        let dep_id = this.state.dep_id == 0 ? null : this.state.dep_id;
+        // якщо хоча б одна зміна відбулася:
+        if (new_seats[this.state.index].seat !== this.state.seat ||
+            new_seats[this.state.index].dep_id !== this.state.dep_id ||
+            new_seats[this.state.index].chief_id !== this.state.chief_id) {
 
-        axios({
-            method: 'post',
-            url: 'seat/' + this.state.id + '/',
-            data: querystring.stringify({
-                id: this.state.id,
-                seat: this.state.seat,
-                is_free_time_chief: this.state.is_free_time_chief,
-                is_carry_out_chief:this.state.is_carry_out_chief,
-                department: dep_id,
-                chief: chief_id,
-                is_active: true,
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then(function (response) {
-            success = true;
-            // console.log('responsepost: ' + response);
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
+            new_seats[this.state.index].id = this.state.id;
+            new_seats[this.state.index].seat = this.state.seat;
+            new_seats[this.state.index].dep = this.state.dep;
+            new_seats[this.state.index].dep_id = this.state.dep_id;
+            new_seats[this.state.index].chief = this.state.chief;
+            new_seats[this.state.index].chief_id = this.state.chief_id;
 
-        if (success === true) {
-            this.seats = new_seats;
+            // переводимо в null не обрані поля
+            let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
+            let dep_id = this.state.dep_id == 0 ? null : this.state.dep_id;
+
+            axios({
+                method: 'post',
+                url: 'seat/' + this.state.id + '/',
+                data: querystring.stringify({
+                    id: this.state.id,
+                    seat: this.state.seat,
+                    is_free_time_chief: this.state.is_free_time_chief,
+                    is_carry_out_chief: this.state.is_carry_out_chief,
+                    department: dep_id,
+                    chief: chief_id,
+                    is_active: true,
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+            }).then((response) => {
+                this.setState({
+                    seats: new_seats,
+                })
+                // console.log('responsepost: ' + response);
+            }).catch((error) => {
+                console.log('errorpost: ' + error);
+            });
         }
 
         this.setState({ open: false }); // закриває модальне вікно
@@ -126,10 +123,6 @@ class SeatsTable extends React.Component {
 
     handleDelete(e) {                   // робить відділ неактивним
         e.preventDefault();
-        let success = false;
-        let new_seats = this.seats;       // видаляємо запис з масиву
-        this.state.index = getIndex(this.state.id, this.seats);  // шукаємо індекс запису, в якому треба внести зміни
-        new_seats.splice(this.state.index, 1);
 
         // переводимо в null не обрані поля
         let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
@@ -150,17 +143,14 @@ class SeatsTable extends React.Component {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-        }).then(function (response) {
-            success = true;
+        }).then((response) => {
+            this.setState(prevState => ({
+                seats: prevState.seats.filter(seat => seat.id !== this.state.id)
+            }));
             // console.log('responsepost: ' + response);
-        }).catch(function (error) {
+        }).catch((error) => {
             console.log('errorpost: ' + error);
         });
-        if (success === true) {
-            this.seats = new_seats;
-            window.location.reload();
-        }
-
         this.setState({ open: false }); // закриває модальне вікно
     }
 
@@ -187,6 +177,13 @@ class SeatsTable extends React.Component {
         this.setState({ open: false });
     };
 
+    // Приймає з компоненту NewDepForm нову посаду і додає у state
+    addSeat(new_seat) {
+        this.setState(prevState => ({
+            seats: [...prevState.seats, new_seat],
+        }));
+    }
+
     render() {
         const { open, chief, dep } = this.state;
 
@@ -197,8 +194,12 @@ class SeatsTable extends React.Component {
 
         return (
             <div>
+                <div className="row">
+                    <NewSeat className="col" addSeat={this.addSeat}/>
+                    <div className="col">Не зайняті посади виділяються червоним</div>
+                </div>
                 <MyTable
-                    rows={this.seats}
+                    rows={this.state.seats}
                     columns={seats_columns}
                     defaultSorting={[{ columnName: "seat", direction: "asc" }]}
                     onRowClick={this.onRowClick}
@@ -227,7 +228,7 @@ class SeatsTable extends React.Component {
                             <Select id='dep-select' name='dep' value={dep} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
-                                  this.deps.map(dep => {
+                                  this.state.deps.map(dep => {
                                     return <option key={dep.id} data-key={dep.id}
                                       value={dep.dep}>{dep.dep}</option>;
                                   })
@@ -240,7 +241,7 @@ class SeatsTable extends React.Component {
                             <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
-                                  this.seats.map(seat => {
+                                  this.state.seats.map(seat => {
                                     return <option key={seat.id} data-key={seat.id}
                                       value={seat.seat}>{seat.seat}</option>;
                                   })
@@ -258,7 +259,4 @@ class SeatsTable extends React.Component {
     }
 }
 
-ReactDOM.render(
-    <SeatsTable />,
-    document.getElementById('seats_table')
-);
+export default SeatTable

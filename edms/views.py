@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import datetime
 from django.utils import timezone
@@ -8,7 +8,7 @@ import pytz
 
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View, Archive_Docs_View, Document_Flow
-from .models import Free_Time_Periods, Carry_Out_Info
+from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm, DocumentFlowForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm
 
@@ -72,8 +72,8 @@ def edms_hr(request):
             seat['is_vacant'] = 'true' if is_vacant is None else 'false'
 
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
-            'id': emp.user.pk,
-            'emp_id': emp.pk,
+            # 'id': emp.user.pk,
+            'id': emp.pk,
             'emp': emp.pip,
             'on_vacation': 'true' if emp.on_vacation else 'false',
             'acting': 0 if emp.acting is None else emp.acting.pip,
@@ -116,20 +116,20 @@ def edms_hr(request):
         if 'new_dep' in request.POST:
             form = DepartmentForm(request.POST)
             if form.is_valid():
-                form.save()
-                return redirect('hr.html')
+                new_dep = form.save()
+                return HttpResponse(new_dep.pk)
 
         if 'new_seat' in request.POST:
             form = SeatForm(request.POST)
             if form.is_valid():
-                form.save()
-                return redirect('hr.html')
+                new_seat = form.save()
+                return HttpResponse(new_seat.pk)
 
         if 'new_emp_seat' in request.POST:
             form_employee_seat = EmployeeSeatForm(request.POST)
             if form_employee_seat.is_valid():
-                form_employee_seat.save()
-                return redirect('hr.html')
+                new_emp_seat = form_employee_seat.save()
+                return HttpResponse(new_emp_seat.pk)
 
     return HttpResponse(status=405)
 
@@ -174,10 +174,53 @@ def edms_hr_seat(request, pk):       # changes in seat row
 def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
     post = get_object_or_404(Employee_Seat, pk=pk)
     if request.method == 'POST':
-        form = EmployeeSeatForm(request.POST, instance=post)
-        if form.is_valid():
-            form.save()
-            return redirect('hr.html')
+        form_request = request.POST.copy()
+        form = EmployeeSeatForm(form_request, instance=post)
+
+        # Обробка звільнення з посади:
+        if form.data['is_active'] == 'false':
+
+            active_docs = Document_Flow.objects.filter(employee_seat_id=pk).filter(is_active=True).first()
+            # Якщо у flow залишаються документи і не визначено "спадкоємця", повертаємо помилку
+            if active_docs is not None and form.data['successor_id'] == '':
+                return HttpResponseForbidden('active flow')
+            # В іншому разі зберігаємо форму і додаємо "спадкоємцю" (якщо такий є) посаду:
+            else:
+                if form.data['successor_id'] != '':
+                    successor_temp = {
+                        'employee': form.data['successor_id'],
+                        'seat': form.data['seat'],
+                        'is_active': True,
+                        'is_main': form.data['new_is_main']
+                    }
+                    successor = QueryDict('').copy()
+                    successor.update(successor_temp)
+                    successor_form = EmployeeSeatForm(successor)
+                    if successor_form.is_valid():
+                        new_successor = successor_form.save()
+                        form.data['successor'] = new_successor.pk
+                        if form.is_valid():
+                            form.save()
+                            return HttpResponse('')
+                else:
+                    if form.is_valid():
+                        form.save()
+                        return HttpResponse('')
+
+
+@login_required(login_url='login')
+def edms_get_emp_seats(request, pk):
+    emp = get_object_or_404(accounts.UserProfile, pk=pk)
+    if request.method == 'GET':
+        emp_seats = [{
+            'id': empSeat.pk,
+            'emp_seat': empSeat.seat.seat,
+            'seat_id': empSeat.seat.pk,
+            'emp_id': empSeat.employee.pk,
+        } for empSeat in
+            Employee_Seat.objects.only('id', 'seat', 'employee').filter(employee_id=emp).filter(is_active=True)]
+
+        return HttpResponse(json.dumps(emp_seats))
 
 
 @login_required(login_url='login')
@@ -300,34 +343,42 @@ def edms_get_doc(request, pk):
         } for flow in Document_Flow.objects.filter(document_id=doc.pk).filter(is_active=True)]
 
         if doc.document_type_id == 1:  # Звільнююча перепустка
-            free_time = datetime.strftime(
-                Free_Time_Periods.objects.filter(document_id=doc.id).values_list('free_day')[0][0], '%d.%m.%Y'
-            )
-
-            destination = Document.objects.filter(id=doc.id).values_list('text')[0][0]
+            info = [{
+                'free_time': datetime.strftime(item.free_day, '%d.%m.%Y'),
+                'destination': item.document.text,
+            } for item in Free_Time_Periods.objects.filter(document_id=doc.id)]
 
             doc_info = {
                 'path': path,
                 'flow': flow,
-                'free_time': free_time,
-                'destination': destination
+                'free_time': info[0]['free_time'],
+                'destination': info[0]['destination'],
             }
 
             return HttpResponse(json.dumps(doc_info))
 
         if doc.document_type_id == 2:  # Матеріальний пропуск
-            carry_out_day = datetime.strftime(
-                Carry_Out_Info.objects.filter(document_id=doc.id).values_list('carry_out_day')[0][0], '%d.%m.%Y'
-            )
-            gate = Carry_Out_Info.objects.filter(document_id=doc.id).values_list('gate')[0][0]
-            destination = Document.objects.filter(id=doc.id).values_list('text')[0][0]
+
+            info = [{
+                'carry_out_day': datetime.strftime(item.carry_out_day, '%d.%m.%Y'),
+                'gate': item.gate,
+                'destination': item.document.text,
+            } for item in Carry_Out_Info.objects.filter(document_id=doc.id)]
+
+            items = [{
+                'id': item.id,
+                'item_name': item.item_name,
+                'quantity': item.quantity,
+                'measurement': item.measurement,
+            } for item in Carry_Out_Items.objects.filter(document_id=doc.id)]
 
             doc_info = {
                 'path': path,
                 'flow': flow,
-                'carry_out_day': carry_out_day,
-                'gate': gate,
-                'destination': destination
+                'carry_out_day': info[0]['carry_out_day'],
+                'gate': info[0]['gate'],
+                'destination': info[0]['destination'],
+                'items': items,
             }
 
             return HttpResponse(json.dumps(doc_info))
@@ -382,7 +433,6 @@ def edms_archive(request):
             'author_seat_id': doc.document.employee_seat_id,
         } for doc in Document_Flow.objects.distinct().
             filter(employee_seat_id__employee_id=request.user.userprofile.id).  # документ був у користувача
-            filter(document_id__closed=True).  # Документ закрито
             exclude(document__employee_seat__employee=request.user.userprofile.id)]  # Автор не користувач
 
         # Позбавляємось дублікатів:
@@ -421,22 +471,24 @@ def edms_get_sub_docs(request, pk):
 
         # Шукаємо документи кожного підлеглого
         sub_docs = []
-        for sub in subs_list:
-            docs = [{  # Список документів у роботі, створених підлеглими юзера
-                'id': temp_doc.document_id,
-                'type': temp_doc.document.document_type.description,
-                'type_id': temp_doc.document.document_type_id,
-                'date': convert_to_localtime(temp_doc.timestamp),
-                'author_seat_id': temp_doc.employee_seat_id,
-                'author': temp_doc.employee_seat.employee.pip,
-                'dep': temp_doc.employee_seat.seat.department.name,
-                'closed': temp_doc.document.closed,
-            } for temp_doc in Document_Path.objects.
-                filter(mark_id=1).
-                filter(employee_seat__seat_id=sub['id'])]
-            if docs:
-                for doc in docs:
-                    sub_docs.append(doc)
+        if subs_list:
+            for sub in subs_list:
+                docs = [{  # Список документів у роботі, створених підлеглими юзера
+                    'id': temp_doc.document_id,
+                    'type': temp_doc.document.document_type.description,
+                    'type_id': temp_doc.document.document_type_id,
+                    'date': convert_to_localtime(temp_doc.timestamp),
+                    'author_seat_id': temp_doc.employee_seat_id,
+                    'author': temp_doc.employee_seat.employee.pip,
+                    'dep': temp_doc.employee_seat.seat.department.name,
+                    'emp_seat_id': pk,
+                    'closed': temp_doc.document.closed,
+                } for temp_doc in Document_Path.objects.
+                    filter(mark_id=1).
+                    filter(employee_seat__seat_id=sub['id'])]
+                if docs:
+                    for doc in docs:
+                        sub_docs.append(doc)
         return HttpResponse(json.dumps(sub_docs))
 
     return HttpResponse(status=405)

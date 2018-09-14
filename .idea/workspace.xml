@@ -1,18 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/templates/edms/csrftoken.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/templates/edms/validations.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/static/bundles/main-f2cdd48770b4b114d471.js" afterPath="" />
+    <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bets/migrations/0011_rate.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bets/migrations/0012_bet_rate_points.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/migrations/0018_employee_seat_successor.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_table_old.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info_old.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/bundles/archive-a1b7b78684e9a8dc2590.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/bundles/hr-a1b7b78684e9a8dc2590.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/bundles/my_docs-a1b7b78684e9a8dc2590.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/bundles/sub_docs-a1b7b78684e9a8dc2590.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.babelrc" afterPath="$PROJECT_DIR$/.babelrc" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bets/admin.py" afterPath="$PROJECT_DIR$/bets/admin.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bets/models.py" afterPath="$PROJECT_DIR$/bets/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/forms.py" afterPath="$PROJECT_DIR$/edms/forms.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/models.py" afterPath="$PROJECT_DIR$/edms/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.js" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/new_seat_form.js" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/new_seat_form.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/my_styles.css" afterPath="$PROJECT_DIR$/edms/templates/edms/my_styles.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/my_table.js" afterPath="$PROJECT_DIR$/edms/templates/edms/my_table.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/urls.py" afterPath="$PROJECT_DIR$/edms/urls.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/edms/views.py" afterPath="$PROJECT_DIR$/edms/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package-lock.json" afterPath="$PROJECT_DIR$/package-lock.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/index/hr_index.js" afterPath="$PROJECT_DIR$/static/index/hr_index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webpack-stats.json" afterPath="$PROJECT_DIR$/webpack-stats.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webpack.config.js" afterPath="$PROJECT_DIR$/webpack.config.js" />
     </list>
     <ignored path="TEST.FDB" />
     <ignored path=".idea/" />
@@ -53,13 +77,6 @@
         <item name="plxk" type="e3449647:DbNodeDescriptor" />
         <item name="" type="fce03ad6:DatabaseStructure$GroupNode" />
       </path>
-      <path>
-        <item name="" type="eadb38e5:DatabaseStructure$Root" />
-        <item name="Django default" type="e3449647:DbNodeDescriptor" />
-        <item name="plxk" type="e3449647:DbNodeDescriptor" />
-        <item name="" type="fce03ad6:DatabaseStructure$GroupNode" />
-        <item name="auth_user" type="e3449647:DbNodeDescriptor" />
-      </path>
     </expand>
     <select />
   </component>
@@ -68,79 +85,191 @@
     <option name="myUseModuleSdk" value="true" />
     <option name="myModuleName" value="PLXK" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+            <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/edms/models.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="476">
+                    <caret line="30" column="29" lean-forward="false" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/edms/forms.py">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="340">
+                    <caret line="23" column="36" lean-forward="true" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="accounts_userprofile" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_userprofile">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_document_type_permission" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_type_permission">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="accounts_department" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_department">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_document_path" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_path">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_document_flow" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_flow">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_seat" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_seat">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_employee_seat" pinned="false" current-in-tab="true">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_employee_seat">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="edms_mark" pinned="false" current-in-tab="false">
+              <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_mark">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FavoritesManager">
     <favorites_list name="PLXK" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/forms.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/edms/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="55" column="51" lean-forward="true" selection-start-line="55" selection-start-column="51" selection-end-line="55" selection-end-column="51" />
+            <state relative-caret-position="186">
+              <caret line="206" column="0" lean-forward="false" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
               <folding>
-                <element signature="e#0#45#0" expanded="true" />
+                <element signature="e#0#64#0" expanded="true" />
+                <element signature="e#804#964#0" expanded="false" />
+                <element signature="e#1076#1666#0" expanded="false" />
+                <element signature="e#1732#1844#0" expanded="false" />
+                <element signature="e#1908#5895#0" expanded="false" />
+                <element signature="e#1945#5151#0" expanded="false" />
+                <element signature="e#5999#6570#0" expanded="false" />
+                <element signature="e#6676#6911#0" expanded="false" />
+                <element signature="e#7012#7226#0" expanded="false" />
+                <element signature="e#9093#9546#0" expanded="false" />
+                <element signature="e#9616#13682#0" expanded="false" />
+                <element signature="e#11493#13645#0" expanded="false" />
+                <element signature="e#11783#12350#0" expanded="false" />
+                <element signature="e#13755#16468#0" expanded="false" />
+                <element signature="e#13844#14436#0" expanded="false" />
+                <element signature="e#14539#14885#0" expanded="false" />
+                <element signature="e#16534#17324#0" expanded="false" />
+                <element signature="e#17393#19257#0" expanded="false" />
+                <element signature="e#19327#19937#0" expanded="false" />
+                <element signature="e#20015#21386#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="validations.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/validations.js">
+      <file leaf-file-name="user_table.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="46" lean-forward="false" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dep_table.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="54" column="46" lean-forward="false" selection-start-line="54" selection-start-column="46" selection-end-line="54" selection-end-column="46" />
+            <state relative-caret-position="359">
+              <caret line="85" column="33" lean-forward="false" selection-start-line="85" selection-start-column="33" selection-end-line="85" selection-end-column="33" />
               <folding>
                 <element signature="e#14#40#0" expanded="true" />
+                <element signature="e#2505#2622#0" expanded="false" />
+                <element signature="n#!!block;n#newUserSeat#0;n#UserTable#0" expanded="false" />
+                <element signature="n#!!block;n#handleSubmit#0;n#UserTable#0" expanded="false" />
+                <element signature="n#!!block;n#handleDelete#0;n#UserTable#0" expanded="false" />
+                <element signature="n#!!block;n#onRowClick#0;n#UserTable#0" expanded="false" />
+                <element signature="e#13105#13151#0" expanded="false" />
+                <element signature="e#13179#13226#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/accounts/models.py">
+      <file leaf-file-name="seat_table.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="7" column="34" lean-forward="false" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
-              <folding />
+            <state relative-caret-position="379">
+              <caret line="91" column="12" lean-forward="false" selection-start-line="91" selection-start-column="12" selection-end-line="92" selection-end-column="81" />
+              <folding>
+                <element signature="e#1068#1830#0" expanded="false" />
+                <element signature="e#1846#1939#0" expanded="false" />
+                <element signature="n#!!block;n#onChange#0;n#SeatTable#0" expanded="false" />
+                <element signature="n#!!block;n#handleDelete#0;n#SeatTable#0" expanded="false" />
+                <element signature="n#!!block;n#onRowClick#0;n#SeatTable#0" expanded="false" />
+                <element signature="e#6958#7004#0" expanded="false" />
+                <element signature="e#7032#7079#0" expanded="false" />
+                <element signature="n#!!block;n#addSeat#0;n#SeatTable#0" expanded="false" />
+                <element signature="e#7752#8062#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
+      <file leaf-file-name="hr.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="31" column="34" lean-forward="false" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+            <state relative-caret-position="782">
+              <caret line="53" column="0" lean-forward="false" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
               <folding>
-                <marker date="1527142651865" expanded="true" signature="0:1344" ph="{&quot;name&quot;: &quot;plxk&quot;...}" />
-                <marker date="1527142651865" expanded="true" signature="145:404" ph="{&quot;js-cookie&quot;: &quot;^2.2.0&quot;...}" />
-                <marker date="1527142651865" expanded="true" signature="427:848" ph="{&quot;babel-core&quot;: &quot;^6.26.3&quot;...}" />
-                <marker date="1527142651865" expanded="true" signature="863:1086" ph="{&quot;dev&quot;: &quot;webpack-dev-server --mode development&quot;...}" />
-                <marker date="1527142651865" expanded="true" signature="1104:1181" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-                <marker date="1527142651865" expanded="true" signature="1229:1286" ph="{&quot;url&quot;: &quot;https://github.com/SamusVM/PLXK/issues&quot;...}" />
+                <element signature="e#14#40#0" expanded="true" />
+                <element signature="e#182#233#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -149,28 +278,8 @@
       <file leaf-file-name="webpack.config.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webpack.config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" column="7" lean-forward="false" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".babelrc" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.babelrc">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="1" lean-forward="false" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hr.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1513">
-              <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="90" selection-end-column="43" />
+            <state relative-caret-position="561">
+              <caret line="33" column="35" lean-forward="false" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -181,9 +290,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="CSS File" />
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
+        <option value="CSS File" />
         <option value="JavaScript File" />
       </list>
     </option>
@@ -192,6 +301,12 @@
     <findStrings>
       <find>r</find>
       <find>`</find>
+      <find>state.emps</find>
+      <find>console.lo</find>
+      <find>emp_seat_id</find>
+      <find>my_sea</find>
+      <find>closed</find>
+      <find>my_archive_columns</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -203,57 +318,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/crm/urls.py" />
-        <option value="$PROJECT_DIR$/templates/crm/graph_scales.html" />
-        <option value="$PROJECT_DIR$/templates/crm/graph_wood.html" />
-        <option value="$PROJECT_DIR$/templates/crm/graph_coal.html" />
-        <option value="$PROJECT_DIR$/crm/views.py" />
-        <option value="$PROJECT_DIR$/docs/admin.py" />
-        <option value="$PROJECT_DIR$/docs/urls.py" />
-        <option value="$PROJECT_DIR$/docs/views.py" />
-        <option value="$PROJECT_DIR$/templates/docs/order_index.html" />
-        <option value="$PROJECT_DIR$/templates/gi/news_detail.html" />
-        <option value="$PROJECT_DIR$/templates/gi/news.html" />
-        <option value="$PROJECT_DIR$/plxk/urls.py" />
+        <option value="$PROJECT_DIR$/edms/migrations/0005_auto_20180612_1008.py" />
+        <option value="$PROJECT_DIR$/edms/migrations/0005_auto_20180612_1025.py" />
+        <option value="$PROJECT_DIR$/edms/migrations/0001_initial.py" />
         <option value="$PROJECT_DIR$/accounts/models.py" />
-        <option value="$PROJECT_DIR$/bets/admin.py" />
-        <option value="$PROJECT_DIR$/gi/admin.py" />
-        <option value="$PROJECT_DIR$/gi/models.py" />
-        <option value="$PROJECT_DIR$/templates/bets/Teams.html" />
-        <option value="$PROJECT_DIR$/templates/bets/edit_bet.html" />
-        <option value="$PROJECT_DIR$/templates/docs/bets.html" />
-        <option value="$PROJECT_DIR$/bets/forms.py" />
-        <option value="$PROJECT_DIR$/templates/bets/bets.html" />
-        <option value="$PROJECT_DIR$/templates/bets/index.html" />
-        <option value="$PROJECT_DIR$/bets/urls.py" />
-        <option value="$PROJECT_DIR$/templates/bets/new_bet.html" />
-        <option value="$PROJECT_DIR$/bets/templatetags/__init__.py" />
-        <option value="$PROJECT_DIR$/bets/templatetags/dict_tags.py" />
         <option value="$PROJECT_DIR$/templates/bets/new_result.html" />
-        <option value="$PROJECT_DIR$/bets/models.py" />
-        <option value="$PROJECT_DIR$/templates/bets/results.html" />
-        <option value="$PROJECT_DIR$/bets/views.py" />
-        <option value="$PROJECT_DIR$/terminal/q.py" />
         <option value="$PROJECT_DIR$/templates/bets/matches.html" />
-        <option value="$PROJECT_DIR$/templates/bets/teams.html" />
-        <option value="$PROJECT_DIR$/templates/base.html" />
-        <option value="$PROJECT_DIR$/docs/models.py" />
-        <option value="$PROJECT_DIR$/docs/forms.py" />
-        <option value="$PROJECT_DIR$/templates/docs/index.html" />
+        <option value="$PROJECT_DIR$/templates/bets/results.html" />
+        <option value="$PROJECT_DIR$/static/index/my_docs_index.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/main.html" />
+        <option value="$PROJECT_DIR$/static/index/archive_index.js" />
+        <option value="$PROJECT_DIR$/static/index/sub_docs_index.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.css" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_table_test.js" />
         <option value="$PROJECT_DIR$/plxk/settings.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/dep_new.html" />
-        <option value="$PROJECT_DIR$/edms/urls.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.html" />
-        <option value="$PROJECT_DIR$/edms/forms.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/csrftoken.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" />
+        <option value="$PROJECT_DIR$/templates/bets/index.html" />
+        <option value="$PROJECT_DIR$/templates/bets/bets.html" />
+        <option value="$PROJECT_DIR$/bets/urls.py" />
+        <option value="$PROJECT_DIR$/bets/views.py" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/edms/views.py" />
-        <option value="$PROJECT_DIR$/webpack.config.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/validations.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/get_doc.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info2.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_extras.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form2.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_seat_form.js" />
+        <option value="$PROJECT_DIR$/edms/urls.py" />
+        <option value="$PROJECT_DIR$/bets/models.py" />
+        <option value="$PROJECT_DIR$/bets/admin.py" />
+        <option value="$PROJECT_DIR$/.babelrc" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" />
+        <option value="$PROJECT_DIR$/static/index/hr_index.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" />
         <option value="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_styles.css" />
+        <option value="$PROJECT_DIR$/webpack.config.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" />
+        <option value="$PROJECT_DIR$/edms/models.py" />
+        <option value="$PROJECT_DIR$/edms/forms.py" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" />
+        <option value="$PROJECT_DIR$/edms/views.py" />
       </list>
     </option>
   </component>
@@ -276,8 +391,8 @@
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1066" />
+    <option name="width" value="1934" />
+    <option name="height" value="1050" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -330,11 +445,6 @@
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="accounts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
               <item name="edms" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -361,13 +471,26 @@
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="my_docs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="plxk" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="index" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -378,10 +501,10 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="C:/Program Files/Git/bin/git.exe" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="ToolWindowmanage.py@PLXK.ShowToolbar" value="false" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
@@ -396,19 +519,19 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\hr" />
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs" />
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms" />
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\archive" />
+      <recent name="D:\Робота\EDMS\PLXK\static\index" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Робота\EDMS\PLXK\static\index" />
+      <recent name="D:\Робота\EDMS\PLXK\static\hr_index" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms" />
       <recent name="D:\PLXK\templates\bets" />
       <recent name="D:\PLXK\bets" />
-      <recent name="D:\PLXK\templates\boards" />
-      <recent name="D:\PLXK\templates\accounts" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\PLXK\bets" />
-      <recent name="D:\PLXK\templates\bets" />
-      <recent name="D:\PLXK\bets\migrations" />
-      <recent name="D:\PLXK\templates\docs" />
-      <recent name="D:\PLXK\old_files" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -717,30 +840,57 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1444563" sideWeight="0.49611542" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.4978678" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36197636" sideWeight="0.36140725" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13486141" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1977612" sideWeight="0.49611542" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32867885" sideWeight="0.4936034" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36090225" sideWeight="0.3555437" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16311301" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3415682" sideWeight="0.43656716" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3243824" sideWeight="0.48720682" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36197636" sideWeight="0.5170576" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36197636" sideWeight="0.48294243" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3243824" sideWeight="0.48507464" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13874066" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3469388" sideWeight="0.4706823" order="13" side_tool="true" content_ui="tabs" x="1205" y="769" width="957" height="271" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3469388" sideWeight="0.5293177" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1444563" sideWeight="0.50388455" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3991131" sideWeight="0.48507464" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="manage.py@PLXK" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15742794" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" x="0" y="0" width="1920" height="1040" />
+      <window_info id="manage.py@PLXK" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3319012" sideWeight="0.44136462" order="11" side_tool="false" content_ui="tabs" x="0" y="0" width="1920" height="1040" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329718" sideWeight="0.4941302" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1881663" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32867885" sideWeight="0.49573562" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36090225" sideWeight="0.3555437" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33834586" sideWeight="0.61886996" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292683" sideWeight="0.49573562" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3243824" sideWeight="0.48720682" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33834586" sideWeight="0.38113007" order="13" side_tool="true" content_ui="tabs" x="1205" y="769" width="957" height="271" />
+      <window_info id="manage.py@PLXK" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3319012" sideWeight="0.46481878" order="11" side_tool="false" content_ui="tabs" x="0" y="0" width="1920" height="1040" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17324094" sideWeight="0.49611542" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15884861" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329718" sideWeight="0.4941302" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1881663" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13874066" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30827066" sideWeight="0.56929636" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1444563" sideWeight="0.50388455" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -810,6 +960,11 @@
           <line>3</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>184</line>
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -818,236 +973,80 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="27" />
+      <option name="time" value="235" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/templatetags/static.py">
+    <entry file="file://$PROJECT_DIR$/bets/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="187">
+          <caret line="11" column="45" lean-forward="false" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bets/templatetags/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bets/templatetags/dict_tags.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/7556c995/33b6efd7-94a2-4726-9886-9f7f979551cf/plxk.bets_match" />
-    <entry file="das://table:/7556c995/33b6efd7-94a2-4726-9886-9f7f979551cf/plxk.bets_bet" />
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/django/core/handlers/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="136" column="0" lean-forward="false" selection-start-line="136" selection-start-column="0" selection-end-line="136" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/new_bet.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="174" lean-forward="false" selection-start-line="21" selection-start-column="174" selection-end-line="21" selection-end-column="174" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/new_result.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="11" lean-forward="false" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/polls/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/polls/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="9" column="1" lean-forward="false" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/polls/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/media/teams_logo/arsenal.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/media/teams_logo/barsa.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/media/teams_logo/ms.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bets/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="25" column="25" lean-forward="false" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/results.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1054">
-          <caret line="62" column="66" lean-forward="false" selection-start-line="62" selection-start-column="66" selection-end-line="62" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/matches.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="16" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/bets/teams.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="10" column="8" lean-forward="false" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="817">
-          <caret line="72" column="122" lean-forward="false" selection-start-line="72" selection-start-column="122" selection-end-line="72" selection-end-column="122" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="11" column="76" lean-forward="false" selection-start-line="11" selection-start-column="76" selection-end-line="11" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bets/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1768">
-          <caret line="111" column="55" lean-forward="false" selection-start-line="111" selection-start-column="55" selection-end-line="111" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/terminal/q.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="15" lean-forward="false" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="20" column="43" lean-forward="false" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="32" lean-forward="false" selection-start-line="12" selection-start-column="32" selection-end-line="12" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/docs/order_index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="39" column="13" lean-forward="false" selection-start-line="39" selection-start-column="13" selection-end-line="39" selection-end-column="98" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/docs/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="42" column="11" lean-forward="false" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bets/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plxk/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1003">
-          <caret line="59" column="58" lean-forward="false" selection-start-line="59" selection-start-column="58" selection-end-line="59" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
+    <entry file="file://$PROJECT_DIR$/templates/bets/bets.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
-          <caret line="48" column="39" lean-forward="false" selection-start-line="48" selection-start-column="39" selection-end-line="48" selection-end-column="39" />
+          <caret line="17" column="14" lean-forward="false" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/pycharm.jar!/resources/html5-schema/html5/common.rnc">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/get_doc.js" />
+    <entry file="file://$PROJECT_DIR$/node_modules/querystring/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="124" column="18" lean-forward="false" selection-start-line="124" selection-start-column="18" selection-end-line="124" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_new.html" />
-    <entry file="file://$PROJECT_DIR$/edms/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="9" column="37" lean-forward="false" selection-start-line="9" selection-start-column="37" selection-end-line="9" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.html" />
-    <entry file="file://$PROJECT_DIR$/edms/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-51">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_carry_out_info">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" />
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_carry_out_items">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_permission">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_mark">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form_old.js" />
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/new_seat_form_old.js" />
+    <entry file="file://$PROJECT_DIR$/accounts/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="4" column="6" lean-forward="false" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_type_permission">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table_old.js" />
     <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_department">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -1055,128 +1054,364 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/forms.py">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/new_seat_form.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="109">
+          <caret line="65" column="20" lean-forward="false" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
+          <folding>
+            <element signature="e#14#40#0" expanded="false" />
+            <element signature="e#1392#1485#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#NewSeat#0" expanded="false" />
+            <element signature="n#!!block;n#handleSubmit#0;n#NewSeat#0" expanded="false" />
+            <element signature="e#4156#4202#0" expanded="false" />
+            <element signature="e#4230#4277#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_extras.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plxk/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bets/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bets/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding>
-            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#0#28#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/csrftoken.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="32" lean-forward="false" selection-start-line="1" selection-start-column="32" selection-end-line="1" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#26#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.auth_user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/Python36/Lib/site-packages/django/contrib/auth/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-22">
-          <caret line="377" column="6" lean-forward="false" selection-start-line="377" selection-start-column="6" selection-end-line="377" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/index.js">
+    <entry file="file://$PROJECT_DIR$/bets/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/archive/archive.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" column="34" lean-forward="false" selection-start-line="31" selection-start-column="34" selection-end-line="31" selection-end-column="34" />
+        <state relative-caret-position="136">
+          <caret line="8" column="39" lean-forward="true" selection-start-line="8" selection-start-column="39" selection-end-line="8" selection-end-column="39" />
           <folding>
-            <marker date="1527142651865" expanded="true" signature="0:1344" ph="{&quot;name&quot;: &quot;plxk&quot;...}" />
-            <marker date="1527142651865" expanded="true" signature="145:404" ph="{&quot;js-cookie&quot;: &quot;^2.2.0&quot;...}" />
-            <marker date="1527142651865" expanded="true" signature="427:848" ph="{&quot;babel-core&quot;: &quot;^6.26.3&quot;...}" />
-            <marker date="1527142651865" expanded="true" signature="863:1086" ph="{&quot;dev&quot;: &quot;webpack-dev-server --mode development&quot;...}" />
-            <marker date="1527142651865" expanded="true" signature="1104:1181" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1527142651865" expanded="true" signature="1229:1286" ph="{&quot;url&quot;: &quot;https://github.com/SamusVM/PLXK/issues&quot;...}" />
+            <element signature="e#14#40#0" expanded="false" />
+            <element signature="e#367#1369#0" expanded="false" />
+            <element signature="n#!!block;n#componentDidMount#0;n#Archive#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#Archive#0" expanded="false" />
+            <element signature="n#!!block;n#onRowClick#0;n#Archive#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webpack.config.js">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="7" lean-forward="false" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+        <state relative-caret-position="106">
+          <caret line="46" column="0" lean-forward="true" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
+          <folding>
+            <element signature="e#645#1323#0" expanded="false" />
+            <element signature="n#!!block;n#docListArrange#0;n#SubDocs#0" expanded="false" />
+            <element signature="n#!!block;n#componentDidMount#0;n#SubDocs#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#SubDocs#0" expanded="false" />
+            <element signature="n#!!block;n#onRowClick#0;n#SubDocs#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info_old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="58" column="8" lean-forward="false" selection-start-line="58" selection-start-column="8" selection-end-line="190" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="40" lean-forward="false" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.babelrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="1" lean-forward="false" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/accounts/models.py">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="7" column="34" lean-forward="false" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
-          <folding />
+          <caret line="135" column="38" lean-forward="true" selection-start-line="135" selection-start-column="38" selection-end-line="135" selection-end-column="86" />
+          <folding>
+            <element signature="n#!!block;n#newFreeTime#0;n#NewDoc#0" expanded="false" />
+            <element signature="n#!!block;n#newCarryOut#0;n#NewDoc#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/validations.js">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="46" lean-forward="false" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="55" />
-          <folding />
+        <state relative-caret-position="446">
+          <caret line="128" column="0" lean-forward="true" selection-start-line="128" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="140" column="45" lean-forward="true" selection-start-line="140" selection-start-column="45" selection-end-line="140" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="85" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="160" selection-end-column="2" />
+          <folding>
+            <element signature="e#633#865#0" expanded="false" />
+            <element signature="n#!!block;n#componentDidMount#0;n#MyDocs#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#MyDocs#0" expanded="false" />
+            <element signature="n#!!block;n#removeDoc#0;n#MyDocs#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1">
+          <caret line="24" column="21" lean-forward="true" selection-start-line="24" selection-start-column="21" selection-end-line="24" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index/hr_index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="43" lean-forward="false" selection-start-line="0" selection-start-column="43" selection-end-line="0" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1513">
-          <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="90" selection-end-column="43" />
+        <state relative-caret-position="153">
+          <caret line="9" column="38" lean-forward="true" selection-start-line="9" selection-start-column="38" selection-end-line="9" selection-end-column="38" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_styles.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="67" column="47" lean-forward="true" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="47" />
+        <state relative-caret-position="170">
+          <caret line="10" column="1" lean-forward="false" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-13">
+          <caret line="39" column="29" lean-forward="false" selection-start-line="39" selection-start-column="29" selection-end-line="39" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.babelrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="42" lean-forward="false" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webpack.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="33" column="35" lean-forward="false" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_path">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="672">
+          <caret line="98" column="0" lean-forward="true" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
           <folding>
-            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#806#984#0" expanded="false" />
+            <element signature="e#1000#1093#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#NewDep#0" expanded="false" />
+            <element signature="n#!!block;n#handleSubmit#0;n#NewDep#0" expanded="false" />
+            <element signature="e#2045#2091#0" expanded="false" />
+            <element signature="e#2119#2166#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="54" column="46" lean-forward="false" selection-start-line="54" selection-start-column="46" selection-end-line="54" selection-end-column="46" />
+        <state relative-caret-position="-391">
+          <caret line="1" column="26" lean-forward="false" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="26" />
+          <folding>
+            <element signature="e#1116#1479#0" expanded="false" />
+            <element signature="e#1495#1588#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#DepTable#0" expanded="false" />
+            <element signature="n#!!block;n#handleDelete#0;n#DepTable#0" expanded="false" />
+            <element signature="n#!!block;n#onRowClick#0;n#DepTable#0" expanded="false" />
+            <element signature="e#4269#4315#0" expanded="false" />
+            <element signature="e#4343#4390#0" expanded="false" />
+            <element signature="n#!!block;n#addDep#0;n#DepTable#0" expanded="false" />
+            <element signature="e#4856#5124#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="30" column="29" lean-forward="false" selection-start-line="30" selection-start-column="29" selection-end-line="30" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="53" column="0" lean-forward="false" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
           <folding>
             <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#182#233#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="23" column="36" lean-forward="true" selection-start-line="23" selection-start-column="36" selection-end-line="23" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="91" column="12" lean-forward="false" selection-start-line="91" selection-start-column="12" selection-end-line="92" selection-end-column="81" />
+          <folding>
+            <element signature="e#1068#1830#0" expanded="false" />
+            <element signature="e#1846#1939#0" expanded="false" />
+            <element signature="n#!!block;n#onChange#0;n#SeatTable#0" expanded="false" />
+            <element signature="n#!!block;n#handleDelete#0;n#SeatTable#0" expanded="false" />
+            <element signature="n#!!block;n#onRowClick#0;n#SeatTable#0" expanded="false" />
+            <element signature="e#6958#7004#0" expanded="false" />
+            <element signature="e#7032#7079#0" expanded="false" />
+            <element signature="n#!!block;n#addSeat#0;n#SeatTable#0" expanded="false" />
+            <element signature="e#7752#8062#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table_old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="85" column="33" lean-forward="false" selection-start-line="85" selection-start-column="33" selection-end-line="85" selection-end-column="33" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#2505#2622#0" expanded="false" />
+            <element signature="n#!!block;n#newUserSeat#0;n#UserTable#0" expanded="false" />
+            <element signature="n#!!block;n#handleSubmit#0;n#UserTable#0" expanded="false" />
+            <element signature="n#!!block;n#handleDelete#0;n#UserTable#0" expanded="false" />
+            <element signature="n#!!block;n#onRowClick#0;n#UserTable#0" expanded="false" />
+            <element signature="e#13105#13151#0" expanded="false" />
+            <element signature="e#13179#13226#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_userprofile">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_flow">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_seat">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_employee_seat">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Program Files/Python36/Lib/site-packages/django/core/handlers/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="549">
+          <caret line="131" column="0" lean-forward="false" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/edms/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="55" column="51" lean-forward="true" selection-start-line="55" selection-start-column="51" selection-end-line="55" selection-end-column="51" />
+        <state relative-caret-position="186">
+          <caret line="206" column="0" lean-forward="false" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
           <folding>
-            <element signature="e#0#45#0" expanded="true" />
+            <element signature="e#0#64#0" expanded="true" />
+            <element signature="e#804#964#0" expanded="false" />
+            <element signature="e#1076#1666#0" expanded="false" />
+            <element signature="e#1732#1844#0" expanded="false" />
+            <element signature="e#1908#5895#0" expanded="false" />
+            <element signature="e#1945#5151#0" expanded="false" />
+            <element signature="e#5999#6570#0" expanded="false" />
+            <element signature="e#6676#6911#0" expanded="false" />
+            <element signature="e#7012#7226#0" expanded="false" />
+            <element signature="e#9093#9546#0" expanded="false" />
+            <element signature="e#9616#13682#0" expanded="false" />
+            <element signature="e#11493#13645#0" expanded="false" />
+            <element signature="e#11783#12350#0" expanded="false" />
+            <element signature="e#13755#16468#0" expanded="false" />
+            <element signature="e#13844#14436#0" expanded="false" />
+            <element signature="e#14539#14885#0" expanded="false" />
+            <element signature="e#16534#17324#0" expanded="false" />
+            <element signature="e#17393#19257#0" expanded="false" />
+            <element signature="e#19327#19937#0" expanded="false" />
+            <element signature="e#20015#21386#0" expanded="false" />
           </folding>
         </state>
       </provider>

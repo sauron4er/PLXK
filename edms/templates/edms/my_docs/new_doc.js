@@ -112,7 +112,7 @@ class NewDoc extends React.Component {
                     carry_out_text:'',
                 });
 
-                this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 1);
+                this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 2);
             })
               .catch(function (error) {
                 console.log('errorpost: ' + error);

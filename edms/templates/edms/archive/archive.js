@@ -1,14 +1,9 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 
 import MyTable from '../my_table';
 import DocInfo from '../my_docs/doc_info';
-
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 
 class Archive extends React.Component {
@@ -25,6 +20,7 @@ class Archive extends React.Component {
         work_archive: [],   // список документів, що були в роботі
         row: '',    // вибраний документ
         doc_info: '',   // отримана з бд інфа про вибраний документ
+        carry_out_items: [],
 
         // налаштування колонок для таблиць
         my_archive_columns: [
@@ -100,28 +96,9 @@ class Archive extends React.Component {
         }
     }
 
-    // Виклик історії документу
+
     onRowClick(clicked_row) {
         this.setState({row:clicked_row});
-        axios({
-            method: 'get',
-            url: 'get_doc/' + clicked_row.id + '/',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then((response) => {
-            // console.log(response);
-            this.setState({
-                doc_info: {
-                    free_time: response.data.free_time,
-                    path: response.data.path,
-                    flow: response.data.flow,
-                    destination: response.data.destination,
-                }
-            })
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
     }
 
     render() {
@@ -170,7 +147,11 @@ class Archive extends React.Component {
                         />
                     </div>
                     <div className="col-lg-4">
-                        <DocInfo doc={this.state.row} my_seat_id={this.state.seat_id} doc_info={this.state.doc_info} closed={true}/>
+                        <DocInfo
+                            doc={this.state.row}
+                            my_seat_id={this.state.seat_id}
+                            closed={true}
+                        />
                     </div>
                 </div>
             </div>

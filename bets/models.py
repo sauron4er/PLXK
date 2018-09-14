@@ -51,9 +51,17 @@ class Bet(models.Model):
     match = models.ForeignKey(Match, related_name='match', blank=True, null=True, on_delete='CASCADE')
     team1_bet = models.IntegerField(null=True, blank=True)
     team2_bet = models.IntegerField(null=True, blank=True)
-    points = models.IntegerField(null=True, blank=True,default=0)
+    points = models.IntegerField(null=True, blank=True, default=0)
+    rate_points = models.IntegerField(null=True, blank=True, default=0)
     def __str__(self):
         return self.player.userprofile.pip + " : " + self.match.team1.name + " - " + self.match.team2.name
 
     def is_editing(self):
         return datetime.now() < self.match.dt - timedelta(hours=1)
+
+
+class Rate(models.Model):
+    match = models.ForeignKey(Match, related_name='matches', blank=True, null=True, on_delete='CASCADE')
+    team1_rate = models.IntegerField(null=True, blank=True)
+    team2_rate = models.IntegerField(null=True, blank=True)
+    draw_rate = models.IntegerField(null=True, blank=True)

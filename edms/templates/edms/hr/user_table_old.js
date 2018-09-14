@@ -71,24 +71,20 @@ class UserTable extends React.Component {
     onChange(event) {
         if (event.target.name === 'acting') { // беремо ід в.о. із <select>
             const selectedIndex = event.target.options.selectedIndex;
-            this.setState({
-                acting_id: event.target.options[selectedIndex].getAttribute('data-key'),
-                acting: event.target.options[selectedIndex].getAttribute('value'),
-            });
+            this.state.acting_id = event.target.options[selectedIndex].getAttribute('data-key');
+            this.state.acting = event.target.options[selectedIndex].getAttribute('value');
         }
         else if (event.target.name === 'seat') { // беремо ід посади із <select>
             const selectedIndex = event.target.options.selectedIndex;
-            this.setState({
-                seat_id: event.target.options[selectedIndex].getAttribute('data-key'),
-                seat: event.target.options[selectedIndex].getAttribute('value'),
-            });
+            this.state.seat_id = event.target.options[selectedIndex].getAttribute('data-key');
+            this.state.seat = event.target.options[selectedIndex].getAttribute('value');
         }
         else if (event.target.name === 'emp_seat') { // беремо ід посади із <select>
             console.log(this.state.emp_seat);
             const selectedIndex = event.target.options.selectedIndex;
             this.setState({
-                emp_seat_id: event.target.options[selectedIndex].getAttribute('value'),
-                emp_seat: event.target.options[selectedIndex].getAttribute('data-key'),
+                emp_seat_id: event.target.options[selectedIndex].getAttribute('data-key'),
+                emp_seat: event.target.options[selectedIndex].getAttribute('value'),
             })
         }
         else if (event.target.name === 'new_emp') {
@@ -408,8 +404,8 @@ class UserTable extends React.Component {
                                     <option data-key={0} value=''>------------</option>
                                     {
                                       this.state.emp_seats_list.map(empSeat => {
-                                        return <option key={empSeat.id} data-key={empSeat.seat_id}
-                                          value={empSeat.id}>{empSeat.emp_seat}</option>;
+                                        return <option key={empSeat.id} data-key={empSeat.id}
+                                          value={empSeat.seat_id}>{empSeat.emp_seat}</option>;
                                       })
                                     }
                                 </Select>
