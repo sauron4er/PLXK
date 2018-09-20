@@ -105,7 +105,7 @@ class Archive extends React.Component {
         const { seat_id, my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width } = this.state;
 
         return(
-            <div className="row css_height p-2">
+            <div  className="css_height" >
                 {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
                 <Choose>
                     <When condition = {window.my_seats.length > 1}>
@@ -124,37 +124,37 @@ class Archive extends React.Component {
                     </Otherwise>
                 </Choose>
 
-                <div className="row mt-3" style={{height: '100%'}}>
-                    <div className="col-lg-4">
-                        <div>Створені мною документи</div>
-                        <MyTable
-                            rows={this.state.my_archive}
-                            columns={my_archive_columns}
-                            defaultSorting={[{ columnName: "date", direction: "desc" }]}
-                            colWidth={my_archive_col_width}
-                            onRowClick={this.onRowClick}
-                            filter
-                        />
+                <div className="row" style={{height: '100%'}}>
+                        <div className="col-lg-4">
+                            <div>Створені мною документи</div>
+                            <MyTable
+                                rows={this.state.my_archive}
+                                columns={my_archive_columns}
+                                defaultSorting={[{ columnName: "date", direction: "desc" }]}
+                                colWidth={my_archive_col_width}
+                                onRowClick={this.onRowClick}
+                                filter
+                            />
+                        </div>
+                        <div className="col-lg-4">
+                            <div>Документи, що були у роботі</div>
+                            <MyTable
+                                rows={this.state.work_archive}
+                                columns={work_archive_columns}
+                                defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                                colWidth={work_archive_col_width}
+                                onRowClick={this.onRowClick}
+                                filter
+                            />
+                        </div>
+                        <div className="col-lg-4" style={{height: '100%'}}>
+                            <DocInfo
+                                doc={this.state.row}
+                                my_seat_id={this.state.seat_id}
+                                closed={true}
+                            />
+                        </div>
                     </div>
-                    <div className="col-lg-4">
-                        <div>Документи, що були у роботі</div>
-                        <MyTable
-                            rows={this.state.work_archive}
-                            columns={work_archive_columns}
-                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
-                            colWidth={work_archive_col_width}
-                            onRowClick={this.onRowClick}
-                            filter
-                        />
-                    </div>
-                    <div className="col-lg-4" style={{height: '100%'}}>
-                        <DocInfo
-                            doc={this.state.row}
-                            my_seat_id={this.state.seat_id}
-                            closed={true}
-                        />
-                    </div>
-                </div>
             </div>
         )
     }

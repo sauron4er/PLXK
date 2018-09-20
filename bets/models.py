@@ -70,13 +70,3 @@ class Bet(models.Model):
 
     def is_editing(self):
         return datetime.now() < self.match.dt - timedelta(hours=1)
-
-
-class Rate(models.Model):
-    match = models.ForeignKey(Match, related_name='matches', blank=True, null=True, on_delete='CASCADE')
-    team1_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    team2_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    draw_rate = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-
-    def __str__(self):
-        return self.match.team1.name + ' - ' + self.match.team2.name

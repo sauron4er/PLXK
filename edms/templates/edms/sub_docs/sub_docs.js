@@ -121,7 +121,7 @@ class SubDocs extends React.Component {
         const { seat_id, sub_columns, sub_col_width, } = this.state;
 
         return(
-            <div className="row css_height p-2">
+            <div  className="css_height" >
                 {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
                 <Choose>
                         <When condition = {window.my_seats.length > 1}>
@@ -139,6 +139,7 @@ class SubDocs extends React.Component {
                             <div>{window.my_seats[0].seat}</div><br/>
                         </Otherwise>
                     </Choose>
+
                 <div className="row" style={{height: '100%'}}>
                     <div className="col-lg-4">
                         <div>Документи підлеглих у роботі</div>
