@@ -30,8 +30,8 @@ class Archive extends React.Component {
       ],
         my_archive_col_width: [
         { columnName: 'id', width: 70 },
-        { columnName: 'type', width: 310 },
-        { columnName: 'date', width: 100 },
+        { columnName: 'type' },
+        { columnName: 'date', width: 90 },
       ],
         work_archive_columns: [
         { name: 'id', title: '№' },
@@ -40,8 +40,8 @@ class Archive extends React.Component {
       ],
         work_archive_col_width: [
         { columnName: 'id', width: 70 },
-        { columnName: 'type', width: 180 },
-        { columnName: 'author', width: 230 },
+        { columnName: 'type', width: 150 },
+        { columnName: 'author' },
       ],
     };
 
@@ -105,7 +105,7 @@ class Archive extends React.Component {
         const { seat_id, my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width } = this.state;
 
         return(
-            <div>
+            <div className="row css_height p-2">
                 {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
                 <Choose>
                     <When condition = {window.my_seats.length > 1}>
@@ -123,7 +123,8 @@ class Archive extends React.Component {
                         <div>{window.my_seats[0].seat}</div><br/>
                     </Otherwise>
                 </Choose>
-                <div className="row">
+
+                <div className="row mt-3" style={{height: '100%'}}>
                     <div className="col-lg-4">
                         <div>Створені мною документи</div>
                         <MyTable
@@ -146,7 +147,7 @@ class Archive extends React.Component {
                             filter
                         />
                     </div>
-                    <div className="col-lg-4">
+                    <div className="col-lg-4" style={{height: '100%'}}>
                         <DocInfo
                             doc={this.state.row}
                             my_seat_id={this.state.seat_id}

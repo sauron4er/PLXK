@@ -8,7 +8,7 @@ import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import NewDep from './new_dep_form';
+import '../my_styles.css'
 import MyTable from '../my_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
@@ -23,18 +23,20 @@ class DepTable extends React.Component {
     super(props);
 
     this.onChange = this.onChange.bind(this);
+    this.newSubmit = this.newSubmit.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.onRowClick = this.onRowClick.bind(this);
-    this.addDep = this.addDep.bind(this);
   }
     state = {
         open: false,
+        new_open: false,
         id: '',                     // id відділу для форми
         dep: '',                    // назва відділу для форми
         index: '',                  // індекс обраного відділу у списку
         text: '',                   // опис відділу для форми
-        deps: window.deps,          // підтягуємо з django необхідні словники
+        new_dep: '',                // назва нового відділу
+        new_text: '',               // опис нового відділу
     };
 
     styles = {
@@ -50,8 +52,8 @@ class DepTable extends React.Component {
 
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
-        let new_deps = this.state.deps;   // Створюємо змінений масив deps, який призначимо this.deps у разі успіху post
-        this.state.index = getIndex(this.state.id, this.state.deps);  // шукаємо індекс запису, в якому треба внести зміни
+        let new_deps = this.props.deps;   // Копіюємо масив для мутації
+        this.state.index = getIndex(this.state.id, new_deps);  // шукаємо індекс запису, в якому треба внести зміни
 
         // якщо хоча б одна зміна відбулася:
         if (new_deps[this.state.index].dep !== this.state.dep ||
@@ -73,9 +75,7 @@ class DepTable extends React.Component {
                   'Content-Type': 'application/x-www-form-urlencoded'
                 },
             }).then((response) => {
-                this.setState({
-                    deps: new_deps,
-                })
+                this.props.changeLists('deps', new_deps);
                 // console.log('responsepost: ' + response);
             }).catch((error) => {
                 console.log('errorpost: ' + error);
@@ -86,6 +86,7 @@ class DepTable extends React.Component {
 
     handleDelete(e) {                   // робить відділ неактивним
         e.preventDefault();
+        const new_deps = this.props.deps.filter(dep => dep.id !== this.state.id);
 
         axios({
             method: 'post',
@@ -100,9 +101,7 @@ class DepTable extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then((response) => {
-            this.setState(prevState => ({
-                deps: prevState.deps.filter(dep => dep.id !== this.state.id)
-            }));
+            this.props.changeLists('deps', new_deps);
             // console.log('responsepost: ' + response);
         }).catch((error) => {
             console.log('errorpost: ' + error);
@@ -128,30 +127,84 @@ class DepTable extends React.Component {
         this.setState({ open: false });
     };
 
-    // Приймає з компоненту NewDepForm новий відділ і додає у state
-    addDep(new_dep) {
-        this.setState(prevState => ({
-            deps: [...prevState.deps, new_dep],
-        }));
+    newSubmit(e) {               // Оновлює запис у списку відділів
+        e.preventDefault();
+
+        // let new_deps = this.props.deps;
+
+        axios({
+            method: 'post',
+            url: '',
+            data: querystring.stringify({
+                new_dep: '',
+                name: this.state.dep,
+                text: this.state.text,
+                is_active: true,
+            }),
+        }).then((response) => {
+            // TODO розібратись, чому не оновлюється таблиця при доданні нового відділу/посади
+            // new_deps.push({
+            //     id: response.data,
+            //     dep: this.state.dep,
+            //     text: this.state.text
+            // });
+            // this.props.changeLists('deps', new_deps);
+            //
+            // this.setState({
+            //     new_open: false,
+            //     dep: '',
+            //     text: '',
+            // });
+            window.location.reload();
+            // console.log('responsepost: ' + response);
+        }).catch((error) => {
+            console.log('errorpost: ' + error);
+        });
     }
 
-    render() {
-        const { open } = this.state;    // для модального вікна
+    onOpenModalNew = () => {
+        this.setState({ new_open: true });
+    };
 
-        const deps_columns = [
-            { name: 'dep', title: 'Відділ' },
-        ];
+    onCloseModalNew = () => {
+        this.setState({ new_open: false });
+    };
+
+    render() {
+        const { open, new_open } = this.state;    // для модального вікна
 
         return (
             <div>
-                <NewDep addDep={this.addDep}/>
+                <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати відділ</button>
+
                 <MyTable
-                    rows={this.state.deps}
-                    columns={deps_columns}
+                    rows={this.props.deps}
+                    columns={[{ name: 'dep', title: 'Відділ' }]}
                     defaultSorting={[{ columnName: "dep", direction: "asc" }]}
                     onRowClick={this.onRowClick}
                     filter
                 />
+                {/* Модальне вікно для нового відділу*/}
+                <Modal open={new_open} onClose={this.onCloseModalNew} center>
+                    <br/>
+                    <p>Новий відділ</p>
+
+                    <Form onSubmit={this.newSubmit}>
+
+                        <label>Назва відділу:
+                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
+                        </label><br /><br />
+
+                        <label>Опис:
+                            <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
+                        </label>
+                        <br /><br />
+
+                        <Button className="float-sm-left" name="new_dep">Підтвердити</Button>
+                    </Form>
+                </Modal>
+
+                {/* Модальне вікно для змін у відділі*/}
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
                     <p>Внесіть зміни при необхідності:</p>
@@ -171,7 +224,9 @@ class DepTable extends React.Component {
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
                 </Modal>
+
             </div>
+
         )
     }
 }

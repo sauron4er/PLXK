@@ -120,7 +120,7 @@ class MyDocs extends React.Component {
     render() {
         const { my_seat_id } = this.state;
         return(
-            <div className="row">
+            <div className="row css_height">
                 <div className="col-lg-3">
                     {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
                     <Choose>

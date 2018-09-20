@@ -33,6 +33,19 @@ class NewDoc extends React.Component {
         checkedGate: '1',
         carry_out_items: [{id: 1, name: '', quantity: '', measurement: '' }],
         carry_out_text: '',
+
+        carry_out_columns: [
+            { name: 'id', title: '№' },
+            { name: 'name', title: 'Найменування' },
+            { name: 'quantity', title: 'К-сть' },
+            { name: 'measurement', title: 'Од. виміру' },
+        ],
+        carry_out_col_width: [
+            { columnName: 'id', width: 70 },
+            { columnName: 'name'},
+            { columnName: 'quantity', width: 80 },
+            { columnName: 'measurement', width: 110 },
+        ]
     };
 
     onChange(event) {
@@ -201,21 +214,12 @@ class NewDoc extends React.Component {
                                 <label>Список матеріальних цінностей:</label>
                                     <MyTable
                                         rows={this.state.carry_out_items}
-                                        columns={[
-                                            { name: 'id', title: '№' },
-                                            { name: 'name', title: 'Найменування' },
-                                            { name: 'quantity', title: 'К-сть' },
-                                            { name: 'measurement', title: 'Од. виміру' },
-                                        ]}
-                                        colWidth={[
-                                            { columnName: 'id', width: 60 },
-                                            { columnName: 'name', width: 290 },
-                                            { columnName: 'quantity', width: 80 },
-                                            { columnName: 'measurement', width: 110 },
-                                        ]}
+                                        columns={this.state.carry_out_columns}
+                                        colWidth={this.state.carry_out_col_width}
                                         edit
                                         // onRowClick={this.onRowClick}
                                         getData={this.getCarryOutItems}
+                                        paging
                                     />
                                  <br /> <br />
 

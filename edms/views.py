@@ -51,8 +51,8 @@ def edms_hr(request):
             'id': dep.pk,
             'dep': dep.name,
             'text': dep.text,
-            'chief': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
-            'chief_id': 0 if dep.manager is None else dep.manager.id,
+            # 'chief': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
+            # 'chief_id': 0 if dep.manager is None else dep.manager.id,
         } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
 
         seats = [{       # Список посад для форм на сторінці відділу кадрів
@@ -81,34 +81,10 @@ def edms_hr(request):
         } for emp in accounts.UserProfile.objects.only(
             'id', 'pip', 'on_vacation', 'acting').filter(is_active=True).order_by('pip')]
 
-        emps_seats = [{
-            'id': empSeat.pk,
-            'emp_seat': empSeat.seat.seat,
-            'emp_seat_id': empSeat.seat.pk,
-            'emp_id': empSeat.employee.pk,
-        } for empSeat in
-            Employee_Seat.objects.only('id', 'seat', 'employee').filter(is_active=True)]
-
-        new_dep_form = DepartmentForm()  # django форма додачі нового відділу
-        new_seat_form = SeatForm()  # django форма додачі нової посади
-
-        # users_with_profile = (user.user.id for user in accounts.UserProfile.objects.only(
-        #     'user__id').filter(user__is_active=True))  # список юзерів, для яких створено профіль
-        # new_users = [{  # список юзерів, для яких не створено профіль
-        #     'id': user.id,
-        #     'name': user.last_name + ' ' + user.first_name,
-        # } for user in accounts.User.objects.all().filter(
-        #     is_active=True).exclude(id__in=users_with_profile).order_by('last_name')]
-
         return render(request, 'edms/hr/hr.html', {
             'deps': deps,
             'seats': seats,
             'emps': emps,
-            'emps_seats': emps_seats,
-
-            'new_dep_form': new_dep_form,
-            'new_seat_form': new_seat_form,
-            # 'new_users': new_users,
         })
 
     elif request.method == 'POST':
@@ -438,6 +414,11 @@ def edms_archive(request):
         # Позбавляємось дублікатів:
         work_archive = list({item["id"]: item for item in work_archive_duplicates}.values())
 
+        # Додаємо поле "дата" у список документів у архіві
+        for doc in work_archive:
+            date = Document_Path.objects.filter(document_id=doc['id']).filter(mark_id=1).values_list('timestamp')[0][0]
+            doc['date'] = datetime.strftime(date, '%d.%m.%Y')
+
         return render(request, 'edms/archive/archive.html', {
             'my_seats': my_seats, 'my_archive': my_archive, 'work_archive': work_archive,
         })
@@ -477,7 +458,7 @@ def edms_get_sub_docs(request, pk):
                     'id': temp_doc.document_id,
                     'type': temp_doc.document.document_type.description,
                     'type_id': temp_doc.document.document_type_id,
-                    'date': convert_to_localtime(temp_doc.timestamp),
+                    'date': datetime.strftime(temp_doc.timestamp, '%d.%m.%Y'),
                     'author_seat_id': temp_doc.employee_seat_id,
                     'author': temp_doc.employee_seat.employee.pip,
                     'dep': temp_doc.employee_seat.seat.department.name,

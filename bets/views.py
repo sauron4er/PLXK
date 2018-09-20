@@ -147,3 +147,55 @@ def results(request):
     except EmptyPage:
         matches1
     return render(request, 'bets/results.html', {'bets': bets, 'ct': ct,'rt' : rt, 'players': players, 'matches' :matches1})
+
+
+def rate_results(request):
+    bets = Bet.objects.all().order_by('match__dt').filter(match__season=4)
+    # players = User.objects.filter(userprofile__is_bets=True)
+    players = User.objects.raw('select *, '
+                               '(select sum(b.rate_points) '
+                               'from bets_bet b '
+                               'left join bets_match bm on b.match_id = bm.id '
+                               'where b.player_id = u.id '
+                               'and bm.season_id = 4 '
+                               ') as points '
+                               'from auth_user u '
+                               'left join accounts_userprofile au on u.id = au.user_id '                                  
+                               'where au.is_bets >0')
+
+    matches1 = Match.objects.all().order_by('dt').filter(season=4)
+    td = datetime.now()
+    old_matches_count = Match.objects.all().order_by('dt').filter(season=4).filter(dt__lte=td).count()
+    rt = {}
+    for m in matches1:
+        rt[m.id] = {}
+        for p in players:
+            rt[m.id][p.id] = {}
+            rt[m.id][p.id]['name'] = p.userprofile.pip
+            rt[m.id][p.id]['id'] = p.id
+            rt[m.id][p.id]['p'] = 0
+            rt[m.id][p.id]['rt1'] = -1
+            rt[m.id][p.id]['rt2'] = -1
+            rt[m.id][p.id]['rt'] = " - : - "
+    for b in bets:
+        rt[b.match.id][b.player.id]['id'] = b.player.id
+        rt[b.match.id][b.player.id]['p'] = b.rate_points
+        rt[b.match.id][b.player.id]['rt1'] = b.team1_bet
+        rt[b.match.id][b.player.id]['rt2'] = b.team2_bet
+        rt[b.match.id][b.player.id]['rt'] = " - : - "
+        if  is_int(b.team1_bet) and is_int(b.team2_bet):
+            rt[b.match.id][b.player.id]['rt'] = "%s - %s" % (b.team1_bet , b.team2_bet)
+
+
+    paginator = Paginator(matches1, 16)
+    ct = matches1.count()
+    page = request.GET.get('page')
+
+    try:
+        # page = (old_matches_count // 16) + 1
+        matches1 = paginator.page(page)
+    except PageNotAnInteger:
+        matches1 = paginator.page((old_matches_count // 16) + 1)
+    except EmptyPage:
+        matches1
+    return render(request, 'bets/results.html', {'bets': bets, 'ct': ct,'rt' : rt, 'players': players, 'matches' :matches1})

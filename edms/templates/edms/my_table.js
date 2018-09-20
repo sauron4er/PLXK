@@ -3,8 +3,8 @@
 
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import {Grid, Table, TableHeaderRow, TableFilterRow, PagingPanel, TableEditRow, TableEditColumn,} from '@devexpress/dx-react-grid-material-ui';
-import { PagingState, SortingState, FilteringState, IntegratedSorting, IntegratedFiltering, IntegratedPaging, EditingState } from '@devexpress/dx-react-grid';
+import {Grid, Table, VirtualTable, TableHeaderRow, TableFilterRow, PagingPanel, TableEditRow, TableEditColumn, TableSelection} from '@devexpress/dx-react-grid-material-ui';
+import { PagingState, SortingState, FilteringState, IntegratedSorting, IntegratedFiltering, IntegratedPaging, EditingState, SelectionState, IntegratedSelection } from '@devexpress/dx-react-grid';
 
 import './my_styles.css'
 
@@ -39,7 +39,7 @@ class MyTable extends React.PureComponent {
     // призначає в state нові props при їх зміні.
     // додав цю функцію, бо в більшості випадків при рендері
     // props чомусь не призначалися в state (rows: this.props.rows - не спрацьовує)
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps, nextContext){
       if (nextProps.rows !== this.state.rows) {
         this.setState({ rows: nextProps.rows })
       }
@@ -80,34 +80,39 @@ class MyTable extends React.PureComponent {
           rows = rows.filter(row => !deletedSet.has(row.id));
         }
 
-        // змушений мутувати rows, бо немутабельна зміна відбувається
-        // асинхронно в кінці функції і в push_data внизу ідуть старі дані
-        // this.setState({ rows });
-        this.state.rows = rows;
+        this.setState({
+            rows: rows
+        });
 
         // відправляємо нові дані батьку
         // ОБЕРЕЖНО, таблиця кожен раз відправляється батьку вся,
         // якщо даних дуже багато - зміни треба робити поза таблицею.
         const push_data = this.props.getData;
-        push_data(this.state.rows);
-
-
+        push_data(rows);
     }
 
     // Стилі рядків
     ChooseStyle(row) {
+        // TODO переробити правильно. Створити змінну style, яку міняти у switch і повертати
         if (this.props.redRow) {
             switch(this.props.redRow){
                 case 'is_vacant':
                     return {
                         cursor: 'pointer',
+                        height: 30,
                         ...styles[row.is_vacant],
                     };
                 default:
-                    return {cursor: 'pointer',};
+                    return {
+                        cursor: 'pointer',
+                        height: 30,
+                    };
             }
         }
-        return {cursor: 'pointer', }
+        return {
+            cursor: 'pointer',
+            height: 30,
+        }
     }
 
     // внутрішні настройки рядка ReactGrid
@@ -120,6 +125,30 @@ class MyTable extends React.PureComponent {
       />
     );
 
+    CellComponent = props => (
+      <Table.Cell
+        {...props}
+        style={{
+          padding: 5,
+          margin: 0,
+          fontSize: '12px',
+          // textAlign: 'center',
+          height: '5px',
+          border: '1px solid #F0F0F0'
+        }}
+      />
+    );
+
+    HeaderCellComponent = props => (
+      <TableHeaderRow.Cell
+        {...props}
+        style={{
+          padding: '1',
+          fontSize: '11px',
+        }}
+      />
+    );
+
     // передача інфу про клікнутий рядок наверх
     onRowClick(row) {
         const onRowClick = this.props.onRowClick;
@@ -128,22 +157,68 @@ class MyTable extends React.PureComponent {
 
     render() {
         const { rows, editingRowIds, rowChanges, addedRows } = this.state;
+
+        // Таблиця бере висоту з this.props.height, якщо така є
+        const height = this.props.height && this.props.height !== null ? this.props.height : '100%';
+        const paper_height = !this.props.paging ? height : {};
+        const grid_height = !this.props.paging ? '100%' : {};
+        const virtual_height = this.props.height && this.props.height !== null ? this.props.height : 750;
+
+
         return (
-            <Paper className="mt-2 full_width">
-                <Grid className="full_width"
-                        rows={rows}
-                        columns={this.props.columns}
-                        getRowId={getRowId} >
+            <Paper className="mt-2 full_width" style={{height: {paper_height}}}>
+                <Grid
+                    rows={rows}
+                    columns={this.props.columns}
+                    getRowId={getRowId}
+                    style={{height: {grid_height}}} >
+
                     <SortingState
                         defaultSorting={this.props.defaultSorting}
                     />
-                    <PagingState
-                        pageSize={this.props.pageSize ? this.props.pageSize : 10}
+                    <If condition={this.props.paging}>
+                        <PagingState
+                            pageSize={this.props.pageSize ? this.props.pageSize : 8}
+                        />
+                    </If>
+                    <FilteringState defaultFilters={[]} />
+                    <EditingState
+                      onCommitChanges={this.commitChanges}
                     />
+                    <SelectionState/>
+
+
                     <IntegratedSorting />
-                    <IntegratedPaging />
-                    <Table rowComponent={this.TableRow} columnExtensions={this.props.colWidth} messages={{noData: 'Немає даних',}} />
-                    <TableHeaderRow showSortingControls />
+                    <If condition={this.props.paging}>
+                        <IntegratedPaging />
+                    </If>
+                    <IntegratedFiltering />
+                    <IntegratedSelection/>
+
+                    {/*Якщо в props нема paging - таблиця показується зі скроллом*/}
+
+                    <Choose>
+                        <When condition={this.props.paging}>
+                            <Table
+                                cellComponent={this.CellComponent}
+                                rowComponent={this.TableRow}
+                                columnExtensions={this.props.colWidth}
+                                messages={{noData: 'Немає даних',}}
+                            />
+                        </When>
+                        <Otherwise>
+                            {/*VirtualTable чомусь неправильно працює з редагуванням. Потрібно використовувати paging */}
+                            <VirtualTable
+                                cellComponent={this.CellComponent}
+                                rowComponent={this.TableRow}
+                                columnExtensions={this.props.colWidth}
+                                messages={{noData: 'Немає даних',}}
+                                height={virtual_height}
+                            />
+                        </Otherwise>
+                    </Choose>
+
+                    <TableHeaderRow cellComponent={this.HeaderCellComponent} showSortingControls messages={{sortingHint: 'Сортувати',}} />
 
                     {/*Якщо в props є edited - таблиця дає можливість редагувати рядки*/}
                     <If condition={this.props.edit}>
@@ -157,7 +232,7 @@ class MyTable extends React.PureComponent {
                             onCommitChanges={this.commitChanges}
                         />
                         <TableEditRow
-                            rowHeight={30}
+                            rowHeight={10}
                         />
                         <TableEditColumn
                             width={220}
@@ -174,21 +249,24 @@ class MyTable extends React.PureComponent {
                         />
                     </If>
 
-                    {/*Таблиця не дає можливість фільтрувати, якщо отримала noFilter в props */}
+                    {/*Якщо в props є filter - таблиця дає можливість фільтрувати*/}
                     <If condition={this.props.filter}>
-                        <FilteringState />
-                        <IntegratedFiltering />
-                        <TableFilterRow messages={{filterPlaceholder: 'Фільтр...',}} />
+                        <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр...',}} />
                     </If>
 
-                    <PagingPanel
-                        allowedPageSizes={[0, 5, 10, 20]}
-                        messages={{
-                            showAll: 'Усі',
-                            rowsPerPage: 'Записів на сторінці',
-                            info: 'Записи з {from} по {to} (всього {count})',
-                        }}
-                    />
+                    {/*Якщо в props є paging - таблиця показує панель пажинації*/}
+                    <If condition={this.props.paging}>
+                        <PagingPanel
+                            allowedPageSizes={[0, 5, 10, 20]}
+                            messages={{
+                                showAll: 'Усі',
+                                rowsPerPage: 'Записів на сторінці',
+                                info: 'Записи з {from} по {to} (всього {count})',
+                            }}
+                        />
+                    </If>
+
+
                 </Grid>
             </Paper>
         )

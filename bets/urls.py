@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^teams/$', views.teams, name='teams'),
     url(r'^matches/$', views.matches, name='matches'),
     url(r'^results/$', views.results, name='results'),
+    url(r'^rate_results/$', views.rate_results, name='rate_results'),
     url(r'^bets/$', views.bets, name='bets'),
     url(r'^new_bet/(?P<mid>\d+)$', views.new_bet, name='new_bet'),
     url(r'^new_result/(?P<mid>\d+)$', views.new_result, name='new_result'),

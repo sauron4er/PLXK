@@ -8,7 +8,6 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 
 import './doc_info.css';
 
-
 class DocInfo extends React.Component {
     constructor(props) {
         super(props);
@@ -260,7 +259,7 @@ class DocInfo extends React.Component {
 
         if (this.props.doc !== '' && this.props.doc.id !== 0 && this.props.my_seat_id == this.props.doc.emp_seat_id) {
             return (
-                <div className="css_main">
+                <div className="css_main">Обраний документ:
                     {/*Початкова інфа про документ:*/}
                     <div className="css_border bg-light p-2 mt-2 mr-1">
                         <div className="d-flex justify-content-between">

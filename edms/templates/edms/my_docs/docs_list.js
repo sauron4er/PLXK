@@ -3,6 +3,7 @@ import React from 'react';
 
 import MyTable from '../my_table';
 import DocInfo from '../my_docs/doc_info';
+import '../my_styles.css'
 
 
 class DocsList extends React.Component {
@@ -27,13 +28,13 @@ class DocsList extends React.Component {
       ],
       my_docs_col_width: [
         { columnName: 'id', width: 70 },
-        { columnName: 'type', width: 240 },
-        { columnName: 'date', width: 100 },
+        { columnName: 'type' },
+        { columnName: 'date', width: 90 },
       ],
       work_docs_col_width: [
         { columnName: 'id', width: 70 },
-        { columnName: 'type', width: 180 },
-        { columnName: 'author', width: 160 },
+        { columnName: 'type', width: 150 },
+        { columnName: 'author' },
       ],
 
       // seat_docs: [], // список документів, закріплених за конкретною посадою користувача
@@ -89,7 +90,7 @@ class DocsList extends React.Component {
         const { work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width } = this.state;
 
         return(
-            <div className="row">
+            <div className="row" style={{height: '100%'}} >
                 <div className="col-lg-5">
                     <div>Документи в черзі:
                         <MyTable
@@ -100,6 +101,7 @@ class DocsList extends React.Component {
                             onRowClick={this.onRowClick}
                             pageSize={5}
                             filter
+                            height={350}
                         />
                     </div><br/>
                     <div>Створені мною документи:
@@ -111,10 +113,11 @@ class DocsList extends React.Component {
                             onRowClick={this.onRowClick}
                             pageSize={5}
                             filter
+                            height={350}
                         />
                     </div>
                 </div>
-                <div className="col-lg-7">Обраний документ:
+                <div className="col-lg-7" style={{height: '100%'}}>
                     <DocInfo
                         doc={this.state.row}
                         my_seat_id={this.props.my_seat_id}

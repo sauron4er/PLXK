@@ -33,15 +33,15 @@ class SubDocs extends React.Component {
         { name: 'id', title: '№' },
         { name: 'type', title: 'Тип' },
         { name: 'author', title: 'Ініціатор' },
-        { name: 'dep', title: 'Відділ' },
+        // { name: 'dep', title: 'Відділ' },
         { name: 'date', title: 'Дата' },
       ],
         sub_col_width: [
         { columnName: 'id', width: 70 },
-        { columnName: 'type', width: 110 },
-        { columnName: 'author', width: 180 },
-        { columnName: 'dep', width: 110 },
-        { columnName: 'date', width: 100 },
+        { columnName: 'type', width: 120 },
+        { columnName: 'author' },
+        // { columnName: 'dep', width: 70 },
+        { columnName: 'date', width: 90 },
       ],
     };
 
@@ -121,7 +121,7 @@ class SubDocs extends React.Component {
         const { seat_id, sub_columns, sub_col_width, } = this.state;
 
         return(
-            <div>
+            <div className="row css_height p-2">
                 {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
                 <Choose>
                         <When condition = {window.my_seats.length > 1}>
@@ -139,7 +139,7 @@ class SubDocs extends React.Component {
                             <div>{window.my_seats[0].seat}</div><br/>
                         </Otherwise>
                     </Choose>
-                <div className="row">
+                <div className="row" style={{height: '100%'}}>
                     <div className="col-lg-4">
                         <div>Документи підлеглих у роботі</div>
                         <MyTable
@@ -162,7 +162,7 @@ class SubDocs extends React.Component {
                             filter
                         />
                     </div>
-                    <div className="col-lg-4">
+                    <div className="col-lg-4" style={{height: '100%'}}>
                         <DocInfo doc={this.state.row}
                                  my_seat_id={this.state.seat_id}
                                  closed={true}

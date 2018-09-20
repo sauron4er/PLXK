@@ -27,9 +27,6 @@ class UserTable extends React.Component {
     }
 
     state = {
-        emps: window.emps,
-        seats: window.seats,
-        emps_seats: window.emps_seats,
 
         open: false,
         index: '',                  // індекс обраного співробітника у списку
@@ -61,13 +58,6 @@ class UserTable extends React.Component {
 
     };
 
-    styles = {
-        checkbox_style: {
-            display:'flex',
-            justifyContent: 'space-between',
-        },
-    };
-
     onChange(event) {
         if (event.target.name === 'acting') { // беремо ід в.о. із <select>
             const selectedIndex = event.target.options.selectedIndex;
@@ -84,7 +74,6 @@ class UserTable extends React.Component {
             });
         }
         else if (event.target.name === 'emp_seat') { // беремо ід посади із <select>
-            console.log(this.state.emp_seat);
             const selectedIndex = event.target.options.selectedIndex;
             this.setState({
                 emp_seat_id: event.target.options[selectedIndex].getAttribute('value'),
@@ -207,7 +196,7 @@ class UserTable extends React.Component {
                                 <Select id='emp-select' name='new_emp' value={this.state.new_emp} onChange={this.onChange}>
                                     <option data-key={0} value='Не внесено'>------------</option>
                                     {
-                                        this.state.emps.map(emp => {
+                                        this.props.emps.map(emp => {
                                             return <option key={emp.id} data-key={emp.id}
                                             value={emp.emp}>{emp.emp}</option>;
                                         })
@@ -220,7 +209,6 @@ class UserTable extends React.Component {
                         </div>
                 })
             }
-            // console.log(error.response.data);
         });
     }
 
@@ -231,8 +219,8 @@ class UserTable extends React.Component {
         // переводимо в null не обрані поля
         let acting_id = this.state.acting_id == 0 ? null : this.state.acting_id;
 
-        let new_emps = this.state.emps;   // клонуємо масив для внесення змін
-        this.state.index = getIndex(this.state.id, this.state.emps);  // шукаємо індекс запису, в якому треба внести зміни
+        let new_emps = this.props.emps;   // клонуємо масив для внесення змін
+        this.state.index = getIndex(this.state.id, this.props.emps);  // шукаємо індекс запису, в якому треба внести зміни
 
         // якщо хоча б одна зміна відбулася:
 
@@ -256,9 +244,7 @@ class UserTable extends React.Component {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
             }).then((response) => {
-                this.setState({
-                    emps: new_emps,
-                })
+                this.props.changeLists('emps', new_emps);
             }).catch((error) => {
                 console.log('errorpost: ' + error);
             });
@@ -291,9 +277,7 @@ class UserTable extends React.Component {
                   'Content-Type': 'application/x-www-form-urlencoded'
                 },
             }).then((response) => {
-                this.setState(prevState => ({
-                    emps: prevState.emps.filter(emp => emp.id !== this.state.id)
-                }));
+                this.props.changeLists('emps', this.props.emps.filter(emp => emp.id !== this.state.id));
             }).catch((error) => {
                 console.log('errorpost: ' + error);
             });
@@ -341,7 +325,7 @@ class UserTable extends React.Component {
         const { open, acting, seat, emp_seat_id, new_emp_form } = this.state;
 
         const users_columns = [
-            { name: 'emp', title: 'П.І.Б.' },
+            { name: 'emp', title: 'Співробітники' },
         ];
 
         const acting_select = this.state.vacation_checked  // відображення селекту для в.о.
@@ -350,7 +334,7 @@ class UserTable extends React.Component {
             <Select id='acting-select' name='acting' value={acting} onChange={this.onChange}>
                 <option data-key={0} value=''>------------</option>
                 {
-                    this.state.emps.map(emp => {
+                    this.props.emps.map(emp => {
                         return <option key={emp.id} data-key={emp.id}
                             value={emp.emp}>{emp.emp}</option>;
                     })
@@ -363,10 +347,10 @@ class UserTable extends React.Component {
           </div>;
 
         return (
-            <div>
-                <div>Співробітники:</div>
+            <div style={{height: '100%'}}>
+                <button type="button" className="btn btn-outline-secondary mb-1 invisible">Співробітники:</button>
                 <MyTable
-                    rows={this.state.emps}
+                    rows={this.props.emps}
                     columns={users_columns}
                     defaultSorting={[{ columnName: "emp", direction: "asc" }]}
                     onRowClick={this.onRowClick}
@@ -391,7 +375,7 @@ class UserTable extends React.Component {
                                 <Select id='seat-select' name='seat' value={seat} onChange={this.onChange}>
                                     <option data-key={0} value='Не внесено'>------------</option>
                                     {
-                                      this.state.seats.map(seat => {
+                                      this.props.seats.map(seat => {
                                         return <option key={seat.id} data-key={seat.id}
                                           value={seat.seat}>{seat.seat}</option>;
                                       })
