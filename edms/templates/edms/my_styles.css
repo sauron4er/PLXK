@@ -15,3 +15,11 @@
     width: 98vw;
     position: absolute;
 }
+
+.css_height_100 {
+    height: 100%
+}
+
+.width_40vh {
+    width: 40vw
+}

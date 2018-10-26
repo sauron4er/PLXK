@@ -31,12 +31,40 @@ div.css_comment {
     padding: 5px;
     font-style: italic;
     white-space: pre-wrap;
-    -moz-box-shadow:    inset 0 0 3px #000000;
-    -webkit-box-shadow: inset 0 0 3px #000000;
-    box-shadow:         inset 0 0 3px #000000;
+    border: solid lightgray 1px;
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+div.css_resolution {
+    display: inline-block;
+    background-color: #ccffcc;
+    width: 100%;
+    padding: 5px;
+    white-space: pre-wrap;
+    border: solid lightgray 1px;
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+div.css_note_text {
+    white-space: pre-wrap;
+    background-color: white;
+    border: solid lightgray 1px;
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+    padding: 0 5px;
 }
 
 div.css_main {
     height:100%;
     overflow-y: scroll;
+}
+
+div.css_loader {
+    padding: 5vw;
+}
+
+.css_full_width {
+    width: 100%;
 }

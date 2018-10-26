@@ -5,7 +5,6 @@ import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
 import Textarea from 'react-validation/build/textarea';
-import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
@@ -36,6 +35,8 @@ class NewDoc extends React.Component {
         my_seats: window.my_seats,
         checkedGate: '1',
         carry_out_items: [{id: 1, name: '', quantity: '', measurement: '' }],
+        carry_out_text: '',
+        work_note_text: '',
 
         carry_out_columns: [
             { name: 'id', title: '№' },
@@ -50,13 +51,8 @@ class NewDoc extends React.Component {
             { columnName: 'measurement', width: 110 },
         ],
         open: false,
-        new_doc_type: 0,
-
-        chief_recipient_id: 0, // ід обраного шефа, кому передавати службову записку
-        chief_recipient: '', // ім’я обраного шефа, кому передавати службову записку
-        chiefs: '' // список шефів для вибору, кому передавати службову записку
+        doc_type: 0,
     };
-
 
     onChange(event) {
         if (event.target.name === 'my_seat') { // беремо ід посади із <select>
@@ -64,29 +60,21 @@ class NewDoc extends React.Component {
             this.state.my_seat_id = event.target.options[selectedIndex].getAttribute('value');
             this.setState({my_seat_id: event.target.options[selectedIndex].getAttribute('value')});
         }
-        else if (event.target.name === 'gate_radio') { // беремо ід посади із <select>
+        if (event.target.name === 'gate_radio') { // беремо ід посади із <select>
             this.setState({checkedGate: event.target.value});
-        }
-        else if (event.target.name === 'chief_recipient') { // беремо ід посади із <select>
-            const selectedIndex = event.target.options.selectedIndex;
-            this.setState({
-                chief_recipient_id: event.target.options[selectedIndex].getAttribute('data-key'),
-                chief_recipient: event.target.options[selectedIndex].getAttribute('value'),
-            });
         }
         else {
              this.setState({[event.target.name]:event.target.value});
         }
     }
 
-
     // Створює форму для модального вікна в залежності від того, яка кнопка була нажата
     getForm() {
-        switch (this.state.new_doc_type) {
+        switch (this.state.doc_type) {
             // 1 - звільнююча
             case 1:
                 return (
-                    <div className="width_40vh">
+                    <div>
                         <h4 className="modal-title">Нова звільнююча</h4>
                         <Form onSubmit={this.newFreeTime}>
                             <div className="modal-body">
@@ -102,7 +90,7 @@ class NewDoc extends React.Component {
                             </div>
 
                             <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                              <Button className="float-sm-left btn btn-outline-secondary mb-1" onClick={this.onCloseModal}>Підтвердити</Button>
                             </div>
                         </Form>
                     </div>
@@ -127,7 +115,7 @@ class NewDoc extends React.Component {
                                 <br />
 
                                 <label className="full_width">Мета виносу:
-                                    <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
+                                    <Textarea className="full_width" value={this.state.carry_out_text} name='carry_out_text' onChange={this.onChange} maxLength={4000}/>
                                 </label> <br />
 
                                 <label>Список матеріальних цінностей:</label>
@@ -145,54 +133,36 @@ class NewDoc extends React.Component {
                             </div>
 
                             <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                              <Button className="float-sm-left btn btn-outline-secondary mb-1" onClick={this.onCloseModal}>Підтвердити</Button>
                             </div>
                         </Form>
                     </div>
                 );
-            // 3 - службова записка
             case 3:
-                const { chief_recipient } = this.state;
                 return (
-                    <div className="width_40vh">
+                    <div>
                         <h4 className="modal-title">Нова службова записка</h4>
 
-                        <Form onSubmit={this.newWorkNote}>
+                        <Form onSubmit={this.newCarryOut}>
                             <div className="modal-body">
 
                                 <label>Кому:
                                     {/*Список безпосередніх начальників для вибору, кому адресовується службова записка*/}
-                                    <Select id='to_chief_select' name='chief_recipient' className="full_width" value={chief_recipient} onChange={this.onChange}>
-                                        <option data-key={0} value='Не внесено'>------------</option>
-                                        {
-                                          this.props.chiefs.map(chief => {
-                                            return <option key={chief.id} data-key={chief.id}
-                                              value={chief.name}>{chief.name + ', ' + chief.seat}</option>;
-                                          })
-                                        }
-                                    </Select>
                                 </label> <br />
 
                                 <label className="full_width">Зміст:
-                                    <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                                    <Textarea className="full_width" value={this.state.work_note_text} name='work_note_text' onChange={this.onChange} maxLength={4000}/>
                                 </label> <br />
 
                             </div>
 
                             <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                              <Button className="float-sm-left btn btn-outline-secondary mb-1" onClick={this.onCloseModal}>Підтвердити</Button>
                             </div>
                         </Form>
                     </div>
                 )
         }
-    }
-
-    // Отримує з таблиці новий список матеріалів
-    getCarryOutItems(carry_out_items) {
-        this.setState({
-            carry_out_items: carry_out_items,
-        })
     }
 
     // Додає нову звільнюючу перепустку
@@ -203,6 +173,7 @@ class NewDoc extends React.Component {
             method: 'post',
             url: '',
             data: querystring.stringify({
+                new_free_time: '',
                 document_type: 1,
                 free_day: this.state.date,
                 text: this.state.text,
@@ -211,15 +182,20 @@ class NewDoc extends React.Component {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
-        }).then((response) => {
+        }).then((response) => { // закриваємо і очищаємо модальне вікно, відправляємо дані нового документа в MyDocs
+            document.getElementById("modal_freetime_close").click();
+
             const today = new Date();
+            this.setState({
+                date:'',
+                text:'',
+            });
+
             this.props.addDoc(response.data, 'Звільнююча перепустка', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 1);
         })
           .catch(function (error) {
             console.log('errorpost: ' + error);
         });
-
-        this.onCloseModal();
     }
 
     // Додає новий матеріальний пропуск
@@ -232,25 +208,31 @@ class NewDoc extends React.Component {
                 method: 'post',
                 url: '',
                 data: querystring.stringify({
+                    new_carry_out: '',
                     document_type: 2,
                     employee_seat: this.props.my_seat_id,
                     carry_out_day: this.state.date,
                     gate: this.state.checkedGate,
                     carry_out_items: JSON.stringify(this.state.carry_out_items),
-                    text: this.state.text,
+                    text: this.state.carry_out_text,
                 }),
                 headers: {
                   'Content-Type': 'application/x-www-form-urlencoded'
                 },
-            }).then((response) => {
+            }).then((response) => { // закриваємо і очищаємо модальне вікно, відправляємо дані нового документа в MyDocs
+                document.getElementById("modal_carryout_close").click();
+
                 const today = new Date();
+                this.setState({
+                    date:'',
+                    carry_out_text:'',
+                });
+
                 this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 2);
             })
               .catch(function (error) {
                 console.log('errorpost: ' + error);
             });
-
-            this.onCloseModal();
         }
     }
 
@@ -258,31 +240,48 @@ class NewDoc extends React.Component {
     newWorkNote(e) {
         e.preventDefault();
 
-        axios({
-            method: 'post',
-            url: '',
-            data: querystring.stringify({
-                document_type: 3,
-                employee_seat: this.props.my_seat_id,
-                recipient: parseInt(this.state.chief_recipient_id),
-                text: this.state.text,
-            }),
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-        }).then((response) => {
-            const today = new Date();
-            this.props.addDoc(response.data, 'Службова записка', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 3);
-        }).catch(function (error) {
-            console.log('errorpost: ' + error);
-        });
+        // axios({
+        //     method: 'post',
+        //     url: '',
+        //     data: querystring.stringify({
+        //         new_carry_out: '',
+        //         document_type: 2,
+        //         employee_seat: this.props.my_seat_id,
+        //         carry_out_day: this.state.date,
+        //         gate: this.state.checkedGate,
+        //         carry_out_items: JSON.stringify(this.state.carry_out_items),
+        //         text: this.state.carry_out_text,
+        //     }),
+        //     headers: {
+        //       'Content-Type': 'application/x-www-form-urlencoded'
+        //     },
+        // }).then((response) => { // закриваємо і очищаємо модальне вікно, відправляємо дані нового документа в MyDocs
+        //     document.getElementById("modal_carryout_close").click();
+        //
+        //     const today = new Date();
+        //     this.setState({
+        //         date:'',
+        //         carry_out_text:'',
+        //     });
+        //
+        //     this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), this.props.my_seat_id, 2);
+        // })
+        //   .catch(function (error) {
+        //     console.log('errorpost: ' + error);
+        // });
 
-        this.onCloseModal();
+    }
+
+    // Отримує з таблиці новий список матеріалів
+    getCarryOutItems(carry_out_items) {
+        this.setState({
+            carry_out_items: carry_out_items,
+        })
     }
 
     onOpenModal(doc_type) {
         this.setState({
-            new_doc_type: doc_type,
+            doc_type: doc_type,
             open: true
         });
     };
@@ -290,9 +289,6 @@ class NewDoc extends React.Component {
     onCloseModal = () => {
         this.setState({
             open: false,
-            date: '',
-            text: '',
-            new_doc_type: '',
         });
     };
 
@@ -315,5 +311,9 @@ class NewDoc extends React.Component {
         )
     }
 }
+
+// NewDoc.propTypes = {
+//       addDoc: PropTypes.func
+//     };
 
 export default NewDoc;

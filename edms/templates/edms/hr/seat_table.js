@@ -8,6 +8,7 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
+import '../my_styles.css'
 import MyTable from '../my_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
@@ -51,8 +52,12 @@ class SeatTable extends React.Component {
         }
         else if (event.target.name === 'dep') { // беремо ід відділу із <select>
             const selectedIndex = event.target.options.selectedIndex;
-            this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
-            this.state.dep = event.target.options[selectedIndex].getAttribute('value');
+            this.setState({
+                dep_id: event.target.options[selectedIndex].getAttribute('data-key'),
+                dep: event.target.options[selectedIndex].getAttribute('value'),
+            });
+            // this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
+            // this.state.dep = event.target.options[selectedIndex].getAttribute('value');
         }
         else if (event.target.name === 'is_free_time_chief' || event.target.name === 'is_carry_out_chief') {
             this.setState({
@@ -235,8 +240,8 @@ class SeatTable extends React.Component {
         this.setState({
             open: false,
             seat: '',
-            dep_id: 0,
-            chief_id: 0,
+            dep: '',
+            chief: '',
             is_free_time_chief: false,
             is_carry_out_chief: false,
         });
@@ -260,7 +265,7 @@ class SeatTable extends React.Component {
 
         return (
             <div>
-                <div className="row">
+                <div className="row ml-1">
                     <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати посаду</button>
                     <div className="col">Вільні посади виділяються червоним</div>
                 </div>
@@ -280,8 +285,8 @@ class SeatTable extends React.Component {
 
                     <Form onSubmit={this.handleSubmit}>
 
-                        <label>Назва посади:
-                            <Input type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                        <label className='full_width'>Назва посади:
+                            <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
                             <div className="d-flex">
                                 <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
                                 <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
@@ -292,8 +297,8 @@ class SeatTable extends React.Component {
                             </div>
                         </label><br /><br />
 
-                        <label>Відділ:
-                            <Select id='dep-select' name='dep' value={dep} onChange={this.onChange}>
+                        <label className='full_width'>Відділ:
+                            <Select className='full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.deps.map(dep => {
@@ -305,8 +310,8 @@ class SeatTable extends React.Component {
                         </label>
                         <br /><br/>
 
-                        <label>Керівник:
-                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                        <label className='full_width'>Керівник:
+                            <Select className='full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.seats.map(seat => {
@@ -329,8 +334,8 @@ class SeatTable extends React.Component {
                     <p>Нова посада</p>
                     <Form onSubmit={this.handleNew}>
 
-                        <label>Назва посади:
-                            <Input type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                        <label className='full_width'>Назва посади:
+                            <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
                             <div className="d-flex">
                                 <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
                                 <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
@@ -341,8 +346,8 @@ class SeatTable extends React.Component {
                             </div>
                         </label><br /><br />
 
-                        <label>Відділ:
-                            <Select id='dep-select' name='dep' value={dep} onChange={this.onChange}>
+                        <label className='full_width'>Відділ:
+                            <Select className='full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.deps.map(dep => {
@@ -354,8 +359,8 @@ class SeatTable extends React.Component {
                         </label>
                         <br /><br/>
 
-                        <label>Керівник:
-                            <Select id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                        <label className='full_width'>Керівник:
+                            <Select className='full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.seats.map(seat => {
@@ -367,7 +372,7 @@ class SeatTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="float-sm-left">Підтвердити</Button>
+                        <Button className="btn btn-outline-secondary float-sm-left">Підтвердити</Button>
                     </Form>
                 </Modal>
             </div>

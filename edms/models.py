@@ -91,13 +91,14 @@ class Document_Flow(models.Model):
 
 class Mark_Demand(models.Model):
     document = models.ForeignKey(Document, related_name='documents_with_demand')
-    employee_control = models.ForeignKey(accounts.UserProfile, related_name='demands_controled')
-    employee_to_mark = models.ForeignKey(accounts.UserProfile, related_name='demands_to_do')
+    document_path = models.ForeignKey(Document_Path, related_name='path_demands', null=True)
+    comment = models.CharField(max_length=500, null=True, blank=True)
+    employee_seat_control = models.ForeignKey(Employee_Seat, related_name='demands_controled', null=True, blank=True)
+    recipient = models.ForeignKey(Employee_Seat, related_name='demands_employees')
     mark = models.ForeignKey(Mark, related_name='demands')
     result_document = models.ForeignKey(Document, related_name='result_document', null=True)
     deadline = models.DateTimeField(null=True)
     done = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(null=True)
 
 
 # Models, related to specific types of documents

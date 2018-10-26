@@ -77,6 +77,9 @@ class DocsList extends React.Component {
             case 8:
                 answer = 'Позначка "Ознайомлений" додана до документу №' + id + '.';
                 break;
+            case 10:
+                answer = 'Резолюції до документу №' + id + ' додано.';
+                break;
         }
         this.setState({
             row: {
@@ -90,7 +93,7 @@ class DocsList extends React.Component {
         const { work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width } = this.state;
 
         return(
-            <div className="row" style={{height: '100%'}} >
+            <div className="row css_height_100" >
                 <div className="col-lg-5">
                     <div>Документи в черзі:
                         <MyTable
@@ -108,7 +111,7 @@ class DocsList extends React.Component {
                         <MyTable
                             rows={this.props.my_docs}
                             columns={my_docs_columns}
-                            defaultSorting={[{ columnName: "date", direction: "desc" }]}
+                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
                             colWidth={my_docs_col_width}
                             onRowClick={this.onRowClick}
                             pageSize={5}
@@ -117,10 +120,11 @@ class DocsList extends React.Component {
                         />
                     </div>
                 </div>
-                <div className="col-lg-7" style={{height: '100%'}}>
+                <div className="col-lg-7 css_height_100">
                     <DocInfo
                         doc={this.state.row}
                         my_seat_id={this.props.my_seat_id}
+                        direct_subs={this.props.direct_subs}
                         removeRow={this.removeRow}
                         closed={false}
                     />

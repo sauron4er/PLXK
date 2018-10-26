@@ -26,7 +26,8 @@ class HR extends React.Component {
         if (name === 'deps') {
             this.setState({
                 deps: list,
-            })
+            });
+            console.log('asd')
         }
         else if (name === 'emps') {
             this.setState({
@@ -40,8 +41,7 @@ class HR extends React.Component {
         }
     }
 
-    notify = (message) => toast.error(
-        message,
+    notify = (message) => toast.error( message,
         {
             position: "bottom-right",
             autoClose: 5000,
@@ -70,7 +70,6 @@ class HR extends React.Component {
                 {/*Вспливаюче повідомлення*/}
                 <ToastContainer />
             </div>
-
         )
     }
 }

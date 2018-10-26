@@ -1,7 +1,8 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Document_Flow, Carry_Out_Items, Carry_Out_Info
+from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Document_Flow, Carry_Out_Items, \
+    Carry_Out_Info, Mark_Demand
 
 
 class UserProfileForm(forms.ModelForm):
@@ -75,3 +76,16 @@ class DocumentFlowForm(forms.ModelForm):  # Для деактивації зап
     class Meta:
         model = Document_Flow
         fields = {'is_active'}
+
+
+class ChiefMarkDemandForm(forms.ModelForm):
+    class Meta:
+        model = Mark_Demand
+        fields = {'document', 'recipient', 'mark'}
+
+
+class ResolutionForm(forms.ModelForm):
+    class Meta:
+        model = Mark_Demand
+        fields = {'document', 'document_path', 'comment', 'recipient', 'mark'}
+

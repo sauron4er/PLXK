@@ -4,30 +4,32 @@
 
 {% block content_fluid %}
 
-    {% block second_nav %}
-        <div class="breadcrumb my-1">
-            <nav class="navbar navbar-expand-sm navbar-light sticky-top " style="padding-top: 2px; padding-bottom: 1px">
-                <div class="container" >
-                    <ul class="navbar-nav">
-                        <li class="nav-item {% if request.resolver_match.url_name == "my_docs" %}active{% endif %}">
-                            <a class="nav-link" href="{% url 'edms:my_docs' %}">Мої документи</a>
-                        </li>
-                        <li class="nav-item {% if request.resolver_match.url_name == "archive" %}active{% endif %}">
-                            <a class="nav-link" href="{% url 'edms:archive' %}">Архів</a>
-                        </li>
-                        <li class="nav-item {% if request.resolver_match.url_name == "sub_docs" %}active{% endif %}">
-                          <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>
-                        </li>
-                        {% if user.userprofile.is_it_admin or user.userprofile.is_hr  %}
-                            <li class="nav-item {% if request.resolver_match.url_name == "hr" %}active{% endif %}">
-                                <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
+    <div style="position: sticky !important" >
+        {% block second_nav %}
+            <div class="breadcrumb my-1">
+                <nav class="navbar navbar-expand-sm navbar-light sticky-top " style="padding-top: 2px; padding-bottom: 1px">
+                    <div class="container" >
+                        <ul class="navbar-nav">
+                            <li class="nav-item {% if request.resolver_match.url_name == "my_docs" %}active{% endif %}">
+                                <a class="nav-link" href="{% url 'edms:my_docs' %}">Мої документи</a>
                             </li>
-                        {% endif %}
-                      </ul>
-              </div>
-            </nav>
-        </div>
-    {% endblock %}
+                            <li class="nav-item {% if request.resolver_match.url_name == "archive" %}active{% endif %}">
+                                <a class="nav-link" href="{% url 'edms:archive' %}">Архів</a>
+                            </li>
+                            <li class="nav-item {% if request.resolver_match.url_name == "sub_docs" %}active{% endif %}">
+                              <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>
+                            </li>
+                            {% if user.userprofile.is_it_admin or user.userprofile.is_hr  %}
+                                <li class="nav-item {% if request.resolver_match.url_name == "hr" %}active{% endif %}">
+                                    <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
+                                </li>
+                            {% endif %}
+                          </ul>
+                  </div>
+                </nav>
+            </div>
+        {% endblock %}
+    </div>
 
     {% block content %}
     {% endblock %}

@@ -140,7 +140,7 @@ class SubDocs extends React.Component {
                         </Otherwise>
                     </Choose>
 
-                <div className="row" style={{height: '100%'}}>
+                <div className="row css_height_100">
                     <div className="col-lg-4">
                         <div>Документи підлеглих у роботі</div>
                         <MyTable
@@ -163,10 +163,11 @@ class SubDocs extends React.Component {
                             filter
                         />
                     </div>
-                    <div className="col-lg-4" style={{height: '100%'}}>
-                        <DocInfo doc={this.state.row}
-                                 my_seat_id={this.state.seat_id}
-                                 closed={true}
+                    <div className="col-lg-4 css_height_100">
+                        <DocInfo
+                            doc={this.state.row}
+                            my_seat_id={this.state.seat_id}
+                            closed={true}
                         />
                     </div>
                 </div>

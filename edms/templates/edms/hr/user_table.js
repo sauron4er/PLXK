@@ -124,6 +124,7 @@ class UserTable extends React.Component {
                 seat: this.state.seat_id,
                 end_date: null,
                 is_active: true,
+                is_main: true,
             }),
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded'
@@ -381,7 +382,7 @@ class UserTable extends React.Component {
                                       })
                                     }
                                 </Select>
-                                <Button className="mt-1" onClick={this.newUserSeat.bind(this)}>{this.state.new_emp_seat_button_label}</Button>
+                                <Button className="btn btn-outline-secondary mt-1" onClick={this.newUserSeat.bind(this)}>{this.state.new_emp_seat_button_label}</Button>
                             </label>
                         </div>
                         <br/>
@@ -400,7 +401,7 @@ class UserTable extends React.Component {
 
                                 {new_emp_form}
 
-                                <Button className="mt-1" onClick={this.delEmpSeat.bind(this)}>{this.state.del_emp_seat_button_label}</Button>
+                                <Button className="btn btn-outline-secondary mt-1" onClick={this.delEmpSeat.bind(this)}>{this.state.del_emp_seat_button_label}</Button>
                             </label>
                         </div>
                         <br/>

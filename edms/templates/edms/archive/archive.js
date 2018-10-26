@@ -124,13 +124,13 @@ class Archive extends React.Component {
                     </Otherwise>
                 </Choose>
 
-                <div className="row" style={{height: '100%'}}>
+                <div className="row css_height_100">
                         <div className="col-lg-4">
                             <div>Створені мною документи</div>
                             <MyTable
                                 rows={this.state.my_archive}
                                 columns={my_archive_columns}
-                                defaultSorting={[{ columnName: "date", direction: "desc" }]}
+                                defaultSorting={[{ columnName: "id", direction: "asc" }]}
                                 colWidth={my_archive_col_width}
                                 onRowClick={this.onRowClick}
                                 filter
@@ -147,7 +147,7 @@ class Archive extends React.Component {
                                 filter
                             />
                         </div>
-                        <div className="col-lg-4" style={{height: '100%'}}>
+                        <div className="col-lg-4 css_height_100">
                             <DocInfo
                                 doc={this.state.row}
                                 my_seat_id={this.state.seat_id}

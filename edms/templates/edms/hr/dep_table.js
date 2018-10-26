@@ -28,6 +28,7 @@ class DepTable extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.onRowClick = this.onRowClick.bind(this);
   }
+
     state = {
         open: false,
         new_open: false,
@@ -76,6 +77,7 @@ class DepTable extends React.Component {
                 },
             }).then((response) => {
                 this.props.changeLists('deps', new_deps);
+                window.location.reload();
                 // console.log('responsepost: ' + response);
             }).catch((error) => {
                 console.log('errorpost: ' + error);
@@ -195,12 +197,12 @@ class DepTable extends React.Component {
                             <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
                         </label><br /><br />
 
-                        <label>Опис:
+                        <label className='full_width'>Опис:
                             <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
                         </label>
                         <br /><br />
 
-                        <Button className="float-sm-left" name="new_dep">Підтвердити</Button>
+                        <Button className="btn btn-outline-secondary float-sm-left" name="new_dep">Підтвердити</Button>
                     </Form>
                 </Modal>
 
