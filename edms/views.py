@@ -9,7 +9,7 @@ import pytz
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View, Archive_Docs_View, Document_Flow
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
-from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm, DocumentFlowForm
+from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
 
 
@@ -281,12 +281,12 @@ def edms_get_doc(request, pk):
 
         # В кого на черзі документ
         flow = [{
-            'id': flow.id,
-            'emp_seat_id': flow.employee_seat_id,
-            'emp': flow.employee_seat.employee.pip,
-            'seat': flow.employee_seat.seat.seat if flow.employee_seat.is_main else '(в.о.) ' + flow.employee_seat.seat.seat,
-            'expected_mark': flow.expected_mark_id,
-        } for flow in Document_Flow.objects.filter(document_id=doc.pk).filter(is_active=True)]
+            'id': demand.id,
+            'emp_seat_id': demand.recipient.id,
+            'emp': demand.recipient.employee.pip,
+            'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
+            'expected_mark': demand.mark_id,
+        } for demand in Mark_Demand.objects.filter(document_id=doc.pk).filter(is_active=True)]
 
         doc_info = {
             'path': path,
@@ -364,16 +364,16 @@ def edms_my_docs(request):
         } for doc in Active_Docs_View.objects.filter(employee_id=request.user.userprofile.id)]
 
         work_docs = [{  # Список документів, що очікують на реакцію користувача
-            'id': doc.document_id,
+            'id': doc.document.id,
             'type': doc.document.document_type.description,
             'type_id': doc.document.document_type_id,
             'flow_id': doc.id,
-            'emp_seat_id': doc.employee_seat_id,
-            'expected_mark': doc.expected_mark_id,
+            'emp_seat_id': doc.recipient.id,
+            'expected_mark': doc.mark.id,
             'author': doc.document.employee_seat.employee.pip,
             'author_seat_id': doc.document.employee_seat_id,
-        } for doc in Document_Flow.objects.
-            filter(employee_seat_id__employee_id=request.user.userprofile.id).  # документ призначений користувачу
+        } for doc in Mark_Demand.objects.
+            filter(recipient_id__employee_id=request.user.userprofile.id).  # документ призначений користувачу
             filter(is_active=True).order_by('document_id')]
 
         # Додаємо поле "дата" у список документів у черзі

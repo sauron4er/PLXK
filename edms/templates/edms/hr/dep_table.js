@@ -9,7 +9,7 @@ import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
 import '../my_styles.css'
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
 
@@ -179,7 +179,7 @@ class DepTable extends React.Component {
             <div>
                 <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати відділ</button>
 
-                <MyTable
+                <DxTable
                     rows={this.props.deps}
                     columns={[{ name: 'dep', title: 'Відділ' }]}
                     defaultSorting={[{ columnName: "dep", direction: "asc" }]}

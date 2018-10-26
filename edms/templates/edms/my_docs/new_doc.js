@@ -6,10 +6,11 @@ import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
 import Textarea from 'react-validation/build/textarea';
 import Select from 'react-validation/build/select';
+import { FileUploader } from 'devextreme-react';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import {required} from '../validations.js';
 import '../my_styles.css'
 
@@ -27,12 +28,13 @@ class NewDoc extends React.Component {
         this.newCarryOut = this.newCarryOut.bind(this);
         this.newWorkNote = this.newWorkNote.bind(this);
         this.getCarryOutItems = this.getCarryOutItems.bind(this);
-        this.getForm = this.getForm.bind(this);
+        this.makeForm = this.makeForm.bind(this);
     }
 
     state = {
         text: '',
         date: '',
+        file: [],
         my_seats: window.my_seats,
         checkedGate: '1',
         carry_out_items: [{id: 1, name: '', quantity: '', measurement: '' }],
@@ -57,7 +59,6 @@ class NewDoc extends React.Component {
         chiefs: '' // список шефів для вибору, кому передавати службову записку
     };
 
-
     onChange(event) {
         if (event.target.name === 'my_seat') { // беремо ід посади із <select>
             const selectedIndex = event.target.options.selectedIndex;
@@ -79,9 +80,8 @@ class NewDoc extends React.Component {
         }
     }
 
-
     // Створює форму для модального вікна в залежності від того, яка кнопка була нажата
-    getForm() {
+    makeForm() {
         switch (this.state.new_doc_type) {
             // 1 - звільнююча
             case 1:
@@ -131,7 +131,7 @@ class NewDoc extends React.Component {
                                 </label> <br />
 
                                 <label>Список матеріальних цінностей:</label>
-                                    <MyTable
+                                    <DxTable
                                         rows={this.state.carry_out_items}
                                         columns={this.state.carry_out_columns}
                                         colWidth={this.state.carry_out_col_width}
@@ -177,6 +177,12 @@ class NewDoc extends React.Component {
                                     <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
                                 </label> <br />
 
+                                <label className="full_width">Додати файл:
+                                    <FileUploader
+                                        onValueChanged={(e) => {this.setState({file: e.value})}}
+                                        uploadMode='useForm'
+                                    />
+                                </label> <br />
                             </div>
 
                             <div className="modal-footer">
@@ -308,7 +314,7 @@ class NewDoc extends React.Component {
 
                 {/*Модальне вікно для форм*/}
                 <Modal open={open} onClose={this.onCloseModal} center>
-                    {this.getForm()}
+                    {this.makeForm()}
                 </Modal>
 
             </div>

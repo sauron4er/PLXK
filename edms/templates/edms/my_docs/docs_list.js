@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import DocInfo from '../my_docs/doc_info';
 import '../my_styles.css'
 
@@ -96,7 +96,7 @@ class DocsList extends React.Component {
             <div className="row css_height_100" >
                 <div className="col-lg-5">
                     <div>Документи в черзі:
-                        <MyTable
+                        <DxTable
                             rows={this.props.work_docs}
                             columns={work_docs_columns}
                             defaultSorting={[{ columnName: "id", direction: "asc" }]}
@@ -108,7 +108,7 @@ class DocsList extends React.Component {
                         />
                     </div><br/>
                     <div>Створені мною документи:
-                        <MyTable
+                        <DxTable
                             rows={this.props.my_docs}
                             columns={my_docs_columns}
                             defaultSorting={[{ columnName: "id", direction: "asc" }]}

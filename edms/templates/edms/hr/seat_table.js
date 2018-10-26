@@ -9,7 +9,7 @@ import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
 import '../my_styles.css'
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import {required} from '../validations.js';
 import {getIndex} from '../my_extras.js';
 
@@ -269,7 +269,7 @@ class SeatTable extends React.Component {
                     <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати посаду</button>
                     <div className="col">Вільні посади виділяються червоним</div>
                 </div>
-                <MyTable
+                <DxTable
                     rows={this.props.seats}
                     columns={seats_columns}
                     defaultSorting={[{ columnName: "seat", direction: "asc" }]}

@@ -98,7 +98,7 @@ class Mark_Demand(models.Model):
     mark = models.ForeignKey(Mark, related_name='demands')
     result_document = models.ForeignKey(Document, related_name='result_document', null=True)
     deadline = models.DateTimeField(null=True)
-    done = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
 
 # Models, related to specific types of documents

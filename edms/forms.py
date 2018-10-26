@@ -72,12 +72,6 @@ class DocumentPathForm(forms.ModelForm):
         fields = {'document', 'employee_seat', 'mark', 'comment'}
 
 
-class DocumentFlowForm(forms.ModelForm):  # Для деактивації записів у flow
-    class Meta:
-        model = Document_Flow
-        fields = {'is_active'}
-
-
 class ChiefMarkDemandForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand

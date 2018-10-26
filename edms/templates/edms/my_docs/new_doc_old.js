@@ -8,7 +8,7 @@ import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import {required} from '../validations.js';
 import '../my_styles.css'
 
@@ -119,7 +119,7 @@ class NewDoc extends React.Component {
                                 </label> <br />
 
                                 <label>Список матеріальних цінностей:</label>
-                                    <MyTable
+                                    <DxTable
                                         rows={this.state.carry_out_items}
                                         columns={this.state.carry_out_columns}
                                         colWidth={this.state.carry_out_col_width}

@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import DocInfo from '../my_docs/doc_info';
 
 
@@ -127,7 +127,7 @@ class Archive extends React.Component {
                 <div className="row css_height_100">
                         <div className="col-lg-4">
                             <div>Створені мною документи</div>
-                            <MyTable
+                            <DxTable
                                 rows={this.state.my_archive}
                                 columns={my_archive_columns}
                                 defaultSorting={[{ columnName: "id", direction: "asc" }]}
@@ -138,7 +138,7 @@ class Archive extends React.Component {
                         </div>
                         <div className="col-lg-4">
                             <div>Документи, що були у роботі</div>
-                            <MyTable
+                            <DxTable
                                 rows={this.state.work_archive}
                                 columns={work_archive_columns}
                                 defaultSorting={[{ columnName: "id", direction: "asc" }]}

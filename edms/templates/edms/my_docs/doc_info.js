@@ -2,8 +2,7 @@
 import React from 'react';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
-import Form from 'react-validation/build/form';
-import Button from 'react-validation/build/button';
+import { FileUploader } from 'devextreme-react';
 import { ToastContainer, toast } from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
 

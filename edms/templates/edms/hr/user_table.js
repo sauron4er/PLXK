@@ -8,7 +8,7 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import {getIndex} from '../my_extras.js';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -350,7 +350,7 @@ class UserTable extends React.Component {
         return (
             <div style={{height: '100%'}}>
                 <button type="button" className="btn btn-outline-secondary mb-1 invisible">Співробітники:</button>
-                <MyTable
+                <DxTable
                     rows={this.props.emps}
                     columns={users_columns}
                     defaultSorting={[{ columnName: "emp", direction: "asc" }]}

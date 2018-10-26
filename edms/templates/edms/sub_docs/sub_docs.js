@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
-import MyTable from '../my_table';
+import DxTable from '../dx_table';
 import DocInfo from '../my_docs/doc_info';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -143,7 +143,7 @@ class SubDocs extends React.Component {
                 <div className="row css_height_100">
                     <div className="col-lg-4">
                         <div>Документи підлеглих у роботі</div>
-                        <MyTable
+                        <DxTable
                             rows={this.state.sub_docs}
                             columns={sub_columns}
                             defaultSorting={[{ columnName: "id", direction: "desc" }]}
@@ -154,7 +154,7 @@ class SubDocs extends React.Component {
                     </div>
                     <div className="col-lg-4">
                         <div>Архів документів підлеглих</div>
-                        <MyTable
+                        <DxTable
                             rows={this.state.sub_archive}
                             columns={sub_columns}
                             defaultSorting={[{ columnName: "id", direction: "desc" }]}
