@@ -1,0 +1,18 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}EDMS - Адміністрування{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+    <script>
+        window.my_seats = {{ my_seats|safe }};
+        window.my_id = {{ request.user.id }};
+        window.seats = {{ seats|safe }};
+        window.marks = {{ marks|safe }};
+    </script>
+
+    <div class="container-fluid px-3" id="administration"></div>
+
+    {% render_bundle 'administration' %} <!-- Renders js files -->
+
+{% endblock %}

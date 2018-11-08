@@ -2,7 +2,6 @@
 import React from 'react';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
-import { FileUploader } from 'devextreme-react';
 import { ToastContainer, toast } from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -14,16 +13,6 @@ import './doc_info.css';
 import '../loader_style.css';
 
 class DocInfo extends React.Component {
-    constructor(props) {
-        super(props);
-        this.newMark = this.newMark.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.getInfo = this.getInfo.bind(this);
-        this.arrangeRenderInfo = this.arrangeRenderInfo.bind(this);
-        this.Resolutions = this.Resolutions.bind(this);
-        this.addResolution = this.addResolution.bind(this);
-        this.postResolutions = this.postResolutions.bind(this);
-    }
 
     state = {
         comment: '',
@@ -42,6 +31,7 @@ class DocInfo extends React.Component {
         render_flow: '',
         render_path: '',
 
+        direct_subs: [],
         sub: '', // для select підлеглих для резолюції
         sub_id: '0',
         resolution_text: '',
@@ -51,15 +41,21 @@ class DocInfo extends React.Component {
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
         if (this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0 ) {
             this.getInfo(this.props.doc);
         }
+        // при отриманні інфи про документ з бд (змінюється path) - підготовка інфи до рендеру
         if (this.state.path !== prevState.path) {
             this.arrangeRenderInfo();
         }
+        // при зміні списку підлеглих у батьківському компоненті - зміна списку підлеглих для резолюцій
+        if (this.props.direct_subs !== prevProps.direct_subs) {
+            this.setState({direct_subs: this.props.direct_subs});
+        }
     }
 
-    onChange(event) {
+    onChange = (event) => {
         if (event.target.name === 'sub') { // беремо ід керівника із <select>
             const selectedIndex = event.target.options.selectedIndex;
             this.setState({
@@ -70,7 +66,7 @@ class DocInfo extends React.Component {
         else {
             this.setState({[event.target.name]:event.target.value});
         }
-    }
+    };
 
     // Спливаюче повідомлення
     notify = (message) => toast.error( message,
@@ -85,7 +81,7 @@ class DocInfo extends React.Component {
     );
 
     // функція для отримання з бази докладної інфи про документ
-    getInfo(doc) {
+    getInfo = (doc) => {
         this.setState({
             ready_for_render: false,
         });
@@ -130,10 +126,10 @@ class DocInfo extends React.Component {
         });
 
         return 0;
-    }
+    };
 
     // опрацьовуємо нажаття кнопок реагування
-    newMark(e, mark_id) {
+    newMark = (e, mark_id) => {
         e.preventDefault();
         const doc_id = this.props.doc.id;
         const author_id = this.props.doc.author_seat_id;
@@ -167,7 +163,7 @@ class DocInfo extends React.Component {
     };
 
     // постить резолюції у бд
-    postResolutions() {
+    postResolutions = () => {
         if (this.state.resolutions.length > 0) {
             const doc_id = this.props.doc.id;
             const author_id = this.props.doc.author_seat_id;
@@ -195,34 +191,40 @@ class DocInfo extends React.Component {
                 console.log('errorpost: ' + error);
             });
         }
-    }
+    };
 
     // додає резолюцію у список резолюцій
-    addResolution() {
-        if (this.state.sub_id === '0' || this.state.resolution_text === '') {
-            this.notify('Оберіть адресата та введіть текст резолюції.')
-        }
-        else {
+    addResolution = () => {
+        if (this.state.sub_id !== '0' && this.state.resolution_text !== '') {
             const new_resolution = {
               recipient_id: this.state.sub_id,
               sub: this.state.sub,
               comment: this.state.resolution_text,
             };
             this.setState(prevState => ({
-              resolutions: [...prevState.resolutions, new_resolution]
-            }));
-            this.setState({
+                resolutions: [...prevState.resolutions, new_resolution],
                 sub_id: '0',
                 sub: '',
                 resolution_text: '',
-            })
+            }));
+
         }
-    }
+        else {
+            this.notify('Оберіть адресата та введіть текст резолюції.')
+        }
+    };
+
+    // видаляє резолюцію зі списку
+    delResolution = (index) => {
+        let resolutions = this.state.resolutions;
+        resolutions.splice(index, 1);
+        this.setState({resolutions: resolutions});
+    };
 
     // компонент для створення резолюцій на документ
-    Resolutions(require) {
+    Resolutions = (require) => {
         // TODO розібратись, чому в цьому компоненті не працюють Select i Textarea з react-validation
-        if (this.props.direct_subs.length > 0) {
+        if (this.state.direct_subs.length > 0) {
             if (require === 'button') {
                 return <button key={10} type="button" className="btn btn-secondary mr-1 mb-1" data-toggle="collapse"
                     data-target="#collapseExample" aria-expanded="false"
@@ -238,10 +240,12 @@ class DocInfo extends React.Component {
                         <select className='full_width' id='sub-select' name='sub' value={sub} onChange={this.onChange}>
                             <option data-key={0} value='Не внесено'>------------</option>
                             {
-                              this.props.direct_subs.map(sub => {
-                                return <option key={sub.id} data-key={sub.id}
-                                  value={sub.name}>{sub.name}, {sub.seat}</option>;
-                              })
+                                this.state.direct_subs.map(sub => {
+                                    if (sub.is_active === true) {
+                                        return <option key={sub.id} data-key={sub.id}
+                                            value={sub.name}>{sub.name}, {sub.seat}</option>;
+                                    }
+                                })
                             }
                         </select>
                         <label className='css_full_width'>Текст:
@@ -254,24 +258,26 @@ class DocInfo extends React.Component {
                                {
                                    this.state.resolutions.map((res, index) => {
                                        return <li key={index}>
-                                           <div className="font-italic">{res.sub}</div>
-                                           <div>{res.comment}</div>
+                                                <button type="button" className="close" aria-label="Close" onClick={this.delResolution.bind(undefined, index)}>
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <div className="font-italic">{res.sub}</div>
+                                                <div>{res.comment}</div>
+                                                <hr/>
                                         </li>;
                                     })
                                 }
                             </ol>
                             <button className="btn btn-success" onClick={this.postResolutions}>Відправити</button>
                         </If>
-
-
                     </div>
                 </div>
             }
         }
-    }
+    };
 
     // Розбирається, яку інфу і які кнопки показувати
-    arrangeRenderInfo() {
+    arrangeRenderInfo = () => {
         if (this.props.doc !== '' && this.props.doc.id !== 0 && this.props.my_seat_id == this.props.doc.emp_seat_id) {    // Якщо рядок вибрано і посада не змінилася:
 
             // Інфа, що є тільки у деяких видів документів (switch-перебір по типу документа):
@@ -479,7 +485,7 @@ class DocInfo extends React.Component {
             })
         }
         return 0;
-    }
+    };
 
     render() {
         const {type_info, render_flow, render_path, buttons } = this.state;

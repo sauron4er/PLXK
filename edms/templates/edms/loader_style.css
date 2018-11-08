@@ -1,5 +1,9 @@
 /* ALL LOADERS */
 
+div.css_loader {
+    padding: 5vw;
+}
+
 .loader{
   width: 90px;
   height: 90px;

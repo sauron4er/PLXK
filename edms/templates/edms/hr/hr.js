@@ -11,10 +11,6 @@ import '../my_styles.css'
 
 
 class HR extends React.Component {
-    constructor(props) {
-        super(props);
-        this.changeLists = this.changeLists.bind(this);
-    }
 
     state = {
         emps: window.emps,
@@ -22,7 +18,7 @@ class HR extends React.Component {
         deps: window.deps,
     };
 
-    changeLists(name, list) {
+    changeLists = (name, list) => {
         if (name === 'deps') {
             this.setState({
                 deps: list,
@@ -39,7 +35,7 @@ class HR extends React.Component {
                 seats: list
             })
         }
-    }
+    };
 
     notify = (message) => toast.error( message,
         {
@@ -55,7 +51,7 @@ class HR extends React.Component {
     render() {
         return(
             <div>
-                <div className="row css_height">
+                <div className="row css_main_div">
                     <div className="col-lg-4 p-2">
                         <UserTable emps={this.state.emps} seats={this.state.seats} changeLists={this.changeLists} message={this.notify}/>
                     </div>

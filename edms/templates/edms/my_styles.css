@@ -10,16 +10,28 @@
     /*height: 100vh;*/
 }
 
-.css_height {
+.css_main_div {
     height: 80%;
     width: 98vw;
     position: absolute;
 }
 
 .css_height_100 {
-    height: 100%
+    height: 100%;
 }
 
 .width_40vh {
     width: 40vw
+}
+
+.css_table_font {
+    font-size: 0.8rem;
+}
+
+.css_dx_table:hover {
+    background-color: #f0f0f0;
+}
+
+.css_dx_table:focus {
+    background-color: #e6e6e6;
 }

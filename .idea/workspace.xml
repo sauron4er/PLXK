@@ -2,28 +2,47 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0024_auto_20181026_1038.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0025_document_type_creator_id.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0026_auto_20181101_0848.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0027_document_type_is_active.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0028_auto_20181102_1009.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0029_auto_20181107_1119.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/administration/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/administration/administration.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/dx_table_styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/seat_chooser.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/index/administration_index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/dx_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/dx_table.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/loader_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/loader_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_old.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_old.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/dx_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_old.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-3d55c836da9b32a06a33.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-3d55c836da9b32a06a33.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-3d55c836da9b32a06a33.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-3d55c836da9b32a06a33.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/index/my_docs_index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/index/my_docs_index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-74081d8e85b7b88f9ea3.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-74081d8e85b7b88f9ea3.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-74081d8e85b7b88f9ea3.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-74081d8e85b7b88f9ea3.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
@@ -91,15 +110,6 @@
               </entry>
             </file>
             <file pinned="false" current-in-tab="false">
-              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_free_time_periods">
-                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-                  <state>
-                    <filtering enabled="true" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file pinned="false" current-in-tab="false">
               <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_seat">
                 <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
                   <state>
@@ -113,9 +123,10 @@
             <file pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/edms/forms.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="527">
-                    <caret line="72" lean-forward="true" selection-start-line="72" selection-end-line="72" />
+                  <state relative-caret-position="443">
+                    <caret line="56" column="34" lean-forward="true" selection-start-line="56" selection-start-column="34" selection-end-line="56" selection-end-column="34" />
                     <folding>
+                      <element signature="e#0#24#0" expanded="true" />
                       <element signature="e#263#374#0" />
                       <element signature="e#422#550#0" />
                       <element signature="e#596#855#0" />
@@ -124,6 +135,10 @@
                       <element signature="e#1575#1662#0" />
                       <element signature="e#1711#1824#0" />
                       <element signature="e#1872#1969#0" />
+                      <element signature="e#2017#2124#0" />
+                      <element signature="e#2175#2265#0" />
+                      <element signature="e#2311#2429#0" />
+                      <marker date="1541583236028" expanded="true" signature="1433:1704" ph="..." />
                     </folding>
                   </state>
                 </provider>
@@ -132,8 +147,17 @@
             <file pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/edms/models.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="462">
-                    <caret line="102" lean-forward="true" selection-start-line="102" selection-end-line="102" />
+                  <state relative-caret-position="357">
+                    <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file pinned="false" current-in-tab="false">
+              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
+                <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+                  <state>
+                    <filtering enabled="true" />
                   </state>
                 </provider>
               </entry>
@@ -157,7 +181,7 @@
               </entry>
             </file>
             <file pinned="false" current-in-tab="false">
-              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_path">
+              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type">
                 <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
                   <state>
                     <filtering enabled="true" />
@@ -166,7 +190,7 @@
               </entry>
             </file>
             <file pinned="false" current-in-tab="false">
-              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark">
+              <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_path">
                 <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
                   <state>
                     <filtering enabled="true" />
@@ -183,61 +207,69 @@
     <session id="705406964">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
-          <entry key="project.open.time.10" value="1" />
+          <entry key="project.closed" value="6" />
+          <entry key="project.open.time.10" value="2" />
           <entry key="project.open.time.14" value="1" />
-          <entry key="project.open.time.15" value="1" />
+          <entry key="project.open.time.15" value="2" />
+          <entry key="project.open.time.16" value="2" />
           <entry key="project.open.time.18" value="1" />
-          <entry key="project.opened" value="4" />
+          <entry key="project.opened" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="cell" value="38" />
-          <entry key="css" value="79" />
-          <entry key="js" value="4761" />
-          <entry key="py" value="1500" />
-          <entry key="py@PLXK" value="54" />
+          <entry key="cell" value="81" />
+          <entry key="css" value="201" />
+          <entry key="html" value="166" />
+          <entry key="js" value="12517" />
+          <entry key="py" value="3246" />
+          <entry key="py@PLXK" value="105" />
           <entry key="sql" value="13" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="CSS" value="79" />
-          <entry key="CommandLine" value="53" />
-          <entry key="JavaScript" value="4761" />
-          <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="1500" />
+          <entry key="CSS" value="201" />
+          <entry key="CommandLine" value="100" />
+          <entry key="HTML" value="166" />
+          <entry key="JavaScript" value="12517" />
+          <entry key="PLAIN_TEXT" value="5" />
+          <entry key="Python" value="3246" />
           <entry key="SQL" value="13" />
-          <entry key="Scratch" value="38" />
+          <entry key="Scratch" value="81" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="accounts_userprofile" value="2" />
-          <entry key="css" value="6" />
-          <entry key="edms_carry_out_info" value="2" />
-          <entry key="edms_carry_out_items" value="2" />
-          <entry key="edms_document" value="4" />
+          <entry key="accounts_userprofile" value="7" />
+          <entry key="css" value="24" />
+          <entry key="edms_carry_out_info" value="3" />
+          <entry key="edms_carry_out_items" value="3" />
+          <entry key="edms_document" value="5" />
           <entry key="edms_document_flow" value="6" />
-          <entry key="edms_document_path" value="6" />
-          <entry key="edms_employee_seat" value="7" />
+          <entry key="edms_document_path" value="8" />
+          <entry key="edms_document_permission" value="1" />
+          <entry key="edms_document_type" value="5" />
+          <entry key="edms_document_type_permission" value="5" />
+          <entry key="edms_employee_seat" value="8" />
           <entry key="edms_free_time_periods" value="5" />
-          <entry key="edms_mark" value="8" />
-          <entry key="edms_mark_demand" value="4" />
-          <entry key="edms_seat" value="6" />
-          <entry key="js" value="40" />
-          <entry key="json" value="3" />
-          <entry key="py" value="16" />
+          <entry key="edms_mark" value="12" />
+          <entry key="edms_mark_demand" value="5" />
+          <entry key="edms_seat" value="7" />
+          <entry key="html" value="19" />
+          <entry key="js" value="143" />
+          <entry key="json" value="4" />
+          <entry key="py" value="24" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CSS" value="6" />
-          <entry key="Database Element" value="52" />
-          <entry key="JSON" value="3" />
-          <entry key="JavaScript" value="40" />
-          <entry key="Python" value="16" />
+          <entry key="CSS" value="24" />
+          <entry key="Database Element" value="80" />
+          <entry key="HTML" value="19" />
+          <entry key="JSON" value="4" />
+          <entry key="JavaScript" value="143" />
+          <entry key="Python" value="24" />
         </counts>
       </usages-collector>
     </session>
@@ -247,122 +279,191 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edms/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#41#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edms/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="347" column="26" selection-start-line="347" selection-start-column="26" selection-end-line="347" selection-end-column="26" />
+            <state relative-caret-position="323">
+              <caret line="166" column="32" lean-forward="true" selection-start-line="166" selection-start-column="32" selection-end-line="166" selection-end-column="32" />
               <folding>
                 <element signature="e#0#64#0" expanded="true" />
-                <element signature="e#854#1014#0" />
-                <element signature="e#1126#1716#0" />
-                <element signature="e#1834#2761#0" />
-                <element signature="e#2827#2939#0" />
-                <element signature="e#3003#5878#0" />
-                <element signature="e#3040#5134#0" />
-                <element signature="e#5180#5841#0" />
-                <element signature="e#5982#6553#0" />
-                <element signature="e#6659#6894#0" />
-                <element signature="e#6995#7209#0" />
-                <element signature="e#7318#8997#0" />
-                <element signature="e#9076#9529#0" />
-                <element signature="e#9605#10057#0" />
-                <element signature="e#10138#10642#0" />
-                <element signature="e#10715#14396#0" />
-                <element signature="e#10841#11275#0" />
-                <element signature="e#11500#11933#0" />
-                <element signature="e#12606#12952#0" />
-                <element signature="e#13028#13766#0" />
-                <element signature="e#13909#14086#0" />
-                <element signature="e#14176#14344#0" />
-                <element signature="e#14466#19390#0" />
-                <element signature="e#16690#17247#0" />
-                <element signature="e#17358#18566#0" />
-                <element signature="e#18681#19353#0" />
-                <element signature="e#19459#21598#0" />
-                <element signature="e#21668#22278#0" />
-                <element signature="e#22356#23736#0" />
-                <element signature="e#23802#24640#0" />
-                <element signature="e#24712#25617#0" />
+                <element signature="e#881#1041#0" />
+                <element signature="e#1153#1743#0" />
+                <element signature="e#1318#1713#0" />
+                <element signature="e#1349#1687#0" />
+                <element signature="e#1599#1687#0" />
+                <element signature="e#1861#2882#0" />
+                <element signature="e#2026#2317#0" />
+                <element signature="e#2027#2195#0" />
+                <element signature="e#2398#2852#0" />
+                <element signature="e#2605#2825#0" />
+                <element signature="e#2650#2825#0" />
+                <element signature="e#2669#2824#0" />
+                <element signature="e#2974#3274#0" />
+                <element signature="e#2985#3254#0" />
+                <element signature="e#2986#3166#0" />
+                <element signature="e#3340#3452#0" />
+                <element signature="e#3516#6358#0" />
+                <element signature="e#3560#3987#0" />
+                <element signature="e#3561#3907#0" />
+                <element signature="e#3720#3825#0" />
+                <element signature="e#4006#4604#0" />
+                <element signature="e#4821#4985#0" />
+                <element signature="e#5002#5470#0" />
+                <element signature="e#5003#5334#0" />
+                <element signature="e#5522#5613#0" />
+                <element signature="e#5702#5855#0" />
+                <element signature="e#5908#6057#0" />
+                <element signature="e#5986#6057#0" />
+                <element signature="e#6114#6321#0" />
+                <element signature="e#6228#6321#0" />
+                <element signature="e#6803#7070#0" />
+                <element signature="e#6836#8272#0" />
+                <element signature="e#6996#8272#0" />
+                <element signature="e#7049#7407#0" />
+                <element signature="e#7061#7352#0" />
+                <element signature="e#7062#7307#0" />
+                <element signature="e#7434#8272#0" />
+                <element signature="e#7446#7758#0" />
+                <element signature="e#7447#7692#0" />
+                <element signature="e#7823#8216#0" />
+                <element signature="e#7838#8163#0" />
+                <element signature="e#7839#8100#0" />
+                <element signature="e#8269#8888#0" />
+                <element signature="e#8418#8888#0" />
+                <element signature="e#8432#8834#0" />
+                <element signature="e#8433#8696#0" />
+                <element signature="e#8992#9563#0" />
+                <element signature="e#9087#9229#0" />
+                <element signature="e#9179#9229#0" />
+                <element signature="e#9272#9563#0" />
+                <element signature="e#9284#9524#0" />
+                <element signature="e#9285#9404#0" />
+                <element signature="e#9669#9904#0" />
+                <element signature="e#9763#9904#0" />
+                <element signature="e#9854#9904#0" />
+                <element signature="e#10005#10219#0" />
+                <element signature="e#10084#10219#0" />
+                <element signature="e#10169#10219#0" />
+                <element signature="e#10328#12008#0" />
+                <element signature="e#10416#12008#0" />
+                <element signature="e#10610#12008#0" />
+                <element signature="e#11064#12008#0" />
+                <element signature="e#11120#11862#0" />
+                <element signature="e#11137#11377#0" />
+                <element signature="e#11623#11862#0" />
+                <element signature="e#11799#11862#0" />
+                <element signature="e#11905#12008#0" />
+                <element signature="e#11949#12008#0" />
+                <element signature="e#12087#12602#0" />
+                <element signature="e#12180#12602#0" />
+                <element signature="e#12192#12550#0" />
+                <element signature="e#12193#12422#0" />
+                <element signature="e#12678#13130#0" />
+                <element signature="e#12862#13130#0" />
+                <element signature="e#13211#13746#0" />
+                <element signature="e#13247#13746#0" />
+                <element signature="e#13417#13663#0" />
+                <element signature="e#13418#13571#0" />
+                <element signature="e#13819#17485#0" />
+                <element signature="e#13900#17485#0" />
+                <element signature="e#13944#14464#0" />
+                <element signature="e#13945#14379#0" />
+                <element signature="e#14604#15037#0" />
+                <element signature="e#14646#15037#0" />
+                <element signature="e#14660#14987#0" />
+                <element signature="e#14661#14919#0" />
+                <element signature="e#15089#15478#0" />
+                <element signature="e#15090#15393#0" />
+                <element signature="e#15499#15562#0" />
+                <element signature="e#15695#16041#0" />
+                <element signature="e#15702#15903#0" />
+                <element signature="e#15703#15837#0" />
+                <element signature="e#15933#16040#0" />
+                <element signature="e#16117#16855#0" />
+                <element signature="e#16124#16366#0" />
+                <element signature="e#16125#16303#0" />
+                <element signature="e#16388#16636#0" />
+                <element signature="e#16389#16572#0" />
+                <element signature="e#16666#16854#0" />
+                <element signature="e#16928#17434#0" />
+                <element signature="e#16997#17235#0" />
+                <element signature="e#16998#17175#0" />
+                <element signature="e#17265#17433#0" />
+                <element signature="e#17555#22235#0" />
+                <element signature="e#17591#19194#0" />
+                <element signature="e#17663#18087#0" />
+                <element signature="e#17664#18002#0" />
+                <element signature="e#18109#18772#0" />
+                <element signature="e#18110#18569#0" />
+                <element signature="e#18874#19043#0" />
+                <element signature="e#19105#19193#0" />
+                <element signature="e#19240#22198#0" />
+                <element signature="e#19535#20092#0" />
+                <element signature="e#19625#20092#0" />
+                <element signature="e#20019#20092#0" />
+                <element signature="e#20203#21411#0" />
+                <element signature="e#20293#21411#0" />
+                <element signature="e#20837#20886#0" />
+                <element signature="e#21004#21363#0" />
+                <element signature="e#21526#22198#0" />
+                <element signature="e#21616#22198#0" />
+                <element signature="e#22304#24076#0" />
+                <element signature="e#22340#24040#0" />
+                <element signature="e#22415#22788#0" />
+                <element signature="e#22416#22702#0" />
+                <element signature="e#22824#23448#0" />
+                <element signature="e#22825#23210#0" />
+                <element signature="e#23707#23876#0" />
+                <element signature="e#23938#24039#0" />
+                <element signature="e#24146#24380#0" />
+                <element signature="e#24182#24344#0" />
+                <element signature="e#24298#24343#0" />
+                <element signature="e#24458#25838#0" />
+                <element signature="e#24494#25801#0" />
+                <element signature="e#24815#25751#0" />
+                <element signature="e#24853#25751#0" />
+                <element signature="e#24860#25644#0" />
+                <element signature="e#24861#25504#0" />
+                <element signature="e#25690#25751#0" />
+                <element signature="e#25904#26101#0" />
+                <element signature="e#25941#26101#0" />
+                <element signature="e#26029#26101#0" />
+                <element signature="e#26173#27078#0" />
+                <element signature="e#26210#27078#0" />
+                <element signature="e#26384#27078#0" />
+                <element signature="e#26762#27032#0" />
+                <marker date="1541583235976" expanded="true" signature="7298:7502" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_free_time_periods">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-14">
-              <caret line="83" column="15" selection-start-line="83" selection-start-column="15" selection-end-line="83" selection-end-column="15" />
+            <state relative-caret-position="833">
+              <caret line="157" column="107" lean-forward="true" selection-start-line="157" selection-start-column="107" selection-end-line="157" selection-end-column="107" />
               <folding>
                 <element signature="e#14#40#0" expanded="true" />
-                <element signature="e#1208#2175#0" />
-                <element signature="n#!!block;n#onChange#0;n#NewDoc#0" />
-                <element signature="n#!!block;n#makeForm#0;n#NewDoc#0" />
-                <element signature="n#!!block;n#getCarryOutItems#0;n#NewDoc#0" />
-                <element signature="n#!!block;n#newCarryOut#0;n#NewDoc#0" />
-                <element signature="n#!!block;n#newWorkNote#0;n#NewDoc#0" />
+                <element signature="e#820#1790#0" />
+                <element signature="e#1819#2840#0" />
+                <element signature="e#3033#4170#0" />
+                <element signature="e#4213#6577#0" />
+                <element signature="e#8988#9076#0" />
+                <element signature="e#9144#9951#0" />
                 <element signature="n#!!block;n#onOpenModal#0;n#NewDoc#0" />
-                <element signature="e#12497#12639#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="4" selection-start-line="4" selection-end-line="5" selection-end-column="55" />
-              <folding>
-                <element signature="e#14#40#0" expanded="true" />
-                <element signature="e#120#168#0" expanded="true" />
-                <element signature="n#!!block;n#componentDidUpdate#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#onChange#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#getInfo#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#newMark#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#postResolutions#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#addResolution#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#Resolutions#0;n#DocInfo#0" />
-                <element signature="n#!!block;n#arrangeRenderInfo#0;n#DocInfo#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="150" column="4" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="4" />
-              <folding>
-                <element signature="e#14#40#0" expanded="true" />
-                <element signature="n#!!block;n#constructor#0;n#MyDocs#0" />
-                <element signature="e#772#1052#0" />
-                <element signature="n#!!block;n#getChiefs#0;n#MyDocs#0" />
-                <element signature="n#!!block;n#getDirectSubs#0;n#MyDocs#0" />
-                <element signature="n#!!block;n#componentDidMount#0;n#MyDocs#0" />
-                <element signature="n#!!block;n#onChange#0;n#MyDocs#0" />
-                <element signature="n#!!block;n#addDoc#0;n#MyDocs#0" />
-                <element signature="n#!!block;n#removeDoc#0;n#MyDocs#0" />
               </folding>
             </state>
           </provider>
@@ -374,9 +475,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
-        <option value="Python Script" />
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -390,6 +491,7 @@
       <find>my_sea</find>
       <find>closed</find>
       <find>my_archive_columns</find>
+      <find>className</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -401,19 +503,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/static/index/archive_index.js" />
-        <option value="$PROJECT_DIR$/static/index/sub_docs_index.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_table_test.js" />
-        <option value="$PROJECT_DIR$/plxk/settings.py" />
-        <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/get_doc.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_extras.js" />
         <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form2.js" />
         <option value="$PROJECT_DIR$/.babelrc" />
-        <option value="$PROJECT_DIR$/static/index/hr_index.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" />
         <option value="$PROJECT_DIR$/edms/templates/edms/hr/new_dep_form.js" />
         <option value="$PROJECT_DIR$/templates/bets/bets.html" />
         <option value="$PROJECT_DIR$/templates/bets/matches.html" />
@@ -428,30 +519,41 @@
         <option value="$PROJECT_DIR$/bets/urls.py" />
         <option value="$PROJECT_DIR$/templates/bets/results.html" />
         <option value="$PROJECT_DIR$/bets/views.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/main.html" />
         <option value="$PROJECT_DIR$/templates/base.html" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" />
         <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info2.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/loader_style.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_styles.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" />
-        <option value="$PROJECT_DIR$/edms/urls.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css" />
-        <option value="$PROJECT_DIR$/webpack.config.js" />
         <option value="$PROJECT_DIR$/static/index/my_docs_index.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" />
         <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" />
+        <option value="$PROJECT_DIR$/static/index/administration_index.js" />
+        <option value="$PROJECT_DIR$/static/index/hr_index.js" />
+        <option value="$PROJECT_DIR$/webpack.config.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/dx_table_styles.css" />
         <option value="$PROJECT_DIR$/edms/templates/edms/dx_table.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_styles.css" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/loader_style.css" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/seat_chooser_old.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/main.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/hr.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/seat_chooser.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js" />
+        <option value="$PROJECT_DIR$/edms/urls.py" />
         <option value="$PROJECT_DIR$/edms/models.py" />
-        <option value="$PROJECT_DIR$/edms/forms.py" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/administration/administration.html" />
         <option value="$PROJECT_DIR$/edms/views.py" />
+        <option value="$PROJECT_DIR$/edms/forms.py" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" />
+        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" />
       </list>
     </option>
   </component>
@@ -476,10 +578,11 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-7" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
     <option name="width" value="1934" />
-    <option name="height" value="1057" />
+    <option name="height" value="1052" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -543,6 +646,22 @@
               <item name="edms" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="administration" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="archive" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
               <item name="hr" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -556,13 +675,15 @@
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="sub_docs" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="index" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -601,11 +722,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms" />
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\administration" />
+      <recent name="D:\Робота\EDMS\PLXK\static\index" />
+      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\hr" />
-      <recent name="D:\Робота\EDMS\PLXK\templates\bets" />
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\archive" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Робота\EDMS\PLXK\static\index" />
@@ -925,61 +1046,36 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="1934" height="1057" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.16061899" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.16684435" />
       <window_info id="Structure" order="1" weight="0.13874066" />
       <window_info id="Favorites" order="2" sideWeight="0.50388455" side_tool="true" weight="0.1444563" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4941302" weight="0.329718" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.40981856" visible="true" weight="0.36078006" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5122732" weight="0.34994584" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.42110875" weight="0.36051503" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.50852877" visible="true" weight="0.34656653" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.4936034" weight="0.32867885" />
+      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49306297" weight="0.32827735" />
       <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49573562" weight="0.3292683" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.48400852" weight="0.32403433" />
+      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.48345783" weight="0.32394367" />
       <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Concurrent Activities Diagram" order="10" weight="0.32963374" />
-      <window_info active="true" anchor="bottom" x="0" y="0" width="1920" height="1040" id="manage.py@PLXK" order="11" sideWeight="0.4348986" visible="true" weight="0.33152762" />
+      <window_info anchor="bottom" x="0" y="0" width="1920" height="1040" id="manage.py@PLXK" order="11" sideWeight="0.43283582" weight="0.3304721" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.42217484" weight="0.36090225" />
-      <window_info active="true" anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.5901814" side_tool="true" visible="true" weight="0.36078006" />
+      <window_info anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.4914712" side_tool="true" visible="true" weight="0.34656653" />
       <window_info anchor="bottom" id="TypeScript" order="14" />
       <window_info anchor="bottom" id="Database Console" order="15" sideWeight="0.49946696" weight="0.32939914" />
       <window_info anchor="bottom" id="Database Changes" order="16" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.14354323" />
+      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.13486141" />
       <window_info anchor="right" id="SciView" order="4" weight="0.1881663" />
       <window_info anchor="right" id="Data View" order="5" weight="0.32995737" />
     </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.17324094" />
-      <window_info id="Structure" order="1" weight="0.13874066" />
-      <window_info id="Favorites" order="2" sideWeight="0.50388455" side_tool="true" weight="0.1444563" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4941302" weight="0.329718" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.61886996" visible="true" weight="0.33834586" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.56929636" weight="0.30827066" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49573562" weight="0.32867885" />
-      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49573562" weight="0.3292683" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.48720682" weight="0.3243824" />
-      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="10" weight="0.32963374" />
-      <window_info anchor="bottom" x="0" y="0" width="1920" height="1040" id="manage.py@PLXK" order="11" sideWeight="0.46481878" weight="0.3319012" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.3555437" weight="0.36090225" />
-      <window_info anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.38113007" side_tool="true" visible="true" weight="0.33834586" />
-      <window_info anchor="bottom" id="TypeScript" order="14" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.15884861" />
-      <window_info anchor="right" id="SciView" order="4" weight="0.1881663" />
-      <window_info anchor="right" id="Data View" order="5" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -1053,401 +1149,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/bets/results.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bets/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="45" lean-forward="true" selection-start-line="11" selection-start-column="45" selection-end-line="11" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/tickets/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="22" lean-forward="true" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/main.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="73" selection-start-line="9" selection-start-column="73" selection-end-line="9" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.auth_user">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_department">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_type">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_old.js">
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://C:/Program Files/Python36/Lib/site-packages/django/contrib/auth/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info2.js" />
-    <entry file="file://$PROJECT_DIR$/templates/home.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/menu.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="118" selection-start-line="16" selection-start-column="118" selection-end-line="16" selection-end-column="118" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/loader_style.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="21" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="163" column="26" lean-forward="true" selection-start-line="163" selection-start-column="26" selection-end-line="163" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/archive/archive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="118" column="29" lean-forward="true" selection-start-line="118" selection-start-column="29" selection-end-line="118" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="68" lean-forward="true" selection-start-line="68" selection-end-line="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../venv's/plxk_venv/Lib/site-packages/django/core/handlers/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="131" selection-start-line="131" selection-end-line="131" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="2" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/react-validation/build/input.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="67" selection-start-column="67" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1496">
-          <caret line="383" column="41" selection-start-line="375" selection-start-column="32" selection-end-line="383" selection-end-column="41" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#367#401#0" expanded="true" />
-            <element signature="n#!!block;n#constructor#0;n#UserTable#0" />
-            <element signature="e#1031#2394#0" />
-            <element signature="n#!!block;n#onChange#0;n#UserTable#0" />
-            <element signature="n#!!block;n#newUserSeat#0;n#UserTable#0" />
-            <element signature="n#!!block;n#delEmpSeat#0;n#UserTable#0" />
-            <element signature="n#!!block;n#handleSubmit#0;n#UserTable#0" />
-            <element signature="n#!!block;n#handleDelete#0;n#UserTable#0" />
-            <element signature="n#!!block;n#onRowClick#0;n#UserTable#0" />
-            <element signature="e#12741#12787#0" />
-            <element signature="e#12815#12862#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2652">
-          <caret line="362" column="58" selection-start-line="362" selection-start-column="58" selection-end-line="362" selection-end-column="58" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#1059#1740#0" />
-            <element signature="n#!!block;n#onChange#0;n#SeatTable#0" />
-            <element signature="n#!!block;n#handleSubmit#0;n#SeatTable#0" />
-            <element signature="n#!!block;n#handleDelete#0;n#SeatTable#0" />
-            <element signature="n#!!block;n#handleNew#0;n#SeatTable#0" />
-            <element signature="n#!!block;n#onRowClick#0;n#SeatTable#0" />
-            <element signature="e#9178#9224#0" />
-            <element signature="e#9252#9464#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="57" lean-forward="true" selection-start-line="57" selection-end-line="57" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#371#396#0" expanded="true" />
-            <element signature="n#!!block;n#constructor#0;n#DepTable#0" />
-            <element signature="n#!!block;n#onChange#0;n#DepTable#0" />
-            <element signature="n#!!block;n#handleDelete#0;n#DepTable#0" />
-            <element signature="n#!!block;n#onRowClick#0;n#DepTable#0" />
-            <element signature="e#4288#4334#0" />
-            <element signature="e#4362#4409#0" />
-            <element signature="n#!!block;n#newSubmit#0;n#DepTable#0" />
-            <element signature="e#5545#5595#0" />
-            <element signature="e#5626#5677#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_userprofile">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="53" column="27" lean-forward="true" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files/Python36/Lib/datetime.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="1359" column="6" selection-start-line="1359" selection-start-column="6" selection-end-line="1359" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../venv's/plxk_venv/Lib/site-packages/django/contrib/auth/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_extras.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="5" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="7" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webpack.config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="45" column="48" lean-forward="true" selection-start-line="45" selection-start-column="48" selection-end-line="45" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/dx_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="30" column="26" lean-forward="true" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="26" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/index/my_docs_index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="49" lean-forward="true" selection-start-line="6" selection-start-column="49" selection-end-line="6" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#53#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="43" column="38" selection-start-line="43" selection-start-column="38" selection-end-line="43" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" column="28" selection-start-line="34" selection-start-column="28" selection-end-line="34" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="4" selection-start-line="4" selection-end-line="5" selection-end-column="55" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#120#168#0" expanded="true" />
-            <element signature="n#!!block;n#componentDidUpdate#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#onChange#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#getInfo#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#newMark#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#postResolutions#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#addResolution#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#Resolutions#0;n#DocInfo#0" />
-            <element signature="n#!!block;n#arrangeRenderInfo#0;n#DocInfo#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="150" column="4" selection-start-line="150" selection-start-column="4" selection-end-line="150" selection-end-column="4" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="n#!!block;n#constructor#0;n#MyDocs#0" />
-            <element signature="e#772#1052#0" />
-            <element signature="n#!!block;n#getChiefs#0;n#MyDocs#0" />
-            <element signature="n#!!block;n#getDirectSubs#0;n#MyDocs#0" />
-            <element signature="n#!!block;n#componentDidMount#0;n#MyDocs#0" />
-            <element signature="n#!!block;n#onChange#0;n#MyDocs#0" />
-            <element signature="n#!!block;n#addDoc#0;n#MyDocs#0" />
-            <element signature="n#!!block;n#removeDoc#0;n#MyDocs#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_seat">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="chief_id = 16" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_carry_out_info">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_carry_out_items">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-14">
-          <caret line="83" column="15" selection-start-line="83" selection-start-column="15" selection-end-line="83" selection-end-column="15" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#1208#2175#0" />
-            <element signature="n#!!block;n#onChange#0;n#NewDoc#0" />
-            <element signature="n#!!block;n#makeForm#0;n#NewDoc#0" />
-            <element signature="n#!!block;n#getCarryOutItems#0;n#NewDoc#0" />
-            <element signature="n#!!block;n#newCarryOut#0;n#NewDoc#0" />
-            <element signature="n#!!block;n#newWorkNote#0;n#NewDoc#0" />
-            <element signature="n#!!block;n#onOpenModal#0;n#NewDoc#0" />
-            <element signature="e#12497#12639#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_mark">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_employee_seat">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="72" lean-forward="true" selection-start-line="72" selection-end-line="72" />
-          <folding>
-            <element signature="e#263#374#0" />
-            <element signature="e#422#550#0" />
-            <element signature="e#596#855#0" />
-            <element signature="e#895#1391#0" />
-            <element signature="e#1435#1531#0" />
-            <element signature="e#1575#1662#0" />
-            <element signature="e#1711#1824#0" />
-            <element signature="e#1872#1969#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="102" lean-forward="true" selection-start-line="102" selection-end-line="102" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_path">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_flow">
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_permission">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true" />
@@ -1461,6 +1166,528 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webpack-stats.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index/administration_index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index/hr_index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="43" selection-start-column="43" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webpack.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="12" column="39" lean-forward="true" selection-start-line="12" selection-start-column="39" selection-end-line="12" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index/archive_index.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/dx_table_old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="25" column="52" selection-start-line="25" selection-start-column="52" selection-end-line="25" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/dx_table_styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="44" lean-forward="true" selection-start-line="11" selection-start-column="44" selection-end-line="11" selection-end-column="44" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_type">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-867" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/seat_chooser_old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/main.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="36" column="23" lean-forward="true" selection-start-line="36" selection-start-column="23" selection-end-line="36" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/archive/archive.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="14" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="13" column="49" selection-start-line="13" selection-start-column="49" selection-end-line="13" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="52" lean-forward="true" selection-start-line="14" selection-start-column="52" selection-end-line="15" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="52" column="32" lean-forward="true" selection-start-line="52" selection-start-column="32" selection-end-line="52" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/loader_style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="14" lean-forward="true" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_employee_seat">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="25" column="4" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="8" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/administration/administration.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="83" column="26" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
+          <folding>
+            <element signature="e#486#765#0" />
+            <element signature="n#!!block;n#componentDidMount#0;n#Administration#0" />
+            <element signature="e#1209#1304#0" />
+            <element signature="e#1371#1966#0" />
+            <element signature="e#2046#2101#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.accounts_userprofile">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../venv's/plxk_venv/Lib/site-packages/django/contrib/auth/decorators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/administration/administration.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="45" lean-forward="true" selection-start-line="8" selection-start-column="45" selection-end-line="8" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/archive/archive.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-833">
+          <caret line="11" column="13" lean-forward="true" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding>
+            <element signature="e#14#52#0" expanded="true" />
+            <element signature="n#!!block;n#componentDidMount#0;n#Archive#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="169" selection-start-line="169" selection-end-line="169" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#371#396#0" expanded="true" />
+            <element signature="n#!!block;n#constructor#0;n#DepTable#0" />
+            <element signature="n#!!block;n#handleSubmit#0;n#DepTable#0" />
+            <element signature="n#!!block;n#handleDelete#0;n#DepTable#0" />
+            <element signature="n#!!block;n#onRowClick#0;n#DepTable#0" />
+            <element signature="e#4167#4213#0" />
+            <element signature="e#4241#4288#0" />
+            <element signature="n#!!block;n#newSubmit#0;n#DepTable#0" />
+            <element signature="e#5424#5474#0" />
+            <element signature="e#5505#5556#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2125">
+          <caret line="338" column="57" lean-forward="true" selection-start-line="338" selection-start-column="57" selection-end-line="338" selection-end-column="57" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#367#401#0" expanded="true" />
+            <element signature="n#!!block;n#constructor#0;n#UserTable#0" />
+            <element signature="e#1031#2316#0" />
+            <element signature="n#!!block;n#newUserSeat#0;n#UserTable#0" />
+            <element signature="n#!!block;n#delEmpSeat#0;n#UserTable#0" />
+            <element signature="n#!!block;n#handleDelete#0;n#UserTable#0" />
+            <element signature="e#12603#12649#0" />
+            <element signature="e#12677#12724#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/doc_info.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="799">
+          <caret line="139" column="12" selection-start-line="139" selection-start-column="12" selection-end-line="157" selection-end-column="15" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#445#469#0" expanded="true" />
+            <element signature="e#554#1100#0" />
+            <element signature="n#!!block;n#componentDidUpdate#0;n#DocInfo#0" />
+            <element signature="e#2412#2618#0" />
+            <element signature="e#2714#4106#0" />
+            <element signature="e#5452#6641#0" />
+            <element signature="e#6712#7313#0" />
+            <element signature="e#7382#7528#0" />
+            <element signature="e#7615#10776#0" />
+            <element signature="e#10863#22166#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/docs_list.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="46" column="29" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/seat_chooser.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-170">
+          <caret line="17" column="14" lean-forward="true" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="601">
+          <caret line="95" column="32" selection-start-line="95" selection-start-column="32" selection-end-line="95" selection-end-column="32" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#367#392#0" expanded="true" />
+            <element signature="n#!!block;n#handleDelete#0;n#SeatTable#0" />
+            <element signature="n#!!block;n#handleNew#0;n#SeatTable#0" />
+            <element signature="n#!!block;n#onRowClick#0;n#SeatTable#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="118" column="8" lean-forward="true" selection-start-line="118" selection-start-column="8" selection-end-line="120" selection-end-column="12" />
+          <folding>
+            <element signature="e#745#1321#0" />
+            <element signature="e#1357#1943#0" />
+            <element signature="e#2010#2603#0" />
+            <element signature="n#!!block;n#componentDidMount#0;n#MyDocs#0" />
+            <element signature="e#3141#3316#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="166" column="32" lean-forward="true" selection-start-line="166" selection-start-column="32" selection-end-line="166" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#64#0" expanded="true" />
+            <element signature="e#881#1041#0" />
+            <element signature="e#1153#1743#0" />
+            <element signature="e#1318#1713#0" />
+            <element signature="e#1349#1687#0" />
+            <element signature="e#1599#1687#0" />
+            <element signature="e#1861#2882#0" />
+            <element signature="e#2026#2317#0" />
+            <element signature="e#2027#2195#0" />
+            <element signature="e#2398#2852#0" />
+            <element signature="e#2605#2825#0" />
+            <element signature="e#2650#2825#0" />
+            <element signature="e#2669#2824#0" />
+            <element signature="e#2974#3274#0" />
+            <element signature="e#2985#3254#0" />
+            <element signature="e#2986#3166#0" />
+            <element signature="e#3340#3452#0" />
+            <element signature="e#3516#6358#0" />
+            <element signature="e#3560#3987#0" />
+            <element signature="e#3561#3907#0" />
+            <element signature="e#3720#3825#0" />
+            <element signature="e#4006#4604#0" />
+            <element signature="e#4821#4985#0" />
+            <element signature="e#5002#5470#0" />
+            <element signature="e#5003#5334#0" />
+            <element signature="e#5522#5613#0" />
+            <element signature="e#5702#5855#0" />
+            <element signature="e#5908#6057#0" />
+            <element signature="e#5986#6057#0" />
+            <element signature="e#6114#6321#0" />
+            <element signature="e#6228#6321#0" />
+            <element signature="e#6803#7070#0" />
+            <element signature="e#6836#8272#0" />
+            <element signature="e#6996#8272#0" />
+            <element signature="e#7049#7407#0" />
+            <element signature="e#7061#7352#0" />
+            <element signature="e#7062#7307#0" />
+            <element signature="e#7434#8272#0" />
+            <element signature="e#7446#7758#0" />
+            <element signature="e#7447#7692#0" />
+            <element signature="e#7823#8216#0" />
+            <element signature="e#7838#8163#0" />
+            <element signature="e#7839#8100#0" />
+            <element signature="e#8269#8888#0" />
+            <element signature="e#8418#8888#0" />
+            <element signature="e#8432#8834#0" />
+            <element signature="e#8433#8696#0" />
+            <element signature="e#8992#9563#0" />
+            <element signature="e#9087#9229#0" />
+            <element signature="e#9179#9229#0" />
+            <element signature="e#9272#9563#0" />
+            <element signature="e#9284#9524#0" />
+            <element signature="e#9285#9404#0" />
+            <element signature="e#9669#9904#0" />
+            <element signature="e#9763#9904#0" />
+            <element signature="e#9854#9904#0" />
+            <element signature="e#10005#10219#0" />
+            <element signature="e#10084#10219#0" />
+            <element signature="e#10169#10219#0" />
+            <element signature="e#10328#12008#0" />
+            <element signature="e#10416#12008#0" />
+            <element signature="e#10610#12008#0" />
+            <element signature="e#11064#12008#0" />
+            <element signature="e#11120#11862#0" />
+            <element signature="e#11137#11377#0" />
+            <element signature="e#11623#11862#0" />
+            <element signature="e#11799#11862#0" />
+            <element signature="e#11905#12008#0" />
+            <element signature="e#11949#12008#0" />
+            <element signature="e#12087#12602#0" />
+            <element signature="e#12180#12602#0" />
+            <element signature="e#12192#12550#0" />
+            <element signature="e#12193#12422#0" />
+            <element signature="e#12678#13130#0" />
+            <element signature="e#12862#13130#0" />
+            <element signature="e#13211#13746#0" />
+            <element signature="e#13247#13746#0" />
+            <element signature="e#13417#13663#0" />
+            <element signature="e#13418#13571#0" />
+            <element signature="e#13819#17485#0" />
+            <element signature="e#13900#17485#0" />
+            <element signature="e#13944#14464#0" />
+            <element signature="e#13945#14379#0" />
+            <element signature="e#14604#15037#0" />
+            <element signature="e#14646#15037#0" />
+            <element signature="e#14660#14987#0" />
+            <element signature="e#14661#14919#0" />
+            <element signature="e#15089#15478#0" />
+            <element signature="e#15090#15393#0" />
+            <element signature="e#15499#15562#0" />
+            <element signature="e#15695#16041#0" />
+            <element signature="e#15702#15903#0" />
+            <element signature="e#15703#15837#0" />
+            <element signature="e#15933#16040#0" />
+            <element signature="e#16117#16855#0" />
+            <element signature="e#16124#16366#0" />
+            <element signature="e#16125#16303#0" />
+            <element signature="e#16388#16636#0" />
+            <element signature="e#16389#16572#0" />
+            <element signature="e#16666#16854#0" />
+            <element signature="e#16928#17434#0" />
+            <element signature="e#16997#17235#0" />
+            <element signature="e#16998#17175#0" />
+            <element signature="e#17265#17433#0" />
+            <element signature="e#17555#22235#0" />
+            <element signature="e#17591#19194#0" />
+            <element signature="e#17663#18087#0" />
+            <element signature="e#17664#18002#0" />
+            <element signature="e#18109#18772#0" />
+            <element signature="e#18110#18569#0" />
+            <element signature="e#18874#19043#0" />
+            <element signature="e#19105#19193#0" />
+            <element signature="e#19240#22198#0" />
+            <element signature="e#19535#20092#0" />
+            <element signature="e#19625#20092#0" />
+            <element signature="e#20019#20092#0" />
+            <element signature="e#20203#21411#0" />
+            <element signature="e#20293#21411#0" />
+            <element signature="e#20837#20886#0" />
+            <element signature="e#21004#21363#0" />
+            <element signature="e#21526#22198#0" />
+            <element signature="e#21616#22198#0" />
+            <element signature="e#22304#24076#0" />
+            <element signature="e#22340#24040#0" />
+            <element signature="e#22415#22788#0" />
+            <element signature="e#22416#22702#0" />
+            <element signature="e#22824#23448#0" />
+            <element signature="e#22825#23210#0" />
+            <element signature="e#23707#23876#0" />
+            <element signature="e#23938#24039#0" />
+            <element signature="e#24146#24380#0" />
+            <element signature="e#24182#24344#0" />
+            <element signature="e#24298#24343#0" />
+            <element signature="e#24458#25838#0" />
+            <element signature="e#24494#25801#0" />
+            <element signature="e#24815#25751#0" />
+            <element signature="e#24853#25751#0" />
+            <element signature="e#24860#25644#0" />
+            <element signature="e#24861#25504#0" />
+            <element signature="e#25690#25751#0" />
+            <element signature="e#25904#26101#0" />
+            <element signature="e#25941#26101#0" />
+            <element signature="e#26029#26101#0" />
+            <element signature="e#26173#27078#0" />
+            <element signature="e#26210#27078#0" />
+            <element signature="e#26384#27078#0" />
+            <element signature="e#26762#27032#0" />
+            <marker date="1541583235976" expanded="true" signature="7298:7502" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="443">
+          <caret line="56" column="34" lean-forward="true" selection-start-line="56" selection-start-column="34" selection-end-line="56" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#263#374#0" />
+            <element signature="e#422#550#0" />
+            <element signature="e#596#855#0" />
+            <element signature="e#895#1391#0" />
+            <element signature="e#1435#1531#0" />
+            <element signature="e#1575#1662#0" />
+            <element signature="e#1711#1824#0" />
+            <element signature="e#1872#1969#0" />
+            <element signature="e#2017#2124#0" />
+            <element signature="e#2175#2265#0" />
+            <element signature="e#2311#2429#0" />
+            <marker date="1541583236028" expanded="true" signature="1433:1704" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_mark">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_carry_out_info">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_carry_out_items">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_seat">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true">
+            <filter text="chief_id = 16" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
     <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -1468,43 +1695,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="347" column="26" selection-start-line="347" selection-start-column="26" selection-end-line="347" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#64#0" expanded="true" />
-            <element signature="e#854#1014#0" />
-            <element signature="e#1126#1716#0" />
-            <element signature="e#1834#2761#0" />
-            <element signature="e#2827#2939#0" />
-            <element signature="e#3003#5878#0" />
-            <element signature="e#3040#5134#0" />
-            <element signature="e#5180#5841#0" />
-            <element signature="e#5982#6553#0" />
-            <element signature="e#6659#6894#0" />
-            <element signature="e#6995#7209#0" />
-            <element signature="e#7318#8997#0" />
-            <element signature="e#9076#9529#0" />
-            <element signature="e#9605#10057#0" />
-            <element signature="e#10138#10642#0" />
-            <element signature="e#10715#14396#0" />
-            <element signature="e#10841#11275#0" />
-            <element signature="e#11500#11933#0" />
-            <element signature="e#12606#12952#0" />
-            <element signature="e#13028#13766#0" />
-            <element signature="e#13909#14086#0" />
-            <element signature="e#14176#14344#0" />
-            <element signature="e#14466#19390#0" />
-            <element signature="e#16690#17247#0" />
-            <element signature="e#17358#18566#0" />
-            <element signature="e#18681#19353#0" />
-            <element signature="e#19459#21598#0" />
-            <element signature="e#21668#22278#0" />
-            <element signature="e#22356#23736#0" />
-            <element signature="e#23802#24640#0" />
-            <element signature="e#24712#25617#0" />
-          </folding>
+    <entry file="das://table:/6917c7a9/586a7ab3-2297-42bc-b30f-efc2ecb212f6/plxk.edms_document_path">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
         </state>
       </provider>
     </entry>
@@ -1512,6 +1706,55 @@
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/dx_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-141">
+          <caret line="113" column="35" lean-forward="true" selection-start-line="113" selection-start-column="35" selection-end-line="113" selection-end-column="35" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#153#179#0" expanded="true" />
+            <element signature="n#!!block;n#componentWillReceiveProps#0;n#DxTable#0" />
+            <element signature="n#!!block;n#changeAddedRows#0;n#DxTable#0" />
+            <element signature="n#!!block;n#changeEditingRowIds#0;n#DxTable#0" />
+            <element signature="n#!!block;n#changeRowChanges#0;n#DxTable#0" />
+            <element signature="n#!!block;n#commitChanges#0;n#DxTable#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="106" column="36" lean-forward="true" selection-start-line="106" selection-start-column="36" selection-end-line="106" selection-end-column="36" />
+          <folding>
+            <element signature="e#14#52#0" expanded="true" />
+            <element signature="e#518#547#0" expanded="true" />
+            <element signature="n#!!block;n#componentDidUpdate#0;n#DocTypeInfo#0" />
+            <element signature="e#1062#1531#0" />
+            <element signature="e#1626#2184#0" />
+            <element signature="e#3115#4758#0" />
+            <element signature="e#6173#6942#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="157" column="107" lean-forward="true" selection-start-line="157" selection-start-column="107" selection-end-line="157" selection-end-column="107" />
+          <folding>
+            <element signature="e#14#40#0" expanded="true" />
+            <element signature="e#820#1790#0" />
+            <element signature="e#1819#2840#0" />
+            <element signature="e#3033#4170#0" />
+            <element signature="e#4213#6577#0" />
+            <element signature="e#8988#9076#0" />
+            <element signature="e#9144#9951#0" />
+            <element signature="n#!!block;n#onOpenModal#0;n#NewDoc#0" />
+          </folding>
         </state>
       </provider>
     </entry>

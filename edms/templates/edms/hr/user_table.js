@@ -29,7 +29,6 @@ class UserTable extends React.Component {
     state = {
 
         open: false,
-        index: '',                  // індекс обраного співробітника у списку
         id: '',                     // id співробітника для форми
         emp: '',                    // ім’я співробітника для форми
         on_vacation: '',            // статус відпустки
@@ -221,16 +220,16 @@ class UserTable extends React.Component {
         let acting_id = this.state.acting_id == 0 ? null : this.state.acting_id;
 
         let new_emps = this.props.emps;   // клонуємо масив для внесення змін
-        this.state.index = getIndex(this.state.id, this.props.emps);  // шукаємо індекс запису, в якому треба внести зміни
+        const index = getIndex(this.state.id, this.props.emps);  // шукаємо індекс запису, в якому треба внести зміни
 
         // якщо хоча б одна зміна відбулася:
 
-        if (new_emps[this.state.index].on_vacation !== this.state.on_vacation ||
-            new_emps[this.state.index].acting_id !== this.state.acting_id) {
+        if (new_emps[index].on_vacation !== this.state.on_vacation ||
+            new_emps[index].acting_id !== this.state.acting_id) {
 
-            new_emps[this.state.index].on_vacation = this.state.on_vacation ? 'true' : 'false';
-            new_emps[this.state.index].acting_id = parseInt(this.state.acting_id);
-            new_emps[this.state.index].acting = this.state.acting;
+            new_emps[index].on_vacation = this.state.on_vacation ? 'true' : 'false';
+            new_emps[index].acting_id = parseInt(this.state.acting_id);
+            new_emps[index].acting = this.state.acting;
 
             axios({
                 method: 'post',
@@ -366,7 +365,7 @@ class UserTable extends React.Component {
                         </div>
                         <div className="d-flex">
                             <Input name='on_vacation' onChange={this.onChange} type="checkbox" checked={this.state.on_vacation} id="vacation" />
-                            <label htmlFor="vacation"> у відпустці</label>
+                            <label htmlFor="vacation">у відпустці</label>
                         </div>
 
                         {acting_select}

@@ -6,13 +6,16 @@ import Paper from '@material-ui/core/Paper';
 import {Grid, Table, VirtualTable, TableHeaderRow, TableFilterRow, PagingPanel, TableEditRow, TableEditColumn, TableSelection} from '@devexpress/dx-react-grid-material-ui';
 import { PagingState, SortingState, FilteringState, IntegratedSorting, IntegratedFiltering, IntegratedPaging, EditingState, SelectionState, IntegratedSelection } from '@devexpress/dx-react-grid';
 
-import './my_styles.css'
+import './dx_table_styles.css'
 
 const styles = {
-      true: { // Колір рядка червоний, якщо заданий рядок == 'true'
-            backgroundColor: '#ff6968'
-        },
-    };
+    true: { // Колір рядка червоний, якщо заданий рядок == 'true'
+        backgroundColor: '#ff6968'
+    },
+    clicked: {
+        backgroundColor: '#e6e6e6'
+    }
+};
 
 const getRowId = row => row.id;
 
@@ -31,6 +34,7 @@ class DxTable extends React.PureComponent {
             addedRows: [],
             editingRowIds: [],
             rowChanges: {},
+            clicked_row_index: '',
         };
     }
 
@@ -93,7 +97,15 @@ class DxTable extends React.PureComponent {
 
     // Стилі рядків
     ChooseStyle(row) {
+        const {clicked_row_index} = this.state;
         // TODO переробити правильно. Створити змінну style, яку міняти у switch і повертати
+        if (row.id === clicked_row_index) {
+            return {
+                cursor: 'pointer',
+                height: 30,
+                ...styles['clicked'],
+            };
+        }
         if (this.props.redRow) {
             switch(this.props.redRow){
                 case 'is_vacant':
@@ -118,6 +130,7 @@ class DxTable extends React.PureComponent {
     // внутрішні настройки рядка ReactGrid
     TableRow = ({ row, ...restProps }) => (
       <Table.Row
+          className='css_dx_table'
         {...restProps}
         // eslint-disable-next-line no-alert
         onClick={() => this.onRowClick(row)}
@@ -152,6 +165,7 @@ class DxTable extends React.PureComponent {
     // передача інфу про клікнутий рядок наверх
     onRowClick(row) {
         const onRowClick = this.props.onRowClick;
+        this.setState({clicked_row_index: row.id});
         onRowClick(row)
     }
 
@@ -171,7 +185,8 @@ class DxTable extends React.PureComponent {
                     rows={rows}
                     columns={this.props.columns}
                     getRowId={getRowId}
-                    style={{height: {grid_height}}} >
+                    style={{height: {grid_height}}}
+                    hoverStateEnabled={true} >
 
                     <SortingState
                         defaultSorting={this.props.defaultSorting}

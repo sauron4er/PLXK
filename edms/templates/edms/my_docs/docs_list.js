@@ -7,13 +7,6 @@ import '../my_styles.css'
 
 
 class DocsList extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.changeSelection = selection => this.setState({ selection });
-        this.onRowClick = this.onRowClick.bind(this);
-        this.removeRow = this.removeRow.bind(this);
-    }
 
     state = {
       my_docs_columns: [
@@ -43,12 +36,12 @@ class DocsList extends React.Component {
       carry_out_items: [],
     };
 
-    onRowClick(clicked_row) {
+    onRowClick = (clicked_row) => {
         this.setState({row:clicked_row});
-    }
+    };
 
     // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закрити й документ в MyDocs
-    removeRow(id, mark_id, author_id) {
+    removeRow = (id, mark_id, author_id) => {
         // видаляємо документ зі списку, якщо реакція не просто коментар:
         if (mark_id !== 4) {
             this.props.removeDoc(id, author_id);
@@ -87,7 +80,7 @@ class DocsList extends React.Component {
                 type: answer,
             },
         });
-    }
+    };
 
     render() {
         const { work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width } = this.state;

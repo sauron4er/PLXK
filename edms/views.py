@@ -7,10 +7,12 @@ import json
 import pytz
 
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View, Archive_Docs_View, Document_Flow
+from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View, Archive_Docs_View
+from .models import Document_Type, Document_Type_Permission, Mark
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
+from .forms import DTPDeactivateForm, DTPAddForm
 
 
 def convert_to_localtime(utctime):
@@ -20,7 +22,7 @@ def convert_to_localtime(utctime):
     return localtz.strftime(fmt)
 
 
-# Функція, яка рекурсією шукає всіх підлеглих і їх підлеглих посади користувача
+# Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
 def get_subs_list(seat):
     seats = [{'id': seat.id} for seat in Seat.objects.filter(chief_id=seat)]  # Знаходимо підлеглих посади
     temp_seats = []
@@ -36,16 +38,16 @@ def get_subs_list(seat):
         return None
 
 
-# Функція, яка рекурсією шукає всіх начальників і їх начальників посади користувача
+# Функція, яка рекурсією шукає всіх начальників посади користувача і їх начальників
 def get_chiefs_list(seat):
     # Знаходимо id посади начальника
     chief_id = (Seat.objects.only('chief_id').filter(id=seat).first()).chief_id
     # Знаходимо людинопосаду начальника
     chief = [{
-        'id': emp_seat.id,
-        'name': emp_seat.employee.pip,
-        'seat': emp_seat.seat.seat,
-    } for emp_seat in Employee_Seat.objects.filter(seat_id=chief_id).filter(is_active=True)]
+        'id': empSeat.id,
+        'name': empSeat.employee.pip,
+        'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
+    } for empSeat in Employee_Seat.objects.filter(seat_id=chief_id).filter(is_active=True).filter(employee__on_vacation=False)]
 
     temp_chiefs = []
     if chief_id is not None:  # якщо начальник є:
@@ -61,6 +63,16 @@ def get_chiefs_list(seat):
         return temp_chiefs
     else:
         return None
+
+
+# Функція, яка повертає список всіх актуальних посад юзера
+def get_my_seats(emp_id):
+    my_seats = [{  # Список посад юзера
+        'id': empSeat.id,
+        'seat_id': empSeat.seat_id,
+        'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
+    } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
+    return my_seats
 
 
 @login_required(login_url='login')
@@ -89,8 +101,6 @@ def edms_hr(request):
             'dep_id': 0 if seat.department is None else seat.department.id,
             'chief': 'Не внесено' if seat.chief is None else seat.chief.seat,
             'chief_id': 0 if seat.chief is None else seat.chief.id,
-            'is_free_time_chief': 'true' if seat.is_free_time_chief else 'false',
-            'is_carry_out_chief': 'true' if seat.is_carry_out_chief else 'false',
         } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
 
         # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
@@ -99,7 +109,6 @@ def edms_hr(request):
             seat['is_vacant'] = 'true' if is_vacant is None else 'false'
 
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
-            # 'id': emp.user.pk,
             'id': emp.pk,
             'emp': emp.pip,
             'on_vacation': 'true' if emp.on_vacation else 'false',
@@ -135,6 +144,93 @@ def edms_hr(request):
                 return HttpResponse(new_emp_seat.pk)
 
     return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_administration(request):
+    if request.method == 'GET':
+        my_seats = get_my_seats(request.user.userprofile.id)
+        seats = [{  # Список посад для форм на сторінці відділу кадрів
+            'id': seat.pk,
+            'seat': seat.seat,
+        } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
+        marks = [{
+            'id': mark.pk,
+            'mark': mark.mark,
+        } for mark in Mark.objects.filter(is_active=True)]
+        return render(request, 'edms/administration/administration.html', {
+            'my_seats': my_seats,
+            'seats': seats,
+            'marks': marks,
+        })
+
+    if request.method == 'POST':
+        form = DTPAddForm(request.POST)
+        if form.is_valid():
+            new_dtp = form.save()
+            return HttpResponse(new_dtp.pk)
+
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_deactivate_permission(request, pk):
+    permission = get_object_or_404(Document_Type_Permission, pk=pk)
+    if request.method == 'POST':
+        form = DTPDeactivateForm(request.POST, instance=permission)
+        if form.is_valid():
+            form.save()
+            return redirect('administration.html')
+
+
+@login_required(login_url='login')
+def edms_get_types(request, pk):
+    # Отримуємо ід посади з ід людинопосади
+    seat_id = Employee_Seat.objects.filter(id=pk).values_list('seat_id')[0][0]
+
+    if request.method == 'GET':
+        if request.user.userprofile.is_it_admin:
+            doc_types = [{  # Список документів, створених даним юзером
+                'id': doc_type.id,
+                'description': doc_type.description,
+                'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
+            } for doc_type in Document_Type.objects.all()]
+            return HttpResponse(json.dumps(doc_types))
+        else:
+            doc_types = [{  # Список документів, створених даним юзером
+                'id': doc_type.id,
+                'description': doc_type.description,
+                'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
+            } for doc_type in Document_Type.objects.filter(creator_id=seat_id)]
+
+            if request.user.userprofile.is_hr:
+                hr_doc_types = [{  # Список документів, створених даним юзером
+                    'id': doc_type.id,
+                    'description': doc_type.description,
+                    'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
+                } for doc_type in Document_Type.objects.filter(creator_id=None)]
+                doc_types = doc_types + hr_doc_types
+
+            return HttpResponse(json.dumps(doc_types))
+
+
+@login_required(login_url='login')
+def edms_get_type_info(request, pk):
+    # Отримуємо ід типу документу
+    doc_type_id = Document_Type.objects.filter(id=pk).values_list('id')[0][0]
+
+    if request.method == 'GET':
+        permissions = [{  # Список дозволів для посад для цього документу
+            'id': permission.id,
+            'seat_id': permission.seat.id,
+            'seat': permission.seat.seat,
+            'mark_id': permission.mark.id,
+            'mark': permission.mark.mark,
+        } for permission in Document_Type_Permission.objects
+            .filter(document_type_id=doc_type_id)
+            .filter(is_active=True)]
+
+        return HttpResponse(json.dumps(permissions))
 
 
 @login_required(login_url='login')
@@ -182,9 +278,8 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
 
         # Обробка звільнення з посади:
         if form.data['is_active'] == 'false':
-
-            active_docs = Document_Flow.objects.filter(employee_seat_id=pk).filter(is_active=True).first()
-            # Якщо у flow залишаються документи і не визначено "спадкоємця", повертаємо помилку
+            active_docs = Mark_Demand.objects.filter(recipient_id=pk).filter(is_active=True).first()
+            # Якщо у mark_demand є хоча б один документ і не визначено "спадкоємця", повертаємо помилку
             if active_docs is not None and form.data['successor_id'] == '':
                 return HttpResponseForbidden('active flow')
             # В іншому разі зберігаємо форму і додаємо "спадкоємцю" (якщо такий є) посаду:
@@ -217,7 +312,7 @@ def edms_get_emp_seats(request, pk):
     if request.method == 'GET':
         emp_seats = [{
             'id': empSeat.pk,
-            'emp_seat': empSeat.seat.seat,
+            'emp_seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
             'seat_id': empSeat.seat.pk,
             'emp_id': empSeat.employee.pk,
         } for empSeat in
@@ -247,6 +342,7 @@ def edms_get_direct_subs(request, pk):
             'id': empSeat.id,
             'name': empSeat.employee.pip,
             'seat': empSeat.seat.seat,
+            'is_active': True,
         } for empSeat in Employee_Seat.objects.filter(seat__chief_id=seat_id).filter(is_active=True)]  # Знаходимо підлеглих посади
         return HttpResponse(json.dumps(direct_subs))
 
@@ -348,10 +444,7 @@ def edms_get_doc(request, pk):
 def edms_my_docs(request):
 
     if request.method == 'GET':
-        my_seats = [{  # Список посад юзера
-            'id': empSeat.id,
-            'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
-        } for empSeat in Employee_Seat.objects.filter(employee_id=request.user.userprofile.id).filter(is_active=True)]
+        my_seats = get_my_seats(request.user.userprofile.id)
 
         my_docs = [{  # Список документів, створених даним юзером
             'id': doc.id,
@@ -460,11 +553,7 @@ def edms_my_docs(request):
 @login_required(login_url='login')
 def edms_archive(request):
     if request.method == 'GET':
-        # TODO перетворити my_seats в окремий компонент, який буде використовуватися на сторінках my_docs та archive (зараз код повторюється)
-        my_seats = [{  # Список посад юзера
-            'id': empSeat.id,
-            'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
-        } for empSeat in Employee_Seat.objects.filter(employee_id=request.user.userprofile.id).filter(is_active=True)]
+        my_seats = get_my_seats(request.user.userprofile.id)
 
         my_archive = [{  # Список документів, створених даним юзером
             'id': doc.id,
@@ -503,12 +592,7 @@ def edms_archive(request):
 @login_required(login_url='login')
 def edms_sub_docs(request):
     if request.method == 'GET':
-        # TODO перетворити my_seats в окремий компонент, який буде використовуватися на різних сторінках (DRY)
-        my_seats = [{  # Список посад юзера
-            'id': empSeat.id,
-            'seat_id': empSeat.seat_id,
-            'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
-        } for empSeat in Employee_Seat.objects.filter(employee_id=request.user.userprofile.id).filter(is_active=True)]
+        my_seats = get_my_seats(request.user.userprofile.id)
 
         return render(request, 'edms/sub_docs/sub_docs.html', {
             'my_seats': my_seats,
@@ -554,20 +638,7 @@ def edms_get_sub_docs(request, pk):
 def edms_mark(request):
     if request.method == 'POST':
         path_form = DocumentPathForm(request.POST)
-
         if path_form.is_valid():
-            # деактивуємо даний запис flow, якщо запис у path не "коментар"
-            # якщо запис "закрито" - деактивуємо всі записи у flow силами бд
-            # if request.POST['mark'] not in ('4', '7'):
-            #     flow_request = request.POST.copy()  # Копіюємо запит, щоб він став мутабельний
-            #     flow_request.update({'is_active': False})
-            #
-            #     flow = get_object_or_404(Document_Flow, pk=flow_request['flow_id'])
-            #     flow_form = DocumentFlowForm(flow_request, instance=flow)
-            #
-            #     if flow_form.is_valid():
-            #         flow_form.save()
-
             new_path = path_form.save()
             return HttpResponse(new_path.pk)
 

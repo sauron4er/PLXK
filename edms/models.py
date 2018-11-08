@@ -9,8 +9,6 @@ class Seat(models.Model):
     seat = models.CharField(max_length=100)
     department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
     chief = models.ForeignKey('self', related_name='subordinate', null=True, blank=True)
-    is_free_time_chief = models.BooleanField(default=False)
-    is_carry_out_chief = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -36,11 +34,11 @@ class Vacation(models.Model):
 
 
 # models, related with documents and marks
-
-
 class Document_Type(models.Model):
     document_type = models.CharField(max_length=50)
     description = models.CharField(max_length=1000)
+    creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.description
@@ -48,6 +46,7 @@ class Document_Type(models.Model):
 
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
+    is_active = models.BooleanField(default=True)
 
 
 class Document(models.Model):
@@ -62,7 +61,7 @@ class Document(models.Model):
 class Document_Type_Permission(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='with_permissions')
     seat = models.ForeignKey(Seat, related_name='type_permissions')
-    mark_type = models.ForeignKey(Mark, related_name='type_permissions')
+    mark = models.ForeignKey(Mark, related_name='type_permissions')
     is_active = models.BooleanField(default=True)
 
 

@@ -13,6 +13,7 @@
             window.my_docs = {{ my_docs|safe }};
             window.my_seats = {{ my_seats|safe }};
             window.work_docs = {{ work_docs|safe }};
+            window.my_id = {{ request.user.id }};
         </script>
     </div>
 

@@ -11,6 +11,7 @@
     <div class="container-fluid" id="sub_docs">
         <script>
             window.my_seats = {{ my_seats|safe }};
+            window.my_id = {{ request.user.id }};
         </script>
     </div>
     {% render_bundle 'sub_docs' %}

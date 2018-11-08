@@ -33,14 +33,10 @@ class SeatTable extends React.Component {
         new_open: false,
         id: '',                     // id посади для форми
         seat: '',                   // назва посади для форми
-        index: '',                  // індекс обраної посади у списку
         dep: '',                    // назва відділу для форми
         dep_id: '',                 // id відділу
         chief: '',                  // керівник посади для форми
         chief_id: '',               // id керівника посади
-        is_free_time_chief: false,  // право підписувати звільнюючі
-        is_carry_out_chief: false,  // право підписувати мат.пропуски
-
         is_vacant: true,            // чи є посада вакантною
     };
 
@@ -56,13 +52,6 @@ class SeatTable extends React.Component {
                 dep_id: event.target.options[selectedIndex].getAttribute('data-key'),
                 dep: event.target.options[selectedIndex].getAttribute('value'),
             });
-            // this.state.dep_id = event.target.options[selectedIndex].getAttribute('data-key');
-            // this.state.dep = event.target.options[selectedIndex].getAttribute('value');
-        }
-        else if (event.target.name === 'is_free_time_chief' || event.target.name === 'is_carry_out_chief') {
-            this.setState({
-                [event.target.name]: event.target.checked,
-            });
         }
         else {
              this.setState({[event.target.name]:event.target.value});
@@ -72,19 +61,19 @@ class SeatTable extends React.Component {
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
         let new_seats = this.props.seats;    // Створюємо змінений масив seats, який призначимо this.seats у разі успіху post
-        this.state.index = getIndex(this.state.id, this.props.seats);  // шукаємо індекс запису, в якому треба внести зміни
+        const index = getIndex(this.state.id, this.props.seats);  // шукаємо індекс запису, в якому треба внести зміни
 
         // якщо хоча б одна зміна відбулася:
-        if (new_seats[this.state.index].seat !== this.state.seat ||
-            new_seats[this.state.index].dep_id !== this.state.dep_id ||
-            new_seats[this.state.index].chief_id !== this.state.chief_id) {
+        if (new_seats[index].seat !== this.state.seat ||
+            new_seats[index].dep_id !== this.state.dep_id ||
+            new_seats[index].chief_id !== this.state.chief_id) {
 
-            new_seats[this.state.index].id = this.state.id;
-            new_seats[this.state.index].seat = this.state.seat;
-            new_seats[this.state.index].dep = this.state.dep;
-            new_seats[this.state.index].dep_id = this.state.dep_id;
-            new_seats[this.state.index].chief = this.state.chief;
-            new_seats[this.state.index].chief_id = this.state.chief_id;
+            new_seats[index].id = this.state.id;
+            new_seats[index].seat = this.state.seat;
+            new_seats[index].dep = this.state.dep;
+            new_seats[index].dep_id = this.state.dep_id;
+            new_seats[index].chief = this.state.chief;
+            new_seats[index].chief_id = this.state.chief_id;
 
             // переводимо в null не обрані поля
             let chief_id = this.state.chief_id == 0 ? null : this.state.chief_id;
@@ -96,8 +85,6 @@ class SeatTable extends React.Component {
                 data: querystring.stringify({
                     id: this.state.id,
                     seat: this.state.seat,
-                    is_free_time_chief: this.state.is_free_time_chief,
-                    is_carry_out_chief: this.state.is_carry_out_chief,
                     department: dep_id,
                     chief: chief_id,
                     is_active: true,
@@ -118,8 +105,6 @@ class SeatTable extends React.Component {
             dep_id: 0,
             chief: '',
             chief_id: 0,
-            is_free_time_chief: false,
-            is_carry_out_chief: false,
             open: false,
         })
     }
@@ -137,8 +122,6 @@ class SeatTable extends React.Component {
             data: querystring.stringify({
                 id: this.state.id,
                 seat: this.state.seat,
-                is_free_time_chief: this.state.is_free_time_chief,
-                is_carry_out_chief:this.state.is_carry_out_chief,
                 department: dep_id,
                 chief: chief_id,
                 is_active: false,
@@ -159,8 +142,6 @@ class SeatTable extends React.Component {
             dep_id: 0,
             chief: '',
             chief_id: 0,
-            is_free_time_chief: false,
-            is_carry_out_chief: false,
             open: false,
         })
     }
@@ -180,8 +161,6 @@ class SeatTable extends React.Component {
             data: querystring.stringify({
                 new_seat: '',
                 seat: this.state.seat,
-                is_free_time_chief: this.state.is_free_time_chief,
-                is_carry_out_chief:this.state.is_carry_out_chief,
                 department: dep_id,
                 chief: chief_id,
                 is_active: true,
@@ -190,8 +169,6 @@ class SeatTable extends React.Component {
             // new_seats.push({
             //     id: response.data,
             //     seat: this.state.seat,
-            //     is_free_time_chief: this.state.is_free_time_chief,
-            //     is_carry_out_chief: this.state.is_carry_out_chief,
             //     dep_id: parseInt(this.state.dep_id),
             //     dep: this.state.dep,
             //     chief_id: parseInt(this.state.chief_id),
@@ -206,8 +183,6 @@ class SeatTable extends React.Component {
             //     dep_id: 0,
             //     chief: '',
             //     chief_id: 0,
-            //     is_free_time_chief: false,
-            //     is_carry_out_chief: false,
             //     new_open: false,
             // });
             window.location.reload();
@@ -225,8 +200,6 @@ class SeatTable extends React.Component {
             dep_id: row.dep_id,
             chief: row.chief,
             chief_id: row.chief_id,
-            is_free_time_chief: row.is_free_time_chief === 'true',
-            is_carry_out_chief: row.is_carry_out_chief === 'true',
             is_vacant: row.is_vacant === 'true',
         });
         this.onOpenModal();
@@ -242,8 +215,6 @@ class SeatTable extends React.Component {
             seat: '',
             dep: '',
             chief: '',
-            is_free_time_chief: false,
-            is_carry_out_chief: false,
         });
     };
 
@@ -287,14 +258,6 @@ class SeatTable extends React.Component {
 
                         <label className='full_width'>Назва посади:
                             <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
-                            <div className="d-flex">
-                                <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
-                                <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
-                            </div>
-                            <div className="d-flex">
-                                <Input name='is_carry_out_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_carry_out_chief} id="is_carry_out_chief" />
-                                <label htmlFor="is_carry_out_chief"> право підписувати мат.пропуски</label>
-                            </div>
                         </label><br /><br />
 
                         <label className='full_width'>Відділ:
@@ -336,14 +299,6 @@ class SeatTable extends React.Component {
 
                         <label className='full_width'>Назва посади:
                             <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
-                            <div className="d-flex">
-                                <Input name='is_free_time_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_free_time_chief} id="is_free_time_chief" />
-                                <label htmlFor="is_free_time_chief"> право підписувати звільнюючі заяви підлеглих</label>
-                            </div>
-                            <div className="d-flex">
-                                <Input name='is_carry_out_chief' onChange={this.onChange} type="checkbox" checked={this.state.is_carry_out_chief} id="is_carry_out_chief" />
-                                <label htmlFor="is_carry_out_chief"> право підписувати мат.пропуски</label>
-                            </div>
                         </label><br /><br />
 
                         <label className='full_width'>Відділ:

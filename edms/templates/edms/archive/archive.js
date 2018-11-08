@@ -1,18 +1,13 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
 import DxTable from '../dx_table';
 import DocInfo from '../my_docs/doc_info';
-
+import SeatChooser from '../seat_chooser';
+import '../my_styles.css'
 
 class Archive extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.onChange = this.onChange.bind(this);
-        this.onRowClick = this.onRowClick.bind(this);
-    }
 
     state = {
         seat_id: 0, // посада
@@ -45,117 +40,84 @@ class Archive extends React.Component {
       ],
     };
 
-    // вибирає із списка посад першу і показує відповідні їй документи
+    // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи
     componentDidMount() {
-        this.setState({
-            seat_id: window.my_seats[0].id
-        });
+        const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
+        this.setState({ seat_id: seat_id });
+        this.updateLists(seat_id);
+    }
 
+    // Оновлює списки документів
+    updateLists = (seat_id) => {
+        this.state.my_archive =[];
         window.my_archive.map(doc => {
-            if (doc.author_seat_id === window.my_seats[0].id) { // сортування по посаді
+            if (doc.author_seat_id === seat_id) {
                 this.setState(prevState => ({
                   my_archive: [...prevState.my_archive, doc]
                 }));
             }
         });
 
+        this.state.work_archive =[];
         window.work_archive.map(doc => {
-            if (doc.emp_seat_id === window.my_seats[0].id) { // сортування по посаді
+            if (doc.emp_seat_id === seat_id) {
                 this.setState(prevState => ({
                   work_archive: [...prevState.work_archive, doc]
                 }));
             }
         });
-    }
+    };
 
-    // При зміні посади змінюється ід посади і списки документів
-    onChange(event) {
-        if (event.target.name === 'my_seat') { // беремо ід посади із <select>
-            const selectedIndex = event.target.options.selectedIndex;
-            this.setState({
-                seat_id: parseInt(event.target.options[selectedIndex].getAttribute('value'))
-            });
+    // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
+    onSeatChange = (new_seat_id) => {
 
-            this.state.my_archive =[];
-            window.my_archive.map(doc => {
-                if (doc.author_seat_id === parseInt(event.target.options[selectedIndex].getAttribute('value'))) {
-                    this.setState(prevState => ({
-                      my_archive: [...prevState.my_archive, doc]
-                    }));
-                }
-            });
+        this.setState({ seat_id: new_seat_id });
 
-            this.state.work_archive =[];
-            window.work_archive.map(doc => {
-                if (doc.emp_seat_id === parseInt(event.target.options[selectedIndex].getAttribute('value'))) {
-                    this.setState(prevState => ({
-                      work_archive: [...prevState.work_archive, doc]
-                    }));
-                }
-            });
-        }
-    }
+        this.updateLists(new_seat_id);
+    };
 
-
-    onRowClick(clicked_row) {
+    onRowClick = (clicked_row) => {
         this.setState({row:clicked_row});
-    }
+    };
 
     render() {
-        const { seat_id, my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width } = this.state;
+        const { my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width } = this.state;
 
         return(
-            <div  className="css_height" >
-                {/* Якщо посад більше, ніж одна, дає можливість обрати необхідну */}
-                <Choose>
-                    <When condition = {window.my_seats.length > 1}>
-                        <label>Оберіть посаду:</label><br/>
-                        <select id='my-seat-select' name='my_seat' value={seat_id} onChange={this.onChange}>
-                            {
-                              window.my_seats.map(seat => {
-                                return <option key={seat.id} data-key={seat.id}
-                                  value={seat.id}>{seat.seat}</option>;
-                              })
-                            }
-                        </select><br/><br/>
-                    </When>
-                    <Otherwise>
-                        <div>{window.my_seats[0].seat}</div><br/>
-                    </Otherwise>
-                </Choose>
-
-                <div className="row css_height_100">
-                        <div className="col-lg-4">
-                            <div>Створені мною документи</div>
-                            <DxTable
-                                rows={this.state.my_archive}
-                                columns={my_archive_columns}
-                                defaultSorting={[{ columnName: "id", direction: "asc" }]}
-                                colWidth={my_archive_col_width}
-                                onRowClick={this.onRowClick}
-                                filter
-                            />
-                        </div>
-                        <div className="col-lg-4">
-                            <div>Документи, що були у роботі</div>
-                            <DxTable
-                                rows={this.state.work_archive}
-                                columns={work_archive_columns}
-                                defaultSorting={[{ columnName: "id", direction: "asc" }]}
-                                colWidth={work_archive_col_width}
-                                onRowClick={this.onRowClick}
-                                filter
-                            />
-                        </div>
-                        <div className="col-lg-4 css_height_100">
-                            <DocInfo
-                                doc={this.state.row}
-                                my_seat_id={this.state.seat_id}
-                                closed={true}
-                            />
-                        </div>
+            <Fragment>
+                <SeatChooser onSeatChange={this.onSeatChange}/>
+                <div className="row css_main_div">
+                    <div className="col-lg-4">
+                        <div>Створені мною документи</div>
+                        <DxTable
+                            rows={this.state.my_archive}
+                            columns={my_archive_columns}
+                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                            colWidth={my_archive_col_width}
+                            onRowClick={this.onRowClick}
+                            filter
+                        />
                     </div>
-            </div>
+                    <div className="col-lg-4">
+                        <div>Документи, що були у роботі</div>
+                        <DxTable
+                            rows={this.state.work_archive}
+                            columns={work_archive_columns}
+                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                            colWidth={work_archive_col_width}
+                            onRowClick={this.onRowClick}
+                            filter
+                        />
+                    </div>
+                    <div className="col-lg-4 css_height_100">
+                        <DocInfo
+                            doc={this.state.row}
+                            my_seat_id={this.state.seat_id}
+                            closed={true}
+                        />
+                    </div>
+                </div>
+            </Fragment>
         )
     }
 }

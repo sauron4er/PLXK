@@ -1,8 +1,8 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Document_Flow, Carry_Out_Items, \
-    Carry_Out_Info, Mark_Demand
+from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, \
+    Mark_Demand, Document_Type_Permission
 
 
 class UserProfileForm(forms.ModelForm):
@@ -31,13 +31,11 @@ class DepartmentForm(forms.ModelForm):
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Seat
-        fields = ('seat', 'department', 'chief', 'is_active', 'is_free_time_chief', 'is_carry_out_chief')
+        fields = ('seat', 'department', 'chief', 'is_active')
         labels = {
             'seat': 'Назва посади',
             'department': 'Відділ',
             'chief': 'Керівник',
-            'is_free_time_chief': 'Право підписувати звільнюючі перепустки',
-            'is_carry_out_chief': 'Право підписувати матеріальні пропуски'
         }
         widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
@@ -47,6 +45,19 @@ class DocumentForm(forms.ModelForm):
         model = Document
         fields = {'document_type', 'text', 'employee_seat'}
 
+
+# Document Type Permission Deactivate Form
+class DTPDeactivateForm(forms.ModelForm):
+    class Meta:
+        model = Document_Type_Permission
+        fields = {'is_active'}
+
+
+# Document Type Permission Add Form
+class DTPAddForm(forms.ModelForm):
+    class Meta:
+        model = Document_Type_Permission
+        fields = {'document_type', 'seat', 'mark'}
 
 class FreeTimeForm(forms.ModelForm):
     class Meta:

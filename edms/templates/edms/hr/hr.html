@@ -8,6 +8,7 @@
         window.emps = {{ emps|safe }};
         window.deps = {{ deps|safe }};
         window.seats = {{ seats|safe }};
+        window.my_id = {{ request.user.id }};
     </script>
 
     <div class="container-fluid px-3" id="hr"></div>

@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_emp_seats  # Відділ кадрів
+from edms.views import edms_administration, edms_get_types, edms_get_type_info, edms_deactivate_permission  # Адміністрування
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs  # Мої документи
 from edms.views import edms_mark, edms_resolution  # Мої документи post
 from edms.views import edms_archive  # Архів
@@ -9,6 +10,7 @@ from edms.views import edms_sub_docs, edms_get_sub_docs  # Документи п
 urlpatterns = [
   #  url(r'^$', RedirectView.as_view(url='/main', permanent=True)),
   #  url(r'^main/', edms_main, name='main'),
+
 
     # Запит на інформацію про документ з будь-якої сторінки
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
@@ -19,6 +21,11 @@ urlpatterns = [
     url(r'^hr/seat/(?P<pk>\d+)/$', edms_hr_seat, name='hr_seat'),
     url(r'^hr/emp_seat/(?P<pk>\d+)/$', edms_hr_emp_seat, name='hr_seat'),
     url(r'^hr/', edms_hr, name='hr'),
+
+    url(r'^administration/get_types/(?P<pk>\d+)/$', edms_get_types, name='get_types'),
+    url(r'^administration/deactivate/(?P<pk>\d+)/$', edms_deactivate_permission, name='deactivate_permission'),
+    url(r'^administration/get_type_info/(?P<pk>\d+)/$', edms_get_type_info, name='get_type_info'),
+    url(r'^administration/', edms_administration, name='administration'),
 
     url(r'^my_docs/get_chiefs/(?P<pk>\d+)/$', edms_get_chiefs, name='my_docs_get_chiefs'),
     url(r'^my_docs/get_direct_subs/(?P<pk>\d+)/$', edms_get_direct_subs, name='my_docs_get_direct_subs'),

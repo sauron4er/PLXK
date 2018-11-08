@@ -34,7 +34,6 @@ class DepTable extends React.Component {
         new_open: false,
         id: '',                     // id відділу для форми
         dep: '',                    // назва відділу для форми
-        index: '',                  // індекс обраного відділу у списку
         text: '',                   // опис відділу для форми
         new_dep: '',                // назва нового відділу
         new_text: '',               // опис нового відділу
@@ -54,14 +53,14 @@ class DepTable extends React.Component {
     handleSubmit(e) {               // Оновлює запис у списку відділів
         e.preventDefault();
         let new_deps = this.props.deps;   // Копіюємо масив для мутації
-        this.state.index = getIndex(this.state.id, new_deps);  // шукаємо індекс запису, в якому треба внести зміни
+        const index = getIndex(this.state.id, new_deps);  // шукаємо індекс запису, в якому треба внести зміни
 
         // якщо хоча б одна зміна відбулася:
-        if (new_deps[this.state.index].dep !== this.state.dep ||
-            new_deps[this.state.index].text !== this.state.text) {
+        if (new_deps[index].dep !== this.state.dep ||
+            new_deps[index].text !== this.state.text) {
 
-            new_deps[this.state.index].dep = this.state.dep;
-            new_deps[this.state.index].text = this.state.text;
+            new_deps[index].dep = this.state.dep;
+            new_deps[index].text = this.state.text;
 
             axios({
                 method: 'post',
