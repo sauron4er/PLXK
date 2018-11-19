@@ -142,7 +142,7 @@ class DxTable extends React.PureComponent {
       <Table.Cell
         {...props}
         style={{
-          padding: 5,
+          paddingLeft: 5,
           margin: 0,
           fontSize: '12px',
           // textAlign: 'center',

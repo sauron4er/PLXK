@@ -193,7 +193,7 @@ class DocTypeInfo extends React.Component {
                                 <div className='modal-header'>Додати дозволи:</div>
                                 <div className="modal-body">
                                     <label className="full_width">Оберіть посаду:
-                                        <Select id='seat_select' name='seat' className="full_width" value={new_seat} onChange={this.onChange} validations={[required]}>
+                                        <Select id='seat_select' name='seat' className="form-control full_width" value={new_seat} onChange={this.onChange} validations={[required]}>
                                             <option data-key={0} value='Не внесено'>------------</option>
                                             {
                                               seats.map(seat => {
@@ -204,7 +204,7 @@ class DocTypeInfo extends React.Component {
                                         </Select>
                                     </label> <br />
                                     <label className="full_width">Оберіть дозвіл:
-                                        <Select id='mark_select' name='mark' className="full_width" value={new_mark} onChange={this.onChange} validations={[required]}>
+                                        <Select id='mark_select' name='mark' className="form-control full_width" value={new_mark} onChange={this.onChange} validations={[required]}>
                                             <option data-key={0} value='Не внесено'>------------</option>
                                             {
                                               marks.map(mark => {

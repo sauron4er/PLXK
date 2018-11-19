@@ -252,16 +252,16 @@ class SeatTable extends React.Component {
                 {/*Модальне вікно редагування посади*/}
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
-                    <p>Внесіть зміни при необхідності:</p>
+                    <p className='font-weight-bold'>Внесіть зміни при необхідності:</p>
 
                     <Form onSubmit={this.handleSubmit}>
 
                         <label className='full_width'>Назва посади:
-                            <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                            <Input className='form-control full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
                         </label><br /><br />
 
                         <label className='full_width'>Відділ:
-                            <Select className='full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
+                            <Select className='form-control full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.deps.map(dep => {
@@ -274,7 +274,7 @@ class SeatTable extends React.Component {
                         <br /><br/>
 
                         <label className='full_width'>Керівник:
-                            <Select className='full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                            <Select className='form-control full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.seats.map(seat => {
@@ -294,15 +294,15 @@ class SeatTable extends React.Component {
                 {/*Модальне вікно додання посади*/}
                 <Modal open={new_open} onClose={this.onCloseModalNew} center>
                     <br/>
-                    <p>Нова посада</p>
+                    <p className='font-weight-bold'>Нова посада</p>
                     <Form onSubmit={this.handleNew}>
 
                         <label className='full_width'>Назва посади:
-                            <Input className='full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
+                            <Input className='form-control full_width' type="text" value={this.state.seat} name='seat' onChange={this.onChange} maxLength={100} size="51" validations={[required]}/>
                         </label><br /><br />
 
                         <label className='full_width'>Відділ:
-                            <Select className='full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
+                            <Select className='form-control full_width' id='dep-select' name='dep' value={dep} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.deps.map(dep => {
@@ -315,7 +315,7 @@ class SeatTable extends React.Component {
                         <br /><br/>
 
                         <label className='full_width'>Керівник:
-                            <Select className='full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
+                            <Select className='form-control full_width' id='chief-select' name='chief' value={chief} onChange={this.onChange}>
                                 <option data-key={0} value='Не внесено'>------------</option>
                                 {
                                   this.props.seats.map(seat => {

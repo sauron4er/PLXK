@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import DxTable from '../dx_table';
-import DocInfo from '../my_docs/doc_info';
+import DocInfo from '../doc_info/doc_info'
 import SeatChooser from '../seat_chooser';
 import '../my_styles.css'
 

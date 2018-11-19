@@ -3,18 +3,18 @@ import React from 'react';
 import { FileUploader } from 'devextreme-react';
 import { ToastContainer, toast } from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
-import axios from 'axios';
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
-
 import Info from './info';
 import Buttons from './buttons';
 import Resolutions from './resolutions';
 import Path from './path';
 import Flow from './flow';
-import '../my_docs/doc_info.css';
+import './doc_info.css';
 import '../loader_style.css';
+import axios from 'axios';
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+
 
 class DocInfo extends React.Component {
 

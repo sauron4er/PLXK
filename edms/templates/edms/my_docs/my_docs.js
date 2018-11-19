@@ -149,25 +149,21 @@ class MyDocs extends React.Component {
     render() {
         return(
             <Fragment>
-                <SeatChooser onSeatChange={this.onSeatChange}/>
-                <div className="row css_main_div">
-                    <div className="col-lg-3">
-                        {/*Якщо є начальники - показуємо кнопки створення нових документів (переробиться при додаванні наказів)*/}
-                        <If condition={this.state.chiefs}>
-                            <NewDoc my_seat_id={this.state.seat_id} chiefs={this.state.chiefs} addDoc={this.addDoc}/>
-                        </If>
-                    </div>
-                    <div className="col-lg-9 css_height_100">
-                        <DocsList
-                            my_seat_id={this.state.seat_id}
-                            my_docs={this.state.my_docs}
-                            work_docs={this.state.work_docs}
-                            acting_docs={this.state.acting_docs}
-                            removeDoc={this.removeDoc}
-                            direct_subs={this.state.direct_subs}
-                        />
-                    </div>
+                <div className='d-flex justify-content-between'>
+                    {/*Якщо є начальники - показуємо кнопки створення нових документів (переробиться при додаванні наказів)*/}
+                    <If condition={this.state.chiefs}>
+                        <NewDoc my_seat_id={this.state.seat_id} chiefs={this.state.chiefs} addDoc={this.addDoc}/>
+                    </If>
+                    <SeatChooser onSeatChange={this.onSeatChange}/>
                 </div>
+                <DocsList
+                    my_seat_id={this.state.seat_id}
+                    my_docs={this.state.my_docs}
+                    work_docs={this.state.work_docs}
+                    acting_docs={this.state.acting_docs}
+                    removeDoc={this.removeDoc}
+                    direct_subs={this.state.direct_subs}
+                />
             </Fragment>
         )
     }

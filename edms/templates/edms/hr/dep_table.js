@@ -188,16 +188,16 @@ class DepTable extends React.Component {
                 {/* Модальне вікно для нового відділу*/}
                 <Modal open={new_open} onClose={this.onCloseModalNew} center>
                     <br/>
-                    <p>Новий відділ</p>
+                    <p className='font-weight-bold'>Новий відділ</p>
 
                     <Form onSubmit={this.newSubmit}>
 
                         <label>Назва відділу:
-                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
+                            <Input className='form-control' type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
                         </label><br /><br />
 
                         <label className='full_width'>Опис:
-                            <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
+                            <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
                         </label>
                         <br /><br />
 
@@ -208,18 +208,17 @@ class DepTable extends React.Component {
                 {/* Модальне вікно для змін у відділі*/}
                 <Modal open={open} onClose={this.onCloseModal} center>
                     <br/>
-                    <p>Внесіть зміни при необхідності:</p>
+                    <p className='font-weight-bold'>Внесіть зміни при необхідності:</p>
 
                     <Form onSubmit={this.handleSubmit}>
 
                         <label>Назва відділу:
-                            <Input type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
-                        </label><br /><br />
+                            <Input className='form-control' type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
+                        </label><br/><br/>
 
-                        <label>Опис:
-                            <Textarea value={this.state.text} name='text' onChange={this.onChange} style={this.styles.textarea_style} maxLength={4000}/>
-                        </label>
-                        <br /><br />
+                        <label className='full_width'>Опис:
+                            <Textarea className='form-control full_width' value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
+                        </label><br/><br/>
 
                         <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>

@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Modal from 'react-responsive-modal';
+import Modal from 'react-awesome-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
@@ -9,7 +9,6 @@ import Select from 'react-validation/build/select';
 import { FileUploader } from 'devextreme-react';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
-
 import DxTable from '../dx_table';
 import {required} from '../validations.js';
 import '../my_styles.css'
@@ -36,10 +35,10 @@ class NewDoc extends React.Component {
             { name: 'measurement', title: 'Од. виміру' },
         ],
         carry_out_col_width: [
-            { columnName: 'id', width: 70 },
+            { columnName: 'id', width: 55 },
             { columnName: 'name'},
-            { columnName: 'quantity', width: 80 },
-            { columnName: 'measurement', width: 110 },
+            { columnName: 'quantity', width: 70 },
+            { columnName: 'measurement', width: 80 },
         ],
         open: false,
         new_doc_type: 0,
@@ -49,11 +48,15 @@ class NewDoc extends React.Component {
         chiefs: '', // список шефів для вибору, кому передавати службову записку
     };
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.new_doc_type !== prevState.new_doc_type && this.state.new_doc_type !== 0) {
+            this.setState({open: true})
+        }
+    }
+
     onChange = (event) => {
-        if (event.target.name === 'my_seat') { // беремо ід посади із <select>
-            const selectedIndex = event.target.options.selectedIndex;
-            this.state.my_seat_id = event.target.options[selectedIndex].getAttribute('value');
-            this.setState({my_seat_id: event.target.options[selectedIndex].getAttribute('value')});
+        if (event.target.name === 'new_doc_type') { // беремо ід посади із <select>
+            this.setState({new_doc_type: parseInt(event.target.value)});
         }
         else if (event.target.name === 'gate_radio') { // беремо ід посади із <select>
             this.setState({checkedGate: event.target.value});
@@ -70,121 +73,107 @@ class NewDoc extends React.Component {
         }
     };
 
-    // test = (e) => {
-    //     console.log(this.myRef);
-    // };
-
     // Створює форму для модального вікна в залежності від того, яка кнопка була нажата
     makeForm() {
         switch (this.state.new_doc_type) {
             // 1 - звільнююча
             case 1:
                 return (
-                    <div className="width_40vh">
-                        <h4 className="modal-title">Нова звільнююча</h4>
-                        <Form onSubmit={this.newFreeTime}>
-                            <div className="modal-body">
-                                <label>День дії звільнюючої:
-                                    <Input type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
-                                </label> <br />
-                                <label className="full_width">Куди, з якою метою звільнюєтесь:
-                                    <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
-                                </label> <br />
-                            </div>
-                            <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
-                            </div>
-                        </Form>
-                    </div>
+                    <Form onSubmit={this.newFreeTime}>
+                        <div className="modal-body">
+                            <h4 className="modal-title">Нова звільнююча</h4>
+                            <br/>
+                            <label>День дії звільнюючої:
+                                <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
+                            </label> <br />
+                            <label className="full_width">Куди, з якою метою звільнюєтесь:
+                                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
+                        </div>
+                        <div className="modal-footer">
+                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        </div>
+                    </Form>
                 );
             // 2 - матпропуск
             case 2:
                 return (
-                    <div>
-                        <h4 className="modal-title">Новий матеріальний пропуск</h4>
-                        <Form onSubmit={this.newCarryOut}>
-                            <div className="modal-body">
+                    <Form onSubmit={this.newCarryOut}>
+                        <div className="modal-body">
+                            <h4 className="modal-title">Новий матеріальний пропуск</h4>
+                            <br/>
+                            <label>День виносу:
+                                <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
+                            </label> <br />
 
-                                <label>День виносу:
-                                    <Input type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
-                                </label> <br />
+                            <label className='mr-1'>Прохідна №:</label>
+                            <input type="radio" name="gate_radio" value='1' onChange={this.onChange} checked={this.state.checkedGate==='1'} /><label className="radio-inline mx-1"> 1</label>
+                            <input type="radio" name="gate_radio" value='2' onChange={this.onChange} checked={this.state.checkedGate==='2'} /><label className="radio-inline mx-1"> 2</label>
 
-                                <label>Виніс через прохідну:</label>
-                                <span> </span>
-                                <label className="radio-inline"><input type="radio" name="gate_radio" value='1' onChange={this.onChange} checked={this.state.checkedGate==='1'} />№ 1</label>
-                                <span> </span>
-                                <label className="radio-inline"><input type="radio" name="gate_radio" value='2' onChange={this.onChange} checked={this.state.checkedGate==='2'} />№ 2</label>
-                                <br />
 
-                                <label className="full_width">Мета виносу:
-                                    <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
-                                </label> <br />
+                            <label className="full_width">Мета виносу:
+                                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
 
-                                <label>Список матеріальних цінностей:</label>
-                                    <DxTable
-                                        rows={this.state.carry_out_items}
-                                        columns={this.state.carry_out_columns}
-                                        colWidth={this.state.carry_out_col_width}
-                                        edit
-                                        // onRowClick={this.onRowClick}
-                                        getData={this.getCarryOutItems}
-                                        paging
-                                    />
-                                 <br /> <br />
+                            <label>Список матеріальних цінностей:</label>
+                                <DxTable
+                                    rows={this.state.carry_out_items}
+                                    columns={this.state.carry_out_columns}
+                                    colWidth={this.state.carry_out_col_width}
+                                    edit
+                                    // onRowClick={this.onRowClick}
+                                    getData={this.getCarryOutItems}
+                                    paging
+                                />
+                        </div>
 
-                            </div>
-
-                            <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
-                            </div>
-                        </Form>
-                    </div>
+                        <div className="modal-footer">
+                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        </div>
+                    </Form>
                 );
             // 3 - службова записка
             case 3:
                 const { chief_recipient } = this.state;
                 return (
-                    <div className="width_40vh">
-                        <h4 className="modal-title">Нова службова записка</h4>
+                    <Form onSubmit={this.newWorkNote}>
+                        <div className="modal-body">
+                            <h4 className="modal-title">Нова службова записка</h4>
+                            <br/>
+                            <label>Кому:
+                                {/*Список безпосередніх начальників для вибору, кому адресовується службова записка*/}
+                                <Select id='to_chief_select' name='chief_recipient' className="form-control full_width" value={chief_recipient} onChange={this.onChange} validations={[required]}>
+                                    <option data-key={0} value='Не внесено'>------------</option>
+                                    {
+                                      this.props.chiefs.map(chief => {
+                                        return <option key={chief.id} data-key={chief.id}
+                                          value={chief.name}>{chief.name + ', ' + chief.seat}</option>;
+                                      })
+                                    }
+                                </Select>
+                            </label> <br />
 
-                        <Form onSubmit={this.newWorkNote}>
-                            <div className="modal-body">
+                            <label className="full_width">Зміст:
+                                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
 
-                                <label>Кому:
-                                    {/*Список безпосередніх начальників для вибору, кому адресовується службова записка*/}
-                                    <Select id='to_chief_select' name='chief_recipient' className="full_width" value={chief_recipient} onChange={this.onChange} validations={[required]}>
-                                        <option data-key={0} value='Не внесено'>------------</option>
-                                        {
-                                          this.props.chiefs.map(chief => {
-                                            return <option key={chief.id} data-key={chief.id}
-                                              value={chief.name}>{chief.name + ', ' + chief.seat}</option>;
-                                          })
-                                        }
-                                    </Select>
-                                </label> <br />
+                            <label className="full_width">Додати файл:
+                                <FileUploader
+                                    onValueChanged={(e) => this.setState({files: e.value})}
+                                    uploadMode='useForm'
+                                    multiple={true}
+                                    allowCanceling={true}
+                                    selectButtonText='Оберіть файл'
+                                    labelText='або перетягніть файл сюди'
+                                    readyToUploadMessage='Готово'
+                                />
+                            </label>
+                        </div>
 
-                                <label className="full_width">Зміст:
-                                    <Textarea className="full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
-                                </label> <br />
-
-                                <label className="full_width">Додати файл:
-                                    <FileUploader
-                                        onValueChanged={(e) => this.setState({files: e.value})}
-                                        uploadMode='useForm'
-                                        multiple={true}
-                                        allowCanceling={true}
-                                        selectButtonText='Оберіть файл'
-                                        labelText='або перетягніть файл сюди'
-                                        readyToUploadMessage='Готово'
-                                    />
-                                </label> <br />
-                            </div>
-
-                            <div className="modal-footer">
-                              <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
-                            </div>
-                        </Form>
-                    </div>
+                        <div className="modal-footer">
+                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        </div>
+                    </Form>
                 )
         }
     }
@@ -287,37 +276,38 @@ class NewDoc extends React.Component {
         this.onCloseModal();
     };
 
-    onOpenModal(doc_type) {
-        this.setState({
-            new_doc_type: doc_type,
-            open: true
-        });
-    };
-
     onCloseModal = () => {
         this.setState({
             open: false,
             date: '',
             text: '',
-            new_doc_type: '',
+            new_doc_type: 0,
         });
     };
 
     render() {
-        const { open } = this.state;
+        const { open, new_doc_type } = this.state;
         return(
             <div>
-
-                <div>Створити новий документ:</div>
-                <button type="button" className="btn btn-outline-secondary mb-1 w-100" onClick={() => this.onOpenModal(1)}>Звільнююча перепустка</button>
-                <button type="button" className="btn btn-outline-secondary mb-1 w-100" onClick={() => this.onOpenModal(2)}>Матеріальний пропуск</button>
-                <button type="button" className="btn btn-outline-secondary mb-1 w-100" onClick={() => this.onOpenModal(3)}>Службова записка</button>
+                <form className="form-inline">
+                    <div className="form-group mb-1">
+                    <label className='font-weight-bold'>Створити новий документ:<pre> </pre></label>
+                    <select className="form-control" id='new-doc-type-select' name='new_doc_type' value={new_doc_type} onChange={this.onChange}>
+                        <option key={0} value={0}>---------------------</option>
+                        <option key={1} value={1}>Звільнююча перепустка</option>
+                        <option key={2} value={2}>Матеріальний пропуск</option>
+                        <option key={3} value={3}>Службова записка</option>
+                    </select>
+                    </div>
+                </form>
 
                 {/*Модальне вікно для форм*/}
-                <Modal open={open} onClose={this.onCloseModal} center>
-                    {this.makeForm()}
+                <Modal visible={open} width='45%' effect="fadeInUp" onClickAway={() => this.onCloseModal()}>
+                    <div>
+                        {this.makeForm()}
+                        <a href="javascript:void(0);" onClick={() => this.onCloseModal()}>Close</a>
+                    </div>
                 </Modal>
-
             </div>
         )
     }

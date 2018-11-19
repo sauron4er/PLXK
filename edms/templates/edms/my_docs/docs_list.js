@@ -1,8 +1,6 @@
 'use strict';
 import React from 'react';
-
 import DxTable from '../dx_table';
-// import DocInfo from '../my_docs/doc_info';
 import DocInfo from '../doc_info/doc_info'
 import '../my_styles.css'
 
@@ -90,34 +88,30 @@ class DocsList extends React.Component {
         const { work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width } = this.state;
 
         return(
-            <div className="row css_height_100" >
-                <div className="col-lg-5">
-                    <div>Документи в черзі:
-                        <DxTable
-                            rows={this.props.work_docs}
-                            columns={work_docs_columns}
-                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
-                            colWidth={work_docs_col_width}
-                            onRowClick={this.onRowClick}
-                            pageSize={5}
-                            filter
-                            height={350}
-                        />
-                    </div><br/>
-                    <div>Створені мною документи:
-                        <DxTable
-                            rows={this.props.my_docs}
-                            columns={my_docs_columns}
-                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
-                            colWidth={my_docs_col_width}
-                            onRowClick={this.onRowClick}
-                            pageSize={5}
-                            filter
-                            height={350}
-                        />
-                    </div>
+            <div className="row css_main_div" >
+                <div className="col-lg-4">Документи в черзі:
+                    <DxTable
+                        rows={this.props.work_docs}
+                        columns={work_docs_columns}
+                        defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                        colWidth={work_docs_col_width}
+                        onRowClick={this.onRowClick}
+                        pageSize={5}
+                        filter
+                    />
+                </div><br/>
+                <div className="col-lg-4">Створені мною документи:
+                    <DxTable
+                        rows={this.props.my_docs}
+                        columns={my_docs_columns}
+                        defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                        colWidth={my_docs_col_width}
+                        onRowClick={this.onRowClick}
+                        pageSize={5}
+                        filter
+                    />
                 </div>
-                <div className="col-lg-7 css_height_100">
+                <div className="col-lg-4 css_height_100">
                     <DocInfo
                         doc={this.state.row}
                         direct_subs={this.props.direct_subs}

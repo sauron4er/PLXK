@@ -331,7 +331,7 @@ class UserTable extends React.Component {
         const acting_select = this.state.vacation_checked  // відображення селекту для в.о.
         ? <div className="d-flex">
             <label htmlFor="acting-select"> В.о.:</label>
-            <Select id='acting-select' name='acting' value={acting} onChange={this.onChange}>
+            <Select className='form-control' id='acting-select' name='acting' value={acting} onChange={this.onChange}>
                 <option data-key={0} value=''>------------</option>
                 {
                     this.props.emps.map(emp => {
@@ -361,7 +361,7 @@ class UserTable extends React.Component {
                     <p> </p>
                     <Form onSubmit={this.handleSubmit}>
                         <div>
-                            <p>{this.state.emp}</p>
+                            <p className='font-weight-bold'>{this.state.emp}</p>
                         </div>
                         <div className="d-flex">
                             <Input name='on_vacation' onChange={this.onChange} type="checkbox" checked={this.state.on_vacation} id="vacation" />
@@ -372,7 +372,7 @@ class UserTable extends React.Component {
 
                         <div>
                             <label>Нова посада:
-                                <Select id='seat-select' name='seat' value={seat} onChange={this.onChange}>
+                                <Select className='form-control' id='seat-select' name='seat' value={seat} onChange={this.onChange}>
                                     <option data-key={0} value='Не внесено'>------------</option>
                                     {
                                       this.props.seats.map(seat => {
@@ -388,7 +388,7 @@ class UserTable extends React.Component {
 
                         <div>
                             <label>Посади користувача:
-                                <Select id='emp-seat-select' name='emp_seat' value={emp_seat_id} onChange={this.onChange}>
+                                <Select className='form-control' id='emp-seat-select' name='emp_seat' value={emp_seat_id} onChange={this.onChange}>
                                     <option data-key={0} value=''>------------</option>
                                     {
                                       this.state.emp_seats_list.map(empSeat => {
