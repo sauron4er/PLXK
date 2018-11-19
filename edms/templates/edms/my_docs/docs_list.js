@@ -2,7 +2,8 @@
 import React from 'react';
 
 import DxTable from '../dx_table';
-import DocInfo from '../my_docs/doc_info';
+// import DocInfo from '../my_docs/doc_info';
+import DocInfo from '../doc_info/doc_info'
 import '../my_styles.css'
 
 
@@ -42,8 +43,8 @@ class DocsList extends React.Component {
 
     // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закрити й документ в MyDocs
     removeRow = (id, mark_id, author_id) => {
-        // видаляємо документ зі списку, якщо реакція не просто коментар:
-        if (mark_id !== 4) {
+        // видаляємо документ зі списку, якщо реакція не просто коментар чи файл:
+        if (mark_id !== 4 && mark_id !== 12) {
             this.props.removeDoc(id, author_id);
         }
         // рендеримо відповідь на подію:
@@ -72,6 +73,9 @@ class DocsList extends React.Component {
                 break;
             case 10:
                 answer = 'Резолюції до документу №' + id + ' додано.';
+                break;
+            case 12:
+                answer = 'Файл до документу №' + id + ' додано.';
                 break;
         }
         this.setState({
@@ -116,7 +120,6 @@ class DocsList extends React.Component {
                 <div className="col-lg-7 css_height_100">
                     <DocInfo
                         doc={this.state.row}
-                        my_seat_id={this.props.my_seat_id}
                         direct_subs={this.props.direct_subs}
                         removeRow={this.removeRow}
                         closed={false}

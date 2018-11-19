@@ -24,7 +24,7 @@ class NewDoc extends React.Component {
     state = {
         text: '',
         date: '',
-        file: [],
+        files: [],
         my_seats: window.my_seats,
         checkedGate: '1',
         carry_out_items: [{id: 1, name: '', quantity: '', measurement: '' }],
@@ -47,8 +47,6 @@ class NewDoc extends React.Component {
         chief_recipient_id: 0, // ід обраного шефа, кому передавати службову записку
         chief_recipient: '', // ім’я обраного шефа, кому передавати службову записку
         chiefs: '', // список шефів для вибору, кому передавати службову записку
-
-
     };
 
     onChange = (event) => {
@@ -71,6 +69,10 @@ class NewDoc extends React.Component {
              this.setState({[event.target.name]:event.target.value});
         }
     };
+
+    // test = (e) => {
+    //     console.log(this.myRef);
+    // };
 
     // Створює форму для модального вікна в залежності від того, яка кнопка була нажата
     makeForm() {
@@ -167,8 +169,13 @@ class NewDoc extends React.Component {
 
                                 <label className="full_width">Додати файл:
                                     <FileUploader
-                                        onValueChanged={(e) => {this.setState({file: e.value})}}
+                                        onValueChanged={(e) => this.setState({files: e.value})}
                                         uploadMode='useForm'
+                                        multiple={true}
+                                        allowCanceling={true}
+                                        selectButtonText='Оберіть файл'
+                                        labelText='або перетягніть файл сюди'
+                                        readyToUploadMessage='Готово'
                                     />
                                 </label> <br />
                             </div>
@@ -252,17 +259,23 @@ class NewDoc extends React.Component {
     newWorkNote = (e) => {
         e.preventDefault();
 
+        let formData = new FormData();
+        if (this.state.files.length > 0) {
+            this.state.files.map(file => {
+                formData.append("file", file);
+            });
+        }
+        formData.append('document_type', '3');
+        formData.append('employee_seat', this.props.my_seat_id);
+        formData.append('recipient', this.state.chief_recipient_id);
+        formData.append('text', this.state.text);
+
         axios({
             method: 'post',
             url: '',
-            data: querystring.stringify({
-                document_type: 3,
-                employee_seat: this.props.my_seat_id,
-                recipient: parseInt(this.state.chief_recipient_id),
-                text: this.state.text,
-            }),
+            data: formData,
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              'Content-Type': 'multipart/form-data'
             },
         }).then((response) => {
             const today = new Date();

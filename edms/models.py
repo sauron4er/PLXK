@@ -2,9 +2,8 @@ from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
 
+
 # models, related with users
-
-
 class Seat(models.Model):
     seat = models.CharField(max_length=100)
     department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
@@ -81,13 +80,6 @@ class Document_Path(models.Model):
     comment = models.CharField(max_length=1000, blank=True)
 
 
-class Document_Flow(models.Model):
-    document = models.ForeignKey(Document, related_name='flow')
-    employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_in_flow')
-    expected_mark = models.ForeignKey(Mark, related_name='in_flow', null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-
-
 class Mark_Demand(models.Model):
     document = models.ForeignKey(Document, related_name='documents_with_demand')
     document_path = models.ForeignKey(Document_Path, related_name='path_demands', null=True)
@@ -98,6 +90,12 @@ class Mark_Demand(models.Model):
     result_document = models.ForeignKey(Document, related_name='result_document', null=True)
     deadline = models.DateTimeField(null=True)
     is_active = models.BooleanField(default=True)
+
+
+class File(models.Model):
+    file = models.FileField(upload_to='edms_files/%Y/%m')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    document_path = models.ForeignKey(Document_Path, related_name='files', null=True)
 
 
 # Models, related to specific types of documents

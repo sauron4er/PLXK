@@ -33,19 +33,23 @@ module.exports = {
             exclude: /node_modules/,
             loader: 'babel-loader',
       }, // to transform JSX into JS
-      {     test: /\.css$/,
-            exclude: /node_modules/,
-            loader: "style-loader!css-loader"
-      },
       {
             test: /\.css$/,
             include: /node_modules/,
             loaders: ['style-loader', 'css-loader'],
       },
-      //  для Devextreme:
-      {     test: /\.(ttf|eot|woff|woff2|svg)$/,
-            loader: "file-loader?name=/[name].[ext]"
+      {     test: /\.css$/,
+            exclude: /node_modules/,
+            loader: "style-loader!css-loader"
       },
+
+      //  for Devextreme:
+      // {     test: /\.(ttf|eot|woff|woff2|svg)$/,
+      //       loader: "file-loader?name=/[name].[ext]"
+      // },
+      {
+        test: /\.(woff|woff2|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/,
+        loader: 'url-loader?limit=100000' },
     ],
   },
 

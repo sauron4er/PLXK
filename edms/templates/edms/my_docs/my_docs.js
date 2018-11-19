@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 
 import '../my_styles.css';
-import NewDoc from '../my_docs/new_doc';
+import NewDoc from './new_doc';
 import DocsList from '../my_docs/docs_list';
 import SeatChooser from '../seat_chooser';
 axios.defaults.xsrfHeaderName = "X-CSRFToken";

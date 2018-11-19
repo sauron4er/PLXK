@@ -3,16 +3,18 @@ from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import datetime
 from django.utils import timezone
+import os
 import json
 import pytz
 
+
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat, Employee_Seat, Document, Document_Path, Active_Docs_View, Archive_Docs_View
+from .models import Seat, Employee_Seat, Document, File, Document_Path, Active_Docs_View, Archive_Docs_View
 from .models import Document_Type, Document_Type_Permission, Mark
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
-from .forms import DTPDeactivateForm, DTPAddForm
+from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
 
 
 def convert_to_localtime(utctime):
@@ -73,6 +75,23 @@ def get_my_seats(emp_id):
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
     } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
     return my_seats
+
+
+# Функція, яка постить файли (для edms_mark та edms_my_docs)
+def handle_files(path_id, post, files):
+    file_request = post.copy()
+    file_request.update({'document_path': path_id})
+    file_request.update({'name': 'file'})
+
+    file_form = NewFileForm(file_request, files)
+    if file_form.is_valid():
+        document_path = file_form.cleaned_data['document_path']
+        for f in files.getlist('file'):
+            File.objects.create(
+                document_path=document_path,
+                file=f,
+                name=f.name
+            )
 
 
 @login_required(login_url='login')
@@ -375,6 +394,17 @@ def edms_get_doc(request, pk):
                 } for res in Mark_Demand.objects.filter(document_path_id=step['id'])]
                 step['resolutions'] = resolutions
 
+        # Перебираємо шлях документа в пошуках файлів і додаємо їх до відповідного запису в path
+        for step in path:
+            files = [{
+                'id': file.id,
+                'file': file.file.name,
+                'name': file.name,
+                'path_id': file.document_path.id,
+                'mark_id': file.document_path.mark.id,
+            } for file in File.objects.filter(document_path_id=step['id'])]
+            step['files'] = files
+
         # В кого на черзі документ
         flow = [{
             'id': demand.id,
@@ -386,7 +416,7 @@ def edms_get_doc(request, pk):
 
         doc_info = {
             'path': path,
-            'flow': flow,
+            'flow': flow
         }
 
         # Інфа, яка стосується окремих видів документів
@@ -419,7 +449,7 @@ def edms_get_doc(request, pk):
                 'carry_out_day': info[0]['carry_out_day'],
                 'gate': info[0]['gate'],
                 'text': info[0]['text'],
-                'items': items,
+                'carry_out_items': items,
             })
 
         if doc.document_type_id == 3:  # Службова записка
@@ -489,7 +519,7 @@ def edms_my_docs(request):
             doc_form = DocumentForm(doc_request)
             if doc_form.is_valid():
 
-                # Отримуємо ід нового документу
+                # Зберігаємо новий документ і отримуємо його id
                 new_doc = doc_form.save()
 
                 # Додаємо в запит ід нового документу:
@@ -509,7 +539,7 @@ def edms_my_docs(request):
                 # отримуємо список цінностей на виніс з запиту в масив
                 carry_out_items = json.loads(request.POST['carry_out_items'])
 
-                # Отримуємо ід нового документу
+                # Зберігаємо новий документ і отримуємо його id
                 new_doc = doc_form.save()
                 doc_request.update({'document': new_doc.pk})
 
@@ -534,18 +564,23 @@ def edms_my_docs(request):
             doc_form = DocumentForm(doc_request)
             if doc_form.is_valid():
 
-                # Отримуємо ід нового документу і додаємо його у запит
+                # Зберігаємо новий документ і отримуємо його id
                 new_doc = doc_form.save()
                 doc_request.update({'document': new_doc.pk})
-                # Додаємо у запит вид позначку, яку очікуємо від шефа:
+                # Додаємо у запит вид позначку 'Погоджено', яку очікуємо від шефа:
                 doc_request.update({'mark': 2})
 
-                # Записуємо інформацію про керівника-отримувача у mark_demand
+                # Заносимо документ у mark_demand
                 chief_mark_demand_form = ChiefMarkDemandForm(doc_request)
                 if chief_mark_demand_form.is_valid():
                     chief_mark_demand_form.save()
 
-                return HttpResponse(new_doc.pk)
+                # Додаємо файли, якщо такі є:
+                if len(request.FILES) > 0:
+                    new_path = Document_Path.objects.filter(document_id=new_doc.pk).filter(mark_id=1).first()
+                    handle_files(new_path.pk, request.POST, request.FILES)
+
+                return HttpResponse(json.dumps(new_doc.pk))
 
     return HttpResponse(status=405)
 
@@ -640,28 +675,27 @@ def edms_mark(request):
         path_form = DocumentPathForm(request.POST)
         if path_form.is_valid():
             new_path = path_form.save()
+
+            # Додаємо файли, якщо такі є:
+            if len(request.FILES) > 0:
+                handle_files(new_path.pk, request.POST, request.FILES)
+
             return HttpResponse(new_path.pk)
 
 
 @login_required(login_url='login')
 def edms_resolution(request):
     if request.method == 'POST':
-        path_request = request.POST.copy()
-        path_request.update({'mark': 10})
-        path_form = DocumentPathForm(path_request)
 
-        if path_form.is_valid():
-            new_path = path_form.save()
-            # отримуємо список резолюцій з request і публікуємо їх усі у базу
-            resolutions = json.loads(request.POST['resolutions'])
-            res_request = request.POST.copy()
-            res_request.update({'document_path': new_path.pk})
-            res_request.update({'mark': 11})
-            for res in resolutions:
-                res_request.update({'recipient': res['recipient_id']})
-                res_request.update({'comment': res['comment']})
-                resolution_form = ResolutionForm(res_request)
-                if resolution_form.is_valid():
-                    resolution_form.save()
-
-            return HttpResponse(new_path.pk)
+        # отримуємо список резолюцій з request і публікуємо їх усі у базу
+        resolutions = json.loads(request.POST['resolutions'])
+        res_request = request.POST.copy()
+        for res in resolutions:
+            res_request.update({'recipient': res['recipient_id']})
+            res_request.update({'comment': res['comment']})
+            resolution_form = ResolutionForm(res_request)
+            if resolution_form.is_valid():
+                new_res = resolution_form.save()
+            else:
+                return HttpResponse(status=405)
+        return HttpResponse('')

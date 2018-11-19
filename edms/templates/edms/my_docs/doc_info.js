@@ -1,10 +1,10 @@
 'use strict';
 import React from 'react';
-import axios from 'axios';
-import querystring from 'querystring'; // for axios
+import { FileUploader } from 'devextreme-react';
 import { ToastContainer, toast } from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
-
+import axios from 'axios';
+import querystring from 'querystring'; // for axios
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -19,6 +19,8 @@ class DocInfo extends React.Component {
         type_info: [],
         flow: [],
         path: [],
+        files: [],
+        new_files: [],
         free_time: '',
         text: '',
         carry_out_day: '',
@@ -93,7 +95,6 @@ class DocInfo extends React.Component {
               'Content-Type': 'application/x-www-form-urlencoded'
             },
         }).then((response) => {
-
             // Отримуємо інформацію щодо конкретних видів документів
             if (doc.type_id === 1) {
                 this.setState({
@@ -118,6 +119,7 @@ class DocInfo extends React.Component {
             this.setState({
                 path: response.data.path,
                 flow: response.data.flow,
+                files: response.data.files,
                 text: response.data.text,
                 ready_for_render: true,
             });
@@ -131,24 +133,37 @@ class DocInfo extends React.Component {
     // опрацьовуємо нажаття кнопок реагування
     newMark = (e, mark_id) => {
         e.preventDefault();
-        const doc_id = this.props.doc.id;
-        const author_id = this.props.doc.author_seat_id;
-        const removeRow = this.props.removeRow;
 
-        // Якщо це не пустий коментар, відправляємо дані у бд, інакше виводимо текст помилки
-        if (mark_id !== 4 || this.state.comment !== '') {
+        // Якщо це пустий коментар, або не прикрпілений файл, виводимо текст помилки
+        if (mark_id === 4 && this.state.comment === '') {
+            this.notify('Введіть текст коментарю.')
+        }
+        else if (mark_id === 12 && this.state.new_files.length === 0) {
+            this.notify('Оберіть файл.')
+        }
+        else {
+            const doc_id = this.props.doc.id;
+            const author_id = this.props.doc.author_seat_id;
+            const removeRow = this.props.removeRow;
+
+            let formData = new FormData();
+            if (this.state.new_files.length > 0) {
+                this.state.new_files.map(file => {
+                    formData.append("file", file);
+                });
+            }
+            formData.append('document', doc_id);
+            formData.append('employee_seat', this.props.my_seat_id);
+            formData.append('mark', mark_id);
+            formData.append('comment', this.state.comment);
+            formData.append('flow_id', this.props.doc.flow_id);
+
             axios({
                 method: 'post',
                 url: 'mark/',
-                data: querystring.stringify({
-                    document: this.props.doc.id,
-                    employee_seat: this.props.my_seat_id,
-                    mark: mark_id,
-                    comment: this.state.comment,
-                    flow_id: this.props.doc.flow_id,
-                }),
+                data: formData,
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'multipart/form-data'
                 },
             }).then((response) => {
                 // направляємо документ на видалення з черги, якщо це не коментар
@@ -156,9 +171,6 @@ class DocInfo extends React.Component {
             }).catch((error) => {
                 console.log('errorpost: ' + error);
             });
-        }
-        else {
-            this.notify('Введіть текст коментарю.')
         }
     };
 
@@ -255,18 +267,16 @@ class DocInfo extends React.Component {
                         <If condition={this.state.resolutions.length > 0}>
                             <div className='mt-1'>Створені резолюції:</div>
                             <ol>
-                               {
-                                   this.state.resolutions.map((res, index) => {
-                                       return <li key={index}>
-                                                <button type="button" className="close" aria-label="Close" onClick={this.delResolution.bind(undefined, index)}>
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                                <div className="font-italic">{res.sub}</div>
-                                                <div>{res.comment}</div>
-                                                <hr/>
-                                        </li>;
-                                    })
-                                }
+                               {this.state.resolutions.map((res, index) => {
+                                   return <li key={index}>
+                                        <button type="button" className="close" aria-label="Close" onClick={this.delResolution.bind(undefined, index)}>
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <div className="font-italic">{res.sub}</div>
+                                        <div>{res.comment}</div>
+                                        <hr/>
+                                    </li>;
+                                })}
                             </ol>
                             <button className="btn btn-success" onClick={this.postResolutions}>Відправити</button>
                         </If>
@@ -278,27 +288,30 @@ class DocInfo extends React.Component {
 
     // Розбирається, яку інфу і які кнопки показувати
     arrangeRenderInfo = () => {
+        const {path, flow, free_time, text, carry_out_items, carry_out_day, gate, recipient, recipient_seat} = this.state;
         if (this.props.doc !== '' && this.props.doc.id !== 0 && this.props.my_seat_id == this.props.doc.emp_seat_id) {    // Якщо рядок вибрано і посада не змінилася:
 
-            // Інфа, що є тільки у деяких видів документів (switch-перебір по типу документа):
-            let type_info = [];
+
+            let type_info = []; // Основна інформація
+
+            // Додаємо в type_info інформацію про документ залежно від його типу:
             switch(this.props.doc.type_id) {
                 case 1:
                     type_info.push(
                         <div key='1'>Дата виходу за територію:
-                            <div className="font-italic ml-1">{this.state.free_time}</div>
+                            <div className="font-italic ml-1">{free_time}</div>
                             <div>Куди та з якою метою:</div>
-                            <div className="css_note_text font-italic ml-1">{this.state.text}</div>
+                            <div className="css_note_text font-italic ml-1">{text}</div>
                         </div>
                     );
                     break;
                 case 2:
                     type_info.push(
                         <div key='1'>Дата виносу:
-                            <div className="font-italic ml-1">{this.state.carry_out_day}</div>
-                            <div>Прохідна №: {this.state.gate}</div>
+                            <div className="font-italic ml-1">{carry_out_day}</div>
+                            <div>Прохідна №: {gate}</div>
                             <div>Куди та з якою метою:</div>
-                            <div className="css_note_text font-italic ml-1">{this.state.text}</div>
+                            <div className="css_note_text font-italic ml-1">{text}</div>
                             <table className="table table-bordered mt-2">
                                 <thead>
                                     <tr>
@@ -309,7 +322,7 @@ class DocInfo extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.state.carry_out_items.map((item, index) => (
+                                    {carry_out_items.map((item, index) => (
                                         <tr key={index}>
                                             <td>{index + 1}</td>
                                             <td>{item.item_name}</td>
@@ -325,19 +338,36 @@ class DocInfo extends React.Component {
                 case 3:
                     type_info.push(
                         <div key='1'>Кому:
-                            <div className="font-italic ml-1">{this.state.recipient}, {this.state.recipient_seat}</div>
+                            <div className="font-italic ml-1">{recipient}, {recipient_seat}</div>
                             <div>Зміст:</div>
-                            <div className="css_note_text ml-1">{this.state.text}</div>
+                            <div className="css_note_text ml-1">{text}</div>
                         </div>
                     );
                     break;
                 default:
                     type_info.push(<div key='1'> </div>)
             }
+
+            // Додаємо в type_info файли, якщо вони завантажені автором:
+            // !!! Працює правильно тільки якщо першопочатковий path документа останній у списку (список відсортований за датою)
+            let init_files = [];
+            const init_path = path[path.length-1]; // Знаходимо path створення документа
+            if (init_path.files.length > 0) {
+                init_path.files.map(file => {
+                    if (file.mark_id === 1) {
+                        init_files.push(
+                            <div key={file.id}><a href={'../../media/' + file.file} download>{file.name}</a></div>
+                        )
+                    }
+                });
+                type_info.push(<div key='2'>Файли:</div>);
+                type_info.push(<div key='3'>{init_files}</div>);
+            }
+
             // Додаємо в type_info резолюцію керівника, якщо така є:
             if (this.props.doc.expected_mark === 11) {
                 let my_resolutions = [];
-                this.state.path.map(step => {
+                path.map(step => {
                     if (step.resolutions) {
                         step.resolutions.map(res => {
                             if (res.emp_seat_id === this.props.my_seat_id) {
@@ -355,15 +385,15 @@ class DocInfo extends React.Component {
                     }
                 });
                 type_info.push(
-                    <div key='2' className="css_resolution mt-2">Резолюції для вас:
+                    <div key='4' className="css_resolution mt-2">Резолюції для вас:
                         {my_resolutions}
                     </div>)
             }
 
-            // Список користувачів, у яких стоїть у черзі документ:
-            const doc_flow = [];
-            if (this.state.flow) {
-                this.state.flow.map(flow => {
+
+            const doc_flow = []; // Список користувачів, у яких стоїть у черзі документ:
+            if (flow) {
+                flow.map(flow => {
                     doc_flow.push(
                         <div key={flow.id} className="css_flow p-2 mt-1 mr-1">
                             <div className="font-weight-bold">{flow.emp}</div>
@@ -372,10 +402,10 @@ class DocInfo extends React.Component {
                 });
             }
 
-            // Список користувачів, які вже відреагували на документ:
-            const doc_path = [];
-            if (this.state.path) {
-                this.state.path.map(path => {
+
+            const doc_path = []; // Історія документа:
+            if (path) {
+                path.map(path => {
                     doc_path.push(
                         <div key={path.id} className="css_path p-2 my-1 mr-1">
                             <div className="d-flex justify-content-between">
@@ -390,14 +420,19 @@ class DocInfo extends React.Component {
                             </If>
                             <If condition={path.resolutions}>
                                 <ol className="list-group mt-1" >
-                                   {
-                                       path.resolutions.map((res, index) => {
-                                           return <li className="list-group-item" key={index}>
-                                               <div className="font-italic">{res.emp}, {res.seat}</div>
-                                               <div>{res.comment}</div>
-                                            </li>;
-                                        })
-                                    }
+                                   {path.resolutions.map((res) => {
+                                       return <li className="list-group-item" key={res.id}>
+                                           <div className="font-italic">{res.emp}, {res.seat}</div>
+                                           <div>{res.comment}</div>
+                                        </li>;
+                                   })}
+                                </ol>
+                            </If>
+                            <If condition={path.files.length > 0}>
+                                <ol className="list-group mt-1" >Файли:
+                                   {path.files.map((file) => {
+                                       return <div key={file.id}><a href={'../../media/' + file.file} download>{file.name}</a></div>;
+                                   })}
                                 </ol>
                             </If>
                         </div>
@@ -405,8 +440,8 @@ class DocInfo extends React.Component {
                 })
             }
 
-            // Список кнопок, які показуються користувачу для реагування на документ:
-            const buttons = [];
+
+            const buttons = []; // Список кнопок, які показуються користувачу:
             // Якщо документ активний:
             if (this.props.closed === false) {
                 // Якщо автор не я:
@@ -471,11 +506,13 @@ class DocInfo extends React.Component {
                         <button key={7} type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.newMark(e, 7)}>Закрити</button>
                     )
                 }
-                // В будь-якому випадку додаємо кнопку "Коментар":
+                // В будь-якому випадку додаємо кнопки "Коментар" та "Файл":
                 buttons.push(
-                    <button key={4} type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.newMark(e, 4)}>Коментар</button>
+                    <button key={4} type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.newMark(e, 4)}>Коментар</button>,
+                    <button key={12} type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.newMark(e, 12)}>Файл</button>
                 );
             }
+
 
             this.setState({
                 type_info: type_info,
@@ -515,6 +552,17 @@ class DocInfo extends React.Component {
                                     <label htmlFor="comment">Текст коментарю:</label>
                                     <textarea name="comment" className="form-control" rows="3" id="comment" onChange={this.onChange} />
                                 </div>
+                                <div>Додати файл:
+                                    <FileUploader
+                                        onValueChanged={(e) => this.setState({new_files: e.value})}
+                                        uploadMode='useForm'
+                                        multiple={true}
+                                        allowCanceling={true}
+                                        selectButtonText='Оберіть файл'
+                                        labelText='або перетягніть файл сюди'
+                                        readyToUploadMessage='Готово'
+                                    />
+                                </div> <br />
                             </div>
 
                             <div className="mt-3">Документ на черзі у:

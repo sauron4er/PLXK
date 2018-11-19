@@ -2,7 +2,7 @@ from django import forms
 
 from accounts import models as accounts
 from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, \
-    Mark_Demand, Document_Type_Permission
+    Mark_Demand, Document_Type_Permission, File
 
 
 class UserProfileForm(forms.ModelForm):
@@ -59,6 +59,7 @@ class DTPAddForm(forms.ModelForm):
         model = Document_Type_Permission
         fields = {'document_type', 'seat', 'mark'}
 
+
 class FreeTimeForm(forms.ModelForm):
     class Meta:
         model = Free_Time_Periods
@@ -94,3 +95,12 @@ class ResolutionForm(forms.ModelForm):
         model = Mark_Demand
         fields = {'document', 'document_path', 'comment', 'recipient', 'mark'}
 
+
+class NewFileForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = {
+            'name',
+            'file',
+            'document_path'
+        }

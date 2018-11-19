@@ -15,8 +15,6 @@ import '../loader_style.css';
 import '../my_styles.css';
 
 
-
-
 class DocTypeInfo extends React.Component {
 
     state = {

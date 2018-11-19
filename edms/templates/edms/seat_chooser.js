@@ -8,11 +8,11 @@ class SeatChooser extends React.Component {
 
     // отримує посаду з локального сховища, якщо там її нема - записує першу зі списку у window.
     componentDidMount() {
-        if (window.my_id != localStorage.getItem('my_id')) {
+        if (window.my_seats != localStorage.getItem('my_seats')) {
             this.setState({
                 my_seat_id: window.my_seats[0].id,
             });
-            localStorage.setItem('my_id', window.my_id);
+            localStorage.setItem('my_seats', window.my_seats);
             localStorage.setItem('my_seat', window.my_seats[0].id);
         }
         else {
