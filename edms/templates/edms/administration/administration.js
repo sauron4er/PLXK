@@ -24,14 +24,23 @@ class Administration extends React.Component {
             { name: 'description', title: 'Назва' },
             { name: 'creator', title: 'Автор' },
         ],
+        main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
     };
 
     // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи
     componentDidMount() {
         const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
-        this.setState({ seat_id: seat_id });
+        this.setState({
+            seat_id: seat_id,
+            main_div_height: this.mainDivRef.clientHeight - 30
+        });
         this.updateLists(seat_id);
     }
+
+    // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+    getMainDivRef = (input) => {
+        this.mainDivRef = input;
+    };
 
     // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
     onSeatChange = (new_seat_id) => {
@@ -65,17 +74,18 @@ class Administration extends React.Component {
 
 
     render() {
-        const {doc_type, doc_types, doc_types_columns} = this.state;
+        const {doc_type, doc_types, doc_types_columns, main_div_height} = this.state;
         return(
             <Fragment>
                 <SeatChooser onSeatChange={this.onSeatChange}/>
-                <div className="row css_main_div">
-                    <div className="col-lg-4">Оберіть документ:
+                <div className="row css_main_div" ref={this.getMainDivRef}>
+                    <div className="col-lg-4">Оберіть документ
                         <DxTable
                             rows={doc_types}
                             columns={doc_types_columns}
                             defaultSorting={[{ columnName: "description", direction: "asc" }]}
                             onRowClick={this.onRowClick}
+                            height={main_div_height}
                             filter
                         />
                     </div>

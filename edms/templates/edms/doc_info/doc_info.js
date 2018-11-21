@@ -39,7 +39,6 @@ class DocInfo extends React.Component {
         }
     }
 
-
     onChange = (event) => {
         this.setState({[event.target.name]:event.target.value});
     };
@@ -81,7 +80,7 @@ class DocInfo extends React.Component {
         return 0;
     };
 
-    // опрацьовуємо нажаття кнопок реагування
+    // відправляємо позначку до бд
     postMark = (mark_id) => {
         let formData = new FormData();
         if (this.state.new_files.length > 0) {
@@ -116,6 +115,7 @@ class DocInfo extends React.Component {
         });
     };
 
+    // опрацьовуємо нажаття кнопок реагування
     handleMark = (e, mark_id) => {
         e.preventDefault();
 

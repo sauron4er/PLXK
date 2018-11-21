@@ -656,7 +656,7 @@ def edms_get_sub_docs(request, pk):
                     'author_seat_id': temp_doc.employee_seat_id,
                     'author': temp_doc.employee_seat.employee.pip,
                     'dep': temp_doc.employee_seat.seat.department.name,
-                    'emp_seat_id': pk,
+                    'emp_seat_id': int(pk),
                     'closed': temp_doc.document.closed,
                 } for temp_doc in Document_Path.objects.
                     filter(mark_id=1).

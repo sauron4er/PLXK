@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -347,13 +347,14 @@ class UserTable extends React.Component {
           </div>;
 
         return (
-            <div style={{height: '100%'}}>
+            <Fragment>
                 <button type="button" className="btn btn-outline-secondary mb-1 invisible">Співробітники:</button>
                 <DxTable
                     rows={this.props.emps}
                     columns={users_columns}
                     defaultSorting={[{ columnName: "emp", direction: "asc" }]}
                     onRowClick={this.onRowClick}
+                    height={this.props.height}
                     filter
                 />
 
@@ -397,19 +398,17 @@ class UserTable extends React.Component {
                                       })
                                     }
                                 </Select>
-
                                 {new_emp_form}
-
                                 <Button className="btn btn-outline-secondary mt-1" onClick={this.delEmpSeat.bind(this)}>{this.state.del_emp_seat_button_label}</Button>
                             </label>
                         </div>
                         <br/>
 
-                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Звільнити співробітника</Button>
                     </Form>
                 </Modal>
-            </div>
+            </Fragment>
         )
     }
 }

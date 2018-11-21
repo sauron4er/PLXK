@@ -216,7 +216,7 @@ class DocTypeInfo extends React.Component {
                                     </label> <br />
                                 </div>
                                 <div className="modal-footer">
-                                    <Button className="float-sm-left btn btn-outline-secondary mb-1">Додати</Button>
+                                    <Button className="float-sm-left btn btn-outline-success mb-1">Додати</Button>
                                 </div>
                             </Form>
                         </div>

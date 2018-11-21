@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -175,14 +175,14 @@ class DepTable extends React.Component {
         const { open, new_open } = this.state;    // для модального вікна
 
         return (
-            <div>
+            <Fragment>
                 <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати відділ</button>
-
                 <DxTable
                     rows={this.props.deps}
                     columns={[{ name: 'dep', title: 'Відділ' }]}
                     defaultSorting={[{ columnName: "dep", direction: "asc" }]}
                     onRowClick={this.onRowClick}
+                    height={this.props.height}
                     filter
                 />
                 {/* Модальне вікно для нового відділу*/}
@@ -201,7 +201,7 @@ class DepTable extends React.Component {
                         </label>
                         <br /><br />
 
-                        <Button className="btn btn-outline-secondary float-sm-left" name="new_dep">Підтвердити</Button>
+                        <Button className="btn btn-outline-success float-sm-left" name="new_dep">Підтвердити</Button>
                     </Form>
                 </Modal>
 
@@ -220,13 +220,11 @@ class DepTable extends React.Component {
                             <Textarea className='form-control full_width' value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
                         </label><br/><br/>
 
-                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
                     </Form>
                 </Modal>
-
-            </div>
-
+            </Fragment>
         )
     }
 }

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import Modal from 'react-awesome-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -91,7 +91,7 @@ class NewDoc extends React.Component {
                             </label> <br />
                         </div>
                         <div className="modal-footer">
-                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                          <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         </div>
                     </Form>
                 );
@@ -126,9 +126,8 @@ class NewDoc extends React.Component {
                                     paging
                                 />
                         </div>
-
                         <div className="modal-footer">
-                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                          <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         </div>
                     </Form>
                 );
@@ -171,7 +170,7 @@ class NewDoc extends React.Component {
                         </div>
 
                         <div className="modal-footer">
-                          <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                          <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         </div>
                     </Form>
                 )
@@ -288,7 +287,7 @@ class NewDoc extends React.Component {
     render() {
         const { open, new_doc_type } = this.state;
         return(
-            <div>
+            <Fragment>
                 <form className="form-inline">
                     <div className="form-group mb-1">
                     <label className='font-weight-bold'>Створити новий документ:<pre> </pre></label>
@@ -302,13 +301,13 @@ class NewDoc extends React.Component {
                 </form>
 
                 {/*Модальне вікно для форм*/}
-                <Modal visible={open} width='45%' effect="fadeInUp" onClickAway={() => this.onCloseModal()}>
-                    <div>
-                        {this.makeForm()}
-                        <a href="javascript:void(0);" onClick={() => this.onCloseModal()}>Close</a>
-                    </div>
+                <Modal visible={open} width='45%' effect="fadeInUp" onClickAway={this.onCloseModal} >
+                    {/*<button type="button" className="close" aria-label="Close" onClick={this.onCloseModal}>*/}
+                        {/*<span className='text-danger' aria-hidden="true">&times;</span>*/}
+                    {/*</button>*/}
+                    {this.makeForm()}
                 </Modal>
-            </div>
+            </Fragment>
         )
     }
 }

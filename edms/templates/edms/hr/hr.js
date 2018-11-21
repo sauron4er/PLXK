@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -16,6 +16,16 @@ class HR extends React.Component {
         emps: window.emps,
         seats: window.seats,
         deps: window.deps,
+        main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    };
+
+    componentDidMount() {
+        this.setState({ main_div_height: this.mainDivRef.clientHeight - 30 });
+    }
+
+    // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+    getMainDivRef = (input) => {
+        this.mainDivRef = input;
     };
 
     changeLists = (name, list) => {
@@ -49,23 +59,39 @@ class HR extends React.Component {
     );
 
     render() {
+        const {main_div_height} = this.state;
         return(
-            <div>
-                <div className="row css_main_div">
+            <Fragment>
+                <div className="row css_main_div" ref={this.getMainDivRef}>
                     <div className="col-lg-4 p-2">
-                        <UserTable emps={this.state.emps} seats={this.state.seats} changeLists={this.changeLists} message={this.notify}/>
+                        <UserTable
+                            emps={this.state.emps}
+                            seats={this.state.seats}
+                            changeLists={this.changeLists}
+                            message={this.notify}
+                            height={main_div_height}
+                        />
                     </div>
                     <div className="col-lg-4 p-2">
-                        <DepTable deps={this.state.deps} changeLists={this.changeLists}/>
+                        <DepTable
+                            deps={this.state.deps}
+                            changeLists={this.changeLists}
+                            height={main_div_height}
+                        />
                     </div>
                     <div className="col-lg-4 p-2">
-                        <SeatTable seats={this.state.seats} deps={this.state.deps} changeLists={this.changeLists}/>
+                        <SeatTable
+                            seats={this.state.seats}
+                            deps={this.state.deps}
+                            changeLists={this.changeLists}
+                            height={main_div_height}
+                        />
                     </div>
                 </div>
 
                 {/*Вспливаюче повідомлення*/}
                 <ToastContainer />
-            </div>
+            </Fragment>
         )
     }
 }

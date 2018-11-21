@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import React, {Fragment} from 'react';
 import Modal from 'react-responsive-modal';
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
@@ -235,7 +235,7 @@ class SeatTable extends React.Component {
         ];
 
         return (
-            <div>
+            <Fragment>
                 <div className="row ml-1">
                     <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати посаду</button>
                     <div className="col">Вільні посади виділяються червоним</div>
@@ -246,6 +246,7 @@ class SeatTable extends React.Component {
                     defaultSorting={[{ columnName: "seat", direction: "asc" }]}
                     onRowClick={this.onRowClick}
                     redRow="is_vacant"
+                    height={this.props.height}
                     filter
                 />
 
@@ -286,7 +287,7 @@ class SeatTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="float-sm-left btn btn-outline-secondary mb-1">Підтвердити</Button>
+                        <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete}>Видалити посаду</Button>
                     </Form>
                 </Modal>
@@ -327,10 +328,10 @@ class SeatTable extends React.Component {
                         </label>
                         <br/><br/>
 
-                        <Button className="btn btn-outline-secondary float-sm-left">Підтвердити</Button>
+                        <Button className="btn btn-outline-success float-sm-left">Підтвердити</Button>
                     </Form>
                 </Modal>
-            </div>
+            </Fragment>
         )
     }
 }

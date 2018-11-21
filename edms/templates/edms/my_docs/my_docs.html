@@ -15,7 +15,6 @@
             window.work_docs = {{ work_docs|safe }};
             window.my_id = {{ request.user.id }};
         </script>
+        {% render_bundle 'my_docs' %} <!-- Renders js files -->
     </div>
-
-    {% render_bundle 'my_docs' %} <!-- Renders js files -->
 {% endblock %}

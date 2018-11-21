@@ -49,7 +49,7 @@ class SeatChooser extends React.Component {
         return(
             <Choose>
                 <When condition = {window.my_seats.length > 1}>
-                    <form className="form-inline">
+                    <form className="form-inline justify-content-end">
                         <div className="form-group mb-1">
                         <label>Оберіть посаду:<pre> </pre></label>
                         <select className="form-control" id='my-seat-select' name='my_seat' value={my_seat_id} onChange={this.onChange}>
@@ -64,7 +64,9 @@ class SeatChooser extends React.Component {
                     </form>
                 </When>
                 <Otherwise>
-                    <div>{window.my_seats[0].seat}</div><br/>
+                    <form className="form-inline justify-content-end">
+                        <div className="form-control">{window.my_seats[0].seat}</div><br/>
+                    </form>
                 </Otherwise>
             </Choose>
         )

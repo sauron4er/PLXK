@@ -4,7 +4,6 @@ import DxTable from '../dx_table';
 import DocInfo from '../doc_info/doc_info'
 import '../my_styles.css'
 
-
 class DocsList extends React.Component {
 
     state = {
@@ -33,6 +32,16 @@ class DocsList extends React.Component {
       row: '',
       doc_info: '',
       carry_out_items: [],
+      main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    };
+
+    componentDidMount() {
+        this.setState({ main_div_height: this.mainDivRef.clientHeight - 30 });
+    }
+
+    // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+    getMainDivRef = (input) => {
+        this.mainDivRef = input;
     };
 
     onRowClick = (clicked_row) => {
@@ -85,29 +94,29 @@ class DocsList extends React.Component {
     };
 
     render() {
-        const { work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width } = this.state;
+        const {work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width, main_div_height} = this.state;
 
         return(
-            <div className="row css_main_div" >
-                <div className="col-lg-4">Документи в черзі:
+            <div className="row css_main_div" ref={this.getMainDivRef}>
+                <div className="col-lg-4">Документи в черзі
                     <DxTable
                         rows={this.props.work_docs}
                         columns={work_docs_columns}
                         defaultSorting={[{ columnName: "id", direction: "asc" }]}
                         colWidth={work_docs_col_width}
                         onRowClick={this.onRowClick}
-                        pageSize={5}
+                        height={main_div_height}
                         filter
                     />
                 </div><br/>
-                <div className="col-lg-4">Створені мною документи:
+                <div className="col-lg-4">Створені вами документи
                     <DxTable
                         rows={this.props.my_docs}
                         columns={my_docs_columns}
                         defaultSorting={[{ columnName: "id", direction: "asc" }]}
                         colWidth={my_docs_col_width}
                         onRowClick={this.onRowClick}
-                        pageSize={5}
+                        height={main_div_height}
                         filter
                     />
                 </div>

@@ -38,14 +38,23 @@ class Archive extends React.Component {
         { columnName: 'type', width: 150 },
         { columnName: 'author' },
       ],
+      main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
     };
 
     // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи
     componentDidMount() {
         const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
-        this.setState({ seat_id: seat_id });
+        this.setState({
+            seat_id: seat_id,
+            main_div_height: this.mainDivRef.clientHeight - 30
+        });
         this.updateLists(seat_id);
     }
+
+    // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+    getMainDivRef = (input) => {
+        this.mainDivRef = input;
+    };
 
     // Оновлює списки документів
     updateLists = (seat_id) => {
@@ -81,31 +90,31 @@ class Archive extends React.Component {
     };
 
     render() {
-        const { my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width } = this.state;
+        const { my_archive_columns, my_archive_col_width, work_archive_columns, work_archive_col_width, main_div_height } = this.state;
 
         return(
             <Fragment>
                 <SeatChooser onSeatChange={this.onSeatChange}/>
-                <div className="row css_main_div">
-                    <div className="col-lg-4">
-                        <div>Створені мною документи</div>
+                <div className="row css_main_div" ref={this.getMainDivRef}>
+                    <div className="col-lg-4">Створені вами документи
                         <DxTable
                             rows={this.state.my_archive}
                             columns={my_archive_columns}
                             defaultSorting={[{ columnName: "id", direction: "asc" }]}
                             colWidth={my_archive_col_width}
                             onRowClick={this.onRowClick}
+                            height={main_div_height}
                             filter
                         />
                     </div>
-                    <div className="col-lg-4">
-                        <div>Документи, що були у роботі</div>
+                    <div className="col-lg-4">Документи, що були у роботі
                         <DxTable
                             rows={this.state.work_archive}
                             columns={work_archive_columns}
                             defaultSorting={[{ columnName: "id", direction: "asc" }]}
                             colWidth={work_archive_col_width}
                             onRowClick={this.onRowClick}
+                            height={main_div_height}
                             filter
                         />
                     </div>

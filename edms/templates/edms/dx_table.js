@@ -211,7 +211,6 @@ class DxTable extends React.PureComponent {
                     <IntegratedSelection/>
 
                     {/*Якщо в props нема paging - таблиця показується зі скроллом*/}
-
                     <Choose>
                         <When condition={this.props.paging}>
                             <Table
