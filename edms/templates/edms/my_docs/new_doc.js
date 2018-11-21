@@ -296,6 +296,7 @@ class NewDoc extends React.Component {
                         <option key={1} value={1}>Звільнююча перепустка</option>
                         <option key={2} value={2}>Матеріальний пропуск</option>
                         <option key={3} value={3}>Службова записка</option>
+                        <option key={4} value={4}>Проект наказу</option>
                     </select>
                     </div>
                 </form>
