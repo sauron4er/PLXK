@@ -14,16 +14,16 @@ class Buttons extends React.Component {
                         <When condition={this.props.doc.expected_mark === 6}>{/* Не заперечую */}
                             <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 6)}>Не заперечую</button>
                             <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 3)}>Відмовити</button>
-                            <If condition={this.props.doc.type_id !== 1}>
-                                <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>
-                            </If>
+                            {/*<If condition={this.props.doc.type_id !== 1}>*/}
+                                {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
+                            {/*</If>*/}
                         </When>
                         <When condition={this.props.doc.expected_mark === 2}>{/* Погоджую */}
                             <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 2)}>Погодити</button>
                             <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 3)}>Відмовити</button>
-                            <If condition={this.props.doc.type_id !== 1}>
-                                <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>
-                            </If>
+                            {/*<If condition={this.props.doc.type_id !== 1}>*/}
+                                {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
+                            {/*</If>*/}
                             <If condition={this.props.doc.type_id === 3}>{/* Якщо це службова - додаємо резолюції */}
                                 <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 10)}>Резолюція</button>
                             </If>

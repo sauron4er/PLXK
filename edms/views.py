@@ -457,7 +457,7 @@ def edms_get_doc(request, pk):
             # Ід і ім’я керівника-отримувача, текст службової
             info = [{
                 'recipient': item.recipient.employee.pip,
-                'recipient_seat': item.recipient.seat.seat,
+                'recipient_seat': item.recipient.seat.seat if item.recipient.is_main else '(в.о.) ' + item.recipient.seat.seat,
                 'text': item.document.text,
             } for item in Mark_Demand.objects.filter(document_id=doc.id)]
 
