@@ -33,6 +33,7 @@ class Buttons extends React.Component {
                         </When>
                         <When condition={this.props.doc.expected_mark === 11}>{/* Виконано */}
                             <If condition={this.props.is_chief === true}>{/* Якщо є підлеглі - додаємо резолюції */}
+                                <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 11)}>Виконано</button>
                                 <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 10)}>Резолюція</button>
                             </If>
                         </When>
