@@ -10,7 +10,7 @@ import { FileUploader } from 'devextreme-react';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 import DxTable from '../dx_table';
-import {required} from '../validations.js';
+import {required, required_not_0} from '../validations.js';
 import '../my_styles.css'
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -141,8 +141,8 @@ class NewDoc extends React.Component {
                             <br/>
                             <label>Кому:
                                 {/*Список безпосередніх начальників для вибору, кому адресовується службова записка*/}
-                                <Select id='to_chief_select' name='chief_recipient' className="form-control full_width" value={chief_recipient} onChange={this.onChange} validations={[required]}>
-                                    <option data-key={0} value='Не внесено'>------------</option>
+                                <Select id='to_chief_select' name='chief_recipient' className="form-control full_width" value={chief_recipient} onChange={this.onChange} validations={[required_not_0]}>
+                                    <option data-key={0} value='0'>------------</option>
                                     {
                                       this.props.chiefs.map(chief => {
                                         return <option key={chief.id} data-key={chief.id}

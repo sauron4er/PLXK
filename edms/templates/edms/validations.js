@@ -8,6 +8,17 @@ export const required = (value) => {
   }
 };
 
+export const required_not_0 = (value) => {
+  if (!value.toString().trim().length) {
+    // We can return string or jsx as the 'error' prop for the validated Component
+    return <span className="error text-danger"> Це поле не може бути пустим.</span>
+  }
+  else if (value.toString() === '0') {
+    // We can return string or jsx as the 'error' prop for the validated Component
+    return <span className="error text-danger"> Оберіть варіант зі списку.</span>
+  }
+};
+
 export const lt = (value, props) => {
   // get the maxLength from component's props
   if (!value.toString().trim().length > props.maxLength) {
