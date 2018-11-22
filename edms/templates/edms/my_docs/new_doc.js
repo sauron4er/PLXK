@@ -173,7 +173,37 @@ class NewDoc extends React.Component {
                           <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         </div>
                     </Form>
-                )
+                );
+            // 4 - наказ
+            case 4:
+                return (
+                    <Form onSubmit={this.newDecree}>
+                        <div className="modal-body">
+                            <h4 className="modal-title">Новий проект наказу</h4>
+                            <br/>
+                            <label className="full_width">Преамбула:
+                                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
+                            <h3 className='text-center'>НАКАЗУЮ</h3>
+
+                            <label className="full_width">Додати файли:
+                                <FileUploader
+                                    onValueChanged={(e) => this.setState({files: e.value})}
+                                    uploadMode='useForm'
+                                    multiple={true}
+                                    allowCanceling={true}
+                                    selectButtonText='Оберіть файл'
+                                    labelText='або перетягніть файл сюди'
+                                    readyToUploadMessage='Готово'
+                                />
+                            </label>
+                        </div>
+
+                        <div className="modal-footer">
+                          <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
+                        </div>
+                    </Form>
+                );
         }
     }
 
@@ -274,6 +304,9 @@ class NewDoc extends React.Component {
 
         this.onCloseModal();
     };
+
+    // Додає новий наказ
+    newDecree = (e) => {};
 
     onCloseModal = () => {
         this.setState({
