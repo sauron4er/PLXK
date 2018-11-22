@@ -34,7 +34,7 @@ class SubDocs extends React.Component {
             { columnName: 'type', width: 120 },
             { columnName: 'author' },
             // { columnName: 'dep', width: 70 },
-            { columnName: 'date', width: 90 },
+            { columnName: 'date', width: 100 },
         ],
         main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
     };

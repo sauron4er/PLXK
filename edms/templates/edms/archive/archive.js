@@ -26,7 +26,7 @@ class Archive extends React.Component {
         my_archive_col_width: [
         { columnName: 'id', width: 70 },
         { columnName: 'type' },
-        { columnName: 'date', width: 90 },
+        { columnName: 'date', width: 100 },
       ],
         work_archive_columns: [
         { name: 'id', title: '№' },

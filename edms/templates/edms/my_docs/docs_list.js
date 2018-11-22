@@ -20,7 +20,7 @@ class DocsList extends React.Component {
       my_docs_col_width: [
         { columnName: 'id', width: 70 },
         { columnName: 'type' },
-        { columnName: 'date', width: 90 },
+        { columnName: 'date', width: 100 },
       ],
       work_docs_col_width: [
         { columnName: 'id', width: 70 },
