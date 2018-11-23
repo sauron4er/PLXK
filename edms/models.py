@@ -38,6 +38,7 @@ class Document_Type(models.Model):
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True)
     is_active = models.BooleanField(default=True)
+    testing = models.BooleanField(default=False)
 
     def __str__(self):
         return self.description
@@ -55,6 +56,7 @@ class Document(models.Model):
     image = models.BinaryField(editable=True, null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
     closed = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True, null=True)
 
 
 class Document_Type_Permission(models.Model):
@@ -122,28 +124,28 @@ class Carry_Out_Info(models.Model):
 # SQL Views models
 
 # Модель, створена для обробки view в бд, яка показує список активних документів
-class Active_Docs_View(models.Model):
-    employee_id = models.IntegerField()
-    id = models.IntegerField(primary_key=True)
-    date = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-    type_id = models.IntegerField()
-    employee_seat_id = models.IntegerField()
-
-    class Meta:
-        managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
-        db_table = 'edms_active_docs'
+# class Active_Docs_View(models.Model):
+#     employee_id = models.IntegerField()
+#     id = models.IntegerField(primary_key=True)
+#     date = models.CharField(max_length=100)
+#     description = models.CharField(max_length=100)
+#     type_id = models.IntegerField()
+#     employee_seat_id = models.IntegerField()
+#
+#     class Meta:
+#         managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
+#         db_table = 'edms_active_docs'
 
 
 # Модель, створена для обробки view в бд, яка показує список документів в архіві
-class Archive_Docs_View(models.Model):
-    employee_id = models.IntegerField()
-    id = models.IntegerField(primary_key=True)
-    date = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-    type_id = models.IntegerField()
-    employee_seat_id = models.IntegerField()
-
-    class Meta:
-        managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
-        db_table = 'edms_my_archive_docs'
+# class Archive_Docs_View(models.Model):
+#     employee_id = models.IntegerField()
+#     id = models.IntegerField(primary_key=True)
+#     date = models.CharField(max_length=100)
+#     description = models.CharField(max_length=100)
+#     type_id = models.IntegerField()
+#     employee_seat_id = models.IntegerField()
+#
+#     class Meta:
+#         managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
+#         db_table = 'edms_my_archive_docs'

@@ -64,3 +64,8 @@ div.css_main {
 .css_full_width {
     width: 100%;
 }
+
+.css_modal_scroll {
+    height:100%;
+    overflow-y: scroll;
+}

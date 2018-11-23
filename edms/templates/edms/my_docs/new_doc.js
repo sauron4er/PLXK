@@ -21,6 +21,7 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 class NewDoc extends React.Component {
 
     state = {
+        name: '',
         text: '',
         date: '',
         files: [],
@@ -173,7 +174,43 @@ class NewDoc extends React.Component {
                           <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
                         </div>
                     </Form>
-                )
+                );
+            // 4 - наказ
+            case 4:
+                return (
+                    <Form onSubmit={this.newDecree}>
+                        <div className="modal-body">
+                            <h4 className="modal-title">Новий проект наказу</h4>
+                            <br/>
+                            <label className="full_width">Назва:
+                                <Textarea className="form-control full_width" value={this.state.name} name='name' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
+                            <label className="full_width">Преамбула:
+                                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+                            </label> <br />
+                            <h3 className='text-center'>НАКАЗУЮ</h3>
+                            <label className="full_width">Пункти:
+                            </label> <br />
+                            <label className="full_width">На погодження:
+                            </label> <br />
+                            <label className="full_width">Додати файли:
+                                <FileUploader
+                                    onValueChanged={(e) => this.setState({files: e.value})}
+                                    uploadMode='useForm'
+                                    multiple={true}
+                                    allowCanceling={true}
+                                    selectButtonText='Оберіть файл'
+                                    labelText='або перетягніть файл сюди'
+                                    readyToUploadMessage='Готово'
+                                />
+                            </label>
+                        </div>
+
+                        <div className="modal-footer">
+                          <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
+                        </div>
+                    </Form>
+                );
         }
     }
 
@@ -275,6 +312,9 @@ class NewDoc extends React.Component {
         this.onCloseModal();
     };
 
+    // Додає новий наказ
+    newDecree = (e) => {};
+
     onCloseModal = () => {
         this.setState({
             open: false,
@@ -293,19 +333,27 @@ class NewDoc extends React.Component {
                     <label className='font-weight-bold'>Створити новий документ:<pre> </pre></label>
                     <select className="form-control" id='new-doc-type-select' name='new_doc_type' value={new_doc_type} onChange={this.onChange}>
                         <option key={0} value={0}>---------------------</option>
-                        <option key={1} value={1}>Звільнююча перепустка</option>
-                        <option key={2} value={2}>Матеріальний пропуск</option>
-                        <option key={3} value={3}>Службова записка</option>
+                        {
+                            window.new_docs.map(doc => {
+                                return <option key={doc.id} value={doc.id}>{doc.description}</option>;
+                            })
+                        }
+                        {/*<option key={1} value={1}>Звільнююча перепустка</option>*/}
+                        {/*<option key={2} value={2}>Матеріальний пропуск</option>*/}
+                        {/*<option key={3} value={3}>Службова записка</option>*/}
+                        {/*<option key={4} value={4}>Проект наказу</option>*/}
                     </select>
                     </div>
                 </form>
 
                 {/*Модальне вікно для форм*/}
-                <Modal visible={open} width='45%' effect="fadeInUp" onClickAway={this.onCloseModal} >
+                <Modal visible={open} height='50%' width='45%' effect="fadeInUp" onClickAway={this.onCloseModal} >
+                    <div className='css_modal_scroll'>
+                        {this.makeForm()}
+                    </div>
                     {/*<button type="button" className="close" aria-label="Close" onClick={this.onCloseModal}>*/}
                         {/*<span className='text-danger' aria-hidden="true">&times;</span>*/}
                     {/*</button>*/}
-                    {this.makeForm()}
                 </Modal>
             </Fragment>
         )

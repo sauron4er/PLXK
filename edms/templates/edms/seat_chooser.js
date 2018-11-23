@@ -6,6 +6,7 @@ class SeatChooser extends React.Component {
         my_seat_id: '', // id посади для select
     };
 
+
     // отримує посаду з локального сховища, якщо там її нема - записує першу зі списку у window.
     componentDidMount() {
         if (localStorage.getItem('my_seats') == null || window.my_seats != JSON.parse(localStorage.getItem('my_seats'))) {

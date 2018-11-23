@@ -3,13 +3,13 @@ from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import datetime
 from django.utils import timezone
-import os
 import json
 import pytz
 
 
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat, Employee_Seat, Document, File, Document_Path, Active_Docs_View, Archive_Docs_View
+from .models import Seat, Employee_Seat, Document, File, Document_Path
+# from .models import Active_Docs_View, Archive_Docs_View
 from .models import Document_Type, Document_Type_Permission, Mark
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
@@ -17,8 +17,17 @@ from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkD
 from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
 
 
-def convert_to_localtime(utctime):
-    fmt = '%d.%m.%Y %H:%M'
+# При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
+# Для деплоя треба ставити testing = False
+testing = False
+
+
+def convert_to_localtime(utctime, frmt):
+    if frmt == 'day':
+        fmt = '%d.%m.%Y'
+    else:
+        fmt = '%d.%m.%Y %H:%M'
+
     utc = utctime.replace(tzinfo=pytz.UTC)
     localtz = utc.astimezone(timezone.get_current_timezone())
     return localtz.strftime(fmt)
@@ -373,7 +382,7 @@ def edms_get_doc(request, pk):
         # Шлях, пройдений документом
         path = [{
             'id': path.id,
-            'time': convert_to_localtime(path.timestamp),
+            'time': convert_to_localtime(path.timestamp, 'time'),
             'mark_id': path.mark_id,
             'mark': path.mark.mark,
             'emp_seat_id': path.employee_seat_id,
@@ -476,36 +485,44 @@ def edms_my_docs(request):
     if request.method == 'GET':
         my_seats = get_my_seats(request.user.userprofile.id)
 
+        new_docs = [{  # Список документів, які може створити юзер
+            'id': doc_type.id,
+            'description': doc_type.description,
+        } for doc_type in Document_Type.objects
+            .filter(testing=testing)]  # В режимі тестування показуються типи документів, що тестуються
+
         my_docs = [{  # Список документів, створених даним юзером
-            'id': doc.id,
-            'type': doc.description,
-            'type_id': doc.type_id,
-            'date': doc.date,
-            'emp_seat_id': doc.employee_seat_id,
+            'id': path.document.id,
+            'type': path.document.document_type.description,
+            'type_id': path.document.document_type.id,
+            'date': convert_to_localtime(path.timestamp, 'day'),
+            'emp_seat_id': path.employee_seat.id,
             'author': request.user.userprofile.pip,
-            'author_seat_id': doc.employee_seat_id,
-        } for doc in Active_Docs_View.objects.filter(employee_id=request.user.userprofile.id)]
+            'author_seat_id': path.employee_seat.id,
+        } for path in Document_Path.objects
+            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)  # Створено користувачем
+            .filter(document__closed=False)  # Активний документ
+            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
+        ]
 
         work_docs = [{  # Список документів, що очікують на реакцію користувача
-            'id': doc.document.id,
-            'type': doc.document.document_type.description,
-            'type_id': doc.document.document_type_id,
-            'flow_id': doc.id,
-            'emp_seat_id': doc.recipient.id,
-            'expected_mark': doc.mark.id,
-            'author': doc.document.employee_seat.employee.pip,
-            'author_seat_id': doc.document.employee_seat_id,
-        } for doc in Mark_Demand.objects.
-            filter(recipient_id__employee_id=request.user.userprofile.id).  # документ призначений користувачу
-            filter(is_active=True).order_by('document_id')]
-
-        # Додаємо поле "дата" у список документів у черзі
-        for doc in work_docs:
-            date = Document_Path.objects.filter(document_id=doc['id']).filter(mark_id=1).values_list('timestamp')[0][0]
-            doc['date'] = datetime.strftime(date, '%d.%m.%Y')
+            'id': demand.document.id,
+            'type': demand.document.document_type.description,
+            'type_id': demand.document.document_type_id,
+            'flow_id': demand.id,
+            'date': convert_to_localtime(demand.document.date, 'day'),
+            'emp_seat_id': demand.recipient.id,
+            'expected_mark': demand.mark.id,
+            'author': demand.document.employee_seat.employee.pip,
+            'author_seat_id': demand.document.employee_seat_id,
+        } for demand in Mark_Demand.objects
+            .filter(recipient_id__employee_id=request.user.userprofile.id)  # документ призначений користувачу
+            .filter(is_active=True)
+            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
+            .order_by('document_id')]
 
         return render(request, 'edms/my_docs/my_docs.html', {
-            'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
+            'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
         })
 
     elif request.method == 'POST':
@@ -591,32 +608,33 @@ def edms_archive(request):
         my_seats = get_my_seats(request.user.userprofile.id)
 
         my_archive = [{  # Список документів, створених даним юзером
-            'id': doc.id,
-            'type': doc.description,
-            'type_id': doc.type_id,
-            'date': doc.date,
-            'emp_seat_id': doc.employee_seat_id,
-            'author_seat_id': doc.employee_seat_id,
-        } for doc in Archive_Docs_View.objects.filter(employee_id=request.user.userprofile.id)]
+            'id': path.document.id,
+            'type': path.document.document_type.description,
+            'type_id': path.document.document_type.id,
+            'date': convert_to_localtime(path.timestamp, 'day'),
+            'emp_seat_id': path.employee_seat.id,
+            'author_seat_id': path.employee_seat.id,
+        } for path in Document_Path.objects
+            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)  # Створено користувачем
+            .filter(document__closed=True)  # Закритий документ
+            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
+        ]
 
-        work_archive_duplicates = [{  # Список документів, які були у роботі користувача
-            'id': doc.document_id,
-            'type': doc.document.document_type.description,
-            'type_id': doc.document.document_type_id,
-            'emp_seat_id': doc.employee_seat_id,
-            'author': doc.document.employee_seat.employee.pip,
-            'author_seat_id': doc.document.employee_seat_id,
-        } for doc in Document_Path.objects.distinct().
-            filter(employee_seat_id__employee_id=request.user.userprofile.id).  # документ був у користувача
-            exclude(document__employee_seat__employee=request.user.userprofile.id)]  # Автор не користувач
+        work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
+            'id': path.document_id,
+            'type': path.document.document_type.description,
+            'type_id': path.document.document_type_id,
+            'date': convert_to_localtime(path.document.date, 'day'),
+            'emp_seat_id': path.employee_seat_id,
+            'author': path.document.employee_seat.employee.pip,
+            'author_seat_id': path.document.employee_seat_id,
+        } for path in Document_Path.objects.distinct()
+            .filter(employee_seat_id__employee_id=request.user.userprofile.id)  # документ був у користувача
+            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
+            .exclude(document__employee_seat__employee=request.user.userprofile.id)]  # Автор не користувач
 
         # Позбавляємось дублікатів:
-        work_archive = list({item["id"]: item for item in work_archive_duplicates}.values())
-
-        # Додаємо поле "дата" у список документів у архіві
-        for doc in work_archive:
-            date = Document_Path.objects.filter(document_id=doc['id']).filter(mark_id=1).values_list('timestamp')[0][0]
-            doc['date'] = datetime.strftime(date, '%d.%m.%Y')
+        work_archive = list({item["id"]: item for item in work_archive_with_duplicates}.values())
 
         return render(request, 'edms/archive/archive.html', {
             'my_seats': my_seats, 'my_archive': my_archive, 'work_archive': work_archive,
@@ -649,18 +667,19 @@ def edms_get_sub_docs(request, pk):
         if subs_list:
             for sub in subs_list:
                 docs = [{  # Список документів у роботі, створених підлеглими юзера
-                    'id': temp_doc.document_id,
-                    'type': temp_doc.document.document_type.description,
-                    'type_id': temp_doc.document.document_type_id,
-                    'date': datetime.strftime(temp_doc.timestamp, '%d.%m.%Y'),
-                    'author_seat_id': temp_doc.employee_seat_id,
-                    'author': temp_doc.employee_seat.employee.pip,
-                    'dep': temp_doc.employee_seat.seat.department.name,
+                    'id': path.document_id,
+                    'type': path.document.document_type.description,
+                    'type_id': path.document.document_type_id,
+                    'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
+                    'author_seat_id': path.employee_seat_id,
+                    'author': path.employee_seat.employee.pip,
+                    'dep': path.employee_seat.seat.department.name,
                     'emp_seat_id': int(pk),
-                    'closed': temp_doc.document.closed,
-                } for temp_doc in Document_Path.objects.
-                    filter(mark_id=1).
-                    filter(employee_seat__seat_id=sub['id'])]
+                    'closed': path.document.closed,
+                } for path in Document_Path.objects
+                    .filter(mark_id=1)
+                    .filter(employee_seat__seat_id=sub['id'])
+                    .filter(document__document_type__testing=testing)]
                 if docs:
                     for doc in docs:
                         sub_docs.append(doc)
