@@ -19,7 +19,7 @@ from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
 # Для деплоя треба ставити testing = False
-testing = False
+testing = True
 
 
 def convert_to_localtime(utctime, frmt):
