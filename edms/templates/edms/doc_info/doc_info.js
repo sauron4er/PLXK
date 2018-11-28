@@ -24,6 +24,7 @@ class DocInfo extends React.Component {
         new_files: [],
         new_path_id: '', // для повернення в компонент Resolutions і посту резолюцій
         direct_subs: [],
+        deletable: true,
         show_resolutions_area: false,
         ready_for_render: true, // при false рендериться loader
     };
@@ -73,6 +74,14 @@ class DocInfo extends React.Component {
                 info: response.data,
                 ready_for_render: true,
             });
+
+            for (let i = 0; i <= response.data.path.length - 1; i++) {
+                if (response.data.path[i].emp_seat_id !== parseInt(localStorage.getItem('my_seat'))) {
+                    this.setState({deletable: false});
+                    break;
+                }
+            }
+
         }).catch((error) => {
             console.log('errorpost: ' + error);
         });
@@ -92,7 +101,6 @@ class DocInfo extends React.Component {
         formData.append('employee_seat', localStorage.getItem('my_seat'));
         formData.append('mark', mark_id);
         formData.append('comment', this.state.comment);
-        // formData.append('flow_id', this.props.doc.flow_id);
 
         axios({
             method: 'post',
@@ -102,14 +110,20 @@ class DocInfo extends React.Component {
                 'Content-Type': 'multipart/form-data'
             },
         }).then((response) => {
-            // направляємо документ на видалення з черги, якщо це не коментар
-            this.setState({
-                new_path_id: response.data
-            });
-            const doc_id = this.props.doc.id;
-            const author_id = this.props.doc.author_seat_id;
-            const removeRow = this.props.removeRow;
-            removeRow(doc_id, mark_id, author_id);
+            if (response.data === 'not deletable') {
+                this.notify('На документ відреагували, видалити неможливо, оновіть сторінку.')
+            }
+            else {
+                // направляємо документ на видалення з черги, якщо це не коментар
+                this.setState({
+                    new_path_id: response.data
+                });
+                const doc_id = this.props.doc.id;
+                const author_id = this.props.doc.author_seat_id;
+                const removeRow = this.props.removeRow;
+                removeRow(doc_id, mark_id, author_id);
+            }
+
         }).catch((error) => {
             console.log('errorpost: ' + error);
         });
@@ -159,6 +173,7 @@ class DocInfo extends React.Component {
                                 <Buttons
                                     doc={this.props.doc}
                                     is_chief={this.state.direct_subs.length > 0}
+                                    deletable={this.state.deletable}
                                     onClick={this.handleMark}
                                 />
                                 <If condition={this.state.show_resolutions_area === true}>

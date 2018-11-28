@@ -111,7 +111,6 @@ class NewDoc extends React.Component {
                             <input type="radio" name="gate_radio" value='1' onChange={this.onChange} checked={this.state.checkedGate==='1'} /><label className="radio-inline mx-1"> 1</label>
                             <input type="radio" name="gate_radio" value='2' onChange={this.onChange} checked={this.state.checkedGate==='2'} /><label className="radio-inline mx-1"> 2</label>
 
-
                             <label className="full_width">Мета виносу:
                                 <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
                             </label> <br />
@@ -347,10 +346,11 @@ class NewDoc extends React.Component {
                 </form>
 
                 {/*Модальне вікно для форм*/}
-                <Modal visible={open} height='50%' width='45%' effect="fadeInUp" onClickAway={this.onCloseModal} >
+                <Modal visible={open} width='45%' effect="fadeInUp" onClickAway={this.onCloseModal} >
                     <div className='css_modal_scroll'>
                         {this.makeForm()}
                     </div>
+
                     {/*<button type="button" className="close" aria-label="Close" onClick={this.onCloseModal}>*/}
                         {/*<span className='text-danger' aria-hidden="true">&times;</span>*/}
                     {/*</button>*/}

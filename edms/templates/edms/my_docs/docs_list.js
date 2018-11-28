@@ -84,6 +84,9 @@ class DocsList extends React.Component {
             case 12:
                 answer = 'Файл до документу №' + id + ' додано.';
                 break;
+             case 13:
+                answer = 'Документ №' + id + ' видалено.';
+                break;
         }
         this.setState({
             row: {

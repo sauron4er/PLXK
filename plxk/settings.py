@@ -176,7 +176,7 @@ WEBPACK_LOADER = {
     }
 }
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media', 'edms_files')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media')
 
 MEDIA_URL = '/media/'
 

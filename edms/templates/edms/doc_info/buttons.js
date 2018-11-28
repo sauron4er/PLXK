@@ -40,9 +40,15 @@ class Buttons extends React.Component {
                     </Choose>
                 </When>
 
-                {/* Якщо автор я, додаємо кнопку закрити */}
+                {/* Якщо автор я */}
                 <Otherwise>
+                    {/* Якщо ніхто не встиг відреагувати - можна видалити документ */}
+                    <If condition={this.props.deletable === true}>
+                        <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 13)}>Видалити</button>
+                    </If>
+                    {/* Додаємо кнопку Закрити */}
                     <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 7)}>Закрити</button>
+
                 </Otherwise>
             </Choose>
 

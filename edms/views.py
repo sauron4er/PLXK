@@ -18,7 +18,6 @@ from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-# Для деплоя треба ставити testing = False
 testing = False
 
 
@@ -222,7 +221,7 @@ def edms_get_types(request, pk):
                 'id': doc_type.id,
                 'description': doc_type.description,
                 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-            } for doc_type in Document_Type.objects.all()]
+            } for doc_type in Document_Type.objects.filter(testing=testing)]
             return HttpResponse(json.dumps(doc_types))
         else:
             doc_types = [{  # Список документів, створених даним юзером
@@ -236,7 +235,7 @@ def edms_get_types(request, pk):
                     'id': doc_type.id,
                     'description': doc_type.description,
                     'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-                } for doc_type in Document_Type.objects.filter(creator_id=None)]
+                } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=testing)]
                 doc_types = doc_types + hr_doc_types
 
             return HttpResponse(json.dumps(doc_types))
@@ -691,6 +690,16 @@ def edms_get_sub_docs(request, pk):
 @login_required(login_url='login')
 def edms_mark(request):
     if request.method == 'POST':
+        # Якщо документ намагаються видалити, шукаємо, чи хтось не відреагував на нього
+        # Якщо позначки від інших користувачів є - відмовляємо у видаленні
+        if request.POST['mark'] == '13':
+            deletable = Document_Path.objects\
+                .filter(document_id=request.POST['document'])\
+                .exclude(employee_seat_id=request.POST['employee_seat'])
+
+            if len(deletable) > 0:
+                return HttpResponse('not deletable')
+
         path_form = DocumentPathForm(request.POST)
         if path_form.is_valid():
             new_path = path_form.save()

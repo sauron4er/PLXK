@@ -55,7 +55,8 @@ class Document(models.Model):
     text = models.CharField(max_length=1000, null=True, blank=True)
     image = models.BinaryField(editable=True, null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
-    closed = models.BooleanField(default=False)
+    closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
+    is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
     date = models.DateTimeField(auto_now_add=True, null=True)
 
 
