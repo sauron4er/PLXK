@@ -35,3 +35,11 @@
 .css_dx_table:focus {
     background-color: #e6e6e6;
 }
+
+.css_decree_article {
+    border: solid #ebebeb 1px;
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+    padding: 0 5px;
+    margin-bottom: 5px;
+}

@@ -17,7 +17,6 @@ class MyDocs extends React.Component {
     state = {
         chiefs: '',
         direct_subs: '',
-        seat_id: 0,
         my_docs: [], // Документи, створені користувачем
         work_docs: [], // Документи, що чекають на реакцію користувача
     };
@@ -85,11 +84,7 @@ class MyDocs extends React.Component {
 
     // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи, керівники, підлеглі
     componentDidMount() {
-
         const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
-
-        this.setState({ seat_id: seat_id });
-
         this.getChiefs(seat_id);
         this.getDirectSubs(seat_id);
         this.updateLists(seat_id);
@@ -97,20 +92,17 @@ class MyDocs extends React.Component {
 
     // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
     onSeatChange = (new_seat_id) => {
-
-        this.setState({ seat_id: new_seat_id });
-
         this.getChiefs(new_seat_id);
         this.getDirectSubs(new_seat_id);
         this.updateLists(new_seat_id);
     };
 
     // Додає новий документ, створений у компоненті NewDoc, у список
-    addDoc = (id, type, date, seat, type_id) => {
+    addDoc = (id, type, date, type_id) => {
         const new_doc = {
-            author_seat_id: seat,
+            author_seat_id: parseInt(localStorage.getItem('my_seat')),
             date: date,
-            emp_seat_id: this.state.seat_id,
+            emp_seat_id: parseInt(localStorage.getItem('my_seat')),
             id: id,
             type: type,
             type_id: type_id
@@ -126,7 +118,7 @@ class MyDocs extends React.Component {
     // Видаляє зі списку документ, якому поставили позначку "Закрито" у компоненті Doc_info
     removeDoc = (id, author_id) => {
         // якщо автор я:
-        if (author_id === this.state.seat_id) {
+        if (author_id === parseInt(localStorage.getItem('my_seat'))) {
             this.setState(prevState => ({
                 my_docs: prevState.my_docs.filter(doc => doc.id !== id)
             }));

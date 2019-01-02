@@ -18,7 +18,7 @@ from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 
 def convert_to_localtime(utctime, frmt):
@@ -615,6 +615,7 @@ def edms_archive(request):
             'author_seat_id': path.employee_seat.id,
         } for path in Document_Path.objects
             .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)  # Створено користувачем
+            .filter(document__is_active=True)  # Не видалений документ
             .filter(document__closed=True)  # Закритий документ
             .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
         ]
@@ -629,6 +630,7 @@ def edms_archive(request):
             'author_seat_id': path.document.employee_seat_id,
         } for path in Document_Path.objects.distinct()
             .filter(employee_seat_id__employee_id=request.user.userprofile.id)  # документ був у користувача
+            .filter(document__is_active=True)  # Не видалений документ
             .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
             .exclude(document__employee_seat__employee=request.user.userprofile.id)]  # Автор не користувач
 
@@ -678,6 +680,7 @@ def edms_get_sub_docs(request, pk):
                 } for path in Document_Path.objects
                     .filter(mark_id=1)
                     .filter(employee_seat__seat_id=sub['id'])
+                    .filter(document__is_active=True)  # Не видалений документ
                     .filter(document__document_type__testing=testing)]
                 if docs:
                     for doc in docs:

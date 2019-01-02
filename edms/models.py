@@ -122,6 +122,25 @@ class Carry_Out_Info(models.Model):
     gate = models.IntegerField(default=1)
 
 
+class Decree(models.Model):
+    document = models.ForeignKey(Document, related_name='decree_info')
+    name = models.CharField(max_length=500)
+    preamble = models.CharField(max_length=1000)
+    sign_date = models.DateField(null=True)
+    is_valid = models.BooleanField(default=True)
+    validity_start = models.DateTimeField(null=True)
+    validity_end = models.DateTimeField(null=True)
+
+
+class Decree_Articles(models.Model):
+    decree = models.ForeignKey(Decree, related_name='articles')
+    number = models.IntegerField()
+    text = models.CharField(max_length=1000)
+    recipient = models.ForeignKey(Employee_Seat, related_name='decree_recipients')
+    deadline = models.DateTimeField(null=True)
+    is_active = models.BooleanField(default=True)
+    date_time = models.DateTimeField(auto_now_add=True)
+
 # SQL Views models
 
 # Модель, створена для обробки view в бд, яка показує список активних документів
