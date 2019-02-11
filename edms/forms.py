@@ -2,7 +2,7 @@ from django import forms
 
 from accounts import models as accounts
 from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, \
-    Mark_Demand, Document_Type_Permission, File
+    Mark_Demand, Document_Type_Permission, File, Decree, Doc_Article, Doc_Article_Dep, Doc_Approval
 
 
 class UserProfileForm(forms.ModelForm):
@@ -103,4 +103,43 @@ class NewFileForm(forms.ModelForm):
             'name',
             'file',
             'document_path'
+        }
+
+
+class NewDecreeForm(forms.ModelForm):
+    class Meta:
+        model = Decree
+        fields = {
+            'document',
+            'name',
+            'preamble',
+            'is_draft',
+        }
+
+
+class NewArticleForm(forms.ModelForm):  # пункти наказів чи інших документів
+    class Meta:
+        model = Doc_Article
+        fields = {
+            'document',
+            'text',
+            'deadline',
+        }
+
+
+class NewArticleDepForm(forms.ModelForm):  # пункти наказів чи інших документів
+    class Meta:
+        model = Doc_Article_Dep
+        fields = {
+            'article',
+            'department',
+        }
+
+
+class NewApprovalForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+    class Meta:
+        model = Doc_Approval
+        fields = {
+            'document',
+            'employee_seat',
         }

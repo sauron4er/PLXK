@@ -141,7 +141,7 @@ def results(request):
     page = request.GET.get('page')
 
     try:
-        # page = (old_matches_count // 16) + 1
+        page = (old_matches_count // 16) + 1
         matches1 = paginator.page(page)
     except PageNotAnInteger:
         matches1 = paginator.page((old_matches_count // 16))

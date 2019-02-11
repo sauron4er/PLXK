@@ -45,7 +45,7 @@ class FreeTime extends React.Component {
             console.log('errorpost: ' + error);
         });
 
-        this.props.closeModal();
+        this.props.onCloseModal();
     };
 
     onCloseModal = () => {

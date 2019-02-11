@@ -43,3 +43,7 @@
     padding: 0 5px;
     margin-bottom: 5px;
 }
+
+.css_multiline {
+    white-space: pre-line;
+}

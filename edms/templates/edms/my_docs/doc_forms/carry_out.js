@@ -3,7 +3,6 @@ import React from 'react';
 import Form from "react-validation/build/form";
 import Textarea from "react-validation/build/textarea";
 import {required} from "../../validations";
-import {FileUploader} from "devextreme-react";
 import Button from "react-validation/build/button";
 import Input from "react-validation/build/input";
 import axios from "axios";
@@ -78,7 +77,7 @@ class CarryOut extends React.Component {
                 console.log('errorpost: ' + error);
             });
 
-            this.props.closeModal();
+            this.props.onCloseModal();
         }
     };
 

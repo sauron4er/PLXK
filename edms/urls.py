@@ -2,8 +2,9 @@ from django.conf.urls import include, url
 
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_emp_seats  # Відділ кадрів
 from edms.views import edms_administration, edms_get_types, edms_get_type_info, edms_deactivate_permission  # Адміністрування
-from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs  # Мої документи
+from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs  # Мої документи get
 from edms.views import edms_mark, edms_resolution  # Мої документи post
+from edms.views import edms_get_deps, edms_get_seats  # Нові документи
 from edms.views import edms_archive  # Архів
 from edms.views import edms_sub_docs, edms_get_sub_docs  # Документи підлеглих
 
@@ -12,8 +13,9 @@ urlpatterns = [
   #  url(r'^main/', edms_main, name='main'),
 
 
-    # Запит на інформацію про документ з будь-якої сторінки
-    url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
+    url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
+    url(r'^.+/get_deps/', edms_get_deps, name='get_deps'),  # Запит списку відділів
+    url(r'^.+/get_seats/', edms_get_seats, name='get_seats'),  # Запит списку відділів
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_emp_seats/(?P<pk>\d+)/$', edms_get_emp_seats, name='hr_emp'),

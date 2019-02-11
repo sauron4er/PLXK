@@ -67,7 +67,7 @@
     </td>
     {% for player in players %}
       <td style="text-align: center">
-      {% if match.is_editing and rt|get_item:match.id|get_item:player.id|get_item:"id" = user.id  %}
+      {% if match.is_editing and rt|get_item:match.id|get_item:player.id|get_item:"id" == user.id  %}
       <a href="{% url 'bets:new_bet'  match.id %}" > {{ rt|get_item:match.id|get_item:player.id|get_item:"rt" }} </a>
       {% else %}
       {{ rt|get_item:match.id|get_item:player.id|get_item:"rt" }}

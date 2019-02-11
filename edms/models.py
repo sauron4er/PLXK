@@ -124,22 +124,43 @@ class Carry_Out_Info(models.Model):
 
 class Decree(models.Model):
     document = models.ForeignKey(Document, related_name='decree_info')
+    number = models.CharField(max_length=10, null=True, blank=True)
     name = models.CharField(max_length=500)
     preamble = models.CharField(max_length=1000)
     sign_date = models.DateField(null=True)
     is_valid = models.BooleanField(default=True)
     validity_start = models.DateTimeField(null=True)
     validity_end = models.DateTimeField(null=True)
+    is_draft = models.BooleanField(default=False)
 
 
-class Decree_Articles(models.Model):
-    decree = models.ForeignKey(Decree, related_name='articles')
-    number = models.IntegerField()
+# моделі, які можуть використовуватися різними типами документів
+
+# пункти [наказу]
+class Doc_Article(models.Model):
+    document = models.ForeignKey(Document, related_name='document_articles')
+    number = models.IntegerField(null=True)
     text = models.CharField(max_length=1000)
-    recipient = models.ForeignKey(Employee_Seat, related_name='decree_recipients')
-    deadline = models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    date_time = models.DateTimeField(auto_now_add=True)
+
+
+# відповідальні відділи для пунктів [наказу]
+class Doc_Article_Dep(models.Model):
+    article = models.ForeignKey(Doc_Article, related_name='article_deps')
+    department = models.ForeignKey(accounts.Department, related_name='articles_to_response')
+    is_active = models.BooleanField(default=True)
+
+
+# Список необхідних погоджень документу. Ставиться done автоматично при проставці позначки Погоджено.
+# Автоматично анулюється, якщо в іншому погодженні поставили позначку "Відмовлено" чи "На доопрацювання".
+class Doc_Approval(models.Model):
+    document = models.ForeignKey(Document, related_name='document_approves')
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='employee_approvals')
+    approved = models.BooleanField(default=False)
+    approved_path = models.ForeignKey(Document_Path, related_name='path_approval', null=True)
+    is_active = models.BooleanField(default=True)
+
 
 # SQL Views models
 

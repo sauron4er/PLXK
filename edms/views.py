@@ -15,10 +15,11 @@ from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Dem
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
+from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm # форми наказу
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = True
+testing = False
 
 
 def convert_to_localtime(utctime, frmt):
@@ -102,6 +103,25 @@ def handle_files(path_id, post, files):
             )
 
 
+# Функція, яка повертає з бд список відділів
+def get_deps():
+    deps = [{
+        'id': dep.pk,
+        'dep': dep.name,
+        'text': dep.text,
+    } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
+    return deps
+
+
+# Функція, яка повертає з бд елементарний список посад
+def get_seats():
+    seats = [{
+        'id': seat.pk,
+        'seat': seat.seat,
+    } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
+    return seats
+
+
 @login_required(login_url='login')
 def edms_main(request):
     if request.method == 'GET':
@@ -113,13 +133,7 @@ def edms_main(request):
 def edms_hr(request):
     if request.method == 'GET':
 
-        deps = [{       # Список відділів для форм на сторінці відділу кадрів
-            'id': dep.pk,
-            'dep': dep.name,
-            'text': dep.text,
-            # 'chief': 'Не внесено' if dep.manager is None else dep.manager.last_name + ' ' + dep.manager.first_name,
-            # 'chief_id': 0 if dep.manager is None else dep.manager.id,
-        } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
+        deps = get_deps()
 
         seats = [{       # Список посад для форм на сторінці відділу кадрів
             'id': seat.pk,
@@ -536,16 +550,16 @@ def edms_my_docs(request):
             if doc_form.is_valid():
 
                 # Зберігаємо новий документ і отримуємо його id
-                new_doc = doc_form.save()
+                new_doc_id = doc_form.save()
 
                 # Додаємо в запит ід нового документу:
-                doc_request.update({'document': new_doc.pk})
+                doc_request.update({'document': new_doc_id.pk})
 
                 # вносимо новий документ і запис у таблицю Free_Time_Periods
                 free_time_form = FreeTimeForm(doc_request)
                 if free_time_form.is_valid():
                     free_time_form.save()
-                    return HttpResponse(new_doc.pk)
+                    return HttpResponse(new_doc_id.pk)
 
         # якщо клієнт постить новий мат.пропуск
         if request.POST['document_type'] == '2':
@@ -556,8 +570,8 @@ def edms_my_docs(request):
                 carry_out_items = json.loads(request.POST['carry_out_items'])
 
                 # Зберігаємо новий документ і отримуємо його id
-                new_doc = doc_form.save()
-                doc_request.update({'document': new_doc.pk})
+                new_doc_id = doc_form.save()
+                doc_request.update({'document': new_doc_id.pk})
 
                 # Записуємо інформацію про виніс у carry_out_info
                 chief_mark_demand_form = CarryOutInfoForm(doc_request)
@@ -573,7 +587,7 @@ def edms_my_docs(request):
                     carry_out_form = CarryOutItemsForm(doc_request)
                     if carry_out_form.is_valid():
                         carry_out_form.save()
-                return HttpResponse(new_doc.pk)
+                return HttpResponse(new_doc_id.pk)
 
         # якщо клієнт постить нову службову записку
         if request.POST['document_type'] == '3':
@@ -581,8 +595,8 @@ def edms_my_docs(request):
             if doc_form.is_valid():
 
                 # Зберігаємо новий документ і отримуємо його id
-                new_doc = doc_form.save()
-                doc_request.update({'document': new_doc.pk})
+                new_doc_id = doc_form.save()
+                doc_request.update({'document': new_doc_id.pk})
                 # Додаємо у запит вид позначку 'Погоджено', яку очікуємо від шефа:
                 doc_request.update({'mark': 2})
 
@@ -593,10 +607,60 @@ def edms_my_docs(request):
 
                 # Додаємо файли, якщо такі є:
                 if len(request.FILES) > 0:
-                    new_path = Document_Path.objects.filter(document_id=new_doc.pk).filter(mark_id=1).first()
+                    new_path = Document_Path.objects.filter(document_id=new_doc_id.pk).filter(mark_id=1).first()
                     handle_files(new_path.pk, request.POST, request.FILES)
 
-                return HttpResponse(json.dumps(new_doc.pk))
+                return HttpResponse(json.dumps(new_doc_id.pk))
+
+        # якщо клієнт постить новий наказ
+        if request.POST['document_type'] == '4':
+            doc_form = DocumentForm(doc_request)
+            if doc_form.is_valid():
+
+                # Зберігаємо новий документ, якщо ми не на тестуванні, отримуємо його id
+                # new_doc_id = 335
+                new_doc_id = doc_form.save().pk
+                doc_request.update({'document': new_doc_id})
+
+                # Зберігаємо наказ
+                decree_form = NewDecreeForm(doc_request)
+                if decree_form.is_valid():
+                    decree_form.save()
+
+                    # Зберігаємо пункти наказу
+                    articles = json.loads(request.POST['articles'])
+                    for article in articles:
+                        doc_request.update({
+                            'text': article['text'],
+                            'deadline': article['deadline'],
+                        })
+                        article_form = NewArticleForm(doc_request)
+                        if article_form.is_valid():
+                            new_article_id = article_form.save()
+                            for dep in article['deps']:
+                                doc_request.update({'article': new_article_id})
+                                doc_request.update({'department': dep['id']})
+                                article_dep_form = NewArticleDepForm(doc_request)
+                                if article_dep_form.is_valid():
+                                    article_dep_form.save()  # TODO НЕ ЗБЕРІГАЄ
+
+                    # Зберігаємо погоджуючих
+                    approval_seats = json.loads(request.POST['approval_seats'])
+                    for item in approval_seats:
+                        doc_request.update({'employee_seat': item['id']})
+                        approval_form = NewApprovalForm(doc_request)
+                        if approval_form.is_valid():
+                            approval_form.save()  # TODO НЕ ЗБЕРІГАЄ
+
+                    # Додаємо файли, якщо такі є:
+                    if len(request.FILES) > 0:
+                        first_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
+                        handle_files(first_path.pk, request.POST, request.FILES)
+
+                    # БД сама заносить у mark_demand безпосереднього шефа, якшо автор не керівник відділу.
+                    # Якщо автор - керівник відділу - то відправляє документ відразу погоджуючим.
+
+                return HttpResponse(json.dumps(new_doc_id))
 
     return HttpResponse(status=405)
 
@@ -730,3 +794,17 @@ def edms_resolution(request):
             else:
                 return HttpResponse(status=405)
         return HttpResponse('')
+
+
+@login_required(login_url='login')
+def edms_get_deps(request):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_deps()))
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_get_seats(request):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_seats()))
+    return HttpResponse(status=405)

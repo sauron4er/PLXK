@@ -15,7 +15,7 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 class MyDocs extends React.Component {
 
     state = {
-        chiefs: '',
+        chiefs: [],
         direct_subs: '',
         my_docs: [], // Документи, створені користувачем
         work_docs: [], // Документи, що чекають на реакцію користувача
@@ -143,7 +143,7 @@ class MyDocs extends React.Component {
             <Fragment>
                 <div className='d-flex justify-content-between'>
                     {/*Якщо є начальники - показуємо кнопки створення нових документів (переробиться при додаванні наказів)*/}
-                    <If condition={this.state.chiefs}>
+                    <If condition={this.state.chiefs.length > 0}>
                         <NewDoc my_seat_id={this.state.seat_id} chiefs={this.state.chiefs} addDoc={this.addDoc}/>
                     </If>
                     <SeatChooser onSeatChange={this.onSeatChange}/>
