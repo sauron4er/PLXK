@@ -43,7 +43,7 @@ class SeatForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat'}
+        fields = {'document_type', 'text', 'employee_seat', 'is_draft'}
 
 
 # Document Type Permission Deactivate Form
@@ -113,7 +113,6 @@ class NewDecreeForm(forms.ModelForm):
             'document',
             'name',
             'preamble',
-            'is_draft',
         }
 
 
@@ -141,5 +140,5 @@ class NewApprovalForm(forms.ModelForm):  # людинопосади, які по
         model = Doc_Approval
         fields = {
             'document',
-            'employee_seat',
+            'seat',
         }

@@ -6,7 +6,7 @@ import ReactDragList from 'react-drag-list'
 import 'react-drag-list/assets/index.css'
 import Input from "react-validation/build/input";
 import axios from "axios";
-import {uniqueArray} from '../../../my_extras'
+import {uniqueArray} from '../../../_else/my_extras'
 
 class DecreeArticles extends React.Component {
 
@@ -430,7 +430,7 @@ class DecreeArticles extends React.Component {
                                         }
                                     </ul>
                                 </If>
-                                <If condition={record.deadline !== ''}>
+                                <If condition={record.deadline}>
                                     <div className='mt-0'>Виконати до: {record.deadline}</div>
                                 </If>
 

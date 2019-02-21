@@ -5,7 +5,7 @@ import FreeTime from './doc_forms/free_time'
 import CarryOut from './doc_forms/carry_out'
 import WorkNote from './doc_forms/work_note'
 import Decree from './doc_forms/decree/decree'
-import '../my_styles.css'
+import '../_else/my_styles.css'
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';

@@ -7,8 +7,8 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-import SeatChooser from "../seat_chooser";
-import DxTable from '../dx_table';
+import SeatChooser from "../_else/seat_chooser";
+import DxTable from '../_else/dx_table';
 import DocTypeInfo from './doc_type_info'
 
 

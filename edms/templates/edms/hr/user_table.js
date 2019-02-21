@@ -8,8 +8,8 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import DxTable from '../dx_table';
-import {getIndex} from '../my_extras.js';
+import DxTable from '../_else/dx_table';
+import {getIndex} from '../_else/my_extras.js';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';

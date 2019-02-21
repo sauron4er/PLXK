@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseForbidden, QueryDict
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import datetime
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 import json
 import pytz
 
@@ -15,11 +16,11 @@ from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Dem
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
-from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm # форми наказу
+from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm  # форми наказу
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 
 def convert_to_localtime(utctime, frmt):
@@ -88,6 +89,7 @@ def get_my_seats(emp_id):
 
 # Функція, яка постить файли (для edms_mark та edms_my_docs)
 def handle_files(path_id, post, files):
+    # TODO додати обробку помилок при збереженні файлів
     file_request = post.copy()
     file_request.update({'document_path': path_id})
     file_request.update({'name': 'file'})
@@ -120,6 +122,48 @@ def get_seats():
         'seat': seat.seat,
     } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
     return seats
+
+
+# Функція, яка додає у бд новий документ та повертає його id
+def post_document(request):
+    try:
+        doc_request = request.POST.copy()
+        doc_request.update({'employee': request.user.userprofile.id})
+        doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
+
+        doc_form = DocumentForm(doc_request)
+        if doc_form.is_valid():
+            new_doc_id = doc_form.save().pk
+            return new_doc_id
+        else:
+            raise ValidationError('edms/views: function post_document: document_form invalid')
+    except Exception as err:
+        raise err
+
+
+# Функція, яка додає у бд новий пункт документу та повертає його id
+def post_articles(doc_request, articles):
+    try:
+        for article in articles:
+            doc_request.update({
+                'text': article['text'],
+                'deadline': article['deadline'],
+            })
+            article_form = NewArticleForm(doc_request)
+            if article_form.is_valid():
+                new_article_id = article_form.save().pk
+                for dep in article['deps']:
+                    doc_request.update({'article': new_article_id})
+                    doc_request.update({'department': dep['id']})
+                    article_dep_form = NewArticleDepForm(doc_request)
+                    if article_dep_form.is_valid():
+                        article_dep_form.save()
+                    else:
+                        raise ValidationError('edms/view func post_articles: article_dep_form invalid')
+            else:
+                raise ValidationError('edms/view func post_articles: article_form invalid')
+    except ValueError as err:
+        raise err
 
 
 @login_required(login_url='login')
@@ -494,84 +538,76 @@ def edms_get_doc(request, pk):
 
 @login_required(login_url='login')
 def edms_my_docs(request):
+    try:
+        if request.method == 'GET':
+            my_seats = get_my_seats(request.user.userprofile.id)
 
-    if request.method == 'GET':
-        my_seats = get_my_seats(request.user.userprofile.id)
+            new_docs_query = Document_Type.objects.all()
+            my_docs_query = Document_Path.objects.filter(mark=1) \
+                .filter(employee_seat__employee_id=request.user.userprofile.id) \
+                .filter(document__is_draft=False) \
+                .filter(document__closed=False)  # Створено користувачем, не чернетка і не деактивовано
+            work_docs_query = Mark_Demand.objects \
+                .filter(recipient_id__employee_id=request.user.userprofile.id) \
+                .filter(is_active=True).order_by('document_id')
 
-        new_docs = [{  # Список документів, які може створити юзер
-            'id': doc_type.id,
-            'description': doc_type.description,
-        } for doc_type in Document_Type.objects
-            .filter(testing=testing)]  # В режимі тестування показуються типи документів, що тестуються
+            # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+            if not testing:
+                new_docs_query = new_docs_query.filter(testing=False)
+                my_docs_query = my_docs_query.filter(document__document_type__testing=False)
+                work_docs_query = work_docs_query.filter(document__document_type__testing=False)
 
-        my_docs = [{  # Список документів, створених даним юзером
-            'id': path.document.id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type.id,
-            'date': convert_to_localtime(path.timestamp, 'day'),
-            'emp_seat_id': path.employee_seat.id,
-            'author': request.user.userprofile.pip,
-            'author_seat_id': path.employee_seat.id,
-        } for path in Document_Path.objects
-            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)  # Створено користувачем
-            .filter(document__closed=False)  # Активний документ
-            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
-        ]
+            new_docs = [{  # Список документів, які може створити юзер
+                'id': doc_type.id,
+                'description': doc_type.description,
+            } for doc_type in new_docs_query]  # В режимі тестування показуються типи документів, що тестуються
 
-        work_docs = [{  # Список документів, що очікують на реакцію користувача
-            'id': demand.document.id,
-            'type': demand.document.document_type.description,
-            'type_id': demand.document.document_type_id,
-            'flow_id': demand.id,
-            'date': convert_to_localtime(demand.document.date, 'day'),
-            'emp_seat_id': demand.recipient.id,
-            'expected_mark': demand.mark.id,
-            'author': demand.document.employee_seat.employee.pip,
-            'author_seat_id': demand.document.employee_seat_id,
-        } for demand in Mark_Demand.objects
-            .filter(recipient_id__employee_id=request.user.userprofile.id)  # документ призначений користувачу
-            .filter(is_active=True)
-            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
-            .order_by('document_id')]
+            my_docs = [{  # Список документів, створених даним юзером
+                'id': path.document.id,
+                'type': path.document.document_type.description,
+                'type_id': path.document.document_type.id,
+                'date': convert_to_localtime(path.timestamp, 'day'),
+                'emp_seat_id': path.employee_seat.id,
+                'author': request.user.userprofile.pip,
+                'author_seat_id': path.employee_seat.id,
+            } for path in my_docs_query]
 
-        return render(request, 'edms/my_docs/my_docs.html', {
-            'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
-        })
+            work_docs = [{  # Список документів, що очікують на реакцію користувача
+                'id': demand.document.id,
+                'type': demand.document.document_type.description,
+                'type_id': demand.document.document_type_id,
+                'flow_id': demand.id,
+                'date': convert_to_localtime(demand.document.date, 'day'),
+                'emp_seat_id': demand.recipient.id,
+                'expected_mark': demand.mark.id,
+                'author': demand.document.employee_seat.employee.pip,
+                'author_seat_id': demand.document.employee_seat_id,
+            } for demand in work_docs_query]
 
-    elif request.method == 'POST':
+            return render(request, 'edms/my_docs/my_docs.html', {
+                'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
+            })
+        elif request.method == 'POST':
+            doc_request = request.POST.copy()
+            # TODO як не зберігаючи документ перевірити на правильність усі інші форми (яким потрібен ід документа)?
 
-        # копіюємо запит, щоб зробити його мутабельним і додаємо поле "користувач"
-        doc_request = request.POST.copy()
-        doc_request.update({'employee': request.user.userprofile.id})
+            # записуємо документ і отримуємо його ід
+            new_doc_id = post_document(request)
 
-        # якщо клієнт постить нову звільнюючу
-        if request.POST['document_type'] == '1':
-            doc_form = DocumentForm(doc_request)
-            if doc_form.is_valid():
+            doc_request.update({'document': new_doc_id})
 
-                # Зберігаємо новий документ і отримуємо його id
-                new_doc_id = doc_form.save()
-
-                # Додаємо в запит ід нового документу:
-                doc_request.update({'document': new_doc_id.pk})
-
+            # якщо клієнт постить нову звільнюючу
+            if request.POST['document_type'] == '1':
                 # вносимо новий документ і запис у таблицю Free_Time_Periods
                 free_time_form = FreeTimeForm(doc_request)
                 if free_time_form.is_valid():
                     free_time_form.save()
-                    return HttpResponse(new_doc_id.pk)
+                    return HttpResponse(new_doc_id)
 
-        # якщо клієнт постить новий мат.пропуск
-        if request.POST['document_type'] == '2':
-            doc_form = DocumentForm(doc_request)
-            if doc_form.is_valid():
-
+            # якщо клієнт постить новий мат.пропуск
+            if request.POST['document_type'] == '2':
                 # отримуємо список цінностей на виніс з запиту в масив
                 carry_out_items = json.loads(request.POST['carry_out_items'])
-
-                # Зберігаємо новий документ і отримуємо його id
-                new_doc_id = doc_form.save()
-                doc_request.update({'document': new_doc_id.pk})
 
                 # Записуємо інформацію про виніс у carry_out_info
                 chief_mark_demand_form = CarryOutInfoForm(doc_request)
@@ -587,17 +623,13 @@ def edms_my_docs(request):
                     carry_out_form = CarryOutItemsForm(doc_request)
                     if carry_out_form.is_valid():
                         carry_out_form.save()
-                return HttpResponse(new_doc_id.pk)
+                    else:
+                        return HttpResponseBadRequest
+                return HttpResponse(new_doc_id)
 
-        # якщо клієнт постить нову службову записку
-        if request.POST['document_type'] == '3':
-            doc_form = DocumentForm(doc_request)
-            if doc_form.is_valid():
-
-                # Зберігаємо новий документ і отримуємо його id
-                new_doc_id = doc_form.save()
-                doc_request.update({'document': new_doc_id.pk})
-                # Додаємо у запит вид позначку 'Погоджено', яку очікуємо від шефа:
+            # якщо клієнт постить нову службову записку
+            if request.POST['document_type'] == '3':
+                # Додаємо у запит вид позначки 'Погоджено', яку очікуємо від шефа:
                 doc_request.update({'mark': 2})
 
                 # Заносимо документ у mark_demand
@@ -607,62 +639,72 @@ def edms_my_docs(request):
 
                 # Додаємо файли, якщо такі є:
                 if len(request.FILES) > 0:
-                    new_path = Document_Path.objects.filter(document_id=new_doc_id.pk).filter(mark_id=1).first()
+                    new_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
                     handle_files(new_path.pk, request.POST, request.FILES)
 
-                return HttpResponse(json.dumps(new_doc_id.pk))
+                return HttpResponse(new_doc_id)
 
-        # якщо клієнт постить новий наказ
-        if request.POST['document_type'] == '4':
-            doc_form = DocumentForm(doc_request)
-            if doc_form.is_valid():
-
-                # Зберігаємо новий документ, якщо ми не на тестуванні, отримуємо його id
-                # new_doc_id = 335
-                new_doc_id = doc_form.save().pk
-                doc_request.update({'document': new_doc_id})
-
+            # якщо клієнт постить новий наказ
+            if request.POST['document_type'] == '4':
                 # Зберігаємо наказ
                 decree_form = NewDecreeForm(doc_request)
                 if decree_form.is_valid():
                     decree_form.save()
 
                     # Зберігаємо пункти наказу
-                    articles = json.loads(request.POST['articles'])
-                    for article in articles:
-                        doc_request.update({
-                            'text': article['text'],
-                            'deadline': article['deadline'],
-                        })
-                        article_form = NewArticleForm(doc_request)
-                        if article_form.is_valid():
-                            new_article_id = article_form.save()
-                            for dep in article['deps']:
-                                doc_request.update({'article': new_article_id})
-                                doc_request.update({'department': dep['id']})
-                                article_dep_form = NewArticleDepForm(doc_request)
-                                if article_dep_form.is_valid():
-                                    article_dep_form.save()  # TODO НЕ ЗБЕРІГАЄ
+                    post_articles(doc_request, json.loads(request.POST['articles']))
 
                     # Зберігаємо погоджуючих
                     approval_seats = json.loads(request.POST['approval_seats'])
                     for item in approval_seats:
-                        doc_request.update({'employee_seat': item['id']})
+                        doc_request.update({'seat': item})
                         approval_form = NewApprovalForm(doc_request)
                         if approval_form.is_valid():
-                            approval_form.save()  # TODO НЕ ЗБЕРІГАЄ
+                            approval_form.save()
+                        else:
+                            raise ValidationError('edms/views edms_my_docs approval_form invalid')
 
                     # Додаємо файли, якщо такі є:
                     if len(request.FILES) > 0:
                         first_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
                         handle_files(first_path.pk, request.POST, request.FILES)
+                else:
+                    raise ValidationError('edms/views edms_my_docs: decree_form invalid')
 
                     # БД сама заносить у mark_demand безпосереднього шефа, якшо автор не керівник відділу.
                     # Якщо автор - керівник відділу - то відправляє документ відразу погоджуючим.
 
                 return HttpResponse(json.dumps(new_doc_id))
+    except Exception as err:
+        return HttpResponse(status=405, content=err)
 
-    return HttpResponse(status=405)
+
+@login_required(login_url='login')
+def edms_get_drafts(request):
+    try:
+        if request.method == 'GET':
+            my_drafts_query = Document.objects\
+                .filter(employee_seat__employee_id=request.user.userprofile.id)\
+                .filter(is_draft=True)\
+                .filter(closed=False)
+
+            # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+            if not testing:
+                my_drafts_query = my_drafts_query.filter(document_type__testing=False)
+
+            my_drafts = [{  # Список документів, створених даним юзером
+                'id': draft.id,
+                'type': draft.document_type.description,
+                'type_id': draft.document_type.id,
+                'date': convert_to_localtime(draft.date, 'day'),
+                # 'emp_seat_id': draft.employee_seat.id,
+                # 'author': request.user.userprofile.pip,
+                # 'author_seat_id': draft.employee_seat.id,
+            } for draft in my_drafts_query]
+
+            return HttpResponse(json.dumps(my_drafts))
+    except Exception as err:
+        return HttpResponse(status=405, content=err)
 
 
 @login_required(login_url='login')

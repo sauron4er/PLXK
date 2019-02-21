@@ -9,7 +9,7 @@ import Resolutions from './resolutions';
 import Path from './path';
 import Flow from './flow';
 import './doc_info.css';
-import '../loader_style.css';
+import '../_else/loader_style.css';
 import axios from 'axios';
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';

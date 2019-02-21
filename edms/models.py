@@ -55,6 +55,7 @@ class Document(models.Model):
     text = models.CharField(max_length=1000, null=True, blank=True)
     image = models.BinaryField(editable=True, null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
+    is_draft = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
     date = models.DateTimeField(auto_now_add=True, null=True)
@@ -131,7 +132,6 @@ class Decree(models.Model):
     is_valid = models.BooleanField(default=True)
     validity_start = models.DateTimeField(null=True)
     validity_end = models.DateTimeField(null=True)
-    is_draft = models.BooleanField(default=False)
 
 
 # моделі, які можуть використовуватися різними типами документів
@@ -156,7 +156,7 @@ class Doc_Article_Dep(models.Model):
 # Автоматично анулюється, якщо в іншому погодженні поставили позначку "Відмовлено" чи "На доопрацювання".
 class Doc_Approval(models.Model):
     document = models.ForeignKey(Document, related_name='document_approves')
-    employee_seat = models.ForeignKey(Employee_Seat, related_name='employee_approvals')
+    seat = models.ForeignKey(Seat, related_name='seat_approvals')
     approved = models.BooleanField(default=False)
     approved_path = models.ForeignKey(Document_Path, related_name='path_approval', null=True)
     is_active = models.BooleanField(default=True)

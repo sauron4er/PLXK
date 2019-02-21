@@ -1,0 +1,49 @@
+.full_width {
+    width: 100%;
+}
+
+.css_notification {
+    position: fixed;
+    /*top: 0;*/
+    /*left: 0;*/
+    /*width: 100vw;*/
+    /*height: 100vh;*/
+}
+
+.css_main_div {
+    height: 72%;
+    width: 98vw;
+    position: absolute;
+}
+
+.css_height_100 {
+    height: 100%;
+}
+
+.width_40vh {
+    width: 40vw
+}
+
+.css_table_font {
+    font-size: 0.8rem;
+}
+
+.css_dx_table:hover {
+    background-color: #f0f0f0;
+}
+
+.css_dx_table:focus {
+    background-color: #e6e6e6;
+}
+
+.css_decree_article {
+    border: solid #ebebeb 1px;
+    -moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+    padding: 0 5px;
+    margin-bottom: 5px;
+}
+
+.css_multiline {
+    white-space: pre-line;
+}

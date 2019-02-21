@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import UserTable from './user_table';
 import DepTable from './dep_table';
 import SeatTable from './seat_table';
-import '../my_styles.css'
+import '../_else/my_styles.css'
 
 
 class HR extends React.Component {

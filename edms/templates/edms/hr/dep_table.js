@@ -8,10 +8,10 @@ import Textarea from 'react-validation/build/textarea';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
-import '../my_styles.css'
-import DxTable from '../dx_table';
-import {required} from '../validations.js';
-import {getIndex} from '../my_extras.js';
+import '../_else/my_styles.css'
+import DxTable from '../_else/dx_table';
+import {required} from '../_else/validations.js';
+import {getIndex} from '../_else/my_extras.js';
 
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';

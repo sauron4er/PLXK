@@ -4,15 +4,15 @@ import Paper from '@material-ui/core/Paper';
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Select from 'react-validation/build/select';
-import {required} from "../validations";
+import {required} from "../_else/validations";
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-import '../loader_style.css';
-import '../my_styles.css';
+import '../_else/loader_style.css';
+import '../_else/my_styles.css';
 
 
 class DocTypeInfo extends React.Component {

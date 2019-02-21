@@ -11,7 +11,7 @@
                     <div class="container" >
                         <ul class="navbar-nav">
                             <li class="nav-item {% if request.resolver_match.url_name == "my_docs" %}active{% endif %}">
-                                <a class="nav-link" href="{% url 'edms:my_docs' %}">Мої документи</a>
+                                <a class="nav-link" href="{% url 'edms:my_docs' %}">Документи</a>
                             </li>
                             <li class="nav-item {% if request.resolver_match.url_name == "archive" %}active{% endif %}">
                                 <a class="nav-link" href="{% url 'edms:archive' %}">Архів</a>
