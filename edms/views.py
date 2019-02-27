@@ -19,7 +19,7 @@ from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApproval
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = True
+testing = False
 
 
 def convert_to_localtime(utctime, frmt):
@@ -197,6 +197,7 @@ def close_doc(request, doc_id):
             close_doc_form.save()
     except ValueError as err:
         raise err
+
 
 
 @login_required(login_url='login')
