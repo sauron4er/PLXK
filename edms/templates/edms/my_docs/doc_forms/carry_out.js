@@ -13,26 +13,25 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 
 class CarryOut extends React.Component {
-  // рендерить форму нового наказу
-
   state = {
     open: true,
     date: '',
     text: '',
     checkedGate: '1',
-    carry_out_items: [{id: 1, name: '', quantity: '', measurement: '' }],
+    carry_out_items: [{id: 1, item_name: '', quantity: '', measurement: '' }],
     carry_out_columns: [
       { name: 'id', title: '№' },
-      { name: 'name', title: 'Найменування' },
+      { name: 'item_name', title: 'Найменування' },
       { name: 'quantity', title: 'К-сть' },
       { name: 'measurement', title: 'Од. виміру' },
     ],
     carry_out_col_width: [
       { columnName: 'id', width: 55 },
-      { columnName: 'name'},
+      { columnName: 'item_name'},
       { columnName: 'quantity', width: 70 },
       { columnName: 'measurement', width: 80 },
     ],
+    render_ready: this.props.docId === 0, // якщо ід док. = 0, то це не чернетка, і можна рендерити відразу
   };
 
   onChange = (event) => {
@@ -43,6 +42,29 @@ class CarryOut extends React.Component {
       this.setState({[event.target.name]:event.target.value});
     }
   };
+  
+    // отримуємо з бд інфу про документ, якщо це чернетка
+  componentDidMount() {
+    if (this.props.docId !== 0) {
+      axios({
+        method: 'get',
+        url: 'get_doc/' + this.props.docId + '/',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+      }).then((response) => {
+        this.setState({
+          date: response.data.date,
+          checkedGate: response.data.gate.toString(),
+          text: response.data.text,
+          carry_out_items: response.data.carry_out_items,
+          render_ready: true,
+        });
+      }).catch((error) => {
+        console.log('errorpost: ' + error);
+      });
+    }
+  }
 
   // Отримує з таблиці новий список матеріалів
   getCarryOutItems = (carry_out_items) => {
@@ -52,38 +74,59 @@ class CarryOut extends React.Component {
   };
 
   // Додає новий матеріальний пропуск
-  newCarryOut = (e) => {
+  newCarryOut = (e, type) => {
     e.preventDefault();
-
+    
     if (this.state.carry_out_items.length > 0) {
-
       axios({
         method: 'post',
         url: '',
         data: querystring.stringify({
           document_type: 2,
-          employee_seat: localStorage.getItem('my_seat'),
+          old_draft_id: this.props.docId,
           carry_out_day: this.state.date,
+          text: this.state.text,
           gate: this.state.checkedGate,
           carry_out_items: JSON.stringify(this.state.carry_out_items),
-          text: this.state.text,
-          is_draft: e.target.id === 'draft'
+          employee_seat: localStorage.getItem('my_seat'),
+          is_draft: type === 'draft'
         }),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
       }).then((response) => {
         const today = new Date();
-        if (e.target.id === 'draft') {
-          this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + today.getMonth() + '.' + today.getFullYear(), 2);
-        }
-      })
-        .catch(function (error) {
+        type === 'post'
+        ?
+        this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 2)
+        :
+        this.props.addDraft(response.data, 'Матеріальний пропуск', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 2);
+      
+        this.props.delDraft(this.props.docId)
+      }).catch(function (error) {
           console.log('errorpost: ' + error);
       });
-
       this.props.onCloseModal();
     }
+  };
+  
+  // видаляє чернетку з бд
+  delDraft = (e) => {
+    e.preventDefault();
+    
+    axios({
+      method: 'post',
+      url: 'del_draft/' +this.props.docId + '/',
+      data: querystring.stringify({}),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+    }).then((response) => {
+      this.props.delDraft(this.props.docId)
+    }).catch(function (error) {
+      console.log('errorpost: ' + error);
+    });
+    this.props.onCloseModal();
   };
 
   onCloseModal = (e) => {
@@ -97,45 +140,58 @@ class CarryOut extends React.Component {
 
   render() {
     return <Modal visible={this.state.open} width='45%' effect="fadeInUp">
-      <div className='css_modal_scroll'>
-        <Form onSubmit={this.newCarryOut}>
-          <div className="modal-body">
-            <div className='d-flex justify-content-between'>
-              <h4 className="modal-title">Новий матеріальний пропуск</h4>
-              <button className="btn btn-link" onClick={this.onCloseModal}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
+      <If  condition={this.state.render_ready}>
+        <div className='css_modal_scroll'>
+          <Form onSubmit={e => this.newCarryOut(e, 'post')}>
+            <div className="modal-body">
+              <div className='d-flex justify-content-between'>
+                <h4 className="modal-title">Новий матеріальний пропуск</h4>
+                <button className="btn btn-link" onClick={this.onCloseModal}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+              <br/>
+              <label>День виносу:
+                <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
+              </label> <br />
+  
+              <label className='mr-1'>Прохідна №:</label>
+              <input type="radio" name="gate_radio" value='1' onChange={this.onChange} checked={this.state.checkedGate==='1'} /><label className="radio-inline mx-1"> 1</label>
+              <input type="radio" name="gate_radio" value='2' onChange={this.onChange} checked={this.state.checkedGate==='2'} /><label className="radio-inline mx-1"> 2</label>
+  
+              <label className="full_width">Мета виносу:
+                <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
+              </label> <br />
+  
+              <label>Список матеріальних цінностей:</label>
+                <DxTable
+                  rows={this.state.carry_out_items}
+                  columns={this.state.carry_out_columns}
+                  colWidth={this.state.carry_out_col_width}
+                  edit
+                  getData={this.getCarryOutItems}
+                  paging
+                />
             </div>
-            <br/>
-            <label>День виносу:
-              <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
-            </label> <br />
-
-            <label className='mr-1'>Прохідна №:</label>
-            <input type="radio" name="gate_radio" value='1' onChange={this.onChange} checked={this.state.checkedGate==='1'} /><label className="radio-inline mx-1"> 1</label>
-            <input type="radio" name="gate_radio" value='2' onChange={this.onChange} checked={this.state.checkedGate==='2'} /><label className="radio-inline mx-1"> 2</label>
-
-            <label className="full_width">Мета виносу:
-              <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000} validations={[required]}/>
-            </label> <br />
-
-            <label>Список матеріальних цінностей:</label>
-              <DxTable
-                rows={this.state.carry_out_items}
-                columns={this.state.carry_out_columns}
-                colWidth={this.state.carry_out_col_width}
-                edit
-                getData={this.getCarryOutItems}
-                paging
-              />
-          </div>
-          <div className="modal-footer">
-            <button className="float-sm-left btn btn-sm btn-outline-info mb-1" id='draft' onClick={this.newCarryOut}>Зберегти як чернетку</button>
-            <Button className="float-sm-left btn btn-outline-success mb-1" id='post'>Підтвердити</Button>
-          </div>
-        </Form>
-      </div>
+            <div className="modal-footer">
+              <If condition={this.props.docId !== 0}>
+                <button className="float-sm-left btn btn-sm btn-outline-danger mb-1"
+                      onClick={this.delDraft}>Видалити чернетку
+                </button>
+              </If>
+              <button className="float-sm-left btn btn-sm btn-outline-info mb-1"
+                      onClick={e => this.newCarryOut(e, 'draft')}>Зберегти як чернетку
+              </button>
+              <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
+            </div>
+          </Form>
+        </div>
+      </If>
     </Modal>
+  }
+  
+  static defaultProps = {
+    docId: 0,
   }
 }
 

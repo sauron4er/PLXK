@@ -46,6 +46,13 @@ class DocumentForm(forms.ModelForm):
         fields = {'document_type', 'text', 'employee_seat', 'is_draft'}
 
 
+#  Видалення документа (не буде показуватися в архівах)
+class CloseDocForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = {'closed'}
+
+
 # Document Type Permission Deactivate Form
 class DTPDeactivateForm(forms.ModelForm):
     class Meta:

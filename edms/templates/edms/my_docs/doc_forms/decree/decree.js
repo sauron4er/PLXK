@@ -27,10 +27,13 @@ class Decree extends React.Component {
     name: '',
     preamble: '',
     approval_seats: [],
+    articles: [],
     files: [],
     
     select_approval_seat_id: '',
     select_approval_seat: '',
+    
+    render_ready: this.props.docId === 0, // якщо ід док. = 0, то це не чернетка, і можна рендерити відразу
   };
 
   onChange = (event) => {
@@ -58,19 +61,38 @@ class Decree extends React.Component {
     }
   );
   
-  // отримуємо з бд список посад для селекту "На погодження"
+  // отримуємо з бд список посад для селекту "На погодження",
+  // отримуємо інфу про документ, якщо це чернетка
   componentDidMount() {
-    if (this.state.seat_list.length === 0) {
+    axios({
+      method: 'get',
+      url: 'get_seats/',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+    }).then((response) => {
+      this.setState({
+        seat_list: response.data,
+      })
+    }).catch((error) => {
+      console.log('errorpost: ' + error);
+    });
+    
+    if (this.props.docId !== 0) {
       axios({
         method: 'get',
-        url: 'get_seats/',
+        url: 'get_doc/' + this.props.docId + '/',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
       }).then((response) => {
         this.setState({
-          seat_list: response.data,
-        })
+          name: response.data.name,
+          preamble: response.data.preamble,
+          approval_seats: response.data.approval_seats,
+          articles: response.data.articles,
+          render_ready: true,
+        });
       }).catch((error) => {
         console.log('errorpost: ' + error);
       });
@@ -102,10 +124,8 @@ class Decree extends React.Component {
   
   // перед тим, як постити наказ, додає погоджуючого у список, якщо клієнт забув це зробити сам
   // і передає управління функції postDecree
-  newDecree = (e) => {
+  newDecree = (e, type) => {
     e.preventDefault();
-    const post_type = e.target.id;
-    
     if (this.state.select_approval_seat !== '') {
       let approval_seats = [...this.state.approval_seats];
       approval_seats.push({id: this.state.select_approval_seat_id, seat: this.state.select_approval_seat});
@@ -115,16 +135,16 @@ class Decree extends React.Component {
         select_approval_seat_id: '',
         select_approval_seat: '',
       },
-        () => {this.postDecree(post_type)}  // постимо наказ після оновлення списку погоджуючих
+        () => {this.postDecree(type)}  // постимо наказ після оновлення списку погоджуючих
       )
     }
     else {
-      this.postDecree(post_type)
+      this.postDecree(type)
     }
   };
 
   // відправляє новий наказ у бд
-  postDecree = (post_type) => {
+  postDecree = (type) => {
     const articles = this.ArticlesRef.current; // пункти наказу з компонента DecreeArticles
     
     // відправляємо наказ тільки якщо є хоч один пункт і хоч одна посада для погодження
@@ -137,13 +157,13 @@ class Decree extends React.Component {
     else {
       let formData = new FormData();
       // інфа для форми нового документу:
-      // formData.append('document_type', '4');
+      formData.append('document_type', '4');
       formData.append('employee_seat', localStorage.getItem('my_seat'));
 
       // інфа для форми нового наказу:
       formData.append('name', this.state.name);
       formData.append('preamble', this.state.preamble);
-      formData.append('is_draft', post_type === 'draft');
+      formData.append('is_draft', type === 'draft');
 
       // пункти, погоджуючі, файли:
       // витягуємо з масиву approval_seats поле 'id', щоб не відправляти на сервер лишню інфу
@@ -169,13 +189,13 @@ class Decree extends React.Component {
         },
       }).then((response) => {
         const today = new Date();
-        if (post_type === 'post') {
+        if (type === 'post') {
           this.props.addDoc(response.data, 'Наказ', today.getDate() + '.0' + (today.getMonth() + 1) + '.' + today.getFullYear(), 4);
         }
-        this.props.onCloseModal();
         this.setState({
           open: false,
         });
+        this.props.onCloseModal();
       }).catch((error) => {
         console.log('errorpost: ' + error);
         console.log(error.response.data);
@@ -187,96 +207,103 @@ class Decree extends React.Component {
   onCloseModal = (e) => {
     e.preventDefault();
     // Передаємо вверх інфу, що модальне вікно закрите
-    this.props.onCloseModal();
     this.setState({
       open: false,
     });
+    this.props.onCloseModal();
   };
 
   render() {
-      return <Modal visible={this.state.open} width='45%' effect="fadeInUp" >
-          <div className='css_modal_scroll'>
-              <Form onSubmit={this.newDecree}>
-                <div className="modal-body">
-                  <div className='d-flex justify-content-between'>
-                    <h4 className="modal-title">Новий проект наказу</h4>
-                    <button className="btn btn-link" onClick={this.onCloseModal}>
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </div>
-                  <br/>
-                  <label className="full_width">Назва:
-                    <Textarea className="form-control full_width" value={this.state.name} name='name'
-                              onChange={this.onChange} maxLength={4000} validations={[required]}/>
-                  </label> <br />
-                  <label className="full_width">Преамбула:
-                    <Textarea className="form-control full_width" value={this.state.preamble} name='preamble'
-                              onChange={this.onChange} maxLength={4000} validations={[required]}/>
-                  </label> <br />
+    return <Modal visible={this.state.open} width='45%' effect="fadeInUp" >
+      <If  condition={this.state.seat_list.length > 0 && this.state.render_ready}>
+        <div className='css_modal_scroll'>
+          <Form onSubmit={e => this.newDecree(e, 'post')}>
+            <div className="modal-body">
+              <div className='d-flex justify-content-between'>
+                <h4 className="modal-title">Новий проект наказу</h4>
+                <button className="btn btn-link" onClick={this.onCloseModal}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+              <br/>
+              <label className="full_width">Назва:
+                <Textarea className="form-control full_width" value={this.state.name} name='name'
+                          onChange={this.onChange} maxLength={4000} validations={[required]}/>
+              </label> <br />
+              <label className="full_width">Преамбула:
+                <Textarea className="form-control full_width" value={this.state.preamble} name='preamble'
+                          onChange={this.onChange} maxLength={4000} validations={[required]}/>
+              </label> <br />
   
-                  <DecreeArticles ref={this.ArticlesRef}/>
-                  
-                  <If condition={this.state.seat_list.length > 0}>
-                    <br />
-                    <div className='d-flex align-items-start mt-1'>
-                      <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval_seat'>На погодження:</label>
-                      <select className='form-control' id='select_approval_seat' name='select_approval_seat' value={this.state.select_approval_seat} onChange={this.onChange}>
-                        <option key={0} data-key={0} value='Не внесено'>------------</option>
-                        {
-                          this.state.seat_list.map(seat => {
-                            return <option key={seat.id} data-key={seat.id} value={seat.seat}>{seat.seat}</option>;
-                          })
-                        }
-                      </select>
-                      <button className=" btn btn-sm btn-outline-secondary font-weight-bold ml-1" onClick={this.addNewApprovalSeat}>
-                        <FontAwesomeIcon icon={faPlus} />
-                      </button>
-                    </div>
-                    <If condition={this.state.approval_seats.length > 0}>
-                      <ul className='mt-1'>
-                        {
-                          this.state.approval_seats.map(seat => {
-                            return (
-                              <div key={seat.id} className='d-flex align-items-start'>
-                                <li>{seat.seat}</li>
-                                <button className="btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1"
-                                        onClick={(e) => this.delApprovalSeat(e, seat.id)} >
-                                  <FontAwesomeIcon icon={faTimes} />
-                                </button>
-                              </div>
-                            )
-                          })
-                        }
-                      </ul>
-                    </If>
-                    <br/>
-                  </If>
-                
-                  <label className="full_width">Додати файли:
-                    <FileUploader
-                      onValueChanged={(e) => this.setState({files: e.value})}
-                      uploadMode='useForm'
-                      multiple={true}
-                      allowCanceling={true}
-                      selectButtonText='Оберіть файл'
-                      labelText='або перетягніть файл сюди'
-                      readyToUploadMessage='Готово'
-                    />
-                  </label>
-                </div>
-                <div className="modal-footer">
-                  <button className="float-sm-left btn btn-sm btn-outline-info mb-1" id='draft' onClick={this.newDecree}>
-                    Зберегти як чернетку
+              <DecreeArticles ref={this.ArticlesRef} articles={this.state.articles}/>
+              
+              <If condition={this.state.seat_list.length > 0}>
+                <br />
+                <div className='d-flex align-items-start mt-1'>
+                  <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval_seat'>На погодження:</label>
+                  <select className='form-control' id='select_approval_seat' name='select_approval_seat'
+                          value={this.state.select_approval_seat} onChange={this.onChange}>
+                    <option key={0} data-key={0} value='Не внесено'>------------</option>
+                    {
+                      this.state.seat_list.map(seat => {
+                        return <option key={seat.id} data-key={seat.id} value={seat.seat}>{seat.seat}</option>;
+                      })
+                    }
+                  </select>
+                  <button className=" btn btn-sm btn-outline-secondary font-weight-bold ml-1" onClick={this.addNewApprovalSeat}>
+                    <FontAwesomeIcon icon={faPlus} />
                   </button>
-                  <Button className="float-sm-left btn btn-outline-success mb-1" id='post'>
-                    Підтвердити
-                  </Button>
                 </div>
-              </Form>
-          </div>
-        {/*Вспливаюче повідомлення*/}
-        <ToastContainer />
-      </Modal>
+                <If condition={this.state.approval_seats.length > 0}>
+                  <ul className='mt-1'>
+                    {
+                      this.state.approval_seats.map(seat => {
+                        return (
+                          <div key={seat.id} className='d-flex align-items-start'>
+                            <li>{seat.seat}</li>
+                            <button className="btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1"
+                              onClick={(e) => this.delApprovalSeat(e, seat.id)} >
+                              <FontAwesomeIcon icon={faTimes} />
+                            </button>
+                          </div>
+                        )
+                      })
+                    }
+                  </ul>
+                </If>
+                <br/>
+              </If>
+            
+              <label className="full_width">Додати файли:
+                <FileUploader
+                  onValueChanged={(e) => this.setState({files: e.value})}
+                  uploadMode='useForm'
+                  multiple={true}
+                  allowCanceling={true}
+                  selectButtonText='Оберіть файл'
+                  labelText='або перетягніть файл сюди'
+                  readyToUploadMessage='Готово'
+                />
+              </label>
+            </div>
+            <div className="modal-footer">
+              <button className="float-sm-left btn btn-sm btn-outline-info mb-1"
+                      onClick={e => this.newDecree(e, 'draft')}>Зберегти як чернетку
+              </button>
+              <Button className="float-sm-left btn btn-outline-success mb-1">
+                Підтвердити
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </If>
+      {/*Вспливаюче повідомлення*/}
+      <ToastContainer />
+    </Modal>
+  }
+  
+  static defaultProps = {
+    docId: 0,
   }
 }
 

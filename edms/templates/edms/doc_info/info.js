@@ -55,7 +55,7 @@ class Info extends React.Component {
                     <Choose>
                         <When condition={this.props.doc.type_id === 1}>
                             <div>Дата виходу за територію:
-                                <div className="font-italic ml-1">{this.props.info.free_time}</div>
+                                <div className="font-italic ml-1">{this.props.info.date}</div>
                                 <div>Куди та з якою метою:</div>
                                 <div className="css_note_text font-italic ml-1">{this.props.info.text}</div>
                             </div>
@@ -77,14 +77,14 @@ class Info extends React.Component {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <For each='item' index='idx' of={this.props.info.carry_out_items}>
-                                            <tr key={idx}>
-                                                <td>{idx + 1}</td>
-                                                <td>{item.item_name}</td>
-                                                <td>{item.quantity}</td>
-                                                <td>{item.measurement}</td>
-                                            </tr>
-                                        </For>
+                                            <For each='item' index='idx' of={this.props.info.carry_out_items}>
+                                                <tr key={idx}>
+                                                    <td>{idx + 1}</td>
+                                                    <td>{item.item_name}</td>
+                                                    <td>{item.quantity}</td>
+                                                    <td>{item.measurement}</td>
+                                                </tr>
+                                            </For>
                                         </tbody>
                                     </table>
                                 </div>

@@ -80,14 +80,14 @@ class SubDocs extends React.Component {
         this.setState({sub_docs:[], sub_archive:[]});
 
         doc_list.map(doc => {
-            if (doc.closed === true) {
+            if (doc.is_active) {
                 this.setState(prevState => ({
-                  sub_archive: [...prevState.sub_archive, doc]
+                  sub_docs: [...prevState.sub_docs, doc]
                 }));
             }
             else {
                 this.setState(prevState => ({
-                  sub_docs: [...prevState.sub_docs, doc]
+                  sub_archive: [...prevState.sub_archive, doc]
                 }));
             }
         })

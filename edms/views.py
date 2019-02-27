@@ -9,13 +9,12 @@ import pytz
 
 
 from accounts import models as accounts  # import models Department, UserProfile
-from .models import Seat, Employee_Seat, Document, File, Document_Path
-# from .models import Active_Docs_View, Archive_Docs_View
-from .models import Document_Type, Document_Type_Permission, Mark
+from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
+from .models import Decree, Doc_Approval, Doc_Article, Doc_Article_Dep
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
-from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm
+from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm, CloseDocForm
 from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm  # форми наказу
 
 
@@ -162,6 +161,40 @@ def post_articles(doc_request, articles):
                         raise ValidationError('edms/view func post_articles: article_dep_form invalid')
             else:
                 raise ValidationError('edms/view func post_articles: article_form invalid')
+    except ValueError as err:
+        raise err
+
+
+# Функція, яка повертає список пунктів документу
+def get_doc_articles(doc_id):
+    articles = [{
+        'text': article.text,
+        'deadline': datetime.strftime(article.deadline, '%Y-%m-%d'),
+        'deps': get_responsible_deps(article.id),  # Знаходимо список відповідальних за пункт окремою функцією
+    } for article in Doc_Article.objects.filter(document_id=doc_id).filter(is_active=True)]
+
+    return articles
+
+
+# Функція, яка повертає з бд список відділів, відповідальних за виконання пункту документу
+def get_responsible_deps(article_id):
+    deps = [{
+        'id': dep.department.id,
+        'dep': dep.department.name,
+    } for dep in Doc_Article_Dep.objects.filter(article_id=article_id).filter(is_active=True)]
+
+    return deps
+
+
+# Фунція, яка "видаляє" документ/чернетку
+def close_doc(request, doc_id):
+    try:
+        doc = get_object_or_404(Document, pk=doc_id)
+        doc_request = request.POST.copy()
+        doc_request.update({'closed': True})
+        close_doc_form = CloseDocForm(doc_request, instance=doc)
+        if close_doc_form.is_valid():
+            close_doc_form.save()
     except ValueError as err:
         raise err
 
@@ -436,70 +469,76 @@ def edms_get_direct_subs(request, pk):
 def edms_get_doc(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     if request.method == 'GET':
-        # Шлях, пройдений документом
-        path = [{
-            'id': path.id,
-            'time': convert_to_localtime(path.timestamp, 'time'),
-            'mark_id': path.mark_id,
-            'mark': path.mark.mark,
-            'emp_seat_id': path.employee_seat_id,
-            'emp': path.employee_seat.employee.pip,
-            'seat': path.employee_seat.seat.seat if path.employee_seat.is_main else '(в.о.) ' + path.employee_seat.seat.seat,
-            'comment': path.comment,
-        } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
+        # Всю інформацію про документ записуємо сюди
+        doc_info = {}
 
-        # Перебираємо шлях документа в пошуках резолюцій і додаємо їх до відповідного запису в path
-        for step in path:
-            if step['mark_id'] == 10:
-                resolutions = [{
-                    'id': res.id,
-                    'emp_seat_id': res.recipient.id,
-                    'emp': res.recipient.employee.pip,
-                    'seat': res.recipient.seat.seat,
-                    'comment': res.comment,
-                } for res in Mark_Demand.objects.filter(document_path_id=step['id'])]
-                step['resolutions'] = resolutions
+        # Шукаємо path i flow документа, якщо це не чернетка:
+        if not doc.is_draft:
+            path = [{
+                'id': path.id,
+                'time': convert_to_localtime(path.timestamp, 'time'),
+                'mark_id': path.mark_id,
+                'mark': path.mark.mark,
+                'emp_seat_id': path.employee_seat_id,
+                'emp': path.employee_seat.employee.pip,
+                'seat': path.employee_seat.seat.seat if path.employee_seat.is_main else '(в.о.) ' + path.employee_seat.seat.seat,
+                'comment': path.comment,
+            } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
 
-        # Перебираємо шлях документа в пошуках файлів і додаємо їх до відповідного запису в path
-        for step in path:
-            files = [{
-                'id': file.id,
-                'file': file.file.name,
-                'name': file.name,
-                'path_id': file.document_path.id,
-                'mark_id': file.document_path.mark.id,
-            } for file in File.objects.filter(document_path_id=step['id'])]
-            step['files'] = files
+            # Перебираємо шлях документа в пошуках резолюцій і додаємо їх до відповідного запису в path
+            for step in path:
+                if step['mark_id'] == 10:
+                    resolutions = [{
+                        'id': res.id,
+                        'emp_seat_id': res.recipient.id,
+                        'emp': res.recipient.employee.pip,
+                        'seat': res.recipient.seat.seat,
+                        'comment': res.comment,
+                    } for res in Mark_Demand.objects.filter(document_path_id=step['id'])]
+                    step['resolutions'] = resolutions
 
-        # В кого на черзі документ
-        flow = [{
-            'id': demand.id,
-            'emp_seat_id': demand.recipient.id,
-            'emp': demand.recipient.employee.pip,
-            'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
-            'expected_mark': demand.mark_id,
-        } for demand in Mark_Demand.objects.filter(document_id=doc.pk).filter(is_active=True)]
+            # Перебираємо шлях документа в пошуках файлів і додаємо їх до відповідного запису в path
+            for step in path:
+                files = [{
+                    'id': file.id,
+                    'file': file.file.name,
+                    'name': file.name,
+                    'path_id': file.document_path.id,
+                    'mark_id': file.document_path.mark.id,
+                } for file in File.objects.filter(document_path_id=step['id'])]
+                step['files'] = files
 
-        doc_info = {
-            'path': path,
-            'flow': flow
-        }
+            # В кого на черзі документ
+            flow = [{
+                'id': demand.id,
+                'emp_seat_id': demand.recipient.id,
+                'emp': demand.recipient.employee.pip,
+                'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
+                'expected_mark': demand.mark_id,
+            } for demand in Mark_Demand.objects.filter(document_id=doc.pk).filter(is_active=True)]
+
+            doc_info = {
+                'path': path,
+                'flow': flow
+            }
 
         # Інфа, яка стосується окремих видів документів
         if doc.document_type_id == 1:  # Звільнююча перепустка
             info = [{
-                'free_time': datetime.strftime(item.free_day, '%d.%m.%Y'),
+                # 'date': datetime.strftime(item.free_day, '%d.%m.%Y'),
+                'date': datetime.strftime(item.free_day, '%Y-%m-%d'),
                 'text': item.document.text,
             } for item in Free_Time_Periods.objects.filter(document_id=doc.id)]
 
             doc_info.update({
-                'free_time': info[0]['free_time'],
+                'date': info[0]['date'],
                 'text': info[0]['text'],
             })
 
         if doc.document_type_id == 2:  # Матеріальний пропуск
             info = [{
-                'carry_out_day': datetime.strftime(item.carry_out_day, '%d.%m.%Y'),
+                # 'carry_out_day': datetime.strftime(item.carry_out_day, '%d.%m.%Y'),
+                'date': datetime.strftime(item.carry_out_day, '%Y-%m-%d'),
                 'gate': item.gate,
                 'text': item.document.text,
             } for item in Carry_Out_Info.objects.filter(document_id=doc.id)]
@@ -511,11 +550,19 @@ def edms_get_doc(request, pk):
                 'measurement': item.measurement,
             } for item in Carry_Out_Items.objects.filter(document_id=doc.id)]
 
+            # Індексуємо список товарів, щоб id товарів не бралися з таблиці а створювалися для кожного документу
+            items_indexed = [{
+                'id': items.index(item) + 1,
+                'item_name': item['item_name'],
+                'quantity': item['quantity'],
+                'measurement': item['measurement'],
+            } for item in items]
+
             doc_info.update({
-                'carry_out_day': info[0]['carry_out_day'],
+                'date': info[0]['date'],
                 'gate': info[0]['gate'],
                 'text': info[0]['text'],
-                'carry_out_items': items,
+                'carry_out_items': items_indexed,
             })
 
         if doc.document_type_id == 3:  # Службова записка
@@ -523,14 +570,39 @@ def edms_get_doc(request, pk):
             # Ід і ім’я керівника-отримувача, текст службової
             info = [{
                 'recipient': item.recipient.employee.pip,
+                'recipient_id': item.recipient.id,
                 'recipient_seat': item.recipient.seat.seat if item.recipient.is_main else '(в.о.) ' + item.recipient.seat.seat,
                 'text': item.document.text,
             } for item in Mark_Demand.objects.filter(document_id=doc.id)]
 
             doc_info.update({
                 'recipient': info[0]['recipient'],
+                'recipient_id': info[0]['recipient_id'],
                 'recipient_seat': info[0]['recipient_seat'],
                 'text': info[0]['text'],
+            })
+
+        if doc.document_type_id == 4:
+            # Наказ
+            decree = [{
+                'name': decree.name,
+                'preamble': decree.preamble,
+            } for decree in Decree.objects.filter(document_id=doc.id)]
+
+            # Погоджуючі посади
+            approval_seats = [{
+                'id': approval.seat.id,
+                'seat': approval.seat.seat,
+            } for approval in Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True)]
+
+            # Пункти наказу
+            articles = get_doc_articles(doc.id)
+
+            doc_info.update({
+                'name': decree[0]['name'],
+                'preamble': decree[0]['preamble'],
+                'approval_seats': approval_seats,
+                'articles': articles,
             })
 
         return HttpResponse(json.dumps(doc_info))
@@ -546,6 +618,7 @@ def edms_my_docs(request):
             my_docs_query = Document_Path.objects.filter(mark=1) \
                 .filter(employee_seat__employee_id=request.user.userprofile.id) \
                 .filter(document__is_draft=False) \
+                .filter(document__is_active=True) \
                 .filter(document__closed=False)  # Створено користувачем, не чернетка і не деактивовано
             work_docs_query = Mark_Demand.objects \
                 .filter(recipient_id__employee_id=request.user.userprofile.id) \
@@ -587,9 +660,10 @@ def edms_my_docs(request):
             return render(request, 'edms/my_docs/my_docs.html', {
                 'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
             })
+
         elif request.method == 'POST':
-            doc_request = request.POST.copy()
             # TODO як не зберігаючи документ перевірити на правильність усі інші форми (яким потрібен ід документа)?
+            doc_request = request.POST.copy()
 
             # записуємо документ і отримуємо його ід
             new_doc_id = post_document(request)
@@ -597,15 +671,14 @@ def edms_my_docs(request):
             doc_request.update({'document': new_doc_id})
 
             # якщо клієнт постить нову звільнюючу
-            if request.POST['document_type'] == '1':
+            if doc_request['document_type'] == '1':
                 # вносимо новий документ і запис у таблицю Free_Time_Periods
                 free_time_form = FreeTimeForm(doc_request)
                 if free_time_form.is_valid():
                     free_time_form.save()
-                    return HttpResponse(new_doc_id)
 
             # якщо клієнт постить новий мат.пропуск
-            if request.POST['document_type'] == '2':
+            elif doc_request['document_type'] == '2':
                 # отримуємо список цінностей на виніс з запиту в масив
                 carry_out_items = json.loads(request.POST['carry_out_items'])
 
@@ -617,7 +690,7 @@ def edms_my_docs(request):
                 # Для кожного пункту в списку цінностей створюємо
                 # і постимо запит у carry_out_items
                 for item in carry_out_items:
-                    doc_request.update({'item_name': item['name']})
+                    doc_request.update({'item_name': item['item_name']})
                     doc_request.update({'quantity': item['quantity']})
                     doc_request.update({'measurement': item['measurement']})
                     carry_out_form = CarryOutItemsForm(doc_request)
@@ -625,10 +698,9 @@ def edms_my_docs(request):
                         carry_out_form.save()
                     else:
                         return HttpResponseBadRequest
-                return HttpResponse(new_doc_id)
 
             # якщо клієнт постить нову службову записку
-            if request.POST['document_type'] == '3':
+            elif doc_request['document_type'] == '3':
                 # Додаємо у запит вид позначки 'Погоджено', яку очікуємо від шефа:
                 doc_request.update({'mark': 2})
 
@@ -642,10 +714,9 @@ def edms_my_docs(request):
                     new_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
                     handle_files(new_path.pk, request.POST, request.FILES)
 
-                return HttpResponse(new_doc_id)
-
             # якщо клієнт постить новий наказ
-            if request.POST['document_type'] == '4':
+
+            elif doc_request['document_type'] == '4':
                 # Зберігаємо наказ
                 decree_form = NewDecreeForm(doc_request)
                 if decree_form.is_valid():
@@ -674,7 +745,10 @@ def edms_my_docs(request):
                     # БД сама заносить у mark_demand безпосереднього шефа, якшо автор не керівник відділу.
                     # Якщо автор - керівник відділу - то відправляє документ відразу погоджуючим.
 
-                return HttpResponse(json.dumps(new_doc_id))
+            if doc_request['old_draft_id'] != '0':  # деактивуємо стару чернетку
+                close_doc(request, int(doc_request['old_draft_id']))
+
+            return HttpResponse(new_doc_id)
     except Exception as err:
         return HttpResponse(status=405, content=err)
 
@@ -697,12 +771,21 @@ def edms_get_drafts(request):
                 'type': draft.document_type.description,
                 'type_id': draft.document_type.id,
                 'date': convert_to_localtime(draft.date, 'day'),
-                # 'emp_seat_id': draft.employee_seat.id,
-                # 'author': request.user.userprofile.pip,
-                # 'author_seat_id': draft.employee_seat.id,
             } for draft in my_drafts_query]
 
-            return HttpResponse(json.dumps(my_drafts))
+            response = my_drafts if len(my_drafts) > 0 else []
+
+            return HttpResponse(json.dumps(response))
+    except Exception as err:
+        return HttpResponse(status=405, content=err)
+
+
+@login_required(login_url='login')
+def edms_del_draft(request, pk):
+    try:
+        if request.method == 'POST':
+            close_doc(request, pk)
+            return HttpResponse(pk)
     except Exception as err:
         return HttpResponse(status=405, content=err)
 
@@ -712,6 +795,21 @@ def edms_archive(request):
     if request.method == 'GET':
         my_seats = get_my_seats(request.user.userprofile.id)
 
+        my_archive_query = Document_Path.objects.filter(mark=1) \
+            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id) \
+            .filter(document__is_active=False) \
+            .filter(document__closed=False)
+
+        work_archive_query = Document_Path.objects.distinct() \
+            .filter(employee_seat_id__employee_id=request.user.userprofile.id) \
+            .filter(document__closed=False) \
+            .exclude(document__employee_seat__employee=request.user.userprofile.id)  # Автор не користувач
+
+        # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+        if not testing:
+            my_archive_query = my_archive_query.filter(document__document_type__testing=False)
+            work_archive_query = work_archive_query.filter(document__document_type__testing=False)
+
         my_archive = [{  # Список документів, створених даним юзером
             'id': path.document.id,
             'type': path.document.document_type.description,
@@ -719,12 +817,7 @@ def edms_archive(request):
             'date': convert_to_localtime(path.timestamp, 'day'),
             'emp_seat_id': path.employee_seat.id,
             'author_seat_id': path.employee_seat.id,
-        } for path in Document_Path.objects
-            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)  # Створено користувачем
-            .filter(document__is_active=True)  # Не видалений документ
-            .filter(document__closed=True)  # Закритий документ
-            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
-        ]
+        } for path in my_archive_query]
 
         work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
             'id': path.document_id,
@@ -734,11 +827,7 @@ def edms_archive(request):
             'emp_seat_id': path.employee_seat_id,
             'author': path.document.employee_seat.employee.pip,
             'author_seat_id': path.document.employee_seat_id,
-        } for path in Document_Path.objects.distinct()
-            .filter(employee_seat_id__employee_id=request.user.userprofile.id)  # документ був у користувача
-            .filter(document__is_active=True)  # Не видалений документ
-            .filter(document__document_type__testing=testing)  # У режимі тестування показуються лише тестовані типи
-            .exclude(document__employee_seat__employee=request.user.userprofile.id)]  # Автор не користувач
+        } for path in work_archive_query]
 
         # Позбавляємось дублікатів:
         work_archive = list({item["id"]: item for item in work_archive_with_duplicates}.values())
@@ -773,6 +862,16 @@ def edms_get_sub_docs(request, pk):
         sub_docs = []
         if subs_list:
             for sub in subs_list:
+
+                docs_query = Document_Path.objects \
+                    .filter(mark_id=1) \
+                    .filter(employee_seat__seat_id=sub['id']) \
+                    .filter(document__closed=False) \
+
+                # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+                if not testing:
+                    docs_query = docs_query.filter(document__document_type__testing=False)
+
                 docs = [{  # Список документів у роботі, створених підлеглими юзера
                     'id': path.document_id,
                     'type': path.document.document_type.description,
@@ -782,12 +881,9 @@ def edms_get_sub_docs(request, pk):
                     'author': path.employee_seat.employee.pip,
                     'dep': path.employee_seat.seat.department.name,
                     'emp_seat_id': int(pk),
-                    'closed': path.document.closed,
-                } for path in Document_Path.objects
-                    .filter(mark_id=1)
-                    .filter(employee_seat__seat_id=sub['id'])
-                    .filter(document__is_active=True)  # Не видалений документ
-                    .filter(document__document_type__testing=testing)]
+                    'is_active': path.document.is_active,
+                } for path in docs_query]
+
                 if docs:
                     for doc in docs:
                         sub_docs.append(doc)

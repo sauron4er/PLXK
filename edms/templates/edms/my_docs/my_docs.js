@@ -16,35 +16,13 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 class MyDocs extends React.Component {
 
   state = {
-    chiefs: [],
     direct_subs: '',
     my_docs: [], // Документи, створені користувачем
     work_docs: [], // Документи, що чекають на реакцію користувача
     draft_view: false, // true - покаже список чернеток, сховає документи
   };
 
-  getChiefs = (seat_id) => {
-    // отримує список шефів, відповідний обраній посаді
-    axios({
-      method: 'get',
-      url: 'get_chiefs/' + seat_id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-    }).then((response) => {
-      // Передаємо список у state, якщо він є
-      if (response.data) {
-        this.setState({
-          chiefs: response.data
-        })
-      }
-    }).catch((error) => {
-      console.log('errorpost: ' + error);
-    });
-  };
-
   getDirectSubs = (seat_id) => {
-      // отримує список шефів, відповідний обраній посаді
       axios({
           method: 'get',
           url: 'get_direct_subs/' + seat_id + '/',
@@ -86,10 +64,9 @@ class MyDocs extends React.Component {
 
   // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи, керівники, підлеглі
   componentDidMount() {
-      const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
-      this.getChiefs(seat_id);
-      this.getDirectSubs(seat_id);
-      this.updateLists(seat_id);
+    const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
+    this.getDirectSubs(seat_id);
+    this.updateLists(seat_id);
   }
   
   // Показ чернеток або документів
@@ -102,7 +79,6 @@ class MyDocs extends React.Component {
 
   // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
   onSeatChange = (new_seat_id) => {
-      this.getChiefs(new_seat_id);
       this.getDirectSubs(new_seat_id);
       this.updateLists(new_seat_id);
   };
@@ -155,7 +131,7 @@ class MyDocs extends React.Component {
           <When condition={!this.state.draft_view}>
             <div className='d-flex justify-content-between'>
               <div className='d-flex'>
-                <NewDoc my_seat_id={this.state.seat_id} chiefs={this.state.chiefs} addDoc={this.addDoc}/>
+                <NewDoc addDoc={this.addDoc}/>
                 <button type="button" className='btn btn-link pb-2' onClick={this.onDraftClick}>Чернетки</button>
               </div>
               <SeatChooser onSeatChange={this.onSeatChange}/>
@@ -174,7 +150,7 @@ class MyDocs extends React.Component {
               <button type="button" className='btn btn-link pb-2' onClick={this.onDraftClick}>Назад</button>
               <SeatChooser onSeatChange={this.onSeatChange}/>
             </div>
-            <Drafts/>
+            <Drafts addDoc={this.addDoc}/>
           </Otherwise>
         </Choose>
       </Fragment>
