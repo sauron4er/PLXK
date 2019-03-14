@@ -65,13 +65,15 @@ class FreeTime extends React.Component {
       const today = new Date();
       type === 'post'
         ?
-        this.props.addDoc(response.data, 'Звільнююча перепустка', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 1)
+        this.props.addDoc(response.data, 'Звільнююча перепустка', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 1)
         :
-        this.props.addDraft(response.data, 'Звільнююча перепустка', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 1);
+        this.props.addDraft(response.data, 'Звільнююча перепустка', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 1);
       
-        this.props.delDraft(this.props.docId);
-    }).catch(function (error) {
-      console.log('errorpost: ' + error);
+        if (this.props.docId !== 0) {
+          this.props.delDraft(this.props.docId)
+        }
+    }).catch((error) => {
+      console.log('error: ' + error);
     });
     this.props.onCloseModal();
   };

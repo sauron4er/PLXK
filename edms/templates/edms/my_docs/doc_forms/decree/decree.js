@@ -158,11 +158,10 @@ class Decree extends React.Component {
       let formData = new FormData();
       // інфа для форми нового документу:
       formData.append('document_type', '4');
-      formData.append('employee_seat', localStorage.getItem('my_seat'));
-
-      // інфа для форми нового наказу:
+      formData.append('old_draft_id', this.props.docId);
       formData.append('name', this.state.name);
       formData.append('preamble', this.state.preamble);
+      formData.append('employee_seat', localStorage.getItem('my_seat'));
       formData.append('is_draft', type === 'draft');
 
       // пункти, погоджуючі, файли:
@@ -189,15 +188,20 @@ class Decree extends React.Component {
         },
       }).then((response) => {
         const today = new Date();
-        if (type === 'post') {
-          this.props.addDoc(response.data, 'Наказ', today.getDate() + '.0' + (today.getMonth() + 1) + '.' + today.getFullYear(), 4);
+        type === 'post'
+        ?
+        this.props.addDoc(response.data, 'Наказ', today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear(), 4)
+        :
+        this.props.addDraft(response.data, 'Наказ', today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear(), 4);
+        
+        if (this.props.docId !== 0) {
+          this.props.delDraft(this.props.docId)
         }
         this.setState({
           open: false,
         });
         this.props.onCloseModal();
       }).catch((error) => {
-        console.log('errorpost: ' + error);
         console.log(error.response.data);
         this.notify('Помилка на сервері. Повідомте адміністратора.');
       });

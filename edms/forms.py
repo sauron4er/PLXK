@@ -1,8 +1,8 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, \
-    Mark_Demand, Document_Type_Permission, File, Decree, Doc_Article, Doc_Article_Dep, Doc_Approval
+from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, Mark_Demand, Document_Type_Permission, Decree
+from .models import File, Doc_Article, Doc_Article_Dep, Doc_Approval, Doc_Day, Doc_Name, Doc_Number, Doc_Preamble, Doc_Sign, Doc_Validity
 
 
 class UserProfileForm(forms.ModelForm):
@@ -21,23 +21,23 @@ class DepartmentForm(forms.ModelForm):
     class Meta:
         model = accounts.Department
         fields = ('name', 'text', 'is_active')
-        labels = {
-            'name': 'Назва відділу',
-            'text': 'Опис'
-        }
-        widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
+        # labels = {
+        #     'name': 'Назва відділу',
+        #     'text': 'Опис'
+        # }
+        # widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
 
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Seat
-        fields = ('seat', 'department', 'chief', 'is_active')
-        labels = {
-            'seat': 'Назва посади',
-            'department': 'Відділ',
-            'chief': 'Керівник',
-        }
-        widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
+        fields = ('seat', 'department', 'chief', 'is_dep_chief', 'is_active')
+        # labels = {
+        #     'seat': 'Назва посади',
+        #     'department': 'Відділ',
+        #     'chief': 'Керівник',
+        # }
+        # widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
 
 class DocumentForm(forms.ModelForm):
@@ -103,16 +103,6 @@ class ResolutionForm(forms.ModelForm):
         fields = {'document', 'document_path', 'comment', 'recipient', 'mark'}
 
 
-class NewFileForm(forms.ModelForm):
-    class Meta:
-        model = File
-        fields = {
-            'name',
-            'file',
-            'document_path'
-        }
-
-
 class NewDecreeForm(forms.ModelForm):
     class Meta:
         model = Decree
@@ -120,6 +110,18 @@ class NewDecreeForm(forms.ModelForm):
             'document',
             'name',
             'preamble',
+        }
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# Форми модулів ЕДО
+class NewFileForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = {
+            'name',
+            'file',
+            'document_path'
         }
 
 
@@ -149,3 +151,27 @@ class NewApprovalForm(forms.ModelForm):  # людинопосади, які по
             'document',
             'seat',
         }
+
+
+class NewNameForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+    class Meta:
+        model = Doc_Name
+        fields = {
+            'document',
+            'name',
+        }
+
+
+class NewPreambleForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+    class Meta:
+        model = Doc_Preamble
+        fields = {
+            'document',
+            'preamble',
+        }
+
+
+class NewDocDayForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Day
+        fields = {'document', 'day'}

@@ -1,4 +1,4 @@
-#!D:\PLXK\venv\Scripts\python.exe
+#!D:\Робота\EDMS\venv's\plxk_venv\Scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":

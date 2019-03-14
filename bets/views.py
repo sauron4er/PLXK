@@ -138,13 +138,15 @@ def results(request):
 
     paginator = Paginator(matches1, 16)
     ct = matches1.count()
-    page = request.GET.get('page')
 
     try:
-        page = (old_matches_count // 16) + 1
+        page = request.GET.get('page')
+        # page = ((old_matches_count - 1) // 16) + 1
         matches1 = paginator.page(page)
     except PageNotAnInteger:
-        matches1 = paginator.page((old_matches_count // 16))
+        page = (old_matches_count // 16) + 1 if old_matches_count % 16 == 0 else (old_matches_count // 16)
+        # matches1 = paginator.page((old_matches_count // 16))
+        matches1 = paginator.page(page)
     except EmptyPage:
         matches1
     return render(request, 'bets/results.html', {'bets': bets, 'ct': ct,'rt' : rt, 'players': players, 'matches' :matches1})

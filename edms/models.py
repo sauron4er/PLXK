@@ -8,6 +8,7 @@ class Seat(models.Model):
     seat = models.CharField(max_length=100)
     department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
     chief = models.ForeignKey('self', related_name='subordinate', null=True, blank=True)
+    is_dep_chief = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -44,6 +45,19 @@ class Document_Type(models.Model):
         return self.description
 
 
+# Список можливих опцій документів (прикріплення файлів, погоджуючі, пункти, резолюції тощо)
+class Option(models.Model):
+    option = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+
+
+# Список опцій конкретних типів документів
+class Document_Type_Option(models.Model):
+    document_type = models.ForeignKey(Document_Type, related_name='option_types')
+    option = models.ForeignKey(Option, related_name='type_options')
+    is_active = models.BooleanField(default=True)
+
+
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
@@ -63,8 +77,8 @@ class Document(models.Model):
 
 class Document_Type_Permission(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='with_permissions')
-    seat = models.ForeignKey(Seat, related_name='type_permissions')
-    mark = models.ForeignKey(Mark, related_name='type_permissions')
+    seat = models.ForeignKey(Seat, related_name='permission_seats')
+    mark = models.ForeignKey(Mark, related_name='permission_marks')
     is_active = models.BooleanField(default=True)
 
 
@@ -134,7 +148,7 @@ class Decree(models.Model):
     validity_end = models.DateTimeField(null=True)
 
 
-# моделі, які можуть використовуватися різними типами документів
+# Модульна система документів:
 
 # пункти [наказу]
 class Doc_Article(models.Model):
@@ -152,41 +166,54 @@ class Doc_Article_Dep(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Список необхідних погоджень документу. Ставиться done автоматично при проставці позначки Погоджено.
-# Автоматично анулюється, якщо в іншому погодженні поставили позначку "Відмовлено" чи "На доопрацювання".
+# Список погоджуючих. Поле approved - true, false, null (null - коли ще не відреагували)
+# Автоматично анулюється, якщо в іншому погодженні до того ж документу поставили "Відмовлено" чи "На доопрацювання".
 class Doc_Approval(models.Model):
-    document = models.ForeignKey(Document, related_name='document_approves')
+    document = models.ForeignKey(Document, related_name='document_approvals')
     seat = models.ForeignKey(Seat, related_name='seat_approvals')
-    approved = models.BooleanField(default=False)
+    approved = models.NullBooleanField(null=True)
     approved_path = models.ForeignKey(Document_Path, related_name='path_approval', null=True)
     is_active = models.BooleanField(default=True)
 
 
-# SQL Views models
-
-# Модель, створена для обробки view в бд, яка показує список активних документів
-# class Active_Docs_View(models.Model):
-#     employee_id = models.IntegerField()
-#     id = models.IntegerField(primary_key=True)
-#     date = models.CharField(max_length=100)
-#     description = models.CharField(max_length=100)
-#     type_id = models.IntegerField()
-#     employee_seat_id = models.IntegerField()
-#
-#     class Meta:
-#         managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
-#         db_table = 'edms_active_docs'
+# Чинність документу
+class Doc_Validity(models.Model):
+    document = models.OneToOneField(Document, related_name='document_validity')
+    is_valid = models.BooleanField(default=True)
+    validity_start = models.DateTimeField(null=True)
+    validity_end = models.DateTimeField(null=True)
 
 
-# Модель, створена для обробки view в бд, яка показує список документів в архіві
-# class Archive_Docs_View(models.Model):
-#     employee_id = models.IntegerField()
-#     id = models.IntegerField(primary_key=True)
-#     date = models.CharField(max_length=100)
-#     description = models.CharField(max_length=100)
-#     type_id = models.IntegerField()
-#     employee_seat_id = models.IntegerField()
-#
-#     class Meta:
-#         managed = False     # Для того, щоб модель не враховувалась в міграціях, адже це не справжня таблиця у бд
-#         db_table = 'edms_my_archive_docs'
+# Підпис документу [директором]
+class Doc_Sign(models.Model):
+    document = models.OneToOneField(Document, related_name='document_sign')
+    signed = models.BooleanField(default=True)
+    sign_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
+
+
+# Унікальна нумерація документу
+class Doc_Number(models.Model):
+    document = models.OneToOneField(Document, related_name='document_number')
+    number = models.IntegerField(null=True)
+    is_active = models.BooleanField(default=True)
+
+
+# Назва документу
+class Doc_Name(models.Model):
+    document = models.OneToOneField(Document, related_name='document_name')
+    name = models.CharField(max_length=500)
+    is_active = models.BooleanField(default=True)
+
+
+# Преамбула документу
+class Doc_Preamble(models.Model):
+    document = models.OneToOneField(Document, related_name='document_preamble')
+    preamble = models.CharField(max_length=1000)
+    is_active = models.BooleanField(default=True)
+
+
+# Дата, яка використовується у документі. Н-д, день дії звільнюючої
+class Doc_Day(models.Model):
+    document = models.ForeignKey(Document, related_name='document_day')
+    day = models.DateField(default=timezone.now)
+    is_active = models.BooleanField(default=True)

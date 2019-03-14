@@ -1,0 +1,8 @@
+Материнська плата: MSI H81M-E33, 			1180
+Процесор: Intel Core i3-4160, 				2871
+Оперативка: Kingston DDR3 4GB,				500 
+Вінчестер: SSD Kingston HyperX Fury 120GB,		1500 
+БП: Zalman ZM600-LE					1300
+УПС							2000
+Корпус							1000	
+---------	

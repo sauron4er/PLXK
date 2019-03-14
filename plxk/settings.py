@@ -99,6 +99,7 @@ DATABASES = {
         'PASSWORD': 'Cvjhjlbyf11',
         'HOST': '10.10.10.22',  # Or an IP Address that your DB is hosted on
         'PORT': '3306',
+        'ATOMIC_REQUESTS': True,
     },
 
     'lite': {

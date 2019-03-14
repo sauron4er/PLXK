@@ -1,4 +1,4 @@
-#!D:\plxk\venv\Scripts\python.exe
+#!D:\Dropbox\Code\Python\EDMS\plxk_venv\Scripts\python.exe
 """PILdriver, an image-processing calculator using PIL.
 
 An instance of class PILDriver is essentially a software stack machine

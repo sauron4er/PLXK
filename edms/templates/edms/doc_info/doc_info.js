@@ -70,11 +70,14 @@ class DocInfo extends React.Component {
         info: response.data,
         ready_for_render: true,
       });
-
+      
       for (let i = 0; i <= response.data.path.length - 1; i++) {
         if (response.data.path[i].emp_seat_id !== parseInt(localStorage.getItem('my_seat'))) {
           this.setState({deletable: false});
           break;
+        }
+        else {
+          this.setState({deletable: true});
         }
       }
 

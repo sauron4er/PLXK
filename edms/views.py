@@ -4,10 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.timezone import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.db import transaction
 import json
 import pytz
-
-
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
 from .models import Free_Time_Periods, Carry_Out_Info, Carry_Out_Items, Mark_Demand
@@ -15,7 +14,7 @@ from .models import Decree, Doc_Approval, Doc_Article, Doc_Article_Dep
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
 from .forms import FreeTimeForm, CarryOutItemsForm, CarryOutInfoForm, ChiefMarkDemandForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm, NewFileForm, CloseDocForm
-from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm  # форми наказу
+from .forms import NewDecreeForm, NewArticleForm, NewArticleDepForm, NewApprovalForm, NewNameForm, NewPreambleForm
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
@@ -86,24 +85,6 @@ def get_my_seats(emp_id):
     return my_seats
 
 
-# Функція, яка постить файли (для edms_mark та edms_my_docs)
-def handle_files(path_id, post, files):
-    # TODO додати обробку помилок при збереженні файлів
-    file_request = post.copy()
-    file_request.update({'document_path': path_id})
-    file_request.update({'name': 'file'})
-
-    file_form = NewFileForm(file_request, files)
-    if file_form.is_valid():
-        document_path = file_form.cleaned_data['document_path']
-        for f in files.getlist('file'):
-            File.objects.create(
-                document_path=document_path,
-                file=f,
-                name=f.name
-            )
-
-
 # Функція, яка повертає з бд список відділів
 def get_deps():
     deps = [{
@@ -123,53 +104,12 @@ def get_seats():
     return seats
 
 
-# Функція, яка додає у бд новий документ та повертає його id
-def post_document(request):
-    try:
-        doc_request = request.POST.copy()
-        doc_request.update({'employee': request.user.userprofile.id})
-        doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
-
-        doc_form = DocumentForm(doc_request)
-        if doc_form.is_valid():
-            new_doc_id = doc_form.save().pk
-            return new_doc_id
-        else:
-            raise ValidationError('edms/views: function post_document: document_form invalid')
-    except Exception as err:
-        raise err
-
-
-# Функція, яка додає у бд новий пункт документу та повертає його id
-def post_articles(doc_request, articles):
-    try:
-        for article in articles:
-            doc_request.update({
-                'text': article['text'],
-                'deadline': article['deadline'],
-            })
-            article_form = NewArticleForm(doc_request)
-            if article_form.is_valid():
-                new_article_id = article_form.save().pk
-                for dep in article['deps']:
-                    doc_request.update({'article': new_article_id})
-                    doc_request.update({'department': dep['id']})
-                    article_dep_form = NewArticleDepForm(doc_request)
-                    if article_dep_form.is_valid():
-                        article_dep_form.save()
-                    else:
-                        raise ValidationError('edms/view func post_articles: article_dep_form invalid')
-            else:
-                raise ValidationError('edms/view func post_articles: article_form invalid')
-    except ValueError as err:
-        raise err
-
-
 # Функція, яка повертає список пунктів документу
 def get_doc_articles(doc_id):
     articles = [{
+        'id': article.id,
         'text': article.text,
-        'deadline': datetime.strftime(article.deadline, '%Y-%m-%d'),
+        'deadline': None if not article.deadline else datetime.strftime(article.deadline, '%Y-%m-%d'),
         'deps': get_responsible_deps(article.id),  # Знаходимо список відповідальних за пункт окремою функцією
     } for article in Doc_Article.objects.filter(document_id=doc_id).filter(is_active=True)]
 
@@ -195,8 +135,110 @@ def close_doc(request, doc_id):
         close_doc_form = CloseDocForm(doc_request, instance=doc)
         if close_doc_form.is_valid():
             close_doc_form.save()
+        else:
+            raise ValidationError('edms/view func close_doc: close_doc_form invalid')
+    except ValidationError as err:
+        raise err
+    except Exception as err:
+        raise err
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# функції модульних документів
+
+# Функція, яка додає у бд новий документ та повертає його id
+def post_document(request):
+    try:
+        doc_request = request.POST.copy()
+        doc_request.update({'employee': request.user.userprofile.id})
+        doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
+
+        doc_form = DocumentForm(doc_request)
+        if doc_form.is_valid():
+            new_doc_id = doc_form.save().pk
+            return new_doc_id
+        else:
+            raise ValidationError('edms/views: function post_document: document_form invalid')
+    except Exception as err:
+        raise err
+
+
+# Функція, яка додає у бд нові пункти документу
+def post_articles(doc_request, articles):
+    try:
+        for article in articles:
+            doc_request.update({
+                'text': article['text'],
+                'deadline': article['deadline'],
+            })
+            article_form = NewArticleForm(doc_request)
+            if article_form.is_valid():
+                new_article_id = article_form.save().pk
+                for dep in article['deps']:
+                    doc_request.update({'article': new_article_id})
+                    doc_request.update({'department': dep['id']})
+                    article_dep_form = NewArticleDepForm(doc_request)
+                    if article_dep_form.is_valid():
+                        article_dep_form.save()
+                    else:
+                        raise ValidationError('edms/view func post_articles: article_dep_form invalid')
+            else:
+                raise ValidationError('edms/view func post_articles: article_form invalid')
     except ValueError as err:
         raise err
+
+
+# Функція, яка додає у бд список погоджуючих
+def post_approval_seats(doc_request, approval_seats):
+    for item in approval_seats:
+        doc_request.update({'seat': item})
+        approval_form = NewApprovalForm(doc_request)
+        if approval_form.is_valid():
+            approval_form.save()
+        else:
+            raise ValidationError('edms/views post_approval_seats approval_form invalid')
+
+
+# Функція, яка додає у бд назву документу
+def post_name(doc_request, name):
+    doc_request.update({'name': name})
+    name_form = NewNameForm(doc_request)
+    if name_form.is_valid():
+        name_form.save()
+    else:
+        raise ValidationError('edms/views post_name name_form invalid')
+
+
+# Функція, яка додає у бд преамбулу документу
+def post_preamble(doc_request, preamble):
+    doc_request.update({'preamble': preamble})
+    preamble_form = NewPreambleForm(doc_request)
+    if preamble_form.is_valid():
+        preamble_form.save()
+    else:
+        raise ValidationError('edms/views post_preamble preamble_form invalid')
+
+
+# Функція, яка постить файли
+def handle_files(request, path_id):
+    if len(request.FILES) > 0:
+        # TODO додати обробку помилок при збереженні файлів
+        file_request = request.POST.copy()
+        file_request.update({'document_path': path_id})
+        file_request.update({'name': 'file'})
+
+        file_form = NewFileForm(file_request, request.FILES)
+        if file_form.is_valid():
+            document_path = file_form.cleaned_data['document_path']
+            for f in request.FILES.getlist('file'):
+                File.objects.create(
+                    document_path=document_path,
+                    file=f,
+                    name=f.name
+                )
+        else:
+            raise ValidationError('edms/views: function handle_files: file_form invalid')
+# ---------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -218,14 +260,15 @@ def edms_hr(request):
             'seat': seat.seat,
             'dep': 'Не внесено' if seat.department is None else seat.department.name,
             'dep_id': 0 if seat.department is None else seat.department.id,
+            'is_dep_chief': 'true' if seat.is_dep_chief else 'false',
             'chief': 'Не внесено' if seat.chief is None else seat.chief.seat,
             'chief_id': 0 if seat.chief is None else seat.chief.id,
         } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
 
         # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
         for seat in seats:
-            is_vacant = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
-            seat['is_vacant'] = 'true' if is_vacant is None else 'false'
+            occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
+            seat['is_vacant'] = 'true' if occupied_by is None else 'false'
 
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
             'id': emp.pk,
@@ -309,25 +352,33 @@ def edms_get_types(request, pk):
 
     if request.method == 'GET':
         if request.user.userprofile.is_it_admin:
-            doc_types = [{  # Список документів, створених даним юзером
+            doc_types_query = Document_Type.objects.all()
+
+            # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+            if not testing:
+                doc_types_query = doc_types_query.filter(testing=False)
+
+            doc_types = [{
                 'id': doc_type.id,
                 'description': doc_type.description,
                 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-            } for doc_type in Document_Type.objects.filter(testing=testing)]
+            } for doc_type in doc_types_query]
+
             return HttpResponse(json.dumps(doc_types))
         else:
-            doc_types = [{  # Список документів, створених даним юзером
+            doc_types = [{
                 'id': doc_type.id,
                 'description': doc_type.description,
                 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
             } for doc_type in Document_Type.objects.filter(creator_id=seat_id)]
 
+            # Відділ кадрів може змінювати свої документи та загальні (не створені іншими користувачами)
             if request.user.userprofile.is_hr:
-                hr_doc_types = [{  # Список документів, створених даним юзером
+                hr_doc_types = [{
                     'id': doc_type.id,
                     'description': doc_type.description,
-                    'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-                } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=testing)]
+                    'creator': '',
+                } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=False)]
                 doc_types = doc_types + hr_doc_types
 
             return HttpResponse(json.dumps(doc_types))
@@ -591,9 +642,11 @@ def edms_get_doc(request, pk):
             } for decree in Decree.objects.filter(document_id=doc.id)]
 
             # Погоджуючі посади
-            approval_seats = [{
+            approvals = [{
                 'id': approval.seat.id,
                 'seat': approval.seat.seat,
+                'approved': approval.approved,
+                'decline_comment': approval.approved_path.comment if approval.approved is False and approval.approved_path is not None else '',
             } for approval in Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True)]
 
             # Пункти наказу
@@ -602,13 +655,14 @@ def edms_get_doc(request, pk):
             doc_info.update({
                 'name': decree[0]['name'],
                 'preamble': decree[0]['preamble'],
-                'approval_seats': approval_seats,
+                'approvals': approvals,
                 'articles': articles,
             })
 
         return HttpResponse(json.dumps(doc_info))
 
 
+@transaction.atomic
 @login_required(login_url='login')
 def edms_my_docs(request):
     try:
@@ -677,6 +731,8 @@ def edms_my_docs(request):
                 free_time_form = FreeTimeForm(doc_request)
                 if free_time_form.is_valid():
                     free_time_form.save()
+                else:
+                    raise ValidationError('free_time_form invalid')
 
             # якщо клієнт постить новий мат.пропуск
             elif doc_request['document_type'] == '2':
@@ -684,9 +740,11 @@ def edms_my_docs(request):
                 carry_out_items = json.loads(request.POST['carry_out_items'])
 
                 # Записуємо інформацію про виніс у carry_out_info
-                chief_mark_demand_form = CarryOutInfoForm(doc_request)
-                if chief_mark_demand_form.is_valid():
-                    chief_mark_demand_form.save()
+                carry_out_info_form = CarryOutInfoForm(doc_request)
+                if carry_out_info_form.is_valid():
+                    carry_out_info_form.save()
+                else:
+                    raise ValidationError('carry_out_info_form invalid')
 
                 # Для кожного пункту в списку цінностей створюємо
                 # і постимо запит у carry_out_items
@@ -694,11 +752,11 @@ def edms_my_docs(request):
                     doc_request.update({'item_name': item['item_name']})
                     doc_request.update({'quantity': item['quantity']})
                     doc_request.update({'measurement': item['measurement']})
-                    carry_out_form = CarryOutItemsForm(doc_request)
-                    if carry_out_form.is_valid():
-                        carry_out_form.save()
+                    carry_out_item_form = CarryOutItemsForm(doc_request)
+                    if carry_out_item_form.is_valid():
+                        carry_out_item_form.save()
                     else:
-                        return HttpResponseBadRequest
+                        raise ValidationError('carry_out_item_form invalid')
 
             # якщо клієнт постить нову службову записку
             elif doc_request['document_type'] == '3':
@@ -707,51 +765,51 @@ def edms_my_docs(request):
 
                 # Заносимо документ у mark_demand
                 chief_mark_demand_form = ChiefMarkDemandForm(doc_request)
-                if chief_mark_demand_form.is_valid():
+                if chief_mark_demand_form.is_valid:
                     chief_mark_demand_form.save()
-
-                # Додаємо файли, якщо такі є:
-                if len(request.FILES) > 0:
-                    new_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
-                    handle_files(new_path.pk, request.POST, request.FILES)
+                else:
+                    raise ValidationError('chief_mark_demand_form invalid')
 
             # якщо клієнт постить новий наказ
-
             elif doc_request['document_type'] == '4':
                 # Зберігаємо наказ
                 decree_form = NewDecreeForm(doc_request)
                 if decree_form.is_valid():
                     decree_form.save()
-
-                    # Зберігаємо пункти наказу
-                    post_articles(doc_request, json.loads(request.POST['articles']))
-
-                    # Зберігаємо погоджуючих
-                    approval_seats = json.loads(request.POST['approval_seats'])
-                    for item in approval_seats:
-                        doc_request.update({'seat': item})
-                        approval_form = NewApprovalForm(doc_request)
-                        if approval_form.is_valid():
-                            approval_form.save()
-                        else:
-                            raise ValidationError('edms/views edms_my_docs approval_form invalid')
-
-                    # Додаємо файли, якщо такі є:
-                    if len(request.FILES) > 0:
-                        first_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
-                        handle_files(first_path.pk, request.POST, request.FILES)
                 else:
-                    raise ValidationError('edms/views edms_my_docs: decree_form invalid')
+                    raise ValidationError('decree_form invalid')
 
-                    # БД сама заносить у mark_demand безпосереднього шефа, якшо автор не керівник відділу.
-                    # Якщо автор - керівник відділу - то відправляє документ відразу погоджуючим.
+            # Додаємо назву документа, якщо така є
+            if request.POST['name']:
+                post_name(doc_request, request.POST['name'])
+
+            # Додаємо преамбулу документа, якщо така є
+            if request.POST['preamble']:
+                post_preamble(doc_request, request.POST['preamble'])
+
+            # Додаємо погоджуючих, якщо такі є
+            if request.POST['approval_seats']:
+                post_approval_seats(doc_request, json.loads(request.POST['approval_seats']))
+
+            # Додаємо пункти, якщо такі є
+            if request.POST['articles']:
+                post_articles(doc_request, json.loads(request.POST['articles']))
+
+            # Додаємо файли, якщо такі є:
+            new_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
+            handle_files(request, new_path.pk)
 
             if doc_request['old_draft_id'] != '0':  # деактивуємо стару чернетку
                 close_doc(request, int(doc_request['old_draft_id']))
 
+            # raise ValidationError
             return HttpResponse(new_doc_id)
+    except ValidationError as err:
+        raise err
+        # return HttpResponse(status=405, content=err)
     except Exception as err:
-        return HttpResponse(status=405, content=err)
+        raise err
+        # return HttpResponse(status=405, content=err)
 
 
 @login_required(login_url='login')
@@ -893,28 +951,35 @@ def edms_get_sub_docs(request, pk):
     return HttpResponse(status=405)
 
 
+@transaction.atomic
 @login_required(login_url='login')
 def edms_mark(request):
-    if request.method == 'POST':
-        # Якщо документ намагаються видалити, шукаємо, чи хтось не відреагував на нього
-        # Якщо позначки від інших користувачів є - відмовляємо у видаленні
-        if request.POST['mark'] == '13':
-            deletable = Document_Path.objects\
-                .filter(document_id=request.POST['document'])\
-                .exclude(employee_seat_id=request.POST['employee_seat'])
+    try:
+        if request.method == 'POST':
+            # Якщо документ намагаються видалити, шукаємо, чи хтось не відреагував на нього
+            # Якщо позначки від інших користувачів є - відмовляємо у видаленні
+            if request.POST['mark'] == '13':
+                deletable = Document_Path.objects\
+                    .filter(document_id=request.POST['document'])\
+                    .exclude(employee_seat_id=request.POST['employee_seat'])
 
-            if len(deletable) > 0:
-                return HttpResponse('not deletable')
+                if len(deletable) > 0:
+                    return HttpResponse('not deletable')
 
-        path_form = DocumentPathForm(request.POST)
-        if path_form.is_valid():
-            new_path = path_form.save()
+            path_form = DocumentPathForm(request.POST)
+            if path_form.is_valid():
+                new_path = path_form.save()
+            else:
+                raise ValidationError('view edms_mark: path_form invalid')
 
             # Додаємо файли, якщо такі є:
-            if len(request.FILES) > 0:
-                handle_files(new_path.pk, request.POST, request.FILES)
+            handle_files(request, new_path.pk)
 
             return HttpResponse(new_path.pk)
+    except ValidationError as err:
+        raise err
+    except Exception as err:
+        raise err
 
 
 @login_required(login_url='login')

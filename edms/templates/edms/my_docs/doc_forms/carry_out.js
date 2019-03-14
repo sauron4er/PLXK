@@ -98,15 +98,18 @@ class CarryOut extends React.Component {
         const today = new Date();
         type === 'post'
         ?
-        this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 2)
+        this.props.addDoc(response.data, 'Матеріальний пропуск', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 2)
         :
-        this.props.addDraft(response.data, 'Матеріальний пропуск', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 2);
-      
-        this.props.delDraft(this.props.docId)
+        this.props.addDraft(response.data, 'Матеріальний пропуск', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 2);
+        
+        if (this.props.docId !== 0) {
+          this.props.delDraft(this.props.docId)
+        }
+        this.props.onCloseModal();
       }).catch(function (error) {
           console.log('errorpost: ' + error);
       });
-      this.props.onCloseModal();
+      
     }
   };
   

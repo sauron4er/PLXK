@@ -103,13 +103,15 @@ class WorkNote extends React.Component {
       const today = new Date();
       type === 'post'
         ?
-        this.props.addDoc(response.data, 'Службова записка', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 3)
+        this.props.addDoc(response.data, 'Службова записка', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 3)
         :
-        this.props.addDraft(response.data, 'Службова записка', today.getDate() + '.0' + (today.getMonth()+1) + '.' + today.getFullYear(), 3);
+        this.props.addDraft(response.data, 'Службова записка', today.getDate() + '.' + (today.getMonth()+1) + '.' + today.getFullYear(), 3);
       
-        this.props.delDraft(this.props.docId);
-    }).catch(function (error) {
-      console.log('errorpost: ' + error);
+        if (this.props.docId !== 0) {
+          this.props.delDraft(this.props.docId)
+        }
+    }).catch((error) => {
+      console.log('error: ' + error);
     });
     this.props.onCloseModal();
   };
