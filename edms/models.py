@@ -45,19 +45,6 @@ class Document_Type(models.Model):
         return self.description
 
 
-# Список можливих опцій документів (прикріплення файлів, погоджуючі, пункти, резолюції тощо)
-class Option(models.Model):
-    option = models.CharField(max_length=50)
-    is_active = models.BooleanField(default=True)
-
-
-# Список опцій конкретних типів документів
-class Document_Type_Option(models.Model):
-    document_type = models.ForeignKey(Document_Type, related_name='option_types')
-    option = models.ForeignKey(Option, related_name='type_options')
-    is_active = models.BooleanField(default=True)
-
-
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
     is_active = models.BooleanField(default=True)
@@ -116,39 +103,25 @@ class File(models.Model):
     document_path = models.ForeignKey(Document_Path, related_name='files', null=True)
 
 
-# Models, related to specific types of documents
-class Free_Time_Periods(models.Model):
-    document = models.ForeignKey(Document, related_name='free_documents')
-    free_day = models.DateField(default=timezone.now)
-    begin_time = models.TimeField(null=True, blank=True)
-    end_time = models.TimeField(null=True, blank=True)
-
-
-class Carry_Out_Items(models.Model):
-    document = models.ForeignKey(Document, related_name='carry_documents')
-    item_name = models.CharField(max_length=100)
-    quantity = models.CharField(max_length=100)
-    measurement = models.CharField(max_length=100)
-
-
-class Carry_Out_Info(models.Model):
-    document = models.ForeignKey(Document, related_name='info_documents')
-    carry_out_day = models.DateField(default=timezone.now)
-    gate = models.IntegerField(default=1)
-
-
-class Decree(models.Model):
-    document = models.ForeignKey(Document, related_name='decree_info')
-    number = models.CharField(max_length=10, null=True, blank=True)
-    name = models.CharField(max_length=500)
-    preamble = models.CharField(max_length=1000)
-    sign_date = models.DateField(null=True)
-    is_valid = models.BooleanField(default=True)
-    validity_start = models.DateTimeField(null=True)
-    validity_end = models.DateTimeField(null=True)
-
-
+# ----------------------------------------------------------------------------------------------------------------------
 # Модульна система документів:
+
+
+# Список модулів (прикріплення файлів, погоджуючі, пункти, резолюції тощо)
+class Module(models.Model):
+    module = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+
+
+# Список модулів конкретних типів документів
+class Document_Type_Module(models.Model):
+    document_type = models.ForeignKey(Document_Type, related_name='module_types')
+    module = models.ForeignKey(Module, related_name='type_modules')
+    queue = models.IntegerField()
+    field_name = models.CharField(max_length=500)
+    required = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
 
 # пункти [наказу]
 class Doc_Article(models.Model):
@@ -178,7 +151,7 @@ class Doc_Approval(models.Model):
 
 # Чинність документу
 class Doc_Validity(models.Model):
-    document = models.OneToOneField(Document, related_name='document_validity')
+    document = models.ForeignKey(Document, related_name='document_validity')
     is_valid = models.BooleanField(default=True)
     validity_start = models.DateTimeField(null=True)
     validity_end = models.DateTimeField(null=True)
@@ -186,29 +159,43 @@ class Doc_Validity(models.Model):
 
 # Підпис документу [директором]
 class Doc_Sign(models.Model):
-    document = models.OneToOneField(Document, related_name='document_sign')
+    document = models.ForeignKey(Document, related_name='document_sign')
     signed = models.BooleanField(default=True)
     sign_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
 
 
 # Унікальна нумерація документу
-class Doc_Number(models.Model):
-    document = models.OneToOneField(Document, related_name='document_number')
+class Doc_Type_Unique_Number(models.Model):
+    document = models.ForeignKey(Document, related_name='document_number')
     number = models.IntegerField(null=True)
     is_active = models.BooleanField(default=True)
 
 
 # Назва документу
 class Doc_Name(models.Model):
-    document = models.OneToOneField(Document, related_name='document_name')
+    document = models.ForeignKey(Document, related_name='document_name')
     name = models.CharField(max_length=500)
     is_active = models.BooleanField(default=True)
 
 
 # Преамбула документу
 class Doc_Preamble(models.Model):
-    document = models.OneToOneField(Document, related_name='document_preamble')
+    document = models.ForeignKey(Document, related_name='document_preamble')
     preamble = models.CharField(max_length=1000)
+    is_active = models.BooleanField(default=True)
+
+
+# Адресат документу
+class Doc_Recipient(models.Model):
+    document = models.ForeignKey(Document, related_name='doc_recipient')
+    recipient = models.ForeignKey(Employee_Seat, related_name='recipient_doc')
+    is_active = models.BooleanField(default=True)
+
+
+# Текст документу
+class Doc_Text(models.Model):
+    document = models.ForeignKey(Document, related_name='doc_text')
+    text = models.CharField(max_length=1000, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -217,3 +204,18 @@ class Doc_Day(models.Model):
     document = models.ForeignKey(Document, related_name='document_day')
     day = models.DateField(default=timezone.now)
     is_active = models.BooleanField(default=True)
+
+
+# Номер прохідної (для матеріального пропуску тощо)
+class Doc_Gate(models.Model):
+    document = models.ForeignKey(Document, related_name='document_gate')
+    gate = models.IntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+
+
+# Список матеріальних цінностей для матеріального пропуску
+class Carry_Out_Items(models.Model):
+    document = models.ForeignKey(Document, related_name='carry_documents')
+    item_name = models.CharField(max_length=100)
+    quantity = models.CharField(max_length=100)
+    measurement = models.CharField(max_length=100)

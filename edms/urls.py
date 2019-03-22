@@ -4,7 +4,7 @@ from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_
 from edms.views import edms_administration, edms_get_types, edms_get_type_info, edms_deactivate_permission  # Адміністрування
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs  # Мої документи get
 from edms.views import edms_mark, edms_resolution, edms_del_draft  # Мої документи post
-from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts  # Нові документи
+from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive  # Архів
 from edms.views import edms_sub_docs, edms_get_sub_docs  # Документи підлеглих
 
@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^my_docs/get_direct_subs/(?P<pk>\d+)/$', edms_get_direct_subs, name='my_docs_get_direct_subs'),
     url(r'^my_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^my_docs/resolution/', edms_resolution, name='my_docs_resolution'),
+    url(r'^my_docs/get_doc_type_modules/(?P<pk>\d+)/$', edms_get_doc_type_modules, name='my_docs_get_doc_type_modules'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/', edms_archive, name='archive'),

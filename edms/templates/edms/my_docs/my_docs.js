@@ -70,7 +70,7 @@ class MyDocs extends React.Component {
   }
   
   // Показ чернеток або документів
-  onDraftClick = (e) => {
+  onReturnClick = (e) => {
     e.preventDefault();
     this.setState(prevState => ({
       draft_view: !prevState.draft_view
@@ -132,7 +132,7 @@ class MyDocs extends React.Component {
             <div className='d-flex justify-content-between'>
               <div className='d-flex'>
                 <NewDoc addDoc={this.addDoc}/>
-                <button type="button" className='btn btn-link pb-2' onClick={this.onDraftClick}>Чернетки</button>
+                <button type="button" className='btn btn-link pb-2' onClick={this.onReturnClick}>Чернетки</button>
               </div>
               <SeatChooser onSeatChange={this.onSeatChange}/>
             </div>
@@ -147,7 +147,7 @@ class MyDocs extends React.Component {
           </When>
           <Otherwise>
             <div className='d-flex justify-content-between'>
-              <button type="button" className='btn btn-link pb-2' onClick={this.onDraftClick}>Назад</button>
+              <button type="button" className='btn btn-link pb-2' onClick={this.onReturnClick}>Назад</button>
               <SeatChooser onSeatChange={this.onSeatChange}/>
             </div>
             <Drafts addDoc={this.addDoc}/>

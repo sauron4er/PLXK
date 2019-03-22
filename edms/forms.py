@@ -1,8 +1,10 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Free_Time_Periods, Document_Path, Carry_Out_Items, Carry_Out_Info, Mark_Demand, Document_Type_Permission, Decree
-from .models import File, Doc_Article, Doc_Article_Dep, Doc_Approval, Doc_Day, Doc_Name, Doc_Number, Doc_Preamble, Doc_Sign, Doc_Validity
+from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand, \
+    Document_Type_Permission
+from .models import File, Doc_Article, Doc_Article_Dep, Doc_Approval, Doc_Day, Doc_Name, Doc_Type_Unique_Number, \
+    Doc_Preamble, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
 
 
 class UserProfileForm(forms.ModelForm):
@@ -67,24 +69,6 @@ class DTPAddForm(forms.ModelForm):
         fields = {'document_type', 'seat', 'mark'}
 
 
-class FreeTimeForm(forms.ModelForm):
-    class Meta:
-        model = Free_Time_Periods
-        fields = {'document', 'free_day'}
-
-
-class CarryOutItemsForm(forms.ModelForm):
-    class Meta:
-        model = Carry_Out_Items
-        fields = {'document', 'item_name', 'quantity', 'measurement'}
-
-
-class CarryOutInfoForm(forms.ModelForm):
-    class Meta:
-        model = Carry_Out_Info
-        fields = {'document', 'carry_out_day', 'gate'}
-
-
 class DocumentPathForm(forms.ModelForm):
     class Meta:
         model = Document_Path
@@ -103,75 +87,70 @@ class ResolutionForm(forms.ModelForm):
         fields = {'document', 'document_path', 'comment', 'recipient', 'mark'}
 
 
-class NewDecreeForm(forms.ModelForm):
-    class Meta:
-        model = Decree
-        fields = {
-            'document',
-            'name',
-            'preamble',
-        }
-
-
 # --------------------------------------------------------------------------------------------------------------------
-# Форми модулів ЕДО
+# Форми модульної системи ЕДО
+
 class NewFileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = {
-            'name',
-            'file',
-            'document_path'
-        }
+        fields = {'name', 'file', 'document_path'}
 
 
-class NewArticleForm(forms.ModelForm):  # пункти наказів чи інших документів
+class NewArticleForm(forms.ModelForm):
     class Meta:
         model = Doc_Article
-        fields = {
-            'document',
-            'text',
-            'deadline',
-        }
+        fields = {'document', 'text', 'deadline'}
 
 
-class NewArticleDepForm(forms.ModelForm):  # пункти наказів чи інших документів
+class NewArticleDepForm(forms.ModelForm):
     class Meta:
         model = Doc_Article_Dep
-        fields = {
-            'article',
-            'department',
-        }
+        fields = {'article', 'department'}
 
 
-class NewApprovalForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+class NewApprovalForm(forms.ModelForm):
     class Meta:
         model = Doc_Approval
-        fields = {
-            'document',
-            'seat',
-        }
+        fields = {'document', 'seat'}
 
 
-class NewNameForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+class NewNameForm(forms.ModelForm):
     class Meta:
         model = Doc_Name
-        fields = {
-            'document',
-            'name',
-        }
+        fields = {'document', 'name'}
 
 
-class NewPreambleForm(forms.ModelForm):  # людинопосади, які повинні погодити документ перед підписом
+class NewPreambleForm(forms.ModelForm):
     class Meta:
         model = Doc_Preamble
-        fields = {
-            'document',
-            'preamble',
-        }
+        fields = {'document', 'preamble'}
 
 
-class NewDocDayForm(forms.ModelForm):
+class NewTextForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Text
+        fields = {'document', 'text'}
+
+
+class NewRecipientForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Recipient
+        fields = {'document', 'recipient'}
+
+
+class NewDayForm(forms.ModelForm):
     class Meta:
         model = Doc_Day
         fields = {'document', 'day'}
+
+
+class NewGateForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Gate
+        fields = {'document', 'gate'}
+
+
+class CarryOutItemsForm(forms.ModelForm):
+    class Meta:
+        model = Carry_Out_Items
+        fields = {'document', 'item_name', 'quantity', 'measurement'}

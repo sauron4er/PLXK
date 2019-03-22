@@ -146,13 +146,14 @@ class CarryOut extends React.Component {
       <If  condition={this.state.render_ready}>
         <div className='css_modal_scroll'>
           <Form onSubmit={e => this.newCarryOut(e, 'post')}>
+            <div className='modal-header d-flex justify-content-between'>
+              <h4 className="modal-title">Новий матеріальний пропуск</h4>
+              <button className="btn btn-link" onClick={this.onCloseModal}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+            
             <div className="modal-body">
-              <div className='d-flex justify-content-between'>
-                <h4 className="modal-title">Новий матеріальний пропуск</h4>
-                <button className="btn btn-link" onClick={this.onCloseModal}>
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              </div>
               <br/>
               <label>День виносу:
                 <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange} validations={[required]}/>
@@ -176,6 +177,7 @@ class CarryOut extends React.Component {
                   paging
                 />
             </div>
+            
             <div className="modal-footer">
               <If condition={this.props.docId !== 0}>
                 <button className="float-sm-left btn btn-sm btn-outline-danger mb-1"
@@ -187,6 +189,7 @@ class CarryOut extends React.Component {
               </button>
               <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
             </div>
+            
           </Form>
         </div>
       </If>

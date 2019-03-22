@@ -111,13 +111,14 @@ class FreeTime extends React.Component {
       <If condition={this.state.render_ready}>
         <div className='css_modal_scroll'>
           <Form onSubmit={e => this.newFreeTime(e, 'post')}>
+            <div className='modal-header d-flex justify-content-between'>
+              <h4 className="modal-title">Нова звільнююча</h4>
+              <button className="btn btn-link" onClick={this.onCloseModal}>
+                <FontAwesomeIcon icon={faTimes}/>
+              </button>
+            </div>
+            
             <div className="modal-body">
-              <div className='d-flex justify-content-between'>
-                <h4 className="modal-title">Нова звільнююча</h4>
-                <button className="btn btn-link" onClick={this.onCloseModal}>
-                  <FontAwesomeIcon icon={faTimes}/>
-                </button>
-              </div>
               <br/>
               <label>День дії звільнюючої:
                 <Input className='form-control' type="date" value={this.state.date} name="date" onChange={this.onChange}
@@ -128,6 +129,7 @@ class FreeTime extends React.Component {
                           onChange={this.onChange} maxLength={4000} validations={[required]}/>
               </label> <br/>
             </div>
+            
             <div className="modal-footer">
               <If condition={this.props.docId !== 0}>
                 <button className="float-sm-left btn btn-sm btn-outline-danger mb-1"
