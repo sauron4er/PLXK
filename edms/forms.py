@@ -45,7 +45,7 @@ class SeatForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat', 'is_draft'}
+        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'phases_testing'}
 
 
 #  Видалення документа (не буде показуватися в архівах)
@@ -75,10 +75,10 @@ class DocumentPathForm(forms.ModelForm):
         fields = {'document', 'employee_seat', 'mark', 'comment'}
 
 
-class ChiefMarkDemandForm(forms.ModelForm):
+class MarkDemandForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand
-        fields = {'document', 'recipient', 'mark'}
+        fields = {'document', 'recipient', 'mark', 'document_path', 'phase'}
 
 
 class ResolutionForm(forms.ModelForm):

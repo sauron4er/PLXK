@@ -7,21 +7,26 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 import json
 import pytz
+import smtplib
+
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
 from .models import Carry_Out_Items, Mark_Demand
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, DocumentPathForm
-from .forms import CarryOutItemsForm, ChiefMarkDemandForm, ResolutionForm
+from .forms import CarryOutItemsForm, MarkDemandForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm, CloseDocForm
-
+# Модульна система:
 from .models import Document_Type_Module, Doc_Name, Doc_Preamble, Doc_Approval, Doc_Article, Doc_Article_Dep
-from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate
+from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate, Doc_Type_Unique_Number
 from .forms import NewArticleForm, NewArticleDepForm, NewApprovalForm, NewNameForm, NewPreambleForm, NewFileForm
 from .forms import NewTextForm, NewRecipientForm, NewDayForm, NewGateForm
+# Система фаз:
+from .models import Doc_Type_Phase, Doc_Type_Phase_Queue
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
 testing = False
+phases_testing = False
 
 
 def convert_to_localtime(utctime, frmt):
@@ -146,6 +151,148 @@ def close_doc(request, doc_id):
         raise err
 
 
+def send_email(email_type, recipients):
+    for recipient in recipients:
+        emp_seat_id = vacation_check(recipient['id'])
+        recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
+        mail = recipient_mail[0]['employee__user__email']
+
+        if mail:
+            HOST = "imap.polyprom.com"
+
+            SUBJECT = "Новий електронний документ" \
+                if email_type == 'new_doc' \
+                else "Нова реакція на Ваш електронний документ"
+
+            TO = 'sauron4er@gmail.com' if testing else mail
+
+            FROM = "it@lxk.com.ua"
+
+            text = "Вашої реакції очікує новий документ. " \
+                   "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" \
+                if email_type == 'new_doc' \
+                else "У Вашого електронного документу з’явилася нова позначка. " \
+                     "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/"
+
+            BODY = u"\r\n".join((
+                "From: " + FROM,
+                "To: " + TO,
+                "Subject: " + SUBJECT,
+                "",
+                text
+            )).encode('utf-8').strip()
+
+            server = smtplib.SMTP(HOST)
+            server.login('lxk_it', 'J2NYEHb50nymRF1L')
+            server.sendmail(FROM, [TO], BODY)
+            server.quit()
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Функції фазової системи
+def post_path(doc_request):
+    if phases_testing is True:
+        # створюємо новий path
+        doc_request.update({'mark': 1})
+        doc_request.update({'comment': ''})
+        path_form = DocumentPathForm(doc_request)
+        if path_form.is_valid():
+            return path_form.save()
+        else:
+            raise ValidationError('edms/views: function new_phase: path_form invalid')
+    else:
+        # id першого запису в document_path: переробиться на створення запису прямо з django
+        return Document_Path.objects.filter(document_id=doc_request['document']).filter(mark_id=1).first()
+
+
+def post_mark_demand(doc_request, emp_seat_id, phase_number):
+    emp_seat_id = vacation_check(emp_seat_id)
+    doc_request.update({'recipient': emp_seat_id})
+    doc_request.update({'phase': phase_number})
+
+    mark_demand_form = MarkDemandForm(doc_request)
+    if mark_demand_form.is_valid:
+        mark_demand_form.save()
+    else:
+        raise ValidationError('edms/views new_phase mark_demand_form invalid')
+
+
+# Функція, яка отримує ід людинопосади, перевіряє чи вона у відпустці
+# і повертає ід в.о., якщо ця у відпустці або цей же ід, якщо ні
+def vacation_check(emp_seat_id):
+    # Перевіряємо, чи людина у відпустці:
+    emp_on_vacation = Employee_Seat.objects.values_list('employee__on_vacation', flat=True) \
+        .filter(id=emp_seat_id)
+
+    if emp_on_vacation[0] is True:
+        # Активна людино-посада в.о.:
+        acting_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+            .filter(acting_for_id=emp_seat_id).filter(is_active=True)
+        return acting_emp_seat_id
+    else:
+        return emp_seat_id
+
+
+# Створення нової фази документа:
+def new_phase(doc_request, new_doc, phase_number):
+    # Створюємо нові Mark_Demand
+    # Визначаємо, які позначки використовуються у даній фазі
+    phase_marks = [{
+        'id': phase.id,
+        'mark_id': phase.mark_id,
+    } for phase in Doc_Type_Phase.objects
+        .filter(document_type_id=new_doc.document_type_id)
+        .filter(queue=phase_number)
+        .filter(is_active=True)]
+
+    # Визначаємо усіх отримувачів згідно з фазою документа:
+    phase_recipients = []
+    for mark in phase_marks:
+        mark_recipients = []  # Список людинопосад, яким направляємо документ
+        if mark['mark_id'] == 6:  # 6 - "Не заперечую", отже документ повинен йти безпосередньому керівнику
+            # Посада безпосереднього керівника:
+            chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=10)
+            # Активна людино-посада безпосереднього керівника:
+            chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+                .filter(seat_id=chief_seat_id).filter(is_main=True)
+
+            phase_recipients.append({'id': chief_emp_seat_id[0]})
+            mark_recipients.append({'id': chief_emp_seat_id[0]})
+        else:
+            # Список отримувачів mark_demand у цій фазі:
+            recipients = [{
+                'seat_id': item.seat_id,
+                'employee_id': item.employee_id,
+                'employee_seat_id': item.employee_seat_id,
+            } for item in Doc_Type_Phase_Queue.objects
+                .filter(phase_id=mark['id'])
+                .filter(is_active=True)
+                .order_by('queue')]
+
+            # Знаходимо ід людинопосади кожного отримувача чи його в.о. і додаємо в перемінну recipients
+            for recipient in recipients:
+                if recipient['seat_id']:
+                    # Активна людино-посада отримувача:
+                    emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+                        .filter(seat_id=recipient['seat_id']).filter(is_main=True)
+
+                    phase_recipients.append({'id': emp_seat_id[0]})
+                    mark_recipients.append({'id': emp_seat_id[0]})
+                elif recipient['employee_seat_id']:
+                    test = 'test'
+                else:
+                    test = 'test'
+
+        # Додаємо кожного отримувача у MarkDemand:
+        for recipient in mark_recipients:
+            doc_request.update({
+                'mark': mark['mark_id'],
+                'phase': phase_number
+            })
+            post_mark_demand(doc_request, recipient['id'], phase_number)
+    return phase_recipients
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # функції модульних документів
 
@@ -153,17 +300,74 @@ def close_doc(request, doc_id):
 def post_document(request):
     try:
         doc_request = request.POST.copy()
+        doc_request.update({'phases_testing': phases_testing})
         doc_request.update({'employee': request.user.userprofile.id})
         doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
 
         doc_form = DocumentForm(doc_request)
         if doc_form.is_valid():
             new_doc = doc_form.save()
-            return new_doc.pk
+            return new_doc
         else:
             raise ValidationError('edms/views: function post_document: document_form invalid')
     except Exception as err:
         raise err
+
+
+# Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
+# Повертає список отримувачів документа (якщо використовується модуль recipient_chief)
+def post_modules(doc_request, doc_files, new_path):
+    doc_modules = json.loads(doc_request['doc_modules'])
+    recipients = []
+
+    # Додаємо назву документа
+    if 'name' in doc_modules:
+        post_name(doc_request, doc_modules['name'])
+
+    # Додаємо текст документа
+    if 'text' in doc_modules:
+        post_text(doc_request, doc_modules['text'])
+
+    # Додаємо отримувача-шефа
+    # Отримувач-шеф отримує mark-demand з вимогою поставити "Погоджую"
+    # Звичайний отримувач - якусь іншу позначку.
+    if 'recipient_chief' in doc_modules:
+        post_recipient_chief(doc_request, doc_modules['recipient_chief'], new_path)
+        recipients = [doc_modules['recipient_chief']]
+
+    # Додаємо преамбулу документа
+    if 'preamble' in doc_modules:
+        post_preamble(doc_request, doc_modules['preamble'])
+
+    # Додаємо погоджуючих
+    if 'approval_seats' in doc_modules:
+        post_approval_seats(doc_request, doc_modules['approval_seats'])
+
+    # Додаємо пункти
+    if 'articles' in doc_modules:
+        post_articles(doc_request, doc_modules['articles'])
+
+    # Додаємо дату
+    if 'day' in doc_modules:
+        post_day(doc_request, doc_modules['day'])
+
+    # Додаємо прохідну
+    if 'gate' in doc_modules:
+        post_gate(doc_request, doc_modules['gate'])
+
+    # Додаємо список матеріальних цінностей
+    if 'carry_out_items' in doc_modules:
+        post_carry_out_items(doc_request, doc_modules['carry_out_items'])
+
+    # Додаємо файли
+    if doc_request['is_draft'] is False:
+        if doc_files:
+            # Поки що файли додаються тільки якщо документ публікується не як чернетка
+            # Для публікації файла необідно мати перший path_id документа, якго нема в чернетці
+            if new_path is not None:
+                handle_files(doc_files, doc_request, new_path.pk)
+
+    return recipients
 
 
 # Функція, яка додає у бд нові пункти документу
@@ -223,9 +427,9 @@ def post_text(doc_request, text):
 
 
 # Функція, яка додає у бд отримувача
-def post_recipient_chief(doc_request, recipient_chief):
-    doc_request.update({'mark': 2})
-    doc_request.update({'recipient': recipient_chief['id']})
+def post_recipient_chief(doc_request, recipient_chief, path):
+    chief_emp_seat_id = vacation_check(recipient_chief['id'])
+    doc_request.update({'recipient': chief_emp_seat_id})
 
     recipient_form = NewRecipientForm(doc_request)
     if recipient_form.is_valid():
@@ -233,12 +437,11 @@ def post_recipient_chief(doc_request, recipient_chief):
     else:
         raise ValidationError('edms/views post_recipient_chief recipient_form invalid')
 
-    # Заносимо документ у mark_demand
-    chief_mark_demand_form = ChiefMarkDemandForm(doc_request)
-    if chief_mark_demand_form.is_valid:
-        chief_mark_demand_form.save()
-    else:
-        raise ValidationError('edms/views post_recipient_chief chief_mark_demand_form invalid')
+    # Додаємо mark_demand
+    if doc_request['is_draft'] is False:
+        doc_request.update({'mark': 2})
+        doc_request.update({'document_path': path.pk})
+        post_mark_demand(doc_request, recipient_chief['id'], 1)
 
 
 # Функція, яка додає у бд преамбулу документу
@@ -285,17 +488,16 @@ def post_carry_out_items(doc_request, carry_out_items):
 
 
 # Функція, яка постить файли
-def handle_files(request, path_id):
-    if len(request.FILES) > 0:
+def handle_files(doc_files, doc_request, path_id):
+    if len(doc_files) > 0:
         # TODO додати обробку помилок при збереженні файлів
-        file_request = request.POST.copy()
-        file_request.update({'document_path': path_id})
-        file_request.update({'name': 'file'})
+        doc_request.update({'document_path': path_id})
+        doc_request.update({'name': 'file'})
 
-        file_form = NewFileForm(file_request, request.FILES)
+        file_form = NewFileForm(doc_request, doc_files)
         if file_form.is_valid():
             document_path = file_form.cleaned_data['document_path']
-            for f in request.FILES.getlist('file'):
+            for f in doc_files.getlist('file'):
                 File.objects.create(
                     document_path=document_path,
                     file=f,
@@ -657,9 +859,10 @@ def edms_get_doc(request, pk):
                     'name': item.name,
                 } for item in Doc_Name.objects.filter(document_id=doc.id).filter(is_active=True)]
 
-                doc_info.update({
-                    'name': name[0]['name'],
-                })
+                if name:
+                    doc_info.update({
+                        'name': name[0]['name'],
+                    })
             elif module['module'] == 'preamble':
                 test = 'test'
             elif module['module'] == 'text':
@@ -667,12 +870,13 @@ def edms_get_doc(request, pk):
                     'text': item.text,
                 } for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
 
-                doc_info.update({
-                    'text': text[0]['text'],
-                })
+                if text:
+                    doc_info.update({
+                        'text': text[0]['text'],
+                    })
             elif module['module'] == 'articles':
                 test = 'test'
-            elif module['module'] == 'recipient' or module['module'] == 'recipient_chief':
+            elif module['module'] == 'recipient':
                 recipient = [{
                     'id': item.recipient.id,
                     'name': item.recipient.employee.pip,
@@ -681,13 +885,31 @@ def edms_get_doc(request, pk):
                     else '(в.о.) ' + item.recipient.seat.seat,
                 } for item in Doc_Recipient.objects.filter(document_id=doc.id).filter(is_active=True)]
 
-                doc_info.update({
-                    'recipient': {
-                        'id': recipient[0]['id'],
-                        'name': recipient[0]['name'],
-                        'seat': recipient[0]['seat'],
-                    }
-                })
+                if recipient:
+                    doc_info.update({
+                        'recipient': {
+                            'id': recipient[0]['id'],
+                            'name': recipient[0]['name'],
+                            'seat': recipient[0]['seat'],
+                        }
+                    })
+            elif module['module'] == 'recipient_chief':
+                recipient_chief = [{
+                    'id': item.recipient.id,
+                    'name': item.recipient.employee.pip,
+                    'seat': item.recipient.seat.seat
+                    if item.recipient.is_main
+                    else '(в.о.) ' + item.recipient.seat.seat,
+                } for item in Doc_Recipient.objects.filter(document_id=doc.id).filter(is_active=True)]
+
+                if recipient_chief:
+                    doc_info.update({
+                        'recipient_chief': {
+                            'id': recipient_chief[0]['id'],
+                            'name': recipient_chief[0]['name'],
+                            'seat': recipient_chief[0]['seat'],
+                        }
+                    })
             elif module['module'] == 'approvals':
                 test = 'test'
             elif module['module'] == 'files':
@@ -697,17 +919,19 @@ def edms_get_doc(request, pk):
                     'day': datetime.strftime(item.day, '%Y-%m-%d'),
                 } for item in Doc_Day.objects.filter(document_id=doc.id).filter(is_active=True)]
 
-                doc_info.update({
-                    'day': day[0]['day'],
-                })
+                if day:
+                    doc_info.update({
+                        'day': day[0]['day'],
+                    })
             elif module['module'] == 'gate':
                 gate = [{
                     'gate': item.gate,
                 } for item in Doc_Gate.objects.filter(document_id=doc.id).filter(is_active=True)]
 
-                doc_info.update({
-                    'gate': gate[0]['gate'],
-                })
+                if gate:
+                    doc_info.update({
+                        'gate': gate[0]['gate'],
+                    })
             elif module['module'] == 'carry_out_items':
                     items = [{
                         'id': item.id,
@@ -716,15 +940,16 @@ def edms_get_doc(request, pk):
                         'measurement': item.measurement,
                     } for item in Carry_Out_Items.objects.filter(document_id=doc.id)]
 
-                    # Індексуємо список товарів, щоб id товарів не бралися з таблиці а створювалися з 1
-                    items_indexed = [{
-                        'id': items.index(item) + 1,
-                        'item_name': item['item_name'],
-                        'quantity': item['quantity'],
-                        'measurement': item['measurement'],
-                    } for item in items]
+                    if items:
+                        # Індексуємо список товарів, щоб id товарів не бралися з таблиці а створювалися з 1
+                        items_indexed = [{
+                            'id': items.index(item) + 1,
+                            'item_name': item['item_name'],
+                            'quantity': item['quantity'],
+                            'measurement': item['measurement'],
+                        } for item in items]
 
-                    doc_info.update({'carry_out_items': items_indexed})
+                        doc_info.update({'carry_out_items': items_indexed})
 
         return HttpResponse(json.dumps(doc_info))
 
@@ -785,67 +1010,38 @@ def edms_my_docs(request):
 
         elif request.method == 'POST':
             doc_request = request.POST.copy()
+            doc_files = request.FILES.copy()
 
-            # записуємо документ і отримуємо його ід
-            new_doc_id = post_document(request)
-            doc_request.update({'document': new_doc_id})
+            # Записуємо документ і отримуємо його ід
+            new_doc = post_document(request)
+            doc_request.update({'document': new_doc.pk})
 
-            # модульна система:
-            if 'doc_modules' in request.POST:
-                doc_modules = json.loads(request.POST['doc_modules'])
+            # Записуємо перший path і отримуємо його ід
+            new_path = post_path(doc_request)
+            if doc_request['is_draft'] is False:
+                doc_request.update({'document_path': new_path.pk})
 
-                # Додаємо назву документа
-                if 'name' in doc_modules:
-                    post_name(doc_request, doc_modules['name'])
+            # Фазова система
+            # Отримуємо з неї список отримувачів документа
+            phase_recipients = []
+            if phases_testing is False and doc_request['is_draft'] is False:
+                phase_recipients = new_phase(doc_request, new_doc, 1)
 
-                # Додаємо текст документа
-                if 'text' in doc_modules:
-                    post_text(doc_request, doc_modules['text'])
-
-                # Додаємо отримувача-шефа
-                # Отримувач-шеф отримує mark-demand з вимогою поставити "Погоджую"
-                # Звичайний отримувач - якусь іншу позначку.
-                if 'recipient_chief' in doc_modules:
-                    post_recipient_chief(doc_request, doc_modules['recipient_chief'])
-
-                # Додаємо преамбулу документа
-                if 'preamble' in doc_modules:
-                    post_preamble(doc_request, doc_modules['preamble'])
-
-                # Додаємо погоджуючих
-                if 'approval_seats' in doc_modules:
-                    post_approval_seats(doc_request, doc_modules['approval_seats'])
-
-                # Додаємо пункти
-                if 'articles' in doc_modules:
-                    post_articles(doc_request, doc_modules['articles'])
-
-                # Додаємо дату
-                if 'day' in doc_modules:
-                    post_day(doc_request, doc_modules['day'])
-
-                # Додаємо прохідну
-                if 'gate' in doc_modules:
-                    post_gate(doc_request, doc_modules['gate'])
-
-                # Додаємо список матеріальних цінностей
-                if 'carry_out_items' in doc_modules:
-                    post_carry_out_items(doc_request, doc_modules['carry_out_items'])
-
-                # Додаємо файли
-                if 'files' in doc_modules:
-                    # Поки що файли додаються тільки якщо документ публікується не як чернетка
-                    # Для публікації файла необідно мати перший path_id документа, якго нема в чернетці
-                    new_path = Document_Path.objects.filter(document_id=new_doc_id).filter(mark_id=1).first()
-                    if new_path is not None:
-                        handle_files(request, new_path.pk)
+            # Модульна система:
+            # В деяких модулях прямо може бути вказано отримувачів,
+            # тому post_modules повертає їх, який може бути і пустий
+            module_recipients = post_modules(doc_request, doc_files, new_path)
 
             # Деактивуємо стару чернетку
             if doc_request['old_draft_id'] != '0':
                 close_doc(request, int(doc_request['old_draft_id']))
 
-            # raise ValidationError
-            return HttpResponse(new_doc_id)
+            # Додаємо отримувачів з фази та з модулів, відправляємо всім листи
+            if doc_request['is_draft'] is False:
+                recipients = phase_recipients + module_recipients
+                send_email('new_doc', recipients)
+
+            return HttpResponse(new_doc.pk)
     except ValidationError as err:
         raise err
         # return HttpResponse(status=405, content=err)
@@ -1031,7 +1227,8 @@ def edms_mark(request):
                 raise ValidationError('view edms_mark: path_form invalid')
 
             # Додаємо файли, якщо такі є:
-            handle_files(request, new_path.pk)
+            doc_request = request.POST.copy()
+            handle_files(request.FILES, doc_request, new_path.pk)
 
             return HttpResponse(new_path.pk)
     except ValidationError as err:

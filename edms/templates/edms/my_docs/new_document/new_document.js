@@ -106,6 +106,11 @@ class NewDocument extends React.Component {
               seat: '------',
               id: 0
             },
+            recipient_chief: response.data.recipient_chief || {
+              name: '------',
+              seat: '------',
+              id: 0
+            },
             approval_seats: response.data.approval_seats || [],
             files: response.data.files || [],
             day: response.data.day || '',

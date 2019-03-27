@@ -38,12 +38,23 @@ class Info extends React.Component {
             <For each='module' of={info.type_modules}>
               <Choose>
                 <When
-                  condition={module.module === 'recipient' || module.module === 'recipient_chief'}
+                  condition={module.module === 'recipient'}
                 >
                   <Recipient
                     recipient={{
                       name: info.recipient.name,
-                      seat: info.recipient.seat
+                      seat: info.recipient.seat,
+                    }}
+                    fieldName={module.field_name}
+                  />
+                </When>
+                <When
+                  condition={module.module === 'recipient_chief'}
+                >
+                  <Recipient
+                    recipient={{
+                      name: info.recipient_chief.name,
+                      seat: info.recipient_chief.seat,
                     }}
                     fieldName={module.field_name}
                   />

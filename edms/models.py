@@ -50,6 +50,34 @@ class Mark(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Стадії типа документа, із зазначенням черговості і типу позначки
+# Н-д:  звільнююча спочатку використовує "Не заперечую" керівника,
+#       а потім одночасно "Погоджую" директора і "Ознайомлений" охорони
+class Doc_Type_Phase(models.Model):
+    document_type = models.ForeignKey(Document_Type, related_name='dtm_types')
+    mark = models.ForeignKey(Mark, related_name='dtm_marks')
+    queue = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Список посад/людей/людинопосад, до яких надходить документ на тій чи іншій його стадії із зазначенням черговості
+class Doc_Type_Phase_Queue(models.Model):
+    phase = models.ForeignKey(Doc_Type_Phase, related_name='phases')
+    seat = models.ForeignKey(Seat, related_name='phase_seats', null=True)
+    employee = models.ForeignKey(accounts.UserProfile, related_name='phase_employee', null=True)
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='phase_emp_seats', null=True)
+    queue = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Не буде використовуватися, замінюється Doc_Type_Phase_Queue: видалити
+class Document_Type_Permission(models.Model):
+    document_type = models.ForeignKey(Document_Type, related_name='with_permissions')
+    seat = models.ForeignKey(Seat, related_name='permission_seats')
+    mark = models.ForeignKey(Mark, related_name='permission_marks')
+    is_active = models.BooleanField(default=True)
+
+
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type')
     title = models.CharField(max_length=100, null=True, blank=True)
@@ -60,13 +88,7 @@ class Document(models.Model):
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
     date = models.DateTimeField(auto_now_add=True, null=True)
-
-
-class Document_Type_Permission(models.Model):
-    document_type = models.ForeignKey(Document_Type, related_name='with_permissions')
-    seat = models.ForeignKey(Seat, related_name='permission_seats')
-    mark = models.ForeignKey(Mark, related_name='permission_marks')
-    is_active = models.BooleanField(default=True)
+    phases_testing = models.BooleanField(default=False)
 
 
 class Document_Permission(models.Model):
@@ -94,6 +116,7 @@ class Mark_Demand(models.Model):
     mark = models.ForeignKey(Mark, related_name='demands')
     result_document = models.ForeignKey(Document, related_name='result_document', null=True)
     deadline = models.DateTimeField(null=True)
+    phase = models.IntegerField(null=True)
     is_active = models.BooleanField(default=True)
 
 
