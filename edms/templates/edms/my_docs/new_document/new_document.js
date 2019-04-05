@@ -37,6 +37,7 @@ class NewDocument extends React.Component {
       id: 0
     },
     approval_seats: [],
+    old_files: [],
     files: [],
     day: '',
     gate: 1,
@@ -112,7 +113,7 @@ class NewDocument extends React.Component {
               id: 0
             },
             approval_seats: response.data.approval_seats || [],
-            files: response.data.files || [],
+            old_files: response.data.old_files || [],
             day: response.data.day || '',
             gate: response.data.gate || '1',
             carry_out_items: response.data.carry_out_items || [],
@@ -157,7 +158,7 @@ class NewDocument extends React.Component {
   newDocument = (e, type) => {
     e.preventDefault();
     try {
-      const {type_modules} = this.state;
+      const {type_modules, old_files} = this.state;
       const {docTypeId, docId, docType} = this.props;
 
       if (this.requiredFieldsFilled()) {
@@ -175,7 +176,9 @@ class NewDocument extends React.Component {
         formData.append('document_type', docTypeId);
         formData.append('old_draft_id', docId);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
+        formData.append('old_files', JSON.stringify(old_files));
         formData.append('is_draft', type === 'draft');
+        
 
         if (this.state.files.length > 0) {
           this.state.files.map((file) => {
@@ -290,6 +293,7 @@ class NewDocument extends React.Component {
       recipient,
       recipient_chief,
       approval_seats,
+      old_files,
       files,
       day,
       gate,
@@ -347,7 +351,12 @@ class NewDocument extends React.Component {
                     />
                   </When>
                   <When condition={module.module === 'files'}>
-                    <Files onChange={this.onChange} files={files} fieldName={module.field_name} />
+                    <Files
+                      onChange={this.onChange}
+                      oldFiles={old_files}
+                      files={files}
+                      fieldName={module.field_name}
+                    />
                   </When>
                   <When condition={module.module === 'approvals'}>
                     <Approvals

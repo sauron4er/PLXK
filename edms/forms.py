@@ -109,6 +109,12 @@ class NewFileForm(forms.ModelForm):
         fields = {'name', 'file', 'document_path'}
 
 
+class FileNewPathForm(forms.ModelForm):
+    class Meta:
+        model = File
+        fields = {'document_path'}
+
+
 class NewArticleForm(forms.ModelForm):
     class Meta:
         model = Doc_Article
