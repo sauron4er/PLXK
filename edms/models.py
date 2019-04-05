@@ -56,7 +56,8 @@ class Mark(models.Model):
 class Doc_Type_Phase(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='dtm_types')
     mark = models.ForeignKey(Mark, related_name='dtm_marks')
-    queue = models.IntegerField()
+    phase = models.IntegerField()
+    required = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -66,7 +67,7 @@ class Doc_Type_Phase_Queue(models.Model):
     seat = models.ForeignKey(Seat, related_name='phase_seats', null=True)
     employee = models.ForeignKey(accounts.UserProfile, related_name='phase_employee', null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='phase_emp_seats', null=True)
-    queue = models.IntegerField()
+    queue = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
 
@@ -116,7 +117,7 @@ class Mark_Demand(models.Model):
     mark = models.ForeignKey(Mark, related_name='demands')
     result_document = models.ForeignKey(Document, related_name='result_document', null=True)
     deadline = models.DateTimeField(null=True)
-    phase = models.IntegerField(null=True)
+    phase = models.ForeignKey(Doc_Type_Phase, related_name='md_phase')
     is_active = models.BooleanField(default=True)
 
 

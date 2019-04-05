@@ -45,11 +45,18 @@ class SeatForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'phases_testing'}
+        fields = {'document_type', 'text', 'employee_seat', 'is_draft'}
+
+
+#  Деактивація документа (буде показуватися в архівах)
+class DeactivateDocForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = {'is_active'}
 
 
 #  Видалення документа (не буде показуватися в архівах)
-class CloseDocForm(forms.ModelForm):
+class DeleteDocForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = {'closed'}
@@ -78,13 +85,19 @@ class DocumentPathForm(forms.ModelForm):
 class MarkDemandForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand
-        fields = {'document', 'recipient', 'mark', 'document_path', 'phase'}
+        fields = {'document', 'recipient', 'mark', 'document_path', 'phase', 'comment'}
+
+
+class DeactivateMarkDemandForm(forms.ModelForm):
+    class Meta:
+        model = Mark_Demand
+        fields = {'is_active'}
 
 
 class ResolutionForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand
-        fields = {'document', 'document_path', 'comment', 'recipient', 'mark'}
+        fields = {'document', 'recipient', 'mark', 'document_path', 'phase', 'comment'}
 
 
 # --------------------------------------------------------------------------------------------------------------------

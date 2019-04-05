@@ -16,13 +16,6 @@ class Resolutions extends React.Component {
     sub_id: '0',
     sub: '',
   };
-
-  // коли отримує ід нового path - записує у бд резолюції
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.new_path_id !== '' && this.props.new_path_id !== prevProps.new_path_id) {
-        this.postResolutions(this.props.new_path_id);
-    }
-  }
   
   // запит списку підлеглих для резолюцій
   componentDidMount() {
@@ -72,28 +65,7 @@ class Resolutions extends React.Component {
   // заставляє батьківський компонент запостити позначку
   onClick = (e) => {
     e.preventDefault();
-    this.props.postMark(10)
-  };
-
-  // постить резолюції у бд
-  postResolutions = (new_path_id) => {
-    // const new_path_id = await this.props.postMark(10);
-    axios({
-      method: 'post',
-      url: 'resolution/',
-      data: querystring.stringify({
-        document: this.props.doc_id,
-        document_path: new_path_id,
-        resolutions: JSON.stringify(this.state.resolutions),
-        mark: 11,
-      }),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-    }).then((response) => {
-    }).catch((error) => {
-      console.log('errorpost: ' + error);
-    });
+    this.props.onClick(this.state.resolutions);
   };
 
   // додає резолюцію у список резолюцій
@@ -168,6 +140,10 @@ class Resolutions extends React.Component {
         </div>
       </Otherwise>
     </Choose>
+  }
+  
+  static defaultProps = {
+    resolutions: [],
   }
 }
 

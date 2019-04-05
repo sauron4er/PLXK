@@ -62,7 +62,7 @@ class Docs extends React.Component {
     let answer = '';
     switch(mark_id) {
       case 2:
-        answer = 'Документ №' + id + ' погоджено та повернуто ініціатору.';
+        answer = 'Документ №' + id + ' погоджено.';
         break;
       case 3:
         answer = 'У виконанні документу №' + id + ' відмовлено.';
@@ -74,7 +74,7 @@ class Docs extends React.Component {
         answer = 'Документ №' + id + ' відправлено автору на доопрацювання.';
         break;
       case 6:
-        answer = 'Документ №' + id + ' погоджено та відправлено в подальшу роботу.';
+        answer = 'Документ №' + id + ' погоджено.';
         break;
       case 7:
         answer = 'Документ №' + id + ' закрито та відправлено в архів.';
@@ -84,6 +84,9 @@ class Docs extends React.Component {
         break;
       case 10:
         answer = 'Резолюції до документу №' + id + ' додано.';
+        break;
+      case 11:
+        answer = 'Позначка "Виконано" додана до документу №' + id + '.';
         break;
       case 12:
         answer = 'Файл до документу №' + id + ' додано.';
