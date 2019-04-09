@@ -5,31 +5,32 @@ class Buttons extends React.Component {
   // отримує інформацію про документ в масиві doc та створює відповідні кнопки для doc_info
 
   render() {
+    const {doc, isChief, deletable, onClick} = this.props;
     return (
       <div>
         <Choose>
           {/* Якщо автор не я: */}
           <When
             condition={
-              this.props.doc.author_seat_id !==
+              doc.author_seat_id !==
               parseInt(localStorage.getItem("my_seat"))
             }
           >
             {/* Дивимось, яку позначку очікує flow і показуємо відповідні кнопки */}
             <Choose>
-              <When condition={this.props.doc.expected_mark === 6}>
+              <When condition={doc.expected_mark === 6}>
                 {/* Не заперечую */}
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 6)}
+                  onClick={e => onClick(e, 6)}
                 >
                   Не заперечую
                 </button>
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 3)}
+                  onClick={e => onClick(e, 3)}
                 >
                   Відмовити
                 </button>
@@ -37,61 +38,61 @@ class Buttons extends React.Component {
                 {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
                 {/*</If>*/}
               </When>
-              <When condition={this.props.doc.expected_mark === 2}>
+              <When condition={doc.expected_mark === 2}>
                 {/* Погоджую */}
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 2)}
+                  onClick={e => onClick(e, 2)}
                 >
                   Погодити
                 </button>
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 3)}
+                  onClick={e => onClick(e, 3)}
                 >
                   Відмовити
                 </button>
                 {/*<If condition={this.props.doc.type_id !== 1}>*/}
                 {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
                 {/*</If>*/}
-                <If condition={this.props.doc.type_id === 3}>
+                <If condition={doc.type_id === 3}>
                   {/* Якщо це службова - додаємо резолюції */}
                   <button
                     type="button"
                     className="btn btn-secondary mr-1 mb-1"
-                    onClick={e => this.props.onClick(e, 10)}
+                    onClick={e => onClick(e, 10)}
                   >
                     Резолюція
                   </button>
                 </If>
               </When>
-              <When condition={this.props.doc.expected_mark === 8}>
+              <When condition={doc.expected_mark === 8}>
                 {/* Ознайомлений */}
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 8)}
+                  onClick={e => onClick(e, 8)}
                 >
                   Ознайомлений
                 </button>
               </When>
-              <When condition={this.props.doc.expected_mark === 11}>
+              <When condition={doc.expected_mark === 11}>
                 {/* Виконано */}
                 <button
                   type="button"
                   className="btn btn-secondary mr-1 mb-1"
-                  onClick={e => this.props.onClick(e, 11)}
+                  onClick={e => onClick(e, 11)}
                 >
                   Виконано
                 </button>
-                <If condition={this.props.is_chief === true}>
+                <If condition={isChief === true}>
                   {/* Якщо є підлеглі - додаємо резолюції */}
                   <button
                     type="button"
                     className="btn btn-secondary mr-1 mb-1"
-                    onClick={e => this.props.onClick(e, 10)}
+                    onClick={e => onClick(e, 10)}
                   >
                     Резолюція
                   </button>
@@ -103,11 +104,11 @@ class Buttons extends React.Component {
           {/* Якщо автор я */}
           <Otherwise>
             {/* Якщо ніхто не встиг відреагувати - можна видалити документ */}
-            <If condition={this.props.deletable === true}>
+            <If condition={deletable === true}>
               <button
                 type="button"
                 className="btn btn-secondary mr-1 mb-1"
-                onClick={e => this.props.onClick(e, 13)}
+                onClick={e => onClick(e, 13)}
               >
                 Видалити
               </button>
@@ -116,7 +117,7 @@ class Buttons extends React.Component {
             <button
               type="button"
               className="btn btn-secondary mr-1 mb-1"
-              onClick={e => this.props.onClick(e, 7)}
+              onClick={e => onClick(e, 7)}
             >
               Закрити
             </button>
@@ -127,19 +128,24 @@ class Buttons extends React.Component {
         <button
           type="button"
           className="btn btn-secondary mr-1 mb-1"
-          onClick={e => this.props.onClick(e, 4)}
+          onClick={e => onClick(e, 4)}
         >
           Коментар
         </button>
         <button
           type="button"
           className="btn btn-secondary mr-1 mb-1"
-          onClick={e => this.props.onClick(e, 12)}
+          onClick={e => onClick(e, 12)}
         >
           Файл
         </button>
       </div>
     );
+  }
+  
+  static defaultProps = {
+    isChief: false,
+    deletable: false,
   }
 }
 

@@ -118,7 +118,8 @@ class DocInfo extends React.Component {
         } else {
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
-            new_path_id: response.data
+            new_path_id: response.data,
+            show_resolutions_area: false,
           });
           const doc_id = doc.id;
           const author_id = doc.author_seat_id;
@@ -182,7 +183,7 @@ class DocInfo extends React.Component {
               <div className='css_border bg-light p-2 mt-1 mr-1'>
                 <Buttons
                   doc={this.props.doc}
-                  is_chief={this.state.direct_subs.length > 0}
+                  isChief={this.state.direct_subs.length > 0}
                   deletable={this.state.deletable}
                   onClick={this.handleMark}
                 />

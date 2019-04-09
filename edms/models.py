@@ -58,6 +58,9 @@ class Doc_Type_Phase(models.Model):
     mark = models.ForeignKey(Mark, related_name='dtm_marks')
     phase = models.IntegerField()
     required = models.BooleanField(default=True)
+    sole = models.BooleanField(
+        default=False
+    )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
     is_active = models.BooleanField(default=True)
 
 
@@ -65,7 +68,6 @@ class Doc_Type_Phase(models.Model):
 class Doc_Type_Phase_Queue(models.Model):
     phase = models.ForeignKey(Doc_Type_Phase, related_name='phases')
     seat = models.ForeignKey(Seat, related_name='phase_seats', null=True)
-    employee = models.ForeignKey(accounts.UserProfile, related_name='phase_employee', null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='phase_emp_seats', null=True)
     queue = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
@@ -89,7 +91,7 @@ class Document(models.Model):
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
     date = models.DateTimeField(auto_now_add=True, null=True)
-    phases_testing = models.BooleanField(default=False)
+    testing = models.BooleanField(default=False)
 
 
 class Document_Permission(models.Model):

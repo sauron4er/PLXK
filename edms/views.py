@@ -257,89 +257,110 @@ def vacation_check(emp_seat_id):
         return emp_seat_id
 
 
+def get_phase_recipient_list(phase_id):
+    recipients = [{
+        'seat_id': item.seat_id,
+        'employee_seat_id': item.employee_seat_id
+    } for item in Doc_Type_Phase_Queue.objects
+        .filter(phase_id=phase_id)
+        .filter(is_active=True)
+        .order_by('queue')]
+
+    recipients_emp_seat_list = []
+    for recipient in recipients:
+        if recipient['seat_id']:
+            emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+                .filter(seat_id=recipient['seat_id']).filter(is_main=True)
+            if emp_seat_id:
+                recipients_emp_seat_list.append(emp_seat_id[0])
+        elif recipient['employee_seat_id']:
+            recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
+
+    return recipients_emp_seat_list
+
+
+# Повертає простий список ід посад, які мають бути отримувачами в наступній фазі
+# Перевіряє, чи це фаза sole чи ні.
+# Sole - це коли зі списку отримувачів потрібно надіслати документ тільки одному:
+# найближчому керівнику у випадку звільнюючої.
+def get_phase_id_recipients(phase_id, emp_seat):
+    recipients = get_phase_recipient_list(phase_id)
+
+    sole = Doc_Type_Phase.objects.values_list('sole', flat=True).filter(id=phase_id)[0]
+    if sole:
+        chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat)
+        if chief_seat_id:  # False якщо у посади нема внесеного шефа
+            chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+                .filter(seat_id=chief_seat_id[0]).filter(is_main=True)[0]
+
+            while chief_emp_seat_id not in recipients:
+                chief_emp_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id)
+            return [chief_emp_seat_id]
+    else:
+        return recipients
+
+
 # Створення нової фази документа:
 def new_phase(doc_request, phase_number):
-    # Знаходимо ід відповідної фази:
-    doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
+    # Знаходимо id's відповідної фази:
     # За одним номером фази може бути декілька самих ід фаз.
     # Тобто, н-д, на першій фазі документ може йти відразу декільком отримувачам.
-    phase_ids = Doc_Type_Phase.objects.values_list('id', flat=True).filter(document_type_id=doc_type).filter(phase=phase_number)
+    doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
+    phase_ids = Doc_Type_Phase.objects.values_list('id', flat=True)\
+        .filter(document_type_id=doc_type).filter(phase=phase_number)
+
     if phase_ids:
+        mail_recipients = []  # Список людинопосад, які отримують лист
         for phase_id in phase_ids:
-            # Створюємо нові Mark_Demand
-            # Визначаємо, які позначки використовуються у даній фазі
-            phase_marks = [{
-                'id': phase.id,
-                'mark_id': phase.mark_id,
-            } for phase in Doc_Type_Phase.objects
-                .filter(id=phase_id)
-                .filter(is_active=True)]
+            # Визначаємо, яка позначка використовується у даній фазі:
+            phase_id_mark = Doc_Type_Phase.objects.values_list('mark_id', flat=True) \
+                .filter(id=phase_id) \
+                .filter(is_active=True)[0]
 
-            # Визначаємо усіх отримувачів для кожної позначки:
-            phase_recipients = []
-            for mark in phase_marks:
-                mark_recipients = []  # Список людинопосад, яким направляємо документ
-                if mark['mark_id'] == 6:  # 6 - "Не заперечую", отже документ повинен йти безпосередньому керівнику
-                    # Посада безпосереднього керівника:
-                    chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=doc_request['employee_seat'])
-                    if chief_seat_id:
-                        # Активна людино-посада безпосереднього керівника:
-                        chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                            .filter(seat_id=chief_seat_id).filter(is_main=True)
+            mark_recipients = []  # Список людинопосад, яким направляємо документ
 
-                        # якщо ід посади наступної фази = ід безпосереднього керівника, переходимо на наступну фазу:
-                        # Знаходимо ід посад наступної фази:
-                        next_phase_recipients = [{
-                            'phase_id': phase_queue.phase_id,
-                            'seat_id': phase_queue.seat_id,
-                            'employee_id': phase_queue.employee_id,
-                            'employee_seat': phase_queue.employee_seat,
-                        } for phase_queue in Doc_Type_Phase_Queue.objects.all()
-                            .filter(phase__document_type_id=1)
-                            .filter(phase__phase=2)]
+            if phase_id_mark == 6:
+                # Якщо позначка "Не заперечую", документ передається безпосередньому керівнику:
+                # Посада безпосереднього керівника:
+                chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(
+                    id=doc_request['employee_seat'])
 
-                        for recipient in next_phase_recipients:
-                            if recipient['seat_id']:
-                                if recipient['seat_id'] == chief_seat_id[0]:
-                                    mark.update({'mark_id': 2})
-                                    phase_id = recipient['phase_id']
+                if chief_seat_id:  # Посада шефа може бути не внесена в бд
+                    # Активна людино-посада безпосереднього керівника:
+                    chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+                        .filter(seat_id=chief_seat_id).filter(is_main=True)
 
-                            elif recipient['employee_seat_id']:
-                                test = 'test'
-                            else:
-                                test = 'test'
+                    if chief_emp_seat_id:  # Можливо, ніхто не займає цю посаду
+                        # Якщо безпосередній керівник позначений як отримувач наступної фази,
+                        # то переходимо на наступну фазу одразу:
+                        next_phase_ids = Doc_Type_Phase.objects.values_list('id', flat=True) \
+                            .filter(document_type_id=doc_type).filter(phase=phase_number+1)
 
-                        phase_recipients.append({'id': chief_emp_seat_id[0]})
-                        mark_recipients.append({'id': chief_emp_seat_id[0]})
-                else:
-                    # Список отримувачів mark_demand у цій фазі:
-                    recipients = [{
-                        'seat_id': item.seat_id,
-                        'employee_id': item.employee_id,
-                        'employee_seat_id': item.employee_seat_id,
-                    } for item in Doc_Type_Phase_Queue.objects
-                        .filter(phase_id=mark['id'])
-                        .filter(is_active=True)
-                        .order_by('queue')]
+                        chief_is_in_next_phase = False
+                        for phase in next_phase_ids:
+                            if chief_emp_seat_id[0] in get_phase_recipient_list(phase):
+                                chief_is_in_next_phase = True
+                                post_mark_demand(doc_request, chief_emp_seat_id[0], phase, 2)
+                                send_email('new', [{'id': chief_emp_seat_id[0]}], doc_request['document'])
+                                break
 
-                    # Знаходимо ід людинопосади кожного отримувача чи його в.о. і додаємо в перемінну recipients
-                    for recipient in recipients:
-                        if recipient['seat_id']:
-                            # Активна людино-посада отримувача:
-                            emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                                .filter(seat_id=recipient['seat_id']).filter(is_main=True)
+                        if not chief_is_in_next_phase:
+                            mail_recipients.append({'id': chief_emp_seat_id[0]})
+                            mark_recipients.append({'id': chief_emp_seat_id[0]})
 
-                            phase_recipients.append({'id': emp_seat_id[0]})
-                            mark_recipients.append({'id': emp_seat_id[0]})
-                        elif recipient['employee_seat_id']:
-                            test = 'test'
-                        else:
-                            test = 'test'
+            else:
+                # Визначаємо усіх отримувачів для кожної позначки:
+                recipients = get_phase_id_recipients(phase_id, doc_request['employee_seat'])
+                for recipient in recipients:
+                    mail_recipients.append({'id': recipient})
+                    mark_recipients.append({'id': recipient})
 
-                # Додаємо кожного отримувача у MarkDemand:
-                for recipient in mark_recipients:
-                    post_mark_demand(doc_request, recipient['id'], phase_id, mark['mark_id'])
-            send_email('new', phase_recipients, doc_request['document'])
+            # Додаємо кожного отримувача у MarkDemand:
+            for recipient in mark_recipients:
+                post_mark_demand(doc_request, recipient['id'], phase_id, phase_id_mark)
+
+        send_email('new', mail_recipients, doc_request['document'])
+        # TODO чому з’являється помилка на обробці охорони???
     else:
         test = 'test'
 
@@ -375,6 +396,7 @@ def post_document(request):
         doc_request = request.POST.copy()
         doc_request.update({'employee': request.user.userprofile.id})
         doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
+        doc_request.update({'testing': testing})
 
         doc_form = DocumentForm(doc_request)
         if doc_form.is_valid():
@@ -1062,19 +1084,10 @@ def edms_my_docs(request):
             my_seats = get_my_seats(request.user.userprofile.id)
 
             new_docs_query = Document_Type.objects.all()
-            my_docs_query = Document_Path.objects.filter(mark=1) \
-                .filter(employee_seat__employee_id=request.user.userprofile.id) \
-                .filter(document__is_active=True) \
-                .filter(document__closed=False)  # Створено користувачем, не чернетка і не деактивовано
-            work_docs_query = Mark_Demand.objects \
-                .filter(recipient_id__employee_id=request.user.userprofile.id) \
-                .filter(is_active=True).order_by('document_id')
 
             # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
             if not testing:
                 new_docs_query = new_docs_query.filter(testing=False)
-                my_docs_query = my_docs_query.filter(document__document_type__testing=False)
-                work_docs_query = work_docs_query.filter(document__document_type__testing=False)
 
             new_docs = [{  # Список документів, які може створити юзер
                 'id': doc_type.id,
@@ -1089,7 +1102,11 @@ def edms_my_docs(request):
                 'emp_seat_id': path.employee_seat.id,
                 'author': request.user.userprofile.pip,
                 'author_seat_id': path.employee_seat.id,
-            } for path in my_docs_query]
+            } for path in Document_Path.objects.filter(mark=1)
+                .filter(employee_seat__employee_id=request.user.userprofile.id)
+                .filter(document__testing=testing)
+                .filter(document__is_active=True)
+                .filter(document__closed=False)]
 
             work_docs = [{  # Список документів, що очікують на реакцію користувача
                 'id': demand.document.id,
@@ -1103,7 +1120,10 @@ def edms_my_docs(request):
                 'author_seat_id': demand.document.employee_seat_id,
                 'mark_demand_id': demand.id,
                 'phase_id': demand.phase_id,
-            } for demand in work_docs_query]
+            } for demand in Mark_Demand.objects
+                .filter(recipient_id__employee_id=request.user.userprofile.id)
+                .filter(document__testing=testing)
+                .filter(is_active=True).order_by('document_id')]
 
             return render(request, 'edms/my_docs/my_docs.html', {
                 'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
@@ -1170,21 +1190,16 @@ def edms_get_doc_type_modules(request, pk):
 def edms_get_drafts(request):
     try:
         if request.method == 'GET':
-            my_drafts_query = Document.objects\
-                .filter(employee_seat__employee_id=request.user.userprofile.id)\
-                .filter(is_draft=True)\
-                .filter(closed=False)
-
-            # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
-            if not testing:
-                my_drafts_query = my_drafts_query.filter(document_type__testing=False)
-
             my_drafts = [{  # Список документів, створених даним юзером
                 'id': draft.id,
                 'type': draft.document_type.description,
                 'type_id': draft.document_type.id,
                 'date': convert_to_localtime(draft.date, 'day'),
-            } for draft in my_drafts_query]
+            } for draft in Document.objects\
+                .filter(employee_seat__employee_id=request.user.userprofile.id)
+                .filter(is_draft=True)
+                .filter(testing=testing)
+                .filter(closed=False)]
 
             response = my_drafts if len(my_drafts) > 0 else []
 
@@ -1208,21 +1223,6 @@ def edms_archive(request):
     if request.method == 'GET':
         my_seats = get_my_seats(request.user.userprofile.id)
 
-        my_archive_query = Document_Path.objects.filter(mark=1) \
-            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id) \
-            .filter(document__is_active=False) \
-            .filter(document__closed=False)
-
-        work_archive_query = Document_Path.objects.distinct() \
-            .filter(employee_seat_id__employee_id=request.user.userprofile.id) \
-            .filter(document__closed=False) \
-            .exclude(document__employee_seat__employee=request.user.userprofile.id)  # Автор не користувач
-
-        # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
-        if not testing:
-            my_archive_query = my_archive_query.filter(document__document_type__testing=False)
-            work_archive_query = work_archive_query.filter(document__document_type__testing=False)
-
         my_archive = [{  # Список документів, створених даним юзером
             'id': path.document.id,
             'type': path.document.document_type.description,
@@ -1230,7 +1230,11 @@ def edms_archive(request):
             'date': convert_to_localtime(path.timestamp, 'day'),
             'emp_seat_id': path.employee_seat.id,
             'author_seat_id': path.employee_seat.id,
-        } for path in my_archive_query]
+        } for path in Document_Path.objects.filter(mark=1)
+            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)
+            .filter(document__testing=testing)
+            .filter(document__is_active=False)
+            .filter(document__closed=False)]
 
         work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
             'id': path.document_id,
@@ -1240,7 +1244,11 @@ def edms_archive(request):
             'emp_seat_id': path.employee_seat_id,
             'author': path.document.employee_seat.employee.pip,
             'author_seat_id': path.document.employee_seat_id,
-        } for path in work_archive_query]
+        } for path in Document_Path.objects.distinct()
+            .filter(employee_seat_id__employee_id=request.user.userprofile.id)
+            .filter(document__testing=testing)
+            .filter(document__closed=False)
+            .exclude(document__employee_seat__employee=request.user.userprofile.id)]
 
         # Позбавляємось дублікатів:
         work_archive = list({item["id"]: item for item in work_archive_with_duplicates}.values())
@@ -1276,15 +1284,6 @@ def edms_get_sub_docs(request, pk):
         if subs_list:
             for sub in subs_list:
 
-                docs_query = Document_Path.objects \
-                    .filter(mark_id=1) \
-                    .filter(employee_seat__seat_id=sub['id']) \
-                    .filter(document__closed=False) \
-
-                # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
-                if not testing:
-                    docs_query = docs_query.filter(document__document_type__testing=False)
-
                 docs = [{  # Список документів у роботі, створених підлеглими юзера
                     'id': path.document_id,
                     'type': path.document.document_type.description,
@@ -1295,7 +1294,11 @@ def edms_get_sub_docs(request, pk):
                     'dep': path.employee_seat.seat.department.name,
                     'emp_seat_id': int(pk),
                     'is_active': path.document.is_active,
-                } for path in docs_query]
+                } for path in Document_Path.objects
+                    .filter(mark_id=1)
+                    .filter(employee_seat__seat_id=sub['id'])
+                    .filter(document__testing=testing)
+                    .filter(document__closed=False)]
 
                 if docs:
                     for doc in docs:
