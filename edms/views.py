@@ -749,13 +749,13 @@ def edms_get_types(request, pk):
             } for doc_type in Document_Type.objects.filter(creator_id=seat_id)]
 
             # Відділ кадрів може змінювати свої документи та загальні (не створені іншими користувачами)
-            if request.user.userprofile.is_hr:
-                hr_doc_types = [{
-                    'id': doc_type.id,
-                    'description': doc_type.description,
-                    'creator': '',
-                } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=False)]
-                doc_types = doc_types + hr_doc_types
+            # if request.user.userprofile.is_hr:
+            #     hr_doc_types = [{
+            #         'id': doc_type.id,
+            #         'description': doc_type.description,
+            #         'creator': '',
+            #     } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=False)]
+            #     doc_types = doc_types + hr_doc_types
 
             return HttpResponse(json.dumps(doc_types))
 
