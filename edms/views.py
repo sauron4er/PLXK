@@ -17,7 +17,7 @@ from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, 
 from .forms import CarryOutItemsForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm
 # Модульна система:
-from .models import Document_Type_Module, Doc_Name, Doc_Preamble, Doc_Approval, Doc_Article, Doc_Article_Dep
+from .models import Module, Document_Type_Module, Doc_Name, Doc_Preamble, Doc_Approval, Doc_Article, Doc_Article_Dep
 from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate, Doc_Type_Unique_Number
 from .forms import NewArticleForm, NewArticleDepForm, NewApprovalForm, NewNameForm, NewPreambleForm, NewFileForm
 from .forms import NewTextForm, NewRecipientForm, NewDayForm, NewGateForm, FileNewPathForm
@@ -135,9 +135,7 @@ def get_responsible_deps(article_id):
     return deps
 
 
-# ---------------------------------------------------------------------------------------------------------------------
-# Функції фазової системи
-
+# Функції фазової системи ----------------------------------------------------------------------------------------------
 def send_email(email_type, recipients, doc_id):
     for recipient in recipients:
         emp_seat_id = vacation_check(recipient['id'])
@@ -151,8 +149,8 @@ def send_email(email_type, recipients, doc_id):
                 if email_type == 'new' \
                 else "Нова реакція на Ваш електронний документ"
 
-            # TO = 'sauron4er@gmail.com' if testing else mail
-            TO = 'sauron4er@gmail.com'
+            TO = 'sauron4er@gmail.com' if testing else mail
+            # TO = 'sauron4er@gmail.com'
 
             FROM = "it@lxk.com.ua"
 
@@ -375,8 +373,7 @@ def deactivate_doc_mark_demands(doc_request, doc_id):
         deactivate_mark_demand(doc_request, md['id'])
 
 
-# ---------- Обробка різних видів позначок:
-
+# Обробка різних видів позначок: ---------------------------------------------------------------------------------------
 def post_mark_delete(doc_request):
     delete_doc(doc_request, int(doc_request['document']))
     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
@@ -387,8 +384,7 @@ def post_mark_deactivate(doc_request):
     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
 
-# ---------------------------------------------------------------------------------------------------------------------
-# функції модульних документів
+# Функції модульних документів -----------------------------------------------------------------------------------------
 
 # Функція, яка додає у бд новий документ та повертає його id
 def post_document(request):
@@ -684,6 +680,7 @@ def edms_hr(request):
     return HttpResponse(status=405)
 
 
+# Адміністрування ------------------------------------------------------------------------------------------------------
 @login_required(login_url='login')
 def edms_administration(request):
     if request.method == 'GET':
@@ -779,6 +776,33 @@ def edms_get_type_info(request, pk):
         return HttpResponse(json.dumps(permissions))
 
 
+@login_required(login_url='login')
+def edms_get_modules_phases(request, pk):
+    doc_type_id = Document_Type.objects.filter(id=pk).values_list('id', flat=True)
+    modules = [{
+        'id': module.id,
+        'name': module.name,
+        'description': module.description,
+        'field_name': ''
+    } for module in Module.objects
+        .filter(is_active=True)]
+
+    phases = [{
+        'id': phase.id,
+        'name': phase.mark,
+    } for phase in Mark.objects
+        .filter(is_phase=True)
+        .filter(is_active=True)]
+
+    response = {
+        'modules': modules,
+        'phases': phases
+    }
+
+    return HttpResponse(json.dumps(response))
+
+
+# Відділ кадрів --------------------------------------------------------------------------------------------------------
 @login_required(login_url='login')
 def edms_hr_emp(request, pk):       # changes in employee row
     post = get_object_or_404(accounts.UserProfile, pk=pk)

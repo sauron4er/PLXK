@@ -47,6 +47,9 @@ class Document_Type(models.Model):
 
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
+    # is_phase - Чи може ця позначка бути фазою?
+    # Наприклад, "Закрито" - це не фаза, а лише позначка, яка може поставитися на будь-якій фазі
+    is_phase = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -136,6 +139,8 @@ class File(models.Model):
 # Список модулів (прикріплення файлів, погоджуючі, пункти, резолюції тощо)
 class Module(models.Model):
     module = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=500, null=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -144,7 +149,7 @@ class Document_Type_Module(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='module_types')
     module = models.ForeignKey(Module, related_name='type_modules')
     queue = models.IntegerField()
-    field_name = models.CharField(max_length=500)
+    field_name = models.CharField(max_length=50)
     required = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 

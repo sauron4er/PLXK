@@ -9,10 +9,11 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 
 import SeatChooser from '../_else/seat_chooser';
 import DxTable from '../_else/dx_table';
-import DocType from './doc_type';
+import Constructor from './constructor';
 
 class Administration extends React.Component {
   state = {
+    editing_view: false,
     doc_types: [],
     seat_id: 0,
     doc_type: '', // Обраний документ
@@ -69,49 +70,47 @@ class Administration extends React.Component {
 
   // Виклик інформації про тип документу
   onRowClick = (clicked_row) => {
-    this.setState({doc_type: clicked_row});
+    this.setState({
+      doc_type: clicked_row
+    });
   };
 
   onClick = (e) => {
     e.preventDefault();
-    this.setState({
-      doc_type: 0
-    });
+    this.setState((prevState) => ({
+      doc_type: prevState.doc_type === '' ? {id: 0, description: ''} : ''
+    }));
   };
 
   render() {
     const {doc_type, doc_types, doc_types_columns, main_div_height} = this.state;
     return (
-      <Fragment>
-        <div className='d-flex justify-content-between'>
-          <button className='btn btn-sm btn-outline-success' onClick={this.onClick}>
-            Створити новий вид документу
-          </button>
-          <SeatChooser onSeatChange={this.onSeatChange} />
-        </div>
-        <div className='row css_main_div' ref={this.getMainDivRef}>
-          <div className='col-lg-4'>
-            Редагувати документ:
-            <DxTable
-              rows={doc_types}
-              columns={doc_types_columns}
-              defaultSorting={[{columnName: 'description', direction: 'asc'}]}
-              onRowClick={this.onRowClick}
-              height={main_div_height}
-              filter
-            />
+      <Choose>
+        <When condition={doc_type === ''}>
+          <div className='d-flex justify-content-between'>
+            <button className='btn btn-sm btn-outline-secondary' onClick={this.onClick}>
+              Створити новий вид документу
+            </button>
+            <SeatChooser onSeatChange={this.onSeatChange} />
           </div>
-          <div className='col-lg-8 css_height_100'>
-            <Choose>
-              <When condition={doc_type !== ''}>
-                <DocType docType={doc_type} />
-              </When>
-              <Otherwise> </Otherwise>
-            </Choose>
-            {/*<DocTypeInfo doc_type={doc_type} />*/}
+          <div className='row css_main_div' ref={this.getMainDivRef}>
+            <div className='col-lg-4'>
+              Редагувати вид документу:
+              <DxTable
+                rows={doc_types}
+                columns={doc_types_columns}
+                defaultSorting={[{columnName: 'description', direction: 'asc'}]}
+                onRowClick={this.onRowClick}
+                height={main_div_height}
+                filter
+              />
+            </div>
           </div>
-        </div>
-      </Fragment>
+        </When>
+        <Otherwise>
+          <Constructor docType={doc_type} onClick={this.onClick} />
+        </Otherwise>
+      </Choose>
     );
   }
 }

@@ -10,7 +10,7 @@ class SeatChooser extends React.Component {
     if (a.length !== b.length) {
       return false;
     }
-    
+
     for (let i = 0; i < a.length; i++) {
       if (a.id !== b.id) {
         return false;
@@ -41,9 +41,11 @@ class SeatChooser extends React.Component {
 
   // при зміні ід посади передаємо нове ід у батьківський компонент.
   componentDidUpdate(prevProps, prevState, snapshot) {
-    const {my_seat_id} = this.state;
-    if (my_seat_id !== prevState.my_seat_id) {
-      this.props.onSeatChange(parseInt(my_seat_id));
+    if (this.state.my_seat_id !== JSON.parse(localStorage.getItem('my_seat'))) {
+      const {my_seat_id} = this.state;
+      if (my_seat_id !== prevState.my_seat_id) {
+        this.props.onSeatChange(parseInt(my_seat_id));
+      }
     }
   }
 
