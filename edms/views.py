@@ -27,7 +27,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 
 def convert_to_localtime(utctime, frmt):
@@ -779,24 +779,50 @@ def edms_get_type_info(request, pk):
 @login_required(login_url='login')
 def edms_get_modules_phases(request, pk):
     doc_type_id = Document_Type.objects.filter(id=pk).values_list('id', flat=True)
-    modules = [{
-        'id': module.id,
-        'name': module.name,
-        'description': module.description,
-        'field_name': ''
-    } for module in Module.objects
-        .filter(is_active=True)]
+    if doc_type_id[0] == 0:
+        # Якщо ід = 0, значить створюється новий документ, показуємо всі модулі і фази в 'left'
+        modules_left = [{
+            'id': module.id,
+            'name': module.name,
+            'description': module.description,
+            'field_name': ''
+        } for module in Module.objects
+            .filter(is_active=True)]
 
-    phases = [{
-        'id': phase.id,
-        'name': phase.mark,
-    } for phase in Mark.objects
-        .filter(is_phase=True)
-        .filter(is_active=True)]
+        phases_left = [{
+            'id': phase.id,
+            'name': phase.mark,
+        } for phase in Mark.objects
+            .filter(is_phase=True)
+            .filter(is_active=True)]
+
+        modules_chosen = []
+        phases_chosen = []
+    else:
+        # Якщо ід != 0, значить редагується старий документ, розділяємо модулі на 'chosen' i 'left'
+        modules_left = [{
+            'id': module.id,
+            'name': module.name,
+            'description': module.description,
+            'field_name': ''
+        } for module in Module.objects
+            .filter(is_active=True)]
+
+        phases_left = [{
+            'id': phase.id,
+            'name': phase.mark,
+        } for phase in Mark.objects
+            .filter(is_phase=True)
+            .filter(is_active=True)]
+
+        modules_chosen = []
+        phases_chosen = []
 
     response = {
-        'modules': modules,
-        'phases': phases
+        'modules_chosen': modules_chosen,
+        'modules_left': modules_left,
+        'phases_chosen': phases_chosen,
+        'phases_left': phases_left
     }
 
     return HttpResponse(json.dumps(response))
@@ -1147,7 +1173,8 @@ def edms_my_docs(request):
             } for demand in Mark_Demand.objects
                 .filter(recipient_id__employee_id=request.user.userprofile.id)
                 .filter(document__testing=testing)
-                .filter(is_active=True).order_by('document_id')]
+                .filter(is_active=True).filter(document__closed=False)
+                .order_by('document_id')]
 
             return render(request, 'edms/my_docs/my_docs.html', {
                 'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs

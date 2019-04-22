@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import Item from './dnd_item';
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
@@ -138,7 +139,7 @@ class Modules extends Component {
                           {...provided.dragHandleProps}
                           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                         >
-                          {item.name}
+                          <Item item={item} index={index} dndId={'chosen'} />
                         </div>
                       )}
                     </Draggable>
@@ -162,33 +163,7 @@ class Modules extends Component {
                           {...provided.dragHandleProps}
                           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                         >
-                          <Choose>
-                            <When condition={item.description}>
-                              <div className='accordion' id={'accordion' + index}>
-                                <div
-                                  className='d-flex'
-                                  data-toggle='collapse'
-                                  data-target={'#collapse' + index}
-                                  aria-expanded='false'
-                                  aria-controls={'collapse' + index}
-                                >
-                                  {item.name}
-                                  <div className='ml-auto'>
-                                    <FontAwesomeIcon icon={faAngleDown} />
-                                  </div>
-                                </div>
-
-                                <div
-                                  id={'collapse' + index}
-                                  className='collapse'
-                                  data-parent={'#accordion' + index}
-                                >
-                                  <small>{item.description}</small>
-                                </div>
-                              </div>
-                            </When>
-                            <Otherwise>{item.name}</Otherwise>
-                          </Choose>
+                          <Item item={item} index={index} dndId={'left'} />
                         </div>
                       )}
                     </Draggable>

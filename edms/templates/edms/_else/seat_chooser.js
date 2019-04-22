@@ -23,8 +23,9 @@ class SeatChooser extends React.Component {
   componentDidMount() {
     if (
       JSON.parse(localStorage.getItem('my_seats')) == null ||
-      !this.compareById(window.my_seats[0], JSON.parse(localStorage.getItem('my_seats'))[0])
+      !this.compareById(window.my_seats, JSON.parse(localStorage.getItem('my_seats')))
     ) {
+      
       this.setState({
         my_seat_id: window.my_seats[0].id
       });

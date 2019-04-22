@@ -59,8 +59,10 @@ class Constructor extends React.Component {
       .then((response) => {
         if (response.data) {
           this.setState({
-            left_modules: response.data.modules,
-            left_phases: response.data.phases,
+            chosen_modules: response.data.chosen_modules,
+            left_modules: response.data.left_modules,
+            chosen_phases: response.data.chosen_phases,
+            left_phases: response.data.left_phases,
             loading: false
           });
           return 0;
@@ -181,12 +183,18 @@ class Constructor extends React.Component {
               </div>
               <hr />
               <div className='font-weight-bold'>Модулі:</div>
-              <Modules
+              <DragNDrop
                 chosen={chosen_modules}
                 left={left_modules}
                 changeLists={this.changeLists}
                 id='modules'
               />
+              {/*<Modules*/}
+                {/*chosen={chosen_modules}*/}
+                {/*left={left_modules}*/}
+                {/*changeLists={this.changeLists}*/}
+                {/*id='modules'*/}
+              {/*/>*/}
             </When>
             <When condition={step === 3}>
               <div>
