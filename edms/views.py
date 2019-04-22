@@ -27,7 +27,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = True
+testing = False
 
 
 def convert_to_localtime(utctime, frmt):
