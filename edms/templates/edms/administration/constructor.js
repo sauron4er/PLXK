@@ -16,10 +16,10 @@ class Constructor extends React.Component {
     loading: true,
     step: 1,
     doc_type_name: '',
-    chosen_modules: [],
-    left_modules: [],
-    chosen_phases: [],
-    left_phases: []
+    modules_chosen: [],
+    modules_left: [],
+    phases_chosen: [],
+    phases_left: []
   };
 
   onChange = (event) => {
@@ -59,10 +59,10 @@ class Constructor extends React.Component {
       .then((response) => {
         if (response.data) {
           this.setState({
-            chosen_modules: response.data.chosen_modules,
-            left_modules: response.data.left_modules,
-            chosen_phases: response.data.chosen_phases,
-            left_phases: response.data.left_phases,
+            modules_chosen: response.data.modules_chosen,
+            modules_left: response.data.modules_left,
+            phases_chosen: response.data.phases_chosen,
+            phases_left: response.data.phases_left,
             loading: false
           });
           return 0;
@@ -76,13 +76,13 @@ class Constructor extends React.Component {
   changeLists = (lists, id) => {
     if (id === 'modules') {
       this.setState({
-        chosen_modules: lists.chosen,
-        left_modules: lists.left
+        modules_chosen: lists.chosen,
+        modules_left: lists.left
       });
     } else if (id === 'phases') {
       this.setState({
-        chosen_phases: lists.chosen,
-        left_phases: lists.left
+        phases_chosen: lists.chosen,
+        phases_left: lists.left
       });
     }
   };
@@ -100,7 +100,7 @@ class Constructor extends React.Component {
         }
         break;
       case 2:
-        if (this.state.chosen_modules.length === 0) {
+        if (this.state.modules_chosen.length === 0) {
           this.notify('Оберіть модулі');
         } else {
           this.setState((prevState) => ({
@@ -109,7 +109,7 @@ class Constructor extends React.Component {
         }
         break;
       case 3:
-        if (this.state.chosen_phases.length === 0) {
+        if (this.state.phases_chosen.length === 0) {
           this.notify('Оберіть фази');
         } else {
           this.setState((prevState) => ({
@@ -145,10 +145,10 @@ class Constructor extends React.Component {
       loading,
       step,
       doc_type_name,
-      left_modules,
-      chosen_modules,
-      left_phases,
-      chosen_phases
+      modules_left,
+      modules_chosen,
+      phases_left,
+      phases_chosen
     } = this.state;
     return (
       <Choose>
@@ -184,8 +184,8 @@ class Constructor extends React.Component {
               <hr />
               <div className='font-weight-bold'>Модулі:</div>
               <DragNDrop
-                chosen={chosen_modules}
-                left={left_modules}
+                chosen={modules_chosen}
+                left={modules_left}
                 changeLists={this.changeLists}
                 id='modules'
               />
@@ -210,8 +210,8 @@ class Constructor extends React.Component {
               <hr />
               <div className='font-weight-bold'>Фази:</div>
               <DragNDrop
-                chosen={chosen_phases}
-                left={left_phases}
+                chosen={phases_chosen}
+                left={phases_left}
                 changeLists={this.changeLists}
                 id='phases'
               />

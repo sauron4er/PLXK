@@ -149,7 +149,7 @@ def send_email(email_type, recipients, doc_id):
                 if email_type == 'new' \
                 else "Нова реакція на Ваш електронний документ"
 
-            TO = 'sauron4er@gmail.com' if testing else mail
+            TO = 'sauron4er@gmail.com' if testing is True else mail
             # TO = 'sauron4er@gmail.com'
 
             FROM = "it@lxk.com.ua"
@@ -783,27 +783,50 @@ def edms_get_type_info(request, pk):
 @login_required(login_url='login')
 def edms_get_modules_phases(request, pk):
     doc_type_id = Document_Type.objects.filter(id=pk).values_list('id', flat=True)
-    if doc_type_id[0] == 0:
-        # Якщо ід = 0, значить створюється новий документ, показуємо всі модулі і фази в 'left'
-        modules_left = [{
+    if doc_type_id:
+        # Якщо ід != 0, значить редагується старий документ, розділяємо модулі на 'chosen' i 'left'
+        modules_all = [{
             'id': module.id,
             'name': module.name,
             'description': module.description,
-            'field_name': ''
+            # 'field_name': ''
         } for module in Module.objects
             .filter(is_active=True)]
 
-        phases_left = [{
+        modules_chosen = [{
+            'id': doc_type_module.module.id,
+            'name': doc_type_module.module.name,
+            'description': doc_type_module.module.description,
+            # 'field_name': doc_type_module.field_name
+        } for doc_type_module in Document_Type_Module.objects
+            .filter(document_type_id=doc_type_id[0])
+            .filter(is_active=True)]
+
+        modules_left = []
+        for module in modules_all:
+            if module not in modules_chosen:
+                modules_left.append(module)
+
+        phases_all = [{
             'id': phase.id,
             'name': phase.mark,
         } for phase in Mark.objects
             .filter(is_phase=True)
             .filter(is_active=True)]
 
-        modules_chosen = []
-        phases_chosen = []
+        phases_chosen = [{
+            'id': doc_type_phase.mark.id,
+            'name': doc_type_phase.mark.mark,
+        } for doc_type_phase in Doc_Type_Phase.objects
+            .filter(document_type_id=doc_type_id[0])
+            .filter(is_active=True)]
+
+        phases_left = []
+        for phase in phases_all:
+            if phase not in phases_chosen:
+                phases_left.append(phase)
     else:
-        # Якщо ід != 0, значить редагується старий документ, розділяємо модулі на 'chosen' i 'left'
+        # Якщо ід = 0, значить створюється новий документ, показуємо всі модулі і фази в 'left'
         modules_left = [{
             'id': module.id,
             'name': module.name,
@@ -1397,7 +1420,10 @@ def edms_mark(request):
                     .filter(phase__required=True)\
                     .filter(is_active=True)\
                     .count()
-                if remaining_required_md == 0:
+
+                # При позначці "Ознайомлено" не переходимо на наступну фазу,
+                # тому що ця позначка може залишитися з попередньої фази і тоді вона буде знов повертати на теперішню
+                if remaining_required_md == 0 and int(doc_request['mark']) != 8:
                     this_phase = Mark_Demand.objects.values_list('phase__phase', flat=True).filter(id=doc_request['mark_demand_id'])[0]
                     new_phase(doc_request, this_phase + 1)
 

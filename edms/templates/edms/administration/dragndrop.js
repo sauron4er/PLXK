@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import {faAngleDown} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import Item from './dnd_item';
+import Item from './dragndrop_item';
 
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
