@@ -12,7 +12,7 @@ class SeatChooser extends React.Component {
     }
 
     for (let i = 0; i < a.length; i++) {
-      if (a.id !== b.id) {
+      if (a[i].id !== b[i].id) {
         return false;
       }
     }
@@ -25,7 +25,6 @@ class SeatChooser extends React.Component {
       JSON.parse(localStorage.getItem('my_seats')) == null ||
       !this.compareById(window.my_seats, JSON.parse(localStorage.getItem('my_seats')))
     ) {
-      
       this.setState({
         my_seat_id: window.my_seats[0].id
       });

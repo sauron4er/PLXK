@@ -31,7 +31,8 @@ class RecipientChief extends React.Component {
     const {name, seat, id} = this.props.recipientChief;
     const {fieldName, onChange} = this.props;
     return (
-      <If condition={chiefs.length > 0}>
+      <Choose>
+      <When condition={chiefs && chiefs.length > 0}>
         <label className='full_width' htmlFor='recipient_chief_select'>
           {fieldName}:
           <select
@@ -53,7 +54,12 @@ class RecipientChief extends React.Component {
             })}
           </select>
         </label>
-      </If>
+      </When>
+        <Otherwise>
+          <small className='text-danger'>У базу даних не внесено посаду Вашого керівника. Зверніться до адміністратора.</small>
+          
+        </Otherwise>
+        </Choose>
     );
   }
 
