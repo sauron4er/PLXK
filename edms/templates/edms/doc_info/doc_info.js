@@ -11,6 +11,8 @@ import Flow from './flow';
 import './doc_info.css';
 import '../_else/loader_style.css';
 import axios from 'axios';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -119,7 +121,7 @@ class DocInfo extends React.Component {
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response.data,
-            show_resolutions_area: false,
+            show_resolutions_area: false
           });
           const doc_id = doc.id;
           const author_id = doc.author_seat_id;
@@ -173,7 +175,9 @@ class DocInfo extends React.Component {
       ) {
         return (
           <div className='css_main'>
-            Обраний документ:
+            <small>Посилання: http://plhk.com.ua/edms/my_docs/{this.props.doc.id}</small>
+            <div>Обраний документ: </div>
+
             {/*Початкова інфа про документ:*/}
             <div className='css_border bg-light p-2 mt-2 mr-1'>
               <Info doc={this.props.doc} info={this.state.info} />
@@ -183,7 +187,7 @@ class DocInfo extends React.Component {
               <div className='css_border bg-light p-2 mt-1 mr-1'>
                 <Buttons
                   doc={this.props.doc}
-                  isChief={this.state.direct_subs.length > 0}
+                  isChief={this.props.direct_subs.length > 0}
                   deletable={this.state.deletable}
                   onClick={this.handleMark}
                 />

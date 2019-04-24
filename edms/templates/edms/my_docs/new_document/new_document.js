@@ -313,7 +313,6 @@ class NewDocument extends React.Component {
 
             <div className='modal-body'>
               <For each='module' of={type_modules}>
-                {/*<Module key={module.queue} moduleName={module.module} />*/}
                 <Choose>
                   <When condition={module.module === 'name'}>
                     <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
@@ -382,7 +381,7 @@ class NewDocument extends React.Component {
                       fieldName={module.field_name}
                     />
                   </When>
-                  <Otherwise>{/*<div>{module.module}</div>*/}</Otherwise>
+                  <Otherwise> </Otherwise>
                 </Choose>
               </For>
             </div>

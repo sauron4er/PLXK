@@ -155,10 +155,10 @@ def send_email(email_type, recipients, doc_id):
             FROM = "it@lxk.com.ua"
 
             text = "Вашої реакції очікує новий документ. " \
-                   "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" \
+                   "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + doc_id + "" \
                 if email_type == 'new' \
                 else "У Вашого електронного документу (№ " + doc_id + ") з’явилася нова позначка. " \
-                     "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/"
+                     "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + doc_id + ""
 
             BODY = u"\r\n".join((
                 "From: " + FROM,
@@ -168,11 +168,11 @@ def send_email(email_type, recipients, doc_id):
                 text
             )).encode('utf-8').strip()
 
-            if not testing:
-                server = smtplib.SMTP(HOST)
-                server.login('lxk_it', 'J2NYEHb50nymRF1L')
-                server.sendmail(FROM, [TO], BODY)
-                server.quit()
+            # if not testing:
+            server = smtplib.SMTP(HOST)
+            server.login('lxk_it', 'J2NYEHb50nymRF1L')
+            server.sendmail(FROM, [TO], BODY)
+            server.quit()
 
 
 def post_path(doc_request):
@@ -361,7 +361,8 @@ def new_phase(doc_request, phase_number):
             for recipient in mark_recipients:
                 post_mark_demand(doc_request, recipient['id'], phase_id, phase_id_mark)
 
-        send_email('new', mail_recipients, doc_request['document'])
+        if mail_recipients:
+            send_email('new', mail_recipients, doc_request['document'])
         # TODO чому з’являється помилка на обробці охорони???
     else:
         test = 'test'
@@ -800,7 +801,7 @@ def edms_get_modules_phases(request, pk):
             # 'field_name': doc_type_module.field_name
         } for doc_type_module in Document_Type_Module.objects
             .filter(document_type_id=doc_type_id[0])
-            .filter(is_active=True)]
+            .filter(is_active=True).order_by('queue')]
 
         modules_left = []
         for module in modules_all:
@@ -819,7 +820,8 @@ def edms_get_modules_phases(request, pk):
             'name': doc_type_phase.mark.mark,
         } for doc_type_phase in Doc_Type_Phase.objects
             .filter(document_type_id=doc_type_id[0])
-            .filter(is_active=True)]
+            .filter(is_active=True)
+            .exclude(phase=0).order_by('phase')]
 
         phases_left = []
         for phase in phases_all:
@@ -1437,10 +1439,12 @@ def edms_mark(request):
                 # Деактивуємо всі MarkDemands даної фази, перетворюємо документ на чернетку
                 test = 'test'
 
-            elif doc_request['mark'] == '7':  # Закрито
+            # Закрито
+            elif doc_request['mark'] == '7':
                 post_mark_deactivate(doc_request)
 
-            elif doc_request['mark'] == '10':  # Резолюція
+            # Резолюція
+            elif doc_request['mark'] == '10':
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
                 # Створюємо MarkDemand для кожної резолюції з незмінною фазою:
@@ -1448,6 +1452,7 @@ def edms_mark(request):
                 for resolution in resolutions:
                     doc_request.update({'comment': resolution['comment']})
                     post_mark_demand(doc_request, resolution['recipient_id'], doc_request['phase_id'], 11)
+                    send_email('new', [{'id': resolution['recipient_id']}], doc_request['document'])
 
             elif doc_request['mark'] == '13':  # Видалено
                 deletable = Document_Path.objects \

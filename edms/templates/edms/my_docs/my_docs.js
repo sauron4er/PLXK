@@ -20,6 +20,7 @@ class MyDocs extends React.Component {
     my_docs: [], // Документи, створені користувачем
     work_docs: [], // Документи, що чекають на реакцію користувача
     draft_view: false, // true - покаже список чернеток, сховає документи
+    open_doc_id: 0,
   };
 
   getDirectSubs = (seat_id) => {
@@ -67,6 +68,16 @@ class MyDocs extends React.Component {
     const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
     this.getDirectSubs(seat_id);
     this.updateLists(seat_id);
+    
+    // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
+    const arr = window.location.href.split('/');
+    const last_href_piece = parseInt(arr[arr.length-1]);
+    const is_link = !isNaN(last_href_piece);
+    if (is_link) {
+      this.setState({
+        open_doc_id: last_href_piece,
+      })
+    }
   }
   
   // Показ чернеток або документів
@@ -143,6 +154,7 @@ class MyDocs extends React.Component {
               acting_docs={this.state.acting_docs}
               removeDoc={this.removeDoc}
               direct_subs={this.state.direct_subs}
+              openDocId={this.state.open_doc_id}
             />
           </When>
           <Otherwise>

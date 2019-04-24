@@ -104,8 +104,7 @@ class Drafts extends React.Component {
           />
         </div>
         <Choose>
-          <When condition={selected_draft.type_id === 0}> </When>
-          <Otherwise>
+          <When condition={selected_draft.type_id !== 0}>
             <NewDocument
               docId={selected_draft.id}
               addDoc={this.props.addDoc}
@@ -115,7 +114,8 @@ class Drafts extends React.Component {
               docTypeId={selected_draft.type_id}
               onCloseModal={this.onCloseModal}
             />
-          </Otherwise>
+          </When>
+          <Otherwise> </Otherwise>
         </Choose>
       </div>
     );
