@@ -137,42 +137,43 @@ def get_responsible_deps(article_id):
 
 # Функції фазової системи ----------------------------------------------------------------------------------------------
 def send_email(email_type, recipients, doc_id):
-    for recipient in recipients:
-        emp_seat_id = vacation_check(recipient['id'])
-        recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
-        mail = recipient_mail[0]['employee__user__email']
+    if not testing:
+        for recipient in recipients:
+            emp_seat_id = vacation_check(recipient['id'])
+            recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
+            mail = recipient_mail[0]['employee__user__email']
 
-        if mail:
-            HOST = "imap.polyprom.com"
+            if mail:
+                HOST = "imap.polyprom.com"
 
-            SUBJECT = "Новий електронний документ" \
-                if email_type == 'new' \
-                else "Нова реакція на Ваш електронний документ"
+                SUBJECT = "Новий електронний документ" \
+                    if email_type == 'new' \
+                    else "Нова реакція на Ваш електронний документ"
 
-            TO = 'sauron4er@gmail.com' if testing is True else mail
-            # TO = 'sauron4er@gmail.com'
+                TO = mail
+                # TO = 'sauron4er@gmail.com'
 
-            FROM = "it@lxk.com.ua"
+                FROM = "it@lxk.com.ua"
 
-            text = "Вашої реакції очікує новий документ. " \
-                   "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + doc_id + "" \
-                if email_type == 'new' \
-                else "У Вашого електронного документу (№ " + doc_id + ") з’явилася нова позначка. " \
-                     "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + doc_id + ""
+                if email_type == 'new':
+                    text = "Вашої реакції очікує новий документ. " \
+                           "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + str(doc_id) + ""
+                else:
+                    text = "У Вашого електронного документу (№ " + str(doc_id) + ") з’явилася нова позначка. " \
+                           "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + str(doc_id) + ""
 
-            BODY = u"\r\n".join((
-                "From: " + FROM,
-                "To: " + TO,
-                "Subject: " + SUBJECT,
-                "",
-                text
-            )).encode('utf-8').strip()
+                BODY = u"\r\n".join((
+                    "From: " + FROM,
+                    "To: " + TO,
+                    "Subject: " + SUBJECT,
+                    "",
+                    text
+                )).encode('cp1251').strip()
 
-            # if not testing:
-            server = smtplib.SMTP(HOST)
-            server.login('lxk_it', 'J2NYEHb50nymRF1L')
-            server.sendmail(FROM, [TO], BODY)
-            server.quit()
+                server = smtplib.SMTP(HOST)
+                server.login('lxk_it', 'J2NYEHb50nymRF1L')
+                server.sendmail(FROM, [TO], BODY)
+                server.quit()
 
 
 def post_path(doc_request):
