@@ -14,12 +14,14 @@ div.css_mark {
 	-webkit-border-radius: 5px; }
 
 div.css_path {
+    border: solid lightgray 1px;
     background-color: #ccffcc;
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
 div.css_flow {
+    border: solid lightgray 1px;
     background-color: #ffffcc;
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;

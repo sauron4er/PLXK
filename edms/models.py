@@ -64,6 +64,8 @@ class Doc_Type_Phase(models.Model):
     sole = models.BooleanField(
         default=False
     )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
+    is_approve_chained = models.BooleanField(default=False)  # True - вимагає погодження у кожного з ланки керівників аж до отримувача
+    testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 
@@ -149,8 +151,9 @@ class Document_Type_Module(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='module_types')
     module = models.ForeignKey(Module, related_name='type_modules')
     queue = models.IntegerField()
-    field_name = models.CharField(max_length=50)
+    field_name = models.CharField(max_length=200)
     required = models.BooleanField(default=False)
+    testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 

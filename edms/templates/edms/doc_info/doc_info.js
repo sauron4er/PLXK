@@ -11,8 +11,7 @@ import Flow from './flow';
 import './doc_info.css';
 import '../_else/loader_style.css';
 import axios from 'axios';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import DocInfoPrint from '../doc_info/doc_info_print';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -175,8 +174,15 @@ class DocInfo extends React.Component {
       ) {
         return (
           <div className='css_main'>
-            <small>Посилання: http://plhk.com.ua/edms/my_docs/{this.props.doc.id}</small>
-            <div>Обраний документ: </div>
+            <div className='d-flex justify-content-between mr-2'>
+              <div>
+                <small>Посилання: http://plhk.com.ua/edms/my_docs/{this.props.doc.id}</small>
+                <div>Обраний документ: </div>
+              </div>
+              <div>
+                <DocInfoPrint doc={this.props.doc} info={this.state.info} />
+              </div>
+            </div>
 
             {/*Початкова інфа про документ:*/}
             <div className='css_border bg-light p-2 mt-2 mr-1'>

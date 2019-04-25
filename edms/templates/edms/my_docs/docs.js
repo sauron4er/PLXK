@@ -32,7 +32,7 @@ class Docs extends React.Component {
     modal_row: '',
     doc_info: '',
     carry_out_items: [],
-    main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
   };
 
   onChange = (event) => {
@@ -65,7 +65,7 @@ class Docs extends React.Component {
       // Якщо знайшли документ, показуємо його:
       if (doc_info !== '') {
         this.setState({
-          row: doc_info,
+          row: doc_info
         });
       }
     }
@@ -137,7 +137,7 @@ class Docs extends React.Component {
       my_docs_columns,
       my_docs_col_width,
       work_docs_col_width,
-      main_div_height,
+      main_div_height
     } = this.state;
 
     return (

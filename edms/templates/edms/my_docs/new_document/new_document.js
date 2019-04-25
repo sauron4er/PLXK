@@ -325,7 +325,7 @@ class NewDocument extends React.Component {
                     />
                   </When>
                   <When condition={module.module === 'text'}>
-                    <Text onChange={this.onChange} text={text} fieldName={module.field_name} />
+                    <Text onChange={this.onChange} text={text} fieldName={module.field_name} id={module.id} />
                   </When>
                   <When condition={module.module === 'recipient'}>
                     <Recipient

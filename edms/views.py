@@ -84,13 +84,28 @@ def get_chiefs_list(seat):
         return None
 
 
-# Функція, яка повертає список всіх актуальних посад юзера
+# Повертає прізвище та посаду безпосереднього керівника даної посади
+def get_chief_emp_seat(emp_seat):
+    chief_seat = Seat.objects.values_list('chief_id', flat=True).filter(id=emp_seat)
+    if chief_seat:
+        chief_emp_seat = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(seat=chief_seat[0]).filter(is_active=True)
+        if chief_emp_seat:
+            # chief_name_and_seat = chief_emp_seat[0] + ', ' + chief_seat[0]
+            chief_name_and_seat = ''
+            return chief_name_and_seat
+    return ''
+
+
+# Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
 def get_my_seats(emp_id):
     my_seats = [{  # Список посад юзера
         'id': empSeat.id,
         'seat_id': empSeat.seat_id,
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
     } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
+
+    # for seat in my_seats:
+    #     get_chief_emp_seat(seat['seat_id'])
     return my_seats
 
 
@@ -1255,15 +1270,28 @@ def edms_my_docs(request):
 def edms_get_doc_type_modules(request, pk):
     if request.method == 'GET':
         doc_type = get_object_or_404(Document_Type, pk=pk)
+        # doc_type_modules = [{
+        #     'module': type_module.module.module,
+        #     'field_name': None if type_module.field_name is None else type_module.field_name,
+        #     'required': type_module.required,
+        # } for type_module in Document_Type_Module.objects
+        #     .filter(document_type_id=doc_type).filter(testing=False)
+        #     .filter(is_active=True)
+        #     .order_by('queue')]
+
+        doc_type_modules_query = Document_Type_Module.objects.filter(document_type_id=doc_type) \
+            .filter(is_active=True).order_by('queue')
+
+        if not testing:
+            doc_type_modules_query = doc_type_modules_query.filter(testing=False)
+
         doc_type_modules = [{
+            'id': type_module.id,
             'module': type_module.module.module,
             'field_name': None if type_module.field_name is None else type_module.field_name,
-            # 'queue': type_module.queue,
             'required': type_module.required,
-        } for type_module in Document_Type_Module.objects
-            .filter(document_type_id=doc_type)
-            .filter(is_active=True)
-            .order_by('queue')]
+        } for type_module in doc_type_modules_query]
+
         return HttpResponse(json.dumps(doc_type_modules))
 
 
