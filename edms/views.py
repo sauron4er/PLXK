@@ -27,7 +27,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = True
+testing = False
 
 
 def convert_to_localtime(utctime, frmt):
@@ -111,9 +111,10 @@ def get_my_seats(emp_id):
 
     for emp_seat in my_seats:
         chief = get_chief_emp_seat(emp_seat['id'])
-        emp_seat.update({
-            'chief': chief['name'] + ', ' + chief['seat']
-        })
+        if chief:
+            emp_seat.update({
+                'chief': chief['name'] + ', ' + chief['seat']
+            })
     return my_seats
 
 
