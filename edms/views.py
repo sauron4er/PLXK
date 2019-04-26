@@ -27,7 +27,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 
 def convert_to_localtime(utctime, frmt):
@@ -85,14 +85,19 @@ def get_chiefs_list(seat):
 
 
 # Повертає прізвище та посаду безпосереднього керівника даної посади
-def get_chief_emp_seat(emp_seat):
-    chief_seat = Seat.objects.values_list('chief_id', flat=True).filter(id=emp_seat)
-    if chief_seat:
-        chief_emp_seat = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(seat=chief_seat[0]).filter(is_active=True)
-        if chief_emp_seat:
-            # chief_name_and_seat = chief_emp_seat[0] + ', ' + chief_seat[0]
-            chief_name_and_seat = ''
-            return chief_name_and_seat
+def get_chief_emp_seat(emp_seat_id):
+    chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat_id)
+    if chief_seat_id:
+        # Знаходимо людинопосаду начальника
+        chief = [{
+            'emp_seat_id': empSeat.id,
+            'name': empSeat.employee.pip,
+            'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
+        } for empSeat in
+            Employee_Seat.objects.filter(seat_id=chief_seat_id).filter(is_active=True).filter(
+                employee__on_vacation=False)]
+        if chief:
+            return chief[0]  # БД має завжди повертати тільки один запис, який одночасно активний і не у відпустці
     return ''
 
 
@@ -104,8 +109,11 @@ def get_my_seats(emp_id):
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
     } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
 
-    # for seat in my_seats:
-    #     get_chief_emp_seat(seat['seat_id'])
+    for emp_seat in my_seats:
+        chief = get_chief_emp_seat(emp_seat['id'])
+        emp_seat.update({
+            'chief': chief['name'] + ', ' + chief['seat']
+        })
     return my_seats
 
 
@@ -319,7 +327,7 @@ def get_phase_id_recipients(phase_id, emp_seat):
 
 
 # Створення нової фази документа:
-def new_phase(doc_request, phase_number):
+def new_phase(doc_request, phase_number, mail_recipients):
     # Знаходимо id's відповідної фази:
     # За одним номером фази може бути декілька самих ід фаз.
     # Тобто, н-д, на першій фазі документ може йти відразу декільком отримувачам.
@@ -328,16 +336,36 @@ def new_phase(doc_request, phase_number):
         .filter(document_type_id=doc_type).filter(phase=phase_number)
 
     if phase_ids:
-        mail_recipients = []  # Список людинопосад, які отримують лист
         for phase_id in phase_ids:
-            # Визначаємо, яка позначка використовується у даній фазі:
-            phase_id_mark = Doc_Type_Phase.objects.values_list('mark_id', flat=True) \
-                .filter(id=phase_id) \
-                .filter(is_active=True)[0]
+            phase_info = [{
+                'mark_id': phase.mark_id,
+                'is_approve_chained': phase.is_approve_chained,
+            } for phase in Doc_Type_Phase.objects
+                .filter(id=phase_id)
+                .filter(is_active=True)]
 
             mark_recipients = []  # Список людинопосад, яким направляємо документ
 
-            if phase_id_mark == 6:
+            # Визначаємо чи ця позначка вимагає погодження всього ланцюжку керівників до потрапляння до адресата:
+            if phase_info[0]['is_approve_chained']:
+                # Витягуємо ід кінцевого отримувача із інфи про документ:
+                doc_recipient_emp_seat_id = Doc_Recipient.objects.values_list('recipient_id', flat=True)\
+                    .filter(document_id=doc_request['document']).filter(is_active=True)
+                if doc_recipient_emp_seat_id:
+                    # Визначаємо ід керівника автора позначки:
+                    chief = get_chief_emp_seat(doc_request['employee_seat'])
+                    # Якщо керівник автора є кінцевим отримувачем, відправляємо йому позначку з ід нової фази
+                    if doc_recipient_emp_seat_id[0] == chief['emp_seat_id']:
+                        mark_recipients.append({'id': doc_recipient_emp_seat_id})
+                    # Якщо ні, фазу не змінюємо, відправляємо керівнику, замінюємо ід отримувача листа
+                    else:
+                        mail_recipients = [{'id': chief['emp_seat_id']}]
+                        previous_phase_id = Doc_Type_Phase.objects.values_list('id', flat=True)\
+                            .filter(document_type_id=doc_type).filter(phase=phase_number-1)[0]
+                        post_mark_demand(doc_request, chief['emp_seat_id'], previous_phase_id, phase_info[0]['mark_id'])
+
+            # Визначаємо, яка позначка використовується у даній фазі:
+            elif phase_info[0]['mark_id'] == 6:
                 # Якщо позначка "Не заперечую", документ передається безпосередньому керівнику:
                 # Посада безпосереднього керівника:
                 chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(
@@ -375,11 +403,10 @@ def new_phase(doc_request, phase_number):
 
             # Додаємо кожного отримувача у MarkDemand:
             for recipient in mark_recipients:
-                post_mark_demand(doc_request, recipient['id'], phase_id, phase_id_mark)
+                post_mark_demand(doc_request, recipient['id'], phase_id, phase_info[0]['mark_id'])
 
         if mail_recipients:
             send_email('new', mail_recipients, doc_request['document'])
-        # TODO чому з’являється помилка на обробці охорони???
     else:
         test = 'test'
 
@@ -563,12 +590,12 @@ def post_recipient_chief(doc_request, recipient_chief, path):
     else:
         raise ValidationError('edms/views post_recipient_chief recipient_form invalid')
 
-    # Додаємо mark_demand
-    if doc_request['is_draft'] == 'false':
-        doc_request.update({'document_path': path.pk})
-        doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
-        phase_id = Doc_Type_Phase.objects.values_list('id', flat=True).filter(document_type_id=doc_type).filter(phase=1)[0]
-        post_mark_demand(doc_request, recipient_chief['id'], phase_id, 2)
+    # (Додаємо mark_demand) - тепер mark_demand завжди додається у new_phase
+    # if doc_request['is_draft'] == 'false':
+    #     doc_request.update({'document_path': path.pk})
+    #     doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
+    #     phase_id = Doc_Type_Phase.objects.values_list('id', flat=True).filter(document_type_id=doc_type).filter(phase=1)[0]
+    #     post_mark_demand(doc_request, recipient_chief['id'], phase_id, 2)
 
 
 # Функція, яка додає у бд преамбулу документу
@@ -1244,18 +1271,19 @@ def edms_my_docs(request):
 
             # Модульна система:
             # В деяких модулях прямо може бути вказано отримувачів,
-            # тому post_modules повертає їх, який може бути і пустий
+            # тому post_modules повертає їх в array, який може бути і пустий
             module_recipients = post_modules(doc_request, doc_files, new_path)
 
-            new_phase(doc_request, 1)
+            new_phase(doc_request, 1, module_recipients)
 
             # Деактивуємо стару чернетку
             if doc_request['old_draft_id'] != '0':
                 delete_doc(doc_request, int(doc_request['old_draft_id']))
 
-            # Відправляємо листи отримувачам з модулів,
-            if doc_request['is_draft'] == 'false' and module_recipients:
-                send_email('new', module_recipients, doc_request['document'])
+            # (Відправляємо листи отримувачам з модулів) -
+            # тепер направляємо список отримувачів у new_phase, звідки направляємо листи
+            # if doc_request['is_draft'] == 'false' and module_recipients:
+            #     send_email('new', module_recipients, doc_request['document'])
 
             return HttpResponse(new_doc.pk)
     except ValidationError as err:
@@ -1456,7 +1484,7 @@ def edms_mark(request):
                 # тому що ця позначка може залишитися з попередньої фази і тоді вона буде знов повертати на теперішню
                 if remaining_required_md == 0 and int(doc_request['mark']) != 8:
                     this_phase = Mark_Demand.objects.values_list('phase__phase', flat=True).filter(id=doc_request['mark_demand_id'])[0]
-                    new_phase(doc_request, this_phase + 1)
+                    new_phase(doc_request, this_phase + 1, [])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
@@ -1498,7 +1526,7 @@ def edms_mark(request):
 
             # Надсилаємо листа автору документа:
             doc_author = Document.objects.values_list('employee_seat_id', flat=True). filter(id=doc_request['document'])[0]
-            if doc_request['employee_seat'] != doc_author:
+            if int(doc_request['employee_seat']) != doc_author:
                 send_email('mark', [{'id': doc_author}], doc_request['document'])
 
             return HttpResponse(new_path.pk)
