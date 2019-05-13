@@ -260,7 +260,7 @@ class SeatTable extends React.Component {
           >
             Додати посаду
           </button>
-          <div className="col">Вільні посади виділяються червоним</div>
+          <small className="col">Вільні посади виділяються червоним</small>
         </div>
         <DxTable
           rows={this.props.seats}

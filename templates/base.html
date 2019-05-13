@@ -22,11 +22,12 @@
              <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Загальні</a>
                     <div class="dropdown-menu">
+{#                        <a class="dropdown-item" href="{% url 'ads' %}">Оголошення</a>#}
+{#                        <a class="dropdown-item" href="{% url 'menu' %}" target="_blank">Меню столової</a>#}
                         <a class="dropdown-item" href="{% url 'phones' 0 %}">Телефонний довідник</a>
                         <a class="dropdown-item" href="{% url 'polls:index' %}">Опитування</a>
                         <a class="dropdown-item" href="{% url 'tickets:index_f' 0 %}">Заявки ІТ</a>
                         <a class="dropdown-item" href="{% url 'gi:news' %}">Новини</a>
-
                     </div>
              </li>
              <li class="nav-item">

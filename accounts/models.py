@@ -34,13 +34,16 @@ class UserProfile(models.Model):
     is_active = models.BooleanField(default=True)
     acting = models.ForeignKey('self', blank=True, null=True)
     is_hr = models.BooleanField(default=False)  # Для відображення вкладки "Відділ кадрів" в EDMS
+    is_pc_user = models.BooleanField(default=False)  # Для відображення користувача на сторінці відділу кадрів у EDMS
+    birthday = models.DateField(null=True)
 
-    n_main = models.CharField(max_length=4,null=True, blank=True)
+    n_main = models.CharField(max_length=4, null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)
     n_mobile = models.CharField(max_length=4, null=True, blank=True)
     n_out = models.CharField(max_length=11, null=True, blank=True)
     mobile1 = models.CharField(max_length=11, null=True, blank=True)
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
+    tab_number = models.CharField(max_length=8, unique=True, null=True)
 
     def __str__(self):
         return self.user.last_name

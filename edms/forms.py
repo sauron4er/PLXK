@@ -23,23 +23,12 @@ class DepartmentForm(forms.ModelForm):
     class Meta:
         model = accounts.Department
         fields = ('name', 'text', 'is_active')
-        # labels = {
-        #     'name': 'Назва відділу',
-        #     'text': 'Опис'
-        # }
-        # widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
 
 class SeatForm(forms.ModelForm):
     class Meta:
         model = Seat
         fields = ('seat', 'department', 'chief', 'is_dep_chief', 'is_active')
-        # labels = {
-        #     'seat': 'Назва посади',
-        #     'department': 'Відділ',
-        #     'chief': 'Керівник',
-        # }
-        # widgets = {'is_active': forms.HiddenInput()}    # невидиме поле
 
 
 class DocumentForm(forms.ModelForm):

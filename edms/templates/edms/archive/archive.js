@@ -111,7 +111,7 @@ class Archive extends React.Component {
                         <DxTable
                             rows={this.state.work_archive}
                             columns={work_archive_columns}
-                            defaultSorting={[{ columnName: "id", direction: "asc" }]}
+                            defaultSorting={[{ columnName: "id", direction: "desc" }]}
                             colWidth={work_archive_col_width}
                             onRowClick={this.onRowClick}
                             height={main_div_height}

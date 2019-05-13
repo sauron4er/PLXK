@@ -669,66 +669,6 @@ def edms_main(request):
         return render(request, 'edms/main.html')
     return HttpResponse(status=405)
 
-
-@login_required(login_url='login')
-def edms_hr(request):
-    if request.method == 'GET':
-
-        deps = get_deps()
-
-        seats = [{       # Список посад для форм на сторінці відділу кадрів
-            'id': seat.pk,
-            'seat': seat.seat,
-            'dep': 'Не внесено' if seat.department is None else seat.department.name,
-            'dep_id': 0 if seat.department is None else seat.department.id,
-            'is_dep_chief': 'true' if seat.is_dep_chief else 'false',
-            'chief': 'Не внесено' if seat.chief is None else seat.chief.seat,
-            'chief_id': 0 if seat.chief is None else seat.chief.id,
-        } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
-
-        # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
-        for seat in seats:
-            occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
-            seat['is_vacant'] = 'true' if occupied_by is None else 'false'
-
-        emps = [{       # Список працівників для форм на сторінці відділу кадрів
-            'id': emp.pk,
-            'emp': emp.pip,
-            'on_vacation': 'true' if emp.on_vacation else 'false',
-            'acting': 0 if emp.acting is None else emp.acting.pip,
-            'acting_id': 0 if emp.acting is None else emp.acting.id,
-        } for emp in accounts.UserProfile.objects.only(
-            'id', 'pip', 'on_vacation', 'acting').filter(is_active=True).order_by('pip')]
-
-        return render(request, 'edms/hr/hr.html', {
-            'deps': deps,
-            'seats': seats,
-            'emps': emps,
-        })
-
-    elif request.method == 'POST':
-
-        if 'new_dep' in request.POST:
-            form = DepartmentForm(request.POST)
-            if form.is_valid():
-                new_dep = form.save()
-                return HttpResponse(new_dep.pk)
-
-        if 'new_seat' in request.POST:
-            form = SeatForm(request.POST)
-            if form.is_valid():
-                new_seat = form.save()
-                return HttpResponse(new_seat.pk)
-
-        if 'new_emp_seat' in request.POST:
-            form_employee_seat = EmployeeSeatForm(request.POST)
-            if form_employee_seat.is_valid():
-                new_emp_seat = form_employee_seat.save()
-                return HttpResponse(new_emp_seat.pk)
-
-    return HttpResponse(status=405)
-
-
 # Адміністрування ------------------------------------------------------------------------------------------------------
 @login_required(login_url='login')
 def edms_administration(request):
@@ -902,6 +842,66 @@ def edms_get_modules_phases(request, pk):
 
 
 # Відділ кадрів --------------------------------------------------------------------------------------------------------
+@login_required(login_url='login')
+def edms_hr(request):
+    if request.method == 'GET':
+
+        deps = get_deps()
+
+        seats = [{       # Список посад для форм на сторінці відділу кадрів
+            'id': seat.pk,
+            'seat': seat.seat,
+            'dep': 'Не внесено' if seat.department is None else seat.department.name,
+            'dep_id': 0 if seat.department is None else seat.department.id,
+            'is_dep_chief': 'true' if seat.is_dep_chief else 'false',
+            'chief': 'Не внесено' if seat.chief is None else seat.chief.seat,
+            'chief_id': 0 if seat.chief is None else seat.chief.id,
+        } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
+
+        # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
+        for seat in seats:
+            occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
+            seat['is_vacant'] = 'true' if occupied_by is None else 'false'
+
+        emps = [{       # Список працівників для форм на сторінці відділу кадрів
+            'id': emp.pk,
+            'emp': emp.pip,
+            'on_vacation': 'true' if emp.on_vacation else 'false',
+            'acting': 0 if emp.acting is None else emp.acting.pip,
+            'acting_id': 0 if emp.acting is None else emp.acting.id,
+            'tab_number': '' if emp.tab_number is None else emp.tab_number,
+        } for emp in accounts.UserProfile.objects.only(
+            'id', 'pip', 'on_vacation', 'acting').filter(is_active=True).order_by('pip')]
+
+        return render(request, 'edms/hr/hr.html', {
+            'deps': deps,
+            'seats': seats,
+            'emps': emps,
+        })
+
+    elif request.method == 'POST':
+
+        if 'new_dep' in request.POST:
+            form = DepartmentForm(request.POST)
+            if form.is_valid():
+                new_dep = form.save()
+                return HttpResponse(new_dep.pk)
+
+        if 'new_seat' in request.POST:
+            form = SeatForm(request.POST)
+            if form.is_valid():
+                new_seat = form.save()
+                return HttpResponse(new_seat.pk)
+
+        if 'new_emp_seat' in request.POST:
+            form_employee_seat = EmployeeSeatForm(request.POST)
+            if form_employee_seat.is_valid():
+                new_emp_seat = form_employee_seat.save()
+                return HttpResponse(new_emp_seat.pk)
+
+    return HttpResponse(status=405)
+
+
 @login_required(login_url='login')
 def edms_hr_emp(request, pk):       # changes in employee row
     post = get_object_or_404(accounts.UserProfile, pk=pk)
@@ -1275,7 +1275,8 @@ def edms_my_docs(request):
             # тому post_modules повертає їх в array, який може бути і пустий
             module_recipients = post_modules(doc_request, doc_files, new_path)
 
-            new_phase(doc_request, 1, module_recipients)
+            if doc_request['is_draft'] == 'false':
+                new_phase(doc_request, 1, module_recipients)
 
             # Деактивуємо стару чернетку
             if doc_request['old_draft_id'] != '0':
