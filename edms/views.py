@@ -859,9 +859,9 @@ def edms_hr(request):
         } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
 
         # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
-        for seat in seats:
-            occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
-            seat['is_vacant'] = 'true' if occupied_by is None else 'false'
+        # for seat in seats:
+        #     occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
+        #     seat['is_vacant'] = 'true' if occupied_by is None else 'false'
 
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
             'id': emp.pk,

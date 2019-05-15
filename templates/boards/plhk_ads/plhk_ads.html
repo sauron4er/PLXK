@@ -1,0 +1,25 @@
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>ПЛХК Оголошення</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+{#    <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">#}
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+
+<body>
+    {% load render_bundle from webpack_loader %}
+
+
+    <script>
+        window.birthdays = {{ birthdays|safe }};
+        window.ads = {{ ads|safe }};
+    </script>
+
+    <div class="container-fluid h-100" id="plhk_ads"></div>
+
+    {% render_bundle 'plhk_ads' %}
+</body>

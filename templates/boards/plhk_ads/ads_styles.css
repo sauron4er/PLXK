@@ -1,0 +1,17 @@
+.css_happy_birthday {
+    font-family: 'Lobster', cursive;
+    color: Crimson;
+    font-size: 5vw;
+    line-height: 8vw;
+    font-weight: normal;
+    margin-bottom: 5vh;
+    text-align: center;
+    text-shadow: 0 1px 1px #fff;
+}
+
+.css_birthday_card {
+    text-align: center;
+    /*width: 15vw;*/
+    /*min-height: 15vh;*/
+    background: Cornsilk
+}

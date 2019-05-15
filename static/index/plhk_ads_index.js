@@ -1,0 +1,1 @@
+import '../../templates/boards/plhk_ads/plhk_ads.js'

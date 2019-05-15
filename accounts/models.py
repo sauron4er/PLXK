@@ -43,7 +43,7 @@ class UserProfile(models.Model):
     n_out = models.CharField(max_length=11, null=True, blank=True)
     mobile1 = models.CharField(max_length=11, null=True, blank=True)
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
-    tab_number = models.CharField(max_length=8, unique=True, null=True)
+    tab_number = models.CharField(max_length=15, unique=True, null=True)
 
     def __str__(self):
         return self.user.last_name

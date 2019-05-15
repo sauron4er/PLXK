@@ -19,6 +19,7 @@
     "axios": "^0.18.0",
     "devextreme": "^18.2.3",
     "devextreme-react": "^18.2.3",
+    "fireworks-canvas": "^2.3.1",
     "js-cookie": "^2.2.0",
     "querystring": "^0.2.0",
     "react": "^16.8.6",
@@ -58,9 +59,9 @@
     "react-to-print-advanced": "^2.1.2",
     "style-loader": "^0.21.0",
     "url-loader": "^1.1.2",
-    "webpack": "^4.8.3",
+    "webpack": "^4.31.0",
     "webpack-bundle-tracker": "^0.3.0",
-    "webpack-cli": "^3.2.3",
+    "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.2.1"
   },
   "scripts": {

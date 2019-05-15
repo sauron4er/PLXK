@@ -260,14 +260,14 @@ class SeatTable extends React.Component {
           >
             Додати посаду
           </button>
-          <small className="col">Вільні посади виділяються червоним</small>
+          {/*<small className="col">Вільні посади виділяються червоним</small>*/}
         </div>
         <DxTable
           rows={this.props.seats}
           columns={seats_columns}
           defaultSorting={[{ columnName: "seat", direction: "asc" }]}
           onRowClick={this.onRowClick}
-          redRow="is_vacant"
+          // redRow="is_vacant"
           height={this.props.height}
           filter
         />

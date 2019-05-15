@@ -365,10 +365,10 @@ class UserTable extends React.Component {
 
     const users_columns = [
       {name: 'emp', title: 'Ф.І.О.'},
-      {name: 'tab_number', title: 'Табельний номер'}
+      {name: 'tab_number', title: 'Таб.ном.'}
     ];
 
-    const users_col_width = [{columnName: 'tab_number', width: 100}];
+    const users_col_width = [{columnName: 'tab_number', width: 110}];
 
     const acting_select = this.state.vacation_checked ? ( // відображення селекту для в.о.
       <div className='d-flex'>

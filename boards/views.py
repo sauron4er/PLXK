@@ -6,6 +6,23 @@ from .forms import NewTopicForm
 from django.db import connections
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from accounts.models import UserProfile
+from edms.models import Employee_Seat
+from datetime import date
+from django.utils import timezone
+import pytz
+
+
+def convert_to_localtime(utctime, frmt):
+    if frmt == 'day':
+        fmt = '%d.%m.%Y'
+    else:
+        fmt = '%d.%m.%Y %H:%M'
+
+    utc = utctime.replace(tzinfo=pytz.UTC)
+    localtz = utc.astimezone(timezone.get_current_timezone())
+    return localtz.strftime(fmt)
+
 
 def dictfetchall(cursor):
     "Returns all rows from a cursor as a dict"
@@ -56,8 +73,52 @@ def get_context_data():  # Exec 1st
     return context
 
 
-def ads(request):
-    return render(request, 'boards/ads.html')
+def plhk_ads(request):
+    today = date.today()
+
+    # Отримуємо список працівників, в яких сьогодні д/н.
+    # Якщо у працівника більше одніє посади він потрапить у цей список декілька раз
+    birthdays_duplicates = [{
+        'id': bd.employee.id,
+        'name': bd.employee.pip,
+        'seat': bd.seat.seat,
+        'birthday': bd.employee.birthday.year,
+        'photo_name': bd.employee.avatar.file.name,
+        'photo': bd.employee.avatar.name
+    } for bd in Employee_Seat.objects
+        .filter(employee__birthday__month=7, employee__birthday__day=16)
+        # .filter(employee__birthday__month=today.month, employee__birthday__day=today.day)
+        .filter(is_main=True)
+        .filter(is_active=True)
+        .filter(employee__is_active=True)]
+
+    # Позбавляємось дублікатів:
+    birthdays = list({item["id"]: item for item in birthdays_duplicates}.values())
+
+    test = [
+        {'id': 1, 'name': '1 Абвгдеєжзиіїйклмне Аіапловрадплвап Пєдлвпоржащпр',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап Пєдлвпоржащпр'},
+        {'id': 1, 'name': '2 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '3 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '4 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '5 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '6 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '7 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '8 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '9 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+        {'id': 1, 'name': '10 Абвгдеєжзиіїйклмне Аіапловрадплвап',
+         'seat': 'Абвгдеєжзиіїйклмне Аіапловрадплвап'},
+    ]
+
+    return render(request, 'boards/plhk_ads/plhk_ads.html', {'birthdays': birthdays, 'ads': []})
 
 
 def menu(request):
