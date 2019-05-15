@@ -18,7 +18,7 @@ class Birthdays extends React.Component {
             </For>
           </div>
         </div>
-        <Fireworks />
+        {/*<Fireworks />*/}
       </div>
     );
   }
