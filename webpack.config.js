@@ -24,7 +24,7 @@ module.exports = {
 
   plugins: [
     new CleanWebpackPlugin(pathsToClean, {watch: true, beforeEmit: true}),
-    new BundleTracker({filename: './webpack-stats.json'}),
+    new BundleTracker({filename: './webpack-stats.json'})
   ],
 
   module: {
@@ -43,6 +43,18 @@ module.exports = {
       {
         test: /\.(woff|woff2|ttf|eot|svg)(\?v=[a-z0-9]\.[a-z0-9]\.[a-z0-9])?$/,
         loader: 'url-loader?limit=100000'
+      },
+      // {
+      //   test: /\.(?:png|jpe?g|svg)$/,
+      //   loader: 'url-loader'
+      // }
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        use: [
+          {
+            loader: 'file-loader'
+          }
+        ]
       }
     ]
   },
