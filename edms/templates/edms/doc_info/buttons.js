@@ -119,7 +119,7 @@ class Buttons extends React.Component {
               className="btn btn-secondary mr-1 mb-1"
               onClick={e => onClick(e, 7)}
             >
-              Закрити
+              В архів
             </button>
           </Otherwise>
         </Choose>

@@ -1,13 +1,15 @@
 'use strict';
 import React from 'react';
-import * as npmFireworks from 'fireworks-canvas';
+import * as NPMFireworks from 'fireworks-canvas';
+import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 let container = '';
 const options = {
-  maxRockets: 5,            // max # of rockets to spawn
-  rocketSpawnInterval: 100, // millisends to check if new rockets should spawn
+  maxRockets: 10,            // max # of rockets to spawn
+  rocketSpawnInterval: 50, // millisends to check if new rockets should spawn
   numParticles: 100,        // number of particles to spawn when rocket explodes (+0-10)
-  explosionMinHeight: 0.2,  // percentage. min height at which rockets can explode
+  explosionMinHeight: 0.3,  // percentage. min height at which rockets can explode
   explosionMaxHeight: 0.9,  // percentage. max height before a particle is exploded
   explosionChance: 0.01     // chance in each tick the rocket will explode
 };
@@ -19,14 +21,14 @@ class Fireworks extends React.Component {
 
   componentDidMount() {
     container = document.getElementById('container');
-    fireworks = new npmFireworks(container, options);
+    fireworks = new NPMFireworks(container, options);
     // fireworks.start();
     this.interval = setInterval(() => fireworks.fire(), 500);
   }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
-  // }
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
 
   render() {
     return (
@@ -35,4 +37,6 @@ class Fireworks extends React.Component {
   }
 }
 
-export default Fireworks;
+if (document.getElementById('fireworks')) {
+  ReactDOM.render(<Fireworks />, document.getElementById('fireworks'));
+}

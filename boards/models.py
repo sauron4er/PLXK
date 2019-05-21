@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from accounts.models import UserProfile
 
 
 class Board(models.Model):
@@ -25,6 +26,7 @@ class Post(models.Model):
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(User, null=True, related_name='+', on_delete=models.CASCADE)
 
+
 class Phones(models.Model):
     name = models.ForeignKey(User, related_name='pones', on_delete=models.CASCADE)
     n_main = models.CharField(max_length=4,null=True, blank=True)
@@ -33,3 +35,9 @@ class Phones(models.Model):
     n_out = models.CharField(max_length=11, null=True, blank=True)
     mobile1 = models.CharField(max_length=11, null=True, blank=True)
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
+
+
+class Ad(models.Model):
+    ad = models.CharField(max_length=500)
+    author = models.ForeignKey(UserProfile, related_name='ads', on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)

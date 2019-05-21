@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}ПЛХК - редагування оголошень{% endblock %}
+
+{% block content %}
+    <label for="ad">Нове оголошення: </label>
+    <form class="form" action="/boards/new_ad/" method="post">
+        {% csrf_token %}
+        <textarea id="ad" class="form-control mb-1" type="text" name="ad"></textarea>
+        <input type="submit" class="form-control" value="Додати">
+    </form>
+    <hr/>
+
+    <div>Список оголошень:</div>
+    <table class="table table-striped table-hover">
+        <thead>
+            <th>Текст</th>
+            <th>Автор</th>
+            <th></th>
+        </thead>
+        <tbody>
+            {% for ad in ads  %}
+                <tr >
+                <td style="vertical-align: middle">
+                    {{ ad.ad }}
+                </td>
+                <td style="vertical-align: middle">
+                   {{  ad.author  }}
+                </td>
+                <td style="vertical-align: middle; font-size: x-large">
+                    {% if ad.author_id == user.userprofile.id   %}
+                        <a href="{% url 'boards:del_ad' ad.id %}"><span aria-hidden="true" class="text-danger">&times;</span></a>
+                    {% endif %}
+                </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

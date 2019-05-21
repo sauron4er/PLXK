@@ -3,9 +3,9 @@ import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+// axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+// axios.defaults.xsrfCookieName = 'csrftoken';
+// axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 import SeatChooser from '../_else/seat_chooser';
 import DxTable from '../_else/dx_table';
@@ -49,7 +49,6 @@ class Administration extends React.Component {
   // Оновлює списки документів
   updateLists = (seat_id) => {
     axios({
-      // отримуємо з бази список документів
       method: 'get',
       url: 'get_types/' + seat_id + '/',
       headers: {
@@ -57,9 +56,7 @@ class Administration extends React.Component {
       }
     })
       .then((response) => {
-        // розносимо документи у списки закритих та відкритих
         if (response.data) {
-          // this.docListArrange(response.data);
           this.setState({doc_types: response.data});
         }
       })

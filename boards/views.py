@@ -1,16 +1,16 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
-from .models import Board, Phones, Topic, Post
-from .forms import NewTopicForm
+from .models import Board, Phones, Topic, Post, Ad
+from .forms import NewTopicForm, NewAdForm
 from django.db import connections
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-from accounts.models import UserProfile
-from edms.models import Employee_Seat
 from datetime import date
 from django.utils import timezone
 import pytz
+import json
+import random
+from edms.models import Employee_Seat
 
 
 def convert_to_localtime(utctime, frmt):
@@ -22,6 +22,37 @@ def convert_to_localtime(utctime, frmt):
     utc = utctime.replace(tzinfo=pytz.UTC)
     localtz = utc.astimezone(timezone.get_current_timezone())
     return localtz.strftime(fmt)
+
+
+def get_ads():
+    return [{
+        'id': ad.id,
+        'ad': ad.ad,
+        'author_id': ad.author.id,
+        'author': ad.author.pip
+    } for ad in Ad.objects.filter(is_active=True)]
+
+
+def get_bds():
+    today = date.today()
+
+    # Отримуємо список працівників, в яких сьогодні д/н.
+    # Якщо у працівника більше одніє посади він потрапить у цей список декілька раз
+    birthdays_duplicates = [{
+        'id': bd.employee.id,
+        'name': bd.employee.pip,
+        'seat': bd.seat.seat,
+        'birthday': bd.employee.birthday.year,
+        'photo': '' if not bd.employee.avatar else bd.employee.avatar.name
+    } for bd in Employee_Seat.objects
+        # .filter(employee__birthday__month=7, employee__birthday__day=16)
+        .filter(employee__birthday__month=today.month, employee__birthday__day=today.day)
+        .filter(is_main=True)
+        .filter(is_active=True)
+        .filter(employee__is_active=True)]
+
+    # Позбавляємось дублікатів:
+    return list({item["id"]: item for item in birthdays_duplicates}.values())
 
 
 def dictfetchall(cursor):
@@ -74,27 +105,33 @@ def get_context_data():  # Exec 1st
 
 
 def plhk_ads(request):
-    today = date.today()
+    return render(request, 'boards/plhk_ads/plhk_ads.html', {'birthdays': get_bds(), 'ads': get_ads(), 'bg': random.randint(1, 10)})
 
-    # Отримуємо список працівників, в яких сьогодні д/н.
-    # Якщо у працівника більше одніє посади він потрапить у цей список декілька раз
-    birthdays_duplicates = [{
-        'id': bd.employee.id,
-        'name': bd.employee.pip,
-        'seat': bd.seat.seat,
-        'birthday': bd.employee.birthday.year,
-        'photo': bd.employee.avatar.name
-    } for bd in Employee_Seat.objects
-        # .filter(employee__birthday__month=7, employee__birthday__day=16)
-        .filter(employee__birthday__month=today.month, employee__birthday__day=today.day)
-        .filter(is_main=True)
-        .filter(is_active=True)
-        .filter(employee__is_active=True)]
 
-    # Позбавляємось дублікатів:
-    birthdays = list({item["id"]: item for item in birthdays_duplicates}.values())
+def reload(request):
+    if request.method == 'GET':
+        response = {'ads': get_ads(), 'birthdays': get_bds()}
+        return HttpResponse(json.dumps(response))
 
-    return render(request, 'boards/plhk_ads/plhk_ads.html', {'birthdays': birthdays, 'ads': []})
+
+def edit_ads(request):
+    return render(request, 'boards/plhk_ads/edit_ads.html', {'ads': get_ads()})
+
+
+def new_ad(request):
+    ad = request.POST['ad']
+
+    ad = Ad.objects.create(
+        ad=ad,
+        author=request.user.userprofile
+    )
+    return redirect('/boards/edit_ads/', request)
+
+
+def del_ad(request, pk):
+    ad = get_object_or_404(Ad, pk=pk)
+    Ad.objects.filter(id=ad.id).update(is_active=False)
+    return redirect('/boards/edit_ads/', request)
 
 
 def menu(request):

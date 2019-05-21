@@ -433,6 +433,10 @@ def post_mark_deactivate(doc_request):
     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
 
+# В ПЕРШУ ЧЕРГУ СТВОРИТИ МОДУЛЬ "НАДІСЛАТИ КОПІЮ", КУДИ АВТОР ЗМОЖЕ ДОДАТИ ЛЮДЕЙ, ЗАЦІКАВЛЕНИХ В СЛУЖБОВІЙ.
+# БО ДИРЕКТОРИ ВІДМОВЛЯЮТЬСЯ ПИСАТИ РЕЗОЛЮЦІЇ, ТА Й ІНОДІ ХТОСЬ МАЄ ГЛЯНУТИ НА ДОКУМЕНТ І БЕЗ РЕЗОЛЮЦІЇ.
+
+
 # Функції модульних документів -----------------------------------------------------------------------------------------
 
 # Функція, яка додає у бд новий документ та повертає його id
@@ -725,8 +729,6 @@ def edms_get_types(request, pk):
                 'description': doc_type.description,
                 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
             } for doc_type in doc_types_query]
-
-            return HttpResponse(json.dumps(doc_types))
         else:
             doc_types = [{
                 'id': doc_type.id,
@@ -743,7 +745,7 @@ def edms_get_types(request, pk):
             #     } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=False)]
             #     doc_types = doc_types + hr_doc_types
 
-            return HttpResponse(json.dumps(doc_types))
+        return HttpResponse(json.dumps(doc_types))
 
 
 @login_required(login_url='login')
