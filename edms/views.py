@@ -162,6 +162,7 @@ def get_responsible_deps(article_id):
 # Функції фазової системи ----------------------------------------------------------------------------------------------
 def send_email(email_type, recipients, doc_id):
     if not testing:
+    # if testing:
         for recipient in recipients:
             emp_seat_id = vacation_check(recipient['id'])
             recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
@@ -354,14 +355,14 @@ def new_phase(doc_request, phase_number, modules_recipients):
             if recipient_chief == chief['emp_seat_id']:
                 recipient_chief = vacation_check(recipient_chief)
                 post_mark_demand(doc_request, recipient_chief, phase_id, 2)
-                send_email('new', {'id': recipient_chief}, doc_request['document'])
+                send_email('new', [{'id': recipient_chief}], doc_request['document'])
 
             # Якщо ні, фазу не змінюємо, відправляємо керівнику,
             # замінюємо ід отримувача листа, позначка - не заперечую
             else:
                 recipient_chief = vacation_check(chief['emp_seat_id'])
                 post_mark_demand(doc_request, recipient_chief, phase_id, 6)
-                send_email('new', {'id': recipient_chief}, doc_request['document'])
+                send_email('new', [{'id': recipient_chief}], doc_request['document'])
 
         elif recipient['type'] == 'acquaint':
             # Знаходимо ід поточної фази для занесення в mark_demand:
