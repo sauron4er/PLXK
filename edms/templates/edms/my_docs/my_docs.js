@@ -153,7 +153,7 @@ class MyDocs extends React.Component {
               work_docs={this.state.work_docs}
               acting_docs={this.state.acting_docs}
               removeDoc={this.removeDoc}
-              direct_subs={this.state.direct_subs}
+              directSubs={this.state.direct_subs}
               openDocId={this.state.open_doc_id}
             />
           </When>

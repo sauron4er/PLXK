@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import DxTable from '../_else/dx_table';
-import DocInfo from '../doc_info/doc_info';
+import Document from '../doc_info/document';
 import '../_else/my_styles.css';
 
 class Docs extends React.Component {
@@ -82,8 +82,9 @@ class Docs extends React.Component {
 
   // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закрити й документ в MyDocs
   removeRow = (id, mark_id, author_id) => {
-    // видаляємо документ зі списку, якщо реакція не просто коментар чи файл:
-    if (mark_id !== 4 && mark_id !== 12) {
+    // видаляємо документ зі списку, якщо реакція не коментар, файл чи "на ознайомлення":
+    if (![4, 12, 15].includes(mark_id)) {
+    // if (mark_id !== 4 && mark_id !== 12 && mark_id !== 15) {
       this.props.removeDoc(id, author_id);
     }
     // рендеримо відповідь на подію:
@@ -121,6 +122,9 @@ class Docs extends React.Component {
         break;
       case 13:
         answer = 'Документ №' + id + ' видалено.';
+        break;
+      case 15:
+        answer = 'Документ №' + id + ' відправлено на ознайомлення.';
         break;
     }
     this.setState({
@@ -169,9 +173,9 @@ class Docs extends React.Component {
         <br />
 
         <div className='col-lg-4 css_height_100'>
-          <DocInfo
+          <Document
             doc={this.state.row}
-            direct_subs={this.props.direct_subs}
+            directSubs={this.props.directSubs}
             removeRow={this.removeRow}
             closed={false}
           />

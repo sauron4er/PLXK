@@ -3,8 +3,8 @@ from django import forms
 from accounts import models as accounts
 from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand, \
     Document_Type_Permission
-from .models import File, Doc_Article, Doc_Article_Dep, Doc_Approval, Doc_Day, Doc_Name, Doc_Type_Unique_Number, \
-    Doc_Preamble, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
+from .models import File, Doc_Article, Doc_Article_Dep, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Name, \
+    Doc_Type_Unique_Number, Doc_Preamble, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
 
 
 class UserProfileForm(forms.ModelForm):
@@ -116,10 +116,16 @@ class NewArticleDepForm(forms.ModelForm):
         fields = {'article', 'department'}
 
 
+class NewAcquaintForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Acquaint
+        fields = {'document', 'acquaint_emp_seat'}
+
+
 class NewApprovalForm(forms.ModelForm):
     class Meta:
         model = Doc_Approval
-        fields = {'document', 'seat'}
+        fields = {'document', 'approval_emp_seat'}
 
 
 class NewNameForm(forms.ModelForm):

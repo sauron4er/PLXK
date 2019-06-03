@@ -1,7 +1,7 @@
 'use strict';
 import React, {Fragment} from 'react';
 import axios from 'axios';
-import NewDocument from './new_document/new_document';
+import NewDocument from './new_doc_modules/new_document';
 import '../_else/my_styles.css';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

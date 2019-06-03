@@ -3,7 +3,7 @@ import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
 import DxTable from '../_else/dx_table';
-import DocInfo from '../doc_info/doc_info'
+import Document from '../doc_info/document'
 import SeatChooser from '../_else/seat_chooser';
 import '../_else/my_styles.css'
 
@@ -119,7 +119,7 @@ class Archive extends React.Component {
                         />
                     </div>
                     <div className="col-lg-4 css_height_100">
-                        <DocInfo
+                        <Document
                             doc={this.state.row}
                             my_seat_id={this.state.seat_id}
                             closed={true}

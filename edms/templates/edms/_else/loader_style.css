@@ -12,6 +12,15 @@ div.css_loader {
   margin: 0 auto;
 }
 
+.loader-small{
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  position: relative;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
 /* LOADER 1 */
 
 #loader-1:before, #loader-1:after{

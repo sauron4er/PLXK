@@ -124,13 +124,21 @@ class Buttons extends React.Component {
           </Otherwise>
         </Choose>
 
-        {/* Кнопки "коментар" та "файл" є завди */}
+        {/* Кнопки "коментар", "на ознайомлення" та "файл" є завди */}
+        
         <button
           type="button"
           className="btn btn-secondary mr-1 mb-1"
           onClick={e => onClick(e, 4)}
         >
           Коментар
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary mr-1 mb-1"
+          onClick={e => onClick(e, 15)}
+        >
+          На ознайомлення
         </button>
         <button
           type="button"

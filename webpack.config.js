@@ -3,7 +3,7 @@ let BundleTracker = require('webpack-bundle-tracker');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 let pathsToClean = ['./static/bundles/*.*'];
 
-const isProduction = process.env.NODE_ENV === 'production';
+// const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   context: __dirname,
@@ -19,7 +19,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
-    filename: '[name]-[hash].js'
+    filename: '[name]-[hash].js',
+    // chunkFilename: '[name].bundle.js',
   },
 
   plugins: [
