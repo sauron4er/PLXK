@@ -1,40 +1,51 @@
-div.css_border {
+.css_border {
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
-div.css_mark {
+/*.css_mark {*/
+	/*display: inline-block;*/
+	/*background-color: #666;*/
+	/*color: #fff;*/
+	/*font-weight: bold;*/
+	/*padding: 10px;*/
+    /*margin-top: 5px;*/
+	/*-moz-border-radius: 5px;*/
+	/*-webkit-border-radius: 5px; }*/
+
+.css_mark {
 	display: inline-block;
-	background-color: #666;
-	color: #fff;
+    border: solid lightgray 1px;
+	background-color: #ffffff;
+	color: #000000;
 	font-weight: bold;
 	padding: 10px;
     margin-top: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px; }
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px; }
 
-div.css_path {
+.css_path {
     border: solid lightgray 1px;
     background-color: #ccffcc;
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
-div.css_flow {
+.css_flow {
     border: solid lightgray 1px;
     background-color: #ffffcc;
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
-div.css_acquaint {
+.css_acquaint {
     border: solid lightgray 1px;
     /*background-color: #ffffcc;*/
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }
 
-div.css_comment {
+.css_comment {
     display: inline-block;
     width: 100%;
     padding: 5px;
@@ -45,7 +56,7 @@ div.css_comment {
 	-webkit-border-radius: 5px;
 }
 
-div.css_resolution {
+.css_resolution {
     display: inline-block;
     background-color: #ccffcc;
     width: 100%;
@@ -56,7 +67,7 @@ div.css_resolution {
 	-webkit-border-radius: 5px;
 }
 
-div.css_note_text {
+.css_note_text {
     white-space: pre-wrap;
     background-color: white;
     border: solid lightgray 1px;
@@ -65,7 +76,7 @@ div.css_note_text {
     padding: 0 5px;
 }
 
-div.css_main {
+.css_main {
     height:100%;
     overflow-y: scroll;
 }

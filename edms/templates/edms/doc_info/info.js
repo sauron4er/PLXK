@@ -30,7 +30,7 @@ class Info extends React.Component {
           </div>
           <div>
             Автор:
-            <div className='font-italic'>{doc.author}</div>
+            <span className='font-italic'> {doc.author}</span>
           </div>
 
           {/* Модульна система */}

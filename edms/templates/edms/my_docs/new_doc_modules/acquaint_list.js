@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import {uniqueArray} from '../../_else/my_extras';
+import '../../_else/my_styles.css'
 
 class AcquaintList extends React.Component {
   state = {
@@ -114,7 +115,7 @@ class AcquaintList extends React.Component {
             <button
               className={
                 select_acquaint
-                  ? 'btn btn-sm font-weight-bold ml-1 btn-outline-danger'
+                  ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
                   : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
               }
               onClick={this.addNewAcquaint}

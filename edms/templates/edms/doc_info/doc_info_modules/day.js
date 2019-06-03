@@ -6,10 +6,9 @@ class Day extends React.Component {
     const {fieldName, day} = this.props;
 
     return (
-      <Fragment>
-        <div>{fieldName}:</div>
-        <div className='font-italic ml-1'>{day}</div>
-      </Fragment>
+      <div>
+        {fieldName}:<span className='font-italic ml-1'> {day}</span>
+      </div>
     );
   }
 

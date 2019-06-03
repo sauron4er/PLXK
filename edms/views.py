@@ -1421,6 +1421,7 @@ def edms_archive(request):
             'type_id': path.document.document_type.id,
             'date': convert_to_localtime(path.timestamp, 'day'),
             'emp_seat_id': path.employee_seat.id,
+            'author': path.document.employee_seat.employee.pip,
             'author_seat_id': path.employee_seat.id,
         } for path in Document_Path.objects.filter(mark=1)
             .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)
