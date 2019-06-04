@@ -162,7 +162,6 @@ def get_responsible_deps(article_id):
 # Функції фазової системи ----------------------------------------------------------------------------------------------
 def send_email(email_type, recipients, doc_id):
     if not testing:
-    # if testing:
         for recipient in recipients:
             emp_seat_id = vacation_check(recipient['id'])
             recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
@@ -250,6 +249,7 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     mark_demand_form = MarkDemandForm(doc_request)
     if mark_demand_form.is_valid:
         mark_demand_form.save()
+        test = 5
     else:
         raise ValidationError('edms/views new_phase mark_demand_form invalid')
 
@@ -329,7 +329,7 @@ def get_phase_id_recipients(phase_id, emp_seat):
 
 # Створення нової фази документа:
 def new_phase(doc_request, phase_number, modules_recipients):
-    mark_recipients = []  # Список людинопосад, яким направляємо документ
+    # mark_recipients = []  # Список людинопосад, яким направляємо документ
     mail_recipients = []  # Список людей, яким направляємо лист
 
     # Перебираємо список modules_recipients в пошуках отримувачів, яких визначено автором при створенні документа:
@@ -383,6 +383,7 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
     if phase_ids:
         for phase_id in phase_ids:
+
             phase_info = [{
                 'mark_id': phase.mark_id,
                 'is_approve_chained': phase.is_approve_chained,
@@ -418,18 +419,19 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
                         if not chief_is_in_next_phase:
                             mail_recipients.append({'id': chief_emp_seat_id[0]})
-                            mark_recipients.append({'id': chief_emp_seat_id[0]})
-
+                            post_mark_demand(doc_request, chief_emp_seat_id[0], phase_id, phase_info[0]['mark_id'])
+                            # mark_recipients.append({'id': chief_emp_seat_id[0]})
             else:
                 # Визначаємо усіх отримувачів для кожної позначки:
                 recipients = get_phase_id_recipients(phase_id, doc_request['employee_seat'])
                 for recipient in recipients:
                     mail_recipients.append({'id': recipient})
-                    mark_recipients.append({'id': recipient})
+                    post_mark_demand(doc_request, recipient, phase_id, phase_info[0]['mark_id'])
+                    # mark_recipients.append({'id': recipient})
 
             # Додаємо кожного отримувача у MarkDemand:
-            for recipient in mark_recipients:
-                post_mark_demand(doc_request, recipient['id'], phase_id, phase_info[0]['mark_id'])
+            # for recipient in mark_recipients:
+            #     post_mark_demand(doc_request, recipient['id'], phase_id, phase_info[0]['mark_id'])
 
         if modules_recipients:
             send_email('new', mail_recipients, doc_request['document'])
@@ -1078,17 +1080,23 @@ def edms_get_doc(request, pk):
                 'comment': path.comment,
             } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
 
-            # Перебираємо шлях документа в пошуках резолюцій і додаємо їх до відповідного запису в path
+            # Перебираємо шлях документа в пошуках резолюцій чи "на ознайомлення" і додаємо їх до запису в path
             for step in path:
                 if step['mark_id'] == 10:
                     resolutions = [{
-                        'id': res.id,
-                        'emp_seat_id': res.recipient.id,
-                        'emp': res.recipient.employee.pip,
-                        'seat': res.recipient.seat.seat,
-                        'comment': res.comment,
-                    } for res in Mark_Demand.objects.filter(document_path_id=step['id'])]
+                        'id': md.id,
+                        'emp_seat_id': md.recipient.id,
+                        'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
+                        'comment': md.comment,
+                    } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
                     step['resolutions'] = resolutions
+                if step['mark_id'] == 15:
+                    acquaints = [{
+                        'id': md.id,
+                        'emp_seat_id': md.recipient.id,
+                        'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
+                    } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
+                    step['acquaints'] = acquaints
 
             # Перебираємо шлях документа в пошуках файлів і додаємо їх до відповідного запису в path
             for step in path:

@@ -26,9 +26,22 @@ class Path extends React.Component {
                   return (
                     <li className='list-group-item' key={res.id}>
                       <div className='font-italic'>
-                        {res.emp}, {res.seat}
+                        {res.emp_seat}
                       </div>
                       <div>{res.comment}</div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </If>
+            <If condition={path.acquaints}>
+              <ol className='list-group mt-1'>
+                {path.acquaints.map((acquaint) => {
+                  return (
+                    <li className='list-group-item' key={acquaint.id}>
+                      <div className='font-italic'>
+                        {acquaint.emp_seat}
+                      </div>
                     </li>
                   );
                 })}
