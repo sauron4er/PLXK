@@ -372,7 +372,7 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
             recipient_acquaint = vacation_check(recipient['id'])
             post_mark_demand(doc_request, recipient_acquaint, phase_id, 8)
-            send_email('new', {'id': recipient_acquaint}, doc_request['document'])
+            send_email('new', [{'id': recipient_acquaint}], doc_request['document'])
 
     # Знаходимо id's відповідної фази:
     # За одним номером фази може бути декілька самих ід фаз.
@@ -433,7 +433,7 @@ def new_phase(doc_request, phase_number, modules_recipients):
             # for recipient in mark_recipients:
             #     post_mark_demand(doc_request, recipient['id'], phase_id, phase_info[0]['mark_id'])
 
-        if modules_recipients:
+        if mail_recipients:
             send_email('new', mail_recipients, doc_request['document'])
     else:
         test = 'test'
@@ -510,7 +510,7 @@ def post_modules(doc_request, doc_files, new_path):
         if 'acquaint_list' in doc_modules:
             post_acquaint_list(doc_request, doc_modules['acquaint_list'])
             for acquaint in doc_modules['acquaint_list']:
-                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
+                recipients.append({'id': acquaint['emp_seat_id'], 'type': 'acquaint'})
 
         # Додаємо пункти
         if 'articles' in doc_modules:
@@ -581,12 +581,13 @@ def post_articles(doc_request, articles):
 # Функція, яка додає у бд список отримуючих на ознайомлення
 def post_acquaint_list(doc_request, acquaint_list):
     for recipient in acquaint_list:
-        emp_seat_id = vacation_check(recipient['id'])
+        emp_seat_id = vacation_check(recipient['emp_seat_id'])
         doc_request.update({'acquaint_emp_seat': emp_seat_id})
 
         acquaint_form = NewAcquaintForm(doc_request)
         if acquaint_form.is_valid():
             acquaint_form.save()
+            test = 1
         else:
             raise ValidationError('edms/views post_acquaint_list acquaint_form invalid')
 
