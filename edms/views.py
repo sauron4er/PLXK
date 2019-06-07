@@ -510,7 +510,7 @@ def post_modules(doc_request, doc_files, new_path):
         if 'acquaint_list' in doc_modules:
             post_acquaint_list(doc_request, doc_modules['acquaint_list'])
             for acquaint in doc_modules['acquaint_list']:
-                recipients.append({'id': acquaint['emp_seat_id'], 'type': 'acquaint'})
+                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
 
         # Додаємо пункти
         if 'articles' in doc_modules:
@@ -581,7 +581,7 @@ def post_articles(doc_request, articles):
 # Функція, яка додає у бд список отримуючих на ознайомлення
 def post_acquaint_list(doc_request, acquaint_list):
     for recipient in acquaint_list:
-        emp_seat_id = vacation_check(recipient['emp_seat_id'])
+        emp_seat_id = vacation_check(recipient['id'])
         doc_request.update({'acquaint_emp_seat': emp_seat_id})
 
         acquaint_form = NewAcquaintForm(doc_request)
