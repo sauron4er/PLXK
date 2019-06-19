@@ -6,21 +6,25 @@ from .forms import NewDocForm, NewDocOrderForm
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+
 def user_can_edit(user):
     return user.is_authenticated() and user.has_perm("docs.change_document")
 
+
 def index(request):
     docs = Document.objects.all()
-    edit =user_can_edit(request.user)
-    return render(request,'docs/index.html',{'docs':docs, 'edit':edit})
+    edit = user_can_edit(request.user)
+    return render(request, 'docs/index.html', {'docs': docs, 'edit': edit})
+
 
 def index_f(request,fk):
     if fk == 0:
         docs = Document.objects.all()
     else:
         docs = Document.objects.all().filter(doc_group=fk)
-    edit =user_can_edit(request.user)
-    return render(request,'docs/index.html',{'docs':docs, 'edit':edit, 'fk': fk})
+    edit = user_can_edit(request.user)
+    return render(request, 'docs/index.html', {'docs': docs, 'edit': edit, 'fk': fk})
+
 
 def new_doc(request):
     title = 'Новий документ'
@@ -49,6 +53,7 @@ def new_doc(request):
         form = NewDocForm()
     return render(request,'docs/new_doc.html',{'form':form,'title':title})
 
+
 def edit_doc(request,pk):
     doc = get_object_or_404(Document,pk=pk)
     title = 'Редагування'
@@ -68,12 +73,14 @@ def edit_doc(request,pk):
         form = NewDocForm(instance=doc)
     return render(request,'docs/new_doc.html',{'form':form,'title':title})
 
+
 def index_order_f(request,fk):
     if fk == '0':
         docs = Order_doc.objects.all()
     else:
         docs = Order_doc.objects.all().filter(doc_type=fk)
     return render(request,'docs/order_index.html',{'docs':docs, 'fk': fk})
+
 
 def new_order_doc(request):
     title = 'Новий нормативний документ'
@@ -100,6 +107,7 @@ def new_order_doc(request):
         form = NewDocOrderForm()
     return render(request,'docs/new_order_doc.html',{'form':form,'title':title})
 
+
 def edit_order_doc(request,pk):
     doc = get_object_or_404(Order_doc,pk=pk)
     title = 'Редагування'
@@ -114,7 +122,7 @@ def edit_order_doc(request,pk):
             doc.updated_by = user
             doc.updated_at = timezone.now()
             form.save()
-        return redirect('docs:index_order_f',fk = 0 )
+        return redirect('docs:index_order_f', fk=0 )
     else:
         form = NewDocOrderForm(instance=doc)
-    return render(request,'docs/new_order_doc.html',{'form':form,'title':title})
+    return render(request, 'docs/new_order_doc.html', {'form': form, 'title': title})
