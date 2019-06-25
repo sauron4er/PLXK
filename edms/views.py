@@ -195,7 +195,7 @@ def send_email(email_type, recipients, doc_id):
 
                 try:
                     server = smtplib.SMTP(HOST, timeout=2000)
-                    server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+                    server.login('lxk_it', 'J2NYEHb50nymRF1L')
                     server.sendmail(FROM, [TO], BODY)
                     server.quit()
                 except OSError as err:

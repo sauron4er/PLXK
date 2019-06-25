@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
     </list>
     <ignored path="TEST.FDB" />
@@ -124,8 +122,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/edms/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
+            <state relative-caret-position="119">
+              <caret line="161" column="42" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
               <folding>
                 <element signature="e#0#64#0" expanded="true" />
                 <element signature="e#1635#1857#0" />
@@ -442,7 +440,7 @@
                 <element signature="e#70288#70324#0" />
                 <element signature="e#71072#71187#0" />
                 <element signature="e#71258#71374#0" />
-                <marker date="1561457808782" expanded="true" signature="5183:21115" ph="..." />
+                <marker date="1561461628794" expanded="true" signature="5183:21111" ph="..." />
               </folding>
             </state>
           </provider>
@@ -583,7 +581,7 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1934" />
@@ -845,7 +843,7 @@
       <workItem from="1560327673550" duration="1820000" />
       <workItem from="1560924609602" duration="284000" />
       <workItem from="1560943651380" duration="8421000" />
-      <workItem from="1561365240807" duration="5841000" />
+      <workItem from="1561365240807" duration="6578000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -1044,7 +1042,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="593668000" />
+    <option name="totallyTimeSpent" value="594405000" />
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -1167,6 +1165,11 @@
           <url>file://$PROJECT_DIR$/edms/templates/edms/administration/modules.js</url>
           <line>18</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>195</line>
+          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -1573,8 +1576,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/edms/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="160" lean-forward="true" selection-start-line="160" selection-end-line="160" />
+        <state relative-caret-position="119">
+          <caret line="161" column="42" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
           <folding>
             <element signature="e#0#64#0" expanded="true" />
             <element signature="e#1635#1857#0" />
@@ -1891,7 +1894,7 @@
             <element signature="e#70288#70324#0" />
             <element signature="e#71072#71187#0" />
             <element signature="e#71258#71374#0" />
-            <marker date="1561457808782" expanded="true" signature="5183:21115" ph="..." />
+            <marker date="1561461628794" expanded="true" signature="5183:21111" ph="..." />
           </folding>
         </state>
       </provider>
