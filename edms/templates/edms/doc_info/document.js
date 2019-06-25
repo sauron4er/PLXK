@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Info from './info';
 import Buttons from './buttons';
 import NewResolutions from './doc_info_modules/new_resolutions';
-import NewAcquaints from './doc_info_modules/new_acquaints'
+import NewAcquaints from './doc_info_modules/new_acquaints';
 import Path from './path';
 import Flow from './flow';
 import Acquaints from './doc_info_modules/acquaints';
@@ -154,14 +154,13 @@ class Document extends React.Component {
       this.setState((prevState) => ({
         show_resolutions_area: !prevState.show_resolutions_area
       }));
-      
+
       // Кнопка "На ознайомлення" відкриває окремий модуль
     } else if (mark_id === 15) {
       this.setState((prevState) => ({
         show_aquaints_area: !prevState.show_aquaints_area
       }));
-    }
-    else {
+    } else {
       this.postMark(mark_id);
     }
   };
@@ -180,7 +179,7 @@ class Document extends React.Component {
       this.notify('Додайте резолюції');
     }
   };
-  
+
   handleAcquaints = (acquaints) => {
     if (acquaints.length > 0) {
       this.setState(
@@ -237,7 +236,7 @@ class Document extends React.Component {
                     notify={this.notify}
                     new_path_id={this.state.new_path_id}
                   />
-                  <hr/>
+                  <hr />
                 </If>
                 <If condition={this.state.show_aquaints_area === true}>
                   <NewAcquaints
@@ -247,7 +246,7 @@ class Document extends React.Component {
                     notify={this.notify}
                     new_path_id={this.state.new_path_id}
                   />
-                  <hr/>
+                  <hr />
                 </If>
                 <div>
                   <label htmlFor='comment'>Текст коментарю:</label>
@@ -259,7 +258,7 @@ class Document extends React.Component {
                     onChange={this.onChange}
                   />
                 </div>
-                <hr/>
+                <hr />
                 <div>
                   Додати файл:
                   <FileUploader

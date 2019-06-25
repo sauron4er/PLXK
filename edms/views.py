@@ -193,10 +193,19 @@ def send_email(email_type, recipients, doc_id):
                     text
                 )).encode('cp1251').strip()
 
-                server = smtplib.SMTP(HOST)
-                server.login('lxk_it', 'J2NYEHb50nymRF1L')
-                server.sendmail(FROM, [TO], BODY)
-                server.quit()
+                try:
+                    server = smtplib.SMTP(HOST, timeout=2000)
+                    server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+                    server.sendmail(FROM, [TO], BODY)
+                    server.quit()
+                except OSError as err:
+                    FROM = "edms.lxk@gmail.com"
+                    server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
+                    server.ehlo()
+                    server.starttls()
+                    server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+                    server.sendmail(FROM, [TO], BODY)
+                    server.quit()
 
 
 def post_path(doc_request):
