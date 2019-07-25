@@ -410,7 +410,7 @@ def new_phase(doc_request, phase_number, modules_recipients):
                 if chief_seat_id:  # Посада шефа може бути не внесена в бд
                     # Активна людино-посада безпосереднього керівника:
                     chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                        .filter(seat_id=chief_seat_id).filter(is_main=True)
+                        .filter(seat_id=chief_seat_id).filter(is_main=True).filter(is_active=True)
 
                     if chief_emp_seat_id:  # Можливо, ніхто не займає цю посаду
                         # Якщо безпосередній керівник позначений як отримувач наступної фази,

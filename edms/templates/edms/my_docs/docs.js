@@ -151,7 +151,7 @@ class Docs extends React.Component {
           <DxTable
             rows={this.props.my_docs}
             columns={my_docs_columns}
-            defaultSorting={[{columnName: 'id', direction: 'asc'}]}
+            defaultSorting={[{columnName: 'id', direction: 'desc'}]}
             colWidth={my_docs_col_width}
             onRowClick={this.onRowClick}
             height={main_div_height}
@@ -163,7 +163,7 @@ class Docs extends React.Component {
           <DxTable
             rows={this.props.work_docs}
             columns={work_docs_columns}
-            defaultSorting={[{columnName: 'id', direction: 'asc'}]}
+            defaultSorting={[{columnName: 'id', direction: 'desc'}]}
             colWidth={work_docs_col_width}
             onRowClick={this.onRowClick}
             height={main_div_height}

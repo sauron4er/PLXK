@@ -154,7 +154,7 @@ class SeatTable extends React.Component {
       chief_id: 0,
       open: false
     });
-  }
+  };
 
   handleNew = (e) => {
     // Оновлює запис у списку відділів
