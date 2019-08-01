@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
     </list>
     <ignored path="TEST.FDB" />
@@ -68,72 +66,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/edms/views.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="413" lean-forward="true" selection-start-line="413" selection-end-line="413" />
+            <state relative-caret-position="3213">
+              <caret line="200" column="8" selection-start-line="200" selection-start-column="8" selection-end-line="200" selection-end-column="33" />
               <folding>
-                <element signature="e#0#64#0" expanded="true" />
-                <element signature="e#1635#1857#0" />
-                <element signature="e#1969#2559#0" />
-                <element signature="e#2134#2529#0" />
-                <element signature="e#2165#2503#0" />
-                <element signature="e#2415#2503#0" />
-                <element signature="e#2677#3698#0" />
-                <element signature="e#2842#3133#0" />
-                <element signature="e#2843#3011#0" />
-                <element signature="e#3214#3668#0" />
-                <element signature="e#3421#3641#0" />
-                <element signature="e#3466#3641#0" />
-                <element signature="e#3485#3640#0" />
-                <element signature="e#3811#4492#0" />
-                <element signature="e#3943#4478#0" />
-                <element signature="e#3995#4345#0" />
-                <element signature="e#3996#4189#0" />
-                <element signature="e#4613#5120#0" />
-                <element signature="e#4624#4893#0" />
-                <element signature="e#4625#4805#0" />
-                <element signature="e#4933#5100#0" />
-                <element signature="e#5006#5100#0" />
-                <element signature="e#5022#5099#0" />
-                <element signature="e#5188#5372#0" />
-                <element signature="e#5195#5356#0" />
-                <element signature="e#5196#5276#0" />
-                <element signature="e#5451#5600#0" />
-                <element signature="e#5459#5583#0" />
-                <element signature="e#5460#5517#0" />
-                <element signature="e#5686#6082#0" />
-                <element signature="e#5697#6061#0" />
-                <element signature="e#5698#5975#0" />
-                <element signature="e#6218#6408#0" />
-                <element signature="e#6225#6391#0" />
-                <element signature="e#6226#6302#0" />
-                <marker date="1564036436629" expanded="true" signature="5183:21136" ph="..." />
+                <element signature="e#14#54#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark_demand">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true">
-                <filter text="mark_id=8" />
-                <filter text="document_id=63" />
-                <filter text="recipient_id=201" />
-                <filter text="recipient_id=773" />
-              </filtering>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="194" column="10" lean-forward="true" selection-start-line="194" selection-start-column="10" selection-end-line="194" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -153,7 +102,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>reorder</find>
       <find>move</find>
       <find>close</find>
       <find>print</find>
@@ -183,6 +131,7 @@
       <find>mail</find>
       <find>new_phase</find>
       <find>try</find>
+      <find>Mark_De</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -244,8 +193,8 @@
         <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" />
         <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
         <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
         <option value="$PROJECT_DIR$/edms/views.py" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
       </list>
     </option>
   </component>
@@ -301,6 +250,19 @@
             <path>
               <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
               <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
+              <item name="edms" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="edms" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -526,7 +488,11 @@
       <workItem from="1563264572763" duration="623000" />
       <workItem from="1563277720107" duration="3416000" />
       <workItem from="1563957114361" duration="3794000" />
-      <workItem from="1563975177520" duration="1117000" />
+      <workItem from="1563975177520" duration="4071000" />
+      <workItem from="1564121036574" duration="1094000" />
+      <workItem from="1564389925123" duration="632000" />
+      <workItem from="1564407195055" duration="1000" />
+      <workItem from="1564408128774" duration="2325000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -725,7 +691,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="618668000" />
+    <option name="totallyTimeSpent" value="625674000" />
   </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
@@ -738,14 +704,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.19189766" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.20042644" />
       <window_info id="Structure" order="1" weight="0.13874066" />
       <window_info id="Favorites" order="2" sideWeight="0.50388455" side_tool="true" weight="0.1444563" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48773986" weight="0.32900432" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45309168" weight="0.34415585" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5570362" weight="0.39502165" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.58848614" weight="0.39502165" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49253732" weight="0.32792208" />
@@ -755,7 +722,7 @@
       <window_info anchor="bottom" id="Concurrent Activities Diagram" order="10" weight="0.32963374" />
       <window_info anchor="bottom" x="0" y="0" width="1920" height="1040" id="manage.py@PLXK" order="11" sideWeight="0.6140725" weight="0.3300866" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.42217484" weight="0.36090225" />
-      <window_info active="true" anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.5469083" side_tool="true" visible="true" weight="0.3116883" />
+      <window_info active="true" anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.41151386" side_tool="true" visible="true" weight="0.39502165" />
       <window_info anchor="bottom" id="TypeScript" order="14" />
       <window_info anchor="bottom" id="Database Console" order="15" sideWeight="0.49946696" weight="0.32939914" />
       <window_info anchor="bottom" id="Database Changes" order="16" />
@@ -848,6 +815,16 @@
           <line>18</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>163</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>341</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -876,16 +853,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/edms/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2108">
-          <caret line="126" column="4" selection-start-line="126" selection-start-column="4" selection-end-line="126" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edms/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1173">
@@ -896,13 +863,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_carry_out_items">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docs/views.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -910,13 +870,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/docs_doc_group">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/docs_doc_group" />
     <entry file="file://$PROJECT_DIR$/templates/docs/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -1049,15 +1003,6 @@
     <entry file="file://$PROJECT_DIR$/webpack.config.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_type_phase">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="document_type_id=2" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
     <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_type_phase_queue">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -1086,13 +1031,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="17" column="6" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/flow.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1100,16 +1038,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="26" column="57" selection-start-line="26" selection-start-column="57" selection-end-line="26" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5627">
-          <caret line="342" column="76" selection-start-line="342" selection-start-column="76" selection-end-line="342" selection-end-column="76" />
-          <folding>
-            <element signature="e#14#54#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1197,13 +1125,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -1211,22 +1132,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark_demand">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="mark_id=8" />
-            <filter text="document_id=63" />
-            <filter text="recipient_id=201" />
-            <filter text="recipient_id=773" />
-          </filtering>
+    <entry file="file://$PROJECT_DIR$/edms/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="117" column="13" selection-start-line="117" selection-start-column="6" selection-end-line="117" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/edms/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="413" lean-forward="true" selection-start-line="413" selection-end-line="413" />
+        <state relative-caret-position="4216">
+          <caret line="342" selection-start-line="342" selection-end-line="342" />
           <folding>
             <element signature="e#0#64#0" expanded="true" />
             <element signature="e#1635#1857#0" />
@@ -1263,8 +1182,60 @@
             <element signature="e#6218#6408#0" />
             <element signature="e#6225#6391#0" />
             <element signature="e#6226#6302#0" />
-            <marker date="1564036436629" expanded="true" signature="5183:21136" ph="..." />
+            <marker date="1564038252977" expanded="true" signature="5183:21136" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark_demand">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true">
+            <filter text="mark_id=8" />
+            <filter text="document_id=63" />
+            <filter text="recipient_id=201" />
+            <filter text="recipient_id=773" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_type_phase">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true">
+            <filter text="document_type_id=2" />
+          </filtering>
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_carry_out_items">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3213">
+          <caret line="200" column="8" selection-start-line="200" selection-start-column="8" selection-end-line="200" selection-end-column="33" />
+          <folding>
+            <element signature="e#14#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="194" column="10" lean-forward="true" selection-start-line="194" selection-start-column="10" selection-end-line="194" selection-end-column="10" />
         </state>
       </provider>
     </entry>

@@ -1663,24 +1663,6 @@ def edms_mark(request):
         raise err
 
 
-# @login_required(login_url='login')
-# def edms_resolution(request):
-#     if request.method == 'POST':
-#
-#         # отримуємо список резолюцій з request і публікуємо їх усі у базу
-#         resolutions = json.loads(request.POST['resolutions'])
-#         res_request = request.POST.copy()
-#         for res in resolutions:
-#             res_request.update({'recipient': res['recipient_id']})
-#             res_request.update({'comment': res['comment']})
-#             resolution_form = ResolutionForm(res_request)
-#             if resolution_form.is_valid():
-#                 new_res = resolution_form.save()
-#             else:
-#                 return HttpResponse(status=405)
-#         return HttpResponse('')
-
-
 @login_required(login_url='login')
 def edms_get_deps(request):
     if request.method == 'GET':

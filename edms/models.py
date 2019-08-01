@@ -235,7 +235,7 @@ class Doc_Recipient(models.Model):
 # Текст документу
 class Doc_Text(models.Model):
     document = models.ForeignKey(Document, related_name='doc_text')
-    text = models.CharField(max_length=1000, null=True, blank=True)
+    text = models.CharField(max_length=5000, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 
