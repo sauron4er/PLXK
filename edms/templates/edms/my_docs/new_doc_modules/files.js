@@ -1,47 +1,52 @@
 'use strict';
 import React, {Fragment} from 'react';
-import {FileUploader} from 'devextreme-react';
+import Files from 'react-files';
+import '../../_else/files_uploader.css';
+import NewFilesList from '../../_else/new_files_list';
 
-class Files extends React.Component {
-  onChange = (e) => {
+class FilesUpload extends React.Component {
+  onFilesChange = (new_files) => {
     const changed_event = {
       target: {
         name: 'files',
-        value: e.value
+        value: new_files
       }
     };
     this.props.onChange(changed_event);
   };
 
+  onFilesError = (error, file) => {
+    console.log('error code ' + error.code + ': ' + error.message);
+  };
+
+  filesRemoveOne = (e, file) => {
+    this.refs.new_files.removeFile(file);
+  };
+
   render() {
     const {fieldName, oldFiles} = this.props;
     return (
-      <Fragment>
-        {fieldName}:
-        <If condition={oldFiles}>
-          <For each='file' index='id' of={oldFiles}>
-            <div key={file.id}>
-              <a href={'../../media/' + file.file} download>
-                {file.name}
-              </a>
-            </div>
-          </For>
+      <>
+        <div>{fieldName}:</div>
+        <If condition={this.props.files.length > 0}>
+          <NewFilesList files={this.props.files} fileRemove={this.filesRemoveOne} />
         </If>
-        
-        <label className='full_width' htmlFor='files'>
-          <FileUploader
-            id='files'
-            name='files'
-            onValueChanged={(e) => this.onChange(e)}
-            uploadMode='useForm'
-            multiple={true}
-            allowCanceling={true}
-            selectButtonText='Оберіть файл'
-            labelText='або перетягніть файл сюди'
-            readyToUploadMessage='Готово'
-          />
-        </label>
-      </Fragment>
+          <Files
+            ref='new_files'
+            className='btn btn-sm btn-outline-secondary'
+            // className='files-dropzone-list'
+            // style={{height: '100px'}}
+            onChange={this.onFilesChange}
+            onError={this.onFilesError}
+            multiple
+            maxFiles={10}
+            maxFileSize={10000000}
+            minFileSize={0}
+            clickable
+          >
+            Додати файл(и)
+          </Files>
+      </>
     );
   }
 
@@ -52,4 +57,4 @@ class Files extends React.Component {
   };
 }
 
-export default Files;
+export default FilesUpload;

@@ -26,8 +26,6 @@ class Docs extends React.Component {
       {columnName: 'type', width: 150},
       {columnName: 'author'}
     ],
-
-    // seat_docs: [], // список документів, закріплених за конкретною посадою користувача
     row: '',
     modal_row: '',
     doc_info: '',
@@ -80,13 +78,24 @@ class Docs extends React.Component {
     this.setState({row: clicked_row});
   };
 
-  // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закрити й документ в MyDocs
+  // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закритий документ в MyDocs
   removeRow = (id, mark_id, author_id) => {
-    // видаляємо документ зі списку, якщо реакція не коментар, файл чи "на ознайомлення":
-    if (![4, 12, 15].includes(mark_id)) {
-    // if (mark_id !== 4 && mark_id !== 12 && mark_id !== 15) {
-      this.props.removeDoc(id, author_id);
+    // видаляємо документ зі списку, якщо реакція не коментар, файл чи "на ознайомлення" та якщо автор позначки не автор документу:
+
+    // TODO реформатувати цей кошмарний код. (Переробити дві таблиці на одну і працювати з однією?)
+    
+    if (author_id === parseInt(localStorage.getItem('my_seat'))) {
+      // Якщо автор закриває чи видаляє документ, видаляємо документ зі списку створених та отриманих
+      [7, 13].includes(mark_id) ? this.props.removeMyDoc(id, author_id) : null;
+      // Якщо автор ставить іншу позначку, видаляємо документ тільки зі списку отриманих:
+      this.props.removeWorkDoc(id, author_id);
+      
+    } else if (![4, 12, 15].includes(mark_id)) {
+      // Якщо позначку ставить не автор, видаляємо документ зі списку отриманих
+      // (Якщо позначка: Коментар, Файл чи На ознайомлення - не робимо нічого)
+      this.props.removeWorkDoc(id, author_id);
     }
+
     // рендеримо відповідь на подію:
     let answer = '';
     switch (mark_id) {
@@ -126,6 +135,12 @@ class Docs extends React.Component {
       case 15:
         answer = 'Документ №' + id + ' відправлено на ознайомлення.';
         break;
+      case 17:
+        answer = 'Документ №' + id + ' погоджено.';
+        break;
+      case 18:
+        answer = 'Файли документу №' + id + ' оновлено.';
+        break;
     }
     this.setState({
       row: {
@@ -143,32 +158,53 @@ class Docs extends React.Component {
       work_docs_col_width,
       main_div_height
     } = this.state;
+    
+    const my_docs = this.props.my_docs ? this.props.my_docs.filter(doc => doc.status === 'doc') : [];
+    const {work_docs} = this.props;
 
     return (
       <div className='row css_main_div' ref={this.getMainDivRef}>
         <div className='col-lg-4'>
           Створені документи
-          <DxTable
-            rows={this.props.my_docs}
-            columns={my_docs_columns}
-            defaultSorting={[{columnName: 'id', direction: 'desc'}]}
-            colWidth={my_docs_col_width}
-            onRowClick={this.onRowClick}
-            height={main_div_height}
-            filter
-          />
+          <Choose>
+            <When condition={my_docs !== ''}>
+              <DxTable
+                rows={my_docs}
+                columns={my_docs_columns}
+                defaultSorting={[{columnName: 'id', direction: 'desc'}]}
+                colWidth={my_docs_col_width}
+                onRowClick={this.onRowClick}
+                height={main_div_height}
+                filter
+              />
+            </When>
+            <Otherwise>
+              <div className='mt-3 loader-small' id='loader-1'>
+                {' '}
+              </div>
+            </Otherwise>
+          </Choose>
         </div>
         <div className='col-lg-4'>
           Документи в черзі
-          <DxTable
-            rows={this.props.work_docs}
-            columns={work_docs_columns}
-            defaultSorting={[{columnName: 'id', direction: 'desc'}]}
-            colWidth={work_docs_col_width}
-            onRowClick={this.onRowClick}
-            height={main_div_height}
-            filter
-          />
+          <Choose>
+            <When condition={work_docs !== ''}>
+              <DxTable
+                rows={work_docs}
+                columns={work_docs_columns}
+                defaultSorting={[{columnName: 'id', direction: 'desc'}]}
+                colWidth={work_docs_col_width}
+                onRowClick={this.onRowClick}
+                height={main_div_height}
+                filter
+              />
+            </When>
+            <Otherwise>
+              <div className='mt-3 loader-small' id='loader-1 '>
+                {' '}
+              </div>
+            </Otherwise>
+          </Choose>
         </div>
         <br />
 
@@ -183,6 +219,11 @@ class Docs extends React.Component {
       </div>
     );
   }
+
+  static defaultProps = {
+    my_docs: [],
+    work_docs: []
+  };
 }
 
 export default Docs;

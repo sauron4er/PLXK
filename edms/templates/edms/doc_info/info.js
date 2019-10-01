@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
 import Approvals from './doc_info_modules/approvals';
-
 import Recipient from './doc_info_modules/recipient';
 import Text from './doc_info_modules/text';
 import Day from './doc_info_modules/day';
@@ -11,14 +10,10 @@ import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
 
 class Info extends React.Component {
-
   render() {
     const {info, doc} = this.props;
 
     if (info.path) {
-      const path = info.path;
-      const first_path = path[path.length - 1];
-
       return (
         <div>
           {/*Початкова інфа про документ:*/}
@@ -35,32 +30,28 @@ class Info extends React.Component {
 
           {/* Модульна система */}
           <If condition={info.type_modules}>
-            <For each='module' of={info.type_modules}>
+            <For each='module' index='index' of={info.type_modules}>
               <Choose>
-                <When
-                  condition={module.module === 'recipient'}
-                >
+                <When condition={module.module === 'recipient'}>
                   <Recipient
                     recipient={{
                       name: info.recipient.name,
-                      seat: info.recipient.seat,
+                      seat: info.recipient.seat
                     }}
                     fieldName={module.field_name}
                   />
                 </When>
-                <When
-                  condition={module.module === 'recipient_chief'}
-                >
+                <When condition={module.module === 'recipient_chief'}>
                   <Recipient
                     recipient={{
                       name: info.recipient_chief.name,
-                      seat: info.recipient_chief.seat,
+                      seat: info.recipient_chief.seat
                     }}
                     fieldName={module.field_name}
                   />
                 </When>
                 <When condition={module.module === 'text'}>
-                  <Text text={info.text} fieldName={module.field_name} />
+                  <Text text={info.text ? info.text[index-1] : '...'} fieldName={module.field_name} />
                 </When>
                 <When condition={module.module === 'day'}>
                   <Day day={info.day} fieldName={module.field_name} />
@@ -72,10 +63,10 @@ class Info extends React.Component {
                   <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                 </When>
                 <When condition={module.module === 'files'}>
-                  {/*Працює правильно тільки якщо першопочатковий path документа останній у списку (список відсортований за датою)*/}
-                  <If condition={first_path.files.length > 0}>
-                    <Files files={first_path.files} fieldName={module.field_name} />
-                  </If>
+                  <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
+                </When>
+                <When condition={module.module === 'approval_list'}>
+                  <Approvals approvals={info.approval_list} />
                 </When>
               </Choose>
             </For>

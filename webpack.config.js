@@ -2,7 +2,7 @@ let path = require('path');
 let BundleTracker = require('webpack-bundle-tracker');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 let pathsToClean = ['./static/bundles/*.*'];
-
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -25,7 +25,8 @@ module.exports = {
 
   plugins: [
     new CleanWebpackPlugin(pathsToClean, {watch: true, beforeEmit: true}),
-    new BundleTracker({filename: './webpack-stats.json'})
+    new BundleTracker({filename: './webpack-stats.json'}),
+    // new BundleAnalyzerPlugin()
   ],
 
   module: {
@@ -61,6 +62,6 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
   }
 };

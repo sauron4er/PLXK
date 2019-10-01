@@ -34,6 +34,11 @@ class NewDoc extends React.Component {
 
   render() {
     const {new_doc_types, new_doc_type, new_doc_type_id} = this.state;
+    const doc = {
+      id: 0,
+      type: new_doc_type,
+      type_id: new_doc_type_id
+    };
     return (
       <Fragment>
         <form className='form-inline'>
@@ -60,15 +65,12 @@ class NewDoc extends React.Component {
           </div>
         </form>
         <Choose>
-          {/*<When condition={new_doc_type_id === 2}>*/}
-            {/*<CarryOut addDoc={this.props.addDoc} onCloseModal={this.onCloseModal} />*/}
-          {/*</When>*/}
           <When condition={new_doc_type_id !== 0}>
             <NewDocument
+              doc={doc}
               addDoc={this.props.addDoc}
               onCloseModal={this.onCloseModal}
-              docType={new_doc_type}
-              docTypeId={new_doc_type_id}
+              status={'doc'}
             />
           </When>
           <Otherwise>

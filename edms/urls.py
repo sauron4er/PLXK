@@ -3,8 +3,8 @@ from django.conf.urls import include, url
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_emp_seats_hr  # Відділ кадрів
 from edms.views import edms_administration, edms_get_types, edms_get_type_info, edms_deactivate_permission, edms_get_modules_phases  # Адміністрування
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
-from edms.views import edms_mark, edms_del_draft  # Мої документи post
-from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_doc_type_modules  # Нові документи
+from edms.views import edms_mark, edms_del_doc  # Мої документи post
+from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive  # Архів
 from edms.views import edms_sub_docs, edms_get_sub_docs  # Документи підлеглих
 
@@ -32,8 +32,9 @@ urlpatterns = [
 
     url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
+    url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),
     url(r'^my_docs/get_chiefs/(?P<pk>\d+)/$', edms_get_chiefs, name='my_docs_get_chiefs'),
-    url(r'^my_docs/del_draft/(?P<pk>\d+)/$', edms_del_draft, name='del_draft'),
+    url(r'^my_docs/del_doc/(?P<pk>\d+)/$', edms_del_doc, name='del_doc'),
     url(r'^my_docs/get_direct_subs/(?P<pk>\d+)/$', edms_get_direct_subs, name='my_docs_get_direct_subs'),
     url(r'^my_docs/mark/', edms_mark, name='my_docs_mark'),
     # url(r'^my_docs/resolution/', edms_resolution, name='my_docs_resolution'),

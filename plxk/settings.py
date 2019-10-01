@@ -184,3 +184,7 @@ MEDIA_URL = '/media/'
 LOGOUT_REDIRECT_URL = 'home'
 
 LOGIN_REDIRECT_URL = 'home'
+
+# FILE_UPLOAD_HANDLERS = [
+#     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+# ]

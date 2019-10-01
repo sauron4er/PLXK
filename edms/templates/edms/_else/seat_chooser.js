@@ -1,23 +1,11 @@
 'use strict';
 import React from 'react';
+import {compareById} from './my_extras';
 
 class SeatChooser extends React.Component {
   state = {
     my_seat_id: '',
     my_chief: ''
-  };
-
-  compareById = (a, b) => {
-    if (a.length !== b.length) {
-      return false;
-    }
-
-    for (let i = 0; i < a.length; i++) {
-      if (a[i].id !== b[i].id) {
-        return false;
-      }
-    }
-    return true;
   };
 
   getChief = () => {
@@ -34,7 +22,7 @@ class SeatChooser extends React.Component {
   componentDidMount() {
     if (
       JSON.parse(localStorage.getItem('my_seats')) == null ||
-      !this.compareById(window.my_seats, JSON.parse(localStorage.getItem('my_seats')))
+      !compareById(window.my_seats, JSON.parse(localStorage.getItem('my_seats')))
     ) {
       this.setState({
         my_seat_id: window.my_seats[0].id

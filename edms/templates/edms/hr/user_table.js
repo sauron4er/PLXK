@@ -363,10 +363,7 @@ class UserTable extends React.Component {
   render() {
     const {open, acting, seat, emp_seat_id, new_emp_form} = this.state;
 
-    const users_columns = [
-      {name: 'emp', title: 'Ф.І.О.'},
-      {name: 'tab_number', title: 'Таб.ном.'}
-    ];
+    const users_columns = [{name: 'emp', title: 'Ф.І.О.'}, {name: 'tab_number', title: 'Таб.ном.'}];
 
     const users_col_width = [{columnName: 'tab_number', width: 110}];
 
@@ -402,9 +399,21 @@ class UserTable extends React.Component {
 
     return (
       <Fragment>
-        <button type='button' className='btn btn-outline-secondary mb-1 invisible'>
-          Співробітники:
+        <button
+          type='button'
+          className='btn btn-sm btn-outline-secondary mb-1 float-left'
+          // onClick={this.onOpenModalNew}
+        >
+          Додати співробітника
         </button>
+        <button
+          type='button'
+          className='btn btn-sm btn-outline-secondary mb-1 float-right'
+          // onClick={this.onOpenModalNew}
+        >
+          Відпустки
+        </button>
+        <div className='float-left'>
         <DxTable
           rows={this.props.emps}
           columns={users_columns}
@@ -414,13 +423,15 @@ class UserTable extends React.Component {
           height={this.props.height}
           filter
         />
+        </div>
 
         <Modal open={open} onClose={this.onCloseModal} center>
           <p> </p>
           <Form onSubmit={this.handleSubmit}>
             <div>
-              <div className='font-weight-bold'>{this.state.emp} <small>({this.state.tab_number})</small></div>
-              
+              <div className='font-weight-bold'>
+                {this.state.emp} <small>({this.state.tab_number})</small>
+              </div>
             </div>
             <div className='d-flex'>
               <Input

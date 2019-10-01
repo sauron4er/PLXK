@@ -34,7 +34,7 @@ class SeatForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'testing'}
+        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'is_template', 'testing'}
 
 
 #  Деактивація документа (буде показуватися в архівах)
@@ -65,7 +65,7 @@ class DTPAddForm(forms.ModelForm):
         fields = {'document_type', 'seat', 'mark'}
 
 
-class DocumentPathForm(forms.ModelForm):
+class NewPathForm(forms.ModelForm):
     class Meta:
         model = Document_Path
         fields = {'document', 'employee_seat', 'mark', 'comment'}
@@ -95,7 +95,7 @@ class ResolutionForm(forms.ModelForm):
 class NewFileForm(forms.ModelForm):
     class Meta:
         model = File
-        fields = {'name', 'file', 'document_path'}
+        fields = {'name', 'file', 'document_path', 'first_path'}
 
 
 class FileNewPathForm(forms.ModelForm):
@@ -122,10 +122,41 @@ class NewAcquaintForm(forms.ModelForm):
         fields = {'document', 'acquaint_emp_seat'}
 
 
+class NewSignForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Sign
+        fields = {'document'}
+
+
 class NewApprovalForm(forms.ModelForm):
     class Meta:
         model = Doc_Approval
-        fields = {'document', 'approval_emp_seat'}
+        fields = {'document', 'emp_seat', 'approve_queue'}
+
+
+class ApprovedApprovalForm(forms.ModelForm):  # Для створення запису відразу зі значенням True
+    class Meta:
+        model = Doc_Approval
+        fields = {'document', 'emp_seat', 'approve_queue', 'approved', 'approve_path'}
+
+        def __init__(self, *args, **kwargs):
+            # """If no initial data, provide some defaults."""
+            initial = kwargs.get('initial', {})
+            initial['approved'] = None
+            initial['approve_path'] = None
+            kwargs['initial'] = initial
+
+
+class ApproveForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Approval
+        fields = {'approved', 'approve_path'}
+
+
+class DeactivateApproveForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Approval
+        fields = {'approved'}
 
 
 class NewNameForm(forms.ModelForm):
@@ -143,7 +174,7 @@ class NewPreambleForm(forms.ModelForm):
 class NewTextForm(forms.ModelForm):
     class Meta:
         model = Doc_Text
-        fields = {'document', 'text'}
+        fields = {'document', 'text', 'queue_in_doc'}
 
 
 class NewRecipientForm(forms.ModelForm):

@@ -93,6 +93,7 @@ class Document(models.Model):
     image = models.BinaryField(editable=True, null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
     is_draft = models.BooleanField(default=False)
+    is_template = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
     date = models.DateTimeField(auto_now_add=True, null=True)
@@ -132,6 +133,10 @@ class File(models.Model):
     file = models.FileField(upload_to='edms_files/%Y/%m')
     name = models.CharField(max_length=100, null=True, blank=True)
     document_path = models.ForeignKey(Document_Path, related_name='files', null=True)
+    first_path = models.BooleanField(True)  # True - файл доданий при створенні документу. Такі файли показуються в основній інфі про документ.
+    version = models.IntegerField(default=1)
+    deactivate_path = models.ForeignKey(Document_Path, related_name='deactivate_files', null=True)
+    is_active = models.BooleanField(default=True)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -154,7 +159,10 @@ class Document_Type_Module(models.Model):
     field_name = models.CharField(max_length=200)
     required = models.BooleanField(default=False)
     testing = models.BooleanField(default=False)
+    # is_tiny_text_box = models.BooleanField(default=False) # True - маленькі текстові поля, н-д номер документа (приймають до 10 символів)
     is_active = models.BooleanField(default=True)
+    is_editable = models.BooleanField(default=False)
+    additional_info = models.CharField(max_length=200, null=True)  # Додаткова інфа про модуль, яка показується користувачу
 
 
 # пункти [наказу]
@@ -183,9 +191,10 @@ class Doc_Acquaint(models.Model):
 # Список отримувачів на ознайомлення.
 class Doc_Approval(models.Model):
     document = models.ForeignKey(Document, related_name='document_approval_list')
-    approval_emp_seat = models.ForeignKey(Employee_Seat, related_name='emp_seat_approvals')
-    approved = models.NullBooleanField(null=True)
-    approved_path = models.ForeignKey(Document_Path, related_name='path_approvals', null=True)
+    emp_seat = models.ForeignKey(Employee_Seat, related_name='emp_seat_approvals')
+    approved = models.NullBooleanField()
+    approve_path = models.ForeignKey(Document_Path, related_name='path_approvals', null=True)
+    approve_queue = models.IntegerField()   # Черговість подання документа на підпис різним людинопосадам, починаючи з автора (при поверненні переробленого документа, той подається автору на затвердження)
     is_active = models.BooleanField(default=True)
 
 
@@ -197,11 +206,12 @@ class Doc_Validity(models.Model):
     validity_end = models.DateTimeField(null=True)
 
 
-# Підпис документу [директором]
+# Погодження документу
 class Doc_Sign(models.Model):
     document = models.ForeignKey(Document, related_name='document_sign')
-    signed = models.BooleanField(default=True)
-    sign_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
+    # signed = models.BooleanField(default=False)
+    signed_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
+    is_active = models.BooleanField(default=True)
 
 
 # Унікальна нумерація документу
@@ -236,6 +246,7 @@ class Doc_Recipient(models.Model):
 class Doc_Text(models.Model):
     document = models.ForeignKey(Document, related_name='doc_text')
     text = models.CharField(max_length=5000, null=True, blank=True)
+    queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
 

@@ -175,57 +175,110 @@ class DepTable extends React.Component {
         const { open, new_open } = this.state;    // для модального вікна
 
         return (
-            <Fragment>
-                <button type="button" className="btn btn-outline-secondary mb-1" onClick={this.onOpenModalNew}>Додати відділ</button>
-                <DxTable
-                    rows={this.props.deps}
-                    columns={[{ name: 'dep', title: 'Відділ' }]}
-                    defaultSorting={[{ columnName: "dep", direction: "asc" }]}
-                    onRowClick={this.onRowClick}
-                    height={this.props.height}
-                    filter
-                />
-                {/* Модальне вікно для нового відділу*/}
-                <Modal open={new_open} onClose={this.onCloseModalNew} center>
-                    <br/>
-                    <p className='font-weight-bold'>Новий відділ</p>
+          <Fragment>
+            <button
+              type='button'
+              className='btn btn-sm btn-outline-secondary mb-1 float-right'
+              onClick={this.onOpenModalNew}
+            >
+              Додати відділ
+            </button>
+            <div className='float-left'>
+              <DxTable
+                rows={this.props.deps}
+                columns={[{name: 'dep', title: 'Відділ'}]}
+                defaultSorting={[{columnName: 'dep', direction: 'asc'}]}
+                onRowClick={this.onRowClick}
+                height={this.props.height}
+                filter
+              />
+            </div>
+            {/* Модальне вікно для нового відділу*/}
+            <Modal open={new_open} onClose={this.onCloseModalNew} center>
+              <br />
+              <p className='font-weight-bold'>Новий відділ</p>
 
-                    <Form onSubmit={this.newSubmit}>
+              <Form onSubmit={this.newSubmit}>
+                <label>
+                  Назва відділу:
+                  <Input
+                    className='form-control'
+                    type='text'
+                    value={this.state.dep}
+                    name='dep'
+                    onChange={this.onChange}
+                    maxLength={200}
+                    size='51'
+                    validations={[required]}
+                  />
+                </label>
+                <br />
+                <br />
 
-                        <label>Назва відділу:
-                            <Input className='form-control' type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
-                        </label><br /><br />
+                <label className='full_width'>
+                  Опис:
+                  <Textarea
+                    className='form-control full_width'
+                    value={this.state.text}
+                    name='text'
+                    onChange={this.onChange}
+                    maxLength={4000}
+                  />
+                </label>
+                <br />
+                <br />
 
-                        <label className='full_width'>Опис:
-                            <Textarea className="form-control full_width" value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
-                        </label>
-                        <br /><br />
+                <Button className='btn btn-outline-success float-sm-left' name='new_dep'>
+                  Підтвердити
+                </Button>
+              </Form>
+            </Modal>
 
-                        <Button className="btn btn-outline-success float-sm-left" name="new_dep">Підтвердити</Button>
-                    </Form>
-                </Modal>
+            {/* Модальне вікно для змін у відділі*/}
+            <Modal open={open} onClose={this.onCloseModal} center>
+              <Form onSubmit={this.handleSubmit}>
+                <label>
+                  Назва відділу:
+                  <Input
+                    className='form-control'
+                    type='text'
+                    value={this.state.dep}
+                    name='dep'
+                    onChange={this.onChange}
+                    maxLength={200}
+                    size='51'
+                    validations={[required]}
+                  />
+                </label>
+                <br />
+                <br />
 
-                {/* Модальне вікно для змін у відділі*/}
-                <Modal open={open} onClose={this.onCloseModal} center>
-                    <br/>
-                    <p className='font-weight-bold'>Внесіть зміни при необхідності:</p>
+                <label className='full_width'>
+                  Опис:
+                  <Textarea
+                    className='form-control full_width'
+                    value={this.state.text}
+                    name='text'
+                    onChange={this.onChange}
+                    maxLength={4000}
+                  />
+                </label>
+                <br />
+                <br />
 
-                    <Form onSubmit={this.handleSubmit}>
-
-                        <label>Назва відділу:
-                            <Input className='form-control' type="text" value={this.state.dep} name='dep' onChange={this.onChange} maxLength={200} size="51" validations={[required]}/>
-                        </label><br/><br/>
-
-                        <label className='full_width'>Опис:
-                            <Textarea className='form-control full_width' value={this.state.text} name='text' onChange={this.onChange} maxLength={4000}/>
-                        </label><br/><br/>
-
-                        <Button className="float-sm-left btn btn-outline-success mb-1">Підтвердити</Button>
-                        <Button className="float-sm-right btn btn-outline-secondary mb-1" onClick={this.handleDelete.bind(this)}>Видалити відділ</Button>
-                    </Form>
-                </Modal>
-            </Fragment>
-        )
+                <Button className='float-sm-left btn btn-outline-success mb-1'>
+                  Підтвердити
+                </Button>
+                <Button
+                  className='float-sm-right btn btn-outline-secondary mb-1'
+                  onClick={this.handleDelete.bind(this)}
+                >
+                  Видалити відділ
+                </Button>
+              </Form>
+            </Modal>
+          </Fragment>
+        );
     }
 }
 

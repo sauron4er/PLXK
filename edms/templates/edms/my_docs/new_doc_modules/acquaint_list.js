@@ -2,16 +2,18 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
 import {uniqueArray} from '../../_else/my_extras';
-import '../../_else/my_styles.css'
+import {getEmpSeats} from '../../../../api/get_emp_seats';
+import '../../_else/my_styles.css';
 
 class AcquaintList extends React.Component {
   state = {
     acquaint_list: this.props.acquaintList,
     select_acquaint_id: 0,
     select_acquaint: '',
-    seat_list: []
+    seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
+      ? JSON.parse(localStorage.getItem('emp_seat_list'))
+      : []
   };
 
   onChange = (event) => {
@@ -22,23 +24,26 @@ class AcquaintList extends React.Component {
     });
   };
 
-  // отримуємо з бд список користувачів
+  // перевіряємо, чи оновився список співробітників з часу останнього візиту
   componentWillMount() {
-    axios({
-      method: 'get',
-      url: 'get_emp_seats/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
-      .then((response) => {
+    const get_emp_seats = getEmpSeats();
+    get_emp_seats.then((result) => {
+      // Якщо result === 0 - змін у базі не виявлено
+      if (result === 0) {
+        // Але якщо на сторінці два компоненти запитують про зміни,
+        // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
+        // але список не оновлять, тому оновлюємо список самі
+        this.state.seat_list.length === 0
+          ? this.setState({
+              seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
+            })
+          : null;
+      } else {
         this.setState({
-          seat_list: response.data
+          seat_list: result
         });
-      })
-      .catch((error) => {
-        console.log('errorpost: ' + error);
-      });
+      }
+    });
   }
 
   // надсилає новий список у батьківський компонент:

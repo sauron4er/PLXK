@@ -49,12 +49,32 @@ class Path extends React.Component {
             </If>
             <If condition={path.files.length > 0}>
               <ol className='list-group mt-1'>
-                Файли:
+                Додано {path.files.length > 1 ? 'файли' : 'файл'}:
                 {path.files.map((file) => {
                   return (
                     <div key={file.id}>
                       <a href={'../../media/' + file.file} download>
-                        {file.name}
+                        {file.name}{' '}
+                        <If condition={file.version > 1}>
+                          <span className='text-dark font-weight-bold'>v{file.version}</span>
+                        </If>
+                      </a>
+                    </div>
+                  );
+                })}
+              </ol>
+            </If>
+            <If condition={path.deactivated_files.length > 0}>
+              <ol className='list-group mt-1'>
+                Видалено {path.deactivated_files.length > 1 ? 'файли' : 'файл'}:
+                {path.deactivated_files.map((file) => {
+                  return (
+                    <div key={file.id}>
+                      <a href={'../../media/' + file.file} download>
+                        {file.name}{' '}
+                        <If condition={file.version > 1}>
+                          <span className='text-dark font-weight-bold'>v{file.version}</span>
+                        </If>
                       </a>
                     </div>
                   );

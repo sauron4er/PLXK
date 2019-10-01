@@ -1,59 +1,53 @@
-"use strict";
-import React, { Fragment } from "react";
-import Modal from "react-responsive-modal";
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
-import Button from "react-validation/build/button";
-import Select from "react-validation/build/select";
-import "../_else/my_styles.css";
-import DxTable from "../_else/dx_table";
-import { required } from "../_else/validations.js";
-import { getIndex } from "../_else/my_extras.js";
-import axios from "axios";
-import querystring from "querystring"; // for axios
-axios.defaults.xsrfHeaderName = "X-CSRFToken";
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.headers.put["Content-Type"] =
-  "application/x-www-form-urlencoded, x-xsrf-token";
+'use strict';
+import React, {Fragment} from 'react';
+import Modal from 'react-responsive-modal';
+import Form from 'react-validation/build/form';
+import Input from 'react-validation/build/input';
+import Button from 'react-validation/build/button';
+import Select from 'react-validation/build/select';
+import '../_else/my_styles.css';
+import DxTable from '../_else/dx_table';
+import {required} from '../_else/validations.js';
+import {getIndex} from '../_else/my_extras.js';
+import axios from 'axios';
+import querystring from 'querystring'; // for axios
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 class SeatTable extends React.Component {
-  
   state = {
     open: false,
     new_open: false,
-    id: "", // id посади для форми
-    seat: "", // назва посади для форми
-    dep: "", // назва відділу для форми
-    dep_id: "", // id відділу
+    id: '', // id посади для форми
+    seat: '', // назва посади для форми
+    dep: '', // назва відділу для форми
+    dep_id: '', // id відділу
     is_dep_chief: false, // чи є посада керівною у відділі
-    chief: "", // керівник посади для форми
-    chief_id: "", // id керівника посади
+    chief: '', // керівник посади для форми
+    chief_id: '', // id керівника посади
     is_vacant: true // чи є посада вакантною
   };
 
   onChange = (event) => {
-    if (event.target.name === "chief") {
+    if (event.target.name === 'chief') {
       // беремо ід керівника із <select>
       const selectedIndex = event.target.options.selectedIndex;
-      this.state.chief_id = event.target.options[selectedIndex].getAttribute(
-        "data-key"
-      );
-      this.state.chief = event.target.options[selectedIndex].getAttribute(
-        "value"
-      );
-    } else if (event.target.name === "dep") {
+      this.state.chief_id = event.target.options[selectedIndex].getAttribute('data-key');
+      this.state.chief = event.target.options[selectedIndex].getAttribute('value');
+    } else if (event.target.name === 'dep') {
       // беремо ід відділу із <select>
       const selectedIndex = event.target.options.selectedIndex;
       this.setState({
-        dep_id: event.target.options[selectedIndex].getAttribute("data-key"),
-        dep: event.target.options[selectedIndex].getAttribute("value")
+        dep_id: event.target.options[selectedIndex].getAttribute('data-key'),
+        dep: event.target.options[selectedIndex].getAttribute('value')
       });
-    } else if (event.target.name === "is_dep_chief") {
+    } else if (event.target.name === 'is_dep_chief') {
       this.setState({
-        is_dep_chief: event.target.checked,
-      })
+        is_dep_chief: event.target.checked
+      });
     } else {
-      this.setState({ [event.target.name]: event.target.value });
+      this.setState({[event.target.name]: event.target.value});
     }
   };
 
@@ -83,8 +77,8 @@ class SeatTable extends React.Component {
       let dep_id = this.state.dep_id == 0 ? null : this.state.dep_id;
 
       axios({
-        method: "post",
-        url: "seat/" + this.state.id + "/",
+        method: 'post',
+        url: 'seat/' + this.state.id + '/',
         data: querystring.stringify({
           id: this.state.id,
           seat: this.state.seat,
@@ -94,21 +88,23 @@ class SeatTable extends React.Component {
           is_active: true
         }),
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          'Content-Type': 'application/x-www-form-urlencoded'
         }
-      }).then(response => {
-        this.props.changeLists("seats", new_seats);
-        // console.log('responsepost: ' + response);
-      }).catch(error => {
-        console.log("errorpost: " + error);
-      });
+      })
+        .then((response) => {
+          this.props.changeLists('seats', new_seats);
+          // console.log('responsepost: ' + response);
+        })
+        .catch((error) => {
+          console.log('errorpost: ' + error);
+        });
     }
     this.setState({
-      seat: "",
-      dep: "",
+      seat: '',
+      dep: '',
       dep_id: 0,
       is_dep_chief: false,
-      chief: "",
+      chief: '',
       chief_id: 0,
       open: false
     });
@@ -123,8 +119,8 @@ class SeatTable extends React.Component {
     let dep_id = this.state.dep_id == 0 ? null : this.state.dep_id;
 
     axios({
-      method: "post",
-      url: "seat/" + this.state.id + "/",
+      method: 'post',
+      url: 'seat/' + this.state.id + '/',
       data: querystring.stringify({
         id: this.state.id,
         seat: this.state.seat,
@@ -133,24 +129,24 @@ class SeatTable extends React.Component {
         is_active: false
       }),
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-      .then(response => {
+      .then((response) => {
         this.props.changeLists(
-          "seats",
-          this.props.seats.filter(seat => seat.id !== this.state.id)
+          'seats',
+          this.props.seats.filter((seat) => seat.id !== this.state.id)
         );
         // console.log('responsepost: ' + response);
       })
-      .catch(error => {
-        console.log("errorpost: " + error);
+      .catch((error) => {
+        console.log('errorpost: ' + error);
       });
     this.setState({
-      seat: "",
-      dep: "",
+      seat: '',
+      dep: '',
       dep_id: 0,
-      chief: "",
+      chief: '',
       chief_id: 0,
       open: false
     });
@@ -167,10 +163,10 @@ class SeatTable extends React.Component {
     let dep_id = this.state.dep_id == 0 ? null : this.state.dep_id;
 
     axios({
-      method: "post",
-      url: "",
+      method: 'post',
+      url: '',
       data: querystring.stringify({
-        new_seat: "",
+        new_seat: '',
         seat: this.state.seat,
         department: dep_id,
         is_dep_chief: this.state.is_dep_chief,
@@ -178,7 +174,7 @@ class SeatTable extends React.Component {
         is_active: true
       })
     })
-      .then(response => {
+      .then((response) => {
         // new_seats.push({
         //     id: response.data,
         //     seat: this.state.seat,
@@ -201,8 +197,8 @@ class SeatTable extends React.Component {
         window.location.reload();
         // console.log('responsepost: ' + response);
       })
-      .catch(error => {
-        console.log("errorpost: " + error);
+      .catch((error) => {
+        console.log('errorpost: ' + error);
       });
   };
 
@@ -216,129 +212,129 @@ class SeatTable extends React.Component {
       is_dep_chief: row.is_dep_chief === 'true',
       chief: row.chief,
       chief_id: row.chief_id,
-      is_vacant: row.is_vacant === "true"
+      is_vacant: row.is_vacant === 'true'
     });
     this.onOpenModal();
   };
 
   onOpenModal = () => {
-    this.setState({ open: true });
+    this.setState({open: true});
   };
 
   onCloseModal = () => {
     this.setState({
       open: false,
-      seat: "",
-      dep: "",
-      chief: ""
+      seat: '',
+      dep: '',
+      chief: ''
     });
   };
 
   onOpenModalNew = () => {
-    this.setState({ new_open: true });
+    this.setState({new_open: true});
   };
 
   onCloseModalNew = () => {
-    this.setState({ new_open: false });
+    this.setState({new_open: false});
   };
 
   render() {
-    const { open, new_open, chief, dep } = this.state;
+    const {open, new_open, chief, dep} = this.state;
 
-    const seats_columns = [
-      { name: "seat", title: "Посада" },
-      { name: "dep", title: "Відділ" }
-    ];
+    const seats_columns = [{name: 'seat', title: 'Посада'}, {name: 'dep', title: 'Відділ'}];
 
     return (
       <Fragment>
-        <div className="row ml-1">
-          <button
-            type="button"
-            className="btn btn-outline-secondary mb-1"
-            onClick={this.onOpenModalNew}
-          >
-            Додати посаду
-          </button>
-          {/*<small className="col">Вільні посади виділяються червоним</small>*/}
+        <button
+          type='button'
+          className='btn btn-sm btn-outline-secondary mb-1 float-right'
+          onClick={this.onOpenModalNew}
+        >
+          Додати посаду
+        </button>
+        <div className='float-left'>
+          <DxTable
+            rows={this.props.seats}
+            columns={seats_columns}
+            defaultSorting={[{columnName: 'seat', direction: 'asc'}]}
+            onRowClick={this.onRowClick}
+            // redRow="is_vacant"
+            height={this.props.height}
+            filter
+          />
         </div>
-        <DxTable
-          rows={this.props.seats}
-          columns={seats_columns}
-          defaultSorting={[{ columnName: "seat", direction: "asc" }]}
-          onRowClick={this.onRowClick}
-          // redRow="is_vacant"
-          height={this.props.height}
-          filter
-        />
 
         {/*Модальне вікно редагування посади*/}
         <Modal open={open} onClose={this.onCloseModal} center>
           <br />
-          <p className="font-weight-bold">Внесіть зміни при необхідності:</p>
+          <p className='font-weight-bold'>Внесіть зміни при необхідності:</p>
 
           <Form onSubmit={this.handleSubmit}>
-            <label className="full_width" htmlFor='seat'>Назва посади:</label>
-              <Input
-                className="form-control full_width"
-                id='seat'
-                type="text"
-                value={this.state.seat}
-                name="seat"
-                onChange={this.onChange}
-                maxLength={100}
-                size="51"
-                validations={[required]}
-              />
+            <label className='full_width' htmlFor='seat'>
+              Назва посади:
+            </label>
+            <Input
+              className='form-control full_width'
+              id='seat'
+              type='text'
+              value={this.state.seat}
+              name='seat'
+              onChange={this.onChange}
+              maxLength={100}
+              size='51'
+              validations={[required]}
+            />
             <br />
             <br />
 
-            <label className="full_width" htmlFor='dep-select'>Відділ:</label>
-              <Select
-                className="form-control full_width"
-                id="dep-select"
-                name="dep"
-                value={dep}
-                onChange={this.onChange}
-              >
-                <option data-key={0} value="Не внесено">
-                  ------------
-                </option>
-                {this.props.deps.map(dep => {
-                  return (
-                    <option key={dep.id} data-key={dep.id} value={dep.dep}>
-                      {dep.dep}
-                    </option>
-                  );
-                })}
-              </Select>
-            
-            <div className="d-flex">
+            <label className='full_width' htmlFor='dep-select'>
+              Відділ:
+            </label>
+            <Select
+              className='form-control full_width'
+              id='dep-select'
+              name='dep'
+              value={dep}
+              onChange={this.onChange}
+            >
+              <option data-key={0} value='Не внесено'>
+                ------------
+              </option>
+              {this.props.deps.map((dep) => {
+                return (
+                  <option key={dep.id} data-key={dep.id} value={dep.dep}>
+                    {dep.dep}
+                  </option>
+                );
+              })}
+            </Select>
+
+            <div className='d-flex'>
               <Input
-                name="is_dep_chief"
+                name='is_dep_chief'
                 onChange={this.onChange}
-                type="checkbox"
+                type='checkbox'
                 checked={this.state.is_dep_chief}
-                id="dep_chief"
+                id='dep_chief'
               />
-              <label htmlFor="dep_chief">керівник відділу</label>
+              <label htmlFor='dep_chief'>керівник відділу</label>
             </div>
             <br />
             <br />
 
-            <label className="full_width">
+            <label className='full_width'>
               Керівник:
               <Select
-                className="form-control full_width"
-                id="chief-select"
-                name="chief"
+                className='form-control full_width'
+                id='chief-select'
+                name='chief'
                 value={chief}
                 onChange={this.onChange}
               >
-                <option data-key={0} value="Не внесено">
+                <option data-key={0} value='Не внесено'>
                   ------------
                 </option>
-                {this.props.seats.map(seat => {
+                {this.props.seats.map((seat) => {
                   return (
                     <option key={seat.id} data-key={seat.id} value={seat.seat}>
                       {seat.seat}
@@ -350,11 +346,9 @@ class SeatTable extends React.Component {
             <br />
             <br />
 
-            <Button className="float-sm-left btn btn-outline-success mb-1">
-              Підтвердити
-            </Button>
+            <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
             <Button
-              className="float-sm-right btn btn-outline-secondary mb-1"
+              className='float-sm-right btn btn-outline-secondary mb-1'
               onClick={this.handleDelete}
             >
               Видалити посаду
@@ -365,37 +359,37 @@ class SeatTable extends React.Component {
         {/*Модальне вікно додання посади*/}
         <Modal open={new_open} onClose={this.onCloseModalNew} center>
           <br />
-          <p className="font-weight-bold">Нова посада</p>
+          <p className='font-weight-bold'>Нова посада</p>
           <Form onSubmit={this.handleNew}>
-            <label className="full_width">
+            <label className='full_width'>
               Назва посади:
               <Input
-                className="form-control full_width"
-                type="text"
+                className='form-control full_width'
+                type='text'
                 value={this.state.seat}
-                name="seat"
+                name='seat'
                 onChange={this.onChange}
                 maxLength={100}
-                size="51"
+                size='51'
                 validations={[required]}
               />
             </label>
             <br />
             <br />
 
-            <label className="full_width">
+            <label className='full_width'>
               Відділ:
               <Select
-                className="form-control full_width"
-                id="dep-select"
-                name="dep"
+                className='form-control full_width'
+                id='dep-select'
+                name='dep'
                 value={dep}
                 onChange={this.onChange}
               >
-                <option data-key={0} value="Не внесено">
+                <option data-key={0} value='Не внесено'>
                   ------------
                 </option>
-                {this.props.deps.map(dep => {
+                {this.props.deps.map((dep) => {
                   return (
                     <option key={dep.id} data-key={dep.id} value={dep.dep}>
                       {dep.dep}
@@ -407,19 +401,19 @@ class SeatTable extends React.Component {
             <br />
             <br />
 
-            <label className="full_width">
+            <label className='full_width'>
               Керівник:
               <Select
-                className="form-control full_width"
-                id="chief-select"
-                name="chief"
+                className='form-control full_width'
+                id='chief-select'
+                name='chief'
                 value={chief}
                 onChange={this.onChange}
               >
-                <option data-key={0} value="Не внесено">
+                <option data-key={0} value='Не внесено'>
                   ------------
                 </option>
-                {this.props.seats.map(seat => {
+                {this.props.seats.map((seat) => {
                   return (
                     <option key={seat.id} data-key={seat.id} value={seat.seat}>
                       {seat.seat}
@@ -431,9 +425,7 @@ class SeatTable extends React.Component {
             <br />
             <br />
 
-            <Button className="btn btn-outline-success float-sm-left">
-              Підтвердити
-            </Button>
+            <Button className='btn btn-outline-success float-sm-left'>Підтвердити</Button>
           </Form>
         </Modal>
       </Fragment>

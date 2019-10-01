@@ -2,11 +2,99 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0091_document_type_module_is_tiny_text_box.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0092_remove_document_type_module_is_tiny_text_box.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0093_doc_text_queue_in_doc.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0094_auto_20190808_1117.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0095_doc_sign_sign_emp_seat.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0096_auto_20190809_1633.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0097_auto_20190812_0853.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0098_doc_approval_approve_queue.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0099_file_editable.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0100_file_first_path.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0101_document_type_module_is_editable.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0102_auto_20190827_1144.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0103_auto_20190830_1043.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0104_auto_20190830_1046.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0105_auto_20190830_1050.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0106_auto_20190902_1126.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0107_file_deactivate_path.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0108_document_type_module_additional_info.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0109_auto_20190919_1100.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0110_remove_doc_sign_signed.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0111_auto_20190919_1109.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0112_document_is_template.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/files_uploader.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/new_files_list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/table.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons_old.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals_old.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/new_acquaints.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/new_resolutions.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/refusal_comment.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files_old.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_contracts.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_templates.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webpack.config_before_debugging.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.babelrc" beforeDir="false" afterPath="$PROJECT_DIR$/.babelrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/files.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/new_acquaints.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/new_resolutions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/path.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/path.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/get_emp_seats.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/decree.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/decree_articles.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree_articles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/free_time.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/free_time.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/work_note.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/work_note.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views_old.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views_before_text_boxes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plxk/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-2d4c96032a6f4cc68c77.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/index/my_docs_index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/index/my_docs_index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
-    <ignored path="TEST.FDB" />
-    <ignored path=".idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,13 +132,13 @@
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="plxk" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="plxk: schema" type="76f4a085:MysqlImplModel$Schema" />
+        <item name="plxk: schema" type="ebfa3cd1:MariaImplModel$Schema" />
       </path>
       <path>
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="plxk" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="plxk: schema" type="76f4a085:MysqlImplModel$Schema" />
+        <item name="plxk: schema" type="ebfa3cd1:MariaImplModel$Schema" />
         <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
       </path>
     </expand>
@@ -64,139 +152,20 @@
   <component name="FavoritesManager">
     <favorites_list name="PLXK" />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3213">
-              <caret line="200" column="8" selection-start-line="200" selection-start-column="8" selection-end-line="200" selection-end-column="33" />
-              <folding>
-                <element signature="e#14#54#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="194" column="10" lean-forward="true" selection-start-line="194" selection-start-column="10" selection-end-line="194" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="Less File" />
-        <option value="Python Script" />
         <option value="HTML File" />
         <option value="CSS File" />
+        <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>move</find>
-      <find>close</find>
-      <find>print</find>
-      <find>phase</find>
-      <find>my_do</find>
-      <find>request.us</find>
-      <find>appro</find>
-      <find>recipient_lis</find>
-      <find>modules</find>
-      <find>new_phas</find>
-      <find>acqu</find>
-      <find>acq</find>
-      <find>new_pha</find>
-      <find>vacatio</find>
-      <find>approva</find>
-      <find>my_doc</find>
-      <find>new_ph</find>
-      <find>ischi</find>
-      <find>emp_seat</find>
-      <find>isC</find>
-      <find>prevs</find>
-      <find>prev</find>
-      <find>archive</find>
-      <find>testing</find>
-      <find>get_doc</find>
-      <find>my_docs</find>
-      <find>mail</find>
-      <find>new_phase</find>
-      <find>try</find>
-      <find>Mark_De</find>
-    </findStrings>
-    <replaceStrings>
-      <replace />
-    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/templates/boards/plhk_ads/text_line.css" />
-        <option value="$PROJECT_DIR$/templates/boards/plhk_ads/text_line.js" />
-        <option value="$PROJECT_DIR$/static/css/plhk_ads_styles.css" />
-        <option value="$PROJECT_DIR$/static/css/text_line.css" />
-        <option value="$PROJECT_DIR$/static/index/plhk_ads_index.js" />
-        <option value="$PROJECT_DIR$/templates/boards/plhk_ads/fireworks.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" />
-        <option value="$PROJECT_DIR$/static/css/gradient.css" />
-        <option value="$PROJECT_DIR$/boards/urls.py" />
-        <option value="$PROJECT_DIR$/plxk/urls.py" />
-        <option value="$PROJECT_DIR$/templates/boards/plhk_ads/reloader.js" />
-        <option value="$PROJECT_DIR$/boards/views.py" />
-        <option value="$PROJECT_DIR$/templates/boards/plhk_ads/plhk_ads.html" />
-        <option value="$PROJECT_DIR$/static/css/plhk_ads.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/recipient_list.js" />
-        <option value="$PROJECT_DIR$/edms/migrations/0036_decree_doc_approval_doc_article_doc_article_dep.py" />
-        <option value="$PROJECT_DIR$/edms/migrations/0088_auto_20190527_1122.py" />
-        <option value="$PROJECT_DIR$/edms/forms.py" />
-        <option value="$PROJECT_DIR$/edms/models.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/flow.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/acquaints.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/_else/loader_style.css" />
-        <option value="$PROJECT_DIR$/.babelrc" />
-        <option value="$PROJECT_DIR$/webpack.config.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/new_acquaints.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/resolutions.js" />
-        <option value="$PROJECT_DIR$/edms/urls.py" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/resolutions.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/new_resolutions.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/new_acquaints.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/document.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/day.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/document_print.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/_else/my_styles.css" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/path.js" />
-        <option value="$PROJECT_DIR$/docs/views.py" />
-        <option value="$PROJECT_DIR$/templates/docs/index.html" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" />
-        <option value="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" />
-        <option value="$PROJECT_DIR$/edms/views.py" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/.datagrid/cell" />
-      </list>
-    </option>
   </component>
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
@@ -204,12 +173,7 @@
     <other-services-enabled>true</other-services-enabled>
     <auto-save>true</auto-save>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1056" />
-  </component>
+  <component name="ProjectId" id="1QPCGT8tpYYMIDa8uMsaQnb1z7a" />
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
       <profile-state>
@@ -235,53 +199,18 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="edms" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="edms" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PLXK" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PLXK" type="462c0819:PsiDirectoryNode" />
-              <item name="edms" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-              <item name="edms" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
-  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="NewWatcherDialog.advanced.open" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="ToolWindowmanage.py@PLXK.ShowToolbar" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="10.15.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../plxk_venv" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -289,14 +218,14 @@
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.jscs" value="project" />
     <property name="node.js.path.for.package.standard" value="project" />
-    <property name="node.js.selected.package.eslint" value="D:\Робота\EDMS\PLXK\node_modules\eslint" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.jscs" value="" />
-    <property name="node.js.selected.package.standard" value="D:\Робота\EDMS\PLXK\node_modules\eslint" />
+    <property name="node.js.selected.package.standard" value="$PROJECT_DIR$/../../../EDMS/PLXK/node_modules/eslint" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
-    <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\EDMS\PLXK\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
+    <property name="settings.editor.selected.configurable" value="settings.javascript.linters.eslint" />
     <property name="ts.external.directory.path" value="C:\Users\khramtsovsa\AppData\Local\JetBrains\Toolbox\apps\PyCharm-P\ch-0\182.4505.26\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
@@ -309,19 +238,19 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs\new_doc_modules" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
+      <recent name="D:\Робота\Code\EDMS\PLXK" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\_else" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules\modals" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
       <recent name="D:\Робота\EDMS\PLXK\templates\boards\plhk_ads" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs\new_document" />
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs" />
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\_else" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\doc_info" />
-      <recent name="D:\Робота\EDMS\PLXK\edms" />
-      <recent name="D:\Робота\EDMS\PLXK\templates\boards\plhk_ads" />
-      <recent name="D:\Робота\EDMS\PLXK\static\css" />
-      <recent name="D:\Робота\EDMS\PLXK\files\media\images\users" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -418,6 +347,37 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="allServicesViewState">
+      <serviceView>
+        <option name="contentProportion" value="0.22712238" />
+        <treeState>
+          <expand>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@39157954" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@45172714" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@dff65d7" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+          </expand>
+          <select />
+        </treeState>
+      </serviceView>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration>C:\Users\samusvm\AppData\Roaming\Subversion</configuration>
   </component>
@@ -492,7 +452,43 @@
       <workItem from="1564121036574" duration="1094000" />
       <workItem from="1564389925123" duration="632000" />
       <workItem from="1564407195055" duration="1000" />
-      <workItem from="1564408128774" duration="2325000" />
+      <workItem from="1564408128774" duration="8565000" />
+      <workItem from="1565075956039" duration="1848000" />
+      <workItem from="1565090070900" duration="842000" />
+      <workItem from="1565090957046" duration="12063000" />
+      <workItem from="1565252940493" duration="7544000" />
+      <workItem from="1565589015288" duration="11855000" />
+      <workItem from="1565615940672" duration="43084000" />
+      <workItem from="1566885316420" duration="39199000" />
+      <workItem from="1567151538200" duration="5084000" />
+      <workItem from="1567405079651" duration="22152000" />
+      <workItem from="1567515952082" duration="1718000" />
+      <workItem from="1567517745524" duration="158000" />
+      <workItem from="1567517927035" duration="798000" />
+      <workItem from="1567519059892" duration="14094000" />
+      <workItem from="1567602560506" duration="2684000" />
+      <workItem from="1567662757855" duration="64000" />
+      <workItem from="1567662852908" duration="70000" />
+      <workItem from="1567663198449" duration="4069000" />
+      <workItem from="1567679141849" duration="943000" />
+      <workItem from="1567680159959" duration="2186000" />
+      <workItem from="1567687623990" duration="795000" />
+      <workItem from="1567752075459" duration="11180000" />
+      <workItem from="1567771434933" duration="1783000" />
+      <workItem from="1568007097134" duration="1571000" />
+      <workItem from="1568010785968" duration="1939000" />
+      <workItem from="1568012907769" duration="964000" />
+      <workItem from="1568013911820" duration="1779000" />
+      <workItem from="1568015721615" duration="2916000" />
+      <workItem from="1568018815963" duration="17204000" />
+      <workItem from="1568103979599" duration="8233000" />
+      <workItem from="1568189559522" duration="921000" />
+      <workItem from="1568210295007" duration="11745000" />
+      <workItem from="1568358556663" duration="1847000" />
+      <workItem from="1568615882459" duration="14758000" />
+      <workItem from="1568787065163" duration="25027000" />
+      <workItem from="1569219077255" duration="27605000" />
+      <workItem from="1569819276053" duration="12671000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -690,9 +686,6 @@
       <configuration name="Test: polls" configurationId="DjangoTestsConfigurationType" />
     </history-entry>
   </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="625674000" />
-  </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
@@ -701,38 +694,6 @@
       <are-packages-shown value="true" />
       <flatten-packages value="true" />
     </todo-panel>
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49611542" visible="true" weight="0.20042644" />
-      <window_info id="Structure" order="1" weight="0.13874066" />
-      <window_info id="Favorites" order="2" sideWeight="0.50388455" side_tool="true" weight="0.1444563" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.48773986" weight="0.32900432" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.45309168" weight="0.34415585" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.58848614" weight="0.39502165" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49253732" weight="0.32792208" />
-      <window_info anchor="bottom" id="Version Control" order="7" sideWeight="0.49573562" weight="0.3292683" />
-      <window_info anchor="bottom" id="Python Console" order="8" sideWeight="0.48187634" weight="0.3225108" />
-      <window_info anchor="bottom" id="Docker" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Concurrent Activities Diagram" order="10" weight="0.32963374" />
-      <window_info anchor="bottom" x="0" y="0" width="1920" height="1040" id="manage.py@PLXK" order="11" sideWeight="0.6140725" weight="0.3300866" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.42217484" weight="0.36090225" />
-      <window_info active="true" anchor="bottom" x="1205" y="769" width="957" height="271" id="Terminal" order="13" sideWeight="0.41151386" side_tool="true" visible="true" weight="0.39502165" />
-      <window_info anchor="bottom" id="TypeScript" order="14" />
-      <window_info anchor="bottom" id="Database Console" order="15" sideWeight="0.49946696" weight="0.32939914" />
-      <window_info anchor="bottom" id="Database Changes" order="16" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" show_stripe_button="false" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" visible="true" weight="0.1673774" />
-      <window_info anchor="right" id="SciView" order="4" weight="0.1881663" />
-      <window_info anchor="right" id="Data View" order="5" weight="0.32995737" />
-    </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -753,20 +714,7 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
-              <option name="COLUMN_ORDER">
-                <list>
-                  <option value="0" />
-                  <option value="1" />
-                  <option value="2" />
-                  <option value="3" />
-                </list>
-              </option>
+              <option name="COLUMN_ORDER" />
             </State>
           </value>
         </entry>
@@ -817,13 +765,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>163</line>
-          <option name="timeStamp" value="4" />
+          <line>1802</line>
+          <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>341</line>
-          <option name="timeStamp" value="7" />
+          <line>448</line>
+          <option name="timeStamp" value="184" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1876</line>
+          <option name="timeStamp" value="196" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>317</line>
+          <option name="timeStamp" value="197" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1606</line>
+          <option name="timeStamp" value="214" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -851,393 +814,5 @@
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/edms/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1173">
-          <caret line="75" column="21" selection-start-line="75" selection-start-column="21" selection-end-line="75" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/docs/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/docs_doc_group" />
-    <entry file="file://$PROJECT_DIR$/templates/docs/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/boards/plhk_ads/edit_ads.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/boards/plhk_ads/plhk_ads.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="69" column="21" lean-forward="true" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/boards/plhk_ads/fireworks.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/boards/plhk_ads/reloader.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-612">
-          <caret line="11" column="24" lean-forward="true" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_file">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plxk/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1615">
-          <caret line="95" column="8" selection-start-line="95" selection-start-column="8" selection-end-line="101" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/archive/archive.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1751">
-          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.prettierrc.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitattributes">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_day">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_text">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/home.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/menu.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/about.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2669">
-          <caret line="160" column="24" selection-start-line="160" selection-start-column="24" selection-end-line="160" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/acquaints.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="2" selection-start-line="20" selection-start-column="2" selection-end-line="22" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="31" selection-start-line="31" selection-end-line="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.babelrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="22" column="6" lean-forward="true" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webpack.config.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_type_phase_queue">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_path">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3740">
-          <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/hr.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" selection-start-line="4" selection-end-line="4" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/flow.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/path.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="57" selection-start-line="26" selection-start-column="57" selection-end-line="26" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/_else/dx_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2193">
-          <caret line="135" column="28" selection-start-line="135" selection-start-column="28" selection-end-line="135" selection-end-column="28" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1989">
-          <caret line="121" column="3" selection-start-line="121" selection-start-column="3" selection-end-line="121" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="554">
-          <caret line="171" selection-start-line="171" selection-end-line="171" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/info.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-551">
-          <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/accounts_department">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/accounts_userprofile">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="tab_number='ПР11369'" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_employee_seat">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" text="seat_id=42">
-            <filter text="seat_id=42" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="72" column="4" selection-start-line="72" selection-start-column="4" selection-end-line="72" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/doc_info/document.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1495">
-          <caret line="91" column="8" selection-start-line="91" selection-start-column="8" selection-end-line="91" selection-end-column="8" />
-          <folding>
-            <element signature="e#14#40#0" expanded="true" />
-            <element signature="e#169#220#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="117" column="13" selection-start-line="117" selection-start-column="6" selection-end-line="117" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4216">
-          <caret line="342" selection-start-line="342" selection-end-line="342" />
-          <folding>
-            <element signature="e#0#64#0" expanded="true" />
-            <element signature="e#1635#1857#0" />
-            <element signature="e#1969#2559#0" />
-            <element signature="e#2134#2529#0" />
-            <element signature="e#2165#2503#0" />
-            <element signature="e#2415#2503#0" />
-            <element signature="e#2677#3698#0" />
-            <element signature="e#2842#3133#0" />
-            <element signature="e#2843#3011#0" />
-            <element signature="e#3214#3668#0" />
-            <element signature="e#3421#3641#0" />
-            <element signature="e#3466#3641#0" />
-            <element signature="e#3485#3640#0" />
-            <element signature="e#3811#4492#0" />
-            <element signature="e#3943#4478#0" />
-            <element signature="e#3995#4345#0" />
-            <element signature="e#3996#4189#0" />
-            <element signature="e#4613#5120#0" />
-            <element signature="e#4624#4893#0" />
-            <element signature="e#4625#4805#0" />
-            <element signature="e#4933#5100#0" />
-            <element signature="e#5006#5100#0" />
-            <element signature="e#5022#5099#0" />
-            <element signature="e#5188#5372#0" />
-            <element signature="e#5195#5356#0" />
-            <element signature="e#5196#5276#0" />
-            <element signature="e#5451#5600#0" />
-            <element signature="e#5459#5583#0" />
-            <element signature="e#5460#5517#0" />
-            <element signature="e#5686#6082#0" />
-            <element signature="e#5697#6061#0" />
-            <element signature="e#5698#5975#0" />
-            <element signature="e#6218#6408#0" />
-            <element signature="e#6225#6391#0" />
-            <element signature="e#6226#6302#0" />
-            <marker date="1564038252977" expanded="true" signature="5183:21136" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_document_type_permission">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_mark_demand">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="mark_id=8" />
-            <filter text="document_id=63" />
-            <filter text="recipient_id=201" />
-            <filter text="recipient_id=773" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_doc_type_phase">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true">
-            <filter text="document_type_id=2" />
-          </filtering>
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://586a7ab3-2297-42bc-b30f-efc2ecb212f6/schema/plxk/table/edms_carry_out_items">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3213">
-          <caret line="200" column="8" selection-start-line="200" selection-start-column="8" selection-end-line="200" selection-end-column="33" />
-          <folding>
-            <element signature="e#14#54#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edms/templates/edms/hr/user_table.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="194" column="10" lean-forward="true" selection-start-line="194" selection-start-column="10" selection-end-line="194" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>

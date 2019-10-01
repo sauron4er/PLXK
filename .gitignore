@@ -8,3 +8,4 @@ __pycache__/
 *.pyc
 webpack-config.js
 webpack-stats.json
+files/media/edms_files/
