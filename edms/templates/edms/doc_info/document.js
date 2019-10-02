@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import Modal from 'react-awesome-modal';
+import Modal from 'react-responsive-modal';
 import Files from 'react-files';
 import {ToastContainer, toast} from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -338,6 +338,7 @@ class Document extends React.Component {
   };
 
   render() {
+    console.log(this.state.info);
     if (this.state.ready_for_render === true) {
       if (
         this.props.doc !== '' &&
@@ -436,7 +437,7 @@ class Document extends React.Component {
             <Path path={this.state.info.path} />
 
             {/*Модальне вікно*/}
-            <Modal visible={this.state.modal_open} width='45%' effect='fadeInUp'>
+            <Modal open={this.state.modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} >
               <ToastContainer />
               {this.state.modal}
             </Modal>

@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
-// import Modal from 'react-awesome-modal';
-import Modal from 'react-responsive-modal';
+import Modal from 'react-awesome-modal';
 import 'react-drag-list/assets/index.css';
 import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
@@ -47,7 +46,7 @@ class NewDocument extends React.Component {
     day: '',
     gate: 1,
     carry_out_items: [],
-    modal_height: 700
+    modal_height: 'auto'
   };
 
   onChange = (event) => {
@@ -137,47 +136,25 @@ class NewDocument extends React.Component {
         });
     } else {
       this.setState({
-        render_ready: true
+        render_ready: true,
+        // modal_height: 700
       });
     }
   }
-  
-  componentDidUpdate() {
-    if (window.requestAnimationFrame) {
-      window.requestAnimationFrame(this.sizeDialog);
-    }
-    else {
-      // IE <10 CYA - Note: I haven't actually tested this in IE - YMMV
-      window.setTimeout(this.sizeDialog, 50);
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(this.divElement);
+    if (
+      this.divElement.clientHeight &&
+      this.divElement.clientHeight !== prevState.modal_height &&
+      prevState.modal_height !== window.innerHeight*0.95
+    ) {
+      let modal_height = 0;
+      if (this.divElement.clientHeight > window.innerHeight) modal_height = window.innerHeight*0.95;
+      else modal_height = this.divElement.clientHeight;
+      this.setState({modal_height});
     }
   }
-
-  sizeDialog = () => {
-    if (!this.divElement) return;
-    let modal_height = this.divElement.getBoundingClientRect().height;
-    this.setState({
-      modal_height: modal_height,
-    });
-  };
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   // if (this.divElement.clientHeight > 100) {
-  //     // для firefox, який ставить початково висоту модального вікна дуже маленькою (баг?)
-  //     if (
-  //       this.divElement.clientHeight &&
-  //       this.divElement.clientHeight !== prevState.modal_height &&
-  //       prevState.modal_height !== window.innerHeight * 0.95
-  //     ) {
-  //       console.log('p: ' + prevState.modal_height);
-  //       console.log('n: ' + this.divElement.clientHeight);
-  //       let modal_height = 0;
-  //       if (this.divElement.clientHeight > window.innerHeight && this.divElement.clientHeight < 100)
-  //         modal_height = window.innerHeight * 0.95;
-  //       else modal_height = this.divElement.clientHeight;
-  //       this.setState({modal_height});
-  //     }
-  //   // }
-  // }
 
   // Спливаюче повідомлення
   notify = (message) =>
@@ -341,11 +318,11 @@ class NewDocument extends React.Component {
     }
 
     return (
-      <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
+      <Modal visible={open} width='45%' height={'700'} effect='fadeInUp'>
       {/*<Modal visible={open} width='45%' height={modal_height.toString()} effect='fadeInUp'>*/}
-        <div ref={(divElement) => (this.divElement = divElement)}>
+        <div ref={(divElement) => (this.divElement = divElement)} className='css_modal_scroll'>
           <If condition={type_modules.length > 0 && render_ready}>
-            <div className='modal-header d-flex justify-content-between'>
+            <div className='modal-header d-flex justify-content-between sticky-top bg-white'>
               <h4 className='modal-title'>{doc.type}</h4>
               <button className='btn btn-link' onClick={this.onCloseModal}>
                 <FontAwesomeIcon icon={faTimes} />

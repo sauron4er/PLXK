@@ -134,9 +134,9 @@ class EditFiles extends React.Component {
         <div className='modal-body'>
           <table className='table table-bordered table-hover'>
             <colgroup>
-              <col className='col-md-6' />
-              <col className='col-md-3' />
-              <col className='col-md-3' />
+              <col className='col-md-8' />
+              <col className='col-md-2' />
+              <col className='col-md-2' />
             </colgroup>
             <tbody>
               {files.map((file, index) => {
@@ -151,7 +151,7 @@ class EditFiles extends React.Component {
                           <span className='text-dark font-weight-bold'>v{file.version}</span>
                         </If>
                       </td>
-                      <td>
+                      <td className='text-center'>
                         <If condition={['', 'update'].includes(file.status)}>
                           <Files
                             className='btn btn-sm btn-outline-secondary'
@@ -168,7 +168,7 @@ class EditFiles extends React.Component {
                           </Files>
                         </If>
                       </td>
-                      <td>
+                      <td className='text-center'>
                         <Choose>
                           <When condition={['delete', 'update'].includes(file.status)}>
                             <button

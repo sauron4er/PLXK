@@ -10,6 +10,12 @@ import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
 
 class Info extends React.Component {
+  getQueueText(text_list, queue) {
+    for (const i of text_list) {
+      if (i.queue === queue) return i.text;
+    }
+  }
+
   render() {
     const {info, doc} = this.props;
 
@@ -51,7 +57,10 @@ class Info extends React.Component {
                   />
                 </When>
                 <When condition={module.module === 'text'}>
-                  <Text text={info.text ? info.text[index] : '...'} fieldName={module.field_name} />
+                  <Text
+                    text={this.getQueueText(info.text_list, index)}
+                    fieldName={module.field_name}
+                  />
                 </When>
                 <When condition={module.module === 'day'}>
                   <Day day={info.day} fieldName={module.field_name} />
@@ -63,7 +72,11 @@ class Info extends React.Component {
                   <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                 </When>
                 <When condition={module.module === 'files'}>
-                  <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
+                  <Files
+                    files={info.old_files}
+                    fieldName={module.field_name}
+                    is_editable={module.is_editable}
+                  />
                 </When>
                 <When condition={module.module === 'approval_list'}>
                   <Approvals approvals={info.approval_list} />

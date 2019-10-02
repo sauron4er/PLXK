@@ -827,16 +827,15 @@ def post_name(doc_request, name):
 
 # Функція, яка додає у бд текст документу
 def post_text(doc_request, text):
-    # for key, value in text.items():
     for key, value in enumerate(text):
-        # if value is not None:
-        doc_request.update({'queue_in_doc': int(key)})
-        doc_request.update({'text': value})
-        text_form = NewTextForm(doc_request)
-        if text_form.is_valid():
-            text_form.save()
-        else:
-            raise ValidationError('edms/views post_text text_form invalid')
+        if value is not None:
+            doc_request.update({'queue_in_doc': int(key)})
+            doc_request.update({'text': value})
+            text_form = NewTextForm(doc_request)
+            if text_form.is_valid():
+                text_form.save()
+            else:
+                raise ValidationError('edms/views post_text text_form invalid')
 
 
 # Функція, яка додає у бд отримувача зі списку шефів користувача
@@ -1430,10 +1429,13 @@ def edms_get_doc(request, pk):
             elif module['module'] == 'preamble':
                 test = 'test'
             elif module['module'] == 'text':
-                text = [item.text for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
-                if text:
+                text_list = [{
+                        'queue': item.queue_in_doc,
+                        'text': item.text }
+                    for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
+                if text_list:
                     doc_info.update({
-                        'text': text,
+                        'text_list': text_list,
                     })
             elif module['module'] == 'articles':
                 test = 'test'

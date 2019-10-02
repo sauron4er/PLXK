@@ -2,10 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_firefox.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/text.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/text.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-eaa4d65b0e1fb0fe31d2.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -139,7 +151,7 @@
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
     <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
     <property name="settings.editor.selected.configurable" value="settings.javascript.linters.eslint" />
-    <property name="ts.external.directory.path" value="C:\Users\khramtsovsa\AppData\Local\JetBrains\Toolbox\apps\PyCharm-P\ch-0\182.4505.26\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
+    <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -151,19 +163,19 @@
     </option>
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs\new_doc_modules" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
-      <recent name="D:\Робота\Code\EDMS\PLXK" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\_else" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules\modals" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
       <recent name="D:\Робота\EDMS\PLXK\templates\boards\plhk_ads" />
       <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\my_docs\new_document" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs\new_doc_modules" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
+      <recent name="D:\Робота\Code\EDMS\PLXK" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -269,11 +281,6 @@
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
               <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@1dae7f8e" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
@@ -422,7 +429,7 @@
       <workItem from="1568787065163" duration="25027000" />
       <workItem from="1569219077255" duration="27605000" />
       <workItem from="1569819276053" duration="12874000" />
-      <workItem from="1569992261900" duration="3402000" />
+      <workItem from="1569992261900" duration="11172000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -688,7 +695,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1806</line>
+          <line>1808</line>
           <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -698,18 +705,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1880</line>
+          <line>1882</line>
           <option name="timeStamp" value="196" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>317</line>
           <option name="timeStamp" value="197" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1551</line>
-          <option name="timeStamp" value="222" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
@@ -735,6 +737,11 @@
           <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>549</line>
           <option name="timeStamp" value="230" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1607</line>
+          <option name="timeStamp" value="232" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

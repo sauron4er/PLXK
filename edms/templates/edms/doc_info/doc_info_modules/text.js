@@ -16,7 +16,8 @@ class Text extends React.Component {
 
   static defaultProps = {
     text: '???',
-    fieldName: '???'
+    fieldName: '???',
+    queue: 0
   };
 }
 
