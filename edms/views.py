@@ -641,7 +641,10 @@ def post_modules(doc_request, doc_files, new_path):
         if 'sign_list' in doc_modules:
         #     post_sign_list(doc_request, doc_modules['sign_list'])
             for sign in doc_modules['sign_list']:
-                recipients.append({'id': sign['id'], 'type': 'sign'})
+                if doc_request['document_type'] == 2:
+                    sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
+                    if sign_seat not in [16, 21]:
+                        recipients.append({'id': sign['id'], 'type': 'sign'})
 
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
@@ -826,6 +829,7 @@ def post_name(doc_request, name):
 def post_text(doc_request, text):
     # for key, value in text.items():
     for key, value in enumerate(text):
+        # if value is not None:
         doc_request.update({'queue_in_doc': int(key)})
         doc_request.update({'text': value})
         text_form = NewTextForm(doc_request)

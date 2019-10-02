@@ -240,7 +240,7 @@ class NewDocument extends React.Component {
           .catch((error) => {
             console.log('error: ' + error);
           });
-        this.props.onCloseModal();
+        // this.props.onCloseModal();
       }
     } catch (e) {
       this.notify(e);
@@ -316,7 +316,8 @@ class NewDocument extends React.Component {
     }
 
     return (
-      <Modal visible={open} width='45%' height={modal_height.toString()} effect='fadeInUp'>
+      <Modal visible={open} width='45%' height={'700'} effect='fadeInUp'>
+      {/*<Modal visible={open} width='45%' height={modal_height.toString()} effect='fadeInUp'>*/}
         <div ref={(divElement) => (this.divElement = divElement)} className='css_modal_scroll'>
           <If condition={type_modules.length > 0 && render_ready}>
             <div className='modal-header d-flex justify-content-between sticky-top bg-white'>

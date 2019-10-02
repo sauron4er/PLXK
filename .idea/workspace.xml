@@ -2,98 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0091_document_type_module_is_tiny_text_box.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0092_remove_document_type_module_is_tiny_text_box.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0093_doc_text_queue_in_doc.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0094_auto_20190808_1117.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0095_doc_sign_sign_emp_seat.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0096_auto_20190809_1633.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0097_auto_20190812_0853.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0098_doc_approval_approve_queue.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0099_file_editable.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0100_file_first_path.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0101_document_type_module_is_editable.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0102_auto_20190827_1144.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0103_auto_20190830_1043.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0104_auto_20190830_1046.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0105_auto_20190830_1050.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0106_auto_20190902_1126.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0107_file_deactivate_path.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0108_document_type_module_additional_info.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0109_auto_20190919_1100.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0110_remove_doc_sign_signed.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0111_auto_20190919_1109.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0112_document_is_template.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/files_uploader.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/new_files_list.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/_else/table.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons_old.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals_old.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/new_acquaints.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/new_resolutions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/refusal_comment.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files_old.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_contracts.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_templates.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webpack.config_before_debugging.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.babelrc" beforeDir="false" afterPath="$PROJECT_DIR$/.babelrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/files.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/new_acquaints.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/new_resolutions.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/path.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/path.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/get_emp_seats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/decree.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/decree/decree_articles.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree_articles.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/free_time.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/free_time.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/doc_forms_old/work_note.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/work_note.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/views_old.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views_before_text_boxes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plxk/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/administration-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-2d4c96032a6f4cc68c77.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/index/my_docs_index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/index/my_docs_index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -355,22 +268,42 @@
           <expand>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@39157954" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@1dae7f8e" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@45172714" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@3302ee72" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@722b8da4" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@dff65d7" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@4346a7a3" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@5c47cb01" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@7bda5b3d" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@297b2113" type="9fbbdea:ServiceModel$ServiceNode" />
+            </path>
+            <path>
+              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@3ee5612a" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@d807e6a" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
           </expand>
           <select />
@@ -488,7 +421,8 @@
       <workItem from="1568615882459" duration="14758000" />
       <workItem from="1568787065163" duration="25027000" />
       <workItem from="1569219077255" duration="27605000" />
-      <workItem from="1569819276053" duration="12671000" />
+      <workItem from="1569819276053" duration="12874000" />
+      <workItem from="1569992261900" duration="3402000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -675,17 +609,6 @@
     <option name="localTasksCounter" value="27" />
     <servers />
   </component>
-  <component name="TestHistory">
-    <history-entry file="Test__polls - 2017.12.19 at 15h 10m 09s.xml">
-      <configuration name="Test: polls" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__polls - 2017.12.19 at 15h 10m 47s.xml">
-      <configuration name="Test: polls" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-    <history-entry file="Test__polls - 2017.12.19 at 15h 16m 35s.xml">
-      <configuration name="Test: polls" configurationId="DjangoTestsConfigurationType" />
-    </history-entry>
-  </component>
   <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
@@ -765,7 +688,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1802</line>
+          <line>1806</line>
           <option name="timeStamp" value="165" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -775,7 +698,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1876</line>
+          <line>1880</line>
           <option name="timeStamp" value="196" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -785,8 +708,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1606</line>
-          <option name="timeStamp" value="214" />
+          <line>1551</line>
+          <option name="timeStamp" value="222" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>530</line>
+          <option name="timeStamp" value="226" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>456</line>
+          <option name="timeStamp" value="227" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>484</line>
+          <option name="timeStamp" value="228" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>438</line>
+          <option name="timeStamp" value="229" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>549</line>
+          <option name="timeStamp" value="230" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

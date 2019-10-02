@@ -51,7 +51,7 @@ class Info extends React.Component {
                   />
                 </When>
                 <When condition={module.module === 'text'}>
-                  <Text text={info.text ? info.text[index-1] : '...'} fieldName={module.field_name} />
+                  <Text text={info.text ? info.text[index] : '...'} fieldName={module.field_name} />
                 </When>
                 <When condition={module.module === 'day'}>
                   <Day day={info.day} fieldName={module.field_name} />
