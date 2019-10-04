@@ -46,8 +46,7 @@ class NewDocument extends React.Component {
     files: [],
     day: '',
     gate: 1,
-    carry_out_items: [],
-    modal_height: 700
+    carry_out_items: []
   };
 
   onChange = (event) => {
@@ -141,43 +140,6 @@ class NewDocument extends React.Component {
       });
     }
   }
-  
-  componentDidUpdate() {
-    if (window.requestAnimationFrame) {
-      window.requestAnimationFrame(this.sizeDialog);
-    }
-    else {
-      // IE <10 CYA - Note: I haven't actually tested this in IE - YMMV
-      window.setTimeout(this.sizeDialog, 50);
-    }
-  }
-
-  sizeDialog = () => {
-    if (!this.divElement) return;
-    let modal_height = this.divElement.getBoundingClientRect().height;
-    this.setState({
-      modal_height: modal_height,
-    });
-  };
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   // if (this.divElement.clientHeight > 100) {
-  //     // для firefox, який ставить початково висоту модального вікна дуже маленькою (баг?)
-  //     if (
-  //       this.divElement.clientHeight &&
-  //       this.divElement.clientHeight !== prevState.modal_height &&
-  //       prevState.modal_height !== window.innerHeight * 0.95
-  //     ) {
-  //       console.log('p: ' + prevState.modal_height);
-  //       console.log('n: ' + this.divElement.clientHeight);
-  //       let modal_height = 0;
-  //       if (this.divElement.clientHeight > window.innerHeight && this.divElement.clientHeight < 100)
-  //         modal_height = window.innerHeight * 0.95;
-  //       else modal_height = this.divElement.clientHeight;
-  //       this.setState({modal_height});
-  //     }
-  //   // }
-  // }
 
   // Спливаюче повідомлення
   notify = (message) =>
@@ -265,7 +227,7 @@ class NewDocument extends React.Component {
           .catch((error) => {
             console.log('error: ' + error);
           });
-        // this.props.onCloseModal();
+        this.props.onCloseModal();
       }
     } catch (e) {
       this.notify(e);
@@ -323,8 +285,7 @@ class NewDocument extends React.Component {
       files,
       day,
       gate,
-      carry_out_items,
-      modal_height
+      carry_out_items
     } = this.state;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -342,7 +303,6 @@ class NewDocument extends React.Component {
 
     return (
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
-      {/*<Modal visible={open} width='45%' height={modal_height.toString()} effect='fadeInUp'>*/}
         <div ref={(divElement) => (this.divElement = divElement)}>
           <If condition={type_modules.length > 0 && render_ready}>
             <div className='modal-header d-flex justify-content-between'>

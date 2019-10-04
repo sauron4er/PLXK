@@ -513,14 +513,16 @@ def handle_phase_marks(doc_request, phase_info):
     elif phase_info['mark_id'] == 2:
         # Якщо позначка "Погоджую":
         # Шукаємо, яка посада має ставити цю позначку у doc_type_phase_queue
-        recipients = get_phase_recipient_list(phase_info['id'])
+        # recipients = get_phase_recipient_list(phase_info['id'])
+        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
         for recipient in recipients:
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             send_email('new', [{'id': recipient}], doc_request['document'])
 
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
-        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
+        # recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
+        recipients = get_phase_id_sole_recipients(phase_info['id'])
         for recipient in recipients:
             send_email('new', [{'id': recipient}], doc_request['document'])
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
@@ -1824,11 +1826,6 @@ def edms_mark(request):
             doc_author = Document.objects.values_list('employee_seat_id', flat=True).filter(id=doc_request['document'])[0]
             new_path = post_path(doc_request)
             doc_request.update({'document_path': new_path.pk})
-
-            # ------------------------------------------------ test
-
-            STOP = True
-            # ------------------------------------------------ test
 
             # Погоджую, Ознайомлений, Доопрацьовано, Виконано, Підписано, Віза
             if int(doc_request['mark']) in [2, 9, 11, 14, 17]:
