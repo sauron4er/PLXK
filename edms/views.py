@@ -492,6 +492,7 @@ def handle_phase_marks(doc_request, phase_info):
             next_phases = Doc_Type_Phase.objects.values('id', 'mark_id') \
                 .filter(document_type_id=doc_request['document_type']).filter(phase=phase_info['phase'] + 1)
 
+
             for next_phase in next_phases:
                 mark = phase_info['mark_id']
                 if direct_chief['emp_seat_id'] in get_phase_recipient_list(next_phase['id']):
@@ -521,8 +522,7 @@ def handle_phase_marks(doc_request, phase_info):
 
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
-        # recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
-        recipients = get_phase_id_sole_recipients(phase_info['id'])
+        recipients = get_phase_recipient_list(phase_info['id'])
         for recipient in recipients:
             send_email('new', [{'id': recipient}], doc_request['document'])
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
