@@ -382,7 +382,7 @@ def get_phase_recipient_list(phase_id):
     for recipient in recipients:
         if recipient['seat_id']:
             emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                .filter(seat_id=recipient['seat_id']).filter(is_main=True)
+                .filter(seat_id=recipient['seat_id']).filter(is_main=True).filter(is_active=True)
             if emp_seat_id:
                 recipients_emp_seat_list.append(emp_seat_id[0])
         elif recipient['employee_seat_id']:

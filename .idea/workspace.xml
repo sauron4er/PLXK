@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -417,7 +414,7 @@
       <workItem from="1569219077255" duration="27605000" />
       <workItem from="1569819276053" duration="12874000" />
       <workItem from="1569992261900" duration="15118000" />
-      <workItem from="1570597164668" duration="6470000" />
+      <workItem from="1570597164668" duration="6752000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -698,11 +695,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>532</line>
-          <option name="timeStamp" value="226" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>438</line>
           <option name="timeStamp" value="229" />
         </line-breakpoint>
@@ -718,13 +710,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>484</line>
-          <option name="timeStamp" value="236" />
+          <line>406</line>
+          <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>406</line>
-          <option name="timeStamp" value="243" />
+          <line>372</line>
+          <option name="timeStamp" value="245" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
