@@ -26,7 +26,7 @@ class NewDocument extends React.Component {
     open: true,
     render_ready: false,
     type_modules: [],
-    text_list: [],
+    text: [],
 
     name: '',
     preamble: '',
@@ -69,18 +69,18 @@ class NewDocument extends React.Component {
     } else if (event.target.name === 'gate_radio') {
       this.setState({gate: event.target.value});
     } else if (event.target.name === 'text') {
-      let {text_list} = this.state;
+      let {text} = this.state;
       let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
-      const queue = getIndexByProperty(text_list, 'queue', parseInt(text_box_id));
+      const queue = getIndexByProperty(text, 'queue', parseInt(text_box_id));
       if (queue === -1) {
-        text_list.push({
+        text.push({
           queue: parseInt(text_box_id),
           text: event.target.value
         });
       } else {
-        text_list[queue].text = event.target.value;
+        text[queue].text = event.target.value;
       }
-      this.setState({text_list});
+      this.setState({text});
     } else {
       this.setState({[event.target.name]: event.target.value});
     }
@@ -117,7 +117,7 @@ class NewDocument extends React.Component {
           this.setState({
             name: response.data.name || '',
             preamble: response.data.preamble || '',
-            text_list: response.data.text_list || '',
+            text: response.data.text_list || [],
             articles: response.data.articles || [],
             recipient: response.data.recipient || {
               name: '------',
@@ -163,6 +163,7 @@ class NewDocument extends React.Component {
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
+      console.log(this.state[module.module]);
       if (
         module.required &&
         (this.state[module.module].length === 0 || this.state[module.module].id === 0)
@@ -282,7 +283,7 @@ class NewDocument extends React.Component {
       render_ready,
       name,
       preamble,
-      text_list,
+      text,
       articles,
       recipient,
       recipient_chief,
@@ -342,7 +343,7 @@ class NewDocument extends React.Component {
                   <When condition={module.module === 'text'}>
                     <Text
                       onChange={this.onChange}
-                      text={getTextByQueue(text_list, index)}
+                      text={getTextByQueue(text, index)}
                       fieldName={module.field_name}
                       id={module.id}
                       rows={rows}
@@ -462,7 +463,7 @@ class NewDocument extends React.Component {
 
   static defaultProps = {
     status: 'doc',
-    text_list: [],
+    text: [],
     doc: {
       id: 0,
       type: '',

@@ -414,7 +414,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
                 .filter(seat_id=chief_seat_id[0]).filter(is_main=True)[0]
 
             while chief_emp_seat_id not in recipients:
-                chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id)
+                chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id).filter(is_active=True)
                 if chief_seat_id:  # False якщо у посади нема внесеного шефа
                     chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                         .filter(seat_id=chief_seat_id[0]).filter(is_main=True)[0]
