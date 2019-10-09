@@ -8,14 +8,9 @@ import Gate from './doc_info_modules/gate';
 import CarryOut from './doc_info_modules/carry_out';
 import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
+import {getTextByQueue} from '../_else/my_extras';
 
 class Info extends React.Component {
-  getQueueText(text_list, queue) {
-    for (const i of text_list) {
-      if (i.queue === queue) return i.text;
-    }
-  }
-
   render() {
     const {info, doc} = this.props;
 
@@ -58,7 +53,7 @@ class Info extends React.Component {
                 </When>
                 <When condition={module.module === 'text'}>
                   <Text
-                    text={this.getQueueText(info.text_list, index)}
+                    text={getTextByQueue(info.text_list, index)}
                     fieldName={module.field_name}
                   />
                 </When>

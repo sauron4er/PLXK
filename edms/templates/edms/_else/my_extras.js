@@ -60,3 +60,18 @@ export const getEmpSeatList = () => {
     return 0;
   });
 };
+
+export const getTextByQueue = (text_list, queue) => {
+  for (const i of text_list) {
+    if (i && i.queue === queue) return i.text;
+  }
+};
+
+export const getIndexByProperty = (list, key, value) => {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i][key] === value) {
+      return i;
+    }
+  }
+  return -1;
+};

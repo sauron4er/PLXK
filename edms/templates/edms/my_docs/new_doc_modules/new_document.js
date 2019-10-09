@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-// import Modal from 'react-awesome-modal';
 import Modal from 'react-responsive-modal';
 import 'react-drag-list/assets/index.css';
 import axios from 'axios';
@@ -20,13 +19,14 @@ import SignList from './sign_list';
 import Day from './day';
 import Gate from './gate';
 import CarryOut from './carry_out';
+import {getTextByQueue, getIndexByProperty} from '../../_else/my_extras';
 
 class NewDocument extends React.Component {
   state = {
     open: true,
     render_ready: false,
     type_modules: [],
-    text: [],
+    text_list: [],
 
     name: '',
     preamble: '',
@@ -69,10 +69,18 @@ class NewDocument extends React.Component {
     } else if (event.target.name === 'gate_radio') {
       this.setState({gate: event.target.value});
     } else if (event.target.name === 'text') {
-      let {text} = this.state;
+      let {text_list} = this.state;
       let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
-      text[parseInt(text_box_id)] = event.target.value;
-      this.setState({text});
+      const queue = getIndexByProperty(text_list, 'queue', parseInt(text_box_id));
+      if (queue === -1) {
+        text_list.push({
+          queue: parseInt(text_box_id),
+          text: event.target.value
+        });
+      } else {
+        text_list[queue].text = event.target.value;
+      }
+      this.setState({text_list});
     } else {
       this.setState({[event.target.name]: event.target.value});
     }
@@ -109,7 +117,7 @@ class NewDocument extends React.Component {
           this.setState({
             name: response.data.name || '',
             preamble: response.data.preamble || '',
-            text: response.data.text || '',
+            text_list: response.data.text_list || '',
             articles: response.data.articles || [],
             recipient: response.data.recipient || {
               name: '------',
@@ -274,7 +282,7 @@ class NewDocument extends React.Component {
       render_ready,
       name,
       preamble,
-      text,
+      text_list,
       articles,
       recipient,
       recipient_chief,
@@ -302,7 +310,13 @@ class NewDocument extends React.Component {
     }
 
     return (
-      <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
+      <Modal
+        open={open}
+        onClose={this.onCloseModal}
+        showCloseIcon={false}
+        closeOnOverlayClick={false}
+        styles={{modal: {marginTop: 50}}}
+      >
         <div ref={(divElement) => (this.divElement = divElement)}>
           <If condition={type_modules.length > 0 && render_ready}>
             <div className='modal-header d-flex justify-content-between'>
@@ -313,7 +327,7 @@ class NewDocument extends React.Component {
             </div>
 
             <div className='modal-body'>
-              <For each='module' of={type_modules}>
+              <For each='module' index='index' of={type_modules}>
                 <Choose>
                   <When condition={module.module === 'name'}>
                     <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
@@ -328,7 +342,7 @@ class NewDocument extends React.Component {
                   <When condition={module.module === 'text'}>
                     <Text
                       onChange={this.onChange}
-                      text={text[module.queue]}
+                      text={getTextByQueue(text_list, index)}
                       fieldName={module.field_name}
                       id={module.id}
                       rows={rows}
@@ -448,7 +462,7 @@ class NewDocument extends React.Component {
 
   static defaultProps = {
     status: 'doc',
-    text: [],
+    text_list: [],
     doc: {
       id: 0,
       type: '',

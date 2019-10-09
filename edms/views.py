@@ -1639,8 +1639,8 @@ def edms_my_docs(request):
                 new_phase(doc_request, 1, module_recipients)
 
             # Деактивуємо стару чернетку
-            # if doc_request['old_id'] != '0':
-            #     delete_doc(doc_request, int(doc_request['old_id']))
+            if doc_request['status'] == 'draft':
+                delete_doc(doc_request, int(doc_request['old_id']))
 
             return HttpResponse(new_doc.pk)
     except ValidationError as err:
