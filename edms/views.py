@@ -828,16 +828,15 @@ def post_name(doc_request, name):
 
 
 # Функція, яка додає у бд текст документу
-def post_text(doc_request, text):
-    for key, value in enumerate(text):
-        if value is not None:
-            doc_request.update({'queue_in_doc': int(key)})
-            doc_request.update({'text': value})
-            text_form = NewTextForm(doc_request)
-            if text_form.is_valid():
-                text_form.save()
-            else:
-                raise ValidationError('edms/views post_text text_form invalid')
+def post_text(doc_request, text_list):
+    for text in text_list:
+        doc_request.update({'queue_in_doc': text['queue']})
+        doc_request.update({'text': text['text']})
+        text_form = NewTextForm(doc_request)
+        if text_form.is_valid():
+            text_form.save()
+        else:
+            raise ValidationError('edms/views post_text text_form invalid')
 
 
 # Функція, яка додає у бд отримувача зі списку шефів користувача
