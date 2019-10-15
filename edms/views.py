@@ -226,6 +226,10 @@ def is_approval_module_used(doc_type):
         .exists()
 
 
+def new_send_email(email_type, recipients, doc_request):
+    a=5
+
+
 # Функції фазової системи ----------------------------------------------------------------------------------------------
 def send_email(email_type, recipients, doc_id):
     if not testing:
@@ -411,7 +415,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
         chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat)
         if chief_seat_id:  # False якщо у посади нема внесеного шефа
             chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                .filter(seat_id=chief_seat_id[0]).filter(is_main=True)[0]
+                .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
 
             while chief_emp_seat_id not in recipients:
                 chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id).filter(is_active=True)
@@ -432,6 +436,7 @@ def handle_phase_acquaints(doc_request, recipients):
             recipient_acquaint = vacation_check(recipient['id'])
             post_mark_demand(doc_request, recipient_acquaint, zero_phase_id, 8)
             send_email('new', [{'id': recipient_acquaint}], doc_request['document'])
+            # new_send_email('new', [{'id': recipient_acquaint}], doc_request)
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на погодження
@@ -1607,7 +1612,6 @@ def edms_my_docs(request):
 
         elif request.method == 'POST':
             doc_request = request.POST.copy()
-            # doc_files = request.FILES.copy()
             doc_files = request.FILES.getlist('file')
 
             # Записуємо документ і отримуємо його ід, тип
