@@ -9,6 +9,8 @@ import axios from 'axios';
 import querystring from 'querystring'; // for axios
 import UserVacation from './user_vacation';
 import {getIndex} from '../_else/my_extras.js';
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -140,7 +142,7 @@ class User extends React.Component {
 
   delEmpSeat = (e) => {
     e.preventDefault();
-
+    console.log('!');
     axios({
       method: 'post',
       url: 'emp_seat/' + this.state.emp_seat_id + '/',
@@ -179,9 +181,7 @@ class User extends React.Component {
       })
       .catch((error) => {
         if (error.response.data === 'active flow') {
-          this.props.message(
-            'У даного співробітника є документи у роботі. Призначте, будь ласка, на посаду в.о. або нового працівника'
-          );
+          this.notify('У даного співробітника є документи у роботі. Призначте, будь ласка, на посаду в.о. або нового працівника');
           this.setState({
             new_emp_form: (
               <div>
@@ -264,7 +264,7 @@ class User extends React.Component {
           console.log('errorpost: ' + error);
         });
     }
-    // this.setState({open: false}); // закриває модальне вікно
+    this.setState({open: false}); // закриває модальне вікно
   };
 
   handleDelete = (e) => {
@@ -273,7 +273,7 @@ class User extends React.Component {
 
     const {id} = this.state;
     if (this.state.emp_seats_list.length > 0) {
-      this.props.message('Спочатку звільніть співробітника з усіх посад.');
+      this.notify('Спочатку звільніть співробітника з усіх посад.');
     } else {
       // переводимо в null не обрані поля
       let acting_id = this.state.acting == 0 ? null : this.state.acting_id;
@@ -306,6 +306,16 @@ class User extends React.Component {
   onClose = () => {
     this.props.onClose();
   };
+  
+  notify = (message) =>
+    toast.error(message, {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
 
   render() {
     const {acting, seat, emp_seat_id, new_emp_form} = this.state;
@@ -386,7 +396,7 @@ class User extends React.Component {
               </Select>
               <Button
                 className='btn btn-outline-secondary mt-1'
-                onClick={this.newUserSeat.bind(this)}
+                onClick={this.newUserSeat}
               >
                 {this.state.new_emp_seat_button_label}
               </Button>
@@ -418,7 +428,7 @@ class User extends React.Component {
               {new_emp_form}
               <Button
                 className='btn btn-outline-secondary mt-1'
-                onClick={this.delEmpSeat.bind(this)}
+                onClick={this.delEmpSeat}
               >
                 {this.state.del_emp_seat_button_label}
               </Button>
@@ -429,11 +439,14 @@ class User extends React.Component {
           <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
           <Button
             className='float-sm-right btn btn-outline-secondary mb-1'
-            onClick={this.handleDelete.bind(this)}
+            onClick={this.handleDelete}
           >
             Звільнити співробітника
           </Button>
         </Form>
+        
+        {/*Вспливаюче повідомлення*/}
+        <ToastContainer />
       </Modal>
     );
   }

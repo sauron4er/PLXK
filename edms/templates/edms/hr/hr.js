@@ -63,7 +63,6 @@ class HR extends React.Component {
               emps={this.state.emps}
               seats={this.state.seats}
               changeLists={this.changeLists}
-              message={this.notify}
               height={main_div_height}
             />
           </div>

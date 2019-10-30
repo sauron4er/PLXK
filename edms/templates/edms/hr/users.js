@@ -1,16 +1,8 @@
 'use strict';
 import React, {Fragment} from 'react';
-import Modal from 'react-responsive-modal';
-import Form from 'react-validation/build/form';
-import Input from 'react-validation/build/input';
-import Button from 'react-validation/build/button';
-import Select from 'react-validation/build/select';
 import axios from 'axios';
-import querystring from 'querystring'; // for axios
 import DxTable from '../components/dx_table';
 import User from './user';
-import UserVacation from './user_vacation';
-import {getIndex} from '../_else/my_extras.js';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
