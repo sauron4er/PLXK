@@ -53,7 +53,7 @@ class DocTypeChooser extends React.PureComponent {
         <div className='form-group mb-1'>
           <label className='font-weight-bold mr-1'>{label}</label>
           <select
-            className='form-control'
+            className='form-control-sm bg-white'
             id='doc-type-select'
             name='doc_type'
             value={doc_type.name}

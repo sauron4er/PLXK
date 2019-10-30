@@ -57,7 +57,7 @@ class SubEmpChooser extends React.PureComponent {
         <div className='form-group mb-1'>
           <label className='font-weight-bold mr-1'>{label}</label>
           <select
-            className='form-control'
+            className='form-control-sm bg-white'
             id='sub-emp-select'
             name='sub_emp'
             value={sub_emp.sub_emp}

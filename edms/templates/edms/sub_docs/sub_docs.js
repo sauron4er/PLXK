@@ -144,7 +144,6 @@ class SubDocs extends React.Component {
             <small>
               Оберіть тип документа та співробітника для пришвидшення пошуку (не обов’язково)
             </small>
-            <div className='d-flex'>
               <div className='mr-3'>
                 <DocTypeChooser docType={doc_type} changeDocType={this.onChangeDocType} />
               </div>
@@ -154,7 +153,6 @@ class SubDocs extends React.Component {
               <button className='btn btn-outline-success' onClick={this.updateLists}>
                 Знайти
               </button>
-            </div>
           </div>
           <SeatChooser onSeatChange={this.onSeatChange} />
         </div>

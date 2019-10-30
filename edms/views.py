@@ -83,7 +83,10 @@ def get_sub_emps(seat):
         'seat': emp_seat.seat.seat,
         'seat_id': emp_seat.seat_id,
         'emp': emp_seat.employee.pip,
-    } for emp_seat in Employee_Seat.objects.filter(seat__chief_id=seat).filter(is_active=True)]
+    } for emp_seat in Employee_Seat.objects
+        .filter(seat__chief_id=seat)
+        .filter(employee__is_pc_user=True)
+        .filter(is_active=True)]
 
     temp_emp_seats = []
     if emp_seats:  # якщо підлеглі є:
@@ -1807,7 +1810,7 @@ def get_all_subs_docs(emp_seat):
             .filter(document__closed=False)]
 
 
-def get_emp_seat_docs(emp_seat):
+def get_emp_seat_docs(emp_seat, sub_emp):
     return [{
         'id': path.document_id,
         'type': path.document.document_type.description,
@@ -1817,14 +1820,15 @@ def get_emp_seat_docs(emp_seat):
         'author': path.employee_seat.employee.pip,
         'dep': path.employee_seat.seat.department.name,
         'is_active': path.document.is_active,
+        'emp_seat_id': int(emp_seat)
     } for path in Document_Path.objects
         .filter(mark_id=1)
-        .filter(employee_seat_id=emp_seat)
+        .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
 
-def get_emp_seat_and_doc_type_docs(emp_seat, doc_type):
+def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type):
     return [{
         'id': path.document_id,
         'type': path.document.document_type.description,
@@ -1834,10 +1838,11 @@ def get_emp_seat_and_doc_type_docs(emp_seat, doc_type):
         'author': path.employee_seat.employee.pip,
         'dep': path.employee_seat.seat.department.name,
         'is_active': path.document.is_active,
+        'emp_seat_id': int(emp_seat)
     } for path in Document_Path.objects
         .filter(document__document_type_id=doc_type)
         .filter(mark_id=1)
-        .filter(employee_seat_id=emp_seat)
+        .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
@@ -1877,9 +1882,9 @@ def get_doc_type_docs(emp_seat, doc_type):
 def edms_get_sub_docs(request, emp_seat, doc_type, sub_emp):
     if request.method == 'GET':
         if doc_type == '0' and sub_emp != '0':
-            return HttpResponse(json.dumps(get_emp_seat_docs(sub_emp)))
+            return HttpResponse(json.dumps(get_emp_seat_docs(emp_seat, sub_emp)))
         elif doc_type != '0' and sub_emp != '0':
-            return HttpResponse(json.dumps(get_emp_seat_and_doc_type_docs(sub_emp, doc_type)))
+            return HttpResponse(json.dumps(get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type)))
         elif doc_type == '0' and sub_emp == '0':
             return HttpResponse(json.dumps(get_all_subs_docs(emp_seat)))
         elif doc_type != '0' and sub_emp == '0':

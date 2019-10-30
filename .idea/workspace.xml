@@ -2,56 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/edms/api/mail_sender.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0113_auto_20191016_0912.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/migrations/0114_vacation_is_active.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/components/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/components/doc_type_chooser.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/components/sub_emp_chooser.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs_old.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/views_before_new_mail_sender.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/dx_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/dx_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/dx_table_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/dx_table_styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/_else/my_styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/new_files_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/new_files_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/seat_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/seat_chooser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/dep_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/deps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seat_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/text.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/doc_type_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/doc_type_chooser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/sub_emp_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/sub_emp_chooser.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/administration-ec5a94554d8a21b59592.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-ec5a94554d8a21b59592.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-ec5a94554d8a21b59592.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-ec5a94554d8a21b59592.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-ec5a94554d8a21b59592.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-ec5a94554d8a21b59592.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -334,11 +289,6 @@
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
               <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@1e1c6d72" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@45efd4fa" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@1e1c6d72" type="7427dc5b:ServiceModel$ServiceGroupNode" />
               <item name="com.intellij.execution.services.ServiceModel$ServiceNode@63d43b63" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
@@ -349,12 +299,12 @@
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
               <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@1e1c6d72" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@515b7850" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@4cd91934" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
               <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@1e1c6d72" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@4cd91934" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@5f7e9ae1" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
           </expand>
           <select />
@@ -476,7 +426,7 @@
       <workItem from="1569992261900" duration="15118000" />
       <workItem from="1570597164668" duration="42681000" />
       <workItem from="1571640046211" duration="8605000" />
-      <workItem from="1572244193875" duration="23834000" />
+      <workItem from="1572244193875" duration="25472000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -733,17 +683,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>451</line>
+          <line>454</line>
           <option name="timeStamp" value="229" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1177</line>
+          <line>1180</line>
           <option name="timeStamp" value="281" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>807</line>
+          <line>810</line>
           <option name="timeStamp" value="287" />
         </line-breakpoint>
       </breakpoints>

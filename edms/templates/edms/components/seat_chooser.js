@@ -97,7 +97,7 @@ class SeatChooser extends React.PureComponent {
           </div>
         </When>
         <Otherwise>
-          <form className='form-inline justify-content-end'>
+          <form className='form-inline justify-content-end align-content-start'>
             <div className='form-control'>{window.my_seats[0].seat}</div>
             <br />
           </form>
