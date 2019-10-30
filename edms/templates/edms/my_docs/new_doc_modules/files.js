@@ -2,7 +2,7 @@
 import React, {Fragment} from 'react';
 import Files from 'react-files';
 import '../../_else/files_uploader.css';
-import NewFilesList from '../../_else/new_files_list';
+import NewFilesList from '../../components/new_files_list';
 
 class FilesUpload extends React.Component {
   onFilesChange = (new_files) => {

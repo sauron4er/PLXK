@@ -2,9 +2,9 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
-import DxTable from '../_else/dx_table';
+import DxTable from '../components/dx_table';
 import Document from '../doc_info/document';
-import SeatChooser from '../_else/seat_chooser';
+import SeatChooser from '../components/seat_chooser';
 import '../_else/my_styles.css';
 
 class Archive extends React.Component {

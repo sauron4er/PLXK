@@ -40,7 +40,7 @@ class NewDoc extends React.Component {
       type_id: new_doc_type_id
     };
     return (
-      <Fragment>
+      <>
         <form className='form-inline'>
           <div className='form-group mb-1'>
             <label className='font-weight-bold mr-1'>Створити новий документ:</label>
@@ -77,7 +77,7 @@ class NewDoc extends React.Component {
           
           </Otherwise>
         </Choose>
-      </Fragment>
+      </>
     );
   }
 }

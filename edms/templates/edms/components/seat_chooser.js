@@ -1,8 +1,8 @@
 'use strict';
 import React from 'react';
-import {compareById} from './my_extras';
+import {compareById} from '../_else/my_extras';
 
-class SeatChooser extends React.Component {
+class SeatChooser extends React.PureComponent {
   state = {
     my_seat_id: '',
     my_chief: ''
@@ -41,7 +41,8 @@ class SeatChooser extends React.Component {
 
   // при зміні ід посади передаємо нове ід у батьківський компонент.
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.my_seat_id !== JSON.parse(localStorage.getItem('my_seat'))) {
+    if (parseInt(this.state.my_seat_id) !== JSON.parse(localStorage.getItem('my_seat'))) {
+      console.log('cs_update');
       const {my_seat_id} = this.state;
       if (my_seat_id !== prevState.my_seat_id) {
         this.getChief();

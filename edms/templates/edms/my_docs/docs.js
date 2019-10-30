@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import DxTable from '../_else/dx_table';
+import DxTable from '../components/dx_table';
 import Document from '../doc_info/document';
 import '../_else/my_styles.css';
 

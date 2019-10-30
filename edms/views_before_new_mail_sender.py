@@ -5,8 +5,10 @@ from django.utils.timezone import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Q
 import json
 import pytz
+import smtplib
 
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
@@ -14,12 +16,10 @@ from .models import Carry_Out_Items, Mark_Demand
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
 from .forms import CarryOutItemsForm, ResolutionForm
 from .forms import DTPDeactivateForm, DTPAddForm
-# Окремі функції:
-from .api.mail_sender import send_email_new, send_email_mark
 # Модульна система:
-from .models import Module, Document_Type_Module, Doc_Name, Doc_Acquaint, Doc_Approval, Doc_Article, Doc_Article_Dep
+from .models import Module, Document_Type_Module, Doc_Name, Doc_Preamble, Doc_Acquaint, Doc_Approval, Doc_Article, Doc_Article_Dep
 from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate, Doc_Type_Unique_Number
-from .forms import NewArticleForm, NewArticleDepForm, NewAcquaintForm, NewNameForm, NewFileForm
+from .forms import NewArticleForm, NewArticleDepForm, NewAcquaintForm, NewNameForm, NewPreambleForm, NewFileForm
 from .forms import NewTextForm, NewRecipientForm, NewDayForm, NewGateForm, FileNewPathForm
 from .forms import NewApprovalForm, ApprovedApprovalForm, ApproveForm, DeactivateApproveForm, NewSignForm
 # Система фаз:
@@ -28,7 +28,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
@@ -60,50 +60,19 @@ def get_phase_info(doc_request):
 
 
 # Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
-def get_sub_seats(seat):
+def get_subs_list(seat):
     seats = [{'id': seat.id} for seat in Seat.objects.filter(chief_id=seat)]  # Знаходимо підлеглих посади
     temp_seats = []
     if seats:  # якщо підлеглі є:
         for seat in seats:
             temp_seats.append({'id': seat['id']})  # додамо кожного підлеглого у список
-            new_seats = get_sub_seats(seat['id'])  # і шукаємо його підлеглих
+            new_seats = get_subs_list(seat['id'])  # і шукаємо його підлеглих
             if new_seats is not None:  # якщо підлеглі є, додаємо і їх у список
                 for new_seat in new_seats:
                     temp_seats.append({'id': new_seat['id']})
         return temp_seats
     else:
         return None
-
-
-# Знаходить всі підлеглі людино-посади конкретної посади
-def get_sub_emps(seat):
-    # Знаходимо підлеглих посади:
-    emp_seats = [{
-        'id': emp_seat.id,
-        'seat': emp_seat.seat.seat,
-        'seat_id': emp_seat.seat_id,
-        'emp': emp_seat.employee.pip,
-    } for emp_seat in Employee_Seat.objects.filter(seat__chief_id=seat).filter(is_active=True)]
-
-    temp_emp_seats = []
-    if emp_seats:  # якщо підлеглі є:
-        for emp_seat in emp_seats:
-            temp_emp_seats.append(emp_seat)  # додамо кожного підлеглого у список
-            new_seats = get_sub_emps(emp_seat['seat_id'])  # і шукаємо його підлеглих
-            if new_seats is not None:  # якщо підлеглі є, додаємо і їх у список
-                for new_seat in new_seats:
-                    temp_emp_seats.append(new_seat)
-        return sorted(temp_emp_seats, key=lambda i: i['emp'])
-    else:
-        return None
-
-
-def get_doc_types():
-    return [{
-        'id': doc_type.id,
-        'description': doc_type.description,
-        'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-    } for doc_type in Document_Type.objects.filter(is_active=True).filter(testing=False)]
 
 
 # Функція, яка рекурсією шукає всіх начальників посади користувача і їх начальників
@@ -257,39 +226,107 @@ def is_approval_module_used(doc_type):
         .exists()
 
 
-# Функція, яка дописує у doc_request інформацію про автора документа, автора позначки,
-# назву типу документа і назву позначки для оформлення електронних листів отримувачам
-def get_additional_doc_info(doc_request):
-    doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
-    doc_author_name = Document.objects.values_list('employee_seat__employee__pip', flat=True).filter(id=doc_request['document'])[0]
-    doc_request.update({
-        'doc_type_name': doc_type_name,
-        'doc_author_name': doc_author_name
-    })
-
-    if 'mark' in doc_request.keys():
-        mark_name = Mark.objects.values_list('mark', flat=True).filter(id=doc_request['mark'])[0]
-        mark_author_name = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=doc_request['employee_seat'])[0]
-        doc_request.update({
-            'mark_name': mark_name,
-            'mark_author_name': mark_author_name,
-        })
-    return doc_request
-
-
-# Функція, яка відправляє листи:
+# Функція, яка опрацьовує дані, необхідні для складання листа отримувачу
 def new_mail(email_type, recipients, doc_request):
-    if not testing:
+    if testing:
         for recipient in recipients:
             mail = Employee_Seat.objects.values_list('employee__user__email', flat=True).filter(id=recipient['id'])[0]
+            mail = 'sauron4er@gmail.com'
+
             if mail:
+                subject = "Новий електронний документ" if email_type == 'new' else "Нова реакція на Ваш електронний документ"
+                sender = "it@lxk.com.ua"
+                link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}'\
+                    .format(doc_request['document'])
+
                 if email_type == 'new':
-                    send_email_new(doc_request, mail)
-                elif email_type == 'mark':
-                    send_email_mark(doc_request, mail)
+                    text = 'Вашої реакції очікує новий документ ({}, автор {}). {}'\
+                        .format(doc_request['doc_type_name'], doc_request['author_name'], link)
+                else:
+                    text = 'У Вашого електронного документу ({} № {}  з’явилася нова позначка. {}'\
+                        .format(doc_request['doc_type_name'], doc_request['document'], link)
+
+                body = u"\r\n".join((
+                    "From: " + sender,
+                    "To: " + mail,
+                    "Subject: " + subject,
+                    "",
+                    text
+                )).encode('cp1251').strip()
+
+                new_send_email(sender, mail, body)
+
+
+# Функція, яка відправляє листа отримувачеві
+def new_send_email(sender, mail, body):
+    host = "imap.polyprom.com"
+    try:
+        server = smtplib.SMTP(host, timeout=2000)
+        server.login('lxk_it', 'J2NYEHb50nymRF1L')
+        server.sendmail(sender, [mail], body)
+        server.quit()
+    except OSError as err:
+        # Якщо внутрішня пошта it@lxk.com.ua лежить, відправляємо з gmail:
+        sender = "edms.lxk@gmail.com"
+        server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
+        server.ehlo()
+        server.starttls()
+        server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+        server.sendmail(sender, [mail], body)
+        server.quit()
+
+
+# Функції фазової системи ----------------------------------------------------------------------------------------------
+def send_email(email_type, recipients, doc_id):
+    if not testing:
+        for recipient in recipients:
+            emp_seat_id = vacation_check(recipient['id'])
+            recipient_mail = Employee_Seat.objects.values('employee__user__email').filter(id=emp_seat_id)
+            mail = recipient_mail[0]['employee__user__email']
+
+            if mail:
+                host = "imap.polyprom.com"
+
+                subject = "Новий електронний документ" \
+                    if email_type == 'new' \
+                    else "Нова реакція на Ваш електронний документ"
+
+                to = mail
+
+                sender = "it@lxk.com.ua"
+
+                if email_type == 'new':
+                    text = "Вашої реакції очікує новий документ. " \
+                           "Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/" + str(doc_id) + ""
+                else:
+                    text = "У Вашого електронного документу (№ " + str(doc_id) + ") з’явилася нова позначка. " \
+                           "Щоб переглянути, перейдіть за посиланням: http://plhk.com.ua/edms/my_docs/" + str(doc_id) + ""
+
+                body = u"\r\n".join((
+                    "From: " + sender,
+                    "To: " + to,
+                    "Subject: " + subject,
+                    "",
+                    text
+                )).encode('cp1251').strip()
+
+                try:
+                    server = smtplib.SMTP(host, timeout=2000)
+                    server.login('lxk_it', 'J2NYEHb50nymRF1L')
+                    server.sendmail(sender, [to], body)
+                    server.quit()
+                except OSError as err:
+                    sender = "edms.lxk@gmail.com"
+                    server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
+                    server.ehlo()
+                    server.starttls()
+                    server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+                    server.sendmail(sender, [to], body)
+                    server.quit()
 
 
 def post_path(doc_request):
+    # створюємо новий path
     path_form = NewPathForm(doc_request)
     if path_form.is_valid():
         return path_form.save()
@@ -444,7 +481,8 @@ def handle_phase_acquaints(doc_request, recipients):
             zero_phase_id = get_zero_phase_id(doc_request['document_type'])
             recipient_acquaint = vacation_check(recipient['id'])
             post_mark_demand(doc_request, recipient_acquaint, zero_phase_id, 8)
-            new_mail('new', [{'id': recipient_acquaint}], doc_request)
+            send_email('new', [{'id': recipient_acquaint}], doc_request['document'])
+            # new_mail('new', [{'id': recipient_acquaint}], doc_request)
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на погодження
@@ -454,7 +492,7 @@ def handle_phase_approvals(doc_request, phase_info):
         # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
         if approval['approve_queue'] == phase_info['phase']:
             post_mark_demand(doc_request, approval['recipient'], phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': approval['recipient']}], doc_request)
+            send_email('new', [{'id': approval['recipient']}], doc_request['document'])
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на підпис
@@ -462,8 +500,10 @@ def handle_phase_signs(doc_request, phase_info, sign_list):
     for sign in sign_list:
         sign = vacation_check(sign['emp_seat'])
         # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
+        # post_mark_demand(doc_request, sign['emp_seat'], phase_info['id'], 2)  # 2 - Погодження
         post_mark_demand(doc_request, sign, phase_info['id'], 2)  # 2 - Погодження
-        new_mail('new', [{'id': sign}], doc_request)
+        # send_email('new', [{'id': sign['emp_seat']}], doc_request['document'])
+        send_email('new', [{'id': sign}], doc_request['document'])
 
 
 # Створення mark_demand для отримувачів, визначених автором
@@ -483,14 +523,14 @@ def handle_phase_recipients(doc_request, phase_info, recipients):
                     mark = phase_info['mark_id'] if recipient_chief == direct_chief['emp_seat_id'] else 6
                     recipient = vacation_check(direct_chief['emp_seat_id'])
                     post_mark_demand(doc_request, recipient, phase_info['id'], mark)
-                    new_mail('new', [{'id': recipient}], doc_request)
+                    send_email('new', [{'id': recipient}], doc_request['document'])
                 else:
                     test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
         # Якщо отримувач - sign, то фаза повинна вимагати позначку 2:
         elif recipient['type'] == 'sign' and phase_info['mark_id'] == 2:
             recipient = vacation_check(recipient['id'])
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': recipient}], doc_request)
+            send_email('new', [{'id': recipient}], doc_request['document'])
 
 
 # Створення mark_demand для отримувачів, визначених автоматично
@@ -511,8 +551,10 @@ def handle_phase_marks(doc_request, phase_info):
                 if direct_chief['emp_seat_id'] in get_phase_recipient_list(next_phase['id']):
                     mark = next_phase['mark_id']
                 direct_chief = vacation_check(direct_chief['emp_seat_id'])
+                # post_mark_demand(doc_request, direct_chief['emp_seat_id'], phase_info['id'], mark)
+                # send_email('new', [{'id': direct_chief['emp_seat_id']}], doc_request['document'])
                 post_mark_demand(doc_request, direct_chief, phase_info['id'], mark)
-                new_mail('new', [{'id': direct_chief}], doc_request)
+                send_email('new', [{'id': direct_chief}], doc_request['document'])
         else:
             test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
 
@@ -522,7 +564,7 @@ def handle_phase_marks(doc_request, phase_info):
             .filter(document_id=doc_request['document']).filter(approve_queue=phase_info['phase'])
         for approval in approvals:
             post_mark_demand(doc_request, approval, phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': approval}], doc_request)
+            send_email('new', [{'id': approval}], doc_request['document'])
 
     # Погоджую
     elif phase_info['mark_id'] == 2:
@@ -533,14 +575,14 @@ def handle_phase_marks(doc_request, phase_info):
         for recipient in recipients:
             recipient = vacation_check(recipient)
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': recipient}], doc_request)
+            send_email('new', [{'id': recipient}], doc_request['document'])
 
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
         recipients = get_phase_recipient_list(phase_info['id'])
         for recipient in recipients:
             recipient = vacation_check(recipient)
-            new_mail('new', [{'id': recipient}], doc_request)
+            send_email('new', [{'id': recipient}], doc_request['document'])
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
 
 
@@ -645,6 +687,10 @@ def post_modules(doc_request, doc_files, new_path):
             post_recipient_chief(doc_request, doc_modules['recipient_chief']['id'])
             recipients.append({'id': doc_modules['recipient_chief']['id'], 'type': 'chief'})
 
+        # Додаємо преамбулу документа
+        if 'preamble' in doc_modules:
+            post_preamble(doc_request, doc_modules['preamble'])
+
         # Додаємо список отримувачів на ознайомлення
         if 'acquaint_list' in doc_modules:
             post_acquaint_list(doc_request, doc_modules['acquaint_list'])
@@ -663,47 +709,49 @@ def post_modules(doc_request, doc_files, new_path):
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
             # TODO Не додавати нікого, якщо це шаблон чи чернетка
-            approvals = doc_modules['approval_list']
-            # Додаємо у список погоджуючих автора, керівника відділу та директора заводу
-            # Додаємо до списку погодження автора, видаляємо його з існуючого списку:
-            for i in approvals:
-                if int(i['id']) == int(doc_request['employee_seat']):
-                    approvals.remove(i)
-
-            approvals.append({
-                'id': doc_request['employee_seat'],
-                'approve_queue': 0  # Автор документа перший у списку погоджень
-            })
-
-            # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
-            dep_chief = get_dep_chief_id(doc_request['employee_seat'])
-
-            if dep_chief != int(doc_request['employee_seat']):
+            doc_modules = json.loads(doc_request['doc_modules'])
+            if 'approval_list' in doc_modules:
+                approvals = doc_modules['approval_list']
+                # Додаємо у список погоджуючих автора, керівника відділу та директора заводу
+                # Додаємо до списку погодження автора, видаляємо його з існуючого списку:
                 for i in approvals:
-                    if int(i['id']) == dep_chief:
+                    if int(i['id']) == int(doc_request['employee_seat']):
                         approvals.remove(i)
 
                 approvals.append({
-                    'id': dep_chief,
-                    'approve_queue': 1  # Керівник відділу другий у списку погоджень
+                    'id': doc_request['employee_seat'],
+                    'approve_queue': 0  # Автор документа перший у списку погоджень
                 })
 
-            # Додаємо до списку погодження директора, видаляємо його з існуючого списку:
-            director = Employee_Seat.objects.values_list('id', flat=True) \
-                .filter(seat_id=16) \
-                .filter(is_active=True) \
-                .filter(is_main=True)[0]
+                # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
+                dep_chief = get_dep_chief_id(doc_request['employee_seat'])
 
-            for i in approvals:
-                if int(i['id']) == director:
-                    approvals.remove(i)
+                if dep_chief != int(doc_request['employee_seat']):
+                    for i in approvals:
+                        if int(i['id']) == dep_chief:
+                            approvals.remove(i)
 
-            approvals.extend([{
-                'id': director,
-                'approve_queue': 3  # Директор останній у списку погоджень
-            }])
+                    approvals.append({
+                        'id': dep_chief,
+                        'approve_queue': 1  # Керівник відділу другий у списку погоджень
+                    })
 
-            post_approval_list(doc_request, approvals)
+                # Додаємо до списку погодження директора, видаляємо його з існуючого списку:
+                director = Employee_Seat.objects.values_list('id', flat=True) \
+                    .filter(seat_id=16) \
+                    .filter(is_active=True) \
+                    .filter(is_main=True)[0]
+
+                for i in approvals:
+                    if int(i['id']) == director:
+                        approvals.remove(i)
+
+                approvals.extend([{
+                    'id': director,
+                    'approve_queue': 3  # Директор останній у списку погоджень
+                }])
+
+                post_approval_list(doc_request, approvals)
 
         # Додаємо пункти
         if 'articles' in doc_modules:
@@ -723,25 +771,23 @@ def post_modules(doc_request, doc_files, new_path):
 
         # Додаємо файли
         if 'files' in doc_modules:
-            # Записуємо файл якщо це не чернетка і не шаблон:
-            if doc_request['status'] == 'doc':
-                # Додаємо файли зі старої чернетки:
-                old_files = json.loads(doc_request['old_files'])
-                if old_files:
-                    for old_file in old_files:
-                        file = get_object_or_404(File, pk=old_file['id'])
-                        file_change_path_form = FileNewPathForm(doc_request, instance=file)
-                        if file_change_path_form.is_valid():
-                            file_change_path_form.save()
-                        else:
-                            raise ValidationError('edms/view func post_modules: file_change_path_form invalid')
+            # Додаємо файли зі старої чернетки:
+            old_files = json.loads(doc_request['old_files'])
+            if old_files:
+                for old_file in old_files:
+                    file = get_object_or_404(File, pk=old_file['id'])
+                    file_change_path_form = FileNewPathForm(doc_request, instance=file)
+                    if file_change_path_form.is_valid():
+                        file_change_path_form.save()
+                    else:
+                        raise ValidationError('edms/view func post_modules: file_change_path_form invalid')
 
-                # Додаємо нові файли:
-                if doc_files:
-                    # Поки що файли додаються тільки якщо документ публікується не як чернетка
-                    # Для публікації файла необідно мати перший path_id документа, якго нема в чернетці
-                    if new_path is not None:
-                        post_files(doc_files, doc_request, new_path.pk)
+            # Додаємо нові файли:
+            if doc_files:
+                # Поки що файли додаються тільки якщо документ публікується не як чернетка
+                # Для публікації файла необідно мати перший path_id документа, якго нема в чернетці
+                if new_path is not None:
+                    post_files(doc_files, doc_request, new_path.pk)
 
         return recipients
     except ValidationError as err:
@@ -804,7 +850,6 @@ def post_sign_list(doc_request, sign_list):
 
 # Функція, яка додає у бд список отримуючих на погодження
 def post_approval_list(doc_request, approvals):
-    test_global_approvals = []
     for recipient in approvals:
         doc_request.update({'emp_seat': recipient['id']})
         doc_request.update({'approve_queue': recipient['approve_queue']})
@@ -821,11 +866,6 @@ def post_approval_list(doc_request, approvals):
         if approval_form.is_valid():
             new_approval = approval_form.save()
             global_approvals.append({
-                'id': new_approval.id,
-                'recipient': new_approval.emp_seat_id,
-                'approve_queue': new_approval.approve_queue
-            })
-            test_global_approvals.append({
                 'id': new_approval.id,
                 'recipient': new_approval.emp_seat_id,
                 'approve_queue': new_approval.approve_queue
@@ -874,6 +914,16 @@ def post_recipient_chief(doc_request, recipient_chief):
     #     doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
     #     phase_id = Doc_Type_Phase.objects.values_list('id', flat=True).filter(document_type_id=doc_type).filter(phase=1)[0]
     #     post_mark_demand(doc_request, recipient_chief['id'], phase_id, 2)
+
+
+# Функція, яка додає у бд преамбулу документу
+def post_preamble(doc_request, preamble):
+    doc_request.update({'preamble': preamble})
+    preamble_form = NewPreambleForm(doc_request)
+    if preamble_form.is_valid():
+        preamble_form.save()
+    else:
+        raise ValidationError('edms/views post_preamble preamble_form invalid')
 
 
 # Функція, яка додає у бд дату документу
@@ -1001,27 +1051,13 @@ def edms_deactivate_permission(request, pk):
 
 
 @login_required(login_url='login')
-def edms_get_doc_types(request):
-    if request.method == 'GET':
-        return HttpResponse(json.dumps(get_doc_types()))
-
-
-@login_required(login_url='login')
-def edms_get_sub_emps(request, pk):
-    if request.method == 'GET':
-        seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=pk)[0]
-        subs_list = get_sub_emps(seat)
-        return HttpResponse(json.dumps(subs_list))
-
-
-@login_required(login_url='login')
-def edms_get_admin_types(request, pk):
+def edms_get_types(request, pk):
     # Отримуємо ід посади з ід людинопосади
     seat_id = Employee_Seat.objects.filter(id=pk).values_list('seat_id')[0][0]
 
     if request.method == 'GET':
         if request.user.userprofile.is_it_admin:
-            doc_types_query = Document_Type.objects.all().filter(is_active=True)
+            doc_types_query = Document_Type.objects.all()
 
             # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
             if not testing:
@@ -1038,6 +1074,15 @@ def edms_get_admin_types(request, pk):
                 'description': doc_type.description,
                 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
             } for doc_type in Document_Type.objects.filter(creator_id=seat_id)]
+
+            # Відділ кадрів може змінювати свої документи та загальні (не створені іншими користувачами)
+            # if request.user.userprofile.is_hr:
+            #     hr_doc_types = [{
+            #         'id': doc_type.id,
+            #         'description': doc_type.description,
+            #         'creator': '',
+            #     } for doc_type in Document_Type.objects.filter(creator_id=None).filter(testing=False)]
+            #     doc_types = doc_types + hr_doc_types
 
         return HttpResponse(json.dumps(doc_types))
 
@@ -1176,6 +1221,7 @@ def edms_hr(request):
         })
 
     elif request.method == 'POST':
+
         if 'new_dep' in request.POST:
             form = DepartmentForm(request.POST)
             if form.is_valid():
@@ -1439,13 +1485,14 @@ def edms_get_doc(request, pk):
                     doc_info.update({
                         'name': name[0]['name'],
                     })
+            elif module['module'] == 'preamble':
+                test = 'test'
             elif module['module'] == 'text':
-                # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
-                if 'text_list' not in doc_info.keys():
-                    text_list = [{
-                            'queue': item.queue_in_doc,
-                            'text': item.text }
-                        for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
+                text_list = [{
+                        'queue': item.queue_in_doc,
+                        'text': item.text }
+                    for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
+                if text_list:
                     doc_info.update({
                         'text_list': text_list,
                     })
@@ -1625,16 +1672,20 @@ def edms_my_docs(request):
             doc_request.update({'document': new_doc.pk})
             doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
             doc_request.update({'document_type': doc_type})
+            doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
+            author_name = Document.objects.values_list('employee_seat__employee__pip', flat=True).filter(id=doc_request['document'])[0]
+            doc_request.update({
+                'doc_type_name': doc_type_name,
+                'author_name': author_name
+            })
 
-            # Отримуємо назву типу документа та ім’я автора документа для формування листів отримувачам
-            doc_request = get_additional_doc_info(doc_request)
-
-            if doc_request['status'] == 'doc': # Публікація документу
+            # В залежності від того чи це чернетка, записуємо перший path_id з позначкою 1 або 16:
+            if doc_request['status'] == 'doc':
                 doc_request.update({'mark': 1})
-            elif doc_request['status'] == 'draft': # Збереження чернетки
+            elif doc_request['status'] == 'draft':
                 doc_request.update({'mark': 16})
             else:
-                doc_request.update({'mark': 19}) # Збереження шаблону
+                doc_request.update({'mark': 19})
             doc_request.update({'comment': ''})
 
             # Записуємо перший крок шляху документа і отримуємо його ід
@@ -1777,113 +1828,41 @@ def edms_sub_docs(request):
     return HttpResponse(status=405)
 
 
-def get_all_subs_docs(emp_seat):
-    # Отримуємо ід посади з ід людинопосади
-    seat_id = Employee_Seat.objects.filter(id=emp_seat).values_list('seat_id')[0][0]
-
-    # Список всіх підлеглих користувача:
-    subs_list = get_sub_seats(int(seat_id))
-
-    # Шукаємо документи кожного підлеглого
-    subs = []
-    if subs_list:
-        for sub in subs_list:
-            subs.append(sub['id'])
-
-        return [{
-            'id': path.document_id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type_id,
-            'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-            'author_seat_id': path.employee_seat_id,
-            'author': path.employee_seat.employee.pip,
-            'dep': path.employee_seat.seat.department.name,
-            'emp_seat_id': int(emp_seat),
-            'is_active': path.document.is_active,
-        } for path in Document_Path.objects
-            .filter(mark_id=1)
-            .filter(employee_seat__seat_id__in=subs)
-            .filter(document__testing=testing)
-            .filter(document__closed=False)]
-
-
-def get_emp_seat_docs(emp_seat):
-    return [{
-        'id': path.document_id,
-        'type': path.document.document_type.description,
-        'type_id': path.document.document_type_id,
-        'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-        'author_seat_id': path.employee_seat_id,
-        'author': path.employee_seat.employee.pip,
-        'dep': path.employee_seat.seat.department.name,
-        'is_active': path.document.is_active,
-    } for path in Document_Path.objects
-        .filter(mark_id=1)
-        .filter(employee_seat_id=emp_seat)
-        .filter(document__testing=testing)
-        .filter(document__closed=False)]
-
-
-def get_emp_seat_and_doc_type_docs(emp_seat, doc_type):
-    return [{
-        'id': path.document_id,
-        'type': path.document.document_type.description,
-        'type_id': path.document.document_type_id,
-        'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-        'author_seat_id': path.employee_seat_id,
-        'author': path.employee_seat.employee.pip,
-        'dep': path.employee_seat.seat.department.name,
-        'is_active': path.document.is_active,
-    } for path in Document_Path.objects
-        .filter(document__document_type_id=doc_type)
-        .filter(mark_id=1)
-        .filter(employee_seat_id=emp_seat)
-        .filter(document__testing=testing)
-        .filter(document__closed=False)]
-
-
-def get_doc_type_docs(emp_seat, doc_type):
-    # Отримуємо ід посади з ід людинопосади
-    seat_id = Employee_Seat.objects.filter(id=emp_seat).values_list('seat_id')[0][0]
-
-    # Список всіх підлеглих користувача:
-    subs_list = get_sub_seats(int(seat_id))
-
-    # Шукаємо документи кожного підлеглого
-    subs = []
-    if subs_list:
-        for sub in subs_list:
-            subs.append(sub['id'])
-
-        return [{
-            'id': path.document_id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type_id,
-            'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-            'author_seat_id': path.employee_seat_id,
-            'author': path.employee_seat.employee.pip,
-            'dep': path.employee_seat.seat.department.name,
-            'emp_seat_id': int(emp_seat),
-            'is_active': path.document.is_active,
-        } for path in Document_Path.objects
-            .filter(document__document_type_id=doc_type)
-            .filter(mark_id=1)
-            .filter(employee_seat__seat_id__in=subs)
-            .filter(document__testing=testing)
-            .filter(document__closed=False)]
-
-
 @login_required(login_url='login')
-def edms_get_sub_docs(request, emp_seat, doc_type, sub_emp):
+def edms_get_sub_docs(request, pk):
     if request.method == 'GET':
-        if doc_type == '0' and sub_emp != '0':
-            return HttpResponse(json.dumps(get_emp_seat_docs(sub_emp)))
-        elif doc_type != '0' and sub_emp != '0':
-            return HttpResponse(json.dumps(get_emp_seat_and_doc_type_docs(sub_emp, doc_type)))
-        elif doc_type == '0' and sub_emp == '0':
-            return HttpResponse(json.dumps(get_all_subs_docs(emp_seat)))
-        elif doc_type != '0' and sub_emp == '0':
-            return HttpResponse(json.dumps(get_doc_type_docs(emp_seat, doc_type)))
+        # Отримуємо ід посади з ід людинопосади
+        seat_id = Employee_Seat.objects.filter(id=pk).values_list('seat_id')[0][0]
+
+        # Список всіх підлеглих користувача:
+        subs_list = get_subs_list(int(seat_id))
+
+        # Шукаємо документи кожного підлеглого
+        sub_docs = []
+        if subs_list:
+            for sub in subs_list:
+
+                docs = [{  # Список документів у роботі, створених підлеглими юзера
+                    'id': path.document_id,
+                    'type': path.document.document_type.description,
+                    'type_id': path.document.document_type_id,
+                    'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
+                    'author_seat_id': path.employee_seat_id,
+                    'author': path.employee_seat.employee.pip,
+                    'dep': path.employee_seat.seat.department.name,
+                    'emp_seat_id': int(pk),
+                    'is_active': path.document.is_active,
+                } for path in Document_Path.objects
+                    .filter(mark_id=1)
+                    .filter(employee_seat__seat_id=sub['id'])
+                    .filter(document__testing=testing)
+                    .filter(document__closed=False)]
+
+                if docs:
+                    for doc in docs:
+                        sub_docs.append(doc)
+        return HttpResponse(json.dumps(sub_docs))
+
     return HttpResponse(status=405)
 
 
@@ -1904,10 +1883,6 @@ def edms_mark(request):
             doc_request = request.POST.copy()
             doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
             doc_request.update({'document_type': doc_type})
-
-            # Отримуємо назву типу документа, назву позначки та ім’я автора позначки для формування листа автору документа
-            doc_request = get_additional_doc_info(doc_request)
-
             this_phase = get_phase_info(doc_request)
             mark_author = int(doc_request['employee_seat'])
             doc_author = Document.objects.values_list('employee_seat_id', flat=True).filter(id=doc_request['document'])[0]
@@ -2008,8 +1983,10 @@ def edms_mark(request):
                 for resolution in resolutions:
                     recipient = vacation_check(resolution['recipient_id'])
                     doc_request.update({'comment': resolution['comment']})
+                    # post_mark_demand(doc_request, resolution['recipient_id'], doc_request['phase_id'], 11)
+                    # send_email('new', [{'id': resolution['recipient_id']}], doc_request['document'])
                     post_mark_demand(doc_request, recipient, doc_request['phase_id'], 11)
-                    new_mail('new', [{'id': recipient}], doc_request)
+                    send_email('new', [{'id': recipient}], doc_request['document'])
 
             # Видалено
             elif doc_request['mark'] == '13':
@@ -2036,7 +2013,7 @@ def edms_mark(request):
                 for acquaint in acquaints:
                     acquaint = vacation_check(acquaint['emp_seat_id'])
                     post_mark_demand(doc_request, acquaint, phase, 8)
-                    new_mail('new', [{'id': acquaint}], doc_request)
+                    send_email('new', [{'id': acquaint}], doc_request['document'])
 
             # Оновлення документу
             if doc_request['mark'] == '18':
@@ -2076,8 +2053,9 @@ def edms_mark(request):
                 post_files(request.FILES.getlist('new_files'), doc_request, new_path.pk)
 
             # Надсилаємо листа автору документа:
+            doc_author = Document.objects.values_list('employee_seat_id', flat=True). filter(id=doc_request['document'])[0]
             if int(doc_request['employee_seat']) != doc_author:
-                new_mail('mark', [{'id': doc_author}], doc_request)
+                send_email('mark', [{'id': doc_author}], doc_request['document'])
 
             return HttpResponse(new_path.pk)
     except ValidationError as err:

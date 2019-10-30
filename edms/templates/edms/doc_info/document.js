@@ -6,7 +6,7 @@ import {ToastContainer, toast} from 'react-toastify'; // спливаючі по
 import 'react-toastify/dist/ReactToastify.min.css';
 import axios from 'axios';
 import Info from './info';
-import NewFilesList from '../_else/new_files_list';
+import NewFilesList from '../components/new_files_list';
 import Buttons from './buttons';
 import NewResolutions from './doc_info_modules/modals/new_resolutions';
 import NewAcquaints from './doc_info_modules/modals/new_acquaints';
@@ -46,7 +46,7 @@ class Document extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
     if (this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
-      this.getInfo(this.props.doc);
+      this.getDoc(this.props.doc);
     }
   }
 
@@ -66,7 +66,7 @@ class Document extends React.Component {
     });
 
   // функція для отримання з бази докладної інфи про документ
-  getInfo = (doc) => {
+  getDoc = (doc) => {
     this.setState({
       ready_for_render: false
     });
@@ -96,7 +96,7 @@ class Document extends React.Component {
         }
       })
       .catch((error) => {
-        console.log('errorpost: ' + error);
+        console.log(error);
       });
     return 0;
   };
@@ -369,27 +369,6 @@ class Document extends React.Component {
                   deletable={this.state.deletable}
                   onClick={this.onButtonClick}
                 />
-                {/*<If condition={this.state.show_resolutions_area === true}>*/}
-                {/*<NewResolutions*/}
-                {/*directSubs={this.props.directSubs}*/}
-                {/*onSubmit={this.handleResolutions}*/}
-                {/*doc_id={this.props.doc.id}*/}
-                {/*postMark={this.postMark}*/}
-                {/*notify={this.notify}*/}
-                {/*new_path_id={this.state.new_path_id}*/}
-                {/*/>*/}
-                {/*<hr />*/}
-                {/*</If>*/}
-                {/*<If condition={this.state.show_aquaints_area === true}>*/}
-                {/*<NewAcquaints*/}
-                {/*onSubmit={this.handleAcquaints}*/}
-                {/*doc_id={this.props.doc.id}*/}
-                {/*postMark={this.postMark}*/}
-                {/*notify={this.notify}*/}
-                {/*new_path_id={this.state.new_path_id}*/}
-                {/*/>*/}
-                {/*<hr />*/}
-                {/*</If>*/}
                 <div>
                   <label htmlFor='comment'>Текст коментарю:</label>
                   <textarea

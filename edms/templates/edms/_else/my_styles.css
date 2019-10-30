@@ -11,6 +11,7 @@
 }
 
 .css_main_div {
+    margin: auto;
     height: 72%;
     width: 98vw;
     position: absolute;

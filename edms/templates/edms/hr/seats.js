@@ -6,7 +6,7 @@ import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
 import Select from 'react-validation/build/select';
 import '../_else/my_styles.css';
-import DxTable from '../_else/dx_table';
+import DxTable from '../components/dx_table';
 import {required} from '../_else/validations.js';
 import {getIndex} from '../_else/my_extras.js';
 import axios from 'axios';
@@ -15,7 +15,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-class SeatTable extends React.Component {
+class Seats extends React.Component {
   state = {
     open: false,
     new_open: false,
@@ -433,4 +433,4 @@ class SeatTable extends React.Component {
   }
 }
 
-export default SeatTable;
+export default Seats;

@@ -1,6 +1,6 @@
 'use strict';
 import React, {Fragment} from 'react';
-import DxTable from '../../_else/dx_table';
+import DxTable from '../../components/dx_table';
 
 class CarryOut extends React.Component {
   state = {

@@ -1,21 +1,21 @@
 from django.conf.urls import include, url
 
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_emp_seats_hr  # Відділ кадрів
-from edms.views import edms_administration, edms_get_types, edms_get_type_info, edms_deactivate_permission, edms_get_modules_phases  # Адміністрування
+from edms.views import edms_administration, edms_get_admin_types, edms_get_type_info, edms_deactivate_permission, edms_get_modules_phases  # Адміністрування
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive  # Архів
-from edms.views import edms_sub_docs, edms_get_sub_docs  # Документи підлеглих
+from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
+from edms.views import edms_get_doc_types
 
 urlpatterns = [
   #  url(r'^$', RedirectView.as_view(url='/main', permanent=True)),
   #  url(r'^main/', edms_main, name='main'),
 
-
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
-    url(r'^.+/get_deps/', edms_get_deps, name='get_deps'),  # Запит списку відділів
-    url(r'^.+/get_seats/', edms_get_seats, name='get_seats'),  # Запит списку відділів
+    url(r'^.+/get_deps/', edms_get_deps, name='get_deps'),
+    url(r'^.+/get_seats/', edms_get_seats, name='get_seats'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_emp_seats/(?P<pk>\d+)/$', edms_get_emp_seats_hr, name='hr_emp'),
@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^hr/emp_seat/(?P<pk>\d+)/$', edms_hr_emp_seat, name='hr_seat'),
     url(r'^hr/', edms_hr, name='hr'),
 
-    url(r'^administration/get_types/(?P<pk>\d+)/$', edms_get_types, name='get_types'),
+    url(r'^administration/get_types/(?P<pk>\d+)/$', edms_get_admin_types, name='get_admin_types'),
     url(r'^administration/deactivate/(?P<pk>\d+)/$', edms_deactivate_permission, name='deactivate_permission'),
     url(r'^administration/get_type_info/(?P<pk>\d+)/$', edms_get_type_info, name='get_type_info'),
     url(r'^administration/get_modules_phases/(?P<pk>\d+)/$', edms_get_modules_phases, name='get_modules_phases'),
@@ -43,6 +43,9 @@ urlpatterns = [
 
     url(r'^archive/', edms_archive, name='archive'),
 
-    url(r'^sub_docs/get/(?P<pk>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
+    url(r'^sub_docs/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
+    url(r'^sub_docs/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
+    url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
+
 ]

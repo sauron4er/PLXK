@@ -31,6 +31,7 @@ class Vacation(models.Model):
     begin_date = models.DateField(default=timezone.now)
     end_date = models.DateField(null=True)
     acting = models.ForeignKey('self', related_name='acting_for', null=True)  # Acting user, while this on vacation
+    is_active = models.BooleanField(default=True)
 
 
 # models, related with documents and marks
@@ -209,7 +210,6 @@ class Doc_Validity(models.Model):
 # Погодження документу
 class Doc_Sign(models.Model):
     document = models.ForeignKey(Document, related_name='document_sign')
-    # signed = models.BooleanField(default=False)
     signed_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
     is_active = models.BooleanField(default=True)
 
@@ -225,13 +225,6 @@ class Doc_Type_Unique_Number(models.Model):
 class Doc_Name(models.Model):
     document = models.ForeignKey(Document, related_name='document_name')
     name = models.CharField(max_length=500)
-    is_active = models.BooleanField(default=True)
-
-
-# Преамбула документу
-class Doc_Preamble(models.Model):
-    document = models.ForeignKey(Document, related_name='document_preamble')
-    preamble = models.CharField(max_length=1000)
     is_active = models.BooleanField(default=True)
 
 

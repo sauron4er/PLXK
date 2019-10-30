@@ -165,4 +165,3 @@ class ApprovalList extends React.Component {
 }
 
 export {ApprovalList as default};
-// export default ApprovalList;

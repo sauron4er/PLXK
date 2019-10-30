@@ -7,7 +7,7 @@ import '../_else/my_styles.css';
 import NewDoc from './new_doc';
 import Docs from './docs';
 import Drafts from './drafts';
-import SeatChooser from '../_else/seat_chooser';
+import SeatChooser from '../components/seat_chooser';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';

@@ -23,7 +23,7 @@ class Text extends React.Component {
 
   static defaultProps = {
     text: '',
-    fieldName: '???',
+    fieldName: '-',
     rows: 1,
     queue: 1,
     maxLength: 5000

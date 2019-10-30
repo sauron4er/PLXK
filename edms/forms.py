@@ -4,7 +4,7 @@ from accounts import models as accounts
 from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand, \
     Document_Type_Permission
 from .models import File, Doc_Article, Doc_Article_Dep, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Name, \
-    Doc_Type_Unique_Number, Doc_Preamble, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
+    Doc_Type_Unique_Number, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
 
 
 class UserProfileForm(forms.ModelForm):
@@ -163,12 +163,6 @@ class NewNameForm(forms.ModelForm):
     class Meta:
         model = Doc_Name
         fields = {'document', 'name'}
-
-
-class NewPreambleForm(forms.ModelForm):
-    class Meta:
-        model = Doc_Preamble
-        fields = {'document', 'preamble'}
 
 
 class NewTextForm(forms.ModelForm):

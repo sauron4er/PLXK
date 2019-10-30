@@ -7,7 +7,7 @@ import NewDoc from './new_doc';
 import Docs from './docs';
 import Drafts from './drafts';
 import Templates from './templates'
-import SeatChooser from '../_else/seat_chooser';
+import SeatChooser from '../components/seat_chooser';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -84,14 +84,6 @@ class MyDocs extends React.Component {
       });
     }
   }
-
-  // Показ чернеток або документів
-  onReturnClick = (e) => {
-    e.preventDefault();
-    this.setState((prevState) => ({
-      draft_view: !prevState.draft_view
-    }));
-  };
   
   showDrafts = () => {
     this.setState({
@@ -174,7 +166,7 @@ class MyDocs extends React.Component {
               my_docs={this.state.my_docs}
               work_docs={this.state.work_docs}
               acting_docs={this.state.acting_docs}
-              removeDoc={this.removeDoc}
+              removeMyDoc={this.removeDoc}
               removeWorkDoc={this.removeWorkDoc}
               directSubs={this.state.direct_subs}
               openDocId={this.state.open_doc_id}

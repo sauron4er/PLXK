@@ -7,42 +7,26 @@ import Button from 'react-validation/build/button';
 import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
-
-import DxTable from '../_else/dx_table';
+import UserVacation from './user_vacation';
 import {getIndex} from '../_else/my_extras.js';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-class UserTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    // щоб мати доступ до this. із функції треба її прив’язати:
-    this.onChange = this.onChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.onRowClick = this.onRowClick.bind(this);
-  }
-
+class User extends React.Component {
   state = {
-    open: false,
-    id: '', // id співробітника для форми
-    emp: '', // ім’я співробітника для форми
-    on_vacation: '', // статус відпустки
-    acting: '', // ід співробітника, що заміняє даного на час відпустки
-    acting_id: '', // id в.о посади
-    tab_number: '',
+    on_vacation: this.props.user.on_vacation, // статус відпустки
+    acting: this.props.user.acting, // ід співробітника, що заміняє даного на час відпустки
+    acting_id: this.props.user.acting_id, // id в.о посади
 
     seat: '', // назва посади для форми
     seat_id: '', // id посади
-
     emp_seat: '', // обрана посада співробітника
     emp_seat_id: '', // ід запису посади співробітника
-    emp_seats_list: [], // список посад співробітника
+    emp_seats_list: this.props.user.emp_seats_list, // список посад співробітника
 
-    vacation_checked: '', // чи позначений чекбокс "у відпустці" (для відображення списку людей для в.о.)
+    vacation_checked: this.props.user.vacation_checked, // чи позначений чекбокс "у відпустці" (для відображення списку людей для в.о.)
 
     today:
       new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(), // сьогоднішня дата
@@ -57,7 +41,7 @@ class UserTable extends React.Component {
     new_emp_is_acting_checked: false
   };
 
-  onChange(event) {
+  onChange = (event) => {
     if (event.target.name === 'acting') {
       // беремо ід в.о. із <select>
       const selectedIndex = event.target.options.selectedIndex;
@@ -106,9 +90,9 @@ class UserTable extends React.Component {
         [event.target.name]: event.target.value
       });
     }
-  }
+  };
 
-  newUserSeat(e) {
+  newUserSeat = (e) => {
     // Оновлює запис у списку відділів
     e.preventDefault();
 
@@ -117,7 +101,7 @@ class UserTable extends React.Component {
       url: '',
       data: querystring.stringify({
         new_emp_seat: '',
-        employee: this.state.id,
+        employee: this.props.user.id,
         seat: this.state.seat_id,
         end_date: null,
         is_active: true,
@@ -152,17 +136,16 @@ class UserTable extends React.Component {
       .catch((error) => {
         console.log('errorpost: ' + error);
       });
-  }
+  };
 
-  // видаляє обрану посаду співробітника
-  delEmpSeat(e) {
+  delEmpSeat = (e) => {
     e.preventDefault();
 
     axios({
       method: 'post',
       url: 'emp_seat/' + this.state.emp_seat_id + '/',
       data: querystring.stringify({
-        employee: this.state.id,
+        employee: this.props.user.id,
         seat: this.state.emp_seat,
         end_date: this.state.today,
         successor_id: this.state.new_emp_id,
@@ -237,9 +220,9 @@ class UserTable extends React.Component {
           });
         }
       });
-  }
+  };
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     // Оновлює запис у списку відділів
     e.preventDefault();
     // TODO реалізувати можливість прийняти людину відразу в статусі в.о., тепер вона заступає на посаду як основну
@@ -248,7 +231,7 @@ class UserTable extends React.Component {
     let acting_id = this.state.acting_id == 0 ? null : this.state.acting_id;
 
     let new_emps = this.props.emps; // клонуємо масив для внесення змін
-    const index = getIndex(this.state.id, this.props.emps); // шукаємо індекс запису, в якому треба внести зміни
+    const index = getIndex(this.props.user.id, this.props.emps); // шукаємо індекс запису, в якому треба внести зміни
 
     // якщо хоча б одна зміна відбулася:
 
@@ -274,17 +257,17 @@ class UserTable extends React.Component {
         }
       })
         .then((response) => {
-          this.props.changeLists('emps', new_emps);
+          // this.props.changeLists('emps', new_emps);
+          window.location.reload();
         })
         .catch((error) => {
           console.log('errorpost: ' + error);
         });
     }
+    // this.setState({open: false}); // закриває модальне вікно
+  };
 
-    this.setState({open: false}); // закриває модальне вікно
-  }
-
-  handleDelete(e) {
+  handleDelete = (e) => {
     // робить співробітника неактивним
     e.preventDefault();
 
@@ -310,62 +293,22 @@ class UserTable extends React.Component {
         }
       })
         .then((response) => {
-          this.props.changeLists('emps', this.props.emps.filter((emp) => emp.id !== id));
+          // this.props.changeLists('emps', this.props.emps.filter((emp) => emp.id !== id));
+          window.location.reload();
         })
         .catch((error) => {
           console.log('errorpost: ' + error);
         });
-
-      this.setState({open: false}); // закриває модальне вікно
+      // this.setState({open: false}); // закриває модальне вікно
     }
-  }
-
-  onRowClick(row) {
-    this.setState({
-      // інформація про натиснутий рядок
-      id: row.id,
-      emp: row.emp,
-      tab_number: row.tab_number,
-      on_vacation: row.on_vacation === 'true',
-      acting: row.acting,
-      acting_id: row.acting_id,
-      vacation_checked: row.on_vacation === 'true'
-    });
-
-    axios({
-      method: 'get',
-      url: 'get_emp_seats/' + row.id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
-      .then((response) => {
-        this.setState({
-          emp_seats_list: response.data
-        });
-      })
-      .then(() => {
-        this.onOpenModal();
-      })
-      .catch(function(error) {
-        console.log('errorpost: ' + error);
-      });
-  }
-
-  onOpenModal = () => {
-    this.setState({open: true});
   };
 
-  onCloseModal = () => {
-    this.setState({open: false});
+  onClose = () => {
+    this.props.onClose();
   };
 
   render() {
-    const {open, acting, seat, emp_seat_id, new_emp_form} = this.state;
-
-    const users_columns = [{name: 'emp', title: 'Ф.І.О.'}, {name: 'tab_number', title: 'Таб.ном.'}];
-
-    const users_col_width = [{columnName: 'tab_number', width: 110}];
+    const {acting, seat, emp_seat_id, new_emp_form} = this.state;
 
     const acting_select = this.state.vacation_checked ? ( // відображення селекту для в.о.
       <div className='d-flex'>
@@ -398,129 +341,108 @@ class UserTable extends React.Component {
     );
 
     return (
-      <Fragment>
-        <button
-          type='button'
-          className='btn btn-sm btn-outline-secondary mb-1 float-left'
-          // onClick={this.onOpenModalNew}
-        >
-          Додати співробітника
-        </button>
-        <button
-          type='button'
-          className='btn btn-sm btn-outline-secondary mb-1 float-right'
-          // onClick={this.onOpenModalNew}
-        >
-          Відпустки
-        </button>
-        <div className='float-left'>
-        <DxTable
-          rows={this.props.emps}
-          columns={users_columns}
-          colWidth={users_col_width}
-          defaultSorting={[{columnName: 'emp', direction: 'asc'}]}
-          onRowClick={this.onRowClick}
-          height={this.props.height}
-          filter
-        />
-        </div>
-
-        <Modal open={open} onClose={this.onCloseModal} center>
-          <p> </p>
-          <Form onSubmit={this.handleSubmit}>
-            <div>
-              <div className='font-weight-bold'>
-                {this.state.emp} <small>({this.state.tab_number})</small>
-              </div>
+      <Modal open={true} onClose={this.onClose} center>
+        <p> </p>
+        <Form onSubmit={this.handleSubmit}>
+          <div>
+            <div className='font-weight-bold'>
+              {this.props.user.emp} <small>({this.props.user.tab_number})</small>
             </div>
-            <div className='d-flex'>
-              <Input
-                name='on_vacation'
+          </div>
+          <UserVacation emps={this.props.emps} />
+          <div className='d-flex'>
+            <Input
+              name='on_vacation'
+              onChange={this.onChange}
+              type='checkbox'
+              checked={this.state.on_vacation}
+              id='vacation'
+            />
+            <label htmlFor='vacation'>у відпустці</label>
+          </div>
+
+          {acting_select}
+
+          <div>
+            <label>
+              Нова посада:
+              <Select
+                className='form-control'
+                id='seat-select'
+                name='seat'
+                value={seat}
                 onChange={this.onChange}
-                type='checkbox'
-                checked={this.state.on_vacation}
-                id='vacation'
-              />
-              <label htmlFor='vacation'>у відпустці</label>
-            </div>
+              >
+                <option data-key={0} value='Не внесено'>
+                  ------------
+                </option>
+                {this.props.seats.map((seat) => {
+                  return (
+                    <option key={seat.id} data-key={seat.id} value={seat.seat}>
+                      {seat.seat}
+                    </option>
+                  );
+                })}
+              </Select>
+              <Button
+                className='btn btn-outline-secondary mt-1'
+                onClick={this.newUserSeat.bind(this)}
+              >
+                {this.state.new_emp_seat_button_label}
+              </Button>
+            </label>
+          </div>
+          <br />
 
-            {acting_select}
+          <div>
+            <label>
+              Посади користувача:
+              <Select
+                className='form-control'
+                id='emp-seat-select'
+                name='emp_seat'
+                value={emp_seat_id}
+                onChange={this.onChange}
+              >
+                <option data-key={0} value=''>
+                  ------------
+                </option>
+                {this.state.emp_seats_list.map((empSeat) => {
+                  return (
+                    <option key={empSeat.id} data-key={empSeat.seat_id} value={empSeat.id}>
+                      {empSeat.emp_seat}
+                    </option>
+                  );
+                })}
+              </Select>
+              {new_emp_form}
+              <Button
+                className='btn btn-outline-secondary mt-1'
+                onClick={this.delEmpSeat.bind(this)}
+              >
+                {this.state.del_emp_seat_button_label}
+              </Button>
+            </label>
+          </div>
+          <br />
 
-            <div>
-              <label>
-                Нова посада:
-                <Select
-                  className='form-control'
-                  id='seat-select'
-                  name='seat'
-                  value={seat}
-                  onChange={this.onChange}
-                >
-                  <option data-key={0} value='Не внесено'>
-                    ------------
-                  </option>
-                  {this.props.seats.map((seat) => {
-                    return (
-                      <option key={seat.id} data-key={seat.id} value={seat.seat}>
-                        {seat.seat}
-                      </option>
-                    );
-                  })}
-                </Select>
-                <Button
-                  className='btn btn-outline-secondary mt-1'
-                  onClick={this.newUserSeat.bind(this)}
-                >
-                  {this.state.new_emp_seat_button_label}
-                </Button>
-              </label>
-            </div>
-            <br />
-
-            <div>
-              <label>
-                Посади користувача:
-                <Select
-                  className='form-control'
-                  id='emp-seat-select'
-                  name='emp_seat'
-                  value={emp_seat_id}
-                  onChange={this.onChange}
-                >
-                  <option data-key={0} value=''>
-                    ------------
-                  </option>
-                  {this.state.emp_seats_list.map((empSeat) => {
-                    return (
-                      <option key={empSeat.id} data-key={empSeat.seat_id} value={empSeat.id}>
-                        {empSeat.emp_seat}
-                      </option>
-                    );
-                  })}
-                </Select>
-                {new_emp_form}
-                <Button
-                  className='btn btn-outline-secondary mt-1'
-                  onClick={this.delEmpSeat.bind(this)}
-                >
-                  {this.state.del_emp_seat_button_label}
-                </Button>
-              </label>
-            </div>
-            <br />
-
-            <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
-            <Button
-              className='float-sm-right btn btn-outline-secondary mb-1'
-              onClick={this.handleDelete.bind(this)}
-            >
-              Звільнити співробітника
-            </Button>
-          </Form>
-        </Modal>
-      </Fragment>
+          <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
+          <Button
+            className='float-sm-right btn btn-outline-secondary mb-1'
+            onClick={this.handleDelete.bind(this)}
+          >
+            Звільнити співробітника
+          </Button>
+        </Form>
+      </Modal>
     );
   }
+
+  static defaultProps = {
+    emps: [],
+    seats: [],
+    user: {}
+  };
 }
 
-export default UserTable;
+export default User;

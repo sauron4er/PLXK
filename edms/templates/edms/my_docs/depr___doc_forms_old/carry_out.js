@@ -7,7 +7,7 @@ import Button from "react-validation/build/button";
 import Input from "react-validation/build/input";
 import axios from "axios";
 import querystring from "querystring";
-import DxTable from "../../_else/dx_table";
+import DxTable from "../../components/dx_table";
 import Modal from "react-awesome-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimes} from "@fortawesome/free-solid-svg-icons";

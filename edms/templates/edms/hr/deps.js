@@ -9,7 +9,7 @@ import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
 import '../_else/my_styles.css'
-import DxTable from '../_else/dx_table';
+import DxTable from '../components/dx_table';
 import {required} from '../_else/validations.js';
 import {getIndex} from '../_else/my_extras.js';
 
@@ -18,7 +18,7 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 // departments table with modal change_dep window
-class DepTable extends React.Component {
+class Deps extends React.Component {
     constructor(props) {
     super(props);
 
@@ -282,4 +282,4 @@ class DepTable extends React.Component {
     }
 }
 
-export default DepTable
+export default Deps

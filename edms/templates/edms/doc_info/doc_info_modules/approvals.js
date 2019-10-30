@@ -2,8 +2,6 @@
 import React from 'react';
 import {faCircle, faCheckCircle, faTimesCircle} from '@fortawesome/free-regular-svg-icons';
 import {faCheckDouble} from '@fortawesome/free-solid-svg-icons';
-// import {faCheckCircle} from '@fortawesome/free-regular-svg-icons';
-// import {faTimesCircle} from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 class Approvals extends React.Component {
