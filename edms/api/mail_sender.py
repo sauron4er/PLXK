@@ -25,9 +25,9 @@ def send_email_mark(doc_request, mail):
     subject = "Нова реакція на Ваш електронний документ"
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}'\
         .format(doc_request['document'])
-    text = '{} відреагував "{}" на Ваш документ № {} ({}). {}' \
-        .format(doc_request['mark_author_name'], doc_request['mark_name'],
-                doc_request['document'], doc_request['doc_type_name'], link)
+    text = 'Ваш документ #{} ({}) отримав позначку "{}". Автор позначки: {}. {}' \
+        .format(doc_request['document'], doc_request['doc_type_name'],
+                doc_request['mark_name'], doc_request['mark_author_name'], link)
 
     body = u"\r\n".join((
         "From: it@lxk.com.ua",

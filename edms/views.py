@@ -28,7 +28,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
@@ -452,12 +452,23 @@ def handle_phase_acquaints(doc_request, recipients):
 
 # Створення mark_demand для отримувачів, що позначені у списку на погодження
 def handle_phase_approvals(doc_request, phase_info):
-    approvals = global_approvals
+    if global_approvals:  # Ця глобальна змінна існує при створенні нового документа, так як нові approvals ще не записані у бд
+        approvals = global_approvals
+    else:
+        approvals = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
+            .filter(document_id=doc_request['document'])\
+            .filter(approve_queue=phase_info['phase'])\
+            .filter(is_active=True)
+
+    # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
+    if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals):
+        new_phase(doc_request, phase_info['phase']+1, [])
+
     for approval in approvals:
         # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
         if approval['approve_queue'] == phase_info['phase']:
-            post_mark_demand(doc_request, approval['recipient'], phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': approval['recipient']}], doc_request)
+            post_mark_demand(doc_request, approval['emp_seat_id'], phase_info['id'], phase_info['mark_id'])
+            new_mail('new', [{'id': approval['emp_seat_id']}], doc_request)
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на підпис
@@ -549,9 +560,9 @@ def handle_phase_marks(doc_request, phase_info):
 
 # Створення першої фази документу
 def new_phase(doc_request, phase_number, modules_recipients):
-    doc_modules = []
-    if 'doc_modules' in doc_request:
-        doc_modules = json.loads(doc_request['doc_modules'])
+    # doc_modules = []
+    # if 'doc_modules' in doc_request:
+    #     doc_modules = json.loads(doc_request['doc_modules'])
 
     # Знаходимо id's фази.
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
@@ -569,7 +580,8 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
     if phases:
         for phase_info in phases:
-            if 'approval_list' in doc_modules:
+            if is_approval_module_used(doc_request['document_type']):
+            # if 'approval_list' in doc_modules:
                 # 1. Опрацьовуємо документ, якщо є список погоджуючих (при створенні документу "Погодження договору"):
                 handle_phase_approvals(doc_request, phase_info)
             else:  # else використовується, щоб approval_list не використовувався двічі
@@ -577,8 +589,6 @@ def new_phase(doc_request, phase_number, modules_recipients):
                 handle_phase_recipients(doc_request, phase_info, modules_recipients)
                 # 3. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
                 handle_phase_marks(doc_request, phase_info)
-    else:
-        test = 'test'
 
 
 # Деактивація всіх MarkDemand документа:
@@ -678,19 +688,6 @@ def post_modules(doc_request, doc_files, new_path):
                 'approve_queue': 0  # Автор документа перший у списку погоджень
             })
 
-            # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
-            dep_chief = get_dep_chief_id(doc_request['employee_seat'])
-
-            if dep_chief != int(doc_request['employee_seat']):
-                for i in approvals:
-                    if int(i['id']) == dep_chief:
-                        approvals.remove(i)
-
-                approvals.append({
-                    'id': dep_chief,
-                    'approve_queue': 1  # Керівник відділу другий у списку погоджень
-                })
-
             # Додаємо до списку погодження директора, видаляємо його з існуючого списку:
             director = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=16) \
@@ -705,6 +702,19 @@ def post_modules(doc_request, doc_files, new_path):
                 'id': director,
                 'approve_queue': 3  # Директор останній у списку погоджень
             }])
+
+            # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
+            dep_chief = get_dep_chief_id(doc_request['employee_seat'])
+
+            if dep_chief != int(doc_request['employee_seat']):
+                for i in approvals:
+                    if int(i['id']) == dep_chief:
+                        approvals.remove(i)
+
+                approvals.append({
+                    'id': dep_chief,
+                    'approve_queue': 1  # Керівник відділу другий у списку погоджень
+                })
 
             post_approval_list(doc_request, approvals)
 
@@ -807,7 +817,6 @@ def post_sign_list(doc_request, sign_list):
 
 # Функція, яка додає у бд список отримуючих на погодження
 def post_approval_list(doc_request, approvals):
-    test_global_approvals = []
     for recipient in approvals:
         doc_request.update({'emp_seat': recipient['id']})
         doc_request.update({'approve_queue': recipient['approve_queue']})
@@ -825,12 +834,7 @@ def post_approval_list(doc_request, approvals):
             new_approval = approval_form.save()
             global_approvals.append({
                 'id': new_approval.id,
-                'recipient': new_approval.emp_seat_id,
-                'approve_queue': new_approval.approve_queue
-            })
-            test_global_approvals.append({
-                'id': new_approval.id,
-                'recipient': new_approval.emp_seat_id,
+                'emp_seat_id': new_approval.emp_seat_id,
                 'approve_queue': new_approval.approve_queue
             })
 
@@ -870,13 +874,6 @@ def post_recipient_chief(doc_request, recipient_chief):
         recipient_form.save()
     else:
         raise ValidationError('edms/views post_recipient_chief recipient_form invalid')
-
-    # (Додаємо mark_demand) - тепер mark_demand завжди додається у new_phase
-    # if doc_request['is_draft'] == 'false':
-    #     doc_request.update({'document_path': path.pk})
-    #     doc_type = Document.objects.values_list('document_type_id', flat=True).filter(id=doc_request['document'])[0]
-    #     phase_id = Doc_Type_Phase.objects.values_list('id', flat=True).filter(document_type_id=doc_type).filter(phase=1)[0]
-    #     post_mark_demand(doc_request, recipient_chief['id'], phase_id, 2)
 
 
 # Функція, яка додає у бд дату документу
@@ -2064,6 +2061,11 @@ def edms_mark(request):
 
                 if mark_author == doc_author:
                     # Якщо автор оновлення = автор документа, ставимо йому галочку і відправляємо на першу фазу
+                    approval_id = Doc_Approval.objects.values_list('id', flat=True) \
+                        .filter(document_id=doc_request['document']) \
+                        .filter(approve_queue=0) \
+                        .filter(is_active=True)[0]
+                    post_approve(doc_request, approval_id, True)
                     new_phase(doc_request, 1, [])
                 else:
                     # Якщо ні, то створюємо автору документа mark_demand з позначкою "Не заперечую" (6)

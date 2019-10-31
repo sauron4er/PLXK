@@ -59,6 +59,7 @@ class SeatChooser extends React.PureComponent {
       my_seat_id: new_seat_id
     });
     // записуємо ід посади у локальне сховище:
+    this.props.onSeatChange(parseInt(new_seat_id));
     localStorage.setItem('my_seat', new_seat_id);
   };
 
