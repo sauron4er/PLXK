@@ -28,7 +28,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = True
+testing = False
 
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
@@ -452,23 +452,24 @@ def handle_phase_acquaints(doc_request, recipients):
 
 # Створення mark_demand для отримувачів, що позначені у списку на погодження
 def handle_phase_approvals(doc_request, phase_info):
-    if global_approvals:  # Ця глобальна змінна існує при створенні нового документа, так як нові approvals ще не записані у бд
-        approvals = global_approvals
-    else:
-        approvals = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
-            .filter(document_id=doc_request['document'])\
-            .filter(approve_queue=phase_info['phase'])\
-            .filter(is_active=True)
+    if is_approval_module_used(doc_request['document_type']):
+        if global_approvals:  # Ця глобальна змінна існує при створенні нового документа, так як нові approvals ще не записані у бд
+            approvals = global_approvals
+        else:
+            approvals = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
+                .filter(document_id=doc_request['document'])\
+                .filter(approve_queue=phase_info['phase'])\
+                .filter(is_active=True)
 
-    # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
-    if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals):
-        new_phase(doc_request, phase_info['phase']+1, [])
+        # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
+        if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals):
+            new_phase(doc_request, phase_info['phase']+1, [])
 
-    for approval in approvals:
-        # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
-        if approval['approve_queue'] == phase_info['phase']:
-            post_mark_demand(doc_request, approval['emp_seat_id'], phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': approval['emp_seat_id']}], doc_request)
+        for approval in approvals:
+            # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
+            if approval['approve_queue'] == phase_info['phase']:
+                post_mark_demand(doc_request, approval['emp_seat_id'], phase_info['id'], phase_info['mark_id'])
+                new_mail('new', [{'id': approval['emp_seat_id']}], doc_request)
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на підпис
@@ -530,14 +531,6 @@ def handle_phase_marks(doc_request, phase_info):
         else:
             test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
 
-    # "Віза" (н-д при погодженні договору):
-    elif phase_info['mark_id'] == 17:
-        approvals = Doc_Approval.objects.values_list('emp_seat_id', flat=True) \
-            .filter(document_id=doc_request['document']).filter(approve_queue=phase_info['phase'])
-        for approval in approvals:
-            post_mark_demand(doc_request, approval, phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': approval}], doc_request)
-
     # Погоджую
     elif phase_info['mark_id'] == 2:
         # Якщо позначка "Погоджую":
@@ -560,9 +553,6 @@ def handle_phase_marks(doc_request, phase_info):
 
 # Створення першої фази документу
 def new_phase(doc_request, phase_number, modules_recipients):
-    # doc_modules = []
-    # if 'doc_modules' in doc_request:
-    #     doc_modules = json.loads(doc_request['doc_modules'])
 
     # Знаходимо id's фази.
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
@@ -573,22 +563,15 @@ def new_phase(doc_request, phase_number, modules_recipients):
     # бо ознайомлення фактично не є фазою і не впливає на шлях документа
     handle_phase_acquaints(doc_request, modules_recipients)
 
-    # 1 Відправляємо документ
-    # if 'sign_list' in doc_modules:
-    #     # 1. Опрацьовуємо документ, якщо є список підписуючих (при створенні документу "Матеріальний пропуск"):
-    #     handle_phase_signs(doc_request, phase_info, doc_modules['sign_list'])
-
     if phases:
         for phase_info in phases:
-            if is_approval_module_used(doc_request['document_type']):
-            # if 'approval_list' in doc_modules:
-                # 1. Опрацьовуємо документ, якщо є список погоджуючих (при створенні документу "Погодження договору"):
+            # 2. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
+            handle_phase_recipients(doc_request, phase_info, modules_recipients)
+            # 3. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
+            handle_phase_marks(doc_request, phase_info)
+            # 1. Опрацьовуємо документ, якщо є список погоджуючих (при створенні документу "Погодження договору"):
+            if phase_info['mark_id'] not in [2, 6]:  # Позначки 2, 6 уже відправилися через handle_phase_marks
                 handle_phase_approvals(doc_request, phase_info)
-            else:  # else використовується, щоб approval_list не використовувався двічі
-                # 2. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
-                handle_phase_recipients(doc_request, phase_info, modules_recipients)
-                # 3. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
-                handle_phase_marks(doc_request, phase_info)
 
 
 # Деактивація всіх MarkDemand документа:
