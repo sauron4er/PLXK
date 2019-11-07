@@ -10,9 +10,9 @@ import pytz
 
 from accounts import models as accounts  # import models Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
-from .models import Carry_Out_Items, Mark_Demand
+from .models import Carry_Out_Items, Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
-from .forms import CarryOutItemsForm, ResolutionForm
+from .forms import CarryOutItemsForm, ResolutionForm, VacationForm, DeactivateVacationForm
 from .forms import DTPDeactivateForm, DTPAddForm
 # Окремі функції:
 from .api.mail_sender import send_email_new, send_email_mark
@@ -25,6 +25,7 @@ from .forms import NewApprovalForm, ApprovedApprovalForm, ApproveForm, Deactivat
 # Система фаз:
 from .models import Doc_Type_Phase, Doc_Type_Phase_Queue
 from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, DeleteDocForm
+# from django.apps import AppConfig
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
@@ -33,6 +34,14 @@ testing = False
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
 global_approvals = []
+
+
+# def ready(self):
+#     print('ready!')
+
+# Перевірка відпусток
+def vacations_arrange():
+    test=1
 
 
 def convert_to_localtime(utctime, frmt):
@@ -519,14 +528,16 @@ def handle_phase_marks(doc_request, phase_info):
             # то переходимо на наступну фазу одразу:
             next_phases = Doc_Type_Phase.objects.values('id', 'mark_id') \
                 .filter(document_type_id=doc_request['document_type']).filter(phase=phase_info['phase'] + 1)
+            mark = phase_info['mark_id']
+            phase_id = phase_info['id']
 
             for next_phase in next_phases:
-                mark = phase_info['mark_id']
                 if direct_chief['emp_seat_id'] in get_phase_recipient_list(next_phase['id']):
                     mark = next_phase['mark_id']
-                direct_chief = vacation_check(direct_chief['emp_seat_id'])
-                post_mark_demand(doc_request, direct_chief, phase_info['id'], mark)
-                new_mail('new', [{'id': direct_chief}], doc_request)
+                    phase_id = next_phase['id']
+            direct_chief = vacation_check(direct_chief['emp_seat_id'])
+            post_mark_demand(doc_request, direct_chief, phase_id, mark)
+            new_mail('new', [{'id': direct_chief}], doc_request)
         else:
             test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
 
@@ -1137,11 +1148,6 @@ def edms_hr(request):
             'chief_id': 0 if seat.chief is None else seat.chief.id,
         } for seat in Seat.objects.all().filter(is_active=True).order_by('seat')]
 
-        # Додаємо поле "вакансія" у список посад (посада, де вакансія = True, буде виділятися червоним)
-        # for seat in seats:
-        #     occupied_by = Employee_Seat.objects.filter(seat_id=seat['id']).filter(is_active=True).first()
-        #     seat['is_vacant'] = 'true' if occupied_by is None else 'false'
-
         emps = [{       # Список працівників для форм на сторінці відділу кадрів
             'id': emp.pk,
             'emp': emp.pip,
@@ -1178,6 +1184,36 @@ def edms_hr(request):
                 return HttpResponse(new_emp_seat.pk)
 
     return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_new_vacation(request):
+    if request.method == 'POST':
+        vacation = json.loads(request.POST['new_vacation'])
+        doc_request = request.POST.copy()
+        doc_request.update({'employee': vacation['employee']})
+        doc_request.update({'begin': vacation['begin']})
+        doc_request.update({'end': vacation['end']})
+        doc_request.update({'acting': int(vacation['acting_id'])})
+        form = VacationForm(doc_request)
+        if form.is_valid():
+            try:
+                new_vacation = form.save()
+                return HttpResponse(new_vacation.pk)
+            except Exception as err:
+                raise err
+
+
+@login_required(login_url='login')
+def edms_deactivate_vacation(request, pk):
+    if request.method == 'POST':
+        doc_request = request.POST.copy()
+        doc_request.update({'is_active': False})
+        vacation = get_object_or_404(Vacation, pk=pk)
+        form = DeactivateVacationForm(request, instance=vacation)
+        if form.is_valid:
+            form.save()
+            return HttpResponse(status=200)
 
 
 @login_required(login_url='login')
@@ -1254,7 +1290,7 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
 
 
 @login_required(login_url='login')
-def edms_get_emp_seats_hr(request, pk):
+def edms_get_user(request, pk):
     emp = get_object_or_404(accounts.UserProfile, pk=pk)
     if request.method == 'GET':
         emp_seats = [{
@@ -1265,7 +1301,19 @@ def edms_get_emp_seats_hr(request, pk):
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee').filter(employee_id=emp).filter(is_active=True)]
 
-        return HttpResponse(json.dumps(emp_seats))
+        vacations = [{
+            'id': vacation.pk,
+            'begin': vacation.begin.strftime('%Y-%m-%d'),
+            'end': vacation.end.strftime('%Y-%m-%d'),
+            'acting': vacation.acting.pip,
+        } for vacation in
+            Vacation.objects.filter(employee_id=emp).filter(is_active=True)]
+
+        user = {}
+        user.update({'emp_seats': emp_seats})
+        user.update({'vacations': vacations})
+
+        return HttpResponse(json.dumps(user))
 
 
 @login_required(login_url='login')
@@ -1639,10 +1687,8 @@ def edms_my_docs(request):
             return HttpResponse(new_doc.pk)
     except ValidationError as err:
         raise err
-        # return HttpResponse(status=405, content=err)
     except Exception as err:
         raise err
-        # return HttpResponse(status=405, content=err)
 
 
 @login_required(login_url='login')

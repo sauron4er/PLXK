@@ -17,15 +17,12 @@ class Users extends React.Component {
   onRowClick = (row) => {
     axios({
       method: 'get',
-      url: 'get_emp_seats/' + row.id + '/',
+      url: 'get_user/' + row.id + '/',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
       .then((response) => {
-        // this.setState({
-        //   emp_seats_list: response.data
-        // });
         this.setState(
           {
             user: {
@@ -37,7 +34,8 @@ class Users extends React.Component {
               acting: row.acting,
               acting_id: row.acting_id,
               vacation_checked: row.on_vacation === 'true',
-              emp_seats_list: response.data
+              emp_seats: response.data.emp_seats,
+              vacations: response.data.vacations
             }
           }
         );

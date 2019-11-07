@@ -26,7 +26,7 @@ class User extends React.Component {
     seat_id: '', // id посади
     emp_seat: '', // обрана посада співробітника
     emp_seat_id: '', // ід запису посади співробітника
-    emp_seats_list: this.props.user.emp_seats_list, // список посад співробітника
+    emp_seats: this.props.user.emp_seats, // список посад співробітника
 
     vacation_checked: this.props.user.vacation_checked, // чи позначений чекбокс "у відпустці" (для відображення списку людей для в.о.)
 
@@ -116,12 +116,12 @@ class User extends React.Component {
       .then((response) => {
         const new_emp_seat = {
           id: response.data,
-          emp_id: this.state.id,
+          emp_id: this.props.user.id,
           seat_id: this.state.seat_id,
           emp_seat: this.state.seat
         };
         this.setState((prevState) => ({
-          emp_seats_list: [...prevState.emp_seats_list, new_emp_seat]
+          emp_seats: [...prevState.emp_seats, new_emp_seat]
         }));
         this.setState({
           seat: 0,
@@ -142,7 +142,6 @@ class User extends React.Component {
 
   delEmpSeat = (e) => {
     e.preventDefault();
-    console.log('!');
     axios({
       method: 'post',
       url: 'emp_seat/' + this.state.emp_seat_id + '/',
@@ -161,7 +160,7 @@ class User extends React.Component {
     })
       .then((response) => {
         this.setState((prevState) => ({
-          emp_seats_list: prevState.emp_seats_list.filter(
+          emp_seats: prevState.emp_seats.filter(
             (emp_seat) => emp_seat.id != this.state.emp_seat_id
           )
         }));
@@ -245,9 +244,9 @@ class User extends React.Component {
 
       axios({
         method: 'post',
-        url: 'emp/' + this.state.id + '/',
+        url: 'emp/' + this.props.user.id + '/',
         data: querystring.stringify({
-          pip: this.state.emp,
+          pip: this.props.user.emp,
           on_vacation: this.state.on_vacation,
           acting: acting_id,
           is_active: true
@@ -270,21 +269,22 @@ class User extends React.Component {
   handleDelete = (e) => {
     // робить співробітника неактивним
     e.preventDefault();
-
-    const {id} = this.state;
-    if (this.state.emp_seats_list.length > 0) {
+    
+    const {user} = this.props;
+    
+    if (user.emp_seats.length > 0) {
       this.notify('Спочатку звільніть співробітника з усіх посад.');
     } else {
       // переводимо в null не обрані поля
-      let acting_id = this.state.acting == 0 ? null : this.state.acting_id;
+      let acting_id = user.acting == 0 ? null : user.acting_id;
 
       axios({
         method: 'post',
-        url: 'emp/' + id + '/',
+        url: 'emp/' + user.id + '/',
         data: querystring.stringify({
-          pip: this.state.emp,
-          user: id,
-          on_vacation: this.state.on_vacation,
+          pip: user.emp,
+          user: user.id,
+          on_vacation: user.on_vacation,
           acting: acting_id,
           is_active: false
         }),
@@ -359,7 +359,7 @@ class User extends React.Component {
               {this.props.user.emp} <small>({this.props.user.tab_number})</small>
             </div>
           </div>
-          <UserVacation emps={this.props.emps} />
+          <UserVacation user={this.props.user} emps={this.props.emps} />
           <div className='d-flex'>
             <Input
               name='on_vacation'
@@ -417,7 +417,7 @@ class User extends React.Component {
                 <option data-key={0} value=''>
                   ------------
                 </option>
-                {this.state.emp_seats_list.map((empSeat) => {
+                {this.state.emp_seats.map((empSeat) => {
                   return (
                     <option key={empSeat.id} data-key={empSeat.seat_id} value={empSeat.id}>
                       {empSeat.emp_seat}

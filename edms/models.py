@@ -28,9 +28,9 @@ class Employee_Seat(models.Model):
 
 class Vacation(models.Model):
     employee = models.ForeignKey(accounts.UserProfile, related_name='vacations')
-    begin_date = models.DateField(default=timezone.now)
-    end_date = models.DateField(null=True)
-    acting = models.ForeignKey('self', related_name='acting_for', null=True)  # Acting user, while this on vacation
+    begin = models.DateField(default=timezone.now)
+    end = models.DateField(null=True)
+    acting = models.ForeignKey(accounts.UserProfile, related_name='acting_for', null=True)  # Acting user, while this on vacation
     is_active = models.BooleanField(default=True)
 
 

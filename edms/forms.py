@@ -4,7 +4,7 @@ from accounts import models as accounts
 from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand, \
     Document_Type_Permission
 from .models import File, Doc_Article, Doc_Article_Dep, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Name, \
-    Doc_Type_Unique_Number, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate
+    Doc_Type_Unique_Number, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate, Vacation
 
 
 class UserProfileForm(forms.ModelForm):
@@ -88,6 +88,17 @@ class ResolutionForm(forms.ModelForm):
         model = Mark_Demand
         fields = {'document', 'recipient', 'mark', 'document_path', 'phase', 'comment'}
 
+
+class VacationForm(forms.ModelForm):
+    class Meta:
+        model = Vacation
+        fields = {'employee', 'begin', 'end', 'acting'}
+
+
+class DeactivateVacationForm(forms.ModelForm):
+    class Meta:
+        model = Vacation
+        fields = {'is_active'}
 
 # --------------------------------------------------------------------------------------------------------------------
 # Форми модульної системи ЕДО

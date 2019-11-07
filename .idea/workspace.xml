@@ -2,8 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0115_auto_20191105_0934.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0116_auto_20191105_1159.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/migrations/0117_auto_20191106_0906.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-779a0422d509519584d5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -432,7 +448,8 @@
       <workItem from="1569992261900" duration="15118000" />
       <workItem from="1570597164668" duration="42681000" />
       <workItem from="1571640046211" duration="8605000" />
-      <workItem from="1572244193875" duration="41852000" />
+      <workItem from="1572244193875" duration="43013000" />
+      <workItem from="1572851527781" duration="22382000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -689,28 +706,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1160</line>
-          <option name="timeStamp" value="281" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>453</line>
+          <line>461</line>
           <option name="timeStamp" value="343" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>557</line>
-          <option name="timeStamp" value="344" />
+          <line>1923</line>
+          <option name="timeStamp" value="362" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>484</line>
-          <option name="timeStamp" value="345" />
+          <line>2116</line>
+          <option name="timeStamp" value="363" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>512</line>
-          <option name="timeStamp" value="346" />
+          <line>1967</line>
+          <option name="timeStamp" value="364" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="365" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -728,6 +745,7 @@
         <watch expression="phase_id" />
         <watch expression="phase_id" />
         <watch expression="pk" />
+        <watch expression="phases" />
       </configuration>
     </watches-manager>
   </component>

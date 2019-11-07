@@ -1,19 +1,12 @@
 'use strict';
 import React from 'react';
-import Form from 'react-validation/build/form';
-import Input from 'react-validation/build/input';
-import Button from 'react-validation/build/button';
-import Select from 'react-validation/build/select';
-import {faTimesCircle} from '@fortawesome/free-regular-svg-icons';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Collapse} from 'react-collapse';
 import axios from 'axios';
-import querystring from 'querystring'; // for axios
-
-import DxTable from '../components/dx_table';
-import {getIndex} from '../_else/my_extras.js';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {ToastContainer, toast} from 'react-toastify';
+import {getIndex} from '../_else/my_extras';
+import querystring from 'querystring';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -22,7 +15,7 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 class UserVacation extends React.Component {
   state = {
     add_vacation_area: false,
-    vacation_list: [],
+    vacations: this.props.user.vacations,
     acting: '',
     acting_id: 0,
     begin: '',
@@ -71,19 +64,27 @@ class UserVacation extends React.Component {
 
   addVacation = (e) => {
     e.preventDefault();
-    const {vacation_list, begin, end, acting} = this.state;
+    const {vacations, begin, end, acting, acting_id} = this.state;
 
-    if (!begin || !end || !acting) {
-      this.notify('Заповніть всі поля');
+    if (!begin || !end || !acting_id) {
+      this.notify('Заповніть всі поля.');
+    } else if (begin >= end) {
+      this.notify('Дата виходу на відпустку не може бути меншою за дату повернення.');
     } else {
-      vacation_list.push({
+      const new_vacation = {
+        id: 0,
+        employee: this.props.user.id,
         begin: begin,
         end: end,
+        acting_id: acting_id,
         acting: acting
-      });
+      };
+      vacations.push(new_vacation);
+
+      this.postNewVacation(new_vacation);
 
       this.setState({
-        vacation_list: vacation_list,
+        vacations: vacations,
         begin: '',
         end: '',
         acting_id: 0,
@@ -92,19 +93,65 @@ class UserVacation extends React.Component {
       });
     }
   };
-  
-  delVacation = (e, index) => {
+
+  postNewVacation = (new_vacation) => {
+    let formData = new FormData();
+    formData.append('new_vacation', JSON.stringify(new_vacation));
+    axios({
+      method: 'post',
+      url: 'new_vacation/',
+      data: formData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then((response) => {
+        console.log(response.data);
+        const {vacations} = this.state;
+        for (const vacation of vacations) {
+          if (vacation.id === 0) {
+            vacation.id = response.data;
+            break;
+          }
+        }
+        this.setState({vacations});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  delVacation = (e, id) => {
     e.preventDefault();
-    
-    console.log(index);
+
+    const {vacations} = this.state;
+    const index = getIndex(id, vacations);
+    vacations.splice(index, 1);
+    this.setState({vacations});
+
+    this.postDeactivateVacation(id);
+  };
+
+  postDeactivateVacation = (vacation_id) => {
+    axios({
+      method: 'post',
+      url: 'deactivate_vacation/' + vacation_id + '/',
+      data: ({}),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   render() {
-    const {add_vacation_area, vacation_list, acting, begin, end} = this.state;
+    const {add_vacation_area, vacations, acting, begin, end} = this.state;
     return (
       <>
         <hr />
-        {/*<If condition={add_vacation_area}>*/}
         <Collapse isOpened={add_vacation_area}>
           <div className='mb-3 bg-success p-2'>
             <span>Нова відпустка:</span>
@@ -120,6 +167,7 @@ class UserVacation extends React.Component {
                   <th className='text-center'>
                     <small>В.о.</small>
                   </th>
+                  <th> </th>
                 </tr>
               </thead>
               <tbody>
@@ -172,16 +220,15 @@ class UserVacation extends React.Component {
             </button>
           </div>
         </Collapse>
-        {/*</If>*/}
         <button
           className='btn btn-sm btn-outline-secondary mb-2'
           onClick={this.vacationAreaArrange}
         >
           {add_vacation_area ? 'Відмінити' : 'Додати відпустку'}
         </button>
-        <If condition={vacation_list.length > 0}>
+        <If condition={vacations.length > 0}>
           <div>Заплановані відпустки:</div>
-          <table className='table table-sm table-striped'>
+          <table className='table table-sm table-striped table-bordered'>
             <thead>
               <tr>
                 <th className='text-center'>
@@ -193,23 +240,19 @@ class UserVacation extends React.Component {
                 <th className='text-center'>
                   <small>В.о.</small>
                 </th>
-                <th className='text-center'>
-                  <small>
-                    <FontAwesomeIcon icon={faTimesCircle} />
-                  </small>
-                </th>
+                <th className='text-center'> </th>
               </tr>
             </thead>
             <tbody>
-              <For each='vacation' index='idx' of={vacation_list}>
+              <For each='vacation' index='idx' of={vacations}>
                 <tr key={idx}>
-                  <td className='text-center small'>{vacation.begin}</td>
-                  <td className='text-center small'>{vacation.end}</td>
-                  <td className='text-center small'>{vacation.acting}</td>
-                  <td className='text-center small text-danger'>
+                  <td className='text-center align-middle small'>{vacation.begin}</td>
+                  <td className='text-center align-middle small'>{vacation.end}</td>
+                  <td className='text-center align-middle small'>{vacation.acting}</td>
+                  <td className='text-center align-middle small text-danger'>
                     <button
-                      className='btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1'
-                      onClick={(e) => this.delVacation(e, idx)}
+                      className='btn btn-sm btn-link py-0'
+                      onClick={(e) => this.delVacation(e, vacation.id)}
                     >
                       <FontAwesomeIcon icon={faTimes} />
                     </button>
@@ -226,6 +269,7 @@ class UserVacation extends React.Component {
   }
 
   static defaultProps = {
+    user: {},
     emps: []
   };
 }
