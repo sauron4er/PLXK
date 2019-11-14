@@ -31,6 +31,7 @@ class Vacation(models.Model):
     begin = models.DateField(default=timezone.now)
     end = models.DateField(null=True)
     acting = models.ForeignKey(accounts.UserProfile, related_name='acting_for', null=True)  # Acting user, while this on vacation
+    started = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 

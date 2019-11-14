@@ -64,13 +64,9 @@ class UserVacation extends React.Component {
 
   addVacation = (e) => {
     e.preventDefault();
-    const {vacations, begin, end, acting, acting_id} = this.state;
+    if (this.isVacationValid()) {
+      const {vacations, begin, end, acting, acting_id} = this.state;
 
-    if (!begin || !end || !acting_id) {
-      this.notify('Заповніть всі поля.');
-    } else if (begin >= end) {
-      this.notify('Дата виходу на відпустку не може бути меншою за дату повернення.');
-    } else {
       const new_vacation = {
         id: 0,
         employee: this.props.user.id,
@@ -81,8 +77,6 @@ class UserVacation extends React.Component {
       };
       vacations.push(new_vacation);
 
-      this.postNewVacation(new_vacation);
-
       this.setState({
         vacations: vacations,
         begin: '',
@@ -91,22 +85,53 @@ class UserVacation extends React.Component {
         acting: '',
         add_vacation_area: false
       });
+
+      this.postNewVacation(new_vacation);
     }
   };
 
+  isVacationValid = () => {
+    const {begin, end, acting_id} = this.state;
+    const {user} = this.props;
+    const today = new Date();
+      const today_string =
+        today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+
+    if (!begin || !end || !acting_id) {
+      this.notify('Заповніть всі поля.');
+      return false
+    }
+    if (begin >= end) {
+      this.notify('Дата виходу у відпустку не може бути меншою за дату повернення.');
+      return false
+    }
+    if (end <= today_string) {
+      this.notify('Ви намагаєтесь додати відпустку, яка вже завершилася.');
+      return false
+    }
+    if (user.id === parseInt(acting_id)) {
+      this.notify('Виконуючим обов’язки не може бути людина, яка йде у відпустку.');
+      return false
+    }
+    return true
+  };
+
   postNewVacation = (new_vacation) => {
-    let formData = new FormData();
-    formData.append('new_vacation', JSON.stringify(new_vacation));
     axios({
       method: 'post',
       url: 'new_vacation/',
-      data: formData,
+      data: querystring.stringify({
+        id: new_vacation.id,
+        employee: new_vacation.employee,
+        begin: new_vacation.begin,
+        end: new_vacation.end,
+        acting: new_vacation.acting_id
+      }),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
       .then((response) => {
-        console.log(response.data);
         const {vacations} = this.state;
         for (const vacation of vacations) {
           if (vacation.id === 0) {
@@ -136,7 +161,9 @@ class UserVacation extends React.Component {
     axios({
       method: 'post',
       url: 'deactivate_vacation/' + vacation_id + '/',
-      data: ({}),
+      data: querystring.stringify({
+        id: vacation_id
+      }),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -245,7 +272,7 @@ class UserVacation extends React.Component {
             </thead>
             <tbody>
               <For each='vacation' index='idx' of={vacations}>
-                <tr key={idx}>
+                <tr key={idx} className={vacation.started ? 'bg-success' : ''}>
                   <td className='text-center align-middle small'>{vacation.begin}</td>
                   <td className='text-center align-middle small'>{vacation.end}</td>
                   <td className='text-center align-middle small'>{vacation.acting}</td>

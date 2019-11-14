@@ -3,6 +3,7 @@ import React, {Fragment} from 'react';
 import axios from 'axios';
 import DxTable from '../components/dx_table';
 import User from './user';
+import Vacations from './vacations';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -13,7 +14,7 @@ class Users extends React.Component {
     user_modal: false,
     user: {}
   };
-  
+
   onRowClick = (row) => {
     axios({
       method: 'get',
@@ -23,22 +24,20 @@ class Users extends React.Component {
       }
     })
       .then((response) => {
-        this.setState(
-          {
-            user: {
-              // інформація про натиснутий рядок
-              id: row.id,
-              emp: row.emp,
-              tab_number: row.tab_number,
-              on_vacation: row.on_vacation === 'true',
-              acting: row.acting,
-              acting_id: row.acting_id,
-              vacation_checked: row.on_vacation === 'true',
-              emp_seats: response.data.emp_seats,
-              vacations: response.data.vacations
-            }
+        this.setState({
+          user: {
+            // інформація про натиснутий рядок
+            id: row.id,
+            emp: row.emp,
+            tab_number: row.tab_number,
+            on_vacation: row.on_vacation === 'true',
+            acting: row.acting,
+            acting_id: row.acting_id,
+            vacation_checked: row.on_vacation === 'true',
+            emp_seats: response.data.emp_seats,
+            vacations: response.data.vacations
           }
-        );
+        });
       })
       .then(() => {
         this.setState({user_modal: true});
@@ -47,7 +46,7 @@ class Users extends React.Component {
         console.log(error);
       });
   };
-  
+
   onCloseModal = () => {
     this.setState({user_modal: false});
   };
@@ -66,13 +65,7 @@ class Users extends React.Component {
         >
           Додати співробітника
         </button>
-        <button
-          type='button'
-          className='btn btn-sm btn-outline-secondary mb-1 float-right'
-          // onClick={this.onOpenModalNew}
-        >
-          Відпустки
-        </button>
+        <Vacations/>
         <div className='float-left'>
           <DxTable
             rows={this.props.emps}
@@ -86,7 +79,12 @@ class Users extends React.Component {
         </div>
 
         <If condition={user_modal}>
-          <User emps={this.props.emps} seats={this.props.seats} user={user} onClose={this.onCloseModal} />
+          <User
+            emps={this.props.emps}
+            seats={this.props.seats}
+            user={user}
+            onClose={this.onCloseModal}
+          />
         </If>
       </>
     );

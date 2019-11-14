@@ -7,15 +7,17 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 import json
 import pytz
+import threading
 
-from accounts import models as accounts  # import models Department, UserProfile
+from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
 from .models import Carry_Out_Items, Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
-from .forms import CarryOutItemsForm, ResolutionForm, VacationForm, DeactivateVacationForm
+from .forms import CarryOutItemsForm, VacationForm, DeactivateVacationForm
 from .forms import DTPDeactivateForm, DTPAddForm
 # Окремі функції:
 from .api.mail_sender import send_email_new, send_email_mark
+from .api.vacations import schedule_vacations_arrange, end_vacation, add_vacation, deactivate_vacation, vacation_check
 # Модульна система:
 from .models import Module, Document_Type_Module, Doc_Name, Doc_Acquaint, Doc_Approval, Doc_Article, Doc_Article_Dep
 from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate, Doc_Type_Unique_Number
@@ -25,7 +27,6 @@ from .forms import NewApprovalForm, ApprovedApprovalForm, ApproveForm, Deactivat
 # Система фаз:
 from .models import Doc_Type_Phase, Doc_Type_Phase_Queue
 from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, DeleteDocForm
-# from django.apps import AppConfig
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
@@ -34,14 +35,6 @@ testing = False
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
 global_approvals = []
-
-
-# def ready(self):
-#     print('ready!')
-
-# Перевірка відпусток
-def vacations_arrange():
-    test=1
 
 
 def convert_to_localtime(utctime, frmt):
@@ -377,21 +370,6 @@ def deactivate_mark_demand(doc_request, md_id):
         deactivate_mark_demand_form.save()
     else:
         raise ValidationError('edms/views deactivate_mark_demand deactivate_mark_demand_form invalid')
-
-
-# Функція, яка отримує ід людинопосади, перевіряє чи вона у відпустці і повертає її id або id в.о.
-def vacation_check(emp_seat_id):
-    # Перевіряємо, чи людина у відпустці:
-    emp_on_vacation = Employee_Seat.objects.values_list('employee__on_vacation', flat=True) \
-        .filter(id=emp_seat_id)
-
-    if emp_on_vacation[0] is True:
-        # Активна людино-посада в.о.:
-        acting_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-            .filter(acting_for_id=emp_seat_id).filter(is_active=True)
-        return acting_emp_seat_id
-    else:
-        return emp_seat_id
 
 
 def get_phase_recipient_list(phase_id):
@@ -1189,31 +1167,24 @@ def edms_hr(request):
 @login_required(login_url='login')
 def edms_new_vacation(request):
     if request.method == 'POST':
-        vacation = json.loads(request.POST['new_vacation'])
-        doc_request = request.POST.copy()
-        doc_request.update({'employee': vacation['employee']})
-        doc_request.update({'begin': vacation['begin']})
-        doc_request.update({'end': vacation['end']})
-        doc_request.update({'acting': int(vacation['acting_id'])})
-        form = VacationForm(doc_request)
-        if form.is_valid():
-            try:
-                new_vacation = form.save()
-                return HttpResponse(new_vacation.pk)
-            except Exception as err:
-                raise err
+        new_vacation_id = add_vacation(request)
+        return HttpResponse(new_vacation_id)
 
 
 @login_required(login_url='login')
-def edms_deactivate_vacation(request, pk):
+def edms_deactivate_vacation(request):
     if request.method == 'POST':
-        doc_request = request.POST.copy()
-        doc_request.update({'is_active': False})
-        vacation = get_object_or_404(Vacation, pk=pk)
-        form = DeactivateVacationForm(request, instance=vacation)
-        if form.is_valid:
-            form.save()
-            return HttpResponse(status=200)
+        deactivate_vacation(request)
+        return HttpResponse(status=200)
+
+
+@login_required(login_url='login')
+def edms_start_vacations_arrange(request):
+    # Запускає процес, який щоночі оновлює відпустки
+    t = threading.Thread(target=schedule_vacations_arrange(), args=(), kwargs={})
+    t.setDaemon(True)
+    t.start()
+    return HttpResponse(status=200)
 
 
 @login_required(login_url='login')
@@ -1306,6 +1277,7 @@ def edms_get_user(request, pk):
             'begin': vacation.begin.strftime('%Y-%m-%d'),
             'end': vacation.end.strftime('%Y-%m-%d'),
             'acting': vacation.acting.pip,
+            'started': vacation.started
         } for vacation in
             Vacation.objects.filter(employee_id=emp).filter(is_active=True)]
 

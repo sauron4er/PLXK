@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 
-from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_user, edms_new_vacation, edms_deactivate_vacation  # Відділ кадрів
+from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_user, \
+    edms_new_vacation, edms_deactivate_vacation, edms_start_vacations_arrange  # Відділ кадрів
 from edms.views import edms_administration, edms_get_admin_types, edms_get_type_info, edms_deactivate_permission, edms_get_modules_phases  # Адміністрування
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
@@ -23,7 +24,8 @@ urlpatterns = [
     url(r'^hr/seat/(?P<pk>\d+)/$', edms_hr_seat, name='hr_seat'),
     url(r'^hr/emp_seat/(?P<pk>\d+)/$', edms_hr_emp_seat, name='hr_seat'),
     url(r'^hr/new_vacation/', edms_new_vacation, name='new_vacation'),
-    url(r'^hr/deactivate_vacation/(?P<pk>\d+)/$', edms_deactivate_vacation, name='deactivate_vacation'),
+    url(r'^hr/deactivate_vacation/', edms_deactivate_vacation, name='deactivate_vacation'),
+    url(r'^hr/start_vacations_arrange/', edms_start_vacations_arrange, name='start_vacations_arrange'),
     url(r'^hr/', edms_hr, name='hr'),
 
     url(r'^administration/get_types/(?P<pk>\d+)/$', edms_get_admin_types, name='get_admin_types'),

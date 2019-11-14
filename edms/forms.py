@@ -13,10 +13,28 @@ class UserProfileForm(forms.ModelForm):
         fields = ('pip', 'on_vacation', 'acting', 'is_active')
 
 
+class UserVacationForm(forms.ModelForm):
+    class Meta:
+        model = accounts.UserProfile
+        fields = ('on_vacation', 'acting')
+
+
 class EmployeeSeatForm(forms.ModelForm):
     class Meta:
         model = Employee_Seat
         fields = ('employee', 'seat', 'end_date', 'is_active', 'successor', 'is_main')
+
+
+class ActingEmpSeatForm(forms.ModelForm):
+    class Meta:
+        model = Employee_Seat
+        fields = ('employee', 'seat', 'begin_date', 'end_date', 'is_active', 'acting_for', 'is_main')
+
+
+class DeactivateEmpSeatForm(forms.ModelForm):
+    class Meta:
+        model = Employee_Seat
+        fields = ('end_date', 'is_active')
 
 
 class DepartmentForm(forms.ModelForm):
@@ -77,6 +95,12 @@ class MarkDemandForm(forms.ModelForm):
         fields = {'document', 'recipient', 'mark', 'document_path', 'phase', 'comment'}
 
 
+class MarkDemandChangeRecipientForm(forms.ModelForm):
+    class Meta:
+        model = Mark_Demand
+        fields = {'recipient'}
+
+
 class DeactivateMarkDemandForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand
@@ -92,7 +116,13 @@ class ResolutionForm(forms.ModelForm):
 class VacationForm(forms.ModelForm):
     class Meta:
         model = Vacation
-        fields = {'employee', 'begin', 'end', 'acting'}
+        fields = {'employee', 'begin', 'end', 'acting', 'started'}
+
+
+class StartVacationForm(forms.ModelForm):
+    class Meta:
+        model = Vacation
+        fields = {'started'}
 
 
 class DeactivateVacationForm(forms.ModelForm):
