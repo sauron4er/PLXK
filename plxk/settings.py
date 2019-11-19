@@ -107,13 +107,14 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
     'fb': {
+        # Тестова
         'ENGINE': 'firebird',
         'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
         'USER': 'SYSDBA',  # Your db user
         'PASSWORD': 'Cvjhjlbyf11',  # db user password
         'HOST': '10.10.10.8',  # Your host machine
         'PORT': '3050',  # If is empty, use default 3050
-        'OPTIONS' : {'charset':'win1251'}
+        'OPTIONS': {'charset': 'win1251'}
     },
     'fb1': {
         'ENGINE': 'firebird',

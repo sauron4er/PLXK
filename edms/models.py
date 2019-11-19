@@ -115,7 +115,7 @@ class Document_Path(models.Model):
     employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_path')
     mark = models.ForeignKey(Mark, related_name='documents_path')
     timestamp = models.DateTimeField(default=timezone.now)
-    comment = models.CharField(max_length=1000, blank=True)
+    comment = models.CharField(max_length=5000, blank=True)
 
 
 class Mark_Demand(models.Model):
