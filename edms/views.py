@@ -1759,7 +1759,17 @@ def edms_archive(request):
             .exclude(document__employee_seat__employee=request.user.userprofile.id)]
 
         # Позбавляємось дублікатів:
-        work_archive = list({item["id"]: item for item in work_archive_with_duplicates}.values())
+        work_archive = []
+        compare_list = []
+        for i in range(0, len(work_archive_with_duplicates)):
+            # Порівнюємо документи по ід та ід людино-посади, бо один документ може попасти до декількох людинопосад людини
+            entity = {
+                'id': work_archive_with_duplicates[i]['id'],
+                'emp_seat_id': work_archive_with_duplicates[i]['emp_seat_id']
+            }
+            if entity not in compare_list:
+                compare_list.append(entity)
+                work_archive.append(work_archive_with_duplicates[i])
 
         return render(request, 'edms/archive/archive.html', {
             'my_seats': my_seats, 'my_archive': my_archive, 'work_archive': work_archive,
