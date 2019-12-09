@@ -341,8 +341,8 @@ class Document extends React.Component {
     if (this.state.ready_for_render === true) {
       if (
         this.props.doc !== '' &&
-        this.props.doc.id !== 0 &&
-        parseInt(localStorage.getItem('my_seat')) === this.props.doc.emp_seat_id
+        this.props.doc.id !== 0
+        // && parseInt(localStorage.getItem('my_seat')) === this.props.doc.emp_seat_id
       ) {
         return (
           <div className='css_main'>

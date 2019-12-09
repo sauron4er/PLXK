@@ -1741,7 +1741,7 @@ def edms_archive(request):
         } for path in Document_Path.objects.filter(mark=1)
             .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)
             .filter(document__testing=testing)
-            .filter(document__is_active=False)
+            # .filter(document__is_active=False)
             .filter(document__closed=False)]
 
         work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача

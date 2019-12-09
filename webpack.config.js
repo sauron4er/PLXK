@@ -7,8 +7,6 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 module.exports = {
   context: __dirname,
-
-  // entry: ['./static/js/index.js'], // entry point of our app. index.js should require other js modules and dependencies it needs
   entry: {
     hr: './static/index/hr_index.js',
     administration: './static/index/administration_index.js',
@@ -19,7 +17,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
-    filename: '[name]-[hash].js',
+    filename: '[name]-[chunkhash].js',
     // chunkFilename: '[name].bundle.js',
   },
 

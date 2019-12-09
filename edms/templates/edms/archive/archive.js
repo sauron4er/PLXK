@@ -49,7 +49,7 @@ class Archive extends React.Component {
       seat_id: seat_id,
       main_div_height: this.mainDivRef.clientHeight - 30
     });
-    this.updateLists(seat_id);
+    // this.updateLists(seat_id);
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -82,7 +82,7 @@ class Archive extends React.Component {
   onSeatChange = (new_seat_id) => {
     this.setState({seat_id: new_seat_id});
 
-    this.updateLists(new_seat_id);
+    // this.updateLists(new_seat_id);
   };
 
   onRowClick = (clicked_row) => {
@@ -105,7 +105,8 @@ class Archive extends React.Component {
           <div className='col-lg-4'>
             Створені вами документи
             <DxTable
-              rows={this.state.my_archive}
+              // rows={this.state.my_archive}
+              rows={window.my_archive}
               columns={my_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'asc'}]}
               colWidth={my_archive_col_width}
@@ -117,7 +118,8 @@ class Archive extends React.Component {
           <div className='col-lg-4'>
             Документи, що були у роботі
             <DxTable
-              rows={this.state.work_archive}
+              // rows={this.state.work_archive}
+              rows={window.work_archive}
               columns={work_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
               colWidth={work_archive_col_width}
