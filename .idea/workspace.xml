@@ -3,11 +3,27 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/api/vacations.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/vacations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons_old.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_before_acquaints.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals_old.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree_articles.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/free_time.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/work_note.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files_old.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_contracts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_firefox.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_templates.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs_old.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views_before_new_mail_sender.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views_before_text_boxes.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -269,37 +285,27 @@
           <expand>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@75889eac" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@7a666854" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@3b37207" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@120791c3" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@1280fa1c" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@5433fecb" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
             <path>
               <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@182521f8" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@7b46e538" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@24af9a88" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@6bf7f368" type="9fbbdea:ServiceModel$ServiceNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@69c4da4f" type="9fbbdea:ServiceModel$ServiceNode" />
             </path>
           </expand>
           <select />
@@ -428,7 +434,9 @@
       <workItem from="1574068023633" duration="8571000" />
       <workItem from="1574665951418" duration="7132000" />
       <workItem from="1575458362640" duration="2173000" />
-      <workItem from="1575894024454" duration="1521000" />
+      <workItem from="1575894024454" duration="1715000" />
+      <workItem from="1576482162974" duration="158000" />
+      <workItem from="1576569239519" duration="8620000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -685,23 +693,48 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>439</line>
-          <option name="timeStamp" value="343" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1957</line>
-          <option name="timeStamp" value="364" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1906</line>
-          <option name="timeStamp" value="391" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1144</line>
+          <line>1159</line>
           <option name="timeStamp" value="393" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1637</line>
+          <option name="timeStamp" value="394" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>661</line>
+          <option name="timeStamp" value="395" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>559</line>
+          <option name="timeStamp" value="396" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>806</line>
+          <option name="timeStamp" value="397" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>454</line>
+          <option name="timeStamp" value="398" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>348</line>
+          <option name="timeStamp" value="399" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="403" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1956</line>
+          <option name="timeStamp" value="404" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

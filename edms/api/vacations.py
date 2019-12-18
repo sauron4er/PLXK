@@ -151,12 +151,12 @@ def move_docs(move_from, move_to):
 def vacation_check(emp_seat_id):
     # Перевіряємо, чи людина у відпустці:
     emp_on_vacation = Employee_Seat.objects.values_list('employee__on_vacation', flat=True) \
-        .filter(id=emp_seat_id)
+        .filter(id=emp_seat_id)[0]
 
-    if emp_on_vacation[0] is True:
+    if emp_on_vacation is True:
         # Активна людино-посада в.о.:
         acting_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-            .filter(acting_for_id=emp_seat_id).filter(is_active=True)
+            .filter(acting_for_id=emp_seat_id).filter(is_active=True)[0]
         return acting_emp_seat_id
     else:
         return emp_seat_id

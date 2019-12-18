@@ -48,6 +48,19 @@ def convert_to_localtime(utctime, frmt):
     return localtz.strftime(fmt)
 
 
+# Повертає ід працівника, якщо це його основна посада, або ід працівника, замість якого цей працівник в.о.
+def get_main_employee(recipient):
+    is_main = Employee_Seat.objects.values_list('is_main', 'acting_for_id').filter(id=recipient)[0]
+    if not is_main[0]:
+        return is_main[1]
+    else:
+        return recipient
+
+
+def get_acting_flag(is_main):
+    return ' (в.о.)' if not is_main else ''
+
+
 # Функція, яка повертає інформація про фазу документа
 def get_phase_info(doc_request):
     phase_id = doc_request['phase_id']
@@ -666,8 +679,10 @@ def post_modules(doc_request, doc_files, new_path):
                 .filter(is_active=True) \
                 .filter(is_main=True)[0]
 
+            acting_director = vacation_check(director)
+
             for i in approvals:
-                if int(i['id']) == director:
+                if int(i['id']) == director or int(i['id']) == acting_director:
                     approvals.remove(i)
 
             approvals.extend([{
@@ -1498,7 +1513,7 @@ def edms_get_doc(request, pk):
             elif module['module'] == 'approval_list':
                 approval_list = [{
                     'id': item.emp_seat.id,
-                    'emp_seat': item.emp_seat.employee.pip + ', ' + item.emp_seat.seat.seat,
+                    'emp_seat': item.emp_seat.employee.pip + ', ' + item.emp_seat.seat.seat + get_acting_flag(item.emp_seat.is_main),
                     'approved': True if item.approved else False,
                     'approved_date': convert_to_localtime(item.approve_path.timestamp, 'day') if item.approved else None,
                     'approve_queue': item.approve_queue,
@@ -1934,10 +1949,20 @@ def edms_mark(request):
 
                 # Якщо в документі використовується doc_approval, треба буде поставити позначку у таблицю візування:
                 if is_approval_module_used(doc_type):
+                    recipient = doc_request['employee_seat']
                     approve_id = Doc_Approval.objects.values_list('id', flat=True)\
                         .filter(document_id=doc_request['document'])\
-                        .filter(emp_seat_id=doc_request['employee_seat'])[0]
-                    post_approve(doc_request, approve_id, True)
+                        .filter(emp_seat_id=recipient)
+
+                    if approve_id:
+                        post_approve(doc_request, approve_id[0], True)
+                    else:
+                        # Якщо для цього працівника нема approval, то approval є для того, замість кого цей в.о.
+                        main_employee = get_main_employee(recipient)
+                        approve_id = Doc_Approval.objects.values_list('id', flat=True) \
+                            .filter(document_id=doc_request['document']) \
+                            .filter(emp_seat_id=main_employee)
+                        post_approve(doc_request, approve_id[0], True)
 
                 # Отримуємо список необхідних (required) позначок на даній фазі, які ще не виконані
                 # Якщо таких немає, переходимо до наступної фази.
