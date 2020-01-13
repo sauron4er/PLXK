@@ -3,27 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/api/vacations.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/vacations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/buttons_old.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_before_acquaints.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/approvals_old.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/carry_out.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/decree/decree_articles.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/free_time.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/depr___doc_forms_old/work_note.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_before_templates.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs_old.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files_old.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_contracts.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_firefox.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document_before_templates.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs_old.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/views_before_new_mail_sender.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/views_before_text_boxes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/plxk/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -131,6 +114,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DatabaseDriversLRU" value="java.sql.Driver" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="NewWatcherDialog.advanced.open" value="true" />
@@ -140,7 +124,7 @@
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="10.15.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/edms/templates/edms/hr" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Jaybird-2.2.15-JDK_1.8/jaybird-full-2.2.15.jar" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -155,7 +139,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
     <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
@@ -282,32 +266,7 @@
       <serviceView>
         <option name="contentProportion" value="0.08634772" />
         <treeState>
-          <expand>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@7a666854" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@120791c3" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@5433fecb" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@6d83e30e" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@69c4da4f" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-          </expand>
+          <expand />
           <select />
         </treeState>
       </serviceView>
@@ -437,6 +396,12 @@
       <workItem from="1575894024454" duration="1715000" />
       <workItem from="1576482162974" duration="158000" />
       <workItem from="1576569239519" duration="8620000" />
+      <workItem from="1576661769849" duration="1249000" />
+      <workItem from="1576663043618" duration="6496000" />
+      <workItem from="1577438418012" duration="20962000" />
+      <workItem from="1578665462842" duration="1704000" />
+      <workItem from="1578729329680" duration="2356000" />
+      <workItem from="1578732189898" duration="5806000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -735,6 +700,11 @@
           <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>1956</line>
           <option name="timeStamp" value="404" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1921</line>
+          <option name="timeStamp" value="405" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
