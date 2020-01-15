@@ -106,8 +106,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
-    'fb': {
-        # Тестова
+    'fb_test': {
         'ENGINE': 'firebird',
         'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
         'USER': 'SYSDBA',  # Your db user

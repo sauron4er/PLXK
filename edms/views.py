@@ -10,20 +10,19 @@ import pytz
 import threading
 
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
-from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Document_Type_Permission, Mark
+from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Mark
 from .models import Carry_Out_Items, Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
 from .forms import CarryOutItemsForm, VacationForm, DeactivateVacationForm
-from .forms import DTPDeactivateForm, DTPAddForm
 # Окремі функції:
 from .api.mail_sender import send_email_new, send_email_mark
 from .api.vacations import schedule_vacations_arrange, end_vacation, add_vacation, deactivate_vacation, vacation_check
 # Модульна система:
-from .models import Module, Document_Type_Module, Doc_Name, Doc_Acquaint, Doc_Approval, Doc_Article, Doc_Article_Dep
-from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate, Doc_Type_Unique_Number
-from .forms import NewArticleForm, NewArticleDepForm, NewAcquaintForm, NewNameForm, NewFileForm
+from .models import Module, Document_Type_Module, Doc_Acquaint, Doc_Approval
+from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate
+from .forms import NewAcquaintForm, NewFileForm
 from .forms import NewTextForm, NewRecipientForm, NewDayForm, NewGateForm, FileNewPathForm
-from .forms import NewApprovalForm, ApprovedApprovalForm, ApproveForm, DeactivateApproveForm, NewSignForm
+from .forms import NewApprovalForm, ApprovedApprovalForm, ApproveForm, DeactivateApproveForm
 # Система фаз:
 from .models import Doc_Type_Phase, Doc_Type_Phase_Queue
 from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, DeleteDocForm

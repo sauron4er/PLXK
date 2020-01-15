@@ -1,10 +1,8 @@
 from django import forms
 
 from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand, \
-    Document_Type_Permission
-from .models import File, Doc_Article, Doc_Article_Dep, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Name, \
-    Doc_Type_Unique_Number, Doc_Sign, Doc_Validity, Doc_Text, Doc_Recipient, Doc_Gate, Vacation
+from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand
+from .models import File, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Text, Doc_Recipient, Doc_Gate, Vacation
 
 
 class UserProfileForm(forms.ModelForm):
@@ -70,17 +68,17 @@ class DeleteDocForm(forms.ModelForm):
 
 
 # Document Type Permission Deactivate Form
-class DTPDeactivateForm(forms.ModelForm):
-    class Meta:
-        model = Document_Type_Permission
-        fields = {'is_active'}
+# class DTPDeactivateForm(forms.ModelForm):
+#     class Meta:
+#         model = Document_Type_Permission
+#         fields = {'is_active'}
 
 
 # Document Type Permission Add Form
-class DTPAddForm(forms.ModelForm):
-    class Meta:
-        model = Document_Type_Permission
-        fields = {'document_type', 'seat', 'mark'}
+# class DTPAddForm(forms.ModelForm):
+#     class Meta:
+#         model = Document_Type_Permission
+#         fields = {'document_type', 'seat', 'mark'}
 
 
 class NewPathForm(forms.ModelForm):
@@ -145,16 +143,16 @@ class FileNewPathForm(forms.ModelForm):
         fields = {'document_path'}
 
 
-class NewArticleForm(forms.ModelForm):
-    class Meta:
-        model = Doc_Article
-        fields = {'document', 'text', 'deadline'}
+# class NewArticleForm(forms.ModelForm):
+#     class Meta:
+#         model = Doc_Article
+#         fields = {'document', 'text', 'deadline'}
 
 
-class NewArticleDepForm(forms.ModelForm):
-    class Meta:
-        model = Doc_Article_Dep
-        fields = {'article', 'department'}
+# class NewArticleDepForm(forms.ModelForm):
+#     class Meta:
+#         model = Doc_Article_Dep
+#         fields = {'article', 'department'}
 
 
 class NewAcquaintForm(forms.ModelForm):
@@ -163,10 +161,10 @@ class NewAcquaintForm(forms.ModelForm):
         fields = {'document', 'acquaint_emp_seat'}
 
 
-class NewSignForm(forms.ModelForm):
-    class Meta:
-        model = Doc_Sign
-        fields = {'document'}
+# class NewSignForm(forms.ModelForm):
+#     class Meta:
+#         model = Doc_Sign
+#         fields = {'document'}
 
 
 class NewApprovalForm(forms.ModelForm):
@@ -200,10 +198,10 @@ class DeactivateApproveForm(forms.ModelForm):
         fields = {'approved'}
 
 
-class NewNameForm(forms.ModelForm):
-    class Meta:
-        model = Doc_Name
-        fields = {'document', 'name'}
+# class NewNameForm(forms.ModelForm):
+#     class Meta:
+#         model = Doc_Name
+#         fields = {'document', 'name'}
 
 
 class NewTextForm(forms.ModelForm):

@@ -2,9 +2,10 @@
 node_modules
 venv/
 *iml
-__pycache__/
+*/__pycache__/
 *.py[cod]
 .idea/workspace.xml
+.idea\workspace.xml
 *.pyc
 webpack-config.js
 webpack-stats.json
