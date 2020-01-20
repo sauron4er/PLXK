@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0007_auto_20200120_0954.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0008_document_actuality.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -266,22 +265,7 @@
       <serviceView>
         <option name="contentProportion" value="0.08634772" />
         <treeState>
-          <expand>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@4156598" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@4156598" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@364cb31d" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@4156598" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@59522491" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-          </expand>
+          <expand />
           <select />
         </treeState>
       </serviceView>
@@ -418,7 +402,7 @@
       <workItem from="1578729329680" duration="2356000" />
       <workItem from="1578732189898" duration="11993000" />
       <workItem from="1579167027282" duration="31000" />
-      <workItem from="1579506023957" duration="1071000" />
+      <workItem from="1579506023957" duration="3691000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>

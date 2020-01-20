@@ -17,11 +17,13 @@ def index(request):
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit})
 
 
-def index_f(request,fk):
-    if fk == 0:
-        docs = Document.objects.all()
+def index_f(request, fk):
+    if fk == '0':
+        docs = Document.objects.all().filter(actuality=True)
+    elif fk == '666':
+        docs = Document.objects.all().filter(actuality=False)
     else:
-        docs = Document.objects.all().filter(doc_group=fk)
+        docs = Document.objects.all().filter(doc_group=fk).filter(actuality=True)
     edit = user_can_edit(request.user)
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit, 'fk': fk})
 
