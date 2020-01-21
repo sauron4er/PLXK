@@ -5,6 +5,7 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'docs:new_doc'  %}"> <button type="button" class="btn btn-outline-success">Новий документ</button> </a>
             {% endif %}
+            <a href="{% url 'docs:index_f' 6 %}" style="text-decoration: none;color:black" class="{% if fk == '6' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} float-md-right ml-3">Вимоги споживача</a>
             <div class="btn-group float-md-right">
                 <a href="{% url 'docs:index_f' 1 %}" style="text-decoration: none;color:black" class="{% if fk == '1' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">ISO 9001</a>
                 <a href="{% url 'docs:index_f' 2 %}" style="text-decoration: none;color:black" class="{% if fk == '2' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">FSC</a>
