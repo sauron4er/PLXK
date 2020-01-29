@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/index.html" afterDir="false" />
     </list>
@@ -111,7 +112,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DatabaseDriversLRU" value="java.sql.Driver" />
+    <property name="DatabaseDriversLRU" value="java.sql.Driver&#10;564bedf6-79ab-4c8e-8e3f-10aba5b81bb2" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="NewWatcherDialog.advanced.open" value="true" />
@@ -136,7 +137,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
     <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
@@ -411,7 +412,10 @@
       <workItem from="1578732189898" duration="11993000" />
       <workItem from="1579167027282" duration="31000" />
       <workItem from="1579506023957" duration="3948000" />
-      <workItem from="1579586662411" duration="1341000" />
+      <workItem from="1579586662411" duration="1472000" />
+      <workItem from="1579764273650" duration="2406000" />
+      <workItem from="1579789739106" duration="2459000" />
+      <workItem from="1580282654575" duration="2520000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>

@@ -5,13 +5,14 @@
             {% if user.is_authenticated %}
                 <a href="{% url 'docs:new_doc'  %}"> <button type="button" class="btn btn-outline-success">Новий документ</button> </a>
             {% endif %}
-            <a href="{% url 'docs:index_f' 6 %}" style="text-decoration: none;color:black" class="{% if fk == '6' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} float-md-right ml-3">Вимоги споживача</a>
             <div class="btn-group float-md-right">
                 <a href="{% url 'docs:index_f' 1 %}" style="text-decoration: none;color:black" class="{% if fk == '1' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">ISO 9001</a>
                 <a href="{% url 'docs:index_f' 2 %}" style="text-decoration: none;color:black" class="{% if fk == '2' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">FSC</a>
                 <a href="{% url 'docs:index_f' 3 %}" style="text-decoration: none;color:black" class="{% if fk == '3' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">BSCI</a>
                 <a href="{% url 'docs:index_f' 4 %}" style="text-decoration: none;color:black" class="{% if fk == '4' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">PEFC</a>
                 <a href="{% url 'docs:index_f' 5 %}" style="text-decoration: none;color:black" class="{% if fk == '5' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">Матеріали аудитів</a>
+                <a href="{% url 'docs:index_f' 6 %}" style="text-decoration: none;color:black" class="{% if fk == '6' %} btn btn-info {% else %}  btn btn-outline-info{% endif %}">Вимоги споживача</a>
+                <a href="{% url 'docs:index_f' 7 %}" style="text-decoration: none;color:black" class="{% if fk == '7' %} btn btn-info {% else %}  btn btn-outline-info{% endif %}">Наші сертифікати</a>
             </div>
             {% if user.userprofile.is_doc_add or user.userprofile.is_it_admin  %}
                 <a href="{% url 'docs:index_f' 666 %}" style="text-decoration: none;color:black" class="{% if fk == '666' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">Архів</a>
