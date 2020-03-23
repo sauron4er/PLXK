@@ -2,136 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/accounts/migrations/0022_auto_20200304_1057.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/accounts/migrations/0023_remove_userprofile_is_doc_order_add.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/accounts/migrations/0024_userprofile_is_doc_order_add.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/api/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/api/orders.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/api/orders_mail_sender.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0009_auto_20200303_0856.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0010_auto_20200306_1323.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0011_order_doc_author.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0012_order_doc_responsible.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0013_auto_20200312_1539.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0014_file_is_added_or_cancelled.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0015_auto_20200313_0833.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0016_remove_order_doc_cancels_file.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0017_auto_20200317_1003.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/migrations/0018_order_doc_supervisory.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edms/api/edms_mail_sender.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plxk/api/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/accounts.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/app.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/gradient.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/plhk_ads.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css_old/text_line.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/index/orders.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/jquery-3.2.1.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/popper.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/js_old/popper.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/components/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/docs/orders/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/docs/orders/order_mail.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/docs/orders/orders.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/docs/orders/orders.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/migrations/0004_auto_20180118_1254.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/migrations/0004_auto_20180118_1254.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/api/get_emp_seats.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/get_emp_seats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/api/mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/api/mail_sender.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/files_uploader.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/files_uploader.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/loader_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/loader_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/my_extras.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/my_styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/dx_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/dx_table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/dx_table_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/dx_table_styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/new_files_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/new_files_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/seat_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/seat_chooser.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/deps.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/deps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seats.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/articles.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/articles.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/files_upload.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/administration-897679bf1431747f0b69.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-8f880098d82f7b22b8d4.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-4ca4716386a67a1319d6.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-0b15984105ac6151c41f.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-47f7779d33b5d3d9e658.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-276056be001ce4e2388f.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docs/new_order_doc.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/new_order.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docs/order_index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders-old.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -534,7 +406,7 @@
       <workItem from="1584950906668" duration="968000" />
       <workItem from="1584951916975" duration="4156000" />
       <workItem from="1584956164050" duration="731000" />
-      <workItem from="1584956940966" duration="1687000" />
+      <workItem from="1584956940966" duration="3450000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -793,38 +665,38 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
-    <state width="1056" height="318" key="GridCell.Tab.0.bottom" timestamp="1584962533801">
+    <state width="1056" height="318" key="GridCell.Tab.0.bottom" timestamp="1584964898739">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533801" />
-    <state width="1056" height="318" key="GridCell.Tab.0.center" timestamp="1584962533800">
+    <state width="1056" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898739" />
+    <state width="1056" height="318" key="GridCell.Tab.0.center" timestamp="1584964898738">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533800" />
-    <state width="1056" height="318" key="GridCell.Tab.0.left" timestamp="1584962533800">
+    <state width="1056" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898738" />
+    <state width="1056" height="318" key="GridCell.Tab.0.left" timestamp="1584964898738">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533800" />
-    <state width="1056" height="318" key="GridCell.Tab.0.right" timestamp="1584962533801">
+    <state width="1056" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898738" />
+    <state width="1056" height="318" key="GridCell.Tab.0.right" timestamp="1584964898739">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533801" />
-    <state width="1056" height="318" key="GridCell.Tab.1.bottom" timestamp="1584962549649">
+    <state width="1056" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898739" />
+    <state width="1056" height="318" key="GridCell.Tab.1.bottom" timestamp="1584964880387">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549649" />
-    <state width="1056" height="318" key="GridCell.Tab.1.center" timestamp="1584962549648">
+    <state width="1056" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880387" />
+    <state width="1056" height="318" key="GridCell.Tab.1.center" timestamp="1584964880386">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
-    <state width="1056" height="318" key="GridCell.Tab.1.left" timestamp="1584962549648">
+    <state width="1056" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880386" />
+    <state width="1056" height="318" key="GridCell.Tab.1.left" timestamp="1584964880386">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
-    <state width="1056" height="318" key="GridCell.Tab.1.right" timestamp="1584962549648">
+    <state width="1056" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880386" />
+    <state width="1056" height="318" key="GridCell.Tab.1.right" timestamp="1584964880387">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
+    <state width="1056" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880387" />
     <state x="461" y="151" key="SettingsEditor" timestamp="1584429149708">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -895,6 +767,11 @@
           <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>1577</line>
           <option name="timeStamp" value="442" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/docs/views.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="459" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

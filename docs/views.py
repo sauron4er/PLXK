@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpRequest
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 from .forms import NewDocForm
 from django.utils import timezone
@@ -94,8 +96,12 @@ def normalize_month(date):
     return '0' + str(date.month) if date.month < 10 else str(date.month)
 
 
+# @login_required(login_url='login')
 def orders(request):
-    is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
+    if request.user.id:
+        is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
+    else:
+        is_orders_admin = [False]
     is_orders_admin = 'true' if True in is_orders_admin else 'false'  # Переробляємо у текстовий формат, який зрозуміє js
 
     types_list = list(Order_doc_type.objects.values())
@@ -130,6 +136,7 @@ def orders(request):
                                                        'employee_list': employee_list})
 
 
+# @login_required(login_url='login')
 def get_order(request, pk):
     order = get_object_or_404(Order_doc, pk=pk)
 
@@ -169,6 +176,8 @@ def get_order(request, pk):
     return HttpResponse(json.dumps(order))
 
 
+@transaction.atomic
+# @login_required(login_url='login')
 def new_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
@@ -184,6 +193,8 @@ def new_order(request):
     return HttpResponse(order.pk)
 
 
+@transaction.atomic
+# @login_required(login_url='login')
 def edit_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
