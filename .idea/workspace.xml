@@ -2,11 +2,137 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/accounts/migrations/0022_auto_20200304_1057.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/accounts/migrations/0023_remove_userprofile_is_doc_order_add.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/accounts/migrations/0024_userprofile_is_doc_order_add.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/api/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/api/orders.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/api/orders_mail_sender.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0009_auto_20200303_0856.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0010_auto_20200306_1323.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0011_order_doc_author.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0012_order_doc_responsible.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0013_auto_20200312_1539.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0014_file_is_added_or_cancelled.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0015_auto_20200313_0833.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0016_remove_order_doc_cancels_file.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0017_auto_20200317_1003.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/migrations/0018_order_doc_supervisory.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edms/api/edms_mail_sender.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plxk/api/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/accounts.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/app.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-grid.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap-reboot.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/bootstrap.min.css.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/gradient.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/plhk_ads.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css_old/text_line.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/index/orders.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.bundle.min.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/bootstrap.min.js.map" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/jquery-3.2.1.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/popper.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js_old/popper.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/components/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/docs/orders/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/docs/orders/order_mail.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/docs/orders/orders.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/docs/orders/orders.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/migrations/0004_auto_20180118_1254.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/migrations/0004_auto_20180118_1254.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/api/get_emp_seats.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/get_emp_seats.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/api/mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/api/mail_sender.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/files_uploader.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/files_uploader.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/loader_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/loader_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_extras.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/my_extras.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/_else/my_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/my_styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/archive/archive.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/dx_table.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/dx_table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/dx_table_styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/dx_table_styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/new_files_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/new_files_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/components/seat_chooser.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/components/seat_chooser.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/doc_info_modules/modals/edit_files.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/document.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/doc_info/info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/deps.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/deps.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/hr.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/seats.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/seats.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/drafts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/my_docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/acquaint_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/approval_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/articles.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/articles.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/carry_out.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/files.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/components/files_upload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/new_document.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/new_doc_modules/sign_list.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/my_docs/templates.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/sub_docs/sub_docs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-897679bf1431747f0b69.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-8f880098d82f7b22b8d4.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-4ca4716386a67a1319d6.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-0b15984105ac6151c41f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-47f7779d33b5d3d9e658.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-276056be001ce4e2388f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-grid.min.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap-reboot.min.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/bootstrap.min.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.bundle.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/bootstrap.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/bootstrap.min.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/docs/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/docs/new_order_doc.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/new_order.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/docs/order_index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders-old.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -110,6 +236,11 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="java.sql.Driver&#10;564bedf6-79ab-4c8e-8e3f-10aba5b81bb2" />
@@ -122,7 +253,7 @@
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="10.15.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../PLXK firebird" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docs/api" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -150,32 +281,20 @@
     </option>
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\hr" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\components" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\sub_docs" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\my_docs\new_doc_modules" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\static\css" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\templates\components" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\components" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\_else" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules\modals" />
-      <recent name="D:\Робота\EDMS\PLXK\edms\templates\edms\doc_info\doc_info_modules" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\docs\api" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\plxk\api" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\static" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\static\index" />
+    </key>
   </component>
   <component name="RunManager" selected="Django server.PLXK">
     <configuration name="0001_initial" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -229,7 +348,6 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
         <env name="DJANGO_SETTINGS_MODULE" value="plxk.settings" />
-        <env name="=C:" value="c:\''" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -240,7 +358,7 @@
       <option name="port" value="8000" />
       <option name="host" value="" />
       <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="" />
+      <option name="browserUrl" value="http://127.0.0.1:8000/" />
       <option name="runTestServer" value="false" />
       <option name="runNoReload" value="false" />
       <option name="useCustomRunCommand" value="false" />
@@ -258,27 +376,6 @@
         <item itemvalue="Python.0001_initial" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="allServicesViewState">
-      <serviceView>
-        <option name="contentProportion" value="0.08634772" />
-        <treeState>
-          <expand>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@43ec1ccf" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-            </path>
-            <path>
-              <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceGroupNode@43ec1ccf" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              <item name="com.intellij.execution.services.ServiceModel$ServiceNode@506b56ff" type="9fbbdea:ServiceModel$ServiceNode" />
-            </path>
-          </expand>
-          <select />
-        </treeState>
-      </serviceView>
-    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration>C:\Users\samusvm\AppData\Roaming\Subversion</configuration>
@@ -415,7 +512,29 @@
       <workItem from="1579586662411" duration="1472000" />
       <workItem from="1579764273650" duration="2406000" />
       <workItem from="1579789739106" duration="2459000" />
-      <workItem from="1580282654575" duration="2520000" />
+      <workItem from="1580282654575" duration="3598000" />
+      <workItem from="1580888791430" duration="685000" />
+      <workItem from="1581404130662" duration="3227000" />
+      <workItem from="1581492223863" duration="3335000" />
+      <workItem from="1581918341378" duration="8198000" />
+      <workItem from="1582705500083" duration="3518000" />
+      <workItem from="1583216597042" duration="5327000" />
+      <workItem from="1583223355705" duration="1127000" />
+      <workItem from="1583303701754" duration="14260000" />
+      <workItem from="1583393963068" duration="82131000" />
+      <workItem from="1584107674424" duration="3204000" />
+      <workItem from="1584340776488" duration="14252000" />
+      <workItem from="1584370778229" duration="823000" />
+      <workItem from="1584428721263" duration="52000" />
+      <workItem from="1584428795795" duration="70000" />
+      <workItem from="1584428887888" duration="81000" />
+      <workItem from="1584428987432" duration="11618000" />
+      <workItem from="1584516576404" duration="14145000" />
+      <workItem from="1584697306963" duration="4325000" />
+      <workItem from="1584950906668" duration="968000" />
+      <workItem from="1584951916975" duration="4156000" />
+      <workItem from="1584956164050" duration="731000" />
+      <workItem from="1584956940966" duration="1687000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -646,7 +765,6 @@
     <option name="myShow1" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
     <ignored-roots>
       <path value="$PROJECT_DIR$/plxk" />
     </ignored-roots>
@@ -662,6 +780,64 @@
     <MESSAGE value="180319" />
     <option name="LAST_COMMIT_MESSAGE" value="180319" />
   </component>
+  <component name="WindowStateProjectService">
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584957050005">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584957050005" />
+    <state x="694" y="281" key="EnvironmentVariablesDialog" timestamp="1584956499961">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="694" y="281" key="EnvironmentVariablesDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584956499961" />
+    <state x="739" y="261" key="FileChooserDialogImpl" timestamp="1584687501531">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
+    <state width="1056" height="318" key="GridCell.Tab.0.bottom" timestamp="1584962533801">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533801" />
+    <state width="1056" height="318" key="GridCell.Tab.0.center" timestamp="1584962533800">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533800" />
+    <state width="1056" height="318" key="GridCell.Tab.0.left" timestamp="1584962533800">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533800" />
+    <state width="1056" height="318" key="GridCell.Tab.0.right" timestamp="1584962533801">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962533801" />
+    <state width="1056" height="318" key="GridCell.Tab.1.bottom" timestamp="1584962549649">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549649" />
+    <state width="1056" height="318" key="GridCell.Tab.1.center" timestamp="1584962549648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
+    <state width="1056" height="318" key="GridCell.Tab.1.left" timestamp="1584962549648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
+    <state width="1056" height="318" key="GridCell.Tab.1.right" timestamp="1584962549648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1056" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584962549648" />
+    <state x="461" y="151" key="SettingsEditor" timestamp="1584429149708">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584429149708" />
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1584961923559">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584961923559" />
+    <state x="2782" y="160" width="1200" height="800" maximized="true" key="dock-window-1" timestamp="1584956966987">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2782" y="160" width="1200" height="800" maximized="true" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584956966987" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -672,58 +848,53 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1158</line>
+          <line>1160</line>
           <option name="timeStamp" value="393" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1636</line>
-          <option name="timeStamp" value="394" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>660</line>
+          <line>662</line>
           <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>558</line>
+          <line>560</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>805</line>
+          <line>807</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>453</line>
+          <line>455</line>
           <option name="timeStamp" value="398" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>347</line>
+          <line>349</line>
           <option name="timeStamp" value="399" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>51</line>
-          <option name="timeStamp" value="403" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1955</line>
+          <line>1956</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1920</line>
+          <line>1921</line>
           <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/crm/views.py</url>
           <line>6</line>
           <option name="timeStamp" value="408" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1577</line>
+          <option name="timeStamp" value="442" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -741,6 +912,10 @@
         <watch expression="phase_id" />
         <watch expression="phase_id" />
         <watch expression="pk" />
+        <watch expression="phases" />
+        <watch expression="orders_list[0]['doc_file'].name" />
+        <watch expression="phase_id" />
+        <watch expression="order['date_canceled']" />
         <watch expression="phases" />
       </configuration>
     </watches-manager>

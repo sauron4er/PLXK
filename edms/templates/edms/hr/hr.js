@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Users from './users';
 import Deps from './deps';
 import Seats from './seats';
-import '../_else/my_styles.css';
+import 'static/css/my_styles.css';
 
 class HR extends React.Component {
   state = {

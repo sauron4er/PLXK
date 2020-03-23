@@ -3,7 +3,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Files from 'react-files';
-import '../../../_else/files_uploader.css';
+import '../../../../../../static/css/files_uploader.css';
 
 class EditFiles extends React.Component {
   state = {

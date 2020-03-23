@@ -12,14 +12,17 @@ import Text from './text';
 import Recipient from './recipient';
 import RecipientChief from './recipient_chief';
 import Articles from './articles';
-import FilesUpload from './files';
+import FilesUpload from 'templates/components/files_upload';
 import AcquaintList from './acquaint_list';
 import ApprovalList from './approval_list';
 import SignList from './sign_list';
 import Day from './day';
 import Gate from './gate';
 import CarryOut from './carry_out';
-import {getTextByQueue, getIndexByProperty} from '../../_else/my_extras';
+import {getTextByQueue, getIndexByProperty} from 'templates/components/my_extras';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 class NewDocument extends React.Component {
   state = {

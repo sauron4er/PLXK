@@ -13,17 +13,18 @@ module.exports = {
     my_docs: './static/index/my_docs_index.js',
     archive: './static/index/archive_index.js',
     sub_docs: './static/index/sub_docs_index.js',
-    plhk_ads: './static/index/plhk_ads_index.js'
+    plhk_ads: './static/index/plhk_ads_index.js',
+    orders: './static/index/orders.js'
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
-    filename: '[name]-[chunkhash].js',
+    filename: '[name]-[chunkhash].js'
     // chunkFilename: '[name].bundle.js',
   },
 
   plugins: [
     new CleanWebpackPlugin(pathsToClean, {watch: true, beforeEmit: true}),
-    new BundleTracker({filename: './webpack-stats.json'}),
+    new BundleTracker({filename: './webpack-stats.json'})
     // new BundleAnalyzerPlugin()
   ],
 
@@ -60,6 +61,15 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx'],
+    modules: [
+      'node_modules',
+      path.resolve(__dirname, 'static'),
+      path.resolve(__dirname, 'templates'),
+    ],
+    extensions: ['.js', '.jsx', '.json'],
+    alias: {
+      static: path.resolve(__dirname, 'static'),
+      templates: path.resolve(__dirname, 'templates'),
+    }
   }
 };

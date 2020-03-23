@@ -2,10 +2,10 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
-import DxTable from '../components/dx_table';
+import DxTable from '../../../../templates/components/dx_table';
 import Document from '../doc_info/document';
 import SeatChooser from '../components/seat_chooser';
-import '../_else/my_styles.css';
+import 'static/css/my_styles.css';
 
 class Archive extends React.Component {
   state = {
@@ -108,7 +108,7 @@ class Archive extends React.Component {
               // rows={this.state.my_archive}
               rows={window.my_archive}
               columns={my_archive_columns}
-              defaultSorting={[{columnName: 'id', direction: 'asc'}]}
+              defaultSorting={[{columnName: 'id', direction: 'desc'}]}
               colWidth={my_archive_col_width}
               onRowClick={this.onRowClick}
               height={main_div_height}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Документи{% endblock %}
+{% block second_nav %}
+        <div class="container-fluid" style="padding: 10px">
+         {% if user.userprofile.is_doc_order_add %}
+            <a href="{% url 'docs:new_order'  %}"> <button type="button" class="btn  btn-sm  btn-outline-success">Новий документ</button> </a>
+         {% endif %}
+
+            <div class="btn-group float-md-right">
+                <a href="{% url 'docs:orders' 1 %}" style="text-decoration: none;color:black"class=" btn btn-sm  {% if fk == '1' %}btn-info {% else %} btn-outline-info{% endif %}">Накази</a>
+                <a href="{% url 'docs:orders' 2 %}" style="text-decoration: none;color:black"class=" btn btn-sm {% if fk == '2' %} btn-info {% else %}  btn-outline-info{% endif %} ">Розпорядження</a>
+                <a href="{% url 'docs:orders' 3 %}" style="text-decoration: none;color:black"class="btn btn-sm {% if fk == '3' %}  btn-info {% else %}  btn-outline-info{% endif %} ">Протокол</a>
+            </div>
+        </div>
+{% endblock %}
+
+{% block content %}
+    </div>
+    <div class="container-fluid p-2">
+        <table class="table table-sm">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Тип</th>
+                <th>Номер</th>
+                <th>Назва</th>
+                <th>Актуальний</th>
+                <th>Автор</th>
+                <th>Відповідальний</th>
+                <th>Діє з<th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for doc in orders %}
+        <tr>
+            <td>{{ doc.doc_type.name }}</td>
+
+            <td>
+                {% if doc.doc_type.id == 1 %}N{% endif %}
+                {% if doc.doc_type.id == 2 %}R{% endif %}
+                {% if doc.doc_type.id == 3 %}P{% endif %}
+                {{ doc.code}}
+            </td>
+
+            <td> <a href="{{  doc.doc_file.url }}">{{ doc.name }} </a> </td>
+             <td><input type="checkbox" disabled {% if doc.is_act %}  checked {% endif %} "> </td>
+            <td>{{ doc.author }}</td>
+            <td>{{ doc.responsible }} </td>
+            <td>{{ doc.date_start|date:"d.m.Y" }}</td>
+            {% if user.userprofile.is_doc_order_add %}
+
+            <td>
+                <a href={% url 'docs:edit_order' doc.pk  %}> <img src="{% static 'img/edit3.png' %}" style="height: 24px"> </a>
+
+            </td>
+            {% endif %}
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

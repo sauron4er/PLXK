@@ -12,7 +12,7 @@ import ReactDragList from "react-drag-list";
 import "react-drag-list/assets/index.css";
 import Input from "react-validation/build/input";
 import axios from "axios";
-import { uniqueArray } from "../../_else/my_extras";
+import { uniqueArray } from "templates/components/my_extras";
 
 class Articles extends React.Component {
   state = {

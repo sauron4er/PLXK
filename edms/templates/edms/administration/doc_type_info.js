@@ -11,8 +11,8 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-import '../_else/loader_style.css';
-import '../_else/my_styles.css';
+import 'static/css/loader_style.css';
+import 'static/css/my_styles.css';
 
 
 class DocTypeInfo extends React.Component {

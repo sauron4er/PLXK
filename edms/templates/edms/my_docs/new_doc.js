@@ -1,12 +1,7 @@
 'use strict';
-import React, {Fragment} from 'react';
-import axios from 'axios';
+import React from 'react';
 import NewDocument from './new_doc_modules/new_document';
-import '../_else/my_styles.css';
-
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+import 'static/css/my_styles.css';
 
 class NewDoc extends React.Component {
   state = {

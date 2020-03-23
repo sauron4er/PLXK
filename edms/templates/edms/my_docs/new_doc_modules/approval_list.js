@@ -2,9 +2,9 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {uniqueArray} from '../../_else/my_extras';
+import {uniqueArray} from 'templates/components/my_extras';
 import {getEmpSeats} from '../../../../api/get_emp_seats';
-import '../../_else/my_styles.css'
+import 'static/css/my_styles.css'
 
 class ApprovalList extends React.Component {
   state = {
@@ -93,7 +93,7 @@ class ApprovalList extends React.Component {
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <div className='d-flex align-items-start mt-3'>
+          <div className='w-75 d-flex align-items-center mt-3'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval'>
               {fieldName}:
             </label>

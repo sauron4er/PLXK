@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {compareById} from '../templates/edms/_else/my_extras';
+import {compareById} from 'templates/components/my_extras';
 
 export function getEmpSeats() {
   return new Promise(function(resolve, reject) {

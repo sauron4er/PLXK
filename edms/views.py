@@ -9,13 +9,15 @@ import json
 import pytz
 import threading
 
+from docs.models import Order_doc
+
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Mark
 from .models import Carry_Out_Items, Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
 from .forms import CarryOutItemsForm, VacationForm, DeactivateVacationForm
 # Окремі функції:
-from .api.mail_sender import send_email_new, send_email_mark
+from .api.edms_mail_sender import send_email_new, send_email_mark
 from .api.vacations import schedule_vacations_arrange, end_vacation, add_vacation, deactivate_vacation, vacation_check
 # Модульна система:
 from .models import Module, Document_Type_Module, Doc_Acquaint, Doc_Approval
@@ -29,7 +31,7 @@ from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, 
 
 
 # При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+testing = True
 
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
@@ -204,25 +206,25 @@ def get_seats():
 
 
 # Функція, яка повертає список пунктів документу
-def get_doc_articles(doc_id):
-    articles = [{
-        'id': article.id,
-        'text': article.text,
-        'deadline': None if not article.deadline else datetime.strftime(article.deadline, '%Y-%m-%d'),
-        'deps': get_responsible_deps(article.id),  # Знаходимо список відповідальних за пункт окремою функцією
-    } for article in Doc_Article.objects.filter(document_id=doc_id).filter(is_active=True)]
-
-    return articles
+# def get_doc_articles(doc_id):
+#     articles = [{
+#         'id': article.id,
+#         'text': article.text,
+#         'deadline': None if not article.deadline else datetime.strftime(article.deadline, '%Y-%m-%d'),
+#         'deps': get_responsible_deps(article.id),  # Знаходимо список відповідальних за пункт окремою функцією
+#     } for article in Doc_Article.objects.filter(document_id=doc_id).filter(is_active=True)]
+#
+#     return articles
 
 
 # Функція, яка повертає з бд список відділів, відповідальних за виконання пункту документу
-def get_responsible_deps(article_id):
-    deps = [{
-        'id': dep.department.id,
-        'dep': dep.department.name,
-    } for dep in Doc_Article_Dep.objects.filter(article_id=article_id).filter(is_active=True)]
-
-    return deps
+# def get_responsible_deps(article_id):
+#     deps = [{
+#         'id': dep.department.id,
+#         'dep': dep.department.name,
+#     } for dep in Doc_Article_Dep.objects.filter(article_id=article_id).filter(is_active=True)]
+#
+#     return deps
 
 
 # Функція, яка повертає посаду керівника відділу
@@ -748,28 +750,28 @@ def post_modules(doc_request, doc_files, new_path):
 
 
 # Функція, яка додає у бд нові пункти документу
-def post_articles(doc_request, articles):
-    try:
-        for article in articles:
-            doc_request.update({
-                'text': article['text'],
-                'deadline': article['deadline'],
-            })
-            article_form = NewArticleForm(doc_request)
-            if article_form.is_valid():
-                new_article_id = article_form.save().pk
-                for dep in article['deps']:
-                    doc_request.update({'article': new_article_id})
-                    doc_request.update({'department': dep['id']})
-                    article_dep_form = NewArticleDepForm(doc_request)
-                    if article_dep_form.is_valid():
-                        article_dep_form.save()
-                    else:
-                        raise ValidationError('edms/view func post_articles: article_dep_form invalid')
-            else:
-                raise ValidationError('edms/view func post_articles: article_form invalid')
-    except ValueError as err:
-        raise err
+# def post_articles(doc_request, articles):
+#     try:
+#         for article in articles:
+#             doc_request.update({
+#                 'text': article['text'],
+#                 'deadline': article['deadline'],
+#             })
+#             article_form = NewArticleForm(doc_request)
+#             if article_form.is_valid():
+#                 new_article_id = article_form.save().pk
+#                 for dep in article['deps']:
+#                     doc_request.update({'article': new_article_id})
+#                     doc_request.update({'department': dep['id']})
+#                     article_dep_form = NewArticleDepForm(doc_request)
+#                     if article_dep_form.is_valid():
+#                         article_dep_form.save()
+#                     else:
+#                         raise ValidationError('edms/view func post_articles: article_dep_form invalid')
+#             else:
+#                 raise ValidationError('edms/view func post_articles: article_form invalid')
+#     except ValueError as err:
+#         raise err
 
 
 # Функція, яка додає у бд список отримуючих на ознайомлення
@@ -1447,16 +1449,16 @@ def edms_get_doc(request, pk):
 
         # збираємо з використовуваних модулів інфу про документ
         for module in type_modules:
-            if module['module'] == 'name':
-                name = [{
-                    'name': item.name,
-                } for item in Doc_Name.objects.filter(document_id=doc.id).filter(is_active=True)]
-
-                if name:
-                    doc_info.update({
-                        'name': name[0]['name'],
-                    })
-            elif module['module'] == 'text':
+            # if module['module'] == 'name':
+            #     name = [{
+            #         'name': item.name,
+            #     } for item in Doc_Name.objects.filter(document_id=doc.id).filter(is_active=True)]
+            #
+            #     if name:
+            #         doc_info.update({
+            #             'name': name[0]['name'],
+            #         })
+            if module['module'] == 'text':
                 # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
                 if 'text_list' not in doc_info.keys():
                     text_list = [{
@@ -1628,7 +1630,6 @@ def edms_my_docs(request):
                 .filter(document__testing=testing)
                 .filter(is_active=True).filter(document__closed=False)
                 .order_by('document_id')]
-
             return render(request, 'edms/my_docs/my_docs.html', {
                 'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
             })

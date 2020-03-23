@@ -8,7 +8,7 @@ import axios from 'axios';
 // axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 import SeatChooser from '../components/seat_chooser';
-import DxTable from '../components/dx_table';
+import DxTable from '../../../../templates/components/dx_table';
 import Constructor from './constructor';
 
 class Administration extends React.Component {

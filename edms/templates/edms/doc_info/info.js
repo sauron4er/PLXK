@@ -8,7 +8,7 @@ import Gate from './doc_info_modules/gate';
 import CarryOut from './doc_info_modules/carry_out';
 import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
-import {getTextByQueue} from '../_else/my_extras';
+import {getTextByQueue} from 'templates/components/my_extras';
 
 class Info extends React.Component {
   render() {

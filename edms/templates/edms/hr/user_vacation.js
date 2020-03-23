@@ -5,7 +5,7 @@ import {Collapse} from 'react-collapse';
 import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {ToastContainer, toast} from 'react-toastify';
-import {getIndex} from '../_else/my_extras';
+import {getIndex} from 'templates/components/my_extras';
 import querystring from 'querystring';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

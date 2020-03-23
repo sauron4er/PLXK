@@ -18,6 +18,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар',blank=True,null=True)
     department = models.ForeignKey(Department,blank=True,null=True, on_delete='CASCADE',related_name='+', default=1)
     is_ticked_admin = models.BooleanField(default=False)
+    is_orders_admin = models.BooleanField(default=False)
     is_it_admin = models.BooleanField(default=False)
     is_graph = models.BooleanField(default=False)
     is_wood = models.BooleanField(default=False)
@@ -34,7 +35,7 @@ class UserProfile(models.Model):
     is_active = models.BooleanField(default=True)
     acting = models.ForeignKey('self', blank=True, null=True)
     is_hr = models.BooleanField(default=False)  # Для відображення вкладки "Відділ кадрів" в EDMS
-    is_pc_user = models.BooleanField(default=False)  # Для відображення користувача на сторінці відділу кадрів у EDMS
+    is_pc_user = models.BooleanField(default=True)  # Для відображення користувача на сторінці відділу кадрів у EDMS
     birthday = models.DateField(null=True)
 
     n_main = models.CharField(max_length=4, null=True, blank=True)

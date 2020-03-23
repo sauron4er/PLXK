@@ -2,7 +2,7 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import '../_else/my_styles.css';
+import 'static/css/my_styles.css';
 import NewDoc from './new_doc';
 import Docs from './docs';
 import Drafts from './drafts';
@@ -146,7 +146,7 @@ class MyDocs extends React.Component {
 
   render() {
     return (
-      <Fragment>
+      <>
         <Choose>
           <When condition={this.state.view === 'docs'}>
             <div className='d-flex justify-content-between'>
@@ -191,7 +191,7 @@ class MyDocs extends React.Component {
             <Templates templates={this.state.my_docs} addDoc={this.addDoc} removeDoc={this.removeDoc} />
           </When>
         </Choose>
-      </Fragment>
+      </>
     );
   }
 }

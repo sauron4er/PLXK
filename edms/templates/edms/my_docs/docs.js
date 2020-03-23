@@ -1,8 +1,8 @@
 'use strict';
 import React from 'react';
-import DxTable from '../components/dx_table';
+import DxTable from '../../../../templates/components/dx_table';
 import Document from '../doc_info/document';
-import '../_else/my_styles.css';
+import 'static/css/my_styles.css';
 
 class Docs extends React.Component {
   state = {

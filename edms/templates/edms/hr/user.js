@@ -8,7 +8,7 @@ import Select from 'react-validation/build/select';
 import axios from 'axios';
 import querystring from 'querystring'; // for axios
 import UserVacation from './user_vacation';
-import {getIndex} from '../_else/my_extras.js';
+import {getIndex} from 'templates/components/my_extras.js';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 

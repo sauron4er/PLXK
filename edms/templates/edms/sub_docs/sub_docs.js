@@ -2,12 +2,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import DxTable from '../components/dx_table';
+import DxTable from '../../../../templates/components/dx_table';
 import Document from '../doc_info/document';
 import SeatChooser from '../components/seat_chooser';
 import DocTypeChooser from '../components/doc_type_chooser';
 import SubEmpChooser from '../components/sub_emp_chooser';
-import '../_else/my_styles.css';
+import 'static/css/my_styles.css';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
