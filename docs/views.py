@@ -96,7 +96,6 @@ def normalize_month(date):
     return '0' + str(date.month) if date.month < 10 else str(date.month)
 
 
-# @login_required(login_url='login')
 def orders(request):
     if request.user.id:
         is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
@@ -136,7 +135,6 @@ def orders(request):
                                                        'employee_list': employee_list})
 
 
-# @login_required(login_url='login')
 def get_order(request, pk):
     order = get_object_or_404(Order_doc, pk=pk)
 
@@ -177,7 +175,6 @@ def get_order(request, pk):
 
 
 @transaction.atomic
-# @login_required(login_url='login')
 def new_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
@@ -194,7 +191,6 @@ def new_order(request):
 
 
 @transaction.atomic
-# @login_required(login_url='login')
 def edit_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})

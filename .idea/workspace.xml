@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -406,7 +405,7 @@
       <workItem from="1584950906668" duration="968000" />
       <workItem from="1584951916975" duration="4156000" />
       <workItem from="1584956164050" duration="731000" />
-      <workItem from="1584956940966" duration="3450000" />
+      <workItem from="1584956940966" duration="4258000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -767,11 +766,6 @@
           <url>file://$PROJECT_DIR$/edms/views.py</url>
           <line>1577</line>
           <option name="timeStamp" value="442" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/docs/views.py</url>
-          <line>100</line>
-          <option name="timeStamp" value="459" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
