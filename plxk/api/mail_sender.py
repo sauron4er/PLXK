@@ -8,8 +8,8 @@ def send_email(mail, body):
         try:
             server = smtplib.SMTP(host, timeout=2000)
             server.login('lxk_it', 'J2NYEHb50nymRF1L')
-            # server.sendmail(sender, [mail], body)
-            server.sendmail(sender, 'sauron4er@gmail.com', body)
+            server.sendmail(sender, [mail], body)
+            # server.sendmail(sender, 'sauron4er@gmail.com', body)
             server.quit()
         except OSError as err:
             # Якщо внутрішня пошта it@lxk.com.ua лежить, відправляємо з gmail:
