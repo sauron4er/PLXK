@@ -137,7 +137,7 @@ class Orders extends React.Component {
             <DxTable
               rows={orders_list}
               columns={columns}
-              defaultSorting={[{columnName: 'date_start', direction: 'desc'}]}
+              defaultSorting={[{columnName: 'date_start', direction: 'desc'}, {columnName: 'code', direction: 'desc'}]}
               colWidth={col_width}
               onRowClick={this.onRowClick}
               height={main_div_height}

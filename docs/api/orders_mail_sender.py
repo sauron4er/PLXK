@@ -1,17 +1,23 @@
 from django.contrib.auth.models import User
+from django.conf import settings
 from plxk.api.mail_sender import send_email
+from docs.models import File
 import json
 
 
-testing = False
+testing = settings.STAS_DEBUG
 
 
 def create_mail_body(post_request, mail):
-    subject = "Опубліковано нормативний документ"
+    subject = "Опубліковано {} № {}".format(post_request['type_name'], post_request['code'])
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/docs/orders/{}' \
         .format(post_request['id'])
-    text = 'На сайті plhk.com.ua опубліковано нормативний документ №{} "{}". {}' \
-        .format(post_request['id'], post_request['name'], link)
+
+    file = File.objects.values_list('file', flat=True).filter(order_id=post_request['id'])[0]
+    download = 'Щоб скачати документ, натисніть на посилання: http://10.10.10.22/media/{}'.format(file)
+
+    text = 'На сайті plhk.com.ua опубліковано {} №{} "{}". {}.\r\n{}' \
+        .format(post_request['type_name'], post_request['code'], post_request['name'], link, download)
 
     body = u"\r\n".join((
         "From: it@lxk.com.ua",
@@ -52,7 +58,8 @@ def send_mails_list(post_request):
     for receiver in receivers:
         mail = User.objects.values_list('email', flat=True).filter(id=receiver['id'])[0]
         body = create_mail_body(post_request, mail)
-        send_email(mail, body)
+        if not testing:
+            send_email(mail, body)
 
 
 def arrange_mail(post_request):

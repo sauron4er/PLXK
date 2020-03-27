@@ -5,11 +5,12 @@ from django.utils.timezone import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.conf import settings
 import json
 import pytz
 import threading
 
-from docs.models import Order_doc
+# from docs.models import Order_doc
 
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from .models import Seat, Employee_Seat, Document, File, Document_Path, Document_Type, Mark
@@ -30,8 +31,8 @@ from .models import Doc_Type_Phase, Doc_Type_Phase_Queue
 from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, DeleteDocForm
 
 
-# При True у списках відображаться і ті документи, які знаходяться в режимі тестування.
-testing = False
+# При True у списках відображаться документи, які знаходяться в режимі тестування.
+testing = settings.STAS_DEBUG
 
 # Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
 # Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
@@ -1647,12 +1648,12 @@ def edms_my_docs(request):
             # Отримуємо назву типу документа та ім’я автора документа для формування листів отримувачам
             doc_request = get_additional_doc_info(doc_request)
 
-            if doc_request['status'] == 'doc': # Публікація документу
+            if doc_request['status'] == 'doc':  # Публікація документу
                 doc_request.update({'mark': 1})
-            elif doc_request['status'] == 'draft': # Збереження чернетки
+            elif doc_request['status'] == 'draft':  # Збереження чернетки
                 doc_request.update({'mark': 16})
             else:
-                doc_request.update({'mark': 19}) # Збереження шаблону
+                doc_request.update({'mark': 19})  # Збереження шаблону
             doc_request.update({'comment': ''})
 
             # Записуємо перший крок шляху документа і отримуємо його ід

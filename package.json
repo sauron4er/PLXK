@@ -28,6 +28,7 @@
     "react-file-viewer": "^1.1.0",
     "react-files": "^2.4.8",
     "react-notifications-component": "^0.1.1",
+    "react-pdf": "^4.1.0",
     "react-responsive-modal": "^3.6.0",
     "react-toastify": "^4.3.1",
     "react-validation": "^3.0.7",

@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpRequest
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
 from .forms import NewDocForm
@@ -96,12 +95,18 @@ def normalize_month(date):
     return '0' + str(date.month) if date.month < 10 else str(date.month)
 
 
+def normalize_day(date):
+    return '0' + str(date.day) if date.day < 10 else str(date.day)
+
+
 def orders(request):
     if request.user.id:
         is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
     else:
         is_orders_admin = [False]
-    is_orders_admin = 'true' if True in is_orders_admin else 'false'  # Переробляємо у текстовий формат, який зрозуміє js
+
+    # Переробляємо True у 'true', так його зрозуміє js
+    is_orders_admin = 'true' if True in is_orders_admin else 'false'
 
     types_list = list(Order_doc_type.objects.values())
 
@@ -122,10 +127,10 @@ def orders(request):
         'author_name': order.author.last_name + ' ' + order.author.first_name,
         'date_start': str(order.date_start.year) + '-' +
                       normalize_month(order.date_start) + '-' +
-                      str(order.date_start.day) if order.date_start else '',
+                      normalize_day(order.date_start) if order.date_start else '',
         'date_canceled': str(order.date_canceled.year) + '-' +
                          normalize_month(order.date_canceled) + '-' +
-                         str(order.date_canceled.day) if order.date_canceled else '',
+                         normalize_day(order.date_canceled) if order.date_canceled else '',
         'is_actual': order.is_act
     } for order in Order_doc.objects.filter(is_act=True)]
 
@@ -152,10 +157,10 @@ def get_order(request, pk):
         'cancels_code': order.cancels_code if order.cancels_code else get_order_code(order.cancels_id),
         'date_start': str(order.date_start.year) + '-' +
                          normalize_month(order.date_start) + '-' +
-                         str(order.date_start.day) if order.date_start else '',
+                         normalize_day(order.date_start) if order.date_start else '',
         'date_canceled': str(order.date_canceled.year) + '-' +
                          normalize_month(order.date_canceled) + '-' +
-                         str(order.date_canceled.day) if order.date_canceled else '',
+                         normalize_day(order.date_canceled) if order.date_canceled else '',
         'responsible_id': order.responsible_id,
         'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name,
         'supervisory_id': order.supervisory_id,

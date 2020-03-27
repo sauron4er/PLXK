@@ -2,7 +2,42 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/api/orders_mail_sender.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/api/orders_mail_sender.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/13294367_original.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/13399229_original.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/13454298_original.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/1_DMkUd9s.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/1_TADhwGq.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/1_nt8ntPU.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/1_квитанция.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/21.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/21_0vYftet.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/21_8QlMHql.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/21_WUu9Anj.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/21_b3wkDGB.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/37.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/37_7R8aSid.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/39.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/files/media/order_docs/2020/03/bets_view_bets.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plxk/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-c9da2e4683190333b680.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-3f36d9718e7a7bb89af8.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-0449c4e5c7be6fa3528c.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-d297289b4e908c670062.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/orders-d2ba7d99de24957155f9.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-fe285692ec211ec21e96.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-9cc4bb101c0cd3f9c786.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/docs/orders/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders/orders.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -405,7 +440,10 @@
       <workItem from="1584950906668" duration="968000" />
       <workItem from="1584951916975" duration="4156000" />
       <workItem from="1584956164050" duration="731000" />
-      <workItem from="1584956940966" duration="4258000" />
+      <workItem from="1584956940966" duration="14472000" />
+      <workItem from="1585139653177" duration="600000" />
+      <workItem from="1585203238207" duration="2141000" />
+      <workItem from="1585290524431" duration="4519000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -664,50 +702,50 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
-    <state width="1056" height="318" key="GridCell.Tab.0.bottom" timestamp="1584964898739">
+    <state width="1053" height="318" key="GridCell.Tab.0.bottom" timestamp="1585297890981">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898739" />
-    <state width="1056" height="318" key="GridCell.Tab.0.center" timestamp="1584964898738">
+    <state width="1053" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890981" />
+    <state width="1053" height="318" key="GridCell.Tab.0.center" timestamp="1585297890981">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898738" />
-    <state width="1056" height="318" key="GridCell.Tab.0.left" timestamp="1584964898738">
+    <state width="1053" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890981" />
+    <state width="1053" height="318" key="GridCell.Tab.0.left" timestamp="1585297890981">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898738" />
-    <state width="1056" height="318" key="GridCell.Tab.0.right" timestamp="1584964898739">
+    <state width="1053" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890981" />
+    <state width="1053" height="318" key="GridCell.Tab.0.right" timestamp="1585297890981">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964898739" />
-    <state width="1056" height="318" key="GridCell.Tab.1.bottom" timestamp="1584964880387">
+    <state width="1053" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890981" />
+    <state width="1053" height="318" key="GridCell.Tab.1.bottom" timestamp="1585297890880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880387" />
-    <state width="1056" height="318" key="GridCell.Tab.1.center" timestamp="1584964880386">
+    <state width="1053" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890880" />
+    <state width="1053" height="318" key="GridCell.Tab.1.center" timestamp="1585297890880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880386" />
-    <state width="1056" height="318" key="GridCell.Tab.1.left" timestamp="1584964880386">
+    <state width="1053" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890880" />
+    <state width="1053" height="318" key="GridCell.Tab.1.left" timestamp="1585297890880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880386" />
-    <state width="1056" height="318" key="GridCell.Tab.1.right" timestamp="1584964880387">
+    <state width="1053" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890880" />
+    <state width="1053" height="318" key="GridCell.Tab.1.right" timestamp="1585297890880">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1056" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584964880387" />
+    <state width="1053" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585297890880" />
     <state x="461" y="151" key="SettingsEditor" timestamp="1584429149708">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584429149708" />
-    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1584961923559">
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1585292191955">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584961923559" />
-    <state x="2782" y="160" width="1200" height="800" maximized="true" key="dock-window-1" timestamp="1584956966987">
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585292191955" />
+    <state x="2640" y="160" width="1200" height="800" key="dock-window-1" timestamp="1585290540670">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2782" y="160" width="1200" height="800" maximized="true" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584956966987" />
+    <state x="2640" y="160" width="1200" height="800" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585290540670" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -719,42 +757,42 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1160</line>
+          <line>1161</line>
           <option name="timeStamp" value="393" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>662</line>
+          <line>663</line>
           <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>560</line>
+          <line>561</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>807</line>
+          <line>808</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>455</line>
+          <line>456</line>
           <option name="timeStamp" value="398" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>349</line>
+          <line>350</line>
           <option name="timeStamp" value="399" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1956</line>
+          <line>1957</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1921</line>
+          <line>1922</line>
           <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -764,8 +802,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1577</line>
+          <line>1578</line>
           <option name="timeStamp" value="442" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/views.py</url>
+          <line>1665</line>
+          <option name="timeStamp" value="460" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/plxk/api/mail_sender.py</url>
+          <line>4</line>
+          <option name="timeStamp" value="464" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/docs/api/orders_mail_sender.py</url>
+          <line>21</line>
+          <option name="timeStamp" value="465" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -788,6 +841,7 @@
         <watch expression="phase_id" />
         <watch expression="order['date_canceled']" />
         <watch expression="phases" />
+        <watch expression="phase_id" />
       </configuration>
     </watches-manager>
   </component>

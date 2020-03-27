@@ -1,5 +1,5 @@
 'use strict';
-import React, {Fragment} from 'react';
+import React from 'react';
 import axios from 'axios';
 import DxTable from '../../../../templates/components/dx_table';
 import User from './user';
