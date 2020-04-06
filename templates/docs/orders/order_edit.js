@@ -189,7 +189,7 @@ class Order extends React.Component {
         })
           .then((response) => {
             // location.reload();
-            this.props.close(this.state.order, response.data);
+            this.props.close('add', this.state.order, response.data);
           })
           .catch((error) => {
             console.log('error: ' + error);
@@ -199,6 +199,35 @@ class Order extends React.Component {
       } catch (e) {
         this.notify(e);
       }
+    }
+  };
+
+  deactivateOrder = (e) => {
+    e.preventDefault();
+
+    try {
+      const {id} = this.state.order;
+
+      let formData = new FormData();
+      formData.append('id', id);
+
+      axios({
+        method: 'post',
+        url: 'deactivate_order/',
+        data: formData,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          // location.reload();
+          this.props.close('deactivate', this.state.order, id);
+        })
+        .catch((error) => {
+          console.log('error: ' + error);
+        });
+    } catch (e) {
+      this.notify(e);
     }
   };
 
@@ -352,9 +381,7 @@ class Order extends React.Component {
       <For each='file' index='id' of={this.state.order.old_files}>
         <If condition={file.is_added_or_cancelled}>
           <div key={file.id}>
-            <a
-              href={'../../media/' + file.file} target='_blank'
-            >
+            <a href={'../../media/' + file.file} target='_blank'>
               {file.name}{' '}
             </a>
             <If condition={this.state.edit_mode}>
@@ -750,6 +777,12 @@ class Order extends React.Component {
             <button className='btn btn-success my-2' onClick={this.postOrder}>
               Зберегти
             </button>
+            <If condition={id}>
+              <button className='float-sm-right btn btn-danger my-2' onClick={this.deactivateOrder}>
+                Видалити
+              </button>
+            </If>
+
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />
           </div>

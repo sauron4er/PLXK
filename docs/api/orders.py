@@ -1,4 +1,4 @@
-from docs.forms import NewDocOrderForm, CancelOrderForm
+from docs.forms import NewDocOrderForm, CancelOrderForm, DeactivateOrderForm
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from docs.models import Order_doc, File
@@ -11,7 +11,7 @@ def post_order(post_request):
             order = order_form.save()
             return order
         else:
-            raise ValidationError('edms/views: function post_order: order_form invalid')
+            raise ValidationError('docs/orders: function post_order: order_form invalid')
     except Exception as err:
         raise err
 
@@ -23,7 +23,19 @@ def change_order(post_request):
         if order_form.is_valid():
             order_form.save()
         else:
-            raise ValidationError('edms/views: function change_order: order_form invalid')
+            raise ValidationError('docs/orders: function change_order: order_form invalid')
+    except Exception as err:
+        raise err
+
+
+def deactivate_order(post_request):
+    try:
+        order = get_object_or_404(Order_doc, pk=post_request['id'])
+        order_form = DeactivateOrderForm(post_request, instance=order)
+        if order_form.is_valid():
+            order_form.save()
+        else:
+            raise ValidationError('docs/orders: function deactivate_order: order_form invalid')
     except Exception as err:
         raise err
 
@@ -61,7 +73,7 @@ def cancel_order(post_request, instance):
         if cancel_order_form.is_valid():
             cancel_order_form.save()
         else:
-            raise ValidationError('edms/views: function post_document: document_form invalid')
+            raise ValidationError('docs/orders: function post_document: document_form invalid')
     except Exception as err:
         raise err
 

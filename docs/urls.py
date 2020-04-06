@@ -9,8 +9,9 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
 
     # url(r'^order/f(?P<fk>\d+)/$', views.orders, name='orders'),
-    url(r'^orders/new_order', views.new_order, name='orders'),
-    url(r'^orders/edit_order', views.edit_order, name='orders'),
+    url(r'^orders/new_order', views.new_order, name='new_order'),
+    url(r'^orders/edit_order', views.edit_order, name='edit_order'),
+    url(r'^orders/deactivate_order', views.deact_order, name='deact_order'),
     url(r'^orders/', views.orders, name='orders'),
 
     # url(r'^order/new/$', views.new_order, name='new_order'),

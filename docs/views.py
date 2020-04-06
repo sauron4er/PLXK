@@ -13,7 +13,7 @@ import datetime
 from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
 from docs.api.orders_mail_sender import arrange_mail
-from docs.api.orders import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table
+from docs.api.orders import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table, deactivate_order
 
 
 def datetime_to_json_converter(data):
@@ -208,4 +208,12 @@ def edit_order(request):
 
     arrange_mail(post_request)
 
+    return HttpResponse()
+
+
+@transaction.atomic
+def deact_order(request):
+    post_request = request.POST.copy()
+    # post_request.update({'updated_by': request.user.id})
+    deactivate_order(post_request)
     return HttpResponse()

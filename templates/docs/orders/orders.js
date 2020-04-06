@@ -82,9 +82,9 @@ class Orders extends React.Component {
     });
   };
 
-  onChangesPosted = (order, new_id) => {
-    if (new_id) {
-      order.id = new_id;
+  onChangesPosted = (mode, order, id) => {
+    if (mode === 'add') {
+      order.id = id;
       let {orders_list} = this.state;
       orders_list.push(order);
       this.setState(
@@ -98,6 +98,14 @@ class Orders extends React.Component {
           });
         }
       );
+    } else if (mode === 'deactivate') {
+      let {orders_list} = this.state;
+      const new_list = orders_list.filter(order => order.id !== id);
+      this.setState({
+        orders_list: new_list,
+        table_view: true,
+        row: {}
+      });
     } else {
       this.setState({
         table_view: true,
