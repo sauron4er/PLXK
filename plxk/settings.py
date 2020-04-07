@@ -25,7 +25,10 @@ SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Мої налаштування ---------
 STAS_DEBUG = False
+DEV_PLACE = 'Work'  # Home або Work, це впливає на підключення до бд
+# --------------------------
 
 ALLOWED_HOSTS = ['10.10.10.0/24']
 
@@ -93,40 +96,53 @@ WSGI_APPLICATION = 'plxk.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'plxk',
-        'USER': 'root',
-        'PASSWORD': 'Cvjhjlbyf11',
-        'HOST': '10.10.10.22',  # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-        'ATOMIC_REQUESTS': True,
-    },
+if DEV_PLACE == 'Work':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'plxk',
+            'USER': 'root',
+            'PASSWORD': 'Cvjhjlbyf11',
+            'HOST': '10.10.10.22',  # Or an IP Address that your DB is hosted on
+            'PORT': '3306',
+            'ATOMIC_REQUESTS': True,
+        },
 
-    'lite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'fb_test': {
-        'ENGINE': 'firebird',
-        'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-        'USER': 'SYSDBA',  # Your db user
-        'PASSWORD': 'Cvjhjlbyf11',  # db user password
-        'HOST': '10.10.10.8',  # Your host machine
-        'PORT': '3050',  # If is empty, use default 3050
-        'OPTIONS': {'charset': 'win1251'}
-    },
-    'fb1': {
-        'ENGINE': 'firebird',
-        'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-        'USER': 'SYSDBA',  # Your db user
-        'PASSWORD': 'masterke',  # db user password
-        'HOST': '10.10.10.7',  # Your host machine
-        'PORT': '3050',  # If is empty, use default 3050
-        'OPTIONS': {'charset': 'win1251'}
-    },
-}
+        'lite': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        },
+        'fb_test': {
+            'ENGINE': 'firebird',
+            'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
+            'USER': 'SYSDBA',  # Your db user
+            'PASSWORD': 'Cvjhjlbyf11',  # db user password
+            'HOST': '10.10.10.8',  # Your host machine
+            'PORT': '3050',  # If is empty, use default 3050
+            'OPTIONS': {'charset': 'win1251'}
+        },
+        'fb1': {
+            'ENGINE': 'firebird',
+            'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
+            'USER': 'SYSDBA',  # Your db user
+            'PASSWORD': 'masterke',  # db user password
+            'HOST': '10.10.10.7',  # Your host machine
+            'PORT': '3050',  # If is empty, use default 3050
+            'OPTIONS': {'charset': 'win1251'}
+        },
+    }
+elif DEV_PLACE == 'Home':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'PLXK',
+            'USER': 'root',
+            'PASSWORD': 'Cvjhjlbyf11',
+            'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
+            'PORT': '3306',
+            'ATOMIC_REQUESTS': True,
+        },
+    }
 
 
 # Password validation
