@@ -89,13 +89,21 @@ class UserVacation extends React.Component {
       this.postNewVacation(new_vacation);
     }
   };
+  
+  isVacationEnded = () => {
+    const {end} = this.state;
+    
+    const today = new Date();
+    console.log(today);
+    const today_string =
+      today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    console.log(today_string);
+    return true;
+  };
 
   isVacationValid = () => {
     const {begin, end, acting_id} = this.state;
     const {user} = this.props;
-    const today = new Date();
-      const today_string =
-        today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
 
     if (!begin || !end || !acting_id) {
       this.notify('Заповніть всі поля.');
@@ -105,7 +113,7 @@ class UserVacation extends React.Component {
       this.notify('Дата виходу у відпустку не може бути меншою за дату повернення.');
       return false
     }
-    if (end <= today_string) {
+    if (this.isVacationEnded()) {
       this.notify('Ви намагаєтесь додати відпустку, яка вже завершилася.');
       return false
     }

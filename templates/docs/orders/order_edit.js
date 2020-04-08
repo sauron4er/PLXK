@@ -777,7 +777,7 @@ class Order extends React.Component {
             <button className='btn btn-success my-2' onClick={this.postOrder}>
               Зберегти
             </button>
-            <If condition={id}>
+            <If condition={id && edit_mode}>
               <button className='float-sm-right btn btn-danger my-2' onClick={this.deactivateOrder}>
                 Видалити
               </button>

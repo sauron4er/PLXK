@@ -3,15 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/api/orders.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/api/orders.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-e70f75cc6942bccd1fa9.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/orders-19e38218836bae0c9931.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-4a77f4f4cc52faf937c1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-b4a97955ad2e3f353159.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-ba03953dfc16fa2903ac.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-e651e766e443272d3f5a.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/orders-80b58e639c54042a3a05.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-dec6ad7bc522fc84eb34.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-265d9684d10b722fc4b6.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/vendors~pdfjsWorker-5532411023342af3fea9.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docs/orders/orders.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders/orders.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -149,7 +151,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
     <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
@@ -418,7 +420,7 @@
       <workItem from="1584956940966" duration="14472000" />
       <workItem from="1585139653177" duration="600000" />
       <workItem from="1585203238207" duration="2141000" />
-      <workItem from="1585290524431" duration="15981000" />
+      <workItem from="1585290524431" duration="23827000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -677,42 +679,42 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
-    <state width="1053" height="313" key="GridCell.Tab.0.bottom" timestamp="1586154564794">
+    <state width="1052" height="313" key="GridCell.Tab.0.bottom" timestamp="1586324240248">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154564794" />
-    <state width="1053" height="313" key="GridCell.Tab.0.center" timestamp="1586154564794">
+    <state width="1052" height="313" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
+    <state width="1052" height="313" key="GridCell.Tab.0.center" timestamp="1586324240248">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154564794" />
-    <state width="1053" height="313" key="GridCell.Tab.0.left" timestamp="1586154564793">
+    <state width="1052" height="313" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
+    <state width="1052" height="313" key="GridCell.Tab.0.left" timestamp="1586324240248">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154564793" />
-    <state width="1053" height="313" key="GridCell.Tab.0.right" timestamp="1586154564794">
+    <state width="1052" height="313" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
+    <state width="1052" height="313" key="GridCell.Tab.0.right" timestamp="1586324240248">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154564794" />
-    <state width="1053" height="313" key="GridCell.Tab.1.bottom" timestamp="1586154512950">
+    <state width="1052" height="313" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
+    <state width="1052" height="313" key="GridCell.Tab.1.bottom" timestamp="1586324457826">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154512950" />
-    <state width="1053" height="313" key="GridCell.Tab.1.center" timestamp="1586154512950">
+    <state width="1052" height="313" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
+    <state width="1052" height="313" key="GridCell.Tab.1.center" timestamp="1586324457826">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154512950" />
-    <state width="1053" height="313" key="GridCell.Tab.1.left" timestamp="1586154512950">
+    <state width="1052" height="313" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
+    <state width="1052" height="313" key="GridCell.Tab.1.left" timestamp="1586324457826">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154512950" />
-    <state width="1053" height="313" key="GridCell.Tab.1.right" timestamp="1586154512950">
+    <state width="1052" height="313" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
+    <state width="1052" height="313" key="GridCell.Tab.1.right" timestamp="1586324457826">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1053" height="313" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586154512950" />
-    <state x="461" y="151" key="SettingsEditor" timestamp="1584429149708">
+    <state width="1052" height="313" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
+    <state x="461" y="151" key="SettingsEditor" timestamp="1586322043077">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584429149708" />
+    <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586322043077" />
     <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1585292191955">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
