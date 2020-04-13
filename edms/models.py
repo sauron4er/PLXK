@@ -79,15 +79,6 @@ class Doc_Type_Phase_Queue(models.Model):
     queue = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
-
-# Не буде використовуватися, замінюється Doc_Type_Phase_Queue: видалити
-# class Document_Type_Permission(models.Model):
-#     document_type = models.ForeignKey(Document_Type, related_name='with_permissions')
-#     seat = models.ForeignKey(Seat, related_name='permission_seats')
-#     mark = models.ForeignKey(Mark, related_name='permission_marks')
-#     is_active = models.BooleanField(default=True)
-
-
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type')
     title = models.CharField(max_length=100, null=True, blank=True)

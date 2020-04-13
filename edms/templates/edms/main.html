@@ -24,11 +24,6 @@
                                     <a class="nav-link" href="{% url 'edms:hr'  %}">Відділ кадрів</a>
                                 </li>
                             {% endif %}
-                            {% if user.userprofile.is_it_admin  %}
-                                <li class="nav-item {% if request.resolver_match.url_name == "administration" %}active{% endif %}">
-                                    <a class="nav-link" href="{% url 'edms:administration'  %}">Адміністрування</a>
-                                </li>
-                            {% endif %}
                           </ul>
                   </div>
                 </nav>

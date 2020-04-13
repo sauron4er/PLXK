@@ -1,1 +1,0 @@
-import '../../edms/templates/edms/administration/administration.js'

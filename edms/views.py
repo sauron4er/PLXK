@@ -630,10 +630,6 @@ def post_modules(doc_request, doc_files, new_path):
         doc_modules = json.loads(doc_request['doc_modules'])
         recipients = []
 
-        # Додаємо назву документа
-        if 'name' in doc_modules:
-            post_name(doc_request, doc_modules['name'])
-
         # Додаємо текст документа
         if 'text' in doc_modules:
             post_text(doc_request, doc_modules['text'])
@@ -706,10 +702,6 @@ def post_modules(doc_request, doc_files, new_path):
                 })
 
             post_approval_list(doc_request, approvals)
-
-        # Додаємо пункти
-        if 'articles' in doc_modules:
-            post_articles(doc_request, doc_modules['articles'])
 
         # Додаємо дату
         if 'day' in doc_modules:
@@ -788,22 +780,6 @@ def post_acquaint_list(doc_request, acquaint_list):
             raise ValidationError('edms/views post_acquaint_list acquaint_form invalid')
 
 
-# Функція, яка додає у бд список отримуючих на підпис
-def post_sign_list(doc_request, sign_list):
-
-    # TODO Чому не створюються mark_demand для підписуючих?
-
-
-    for sign in sign_list:
-        emp_seat_id = vacation_check(sign['id'])
-        doc_request.update({'sign_emp_seat': emp_seat_id})
-
-        sign_form = NewSignForm(doc_request)
-        if sign_form.is_valid():
-            sign_form.save()
-        else:
-            raise ValidationError('edms/views post_sign_list sign_form invalid')
-
 # Функція, яка додає у бд список отримуючих на погодження
 def post_approval_list(doc_request, approvals):
     for recipient in approvals:
@@ -829,16 +805,6 @@ def post_approval_list(doc_request, approvals):
 
         else:
             raise ValidationError('edms/views post_approval_list approval_form invalid')
-
-
-# Функція, яка додає у бд назву документу
-def post_name(doc_request, name):
-    doc_request.update({'name': name})
-    name_form = NewNameForm(doc_request)
-    if name_form.is_valid():
-        name_form.save()
-    else:
-        raise ValidationError('edms/views post_name name_form invalid')
 
 
 # Функція, яка додає у бд текст документу
@@ -951,44 +917,6 @@ def edms_main(request):
     return HttpResponse(status=405)
 
 
-# Адміністрування ------------------------------------------------------------------------------------------------------
-@login_required(login_url='login')
-def edms_administration(request):
-    if request.method == 'GET':
-        my_seats = get_my_seats(request.user.userprofile.id)
-        seats = [{  # Список посад для форм на сторінці відділу кадрів
-            'id': seat.pk,
-            'seat': seat.seat,
-        } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
-        marks = [{
-            'id': mark.pk,
-            'mark': mark.mark,
-        } for mark in Mark.objects.filter(is_active=True)]
-        return render(request, 'edms/administration/administration.html', {
-            'my_seats': my_seats,
-            'seats': seats,
-            'marks': marks,
-        })
-
-    if request.method == 'POST':
-        form = DTPAddForm(request.POST)
-        if form.is_valid():
-            new_dtp = form.save()
-            return HttpResponse(new_dtp.pk)
-
-    return HttpResponse(status=405)
-
-
-@login_required(login_url='login')
-def edms_deactivate_permission(request, pk):
-    permission = get_object_or_404(Document_Type_Permission, pk=pk)
-    if request.method == 'POST':
-        form = DTPDeactivateForm(request.POST, instance=permission)
-        if form.is_valid():
-            form.save()
-            return redirect('administration.html')
-
-
 @login_required(login_url='login')
 def edms_get_doc_types(request):
     if request.method == 'GET':
@@ -1001,129 +929,6 @@ def edms_get_sub_emps(request, pk):
         seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=pk)[0]
         subs_list = get_sub_emps(seat)
         return HttpResponse(json.dumps(subs_list))
-
-
-@login_required(login_url='login')
-def edms_get_admin_types(request, pk):
-    # Отримуємо ід посади з ід людинопосади
-    seat_id = Employee_Seat.objects.filter(id=pk).values_list('seat_id')[0][0]
-
-    if request.method == 'GET':
-        if request.user.userprofile.is_it_admin:
-            doc_types_query = Document_Type.objects.all().filter(is_active=True)
-
-            # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
-            if not testing:
-                doc_types_query = doc_types_query.filter(testing=False)
-
-            doc_types = [{
-                'id': doc_type.id,
-                'description': doc_type.description,
-                'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-            } for doc_type in doc_types_query]
-        else:
-            doc_types = [{
-                'id': doc_type.id,
-                'description': doc_type.description,
-                'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-            } for doc_type in Document_Type.objects.filter(creator_id=seat_id)]
-
-        return HttpResponse(json.dumps(doc_types))
-
-
-@login_required(login_url='login')
-def edms_get_type_info(request, pk):
-    # Отримуємо ід типу документу
-    doc_type_id = Document_Type.objects.filter(id=pk).values_list('id')[0][0]
-
-    if request.method == 'GET':
-        permissions = [{  # Список дозволів для посад для цього документу
-            'id': permission.id,
-            'seat_id': permission.seat.id,
-            'seat': permission.seat.seat,
-            'mark_id': permission.mark.id,
-            'mark': permission.mark.mark,
-        } for permission in Document_Type_Permission.objects
-            .filter(document_type_id=doc_type_id)
-            .filter(is_active=True)]
-
-        return HttpResponse(json.dumps(permissions))
-
-
-@login_required(login_url='login')
-def edms_get_modules_phases(request, pk):
-    doc_type_id = Document_Type.objects.filter(id=pk).values_list('id', flat=True)
-    if doc_type_id:
-        # Якщо ід != 0, значить редагується старий документ, розділяємо модулі на 'chosen' i 'left'
-        modules_all = [{
-            'id': module.id,
-            'name': module.name,
-            'description': module.description,
-            # 'field_name': ''
-        } for module in Module.objects
-            .filter(is_active=True)]
-
-        modules_chosen = [{
-            'id': doc_type_module.module.id,
-            'name': doc_type_module.module.name,
-            'description': doc_type_module.module.description,
-            # 'field_name': doc_type_module.field_name
-        } for doc_type_module in Document_Type_Module.objects
-            .filter(document_type_id=doc_type_id[0])
-            .filter(is_active=True).order_by('queue')]
-
-        modules_left = []
-        for module in modules_all:
-            if module not in modules_chosen:
-                modules_left.append(module)
-
-        phases_all = [{
-            'id': phase.id,
-            'name': phase.mark,
-        } for phase in Mark.objects
-            .filter(is_phase=True)
-            .filter(is_active=True)]
-
-        phases_chosen = [{
-            'id': doc_type_phase.mark.id,
-            'name': doc_type_phase.mark.mark,
-        } for doc_type_phase in Doc_Type_Phase.objects
-            .filter(document_type_id=doc_type_id[0])
-            .filter(is_active=True)
-            .exclude(phase=0).order_by('phase')]
-
-        phases_left = []
-        for phase in phases_all:
-            if phase not in phases_chosen:
-                phases_left.append(phase)
-    else:
-        # Якщо ід = 0, значить створюється новий документ, показуємо всі модулі і фази в 'left'
-        modules_left = [{
-            'id': module.id,
-            'name': module.name,
-            'description': module.description,
-            'field_name': ''
-        } for module in Module.objects
-            .filter(is_active=True)]
-
-        phases_left = [{
-            'id': phase.id,
-            'name': phase.mark,
-        } for phase in Mark.objects
-            .filter(is_phase=True)
-            .filter(is_active=True)]
-
-        modules_chosen = []
-        phases_chosen = []
-
-    response = {
-        'modules_chosen': modules_chosen,
-        'modules_left': modules_left,
-        'phases_chosen': phases_chosen,
-        'phases_left': phases_left
-    }
-
-    return HttpResponse(json.dumps(response))
 
 
 # Відділ кадрів --------------------------------------------------------------------------------------------------------

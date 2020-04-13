@@ -18,11 +18,17 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 
 class User extends React.Component {
   state = {
+    on_vacation: this.props.user.on_vacation, // статус відпустки
+    acting: this.props.user.acting, // ід співробітника, що заміняє даного на час відпустки
+    acting_id: this.props.user.acting_id, // id в.о посади
+
     seat: '', // назва посади для форми
     seat_id: '', // id посади
     emp_seat: '', // обрана посада співробітника
     emp_seat_id: '', // ід запису посади співробітника
     emp_seats: this.props.user.emp_seats, // список посад співробітника
+
+    vacation_checked: this.props.user.vacation_checked, // чи позначений чекбокс "у відпустці" (для відображення списку людей для в.о.)
 
     today:
       new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(), // сьогоднішня дата
@@ -38,7 +44,14 @@ class User extends React.Component {
   };
 
   onChange = (event) => {
-    if (event.target.name === 'seat') {
+    if (event.target.name === 'acting') {
+      // беремо ід в.о. із <select>
+      const selectedIndex = event.target.options.selectedIndex;
+      this.setState({
+        acting_id: event.target.options[selectedIndex].getAttribute('data-key'),
+        acting: event.target.options[selectedIndex].getAttribute('value')
+      });
+    } else if (event.target.name === 'seat') {
       // беремо ід посади із <select>
       const selectedIndex = event.target.options.selectedIndex;
       this.setState({
@@ -56,6 +69,15 @@ class User extends React.Component {
       const selectedIndex = event.target.options.selectedIndex;
       this.state.new_emp_id = event.target.options[selectedIndex].getAttribute('data-key');
       this.state.new_emp = event.target.options[selectedIndex].getAttribute('value');
+    } else if (event.target.name === 'on_vacation') {
+      this.setState({
+        on_vacation: event.target.checked,
+        vacation_checked: !this.state.vacation_checked
+      });
+      // якщо знімаємо галочку - видалити в.о.
+      if (!event.target.checked) {
+        this.state.acting_id = 0;
+      }
     } else if (event.target.name === 'new_emp_is_acting') {
       this.setState({
         new_emp_is_acting: event.target.checked,
@@ -199,6 +221,51 @@ class User extends React.Component {
       });
   };
 
+  handleSubmit = (e) => {
+    // Оновлює запис у списку відділів
+    e.preventDefault();
+    // TODO реалізувати можливість прийняти людину відразу в статусі в.о., тепер вона заступає на посаду як основну
+
+    // переводимо в null не обрані поля
+    let acting_id = this.state.acting_id == 0 ? null : this.state.acting_id;
+
+    let new_emps = this.props.emps; // клонуємо масив для внесення змін
+    const index = getIndex(this.props.user.id, this.props.emps); // шукаємо індекс запису, в якому треба внести зміни
+
+    // якщо хоча б одна зміна відбулася:
+
+    if (
+      new_emps[index].on_vacation !== this.state.on_vacation ||
+      new_emps[index].acting_id !== this.state.acting_id
+    ) {
+      new_emps[index].on_vacation = this.state.on_vacation ? 'true' : 'false';
+      new_emps[index].acting_id = parseInt(this.state.acting_id);
+      new_emps[index].acting = this.state.acting;
+
+      axios({
+        method: 'post',
+        url: 'emp/' + this.props.user.id + '/',
+        data: querystring.stringify({
+          pip: this.props.user.emp,
+          on_vacation: this.state.on_vacation,
+          acting: acting_id,
+          is_active: true
+        }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+        .then((response) => {
+          // this.props.changeLists('emps', new_emps);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.log('errorpost: ' + error);
+        });
+    }
+    this.setState({open: false}); // закриває модальне вікно
+  };
+
   handleDelete = (e) => {
     // робить співробітника неактивним
     e.preventDefault();
@@ -251,7 +318,37 @@ class User extends React.Component {
     });
 
   render() {
-    const {seat, emp_seat_id, new_emp_form} = this.state;
+    const {acting, seat, emp_seat_id, new_emp_form} = this.state;
+
+    const acting_select = this.state.vacation_checked ? ( // відображення селекту для в.о.
+      <div className='d-flex'>
+        <label htmlFor='acting-select'> В.о.:</label>
+        <Select
+          className='form-control'
+          id='acting-select'
+          name='acting'
+          value={acting}
+          onChange={this.onChange}
+        >
+          <option data-key={0} value=''>
+            ------------
+          </option>
+          {this.props.emps.map((emp) => {
+            return (
+              <option key={emp.id} data-key={emp.id} value={emp.emp}>
+                {emp.emp}
+              </option>
+            );
+          })}
+        </Select>
+        <br />
+        <br />
+      </div>
+    ) : (
+      <div>
+        <br /> <br />
+      </div>
+    );
 
     return (
       <Modal open={true} onClose={this.onClose} center>
@@ -263,6 +360,18 @@ class User extends React.Component {
             </div>
           </div>
           <UserVacation user={this.props.user} emps={this.props.emps} />
+          <div className='d-flex'>
+            <Input
+              name='on_vacation'
+              onChange={this.onChange}
+              type='checkbox'
+              checked={this.state.on_vacation}
+              id='vacation'
+            />
+            <label htmlFor='vacation'>у відпустці</label>
+          </div>
+
+          {acting_select}
 
           <div>
             <label>
@@ -326,7 +435,8 @@ class User extends React.Component {
             </label>
           </div>
           <br />
-          
+
+          <Button className='float-sm-left btn btn-outline-success mb-1' onClick={this.handleSubmit}>Підтвердити</Button>
           <Button
             className='float-sm-right btn btn-outline-secondary mb-1'
             onClick={this.handleDelete}

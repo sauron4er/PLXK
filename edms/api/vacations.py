@@ -13,7 +13,8 @@ def schedule_vacations_arrange():
     schedule.every().day.at("00:01").do(arrange_vacations)
     while True:
         schedule.run_pending()
-        time.sleep(3600)
+        # time.sleep(3600)
+        time.sleep(120)
 
 
 def arrange_vacations():
@@ -53,7 +54,7 @@ def add_vacation(request):
 
 
 def start_vacation(vacation):
-    change_status_in_userprofile(vacation['employee'], vacation['acting'], True)
+    change_status_in_userprofile(vacation['employee'], int(vacation['acting']), True)
     activate_acting_emp_seats(vacation['employee'], vacation['acting'])
 
     vacation.update({'started': True})
@@ -64,7 +65,6 @@ def start_vacation(vacation):
 
 
 def change_status_in_userprofile(employee, acting, on_vacation):
-    print('!')
     form_data = {
         'acting': acting,
         'on_vacation': on_vacation

@@ -67,20 +67,6 @@ class DeleteDocForm(forms.ModelForm):
         fields = {'closed'}
 
 
-# Document Type Permission Deactivate Form
-# class DTPDeactivateForm(forms.ModelForm):
-#     class Meta:
-#         model = Document_Type_Permission
-#         fields = {'is_active'}
-
-
-# Document Type Permission Add Form
-# class DTPAddForm(forms.ModelForm):
-#     class Meta:
-#         model = Document_Type_Permission
-#         fields = {'document_type', 'seat', 'mark'}
-
-
 class NewPathForm(forms.ModelForm):
     class Meta:
         model = Document_Path
@@ -159,12 +145,6 @@ class NewAcquaintForm(forms.ModelForm):
     class Meta:
         model = Doc_Acquaint
         fields = {'document', 'acquaint_emp_seat'}
-
-
-# class NewSignForm(forms.ModelForm):
-#     class Meta:
-#         model = Doc_Sign
-#         fields = {'document'}
 
 
 class NewApprovalForm(forms.ModelForm):

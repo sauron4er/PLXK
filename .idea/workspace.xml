@@ -2,19 +2,37 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
+      <change afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_old.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/api/vacations.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/vacations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration_modules.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/dragndrop.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/dragndrop_item.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/modules.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/administration-4a77f4f4cc52faf937c1.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-b4a97955ad2e3f353159.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-ba03953dfc16fa2903ac.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-e651e766e443272d3f5a.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/orders-80b58e639c54042a3a05.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-dec6ad7bc522fc84eb34.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-265d9684d10b722fc4b6.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/vendors~pdfjsWorker-5532411023342af3fea9.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/templates/docs/orders/order_edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/administration-ac43d5936c8e8615241f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-d6e9bbe3488d55960d2d.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-f8c64943c20691e4dc94.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-2aa578ba38423d998318.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/orders-e696dab46759b1c92e78.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-7da107b1ead5184d8157.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-169f32ad335a2466b1bc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/vendors~pdfjsWorker-50abbd83ca21fa868e73.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/index/administration_index.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webpack.config_before_debugging.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config_before_debugging.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +154,7 @@
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="javascript.nodejs.core.library.configured.version" value="10.15.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/docs/api" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/edms/templates/edms/hr" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -164,19 +182,19 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\hr" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\docs\api" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\plxk\api" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
+      <recent name="D:\Робота\Code\EDMS\PLXK\static" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Робота\Code\EDMS\PLXK\static\css" />
       <recent name="D:\Робота\Code\EDMS\PLXK\templates\components" />
       <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\components" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\Робота\Code\EDMS\PLXK\docs\api" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\plxk\api" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\static" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\static\index" />
     </key>
   </component>
   <component name="RunManager" selected="Django server.PLXK">
@@ -420,7 +438,8 @@
       <workItem from="1584956940966" duration="14472000" />
       <workItem from="1585139653177" duration="600000" />
       <workItem from="1585203238207" duration="2141000" />
-      <workItem from="1585290524431" duration="23827000" />
+      <workItem from="1585290524431" duration="32841000" />
+      <workItem from="1586754493243" duration="6586000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -679,62 +698,62 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
-    <state width="1052" height="313" key="GridCell.Tab.0.bottom" timestamp="1586324240248">
+    <state width="1050" height="318" key="GridCell.Tab.0.bottom" timestamp="1586766509511">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
-    <state width="1052" height="313" key="GridCell.Tab.0.center" timestamp="1586324240248">
+    <state width="1050" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
+    <state width="1050" height="318" key="GridCell.Tab.0.center" timestamp="1586766509511">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
-    <state width="1052" height="313" key="GridCell.Tab.0.left" timestamp="1586324240248">
+    <state width="1050" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
+    <state width="1050" height="318" key="GridCell.Tab.0.left" timestamp="1586766509511">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
-    <state width="1052" height="313" key="GridCell.Tab.0.right" timestamp="1586324240248">
+    <state width="1050" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
+    <state width="1050" height="318" key="GridCell.Tab.0.right" timestamp="1586766509511">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324240248" />
-    <state width="1052" height="313" key="GridCell.Tab.1.bottom" timestamp="1586324457826">
+    <state width="1050" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
+    <state width="1050" height="318" key="GridCell.Tab.1.bottom" timestamp="1586766509446">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
-    <state width="1052" height="313" key="GridCell.Tab.1.center" timestamp="1586324457826">
+    <state width="1050" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
+    <state width="1050" height="318" key="GridCell.Tab.1.center" timestamp="1586766509446">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
-    <state width="1052" height="313" key="GridCell.Tab.1.left" timestamp="1586324457826">
+    <state width="1050" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
+    <state width="1050" height="318" key="GridCell.Tab.1.left" timestamp="1586766509446">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
-    <state width="1052" height="313" key="GridCell.Tab.1.right" timestamp="1586324457826">
+    <state width="1050" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
+    <state width="1050" height="318" key="GridCell.Tab.1.right" timestamp="1586766509446">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1052" height="313" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586324457826" />
-    <state x="461" y="151" key="SettingsEditor" timestamp="1586322043077">
+    <state width="1050" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
+    <state x="461" y="151" key="SettingsEditor" timestamp="1586765139915">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586322043077" />
-    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1585292191955">
+    <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586765139915" />
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1586754517137">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585292191955" />
-    <state x="1920" y="0" width="1326" height="669" maximized="true" key="dock-window-1" timestamp="1585311427466">
+    <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586754517137" />
+    <state x="1920" y="0" width="1326" height="669" maximized="true" key="dock-window-1" timestamp="1586754510539">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="1920" y="0" width="1326" height="669" maximized="true" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1585311427466" />
+    <state x="1920" y="0" width="1326" height="669" maximized="true" key="dock-window-1/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586754510539" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/edms/templates/edms/administration/modules.js</url>
+          <url>file://$PROJECT_DIR$/edms/templates/edms/administration_depr/modules.js</url>
           <line>18</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>663</line>
+          <line>659</line>
           <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -744,7 +763,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>808</line>
+          <line>784</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -759,12 +778,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1957</line>
+          <line>1762</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1922</line>
+          <line>1727</line>
           <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -774,23 +793,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1578</line>
+          <line>1383</line>
           <option name="timeStamp" value="442" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1665</line>
+          <line>1470</line>
           <option name="timeStamp" value="460" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1162</line>
+          <line>967</line>
           <option name="timeStamp" value="467" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1638</line>
+          <line>1443</line>
           <option name="timeStamp" value="468" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="473" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
+          <line>81</line>
+          <option name="timeStamp" value="475" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="476" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

@@ -11,7 +11,6 @@ module.exports = {
   // entry: ['./static/js/index.js'], // entry point of our app. index.js should require other js modules and dependencies it needs
   entry: {
     hr: './static/index/hr_index.js',
-    administration: './static/index/administration_index.js',
     my_docs: './static/index/my_docs_index.js',
     archive: './static/index/archive_index.js',
     sub_docs: './static/index/sub_docs_index.js',

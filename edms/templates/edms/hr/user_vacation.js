@@ -92,13 +92,13 @@ class UserVacation extends React.Component {
   
   isVacationEnded = () => {
     const {end} = this.state;
-    
     const today = new Date();
-    console.log(today);
-    const today_string =
-      today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    console.log(today_string);
-    return true;
+    const today_year = today.getFullYear();
+    const today_month = today.getMonth() > 9 ? today.getMonth() + 1 : '0' + (today.getMonth() + 1);
+    const today_date = today.getDate() > 9 ? today.getDate() + 1 : '0' + (today.getDate() + 1);
+    const today_string = today_year + '-' + today_month + '-' + today_date;
+    
+    return end < today_string;
   };
 
   isVacationValid = () => {
