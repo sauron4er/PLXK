@@ -1,6 +1,6 @@
 import schedule
 import time
-from django.utils.timezone import datetime
+from django.utils.timezone import datetime, timedelta
 from django.shortcuts import get_object_or_404
 
 from accounts import models as accounts
@@ -10,33 +10,37 @@ from ..forms import VacationForm, DeactivateVacationForm, UserVacationForm, Star
 
 
 def schedule_vacations_arrange():
-    schedule.every().day.at("00:01").do(arrange_vacations)
-    while True:
-        schedule.run_pending()
-        # time.sleep(3600)
-        time.sleep(120)
+    # Обробка по розкладку відбувається з помилками при тому самому коді, тому вимушений обробляти кожен день кнопкою.
+    # schedule.every().day.at("14:44").do(arrange_vacations)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(5)
+
+    arrange_vacations()
 
 
 def arrange_vacations():
-    print('00:01')
     today = datetime.today()
+    print('arranged')
+    yesterday = today - timedelta(days=1)
     vacations = [{
         'id': vacation.id,
         'begin': vacation.begin,
         'end': vacation.end,
         'employee': vacation.employee_id,
-        'acting': vacation.acting_id
+        'acting': vacation.acting_id,
+        'is_active': vacation.is_active
     } for vacation in Vacation.objects
         .filter(is_active=True)
         .filter(begin=today).filter(started=False) | Vacation.objects
         .filter(is_active=True)
-        .filter(end=today).filter(started=True)]
+        .filter(end=yesterday).filter(started=True)]
 
     for vacation in vacations:
         if vacation['begin'].strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
             start_vacation(vacation)
         else:
-            end_vacation(vacation['employee'], vacation['acting'])
+            deactivate_vacation(vacation)
 
 
 def add_vacation(request):
@@ -54,13 +58,26 @@ def add_vacation(request):
 
 
 def start_vacation(vacation):
-    change_status_in_userprofile(vacation['employee'], int(vacation['acting']), True)
-    activate_acting_emp_seats(vacation['employee'], vacation['acting'])
-
     vacation.update({'started': True})
     vacation_instance = get_object_or_404(Vacation, pk=vacation['id'])
+    change_status_in_userprofile(vacation_instance.employee_id, vacation_instance.acting_id, True)
+    activate_acting_emp_seats(vacation_instance.employee_id, vacation_instance.acting_id)
+
     form = StartVacationForm(vacation, instance=vacation_instance)
     if form.is_valid():
+        form.save()
+
+
+def deactivate_vacation(vacation):
+    vacation.update({'is_active': False})
+    vacation_instance = get_object_or_404(Vacation, pk=vacation['id'])
+
+    if vacation_instance.is_active:
+        change_status_in_userprofile(vacation_instance.employee_id, None, False)
+        deactivate_acting_emp_seats(vacation_instance.employee_id, vacation_instance.acting_id)
+
+    form = DeactivateVacationForm(vacation, instance=vacation_instance)
+    if form.is_valid:
         form.save()
 
 
@@ -98,9 +115,9 @@ def activate_acting_emp_seats(employee_id, acting_id):
 
 
 def deactivate_acting_emp_seats(employee_id, acting_id):
-    today = datetime.today()
+    yesterday = datetime.today() - timedelta(days=1)
     form_data = {
-        'end_date': today,
+        'end_date': yesterday,
         'is_active': False
     }
 
@@ -116,25 +133,6 @@ def deactivate_acting_emp_seats(employee_id, acting_id):
                 form.save()
 
             move_docs(acting_emp_seat, emp_seat)
-
-
-def end_vacation(employee, acting):
-    change_status_in_userprofile(employee, None, False)
-    deactivate_acting_emp_seats(employee, acting)
-
-
-def deactivate_vacation(request):
-    doc_request = request.POST.copy()
-    doc_request.update({
-        'is_active': False
-    })
-    vacation = get_object_or_404(Vacation, pk=doc_request['id'])
-    form = DeactivateVacationForm(request, instance=vacation)
-    if form.is_valid:
-        form.save()
-
-    if vacation.started:
-        end_vacation(vacation.employee_id, vacation.acting_id)
 
 
 def move_docs(move_from, move_to):

@@ -23,7 +23,7 @@ class Employee_Seat(models.Model):
     is_active = models.BooleanField(default=True)
     is_main = models.BooleanField(default=True)  # false = в.о.
     acting_for = models.ForeignKey('self', related_name='acting_for_me', null=True, blank=True)  # в.о. замість...
-    successor = models.ForeignKey('self', related_name='heir', null=True, blank=True)  # кому передаються активні документи
+    successor = models.ForeignKey('self', related_name='heir', null=True, blank=True)  # кому передаються активні документи при звільненні
 
 
 class Vacation(models.Model):

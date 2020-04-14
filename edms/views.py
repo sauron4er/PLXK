@@ -19,7 +19,7 @@ from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, 
 from .forms import CarryOutItemsForm, VacationForm, DeactivateVacationForm
 # Окремі функції:
 from .api.edms_mail_sender import send_email_new, send_email_mark
-from .api.vacations import schedule_vacations_arrange, end_vacation, add_vacation, deactivate_vacation, vacation_check
+from .api.vacations import schedule_vacations_arrange, add_vacation, deactivate_vacation, vacation_check
 # Модульна система:
 from .models import Module, Document_Type_Module, Doc_Acquaint, Doc_Approval
 from .models import Doc_Text, Doc_Recipient, Doc_Day, Doc_Gate
@@ -204,28 +204,6 @@ def get_seats():
         'seat': seat.seat,
     } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
     return seats
-
-
-# Функція, яка повертає список пунктів документу
-# def get_doc_articles(doc_id):
-#     articles = [{
-#         'id': article.id,
-#         'text': article.text,
-#         'deadline': None if not article.deadline else datetime.strftime(article.deadline, '%Y-%m-%d'),
-#         'deps': get_responsible_deps(article.id),  # Знаходимо список відповідальних за пункт окремою функцією
-#     } for article in Doc_Article.objects.filter(document_id=doc_id).filter(is_active=True)]
-#
-#     return articles
-
-
-# Функція, яка повертає з бд список відділів, відповідальних за виконання пункту документу
-# def get_responsible_deps(article_id):
-#     deps = [{
-#         'id': dep.department.id,
-#         'dep': dep.department.name,
-#     } for dep in Doc_Article_Dep.objects.filter(article_id=article_id).filter(is_active=True)]
-#
-#     return deps
 
 
 # Функція, яка повертає посаду керівника відділу
@@ -996,17 +974,38 @@ def edms_new_vacation(request):
 @login_required(login_url='login')
 def edms_deactivate_vacation(request):
     if request.method == 'POST':
-        deactivate_vacation(request)
+        post_request = request.POST.copy()
+        deactivate_vacation(post_request)
         return HttpResponse(status=200)
 
 
 @login_required(login_url='login')
 def edms_start_vacations_arrange(request):
+    # Обробка по розкладку відбувається з помилками при тому самому коді, тому вимушений обробляти кожен день кнопкою.
     # Запускає процес, який щоночі оновлює відпустки
-    t = threading.Thread(target=schedule_vacations_arrange(), args=(), kwargs={})
-    t.setDaemon(True)
-    t.start()
+    # t = threading.Thread(target=schedule_vacations_arrange(), args=(), kwargs={})
+    # t.setDaemon(True)
+    # t.start()
+    # print('started')
+
+    schedule_vacations_arrange()
+
     return HttpResponse(status=200)
+
+
+@login_required(login_url='login')
+def edms_get_vacations(request):
+    vacations = [{
+        'id': vacation.id,
+        'begin': vacation.begin.strftime('%Y-%m-%d'),
+        'end': vacation.end.strftime('%Y-%m-%d'),
+        'employee': vacation.employee.pip,
+        'acting': vacation.acting.pip,
+        'started': vacation.started
+    } for vacation in Vacation.objects
+      .filter(is_active=True)]
+
+    return HttpResponse(json.dumps(vacations))
 
 
 @login_required(login_url='login')
