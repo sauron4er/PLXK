@@ -21,8 +21,6 @@ def schedule_vacations_arrange():
 
 def arrange_vacations():
     today = datetime.today()
-    print('arranged')
-    yesterday = today - timedelta(days=1)
     vacations = [{
         'id': vacation.id,
         'begin': vacation.begin,
@@ -32,9 +30,9 @@ def arrange_vacations():
         'is_active': vacation.is_active
     } for vacation in Vacation.objects
         .filter(is_active=True)
-        .filter(begin=today).filter(started=False) | Vacation.objects
+        .filter(begin__lte=today).filter(started=False) | Vacation.objects
         .filter(is_active=True)
-        .filter(end=yesterday).filter(started=True)]
+        .filter(end__lt=today).filter(started=True)]
 
     for vacation in vacations:
         if vacation['begin'].strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
