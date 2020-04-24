@@ -27,7 +27,8 @@ def arrange_vacations():
         'end': vacation.end,
         'employee': vacation.employee_id,
         'acting': vacation.acting_id,
-        'is_active': vacation.is_active
+        'is_active': vacation.is_active,
+        'started': vacation.started
     } for vacation in Vacation.objects
         .filter(is_active=True)
         .filter(begin__lte=today).filter(started=False) | Vacation.objects
@@ -35,7 +36,7 @@ def arrange_vacations():
         .filter(end__lt=today).filter(started=True)]
 
     for vacation in vacations:
-        if vacation['begin'].strftime('%Y-%m-%d') == today.strftime('%Y-%m-%d'):
+        if vacation['begin'].strftime('%Y-%m-%d') <= today.strftime('%Y-%m-%d') and not vacation['started']:
             start_vacation(vacation)
         else:
             deactivate_vacation(vacation)
