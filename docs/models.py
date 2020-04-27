@@ -66,8 +66,8 @@ class Order_doc(models.Model):
     canceled_by = models.ForeignKey('self', related_name='cancels_order', null=True, blank=True)
     cancels = models.ForeignKey('self', related_name='cancelled_by_order', null=True, blank=True)
     author = models.ForeignKey(User, related_name='Created_documents')
-    responsible = models.ForeignKey(User, related_name='Responsible_for_documents')
-    supervisory = models.ForeignKey(User, related_name='Supervisory_for_documents', null=True, blank=True)
+    responsible = models.ForeignKey(User, related_name='responsible_for_documents')
+    supervisory = models.ForeignKey(User, related_name='supervisory_for_documents', null=True, blank=True)
     is_act = models.BooleanField(default=True)
 
     def __str__(self):

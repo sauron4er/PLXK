@@ -1,1 +1,1 @@
-import '../../templates/docs/orders/orders.js'
+import '../../docs/templates/docs/orders/orders.js'

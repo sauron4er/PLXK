@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DxTable from '../../components/dx_table';
+import DxTable from 'templates/components/dx_table';
 import axios from 'axios';
 import Order from './order_edit';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

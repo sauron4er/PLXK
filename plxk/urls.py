@@ -1,4 +1,4 @@
-from django.conf.urls import url,include
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.conf import settings
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^reload/', board_views.reload, name='reload'),  # Якщо запит на 'boards/reload' - повертається пустий response
 
     url(r'^docs/', include('docs.urls', namespace='docs')),
+    url(r'^correspondence/', include('correspondence.urls', namespace='correspondence')),
     url(r'^tickets/', include('tickets.urls', namespace='tickets')),
     url(r'^gi/', include('gi.urls', namespace='gi')),
     url(r'^departments/$',  accounts_views.departments, name='departments'),

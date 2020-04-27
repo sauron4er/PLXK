@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'boards',
     'crm',
     'docs',
+    'correspondence',
     'gi',
     'polls',
     'tickets',

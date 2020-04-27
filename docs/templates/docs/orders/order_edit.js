@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Modal from 'react-responsive-modal';
 import {Document, Page} from 'react-pdf';
 import {getItemById} from 'templates/components/my_extras';
-import OrderMail from 'templates/docs/orders/order_mail';
+import OrderMail from 'templates//order_mail';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
