@@ -27,7 +27,7 @@ DEBUG = True
 
 # Мої налаштування ---------
 STAS_DEBUG = False
-DEV_PLACE = 'Work'  # Home або Work, це впливає на підключення до бд
+DEV_PLACE = 'Home'  # Home або Work, це впливає на підключення до бд
 # --------------------------
 
 ALLOWED_HOSTS = ['10.10.10.0/24']

@@ -1,7 +1,9 @@
 let path = require('path');
 let BundleTracker = require('webpack-bundle-tracker');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-let pathsToClean = ['./static/bundles/*.*'];
+let pathsToClean = [
+  './static/bundles/*.*',
+];
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // const isProduction = process.env.NODE_ENV === 'production';
 
@@ -13,7 +15,8 @@ module.exports = {
     archive: './static/index/archive_index.js',
     sub_docs: './static/index/sub_docs_index.js',
     plhk_ads: './static/index/plhk_ads_index.js',
-    orders: './static/index/orders.js'
+    orders: './static/index/orders.js',
+    correspondence: './static/index/correspondence.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),

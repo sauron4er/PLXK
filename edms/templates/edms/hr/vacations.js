@@ -2,10 +2,10 @@
 import React from 'react';
 import Modal from 'react-responsive-modal';
 import axios from 'axios';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTimes} from "@fortawesome/free-solid-svg-icons";
-import {getIndex} from "templates/components/my_extras";
-import querystring from "querystring";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {getIndex} from 'templates/components/my_extras';
+import querystring from 'querystring';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -29,7 +29,7 @@ class Vacations extends React.Component {
           vacations_list: response.data
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -45,7 +45,7 @@ class Vacations extends React.Component {
       .then((response) => {
         window.location.reload();
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   };
@@ -80,7 +80,7 @@ class Vacations extends React.Component {
 
   openModal = () => {
     this.setState({opened: true});
-    this.getVacationsList()
+    this.getVacationsList();
   };
 
   closeModal = () => {
@@ -103,44 +103,44 @@ class Vacations extends React.Component {
           <div className='modal-header'> </div>
           <div className='modal-body'>
             <If condition={vacations_list.length > 0}>
-            <table className='table table-sm table-striped table-bordered'>
-            <thead>
-              <tr>
-                <th className='text-center'>
-                  <small>Початок</small>
-                </th>
-                <th className='text-center'>
-                  <small>Кінець</small>
-                </th>
-                <th className='text-center'>
-                  <small>Ф.І.О.</small>
-                </th>
-                <th className='text-center'>
-                  <small>В.о.</small>
-                </th>
-                <th className='text-center'> </th>
-              </tr>
-            </thead>
-            <tbody>
-              <For each='vacation' index='idx' of={vacations_list}>
-                <tr key={idx} className={vacation.started ? 'bg-success' : ''}>
-                  <td className='text-center align-middle small'>{vacation.begin}</td>
-                  <td className='text-center align-middle small'>{vacation.end}</td>
-                  <td className='text-center align-middle small'>{vacation.employee}</td>
-                  <td className='text-center align-middle small'>{vacation.acting}</td>
-                  <td className='text-center align-middle small text-danger'>
-                    <button
-                      className='btn btn-sm btn-link py-0'
-                      onClick={(e) => this.delVacation(e, vacation.id)}
-                    >
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </td>
-                </tr>
-              </For>
-            </tbody>
-          </table>
-              </If>
+              <table className='table table-sm table-striped table-bordered'>
+                <thead>
+                  <tr>
+                    <th className='text-center'>
+                      <small>Початок</small>
+                    </th>
+                    <th className='text-center'>
+                      <small>Кінець</small>
+                    </th>
+                    <th className='text-center'>
+                      <small>Ф.І.О.</small>
+                    </th>
+                    <th className='text-center'>
+                      <small>В.о.</small>
+                    </th>
+                    <th className='text-center'> </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <For each='vacation' index='idx' of={vacations_list}>
+                    <tr key={idx} className={vacation.started ? 'bg-success' : ''}>
+                      <td className='text-center align-middle small'>{vacation.begin}</td>
+                      <td className='text-center align-middle small'>{vacation.end}</td>
+                      <td className='text-center align-middle small'>{vacation.employee}</td>
+                      <td className='text-center align-middle small'>{vacation.acting}</td>
+                      <td className='text-center align-middle small text-danger'>
+                        <button
+                          className='btn btn-sm btn-link py-0'
+                          onClick={(e) => this.delVacation(e, vacation.id)}
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                      </td>
+                    </tr>
+                  </For>
+                </tbody>
+              </table>
+            </If>
           </div>
           <div className='modal-footer'>
             <If condition={true}>

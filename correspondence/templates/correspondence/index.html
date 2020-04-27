@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Листування з клієнтами{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
 
 {% block content %}
-    <div class="container-fluid p-2">
-        Листування
+    <div class="container-fluid p-2" id="correspondence">
+        <script>
+            window.clients = {{ clients|safe }};
+        </script>
+        {% render_bundle 'correspondence' %}
     </div>
 {% endblock %}

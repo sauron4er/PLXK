@@ -2,37 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a0547f9a-d1b0-42dd-8dd8-a56462650488" name="Default" comment="180319">
-      <change afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_old.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/forms.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/templates/correspondence/clients.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/templates/correspondence/corr_table.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/templates/correspondence/index.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/correspondence/templates/correspondence/laws.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/index/correspondence.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/api/vacations.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/api/vacations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/administration_modules.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/constructor.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/doc_type_info.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/dragndrop.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/dragndrop_item.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/administration/modules.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/user_vacation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/templates/edms/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/main.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edms/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/edms/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/administration-ac43d5936c8e8615241f.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/archive-d6e9bbe3488d55960d2d.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/hr-f8c64943c20691e4dc94.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-2aa578ba38423d998318.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/orders-e696dab46759b1c92e78.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-7da107b1ead5184d8157.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-169f32ad335a2466b1bc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/bundles/vendors~pdfjsWorker-50abbd83ca21fa868e73.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/index/administration_index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/correspondence/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/correspondence/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/correspondence/templates/correspondence/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/correspondence/templates/correspondence/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/correspondence/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/correspondence/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/correspondence/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/correspondence/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/templates/docs/orders/order_edit.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/templates/docs/orders/order_edit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/templates/docs/orders/orders.html" beforeDir="false" afterPath="$PROJECT_DIR$/docs/templates/docs/orders/orders.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edms/templates/edms/hr/vacations.js" beforeDir="false" afterPath="$PROJECT_DIR$/edms/templates/edms/hr/vacations.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plxk/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/plxk/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/archive-7a1b895b9867e5f8b3b0.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/hr-29b6713ba12d381ab739.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/my_docs-120730d5bbd73c3e29dc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/orders-683369bcabd57d2659fe.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/plhk_ads-6481eb101199645574e2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/sub_docs-ed336668bb6e4a9504c0.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/bundles/vendors~pdfjsWorker-f7eb73ca113d2b4ef316.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack-stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/webpack-stats.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.config_before_debugging.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.config_before_debugging.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,14 +65,7 @@
         <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
         <item name="plxk" type="feb32156:DbDataSourceImpl" />
         <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="plxk: schema" type="ebfa3cd1:MariaImplModel$Schema" />
-      </path>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="plxk" type="feb32156:DbDataSourceImpl" />
-        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
-        <item name="plxk: schema" type="ebfa3cd1:MariaImplModel$Schema" />
-        <item name="tables" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="plxk: schema" type="76f4a085:MysqlImplModel$Schema" />
       </path>
     </expand>
     <select />
@@ -97,6 +85,7 @@
         <option value="HTML File" />
         <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="my React File" />
         <option value="Python Script" />
       </list>
     </option>
@@ -144,17 +133,18 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DatabaseDriversLRU" value="java.sql.Driver&#10;564bedf6-79ab-4c8e-8e3f-10aba5b81bb2" />
+    <property name="DatabaseDriversLRU" value="java.sql.Driver&#10;564bedf6-79ab-4c8e-8e3f-10aba5b81bb2&#10;mysql" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
     <property name="NewWatcherDialog.advanced.open" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="ToolWindowmanage.py@PLXK.ShowToolbar" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL&#10;Database Driver&#10;Sqlite (Xerial)" />
     <property name="database.console.LAST_STATE" value="false" />
-    <property name="javascript.nodejs.core.library.configured.version" value="10.15.3" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/edms/templates/edms/hr" />
+    <property name="javascript.nodejs.core.library.configured.version" value="12.16.1" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/correspondence/templates/correspondence" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.jscs" value="true" />
@@ -164,12 +154,12 @@
     <property name="node.js.path.for.package.standard" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.jscs" value="" />
-    <property name="node.js.selected.package.standard" value="$PROJECT_DIR$/../../../EDMS/PLXK/node_modules/eslint" />
+    <property name="node.js.selected.package.standard" value="E:/../EDMS/PLXK/node_modules/eslint" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.NodeInterpreter" value="project" />
-    <property name="prettierjs.PrettierConfiguration.Package" value="D:\Робота\Code\EDMS\PLXK\node_modules\prettier" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="C:\Users\Stas\AppData\Roaming\npm\node_modules\prettier" />
+    <property name="settings.editor.selected.configurable" value="fileTemplates" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/files/media/teams_logo" />
   </component>
@@ -183,18 +173,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\Code\PLXK\correspondence\templates\correspondence" />
+      <recent name="E:\Code\PLXK\static\index" />
       <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\hr" />
       <recent name="D:\Робота\Code\EDMS\PLXK\docs\api" />
       <recent name="D:\Робота\Code\EDMS\PLXK\plxk\api" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\static" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Code\PLXK\static\index" />
+      <recent name="E:\Code\PLXK\static\index\corr" />
       <recent name="D:\Робота\Code\EDMS\PLXK\static\css" />
       <recent name="D:\Робота\Code\EDMS\PLXK\templates\components" />
       <recent name="D:\Робота\Code\EDMS\PLXK\templates\docs\orders" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms\templates\edms\components" />
-      <recent name="D:\Робота\Code\EDMS\PLXK\edms" />
     </key>
   </component>
   <component name="RunManager" selected="Django server.PLXK">
@@ -259,7 +249,7 @@
       <option name="port" value="8000" />
       <option name="host" value="" />
       <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="http://127.0.0.1:8000/" />
+      <option name="browserUrl" value="" />
       <option name="runTestServer" value="false" />
       <option name="runNoReload" value="false" />
       <option name="useCustomRunCommand" value="false" />
@@ -440,6 +430,15 @@
       <workItem from="1585203238207" duration="2141000" />
       <workItem from="1585290524431" duration="32841000" />
       <workItem from="1586754493243" duration="6586000" />
+      <workItem from="1586841348745" duration="736000" />
+      <workItem from="1586842418673" duration="14997000" />
+      <workItem from="1586867880402" duration="109000" />
+      <workItem from="1587590096604" duration="110000" />
+      <workItem from="1587590334110" duration="323000" />
+      <workItem from="1587620400526" duration="26000" />
+      <workItem from="1587639953748" duration="4237000" />
+      <workItem from="1587963936087" duration="6234000" />
+      <workItem from="1587983192606" duration="7763000" />
     </task>
     <task id="LOCAL-00001" summary="33">
       <created>1515149538043</created>
@@ -686,58 +685,82 @@
     <option name="LAST_COMMIT_MESSAGE" value="180319" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1584957050005">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="552" y="183" key="#Prettier" timestamp="1587969234691">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="552" y="183" key="#Prettier/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587969234691" />
+    <state x="414" y="176" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586846819582">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584957050005" />
+    <state x="414" y="176" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1586846819582" />
     <state x="694" y="281" key="EnvironmentVariablesDialog" timestamp="1584956499961">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="694" y="281" key="EnvironmentVariablesDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584956499961" />
-    <state x="739" y="261" key="FileChooserDialogImpl" timestamp="1584687501531">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="739" y="264" key="FileChooserDialogImpl" timestamp="1586867987874">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="739" y="261" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1584687501531" />
-    <state width="1050" height="318" key="GridCell.Tab.0.bottom" timestamp="1586766509511">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="739" y="264" key="FileChooserDialogImpl/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1586867987874" />
+    <state width="1059" height="324" key="GridCell.Tab.0.bottom" timestamp="1587995904311">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
-    <state width="1050" height="318" key="GridCell.Tab.0.center" timestamp="1586766509511">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.0.bottom/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904311" />
+    <state width="1059" height="324" key="GridCell.Tab.0.center" timestamp="1587995904310">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
-    <state width="1050" height="318" key="GridCell.Tab.0.left" timestamp="1586766509511">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.0.center/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904310" />
+    <state width="1059" height="324" key="GridCell.Tab.0.left" timestamp="1587995904310">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
-    <state width="1050" height="318" key="GridCell.Tab.0.right" timestamp="1586766509511">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.0.left/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904310" />
+    <state width="1059" height="324" key="GridCell.Tab.0.right" timestamp="1587995904310">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509511" />
-    <state width="1050" height="318" key="GridCell.Tab.1.bottom" timestamp="1586766509446">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.0.right/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904310" />
+    <state width="1059" height="324" key="GridCell.Tab.1.bottom" timestamp="1587995904311">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.1.bottom/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
-    <state width="1050" height="318" key="GridCell.Tab.1.center" timestamp="1586766509446">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.1.bottom/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904311" />
+    <state width="1059" height="324" key="GridCell.Tab.1.center" timestamp="1587995904311">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.1.center/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
-    <state width="1050" height="318" key="GridCell.Tab.1.left" timestamp="1586766509446">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.1.center/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904311" />
+    <state width="1059" height="324" key="GridCell.Tab.1.left" timestamp="1587995904311">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.1.left/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
-    <state width="1050" height="318" key="GridCell.Tab.1.right" timestamp="1586766509446">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.1.left/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904311" />
+    <state width="1059" height="324" key="GridCell.Tab.1.right" timestamp="1587995904311">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state width="1050" height="318" key="GridCell.Tab.1.right/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586766509446" />
-    <state x="461" y="151" key="SettingsEditor" timestamp="1586765139915">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1059" height="324" key="GridCell.Tab.1.right/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587995904311" />
+    <state x="618" y="172" width="1160" height="715" key="SettingsEditor" timestamp="1587971109334">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="461" y="151" key="SettingsEditor/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586765139915" />
-    <state x="655" y="342" key="com.intellij.ide.util.TipDialog" timestamp="1586754517137">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="618" y="172" width="1160" height="715" key="SettingsEditor/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587971109334" />
+    <state x="681" y="266" width="570" height="524" key="StructurePopup" timestamp="1587993823178">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="681" y="266" width="570" height="524" key="StructurePopup/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587993823178" />
+    <state x="92" y="92" width="1736" height="866" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1587969200114">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="92" y="92" width="1736" height="866" key="com.intellij.history.integration.ui.views.FileHistoryDialog/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587969200114" />
+    <state x="655" y="345" key="com.intellij.ide.util.TipDialog" timestamp="1587983204994">
+      <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="655" y="342" key="com.intellij.ide.util.TipDialog/0.0.1920.1040/1920.0.1920.1040@0.0.1920.1040" timestamp="1586754517137" />
+    <state x="655" y="345" key="com.intellij.ide.util.TipDialog/1920.0.1920.1050/0.0.1920.1050@0.0.1920.1050" timestamp="1587983204994" />
     <state x="1920" y="0" width="1326" height="669" maximized="true" key="dock-window-1" timestamp="1586754510539">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
@@ -753,37 +776,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>659</line>
+          <line>633</line>
           <option name="timeStamp" value="395" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>561</line>
+          <line>539</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>784</line>
+          <line>754</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>456</line>
-          <option name="timeStamp" value="398" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>350</line>
-          <option name="timeStamp" value="399" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1762</line>
+          <line>1566</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1727</line>
+          <line>1531</line>
           <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -793,38 +806,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1383</line>
+          <line>1187</line>
           <option name="timeStamp" value="442" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1470</line>
+          <line>1274</line>
           <option name="timeStamp" value="460" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>967</line>
+          <line>898</line>
           <option name="timeStamp" value="467" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/edms/views.py</url>
-          <line>1443</line>
+          <line>1247</line>
           <option name="timeStamp" value="468" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
-          <line>59</line>
-          <option name="timeStamp" value="473" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
-          <line>81</line>
-          <option name="timeStamp" value="475" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/edms/api/vacations.py</url>
-          <line>74</line>
-          <option name="timeStamp" value="476" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
