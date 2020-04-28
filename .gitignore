@@ -3,9 +3,7 @@
 \*\__pycache__
 *.py[cod]
 *.pyc
-webpack-config.js
-webpack-stats.json
 files/media/edms_files/
 .idea/
-/*/workspace.xml
-\*\workspace.xml
+.idea
+.idea\
