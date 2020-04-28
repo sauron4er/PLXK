@@ -6,7 +6,7 @@ import {ToastContainer, toast} from 'react-toastify'; // спливаючі по
 import 'react-toastify/dist/ReactToastify.min.css';
 import axios from 'axios';
 import Info from './info';
-import NewFilesList from '../../../../templates/components/new_files_list';
+import NewFilesList from 'templates/components/files_uploader/new_files_list';
 import Buttons from './buttons';
 import NewResolutions from './doc_info_modules/modals/new_resolutions';
 import NewAcquaints from './doc_info_modules/modals/new_acquaints';

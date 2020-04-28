@@ -12,3 +12,15 @@ class DelClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['is_active']
+
+
+class NewLawForm(forms.ModelForm):
+    class Meta:
+        model = Law
+        fields = ['name', 'url']
+
+
+class DelLawForm(forms.ModelForm):
+    class Meta:
+        model = Law
+        fields = ['is_active']

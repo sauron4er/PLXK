@@ -27,20 +27,22 @@ class HR extends React.Component {
   };
 
   changeLists = (name, list) => {
-    if (name === 'deps') {
-      this.setState({
-        deps: list
-      });
-      console.log('asd');
-    } else if (name === 'emps') {
-      this.setState({
-        emps: list
-      });
-    } else if (name === 'seats') {
-      this.setState({
-        seats: list
-      });
-    }
+    this.setState({
+      [name]: list
+    });
+    // if (name === 'deps') {
+    //   this.setState({
+    //     deps: list
+    //   });
+    // } else if (name === 'emps') {
+    //   this.setState({
+    //     emps: list
+    //   });
+    // } else if (name === 'seats') {
+    //   this.setState({
+    //     seats: list
+    //   });
+    // }
   };
 
   notify = (message) =>

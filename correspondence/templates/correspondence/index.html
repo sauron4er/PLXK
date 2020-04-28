@@ -8,6 +8,7 @@
     <div class="container-fluid p-2" id="correspondence">
         <script>
             window.clients = {{ clients|safe }};
+            window.laws = {{ laws|safe }};
         </script>
         {% render_bundle 'correspondence' %}
     </div>

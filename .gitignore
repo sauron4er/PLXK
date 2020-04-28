@@ -1,9 +1,8 @@
 \node_modules
 *iml
+files/media/edms_files/
+files/media/correspondence/
+\.idea
 \*\__pycache__
 *.py[cod]
 *.pyc
-files/media/edms_files/
-.idea/
-.idea
-.idea\

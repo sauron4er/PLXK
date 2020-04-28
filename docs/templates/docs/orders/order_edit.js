@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import FilesUpload from 'templates/components/files_upload';
+import FilesUpload from 'templates/components/files_uploader/files_upload';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import axios from 'axios';

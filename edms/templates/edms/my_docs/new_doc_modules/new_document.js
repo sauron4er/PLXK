@@ -12,7 +12,7 @@ import Text from './text';
 import Recipient from './recipient';
 import RecipientChief from './recipient_chief';
 import Articles from './articles';
-import FilesUpload from 'templates/components/files_upload';
+import FilesUpload from 'templates/components/files_uploader/files_upload';
 import AcquaintList from './acquaint_list';
 import ApprovalList from './approval_list';
 import SignList from './sign_list';

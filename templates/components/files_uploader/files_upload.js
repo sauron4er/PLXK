@@ -2,7 +2,7 @@
 import React from 'react';
 import Files from 'react-files';
 import 'static/css/files_uploader.css';
-import NewFilesList from 'templates/components/new_files_list';
+import NewFilesList from 'templates/components/files_uploader/new_files_list';
 
 class FilesUpload extends React.Component {
   onFilesChange = (new_files) => {
@@ -27,7 +27,7 @@ class FilesUpload extends React.Component {
     const {fieldName, oldFiles} = this.props;
     return (
       <>
-        <If condition={fieldName.length > 0}><div>{fieldName}:</div></If>
+        <If condition={fieldName.length > 0}><div className='mr-2'>{fieldName}:</div></If>
         
         <If condition={this.props.files.length > 0}>
           <NewFilesList files={this.props.files} fileRemove={this.filesRemoveOne} />
