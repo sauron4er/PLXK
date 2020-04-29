@@ -113,7 +113,7 @@ class Laws extends React.Component {
   arrangeLawFiles = (files) => {
     return (
       <For each='file' index='idx' of={files}>
-        <div key={file.id}>
+        <div key={idx} className={files.length > 1 ? 'mb-2' : null}>
           <a href={'../../media/' + file.file} target='_blank'>
             {file.name}{' '}
           </a>
@@ -197,7 +197,7 @@ class Laws extends React.Component {
                     {law.url}
                   </a>
                 </td>
-                <td className='align-middle col-3'>{this.arrangeLawFiles(law.files)}</td>
+                <td className='align-middle col-3 p-0'>{this.arrangeLawFiles(law.files)}</td>
                 <td className='text-center align-middle small text-danger col-1'>
                   <button className='btn btn-sm py-0' onClick={(e) => this.postDelLaw(e, law.id)}>
                     <FontAwesomeIcon icon={faTimes} />

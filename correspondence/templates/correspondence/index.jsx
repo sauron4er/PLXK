@@ -2,30 +2,40 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CorrTable from './corr_table';
+import Request from "./request/index";
 import Clients from './clients';
 import Laws from './laws';
+import corrStore from "./store";
 
 class Correspondence extends React.Component {
   state = {
-    view: 'laws', // table, clients, laws
+    view: 'request', // table, request, clients, laws
+    requests: window.requests,
+    request: {},
     clients: window.clients,
     laws: window.laws,
   };
 
-  componentDidMount() {}
-
-  onRowClick = (clicked_row) => {
-    this.setState({
-      row: clicked_row,
-      table_view: false
-    });
-  };
+  componentDidMount() {
+    corrStore.requests = window.requests;
+    corrStore.laws = window.laws;
+    corrStore.clients = window.clients;
+  }
 
   changeView = (e, name) => {
     e.preventDefault();
     this.setState({
       view: name
     });
+  };
+
+  showRequest = (request) => {
+    if (request) {
+      this.setState({
+        view: 'request',
+        request: request
+      })
+    }
   };
 
   getButtonStyle = (name) => {
@@ -35,14 +45,14 @@ class Correspondence extends React.Component {
     return 'btn btn-sm btn-secondary';
   };
 
-  changeListFromChildren = (name, new_list) => {
+  changeListFromChild = (name, new_list) => {
     this.setState({
       [name]: new_list
     });
   };
 
   render() {
-    const {view, clients, laws, corr} = this.state;
+    const {view, requests, request, clients, laws} = this.state;
     return (
       <>
         <div className='btn-group mb-2' role='group' aria-label='Basic example'>
@@ -71,13 +81,16 @@ class Correspondence extends React.Component {
 
         <Choose>
           <When condition={view === 'table'}>
-            <CorrTable />
+            <CorrTable requests={requests} showRequest={this.showRequest} />
+          </When>
+          <When condition={view === 'request'}>
+            <Request close={this.changeView} />
           </When>
           <When condition={view === 'clients'}>
-            <Clients clients={clients} changeList={this.changeListFromChildren} />
+            <Clients clients={clients} changeList={this.changeListFromChild} />
           </When>
           <When condition={view === 'laws'}>
-            <Laws laws={laws} changeList={this.changeListFromChildren} />
+            <Laws laws={laws} changeList={this.changeListFromChild} />
           </When>
         </Choose>
       </>

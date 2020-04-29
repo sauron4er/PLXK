@@ -19,18 +19,13 @@ def index(request):
         'id': law.pk,
         'name': law.name,
         'url': law.url,
-    } for law in
-        Law.objects.only('id', 'name', 'url').filter(is_active=True)]
-
-    for law in laws:
-        files = [{
+        'files': [{
             'id': file.pk,
             'name': file.name,
             'file': file.file.name,
         } for file in
-            Law_file.objects.only('id', 'name', 'file').filter(law_id=law['id']).filter(is_active=True)]
-
-        law.update({'files': files})
+            Law_file.objects.only('id', 'name', 'file').filter(law_id=law.id).filter(is_active=True)]
+    } for law in Law.objects.only('id', 'name', 'url').filter(is_active=True)]
 
     return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
                                                          'laws': json.dumps(laws)},)
