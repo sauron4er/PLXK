@@ -2,14 +2,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CorrTable from './corr_table';
-import Request from "./request/index";
+import Request from "./request/request";
 import Clients from './clients';
 import Laws from './laws';
 import corrStore from "./store";
 
 class Correspondence extends React.Component {
   state = {
-    view: 'request', // table, request, clients, laws
+    view: 'laws', // table, request, clients, laws
     requests: window.requests,
     request: {},
     clients: window.clients,

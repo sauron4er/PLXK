@@ -7,7 +7,6 @@ import { view, store } from '@risingstack/react-easy-state';
 import corrStore from "../store";
 import Client from "./client";
 import Answer from "./answer";
-
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';

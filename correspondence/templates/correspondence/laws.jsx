@@ -1,15 +1,18 @@
 'use strict';
 import React from 'react';
-import axios from 'axios';
 import querystring from 'querystring';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import {view, store} from '@risingstack/react-easy-state';
+import corrStore from './store';
+import axios from 'axios';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+
 
 const notify = (message) =>
   toast.error(message, {
@@ -189,7 +192,7 @@ class Laws extends React.Component {
             </tr>
           </thead>
           <tbody>
-            <For each='law' index='idx' of={laws}>
+            <For each='law' index='idx' of={corrStore.laws}>
               <tr key={idx}>
                 <td className='align-middle col-4'>{law.name}</td>
                 <td className='align-middle col-4'>

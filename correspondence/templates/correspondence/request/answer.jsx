@@ -14,10 +14,13 @@ class Answer extends React.Component {
         <label className='col-lg-1' htmlFor='author'>
           Відповідь:
         </label>
-        <input
-          className='w-25 ml-1'
-          onChange={this.onChange}
+        <textarea
+          className='form-control full_width'
+          name='preamble'
+          id='preamble'
           value={corrStore.request.answer}
+          onChange={this.onChange}
+          maxLength={4000}
         />
       </div>
     );
