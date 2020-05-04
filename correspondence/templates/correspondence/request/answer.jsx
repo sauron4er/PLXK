@@ -10,14 +10,14 @@ class Answer extends React.Component {
 
   render() {
     return (
-      <div className='row align-items-center mt-1 mr-lg-1'>
-        <label className='col-lg-1' htmlFor='author'>
+      <div className='d-flex align-items-center mt-1'>
+        <label className='flex-grow-1 text-nowrap mr-1' htmlFor='answer'>
           Відповідь:
         </label>
         <textarea
-          className='form-control full_width'
-          name='preamble'
-          id='preamble'
+          className='form-control'
+          name='answer'
+          id='answer'
           value={corrStore.request.answer}
           onChange={this.onChange}
           maxLength={4000}

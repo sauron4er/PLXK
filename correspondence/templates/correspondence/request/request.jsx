@@ -2,14 +2,10 @@
 import React from 'react';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import axios from 'axios';
-import { view, store } from '@risingstack/react-easy-state';
-import corrStore from "../store";
-import Client from "./client";
-import Answer from "./answer";
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+import {view, store} from '@risingstack/react-easy-state';
+import corrStore from '../store';
+import Client from './client';
+import Answer from './answer';
 
 const notify = (message) =>
   toast.error(message, {
@@ -22,53 +18,61 @@ const notify = (message) =>
   });
 
 class Request extends React.Component {
-  state = {
+  state = {};
 
-  };
-
-  addRequest = (e) => {
+  postNewRequest = (e) => {
     // isAllFieldsFilled(request)
     console.log(corrStore.request.answer);
-    this.props.close(e, 'table');
+    this.addRequest();
   };
 
-  delRequest = (e) => {
-    this.props.close(e, 'table');
+  postDelRequest = (e) => {
+    this.removeRequest();
   };
 
-  changeRequestKey = (key, value) => {
-    this.setState({
-      [key]: value,
-    })
-  };
+  addRequest = () => {};
+
+  removeRequest = () => {};
 
   render() {
     const {} = this.state;
 
     return (
-      <div>
-        <button className='btn btn-outline-success' onClick={(e) => this.props.close(e, 'table')}>
-          Назад
-        </button>
+      <div className='shadow-lg p-3 mb-5 bg-white rounded'>
+        <div className='modal-header d-flex'>
+          <button className='btn btn-outline-success' onClick={(e) => this.props.close(e, 'table')}>
+            Назад
+          </button>
+          <h5 className='ml-auto'>Додання запиту</h5>
+        </div>
+
         <div className='modal-body'>
-          <Client/>
+          <Client />
+          <hr />
           <div>Лист-запит (файл eml)</div>
-          <Answer/>
+          <hr />
+          <Answer />
+          <hr />
           <div>Файли відповіді</div>
+          <hr />
           <div>Законодавство (декілька!)</div>
+          <hr />
           <div>Дата запиту</div>
+          <hr />
           <div>Термін виконання</div>
+          <hr />
           <div>Відповідальний</div>
+          <hr />
           <div>Відповідальний за надання відповіді</div>
         </div>
         <div className='modal-footer'>
           <button className='btn btn-outline-danger' onClick={this.test}>
             test
           </button>
-          <button className='btn btn-outline-danger' onClick={this.delRequest}>
+          <button className='btn btn-outline-danger' onClick={this.postDelRequest}>
             Видалити
           </button>
-          <button className='btn btn-outline-success' onClick={this.addRequest}>
+          <button className='btn btn-outline-success' onClick={this.postNewRequest}>
             Зберегти
           </button>
         </div>
@@ -80,7 +84,6 @@ class Request extends React.Component {
   }
 
   static defaultProps = {
-    request: {},
     close: () => {}
   };
 }

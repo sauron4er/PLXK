@@ -1,14 +1,13 @@
 'use strict';
 import React from 'react';
-import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import querystring from 'querystring';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+import {view, store} from '@risingstack/react-easy-state';
+import corrStore from './store';
+import {axiosPostRequest} from 'templates/components/axios_requests';
+
 
 const notify = (message) =>
   toast.error(message, {
@@ -22,7 +21,6 @@ const notify = (message) =>
 
 class Clients extends React.Component {
   state = {
-    clients: this.props.clients,
     new_name: ''
   };
 
@@ -30,79 +28,61 @@ class Clients extends React.Component {
     this.setState({new_name: e.target.value});
   };
 
+  isNameFilled = () => {
+    const {new_name} = this.state;
+    if (new_name?.length) {
+      return true;
+    } else {
+      notify('Поле "Назва" обов’язкове для заповнення');
+      return false;
+    }
+  };
+
   postNewClient = (e) => {
     e.preventDefault();
     const {new_name} = this.state;
-    if (new_name) {
-      axios({
-        method: 'post',
-        url: 'new_client/',
-        data: querystring.stringify({
-          name: new_name
-        }),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-        .then((response) => {
-          this.addClient(response.data);
-        })
-        .catch((error) => {
-          console.log('error: ' + error);
-        });
-    } else {
-      notify('Поле "Назва" обов’язкове для заповнення')
+    if (this.isNameFilled()) {
+      let formData = new FormData();
+      formData.append('name', new_name);
+
+      axiosPostRequest('new_client/', formData)
+        .then((response) => this.addClient(response))
+        .catch((error) => notify(error));
     }
   };
 
   postDelClient = (e, id) => {
     e.preventDefault();
-    axios({
-      method: 'post',
-      url: 'del_client/',
-      data: querystring.stringify({
-        id: id,
-        is_active: false
-      }),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
-      .then((response) => {
-        this.removeClient(response.data)
-      })
-      .catch((error) => {
-        console.log('error: ' + error);
-      });
+    let formData = new FormData();
+    formData.append('id', id);
+    formData.append('is_active', false);
+
+    axiosPostRequest('del_client/', formData)
+      .then((response) => this.removeClient(response))
+      .catch((error) => this.notify(error));
   };
-  
+
   addClient = (id) => {
-    const {clients, new_name} = this.state;
-    const new_client = {
+    const {new_name} = this.state;
+    corrStore.clients.push({
       id: id,
       name: new_name
-    };
-    clients.push(new_client);
+    });
     this.setState({
-      clients: clients,
       new_name: ''
     });
-    this.props.changeList('clients', clients);
   };
-  
+
   removeClient = (id) => {
-    const {clients} = this.state;
-    const new_clients = clients.filter(client => client.id !== id);
-    this.setState({clients: new_clients});
-    this.props.changeList('clients', new_clients);
+    corrStore.clients = corrStore.clients.filter((client) => client.id !== id);
   };
 
   render() {
-    const {clients, new_name} = this.state;
+    const {new_name} = this.state;
 
     return (
       <>
-        <hr/>
+        <hr />
         <div className='font-weight-bold mb-1'>Новий клієнт:</div>
         <div className='d-flex w-100 align-items-center mb-2'>
           <label htmlFor='new_name'>Назва:</label>
@@ -121,7 +101,7 @@ class Clients extends React.Component {
             Додати
           </button>
         </div>
-        <hr/>
+        <hr />
         <table className='table table-sm table-striped table-bordered'>
           <thead>
             <tr>
@@ -132,11 +112,14 @@ class Clients extends React.Component {
             </tr>
           </thead>
           <tbody>
-            <For each='client' index='idx' of={clients}>
-              <tr>
+            <For each='client' index='idx' of={corrStore.clients}>
+              <tr key={idx}>
                 <td className='align-middle col-11'>{client.name}</td>
                 <td className='text-center align-middle small text-danger col-1'>
-                  <button className='btn btn-sm py-0' onClick={(e) => this.postDelClient(e, client.id)}>
+                  <button
+                    className='btn btn-sm py-0'
+                    onClick={(e) => this.postDelClient(e, client.id)}
+                  >
                     <FontAwesomeIcon icon={faTimes} />
                   </button>
                 </td>
@@ -149,11 +132,6 @@ class Clients extends React.Component {
       </>
     );
   }
-
-  static defaultProps = {
-    clients: [],
-    changeList: () => {},
-  };
 }
 
-export default Clients;
+export default view(Clients);

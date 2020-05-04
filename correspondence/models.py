@@ -28,7 +28,7 @@ class Law_file(models.Model):
 
 class Request(models.Model):
     product_type = models.ForeignKey(Product_type, related_name='requests')
-    clients_name = models.ForeignKey(Client, related_name='requests')
+    client = models.ForeignKey(Client, related_name='requests')
     request_file = models.FileField(upload_to='correspondence/requests/%Y/%m')
     request_date = models.DateTimeField()
     request_term = models.DateTimeField()

@@ -9,7 +9,7 @@ import corrStore from "./store";
 
 class Correspondence extends React.Component {
   state = {
-    view: 'laws', // table, request, clients, laws
+    view: 'request', // table, request, clients, laws
     requests: window.requests,
     request: {},
     clients: window.clients,
@@ -17,7 +17,7 @@ class Correspondence extends React.Component {
   };
 
   componentDidMount() {
-    corrStore.requests = window.requests;
+    window.requests ? corrStore.requests = window.requests : [];
     corrStore.laws = window.laws;
     corrStore.clients = window.clients;
   }
@@ -90,7 +90,7 @@ class Correspondence extends React.Component {
             <Clients clients={clients} changeList={this.changeListFromChild} />
           </When>
           <When condition={view === 'laws'}>
-            <Laws laws={laws} changeList={this.changeListFromChild} />
+            <Laws/>
           </When>
         </Choose>
       </>

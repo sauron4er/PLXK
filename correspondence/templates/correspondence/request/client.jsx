@@ -18,11 +18,10 @@ class Client extends React.Component {
 
   render() {
     const {client_name} = this.state;
-    const {clients} = corrStore;
 
     return (
       <div className='row align-items-center mt-1 mr-lg-1'>
-        <label className='col-lg-1' htmlFor='author'>
+        <label className='col-lg-1' htmlFor='client'>
           Клієнт:
         </label>
         <select
@@ -35,7 +34,7 @@ class Client extends React.Component {
           <option key={0} data-key={0} value='0'>
             ------------
           </option>
-          {clients.map((emp) => {
+          {corrStore.clients.map((emp) => {
             return (
               <option key={emp.id} data-key={emp.id} value={emp.name}>
                 {emp.name}

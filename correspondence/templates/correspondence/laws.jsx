@@ -1,17 +1,13 @@
 'use strict';
 import React from 'react';
-import querystring from 'querystring';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import FilesUpload from 'templates/components/files_uploader/files_upload';
-import {ToastContainer, toast} from 'react-toastify';
+import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
+import FilesUpload from 'templates/components/files_uploader/files_upload';
+import { axiosPostRequest } from 'templates/components/axios_requests';
 import corrStore from './store';
-import axios from 'axios';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 
 const notify = (message) =>
@@ -26,7 +22,6 @@ const notify = (message) =>
 
 class Laws extends React.Component {
   state = {
-    laws: this.props.laws,
     new_name: '',
     new_url: '',
     files: []
@@ -36,81 +31,67 @@ class Laws extends React.Component {
     this.setState({[e.target.name]: e.target.value});
   };
 
+  isNameAndUrlFilled = () => {
+    const {new_name, new_url} = this.state;
+    if (new_name && new_url) {
+      return true
+    }
+    else {
+      notify('Поля "Назва" та "Посилання" обов’язкові для заповнення');
+      return false
+    }
+  };
+
   postNewLaw = (e) => {
     e.preventDefault();
+
     const {new_name, new_url, files} = this.state;
-    if (new_name && new_url) {
+    if (this.isNameAndUrlFilled()) {
       let formData = new FormData();
       formData.append('name', new_name);
       formData.append('url', new_url);
-      if (files?.length > 0) {
+      if (files?.length) {
         files.map((file) => {
           formData.append('files', file);
         });
       }
-      axios({
-        method: 'post',
-        url: 'new_law/',
-        data: formData,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
-        .then((response) => {
-          this.addLaw(response.data);
-        })
-        .catch((error) => {
-          console.log('error: ' + error);
-        });
-    } else {
-      notify('Поля "Назва" та "Посилання" обов’язкові для заповнення');
+
+      axiosPostRequest('new_law/', formData)
+        .then(response => this.addLaw(response))
+        .catch(error => notify(error));
     }
   };
 
   postDelLaw = (e, id) => {
     e.preventDefault();
-    axios({
-      method: 'post',
-      url: 'del_law/',
-      data: querystring.stringify({
-        id: id,
-        is_active: false
-      }),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
-      .then((response) => {
-        this.removeLaw(response.data);
-      })
-      .catch((error) => {
-        console.log('error: ' + error);
-      });
+
+    let formData = new FormData();
+      formData.append('id', id);
+      formData.append('is_active', false);
+
+    axiosPostRequest('del_law/', formData)
+      .then(response => this.removeLaw(response))
+      .catch(error => this.notify(error));
   };
 
   addLaw = (id) => {
-    const {laws, new_name, new_url, files} = this.state;
-    const new_law = {
+    const {new_name, new_url, files} = this.state;
+
+    corrStore.laws.push({
       id: id,
       name: new_name,
       url: new_url,
       files: files
-    };
-    laws.push(new_law);
+    });
     this.setState({
-      laws: laws,
       new_name: '',
       new_url: '',
       files: []
     });
-    this.props.changeList('laws', laws);
   };
 
   removeLaw = (id) => {
-    const {laws} = this.state;
-    const new_laws = laws.filter((law) => law.id !== id);
-    this.setState({laws: new_laws});
-    this.props.changeList('laws', new_laws);
+    corrStore.laws = corrStore.laws.filter((law) => law.id !== id);
   };
 
   arrangeLawFiles = (files) => {
@@ -132,7 +113,7 @@ class Laws extends React.Component {
   };
 
   render() {
-    const {laws, new_name, new_url, files} = this.state;
+    const {new_name, new_url, files} = this.state;
 
     return (
       <>
@@ -215,11 +196,6 @@ class Laws extends React.Component {
       </>
     );
   }
-
-  static defaultProps = {
-    laws: [],
-    changeList: () => {}
-  };
 }
 
-export default Laws;
+export default view(Laws);

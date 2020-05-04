@@ -27,8 +27,18 @@ def index(request):
             Law_file.objects.only('id', 'name', 'file').filter(law_id=law.id).filter(is_active=True)]
     } for law in Law.objects.only('id', 'name', 'url').filter(is_active=True)]
 
+    requests = [{
+        'id': request.pk,
+        'product': request.product_type_id,
+        'client_name': request.client_name,
+        'request_date': request.request_date,
+        'request_term': request.request_term,
+        'request_responsible': request.responsible.last_name + ' ' + request.responsible.first_name,
+    } for request in Request.objects.all().filter(is_active=True)]
+
     return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
-                                                         'laws': json.dumps(laws)},)
+                                                         'laws': json.dumps(laws),
+                                                         'requests': json.dumps(requests)})
 
 
 #  --------------------------------------------------- Clients

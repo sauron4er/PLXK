@@ -1,10 +1,8 @@
 'use strict';
 import React from 'react';
-import axios from 'axios';
+import {view, store} from '@risingstack/react-easy-state';
+import corrStore from './store';
 import DxTable from 'templates/components/dx_table';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 const columns = [
   {name: 'id', title: 'id'},
@@ -42,12 +40,11 @@ class CorrTable extends React.Component {
 
   render() {
     const {main_div_height} = this.state;
-    const {requests} = this.props;
     return (
       <div ref={this.getMainDivRef}>
         <button className='btn btn-outline-success' onClick={this.newRequest}>Додати запит</button>
         <DxTable
-          rows={requests}
+          rows={corrStore.requests}
           columns={columns}
           colWidth={col_width}
           onRowClick={this.onRowClick}
@@ -59,9 +56,8 @@ class CorrTable extends React.Component {
   }
 
   static defaultProps = {
-    requests: [],
     showRequest: () => {}
   };
 }
 
-export default CorrTable;
+export default view(CorrTable);
