@@ -7,11 +7,11 @@ import FilesUpload from 'templates/components/files_uploader/files_upload';
 class RequestFile extends React.Component {
   deleteFile = (e) => {
     e.preventDefault();
-    corrStore.old_eml_file = {};
+    corrStore.request.old_eml_file = {};
   };
 
   onFilesChange = (e) => {
-    corrStore.new_eml_file = e.target.value;
+    corrStore.request.new_eml_file = e.target.value;
   };
 
   render() {
@@ -19,7 +19,7 @@ class RequestFile extends React.Component {
       <>
         <div>Лист запиту (.eml)</div>
         <Choose>
-          <When condition={corrStore.request.old_eml_file.file}>
+          <When condition={corrStore.request.old_eml_file?.file}>
             <a href={'../../media/' + corrStore.request.old_eml_file.file} target='_blank'>
               {corrStore.request.old_eml_file.name}{' '}
             </a>
@@ -30,7 +30,7 @@ class RequestFile extends React.Component {
           <Otherwise>
             <FilesUpload
               onChange={this.onFilesChange}
-              files={corrStore.new_eml_file}
+              files={corrStore.request.new_eml_file}
               fieldName={''}
               multiple={false}
             />

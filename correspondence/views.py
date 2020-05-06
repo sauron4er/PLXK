@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 from .models import Client, Product_type, Law, Law_file, Request, Answer_file
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm
+from accounts.models import UserProfile
 
 
 def index(request):
@@ -27,6 +28,15 @@ def index(request):
             Law_file.objects.only('id', 'name', 'file').filter(law_id=law.id).filter(is_active=True)]
     } for law in Law.objects.only('id', 'name', 'url').filter(is_active=True)]
 
+    employees = [{
+        'id': user.pk,
+        'name': user.pip,
+    } for user in UserProfile.objects.only('id', 'pip')
+        .filter(is_active=True)
+        .filter(is_correspondence_view=True)
+        # .filter(is_it_admin=False)
+    ]
+
     requests = [{
         'id': request.pk,
         'product': request.product_type_id,
@@ -38,7 +48,8 @@ def index(request):
 
     return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
                                                          'laws': json.dumps(laws),
-                                                         'requests': json.dumps(requests)})
+                                                         'requests': json.dumps(requests),
+                                                         'employees': json.dumps(employees)})
 
 
 #  --------------------------------------------------- Clients
@@ -112,4 +123,26 @@ def del_law(request):
     except Exception as err:
         raise err
 
+
 #  --------------------------------------------------- Requests
+def new_request(request):
+    try:
+        asd = json.loads(request.POST)
+        test=1
+    except Exception as err:
+        raise err
+
+
+def edit_request(request):
+    try:
+        asd = json.loads(request.POST['request'])
+        test=1
+    except Exception as err:
+        raise err
+
+
+def del_request(request):
+    try:
+        test=1
+    except Exception as err:
+        raise err

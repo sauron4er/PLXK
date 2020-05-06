@@ -1,82 +1,96 @@
 .full_width {
-    width: 100%;
+  width: 100%;
 }
 
 .css_notification {
-    position: fixed;
-    /*top: 0;*/
-    /*left: 0;*/
-    /*width: 100vw;*/
-    /*height: 100vh;*/
+  position: fixed;
+  /*top: 0;*/
+  /*left: 0;*/
+  /*width: 100vw;*/
+  /*height: 100vh;*/
 }
 
 .css_main_div {
-    margin: auto;
-    height: 72%;
-    width: 98vw;
-    position: absolute;
+  margin: auto;
+  height: 72%;
+  width: 98vw;
+  position: absolute;
 }
 
 .css_height_100 {
-    height: 100%;
+  height: 100%;
 }
 
 .css_height_95 {
-    height: 95%;
+  height: 95%;
 }
 
 .width_40vh {
-    width: 40vw
+  width: 40vw;
 }
 
 .css_table_font {
-    font-size: 0.8rem;
+  font-size: 0.8rem;
 }
 
 .css_dx_table:hover {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .css_dx_table:focus {
-    background-color: #e6e6e6;
+  background-color: #e6e6e6;
 }
 
 .css_decree_article {
-    border: solid #ebebeb 1px;
-    -moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-    padding: 0 5px;
-    margin-bottom: 5px;
+  border: solid #ebebeb 1px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  padding: 0 5px;
+  margin-bottom: 5px;
 }
 
 .css_multiline {
-    white-space: pre-line;
+  white-space: pre-line;
 }
 
-.css_flash_button{
-	background: #ff3336;
-	color:#fff;
+.css_flash_button {
+  background: #ff3336;
+  color: #fff;
 
-	animation-name: flash;
-	animation-duration: 1.2s;
-	animation-timing-function: linear;
-	animation-iteration-count: infinite;
+  animation-name: flash;
+  animation-duration: 1.2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 
-	/*Firefox 1+*/
-	-webkit-animation-name: flash;
-	-webkit-animation-duration: 1.2s;
-	-webkit-animation-timing-function: linear;
-	-webkit-animation-iteration-count: infinite;
+  /*Firefox 1+*/
+  -webkit-animation-name: flash;
+  -webkit-animation-duration: 1.2s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
 
-	/*Safari 3-4*/
-	-moz-animation-name: flash;
-	-moz-animation-duration: 1.2s;
-	-moz-animation-timing-function: linear;
-	-moz-animation-iteration-count: infinite;
+  /*Safari 3-4*/
+  -moz-animation-name: flash;
+  -moz-animation-duration: 1.2s;
+  -moz-animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+}
+
+.css_selected_law {
+  display: flex;
+  align-items: start;
+  margin-bottom: 10px;
+  border-style: inset;
+  padding: 10px;
 }
 
 @keyframes flash {
-    0% { opacity: 1.0; }
-    50% { opacity: 0.1; }
-    100% { opacity: 1.0; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
 }

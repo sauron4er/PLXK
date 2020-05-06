@@ -9,9 +9,7 @@ const columns = [
   {name: 'name', title: 'Назва'}
 ];
 
-const col_width = [
-  {columnName: 'id', width: 30},
-];
+const col_width = [{columnName: 'id', width: 30}];
 
 class CorrTable extends React.Component {
   state = {
@@ -31,18 +29,21 @@ class CorrTable extends React.Component {
 
   newRequest = (e) => {
     e.preventDefault();
-    this.props.showRequest({})
+    this.props.showRequest();
   };
 
   onRowClick = (row) => {
-    this.props.showRequest(row)
+    corrStore.request = row;
+    this.props.showRequest();
   };
 
   render() {
     const {main_div_height} = this.state;
     return (
       <div ref={this.getMainDivRef}>
-        <button className='btn btn-outline-success' onClick={this.newRequest}>Додати запит</button>
+        <button className='btn btn-outline-success' onClick={this.newRequest}>
+          Додати запит
+        </button>
         <DxTable
           rows={corrStore.requests}
           columns={columns}

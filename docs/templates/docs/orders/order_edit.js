@@ -8,7 +8,7 @@ import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Modal from 'react-responsive-modal';
 import {Document, Page} from 'react-pdf';
-import {getItemById} from 'templates/components/my_extras';
+import {getItemById, testForBlankOrZero} from 'templates/components/my_extras';
 import OrderMail from './order_mail';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -95,16 +95,12 @@ class Order extends React.Component {
     // return 0;
   };
 
-  testForBlankOrZero = (item) => {
-    return item == null || item === 0 || item === '0' || item.length === 0;
-  };
-
   isAllFieldsFilled = () => {
     const {order} = this.state;
     const keys = Object.keys(order);
     for (const key of keys) {
       if (required_fields.hasOwnProperty(key)) {
-        if (this.testForBlankOrZero(order[key])) {
+        if (testForBlankOrZero(order[key])) {
           if (key === 'files') {
             const old_files = this.state.order.old_files.filter(
               (file) => file.is_added_or_cancelled
@@ -644,7 +640,7 @@ class Order extends React.Component {
             {this.getNoMailWarning('supervisory_id')}
             <hr />
 
-            <div className='row mt-2'>
+            <div className='row mt-2 '>
               <div className='col-sm-6 d-flex align-items-center mt-1'>
                 <label className='flex-grow-1 text-nowrap mr-1' htmlFor='date_start'>
                   Діє з:

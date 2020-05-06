@@ -10,7 +10,7 @@ class Answer extends React.Component {
 
   render() {
     return (
-      <div className='d-flex align-items-center mt-1'>
+      <div className='d-flex mt-1'>
         <label className='flex-grow-1 text-nowrap mr-1' htmlFor='answer'>
           Відповідь:
         </label>

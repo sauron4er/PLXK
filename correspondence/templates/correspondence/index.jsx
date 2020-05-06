@@ -1,41 +1,31 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import CorrTable from './corr_table';
-import Request from "./request/request";
+import CorrTable from './table';
+import Request from './request/request';
 import Clients from './clients';
 import Laws from './laws';
-import corrStore from "./store";
+import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'request', // table, request, clients, laws
-    requests: window.requests,
-    request: {},
-    clients: window.clients,
-    laws: window.laws,
+    view: 'request' // table, request, clients, laws
   };
 
   componentDidMount() {
-    window.requests ? corrStore.requests = window.requests : [];
+    window.requests ? (corrStore.requests = window.requests) : [];
     corrStore.laws = window.laws;
     corrStore.clients = window.clients;
+    corrStore.employees = window.employees;
   }
 
   changeView = (e, name) => {
     e.preventDefault();
-    this.setState({
-      view: name
-    });
+    this.setState({view: name});
   };
 
-  showRequest = (request) => {
-    if (request) {
-      this.setState({
-        view: 'request',
-        request: request
-      })
-    }
+  showRequest = () => {
+    this.setState({view: 'request'});
   };
 
   getButtonStyle = (name) => {
@@ -45,14 +35,8 @@ class Correspondence extends React.Component {
     return 'btn btn-sm btn-secondary';
   };
 
-  changeListFromChild = (name, new_list) => {
-    this.setState({
-      [name]: new_list
-    });
-  };
-
   render() {
-    const {view, requests, request, clients, laws} = this.state;
+    const {view} = this.state;
     return (
       <>
         <div className='btn-group mb-2' role='group' aria-label='Basic example'>
@@ -81,16 +65,16 @@ class Correspondence extends React.Component {
 
         <Choose>
           <When condition={view === 'table'}>
-            <CorrTable requests={requests} showRequest={this.showRequest} />
+            <CorrTable showRequest={this.showRequest} />
           </When>
           <When condition={view === 'request'}>
             <Request close={this.changeView} />
           </When>
           <When condition={view === 'clients'}>
-            <Clients clients={clients} changeList={this.changeListFromChild} />
+            <Clients />
           </When>
           <When condition={view === 'laws'}>
-            <Laws/>
+            <Laws />
           </When>
         </Choose>
       </>

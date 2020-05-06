@@ -50,7 +50,7 @@ def new_doc(request):
         user = User.objects.first()
     #user =HttpRequest.user.
     if request.method == 'POST':
-        form = NewDocForm(request.POST,request.FILES)
+        form = NewDocForm(request.POST, request.FILES)
         if form.is_valid():
             doc = Document.objects.create(
                 name=form.cleaned_data.get('name'),

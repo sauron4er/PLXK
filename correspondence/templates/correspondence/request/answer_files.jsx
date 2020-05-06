@@ -14,7 +14,7 @@ class AnswerFiles extends React.Component {
   };
 
   onFilesChange = (e) => {
-    corrStore.new_answer_files = e.target.value;
+    corrStore.request.new_answer_files = e.target.value;
   };
 
   render() {
@@ -39,7 +39,7 @@ class AnswerFiles extends React.Component {
 
         <FilesUpload
           onChange={this.onFilesChange}
-          files={corrStore.new_answer_files}
+          files={corrStore.request.new_answer_files}
           fieldName={''}
         />
       </>

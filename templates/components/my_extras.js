@@ -18,22 +18,22 @@ export const uniqueArray = (arrArg) => {
 };
 
 // видаляє ччернетку з бази даних
-export const delDraft = (doc_id) => {
-  axios({
-    method: 'post',
-    url: 'del_draft/' + doc_id + '/',
-    data: querystring.stringify({}),
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-    .then((response) => {})
-    .catch(function(error) {
-      console.log('errorpost: ' + error);
-      return error;
-    });
-  return null;
-};
+// export const delDraft = (doc_id) => {
+//   axios({
+//     method: 'post',
+//     url: 'del_draft/' + doc_id + '/',
+//     data: querystring.stringify({}),
+//     headers: {
+//       'Content-Type': 'application/x-www-form-urlencoded'
+//     }
+//   })
+//     .then((response) => {})
+//     .catch(function(error) {
+//       console.log('errorpost: ' + error);
+//       return error;
+//     });
+//   return null;
+// };
 
 export const compareById = (a, b) => {
   if (!a || !b || a.length !== b.length) {
@@ -84,3 +84,7 @@ export const getItemById = (id, list) => {
   }
   return -1;
 };
+
+export const testForBlankOrZero = (item) => {
+    return item == null || item === 0 || item === '0' || item.length === 0;
+  };
