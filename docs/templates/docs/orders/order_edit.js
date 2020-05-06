@@ -481,9 +481,7 @@ class Order extends React.Component {
       code,
       author_name,
       files,
-      old_files,
       cancels_files,
-      old_cancels_files,
       responsible_name,
       supervisory_name,
       date_start,
@@ -559,7 +557,6 @@ class Order extends React.Component {
 
             <FilesUpload
               onChange={this.onFilesChange}
-              oldFiles={old_files}
               files={files}
               fieldName={''}
               editable={edit_mode}
@@ -754,7 +751,6 @@ class Order extends React.Component {
                   {this.canceledFilesList()}
                   <FilesUpload
                     onChange={this.onCancelsFilesChange}
-                    oldFiles={old_cancels_files}
                     files={cancels_files}
                     fieldName={''}
                     editable={edit_mode}

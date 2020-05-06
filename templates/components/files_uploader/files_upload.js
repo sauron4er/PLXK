@@ -24,7 +24,7 @@ class FilesUpload extends React.Component {
   };
 
   render() {
-    const {fieldName, oldFiles} = this.props;
+    const {fieldName} = this.props;
     return (
       <>
         <If condition={fieldName.length > 0}><div className='mr-2'>{fieldName}:</div></If>
@@ -40,7 +40,7 @@ class FilesUpload extends React.Component {
             // style={{height: '100px'}}
             onChange={this.onFilesChange}
             onError={this.onFilesError}
-            multiple
+            multiple={this.props.multiple}
             maxFiles={10}
             maxFileSize={10000000}
             minFileSize={0}
@@ -54,7 +54,7 @@ class FilesUpload extends React.Component {
   }
 
   static defaultProps = {
-    oldFiles: [],
+    multiple: true,
     files: [],
     fieldName: '???',
     editable: true

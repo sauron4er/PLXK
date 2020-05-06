@@ -6,6 +6,9 @@ import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
 import Client from './client';
 import Answer from './answer';
+import RequestFile from './request_file';
+import AnswerFiles from './answer_files';
+import RequestDate from './request_date';
 
 const notify = (message) =>
   toast.error(message, {
@@ -49,15 +52,15 @@ class Request extends React.Component {
         <div className='modal-body'>
           <Client />
           <hr />
-          <div>Лист-запит (файл eml)</div>
+          <RequestFile />
           <hr />
           <Answer />
           <hr />
-          <div>Файли відповіді</div>
+          <AnswerFiles />
           <hr />
           <div>Законодавство (декілька!)</div>
           <hr />
-          <div>Дата запиту</div>
+          <RequestDate />
           <hr />
           <div>Термін виконання</div>
           <hr />
