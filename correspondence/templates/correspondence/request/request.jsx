@@ -14,7 +14,7 @@ import AnswerDate from './answer_date';
 import Responsible from './responsible';
 import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
-import {testForBlankOrZero} from 'templates/components/my_extras';
+import {getItemById, testForBlankOrZero, uniqueArray} from 'templates/components/my_extras';
 import { axiosPostRequest } from 'templates/components/axios_requests';
 import querystring from 'querystring'; // for axios
 
@@ -73,14 +73,41 @@ class Request extends React.Component {
     }
     return true;
   };
+  
+  addSelectedLaw = () => {
+    if (corrStore.selected_law_id) {
+      const selected_law = getItemById(corrStore.selected_law_id, corrStore.laws);
+      corrStore.request.laws.push(selected_law);
+      corrStore.request.laws = uniqueArray(corrStore.request.laws);
+    }
+  };
 
   postNewRequest = (e) => {
     e.preventDefault();
 
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
+      this.addSelectedLaw();
+      
+      
       let formData = new FormData();
-      // TODO Додати в formData усі поля з request по черзі
-      formData.append('request', querystring.stringify(corrStore.request));
+      formData.append('id', corrStore.request.id);
+      formData.append('client_id', corrStore.request.client_id);
+      formData.append('answer', corrStore.request.answer);
+      formData.append('new_eml_file', corrStore.request.new_eml_file[0]);
+      formData.append('old_eml_file', JSON.stringify(corrStore.request.old_eml_file));
+      formData.append('request_date', corrStore.request.request_date);
+      formData.append('request_term', corrStore.request.request_term);
+      formData.append('answer_date', corrStore.request.answer_date);
+      formData.append('responsible_id', corrStore.request.responsible_id);
+      formData.append('answer_responsible_id', corrStore.request.answer_responsible_id);
+      formData.append('laws', JSON.stringify(corrStore.request.laws));
+      formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
+      if (corrStore.request.new_answer_files?.length > 0) {
+          corrStore.request.new_answer_files.map((file) => {
+            formData.append('new_answer_files', file);
+          });
+        }
+      
       const url = corrStore.request.id ? 'edit_request/' : 'new_request/'
 
       axiosPostRequest(url, formData)
@@ -114,12 +141,8 @@ class Request extends React.Component {
       client_id: 0,
       client_name: '',
       answer: '',
-      new_eml_file: {},
-      old_eml_file: {
-        file: '',
-        name: '',
-        id: 0
-      },
+      new_eml_file: [],
+      old_eml_file: [],
       new_answer_files: [],
       old_answer_files: [],
       request_date: '',

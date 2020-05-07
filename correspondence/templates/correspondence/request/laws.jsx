@@ -9,29 +9,24 @@ import LawsList from "./laws_list";
 
 class Laws extends React.Component {
   state = {
-    law_name: '',
-    law_id: 0
+    law_name: ''
   };
 
   onChange = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
+    corrStore.selected_law_id = event.target.options[selectedIndex].getAttribute('data-key');
     this.setState({
-      law_id: event.target.options[selectedIndex].getAttribute('data-key'),
       law_name: event.target.options[selectedIndex].getAttribute('value')
     });
   };
 
   addLaw = (e) => {
     e.preventDefault();
-    const {law_id, law_name} = this.state;
-    if (law_name !== '') {
-      const selected_law = getItemById(law_id, corrStore.laws);
+    if (corrStore.selected_law_id) {
+      const selected_law = getItemById(corrStore.selected_law_id, corrStore.laws);
       corrStore.request.laws.push(selected_law);
       corrStore.request.laws = uniqueArray(corrStore.request.laws);
-      this.setState({
-        law_id: '',
-        law_name: ''
-      });
+      this.setState({law_name: ''});
     }
   };
 

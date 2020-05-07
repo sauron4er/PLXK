@@ -21,6 +21,7 @@ const corrStore = store({
     answer_responsible_name: '',
     laws: []
   },
+  selected_law_id: 0,
   laws: [],
   clients: [],
   employees: [],

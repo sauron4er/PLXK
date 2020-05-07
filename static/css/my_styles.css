@@ -79,7 +79,8 @@
   display: flex;
   align-items: start;
   margin-bottom: 10px;
-  border-style: inset;
+  border-style: double;
+  border-color: #2ba749;
   padding: 10px;
 }
 

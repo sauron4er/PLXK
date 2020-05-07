@@ -32,7 +32,7 @@ class LawsList extends React.Component {
         <For each='law' index='id' of={corrStore.request.laws}>
           <div key={law.id} className='css_selected_law'>
             <div>
-              <div>Назва: {law.name}</div>
+              <div className='font-weight-bold'>{law.name}</div>
               <div>
                 Посилання:{' '}
                 <a href={law.url} target='_blank'>
