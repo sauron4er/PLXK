@@ -127,7 +127,7 @@ def del_law(request):
 #  --------------------------------------------------- Requests
 def new_request(request):
     try:
-        asd = json.loads(request.POST)
+        # TODO десь в order_doc є приклад, як зробити дефолтні значення незаповнених полів прямо у views.py
         test=1
     except Exception as err:
         raise err
