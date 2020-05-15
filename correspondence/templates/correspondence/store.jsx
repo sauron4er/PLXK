@@ -7,9 +7,11 @@ const corrStore = store({
     id: 0,
     client_id: 0,
     client_name: '',
+    product_id: 0,
+    product_name: '',
     answer: '',
-    new_eml_file: [],
-    old_eml_file: [],
+    new_request_files: [],
+    old_request_files: [],
     new_answer_files: [],
     old_answer_files: [],
     request_date: '',
@@ -19,12 +21,16 @@ const corrStore = store({
     responsible_name: '',
     answer_responsible_id: 0,
     answer_responsible_name: '',
-    laws: []
+    laws: [],
+    new_laws: [],
+    delete_laws: []
   },
   selected_law_id: 0,
+  selected_law_name: '',
   laws: [],
   clients: [],
   employees: [],
+  products: []
 });
 
 export default corrStore;

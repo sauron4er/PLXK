@@ -7,9 +7,11 @@
 {% block content %}
     <div class="container-fluid p-2" id="correspondence">
         <script>
+            window.products = {{ products|safe }};
             window.clients = {{ clients|safe }};
             window.laws = {{ laws|safe }};
             window.employees = {{ employees|safe }};
+            window.requests = {{ requests|safe }};
         </script>
         {% render_bundle 'correspondence' %}
     </div>

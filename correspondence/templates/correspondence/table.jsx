@@ -6,10 +6,21 @@ import DxTable from 'templates/components/dx_table';
 
 const columns = [
   {name: 'id', title: 'id'},
-  {name: 'name', title: 'Назва'}
+  {name: 'product_name', title: 'Продукт'},
+  {name: 'client_name', title: 'Клієнт'},
+  {name: 'responsible', title: 'Відповідальний'},
+  {name: 'request_date', title: 'Дата отримання'},
+  {name: 'request_term', title: 'Термін'},
+  {name: 'status', title: ''},
 ];
 
-const col_width = [{columnName: 'id', width: 30}];
+const col_width = [
+  {columnName: 'id', width: 30},
+  {columnName: 'product_name', width: 50},
+  {columnName: 'request_date', width: 100},
+  {columnName: 'request_term', width: 100},
+  {columnName: 'status', width: 30},
+];
 
 class CorrTable extends React.Component {
   state = {
@@ -29,12 +40,11 @@ class CorrTable extends React.Component {
 
   newRequest = (e) => {
     e.preventDefault();
-    this.props.showRequest();
+    this.props.showRequest(0);
   };
 
   onRowClick = (row) => {
-    corrStore.request = row;
-    this.props.showRequest();
+    this.props.showRequest(row.id);
   };
 
   render() {
@@ -51,6 +61,7 @@ class CorrTable extends React.Component {
           onRowClick={this.onRowClick}
           height={main_div_height}
           filter
+          coloredStatus
         />
       </div>
     );

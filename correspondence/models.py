@@ -29,20 +29,32 @@ class Law_file(models.Model):
 class Request(models.Model):
     product_type = models.ForeignKey(Product_type, related_name='requests')
     client = models.ForeignKey(Client, related_name='requests')
-    request_file = models.FileField(upload_to='correspondence/requests/%Y/%m')
     request_date = models.DateTimeField()
-    request_term = models.DateTimeField()
-    law = models.ForeignKey(Law, related_name='requests')
+    request_term = models.DateTimeField(null=True)
     responsible = models.ForeignKey(User, related_name='responsible')
     answer_responsible = models.ForeignKey(User, related_name='answer_responsible')
-    answer = models.CharField(max_length=5000)
+    answer = models.CharField(max_length=5000, blank=True, null=True)
     answer_date = models.DateTimeField(null=True, blank=True)
     added_by = models.ForeignKey(User, related_name='requests_added')
+    last_updated_by = models.ForeignKey(User, related_name='requests_updated', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Request_law(models.Model):
+    request = models.ForeignKey(Request, related_name='request_laws')
+    law = models.ForeignKey(Law, related_name='requests', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Request_file(models.Model):
+    file = models.FileField(upload_to='correspondence/request/%Y/%m')
+    name = models.CharField(max_length=100)
+    request = models.ForeignKey(Request, related_name='request_files')
     is_active = models.BooleanField(default=True)
 
 
 class Answer_file(models.Model):
-    file = models.FileField(upload_to='correspondence/request_answers/%Y/%m')
+    file = models.FileField(upload_to='correspondence/answers/%Y/%m')
     name = models.CharField(max_length=100)
     request = models.ForeignKey(Request, related_name='answer_files')
     is_active = models.BooleanField(default=True)

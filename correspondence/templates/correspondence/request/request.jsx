@@ -4,9 +4,10 @@ import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
+import Product from './product';
 import Client from './client';
 import Answer from './answer';
-import RequestFile from './request_file';
+import RequestFiles from './request_files';
 import AnswerFiles from './answer_files';
 import RequestDate from './request_date';
 import RequestTerm from './request_term';
@@ -15,8 +16,8 @@ import Responsible from './responsible';
 import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
 import {getItemById, testForBlankOrZero, uniqueArray} from 'templates/components/my_extras';
-import { axiosPostRequest } from 'templates/components/axios_requests';
-import querystring from 'querystring'; // for axios
+import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
+import Loading from 'templates/components/loading';
 
 const notify = (message) =>
   toast.error(message, {
@@ -29,14 +30,22 @@ const notify = (message) =>
   });
 
 class Request extends React.Component {
+  state = {
+    loading: false
+  };
+
   areAllFieldsFilled = () => {
+    if (testForBlankOrZero(corrStore.request.product_id)) {
+      notify('Оберіть тип продукту');
+      return false;
+    }
     if (testForBlankOrZero(corrStore.request.client_id)) {
       notify('Оберіть клієнта');
       return false;
     }
     if (
-      testForBlankOrZero(corrStore.request.new_eml_file) &&
-      testForBlankOrZero(corrStore.request.old_eml_file)
+      testForBlankOrZero(corrStore.request.new_request_files) &&
+      testForBlankOrZero(corrStore.request.old_request_files)
     ) {
       notify('Додайте файл запиту');
       return false;
@@ -73,8 +82,9 @@ class Request extends React.Component {
     }
     return true;
   };
-  
+
   addSelectedLaw = () => {
+    // Додає до запису закон, якщо автор забув натиснути "+"
     if (corrStore.selected_law_id) {
       const selected_law = getItemById(corrStore.selected_law_id, corrStore.laws);
       corrStore.request.laws.push(selected_law);
@@ -82,67 +92,89 @@ class Request extends React.Component {
     }
   };
 
-  postNewRequest = (e) => {
-    e.preventDefault();
+  componentDidMount() {
+    if (corrStore.request.id !== 0) {
+      this.setState(
+        {loading: true},() => this.getRequestInfo()
+      );
+    }
+  }
 
+  getRequestInfo = () => {
+    axiosGetRequest('get_request/' + corrStore.request.id)
+      .then((response) => {
+        corrStore.request = response;
+        this.setState({loading: false});
+      })
+      .catch((error) => notify(error));
+  };
+
+  postRequest = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
       this.addSelectedLaw();
-      
-      
+
       let formData = new FormData();
-      formData.append('id', corrStore.request.id);
-      formData.append('client_id', corrStore.request.client_id);
+      formData.append('request', corrStore.request.id);
+      formData.append('product_type', corrStore.request.product_id);
+      formData.append('client', corrStore.request.client_id);
       formData.append('answer', corrStore.request.answer);
-      formData.append('new_eml_file', corrStore.request.new_eml_file[0]);
-      formData.append('old_eml_file', JSON.stringify(corrStore.request.old_eml_file));
+      formData.append('old_request_files', JSON.stringify(corrStore.request.old_request_files));
       formData.append('request_date', corrStore.request.request_date);
       formData.append('request_term', corrStore.request.request_term);
       formData.append('answer_date', corrStore.request.answer_date);
-      formData.append('responsible_id', corrStore.request.responsible_id);
-      formData.append('answer_responsible_id', corrStore.request.answer_responsible_id);
+      formData.append('responsible', corrStore.request.responsible_id);
+      formData.append('answer_responsible', corrStore.request.answer_responsible_id);
       formData.append('laws', JSON.stringify(corrStore.request.laws));
       formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
+      if (corrStore.request.new_request_files?.length > 0) {
+        corrStore.request.new_request_files.map((file) => {
+          formData.append('new_request_files', file);
+        });
+      }
       if (corrStore.request.new_answer_files?.length > 0) {
-          corrStore.request.new_answer_files.map((file) => {
-            formData.append('new_answer_files', file);
-          });
-        }
-      
-      const url = corrStore.request.id ? 'edit_request/' : 'new_request/'
+        corrStore.request.new_answer_files.map((file) => {
+          formData.append('new_answer_files', file);
+        });
+      }
+
+      const url = corrStore.request.id ? 'edit_request/' : 'new_request/';
 
       axiosPostRequest(url, formData)
-        .then(response => this.addRequest(response))
-        .catch(error => notify(error));
+        .then((response) => this.addRequest(response))
+        .catch((error) => notify(error));
     }
   };
 
-  postDelRequest = (e) => {
-    e.preventDefault();
-    let formData = new FormData();
-      formData.append('id', corrStore.request.id);
-
-      axiosPostRequest('del_request/', formData)
-        .then(response => this.removeRequest())
-        .catch(error => notify(error));
+  postDelRequest = () => {
+    axiosPostRequest('del_request/' + corrStore.request.id)
+      .then((response) => this.removeRequest(response))
+      .catch((error) => notify(error));
   };
 
   addRequest = (id) => {
-    corrStore.request.id = id
+    if (corrStore.request.id === 0) {
+      corrStore.request.status = 'in progress';
+      corrStore.request.id = id;
+      corrStore.requests.push(corrStore.request);
+    }
+    this.closeRequestView();
   };
 
-  removeRequest = () => {
-
+  removeRequest = (id) => {
+    corrStore.requests = corrStore.requests.filter(req => req.id !== id);
+    this.closeRequestView();
   };
 
-  clearRequest = (e) => {
-    e.preventDefault();
+  clearRequest = () => {
     corrStore.request = {
       id: 0,
+      product_id: 0,
+      product_name: '',
       client_id: 0,
       client_name: '',
       answer: '',
-      new_eml_file: [],
-      old_eml_file: [],
+      new_request_files: [],
+      old_request_files: [],
       new_answer_files: [],
       old_answer_files: [],
       request_date: '',
@@ -154,74 +186,92 @@ class Request extends React.Component {
       answer_responsible_name: '',
       laws: []
     };
+    corrStore.selected_law_id = 0;
+    corrStore.selected_law_name = '';
   };
 
-  test = (e) => {
-    e.preventDefault();
+  test = () => {
     console.log(corrStore.request);
+  };
+  
+  closeRequestView = () => {
+    this.clearRequest()
+    this.props.close('table')
   };
 
   render() {
     return (
-      <div className='shadow-lg p-3 mb-5 bg-white rounded'>
-        <div className='modal-header d-flex'>
-          <button className='btn btn-outline-success' onClick={(e) => this.props.close(e, 'table')}>
-            Назад
-          </button>
-          <h5 className='ml-auto'>
-            {corrStore.request.id
-              ? 'Редагування запиту № ' + corrStore.request.id
-              : 'Додання запиту'}
-          </h5>
-        </div>
+      <Choose>
+        <When condition={!this.state.loading}>
+          <div className='shadow-lg p-3 mb-5 bg-white rounded'>
+            <div className='modal-header d-flex'>
+              <button
+                className='btn btn-outline-success'
+                onClick={() => this.closeRequestView()}
+              >
+                Назад
+              </button>
+              <h5 className='ml-auto'>
+                {corrStore.request.id
+                  ? 'Редагування запиту № ' + corrStore.request.id
+                  : 'Додання запиту'}
+              </h5>
+            </div>
 
-        <div className='modal-body'>
-          <Client />
-          <hr />
-          <RequestFile />
-          <hr />
-          <Answer />
-          <hr />
-          <AnswerFiles />
-          <hr />
-          <Laws />
-          <hr />
-          <div className='d-md-flex'>
-            <div className='mr-auto'>
-              <RequestDate />
+            <div className='modal-body'>
+              <Product />
+              <hr />
+              <Client />
+              <hr />
+              <RequestFiles />
+              <hr />
+              <Answer />
+              <hr />
+              <AnswerFiles />
+              <hr />
+              <Laws />
+              <hr />
+              <div className='d-md-flex'>
+                <div className='mr-auto'>
+                  <RequestDate />
+                </div>
+                <div className='mr-auto'>
+                  <RequestTerm />
+                </div>
+                <AnswerDate />
+              </div>
+              <hr />
+              <Responsible />
+              <hr />
+              <AnswerResponsible />
             </div>
-            <div className='mr-auto'>
-              <RequestTerm />
+            <div className='modal-footer'>
+              <button className='btn btn-outline-danger' onClick={() => this.test()}>
+                test
+              </button>
+              <If condition={corrStore.request.id === 0}>
+                <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
+                  Очистити
+                </button>
+              </If>
+              <If condition={corrStore.request.id !== 0}>
+                <button className='btn btn-outline-danger' onClick={() => this.postDelRequest()}>
+                  Видалити
+                </button>
+              </If>
+              <button className='btn btn-outline-success' onClick={() => this.postRequest()}>
+                Зберегти
+              </button>
             </div>
-            <AnswerDate />
+
+            {/*Вспливаюче повідомлення*/}
+            <ToastContainer />
           </div>
-          <hr />
-          <Responsible />
-          <hr />
-          <AnswerResponsible />
-        </div>
-        <div className='modal-footer'>
-          <button className='btn btn-outline-danger' onClick={this.test}>
-            test
-          </button>
-          <If condition={corrStore.request.id === 0}>
-            <button className='btn btn-outline-dark' onClick={this.clearRequest}>
-              Очистити
-            </button>
-          </If>
-          <If condition={corrStore.request.id !== 0}>
-            <button className='btn btn-outline-danger' onClick={this.postDelRequest}>
-              Видалити
-            </button>
-          </If>
-          <button className='btn btn-outline-success' onClick={this.postNewRequest}>
-            Зберегти
-          </button>
-        </div>
-
-        {/*Вспливаюче повідомлення*/}
-        <ToastContainer />
-      </div>
+        </When>
+        <Otherwise>
+          <Loading />
+        </Otherwise>
+      </Choose>
     );
   }
 

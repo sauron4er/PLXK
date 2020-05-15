@@ -7,9 +7,12 @@ import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import 'static/css/my_styles.css';
 
 class LawsList extends React.Component {
-  delLaw = (e, id) => {
-    e.preventDefault();
-    corrStore.request.laws = corrStore.request.laws.filter((law) => law.id !== id);
+  delLaw = (id) => {
+    for (const i in corrStore.request.laws) {
+      if (corrStore.request.laws.hasOwnProperty(i) && corrStore.request.laws[i].id === id) {
+        corrStore.request.laws[i].status = 'delete';
+      }
+    }
   };
 
   arrangeLawFiles = (files) => {
@@ -30,26 +33,28 @@ class LawsList extends React.Component {
     return (
       <div className='mt-2'>
         <For each='law' index='id' of={corrStore.request.laws}>
-          <div key={law.id} className='css_selected_law'>
-            <div>
-              <div className='font-weight-bold'>{law.name}</div>
+          <If condition={law.status !== 'delete'}>
+            <div key={law.id} className='css_selected_law'>
               <div>
-                Посилання:{' '}
-                <a href={law.url} target='_blank'>
-                  {law.url}
-                </a>
+                <div className='font-weight-bold'>{law.name}</div>
+                <div>
+                  Посилання:{' '}
+                  <a href={law.url} target='_blank'>
+                    {law.url}
+                  </a>
+                </div>
+                <If condition={law.files?.length}>
+                  <div>Файли: {this.arrangeLawFiles(law.files)}</div>
+                </If>
               </div>
-              <If condition={law.files?.length}>
-                <div>Файли: {this.arrangeLawFiles(law.files)}</div>
-              </If>
+              <button
+                className='btn btn-sm btn-outline-secondary font-weight-bold ml-auto'
+                onClick={() => this.delLaw(law.id)}
+              >
+                <FontAwesomeIcon icon={faTimes}/>
+              </button>
             </div>
-            <button
-              className='btn btn-sm btn-outline-secondary font-weight-bold ml-auto'
-              onClick={(e) => this.delLaw(e, law.id)}
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-          </div>
+          </If>
         </For>
       </div>
     );

@@ -1,15 +1,34 @@
-from django.shortcuts import render
 import json
-from django.http import HttpResponse, HttpRequest
+from datetime import date, datetime
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ValidationError
+from django.contrib.auth.decorators import login_required
 
-from .models import Client, Product_type, Law, Law_file, Request, Answer_file
+from .models import Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm
 from accounts.models import UserProfile
+from .api import corr_api
+from plxk.api.datetime_normalizers import datetime_to_json
 
 
+def get_request_status(request_date, request_term, answer_date):
+    if answer_date:
+        return 'ok'
+    else:
+        if request_term and datetime.date(request_term) < date.today():
+            return 'overdue'
+    return 'in progress'
+
+
+@login_required(login_url='login')
 def index(request):
+    products = [{
+        'id': product.pk,
+        'name': product.name
+    } for product in
+        Product_type.objects.all().filter(is_active=True)]
+
     clients = [{
         'id': client.pk,
         'name': client.name
@@ -25,11 +44,11 @@ def index(request):
             'name': file.name,
             'file': file.file.name,
         } for file in
-            Law_file.objects.only('id', 'name', 'file').filter(law_id=law.id).filter(is_active=True)]
-    } for law in Law.objects.only('id', 'name', 'url').filter(is_active=True)]
+            Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
+    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
 
     employees = [{
-        'id': user.pk,
+        'id': user.user.pk,
         'name': user.pip,
     } for user in UserProfile.objects.only('id', 'pip')
         .filter(is_active=True)
@@ -39,14 +58,17 @@ def index(request):
 
     requests = [{
         'id': request.pk,
-        'product': request.product_type_id,
-        'client_name': request.client_name,
-        'request_date': request.request_date,
-        'request_term': request.request_term,
-        'request_responsible': request.responsible.last_name + ' ' + request.responsible.first_name,
+        'product_name': request.product_type.name,
+        'client_name': request.client.name,
+        'request_date': datetime_to_json(request.request_date),
+        'request_term': datetime_to_json(request.request_term),
+        'answer_date': datetime_to_json(request.answer_date),
+        'responsible': request.responsible.last_name + ' ' + request.responsible.first_name,
+        'status': get_request_status(request.request_date, request.request_term, request.answer_date),
     } for request in Request.objects.all().filter(is_active=True)]
 
     return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
+                                                         'products': json.dumps(products),
                                                          'laws': json.dumps(laws),
                                                          'requests': json.dumps(requests),
                                                          'employees': json.dumps(employees)})
@@ -125,24 +147,90 @@ def del_law(request):
 
 
 #  --------------------------------------------------- Requests
+def get_request(request, pk):
+    try:
+        req = get_object_or_404(Request, pk=pk)
+
+        req = {
+            'id': req.id,
+            'client_id': req.client_id,
+            'client_name': req.client.name,
+            'product_id': req.product_type_id,
+            'product_name': req.product_type.name,
+            'answer': req.answer if req.answer else '',
+            'request_date': datetime_to_json(req.request_date),
+            'request_term': datetime_to_json(req.request_term) if req.request_term else '',
+            'answer_date': datetime_to_json(req.answer_date) if req.answer_date else '',
+            'responsible_id': req.responsible_id,
+            'responsible_name': req.responsible.last_name + ' ' + req.responsible.first_name,
+            'answer_responsible_id': req.answer_responsible_id,
+            'answer_responsible_name': req.answer_responsible.last_name + ' ' + req.answer_responsible.first_name,
+        }
+
+        old_request_files = [{
+            'id': file.id,
+            'name': file.name,
+            'file': file.file.name
+        } for file in Request_file.objects.filter(is_active=True).filter(request_id=req['id'])]
+
+        old_answer_files = [{
+            'id': file.id,
+            'name': file.name,
+            'file': file.file.name
+        } for file in Answer_file.objects.filter(is_active=True).filter(request_id=req['id'])]
+
+        laws = [{
+            'id': law.id,
+            'name': law.law.name,
+            'url': law.law.url,
+            'status': 'old',
+            'files': [{
+                'id': file.pk,
+                'name': file.name,
+                'file': file.file.name,
+            } for file in
+                Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
+        } for law in Request_law.objects.filter(is_active=True).filter(request_id=req['id'])]
+
+        req.update({'old_request_files': old_request_files, 'old_answer_files': old_answer_files, 'laws': laws})
+
+        return HttpResponse(json.dumps(req))
+    except Exception as err:
+        raise err
+
+
 def new_request(request):
     try:
-        # TODO десь в order_doc є приклад, як зробити дефолтні значення незаповнених полів прямо у views.py
-        test=1
+        post_request = request.POST.copy()
+
+        new_req_id = corr_api.post_new_req(request)
+        post_request.update({'request': new_req_id, 'id': new_req_id})
+
+        corr_api.post_files(request.FILES, post_request)
+
+        if json.loads(post_request['laws']):
+            corr_api.post_laws(post_request)
+
+        # corr_mail_sender.arrange_mail(post_request)
+
+        return HttpResponse(new_req_id)
     except Exception as err:
         raise err
 
 
 def edit_request(request):
     try:
-        asd = json.loads(request.POST['request'])
-        test=1
+        post_request = request.POST.copy()
+        if json.loads(post_request['laws']):
+            corr_api.post_laws(post_request)
+        return HttpResponse(post_request['request'])
     except Exception as err:
         raise err
 
 
-def del_request(request):
+def del_request(request, pk):
     try:
-        test=1
+        corr_api.deactivate_req(request, pk)
+        return HttpResponse(pk)
     except Exception as err:
         raise err

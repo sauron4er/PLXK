@@ -3,7 +3,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
-export const axiosPostRequest = (url, data) => {
+export const axiosPostRequest = (url, data = []) => {
   return axios({
     method: 'post',
     url: url,
@@ -12,8 +12,8 @@ export const axiosPostRequest = (url, data) => {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
-    .then(response => response.data)
-    .catch(error => {
+    .then((response) => response.data)
+    .catch((error) => {
       console.log('errorpost: ' + error);
       throw error;
     });
@@ -27,8 +27,8 @@ export const axiosGetRequest = (url, data) => {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   })
-    .then(response => response.data)
-    .catch(error => {
+    .then((response) => response.data)
+    .catch((error) => {
       console.log('errorpost: ' + error);
       throw error;
     });

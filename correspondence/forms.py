@@ -1,5 +1,5 @@
 from django import forms
-from .models import Client, Law, Law_file, Product_type, Request, Answer_file
+from .models import Client, Law, Request, Request_law
 
 
 class NewClientForm(forms.ModelForm):
@@ -23,4 +23,28 @@ class NewLawForm(forms.ModelForm):
 class DelLawForm(forms.ModelForm):
     class Meta:
         model = Law
+        fields = ['is_active']
+
+
+class NewRequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['product_type', 'client', 'request_date', 'responsible', 'answer_responsible']
+
+
+class DeactivateRequestForm(forms.ModelForm):
+    class Meta:
+        model = Request
+        fields = ['is_active']
+
+
+class NewRequestLawForm(forms.ModelForm):
+    class Meta:
+        model = Request_law
+        fields = ['request', 'law']
+
+
+class DeactivateRequestLawForm(forms.ModelForm):
+    class Meta:
+        model = Request
         fields = ['is_active']

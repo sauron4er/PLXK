@@ -1,24 +1,15 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse
 from django.db import transaction
-
-from .forms import NewDocForm
 from django.utils import timezone
-import pytz
-from django.core.files.uploadedfile import SimpleUploadedFile
 import json
-import datetime
-
 from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
+from .forms import NewDocForm
 from docs.api.orders_mail_sender import arrange_mail
-from docs.api.orders import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table, deactivate_order
-
-
-def datetime_to_json_converter(data):
-    if isinstance(data, datetime.datetime):
-        return data.__str__()
+from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table, deactivate_order
+from plxk.api.datetime_normalizers import normalize_day, normalize_month
 
 
 def user_can_edit(user):
@@ -91,14 +82,6 @@ def edit_doc(request, pk):
 
 
 # ------------------------------------------------------------------------------------------------------------ Orders
-def normalize_month(date):
-    return '0' + str(date.month) if date.month < 10 else str(date.month)
-
-
-def normalize_day(date):
-    return '0' + str(date.day) if date.day < 10 else str(date.day)
-
-
 def orders(request):
     if request.user.id:
         is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]

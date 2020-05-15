@@ -3,35 +3,42 @@ import React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray, getItemById} from 'templates/components/my_extras';
-import LawsList from "./laws_list";
+import LawsList from './laws_list';
 
 class Laws extends React.Component {
-  state = {
-    law_name: ''
-  };
-
   onChange = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
     corrStore.selected_law_id = event.target.options[selectedIndex].getAttribute('data-key');
-    this.setState({
-      law_name: event.target.options[selectedIndex].getAttribute('value')
-    });
+    corrStore.selected_law_name = event.target.options[selectedIndex].getAttribute('value');
   };
 
-  addLaw = (e) => {
-    e.preventDefault();
+  addLaw = () => {
     if (corrStore.selected_law_id) {
-      const selected_law = getItemById(corrStore.selected_law_id, corrStore.laws);
-      corrStore.request.laws.push(selected_law);
-      corrStore.request.laws = uniqueArray(corrStore.request.laws);
-      this.setState({law_name: ''});
+      let existing_law = getItemById(corrStore.selected_law_id, corrStore.request.laws);
+      if (existing_law !== -1) {
+        console.log('!');
+        for (const i in corrStore.request.laws) {
+          if (
+            corrStore.request.laws.hasOwnProperty(i) &&
+            corrStore.request.laws[i].id === parseInt(corrStore.selected_law_id)
+          ) {
+            corrStore.request.laws[i].status = 'old';
+          }
+        }
+      } else {
+        let selected_law = getItemById(corrStore.selected_law_id, corrStore.laws);
+        selected_law = {...selected_law, status: 'new'};
+        corrStore.request.laws.push(selected_law);
+        corrStore.request.laws = uniqueArray(corrStore.request.laws);
+      }
+      corrStore.selected_law_name = '';
+      corrStore.selected_law_id = 0;
     }
   };
 
   render() {
-    const {law_name} = this.state;
     return (
       <>
         <div className='d-md-flex align-items-center mt-3'>
@@ -43,7 +50,7 @@ class Laws extends React.Component {
               className='flex-grow-1 form-control'
               id='laws'
               name='laws'
-              value={law_name}
+              value={corrStore.selected_law_name}
               onChange={this.onChange}
             >
               <option key={0} data-key={0} value='0'>
@@ -60,11 +67,11 @@ class Laws extends React.Component {
 
             <button
               className={
-                law_name
+                corrStore.selected_law_name
                   ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
                   : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
               }
-              onClick={this.addLaw}
+              onClick={() => this.addLaw()}
             >
               <FontAwesomeIcon icon={faPlus} />
             </button>

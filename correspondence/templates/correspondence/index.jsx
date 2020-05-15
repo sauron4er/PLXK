@@ -9,22 +9,23 @@ import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'request' // table, request, clients, laws
+    view: 'table' // table, request, clients, laws
   };
 
   componentDidMount() {
-    window.requests ? (corrStore.requests = window.requests) : [];
+    corrStore.requests = window.requests;
     corrStore.laws = window.laws;
     corrStore.clients = window.clients;
+    corrStore.products = window.products;
     corrStore.employees = window.employees;
   }
 
-  changeView = (e, name) => {
-    e.preventDefault();
+  changeView = (name) => {
     this.setState({view: name});
   };
 
-  showRequest = () => {
+  showRequest = (id) => {
+    corrStore.request.id = id
     this.setState({view: 'request'});
   };
 
@@ -43,21 +44,21 @@ class Correspondence extends React.Component {
           <button
             type='button'
             className={this.getButtonStyle('table')}
-            onClick={(e) => this.changeView(e, 'table')}
+            onClick={() => this.changeView('table')}
           >
             Запити
           </button>
           <button
             type='button'
             className={this.getButtonStyle('clients')}
-            onClick={(e) => this.changeView(e, 'clients')}
+            onClick={() => this.changeView('clients')}
           >
             Клієнти
           </button>
           <button
             type='button'
             className={this.getButtonStyle('laws')}
-            onClick={(e) => this.changeView(e, 'laws')}
+            onClick={() => this.changeView('laws')}
           >
             Законодавство
           </button>
