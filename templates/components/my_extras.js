@@ -12,8 +12,8 @@ export const getIndex = (id, array) => {
   return -1; //to handle the case where the value doesn't exist
 };
 
-export const uniqueArray = (arrArg) => {
-  return arrArg.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
+export const uniqueArray = (array) => {
+  return array.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
   // спеціально == а не ===, бо в js id - string, а сервер висилає integer
 };
 

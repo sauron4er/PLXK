@@ -15,7 +15,7 @@ import AnswerDate from './answer_date';
 import Responsible from './responsible';
 import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
-import {getItemById, testForBlankOrZero, uniqueArray} from 'templates/components/my_extras';
+import {getItemById, testForBlankOrZero, uniqueArray, getIndex} from 'templates/components/my_extras';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import Loading from 'templates/components/loading';
 
@@ -150,12 +150,26 @@ class Request extends React.Component {
       .then((response) => this.removeRequest(response))
       .catch((error) => notify(error));
   };
+  
+  checkRequestStatus = () => {
+    if (corrStore.request.answer_date) {
+      return 'ok'
+    } else {
+      if (!corrStore.request.request_term || corrStore.request.request_term > new Date()) {
+        return 'in progress'
+      }
+    }
+    return 'overdue'
+  }
 
   addRequest = (id) => {
+    corrStore.request.status = this.checkRequestStatus();
     if (corrStore.request.id === 0) {
-      corrStore.request.status = 'in progress';
       corrStore.request.id = id;
       corrStore.requests.push(corrStore.request);
+    } else {
+      const index = getIndex(corrStore.request.id, corrStore.requests);
+      corrStore.requests[index] = corrStore.request
     }
     this.closeRequestView();
   };
@@ -191,7 +205,7 @@ class Request extends React.Component {
   };
 
   test = () => {
-    console.log(corrStore.request);
+    console.log(corrStore.requests);
   };
   
   closeRequestView = () => {

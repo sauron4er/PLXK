@@ -10,7 +10,13 @@ class LawsList extends React.Component {
   delLaw = (id) => {
     for (const i in corrStore.request.laws) {
       if (corrStore.request.laws.hasOwnProperty(i) && corrStore.request.laws[i].id === id) {
-        corrStore.request.laws[i].status = 'delete';
+        if (corrStore.request.laws[i].status !== 'new') {
+          corrStore.request.laws[i].status = 'delete';
+          break;
+        } else {
+          corrStore.request.laws.splice(i, 1);
+          break;
+        }
       }
     }
   };

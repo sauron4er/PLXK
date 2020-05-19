@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from correspondence.models import Request, Request_file, Answer_file, Request_law
 
 
-def post_new_req(request):
+def new_req(request):
     try:
         post_request = request.POST.copy()
         new_req_form = NewRequestForm(post_request)
@@ -18,6 +18,22 @@ def post_new_req(request):
             raise ValidationError('correspondence/api/corr_api: function post_req: form invalid')
 
         return new_req.pk
+    except Exception as err:
+        raise err
+
+
+def edit_req(post_request):
+    try:
+        req_instance = get_object_or_404(Request, pk=post_request['request'])
+        edit_req_form = NewRequestForm(post_request, instance=req_instance)
+
+        if edit_req_form.is_valid():
+            edit_req = edit_req_form.save(commit=False)
+            edit_req.last_updated_by = post_request['user']
+            edit_req.save()
+        else:
+            raise ValidationError('correspondence/api/corr_api: function post_req: form invalid')
+
     except Exception as err:
         raise err
 
@@ -52,7 +68,7 @@ def deactivate_files(request):
         raise err
 
 
-def post_laws(post_request):
+def post_req_laws(post_request):
     try:
         laws = json.loads(post_request['laws'])
         for law in laws:
@@ -61,13 +77,12 @@ def post_laws(post_request):
                 new_req_law_form = NewRequestLawForm(post_request)
                 if new_req_law_form.is_valid():
                     new_req_law_form.save()
-    except Exception as err:
-        raise err
-
-
-def deactivate_laws(request):
-    try:
-        test = 1
+            if law['status'] == 'delete':
+                req_law_instance = get_object_or_404(Request_law, pk=post_request['???'])
+                post_request.update({'is_active': False})
+                deact_req_law_form = DeactivateRequestLawForm(post_request, instance=req_law_instance)
+                if deact_req_law_form.is_valid():
+                    deact_req_law_form.save()
     except Exception as err:
         raise err
 

@@ -29,7 +29,9 @@ class DelLawForm(forms.ModelForm):
 class NewRequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        fields = ['product_type', 'client', 'request_date', 'responsible', 'answer_responsible']
+        # fields = ['product_type', 'client', 'request_date', 'responsible', 'answer_responsible']
+        fields = ['product_type', 'client', 'request_date', 'responsible',
+                  'answer_responsible', 'answer', 'request_term', 'answer_date']
 
 
 class DeactivateRequestForm(forms.ModelForm):

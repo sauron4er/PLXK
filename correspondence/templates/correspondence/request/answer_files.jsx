@@ -9,8 +9,16 @@ class AnswerFiles extends React.Component {
     old_answer_files: {}
   };
 
-  deleteFile = (e, id) => {
-    e.preventDefault();
+  deleteFile = (id) => {
+    for (const i in corrStore.request.old_answer_files) {
+      if (
+        corrStore.request.old_answer_files.hasOwnProperty(i) &&
+        corrStore.request.old_answer_files[i].id === id
+      ) {
+        corrStore.request.old_answer_files[i].status = 'delete';
+        break;
+      }
+    }
   };
 
   onFilesChange = (e) => {
@@ -23,18 +31,20 @@ class AnswerFiles extends React.Component {
         <div>Файли відповіді:</div>
 
         <For each='file' index='id' of={corrStore.request.old_answer_files}>
-          <div key={file.id}>
-            <a href={'../../media/' + file.file} target='_blank'>
-              {file.name}{' '}
-            </a>
+          <If condition={file.status !== 'delete'}>
+            <div key={file.id}>
+              <a href={'../../media/' + file.file} target='_blank'>
+                {file.name}{' '}
+              </a>
 
-            <button
-              className='btn btn-sm btn-link text-danger '
-              onClick={(e) => this.deleteFile(e, file.id)}
-            >
-              <span aria-hidden='true'>&times;</span>
-            </button>
-          </div>
+              <button
+                className='btn btn-sm btn-link text-danger '
+                onClick={() => this.deleteFile(file.id)}
+              >
+                <span aria-hidden='true'>&times;</span>
+              </button>
+            </div>
+          </If>
         </For>
 
         <FilesUpload

@@ -8,7 +8,7 @@ const columns = [
   {name: 'id', title: 'id'},
   {name: 'product_name', title: 'Продукт'},
   {name: 'client_name', title: 'Клієнт'},
-  {name: 'responsible', title: 'Відповідальний'},
+  {name: 'responsible_name', title: 'Відповідальний'},
   {name: 'request_date', title: 'Дата отримання'},
   {name: 'request_term', title: 'Термін'},
   {name: 'status', title: ''},

@@ -13,6 +13,7 @@
                 <a href="{% url 'docs:docs' 5 %}" style="text-decoration: none;color:black" class="{% if fk == '5' %} btn btn-info {% else %}  btn btn-outline-info{% endif %} ">Матеріали аудитів</a>
                 <a href="{% url 'docs:docs' 6 %}" style="text-decoration: none;color:black" class="{% if fk == '6' %} btn btn-info {% else %}  btn btn-outline-info{% endif %}">Вимоги споживача</a>
                 <a href="{% url 'docs:docs' 7 %}" style="text-decoration: none;color:black" class="{% if fk == '7' %} btn btn-info {% else %}  btn btn-outline-info{% endif %}">Наші сертифікати</a>
+                <a href="{% url 'docs:docs' 8 %}" style="text-decoration: none;color:black" class="{% if fk == '8' %} btn btn-info {% else %}  btn btn-outline-info{% endif %}">Шаблони записів</a>
             </div>
             {% if user.userprofile.is_doc_add or user.userprofile.is_it_admin  %}
                 <a href="{% url 'docs:docs' 666 %}" style="text-decoration: none;color:black" class="{% if fk == '666' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">Архів</a>

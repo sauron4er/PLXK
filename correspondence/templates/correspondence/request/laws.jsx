@@ -18,13 +18,13 @@ class Laws extends React.Component {
     if (corrStore.selected_law_id) {
       let existing_law = getItemById(corrStore.selected_law_id, corrStore.request.laws);
       if (existing_law !== -1) {
-        console.log('!');
         for (const i in corrStore.request.laws) {
           if (
             corrStore.request.laws.hasOwnProperty(i) &&
             corrStore.request.laws[i].id === parseInt(corrStore.selected_law_id)
           ) {
             corrStore.request.laws[i].status = 'old';
+            break;
           }
         }
       } else {

@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 from .models import Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm
@@ -23,55 +24,58 @@ def get_request_status(request_date, request_term, answer_date):
 
 @login_required(login_url='login')
 def index(request):
-    products = [{
-        'id': product.pk,
-        'name': product.name
-    } for product in
-        Product_type.objects.all().filter(is_active=True)]
+    if request.user.userprofile.is_correspondence_view:
+        products = [{
+            'id': product.pk,
+            'name': product.name
+        } for product in
+            Product_type.objects.all().filter(is_active=True)]
 
-    clients = [{
-        'id': client.pk,
-        'name': client.name
-    } for client in
-        Client.objects.only('id', 'name').filter(is_active=True)]
+        clients = [{
+            'id': client.pk,
+            'name': client.name
+        } for client in
+            Client.objects.only('id', 'name').filter(is_active=True)]
 
-    laws = [{
-        'id': law.pk,
-        'name': law.name,
-        'url': law.url,
-        'files': [{
-            'id': file.pk,
-            'name': file.name,
-            'file': file.file.name,
-        } for file in
-            Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
-    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
+        laws = [{
+            'id': law.pk,
+            'name': law.name,
+            'url': law.url,
+            'files': [{
+                'id': file.pk,
+                'name': file.name,
+                'file': file.file.name,
+            } for file in
+                Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
+        } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
 
-    employees = [{
-        'id': user.user.pk,
-        'name': user.pip,
-    } for user in UserProfile.objects.only('id', 'pip')
-        .filter(is_active=True)
-        .filter(is_correspondence_view=True)
-        # .filter(is_it_admin=False)
-    ]
+        employees = [{
+            'id': user.user.pk,
+            'name': user.pip,
+        } for user in UserProfile.objects.only('id', 'pip')
+            .filter(is_active=True)
+            .filter(is_correspondence_view=True)
+            # .filter(is_it_admin=False)
+        ]
 
-    requests = [{
-        'id': request.pk,
-        'product_name': request.product_type.name,
-        'client_name': request.client.name,
-        'request_date': datetime_to_json(request.request_date),
-        'request_term': datetime_to_json(request.request_term),
-        'answer_date': datetime_to_json(request.answer_date),
-        'responsible': request.responsible.last_name + ' ' + request.responsible.first_name,
-        'status': get_request_status(request.request_date, request.request_term, request.answer_date),
-    } for request in Request.objects.all().filter(is_active=True)]
+        requests = [{
+            'id': request.pk,
+            'product_name': request.product_type.name,
+            'client_name': request.client.name,
+            'request_date': datetime_to_json(request.request_date),
+            'request_term': datetime_to_json(request.request_term),
+            'answer_date': datetime_to_json(request.answer_date),
+            'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
+            'status': get_request_status(request.request_date, request.request_term, request.answer_date),
+        } for request in Request.objects.all().filter(is_active=True)]
 
-    return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
-                                                         'products': json.dumps(products),
-                                                         'laws': json.dumps(laws),
-                                                         'requests': json.dumps(requests),
-                                                         'employees': json.dumps(employees)})
+        return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
+                                                             'products': json.dumps(products),
+                                                             'laws': json.dumps(laws),
+                                                             'requests': json.dumps(requests),
+                                                             'employees': json.dumps(employees)})
+    else:
+        return render(request, 'correspondence/404.html')
 
 
 #  --------------------------------------------------- Clients
@@ -170,27 +174,30 @@ def get_request(request, pk):
         old_request_files = [{
             'id': file.id,
             'name': file.name,
-            'file': file.file.name
+            'file': file.file.name,
+            'status': 'old'
         } for file in Request_file.objects.filter(is_active=True).filter(request_id=req['id'])]
 
         old_answer_files = [{
             'id': file.id,
             'name': file.name,
-            'file': file.file.name
+            'file': file.file.name,
+            'status': 'old'
         } for file in Answer_file.objects.filter(is_active=True).filter(request_id=req['id'])]
 
         laws = [{
-            'id': law.id,
-            'name': law.law.name,
-            'url': law.law.url,
+            'req_law_id': req_law.id,
+            'id': req_law.law.id,
+            'name': req_law.law.name,
+            'url': req_law.law.url,
             'status': 'old',
             'files': [{
                 'id': file.pk,
                 'name': file.name,
                 'file': file.file.name,
             } for file in
-                Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
-        } for law in Request_law.objects.filter(is_active=True).filter(request_id=req['id'])]
+                Law_file.objects.all().filter(law_id=req_law.law.id).filter(is_active=True)]
+        } for req_law in Request_law.objects.filter(is_active=True).filter(request_id=req['id'])]
 
         req.update({'old_request_files': old_request_files, 'old_answer_files': old_answer_files, 'laws': laws})
 
@@ -203,13 +210,13 @@ def new_request(request):
     try:
         post_request = request.POST.copy()
 
-        new_req_id = corr_api.post_new_req(request)
+        new_req_id = corr_api.new_req(request)
         post_request.update({'request': new_req_id, 'id': new_req_id})
 
         corr_api.post_files(request.FILES, post_request)
 
         if json.loads(post_request['laws']):
-            corr_api.post_laws(post_request)
+            corr_api.post_req_laws(post_request)
 
         # corr_mail_sender.arrange_mail(post_request)
 
@@ -221,8 +228,11 @@ def new_request(request):
 def edit_request(request):
     try:
         post_request = request.POST.copy()
+        post_request.update({'user': request.user})
+        corr_api.edit_req(post_request)
+
         if json.loads(post_request['laws']):
-            corr_api.post_laws(post_request)
+            corr_api.post_req_laws(post_request)
         return HttpResponse(post_request['request'])
     except Exception as err:
         raise err
