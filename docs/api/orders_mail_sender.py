@@ -1,9 +1,8 @@
 from django.contrib.auth.models import User
-from django.conf import settings
 from plxk.api.mail_sender import send_email
 from docs.models import File
 import json
-
+from django.conf import settings
 
 testing = settings.STAS_DEBUG
 
@@ -39,18 +38,16 @@ def send_mails_default(post_request):
     responsible_body = create_mail_body(post_request, responsible_mail)
     supervisory_body = create_mail_body(post_request, supervisory_mail)
 
-    if not testing:
-        send_email(author_mail, author_body)
-        send_email(responsible_mail, responsible_body)
-        send_email(supervisory_mail, supervisory_body)
+    send_email(author_mail, author_body)
+    send_email(responsible_mail, responsible_body)
+    send_email(supervisory_mail, supervisory_body)
 
 
 def send_mails_everyone(post_request):
     mail = 'all_users@lxk.com.ua'
     body = create_mail_body(post_request, mail)
 
-    if not testing:
-        send_email(mail, body)
+    send_email(mail, body)
 
 
 def send_mails_list(post_request):
@@ -58,15 +55,15 @@ def send_mails_list(post_request):
     for receiver in receivers:
         mail = User.objects.values_list('email', flat=True).filter(id=receiver['id'])[0]
         body = create_mail_body(post_request, mail)
-        if not testing:
-            send_email(mail, body)
+        send_email(mail, body)
 
 
 def arrange_mail(post_request):
-    if post_request['mail_mode'] == 'to_default':
-        send_mails_default(post_request)
-    elif post_request['mail_mode'] == 'everyone':
-        send_mails_everyone(post_request)
-    elif post_request['mail_mode'] == 'list':
-        send_mails_list(post_request)
-        send_mails_default(post_request)
+    if not testing:
+        if post_request['mail_mode'] == 'to_default':
+            send_mails_default(post_request)
+        elif post_request['mail_mode'] == 'everyone':
+            send_mails_everyone(post_request)
+        elif post_request['mail_mode'] == 'list':
+            send_mails_list(post_request)
+            send_mails_default(post_request)

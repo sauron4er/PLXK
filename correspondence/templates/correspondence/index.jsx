@@ -18,6 +18,13 @@ class Correspondence extends React.Component {
     corrStore.clients = window.clients;
     corrStore.products = window.products;
     corrStore.employees = window.employees;
+
+    // Визначаємо, чи відкриваємо просто список, чи це конкретне посилання:
+    const arr = window.location.pathname.split('/');
+    let filtered = arr.filter(el => el !== '');
+    const last_href_piece = parseInt(filtered[filtered.length - 1]);
+    const is_link = !isNaN(last_href_piece);
+    if (is_link) this.showRequest(last_href_piece);
   }
 
   changeView = (name) => {
@@ -25,7 +32,7 @@ class Correspondence extends React.Component {
   };
 
   showRequest = (id) => {
-    corrStore.request.id = id
+    corrStore.request.id = id;
     this.setState({view: 'request'});
   };
 

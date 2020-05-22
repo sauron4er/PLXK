@@ -8,9 +8,6 @@ export const axiosPostRequest = (url, data = []) => {
     method: 'post',
     url: url,
     data: data,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
   })
     .then((response) => response.data)
     .catch((error) => {
@@ -23,9 +20,6 @@ export const axiosGetRequest = (url, data) => {
   return axios({
     method: 'get',
     url: url,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
   })
     .then((response) => response.data)
     .catch((error) => {

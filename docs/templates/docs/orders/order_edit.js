@@ -64,13 +64,10 @@ class Order extends React.Component {
   };
 
   componentDidMount() {
-    // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
     if (this.props.id) {
       this.getOrder(this.props.id);
     } else {
-      this.setState({
-        data_received: true
-      });
+      this.setState({data_received: true});
     }
   }
 
@@ -78,13 +75,8 @@ class Order extends React.Component {
     axios({
       method: 'get',
       url: 'get_order/' + id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
     })
       .then((response) => {
-        // console.log(response.data);
-        // Отримуємо інформацію щодо конкретних видів документів
         this.setState({
           order: response.data,
           data_received: true
@@ -93,7 +85,6 @@ class Order extends React.Component {
       .catch((error) => {
         console.log(error);
       });
-    // return 0;
   };
 
   isAllFieldsFilled = () => {

@@ -1,5 +1,6 @@
 import json
-from correspondence.forms import NewRequestForm, DeactivateRequestForm, NewRequestLawForm, DeactivateRequestLawForm
+from correspondence.forms import NewRequestForm, DeactivateRequestForm, NewRequestLawForm, DeactivateRequestLawForm, \
+    DeactivateRequestFileForm, DeactivateAnswerFileForm
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from correspondence.models import Request, Request_file, Answer_file, Request_law
@@ -40,30 +41,56 @@ def edit_req(post_request):
 
 def post_files(files, post_request):
     try:
-        request_files = files.getlist('new_request_files')
-        answer_files = files.getlist('new_answer_files')
-        req = get_object_or_404(Request, pk=post_request['id'])
+        new_request_files = files.getlist('new_request_files')
+        new_answer_files = files.getlist('new_answer_files')
+        old_request_files = json.loads(post_request['old_request_files'])
+        old_answer_files = json.loads(post_request['old_answer_files'])
+        req = get_object_or_404(Request, pk=post_request['request'])
 
-        for file in request_files:
+        for file in new_request_files:
             Request_file.objects.create(
                 request=req,
                 file=file,
                 name=file.name
             )
 
-        for file in answer_files:
+        for file in new_answer_files:
             Answer_file.objects.create(
                 request=req,
                 file=file,
                 name=file.name
             )
+
+        for file in old_request_files:
+            if file['status'] == 'delete':
+                deactivate_request_file(post_request, file)
+
+        for file in old_answer_files:
+            if file['status'] == 'delete':
+                deactivate_answer_file(post_request, file)
+
     except Exception as err:
         raise err
 
 
-def deactivate_files(request):
+def deactivate_request_file(post_request, file):
     try:
-        test = 1
+        post_request.update({'is_active': False})
+        file = get_object_or_404(Request_file, pk=file['id'])
+        form = DeactivateRequestFileForm(post_request, instance=file)
+        if form.is_valid():
+            form.save()
+    except Exception as err:
+        raise err
+
+
+def deactivate_answer_file(post_request, file):
+    try:
+        post_request.update({'is_active': False})
+        file = get_object_or_404(Answer_file, pk=file['id'])
+        form = DeactivateAnswerFileForm(post_request, instance=file)
+        if form.is_valid():
+            form.save()
     except Exception as err:
         raise err
 

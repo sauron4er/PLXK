@@ -9,7 +9,7 @@ from django.http import Http404
 from .models import Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm
 from accounts.models import UserProfile
-from .api import corr_api
+from .api import corr_api, corr_mail_sender
 from plxk.api.datetime_normalizers import datetime_to_json
 
 
@@ -25,6 +25,7 @@ def get_request_status(request_date, request_term, answer_date):
 @login_required(login_url='login')
 def index(request):
     if request.user.userprofile.is_correspondence_view:
+
         products = [{
             'id': product.pk,
             'name': product.name
@@ -55,7 +56,7 @@ def index(request):
         } for user in UserProfile.objects.only('id', 'pip')
             .filter(is_active=True)
             .filter(is_correspondence_view=True)
-            # .filter(is_it_admin=False)
+            .filter(is_it_admin=False)
         ]
 
         requests = [{
@@ -67,7 +68,7 @@ def index(request):
             'answer_date': datetime_to_json(request.answer_date),
             'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
             'status': get_request_status(request.request_date, request.request_term, request.answer_date),
-        } for request in Request.objects.all().filter(is_active=True)]
+        } for request in Request.objects.all().filter(is_active=True).order_by('-id')]
 
         return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
                                                              'products': json.dumps(products),
@@ -75,7 +76,7 @@ def index(request):
                                                              'requests': json.dumps(requests),
                                                              'employees': json.dumps(employees)})
     else:
-        return render(request, 'correspondence/404.html')
+        return render(request, 'correspondence/forbidden.html')
 
 
 #  --------------------------------------------------- Clients
@@ -211,14 +212,14 @@ def new_request(request):
         post_request = request.POST.copy()
 
         new_req_id = corr_api.new_req(request)
-        post_request.update({'request': new_req_id, 'id': new_req_id})
+        post_request.update({'request': new_req_id})
 
         corr_api.post_files(request.FILES, post_request)
 
         if json.loads(post_request['laws']):
             corr_api.post_req_laws(post_request)
 
-        # corr_mail_sender.arrange_mail(post_request)
+        corr_mail_sender.send_mails(post_request, 'new')
 
         return HttpResponse(new_req_id)
     except Exception as err:
@@ -228,11 +229,17 @@ def new_request(request):
 def edit_request(request):
     try:
         post_request = request.POST.copy()
+
         post_request.update({'user': request.user})
         corr_api.edit_req(post_request)
 
+        corr_api.post_files(request.FILES, post_request)
+
         if json.loads(post_request['laws']):
             corr_api.post_req_laws(post_request)
+
+        corr_mail_sender.send_mails(post_request, 'edit')
+
         return HttpResponse(post_request['request'])
     except Exception as err:
         raise err

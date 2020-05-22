@@ -94,14 +94,13 @@ class Request extends React.Component {
 
   componentDidMount() {
     if (corrStore.request.id !== 0) {
-      this.setState(
-        {loading: true},() => this.getRequestInfo()
-      );
+      this.getRequestInfo()
+      this.setState({loading: true});
     }
   }
 
   getRequestInfo = () => {
-    axiosGetRequest('get_request/' + corrStore.request.id)
+    axiosGetRequest('get_request/' + corrStore.request.id + '/')
       .then((response) => {
         corrStore.request = response;
         this.setState({loading: false});
@@ -140,7 +139,7 @@ class Request extends React.Component {
       const url = corrStore.request.id ? 'edit_request/' : 'new_request/';
 
       axiosPostRequest(url, formData)
-        .then((response) => this.addRequest(response))
+        .then((response) => this.addOrChangeRequest(response))
         .catch((error) => notify(error));
     }
   };
@@ -162,7 +161,7 @@ class Request extends React.Component {
     return 'overdue'
   }
 
-  addRequest = (id) => {
+  addOrChangeRequest = (id) => {
     corrStore.request.status = this.checkRequestStatus();
     if (corrStore.request.id === 0) {
       corrStore.request.id = id;
@@ -202,10 +201,6 @@ class Request extends React.Component {
     };
     corrStore.selected_law_id = 0;
     corrStore.selected_law_name = '';
-  };
-
-  test = () => {
-    console.log(corrStore.requests);
   };
   
   closeRequestView = () => {
@@ -260,9 +255,6 @@ class Request extends React.Component {
               <AnswerResponsible />
             </div>
             <div className='modal-footer'>
-              <button className='btn btn-outline-danger' onClick={() => this.test()}>
-                test
-              </button>
               <If condition={corrStore.request.id === 0}>
                 <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
                   Очистити

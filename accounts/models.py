@@ -29,7 +29,8 @@ class UserProfile(models.Model):
     is_sales = models.BooleanField(default=False)
     is_doc_add = models.BooleanField(default=False)
     is_doc_order_add = models.BooleanField(default=False)
-    is_correspondence_view = models.BooleanField(default=False)
+    is_correspondence_view = models.BooleanField(default=False)  # Для можливості входу на сторінку "Листування з клієнтами"
+    is_correspondence_mail = models.BooleanField(default=False)  # Для отримання пошти про листування з клієнтами
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True,null=True)
     on_vacation = models.BooleanField(default=False)
