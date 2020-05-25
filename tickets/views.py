@@ -5,15 +5,19 @@ from django.views import generic
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connections
-
+from django.contrib.auth.decorators import login_required
 from tickets.forms import NewTicketForm,NewTicketContentForm
 from .models import Ticket,State,Group,Ticket_content
 from django.contrib.auth.models import User
 
+
+@login_required(login_url='login')
 def index(request):
     tickets = Ticket.objects.all()
     return render(request, 'tickets/index.html', {'tickets':tickets})
 
+
+@login_required(login_url='login')
 def index_f(request,fk):
     tickets = Ticket.objects.all()
     if fk == '1':tickets = tickets.filter(state_id = 1)
@@ -31,6 +35,8 @@ def index_f(request,fk):
         tickets
     return render(request, 'tickets/index.html',{'fk' : fk, 'tickets':tickets , 'ct':ct})
 
+
+@login_required(login_url='login')
 def new(request):
     if request.user:
         user = request.user
@@ -55,6 +61,8 @@ def new(request):
         form = NewTicketForm()
     return render(request, 'tickets/new_ticket.html', {'form':form})
 
+
+@login_required(login_url='login')
 def detail(request,pk):
     ticket = Ticket.objects.get(pk = pk);
     ticket_content = Ticket_content.objects.all().filter(ticket = ticket).order_by('-dt')

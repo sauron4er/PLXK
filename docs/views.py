@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.db import transaction
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 import json
 from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
@@ -16,12 +17,14 @@ def user_can_edit(user):
     return user.is_authenticated() and user.has_perm("docs.change_document")
 
 
+@login_required(login_url='login')
 def index(request):
     docs = Document.objects.all()
     edit = user_can_edit(request.user)
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit})
 
 
+@login_required(login_url='login')
 def docs(request, fk):
     if fk == '0':
         docs = Document.objects.all().filter(actuality=True)
@@ -33,6 +36,7 @@ def docs(request, fk):
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit, 'fk': fk})
 
 
+@login_required(login_url='login')
 def new_doc(request):
     title = 'Новий документ'
     if request.user:
@@ -61,6 +65,7 @@ def new_doc(request):
     return render(request, 'docs/new_doc.html', {'form': form, 'title': title})
 
 
+@login_required(login_url='login')
 def edit_doc(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     title = 'Редагування'
@@ -82,6 +87,7 @@ def edit_doc(request, pk):
 
 
 # ------------------------------------------------------------------------------------------------------------ Orders
+@login_required(login_url='login')
 def orders(request):
     if request.user.id:
         is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
@@ -123,6 +129,7 @@ def orders(request):
                                                        'employee_list': employee_list})
 
 
+@login_required(login_url='login')
 def get_order(request, pk):
     order = get_object_or_404(Order_doc, pk=pk)
 
@@ -162,6 +169,7 @@ def get_order(request, pk):
     return HttpResponse(json.dumps(order))
 
 
+@login_required(login_url='login')
 @transaction.atomic
 def new_order(request):
     post_request = request.POST.copy()
@@ -178,6 +186,7 @@ def new_order(request):
     return HttpResponse(order.pk)
 
 
+@login_required(login_url='login')
 @transaction.atomic
 def edit_order(request):
     post_request = request.POST.copy()
@@ -194,6 +203,7 @@ def edit_order(request):
     return HttpResponse()
 
 
+@login_required(login_url='login')
 @transaction.atomic
 def deact_order(request):
     post_request = request.POST.copy()

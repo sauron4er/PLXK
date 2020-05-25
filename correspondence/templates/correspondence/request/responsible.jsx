@@ -11,7 +11,7 @@ class Responsible extends React.Component {
   };
 
   render() {
-
+  
     return (
       <div className='row align-items-center mt-1 mr-lg-1'>
         <label className='col-lg-2' htmlFor='responsible'>

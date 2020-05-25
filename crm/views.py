@@ -2,7 +2,10 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.db import connections
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
+
+@login_required(login_url='login')
 def index(request):
     cursor = connections['fb1'].cursor()
     text_sql = 'select  vn.name as vaga, count(v.Key) as ct from vaga v inner join vaga_name vn on v.vaga_name = vn."KEY" where v.state=3 and v.d > current_date -7    group by 1'
@@ -18,6 +21,7 @@ def index(request):
     wood1= cursor.fetchall()
 
     return render(request, 'crm/index.html',{'vaga':vaga,'raw':raw, 'wood':wood1})
+
 
 def graph_scales(request):
     cursor = connections['fb1'].cursor()
@@ -39,6 +43,7 @@ def graph_scales(request):
 
     return render(request, 'crm/graph_scales.html', {'vaga':vaga, 'vaga2':vaga2, 'raw':raw, 'wood':wood1})
 
+
 def graph_woods(request):
     cursor = connections['fb1'].cursor()
 
@@ -57,6 +62,7 @@ def graph_woods(request):
 
     return render(request, 'crm/graph_wood.html', {'wood1':wood1,'wood2':wood2 ,'wood3':wood3})
 
+
 def graph_coal(request):
     cursor = connections['fb1'].cursor()
     d = datetime.today()
@@ -67,9 +73,6 @@ def graph_coal(request):
     text_sql1 = "select *  from  W_SELECT_MANUFACTURE_COAL('"+s1+"','"+s2+"')"
     cursor.execute(text_sql1)
     coal1= cursor.fetchall()
-
-
-
 
     return render(request, 'crm/graph_coal.html', {'coal1':coal1})
 
