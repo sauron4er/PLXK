@@ -19,7 +19,11 @@ import SignList from './sign_list';
 import Day from './day';
 import Gate from './gate';
 import CarryOut from './carry_out';
+import MockupType from './mockup_type';
+import MockupProductType from './mockup_product_type';
 import {getTextByQueue, getIndexByProperty} from 'templates/components/my_extras';
+import {view, store} from '@risingstack/react-easy-state';
+import newDocStore from './store';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -332,99 +336,124 @@ class NewDocument extends React.Component {
 
             <div className='modal-body'>
               <For each='module' index='index' of={type_modules}>
-                <Choose>
-                  <When condition={module.module === 'name'}>
-                    <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
-                  </When>
-                  <When condition={module.module === 'preamble'}>
-                    <Preamble
-                      onChange={this.onChange}
-                      preamble={preamble}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'text'}>
-                    <Text
-                      onChange={this.onChange}
-                      text={getTextByQueue(text, index)}
-                      fieldName={module.field_name}
-                      id={module.id}
-                      rows={rows}
-                      queue={module.queue}
-                    />
-                  </When>
-                  <When condition={module.module === 'recipient'}>
-                    <Recipient
-                      onChange={this.onChange}
-                      recipient={recipient}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'recipient_chief'}>
-                    <RecipientChief
-                      onChange={this.onChange}
-                      recipientChief={recipient_chief}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'articles'}>
-                    <Articles
-                      onChange={this.onChange}
-                      articles={articles}
-                      modules={type_modules}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'files'}>
-                    <FilesUpload
-                      onChange={this.onChange}
-                      oldFiles={old_files}
-                      files={files}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'acquaint_list'}>
-                    <AcquaintList
-                      onChange={this.onChange}
-                      acquaintList={acquaint_list}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'approval_list'}>
-                    <ApprovalList
-                      onChange={this.onChange}
-                      approvalList={approval_list}
-                      fieldName={module.field_name}
-                      additionalInfo={module.additional_info}
-                    />
-                  </When>
-                  <When condition={module.module === 'sign_list'}>
-                    <SignList
-                      onChange={this.onChange}
-                      signList={sign_list}
-                      fieldName={module.field_name}
-                      additionalInfo={module.additional_info}
-                    />
-                  </When>
-                  <When condition={module.module === 'day'}>
-                    <Day day={day} onChange={this.onChange} fieldName={module.field_name} />
-                  </When>
-                  <When condition={module.module === 'gate'}>
-                    <Gate
-                      checkedGate={gate}
-                      onChange={this.onChange}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <When condition={module.module === 'carry_out_items'}>
-                    <CarryOut
-                      carryOutItems={carry_out_items}
-                      onChange={this.onChange}
-                      fieldName={module.field_name}
-                    />
-                  </When>
-                  <Otherwise> </Otherwise>
-                </Choose>
+                <div key={module.id}>
+                  <Choose>
+                    <When condition={module.module === 'name'}>
+                      <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
+                    </When>
+                    <When condition={module.module === 'preamble'}>
+                      <Preamble
+                        onChange={this.onChange}
+                        preamble={preamble}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'text'}>
+                      <Text
+                        onChange={this.onChange}
+                        text={getTextByQueue(text, index)}
+                        fieldName={module.field_name}
+                        id={module.id}
+                        rows={rows}
+                        queue={module.queue}
+                      />
+                    </When>
+                    <When condition={module.module === 'recipient'}>
+                      <Recipient
+                        onChange={this.onChange}
+                        recipient={recipient}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'recipient_chief'}>
+                      <RecipientChief
+                        onChange={this.onChange}
+                        recipientChief={recipient_chief}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'articles'}>
+                      <Articles
+                        onChange={this.onChange}
+                        articles={articles}
+                        modules={type_modules}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'files'}>
+                      <FilesUpload
+                        onChange={this.onChange}
+                        oldFiles={old_files}
+                        files={files}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'acquaint_list'}>
+                      <AcquaintList
+                        onChange={this.onChange}
+                        acquaintList={acquaint_list}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'approval_list'}>
+                      <ApprovalList
+                        onChange={this.onChange}
+                        approvalList={approval_list}
+                        fieldName={module.field_name}
+                        additionalInfo={module.additional_info}
+                      />
+                    </When>
+                    <When condition={module.module === 'sign_list'}>
+                      <SignList
+                        onChange={this.onChange}
+                        signList={sign_list}
+                        fieldName={module.field_name}
+                        additionalInfo={module.additional_info}
+                      />
+                    </When>
+                    <When condition={module.module === 'day'}>
+                      <Day day={day} onChange={this.onChange} fieldName={module.field_name} />
+                    </When>
+                    <When condition={module.module === 'gate'}>
+                      <Gate
+                        checkedGate={gate}
+                        onChange={this.onChange}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'carry_out_items'}>
+                      <CarryOut
+                        carryOutItems={carry_out_items}
+                        onChange={this.onChange}
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'mockup_type'}>
+                      <MockupType
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'mockup_production'}>
+                      <MockupProductType
+                        fieldName={module.field_name}
+                      />
+                    </When>
+                    <When condition={module.module === 'client'}>
+                      <div>client</div>
+                      <div>client country</div>
+                    </When>
+                    <When condition={module.module === 'client'}>
+                      <div>client</div>
+                    </When>
+                    <When condition={module.module === 'dimensions'}>
+                      <div>dimensions</div>
+                    </When>
+                    <When condition={module.module === 'packaging_type'}>
+                      <div>packaging_type</div>
+                    </When>
+                    <Otherwise> </Otherwise>
+                  </Choose>
+                </div>
               </For>
             </div>
 
@@ -475,4 +504,4 @@ class NewDocument extends React.Component {
   };
 }
 
-export default NewDocument;
+export default view(NewDocument);

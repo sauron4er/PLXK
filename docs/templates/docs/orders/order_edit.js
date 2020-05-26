@@ -10,7 +10,7 @@ import Modal from 'react-responsive-modal';
 import {Document, Page} from 'react-pdf';
 import {getItemById, testForBlankOrZero} from 'templates/components/my_extras';
 import OrderMail from './order_mail';
-import Loading from 'templates/components/loading';
+import {Loader} from 'templates/components/loaders';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -782,7 +782,7 @@ class Order extends React.Component {
       );
     } else {
       return (
-        <Loading/>
+        <Loader/>
       );
     }
   }

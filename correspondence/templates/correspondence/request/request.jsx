@@ -17,7 +17,7 @@ import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
 import {getItemById, testForBlankOrZero, uniqueArray, getIndex} from 'templates/components/my_extras';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
-import Loading from 'templates/components/loading';
+import {Loader} from 'templates/components/loaders';
 
 const notify = (message) =>
   toast.error(message, {
@@ -275,7 +275,7 @@ class Request extends React.Component {
           </div>
         </When>
         <Otherwise>
-          <Loading />
+          <Loader />
         </Otherwise>
       </Choose>
     );

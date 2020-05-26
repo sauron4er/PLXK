@@ -34,7 +34,8 @@ def index(request):
 
         clients = [{
             'id': client.pk,
-            'name': client.name
+            'name': client.name,
+            'country': client.country
         } for client in
             Client.objects.only('id', 'name').filter(is_active=True)]
 

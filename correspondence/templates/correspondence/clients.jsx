@@ -21,29 +21,31 @@ const notify = (message) =>
 
 class Clients extends React.Component {
   state = {
-    new_name: ''
+    new_name: '',
+    country: ''
   };
 
   onChange = (e) => {
-    this.setState({new_name: e.target.value});
+    this.setState({[e.target.name]: e.target.value});
   };
 
-  isNameFilled = () => {
-    const {new_name} = this.state;
-    if (new_name?.length) {
+  isAllFieldsFilled = () => {
+    const {new_name, country} = this.state;
+    if (new_name?.length && country?.length) {
       return true;
     } else {
-      notify('Поле "Назва" обов’язкове для заповнення');
+      notify('Усі поля обов’язкові для заповнення');
       return false;
     }
   };
 
   postNewClient = (e) => {
     e.preventDefault();
-    const {new_name} = this.state;
-    if (this.isNameFilled()) {
+    const {new_name, country} = this.state;
+    if (this.isAllFieldsFilled()) {
       let formData = new FormData();
       formData.append('name', new_name);
+      formData.append('country', country);
 
       axiosPostRequest('new_client/', formData)
         .then((response) => this.addClient(response))
@@ -63,13 +65,16 @@ class Clients extends React.Component {
   };
 
   addClient = (id) => {
-    const {new_name} = this.state;
+    console.log(id);
+    const {new_name, country} = this.state;
     corrStore.clients.push({
       id: id,
-      name: new_name
+      name: new_name,
+      country: country
     });
     this.setState({
-      new_name: ''
+      new_name: '',
+      country: ''
     });
   };
 
@@ -78,7 +83,7 @@ class Clients extends React.Component {
   };
 
   render() {
-    const {new_name} = this.state;
+    const {new_name, country} = this.state;
 
     return (
       <>
@@ -91,6 +96,14 @@ class Clients extends React.Component {
             type='text'
             name='new_name'
             value={new_name}
+            onChange={this.onChange}
+          />
+          <label htmlFor='country'>Країна:</label>
+          <input
+            className='form-control form-control-sm mx-2'
+            type='text'
+            name='country'
+            value={country}
             onChange={this.onChange}
           />
           <button
@@ -108,13 +121,17 @@ class Clients extends React.Component {
               <th className='text-center col-11'>
                 <small>Назва</small>
               </th>
+              <th className='text-center col-11'>
+                <small>Країна</small>
+              </th>
               <th className='text-center col-1'> </th>
             </tr>
           </thead>
           <tbody>
             <For each='client' index='idx' of={corrStore.clients}>
               <tr key={idx}>
-                <td className='align-middle col-11'>{client.name}</td>
+                <td className='align-middle col-8'>{client.name}</td>
+                <td className='align-middle col-3'>{client.country}</td>
                 <td className='text-center align-middle small text-danger col-1'>
                   <button
                     className='btn btn-sm py-0'

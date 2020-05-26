@@ -9,6 +9,7 @@ class Product_type(models.Model):
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
 
 

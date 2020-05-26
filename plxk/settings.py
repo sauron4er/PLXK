@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'crm',
     'docs',
     'correspondence',
+    'production',
     'gi',
     'polls',
     'tickets',
