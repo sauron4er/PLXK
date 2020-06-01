@@ -7,6 +7,7 @@
 {% block content %}
     <div class="container-fluid p-2" id="correspondence">
         <script>
+            window.scopes = {{ scopes|safe }};
             window.products = {{ products|safe }};
             window.clients = {{ clients|safe }};
             window.laws = {{ laws|safe }};

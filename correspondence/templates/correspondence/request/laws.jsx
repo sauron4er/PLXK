@@ -4,7 +4,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {uniqueArray, getItemById} from 'templates/components/my_extras';
+import {uniqueArray, getItemById, getIndex} from 'templates/components/my_extras';
 import LawsList from './laws_list';
 
 class Laws extends React.Component {
@@ -57,11 +57,13 @@ class Laws extends React.Component {
                 ------------
               </option>
               {corrStore.laws.map((law) => {
-                return (
-                  <option key={law.id} data-key={law.id} value={law.name}>
-                    {law.name}
-                  </option>
-                );
+                if (getIndex(parseInt(corrStore.request.scope_id), law.scopes) !== -1) {
+                  return (
+                    <option key={law.id} data-key={law.id} value={law.name}>
+                      {law.name}
+                    </option>
+                  );
+                }
               })}
             </select>
 
@@ -77,6 +79,7 @@ class Laws extends React.Component {
             </button>
           </div>
         </div>
+        <small>Оберіть сферу застосування, щоб сформувати список відповідних законів</small>
 
         <If condition={corrStore.request.laws.length > 0}>
           <LawsList />

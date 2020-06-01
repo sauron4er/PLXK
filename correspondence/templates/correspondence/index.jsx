@@ -4,12 +4,13 @@ import ReactDOM from 'react-dom';
 import CorrTable from './table';
 import Request from './request/request';
 import Clients from './clients';
-import Laws from './laws';
+import Laws from './laws/laws';
+import Scopes from './scopes';
 import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'table' // table, request, clients, laws
+    view: 'table' // table, request, clients, laws, scopes
   };
 
   componentDidMount() {
@@ -18,6 +19,7 @@ class Correspondence extends React.Component {
     corrStore.clients = window.clients;
     corrStore.products = window.products;
     corrStore.employees = window.employees;
+    corrStore.scopes = window.scopes;
 
     // Визначаємо, чи відкриваємо просто список, чи це конкретне посилання:
     const arr = window.location.pathname.split('/');
@@ -38,9 +40,9 @@ class Correspondence extends React.Component {
 
   getButtonStyle = (name) => {
     if (name === this.state.view) {
-      return 'btn btn-sm btn-secondary active';
+      return 'btn btn-sm btn-secondary mr-1 active';
     }
-    return 'btn btn-sm btn-secondary';
+    return 'btn btn-sm btn-secondary mr-1';
   };
 
   render() {
@@ -69,6 +71,13 @@ class Correspondence extends React.Component {
           >
             Законодавство
           </button>
+          <button
+            type='button'
+            className={this.getButtonStyle('scopes')}
+            onClick={() => this.changeView('scopes')}
+          >
+            Сфери застосування
+          </button>
         </div>
 
         <Choose>
@@ -83,6 +92,9 @@ class Correspondence extends React.Component {
           </When>
           <When condition={view === 'laws'}>
             <Laws />
+          </When>
+          <When condition={view === 'scopes'}>
+            <Scopes />
           </When>
         </Choose>
       </>

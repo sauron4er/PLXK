@@ -120,7 +120,7 @@ class Buttons extends React.Component {
         {/* Якщо автор я */}
         <If condition={user_is_doc_author}>
           {/*Якщо тип документа редагуємий*/}
-          <If condition={doc.expected_mark === 9 && docInfoStore?.info?.is_changeable}>
+          <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable}>
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'

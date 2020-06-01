@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
 import Product from './product';
+import Scope from './scope';
 import Client from './client';
 import Answer from './answer';
 import RequestFiles from './request_files';
@@ -37,6 +38,10 @@ class Request extends React.Component {
   areAllFieldsFilled = () => {
     if (isBlankOrZero(corrStore.request.product_id)) {
       notify('Оберіть тип продукту');
+      return false;
+    }
+    if (isBlankOrZero(corrStore.request.scope_id)) {
+      notify('Оберіть сферу застосування');
       return false;
     }
     if (isBlankOrZero(corrStore.request.client_id)) {
@@ -115,6 +120,7 @@ class Request extends React.Component {
       let formData = new FormData();
       formData.append('request', corrStore.request.id);
       formData.append('product_type', corrStore.request.product_id);
+      formData.append('scope', corrStore.request.scope_id);
       formData.append('client', corrStore.request.client_id);
       formData.append('answer', corrStore.request.answer);
       formData.append('old_request_files', JSON.stringify(corrStore.request.old_request_files));
@@ -183,6 +189,8 @@ class Request extends React.Component {
       id: 0,
       product_id: 0,
       product_name: '',
+      scope_id: 0,
+      scope_name: '',
       client_id: 0,
       client_name: '',
       answer: '',
@@ -229,6 +237,8 @@ class Request extends React.Component {
 
             <div className='modal-body'>
               <Product />
+              <hr />
+              <Scope />
               <hr />
               <Client />
               <hr />

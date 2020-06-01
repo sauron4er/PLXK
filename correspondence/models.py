@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Scope(models.Model):
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+
 class Product_type(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
@@ -27,8 +32,15 @@ class Law_file(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class Law_scope(models.Model):
+    law = models.ForeignKey(Law, related_name='scopes')
+    scope = models.ForeignKey(Scope, related_name='laws')
+    is_active = models.BooleanField(default=True)
+
+
 class Request(models.Model):
     product_type = models.ForeignKey(Product_type, related_name='requests')
+    scope = models.ForeignKey(Scope, related_name='requests')
     client = models.ForeignKey(Client, related_name='requests')
     request_date = models.DateTimeField()
     request_term = models.DateTimeField(null=True, blank=True, default=None)

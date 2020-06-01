@@ -6,9 +6,10 @@ import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
-import { axiosPostRequest } from 'templates/components/axios_requests';
-import corrStore from './store';
-
+import LawScopes from './law_scopes';
+import {axiosPostRequest} from 'templates/components/axios_requests';
+import corrStore from '../store';
+import {getItemById, uniqueArray} from 'templates/components/my_extras';
 
 const notify = (message) =>
   toast.error(message, {
@@ -31,25 +32,35 @@ class Laws extends React.Component {
     this.setState({[e.target.name]: e.target.value});
   };
 
-  isNameAndUrlFilled = () => {
-    const {new_name, new_url} = this.state;
-    if (new_name && new_url) {
-      return true
-    }
-    else {
-      notify('Поля "Назва" та "Посилання" обов’язкові для заповнення');
-      return false
+  addSelectedScope = () => {
+    // Додає до запису сферу, якщо автор забув натиснути "+"
+    if (corrStore.law.scope_id) {
+      const selected_scope = getItemById(corrStore.law.scope_id, corrStore.scopes);
+      corrStore.law.scopes.push(selected_scope);
+      corrStore.law.scopes = uniqueArray(corrStore.law.scopes);
     }
   };
 
-  postNewLaw = (e) => {
-    e.preventDefault();
+  isNameAndUrlFilled = () => {
+    const {new_name, new_url} = this.state;
+    if (new_name && new_url && corrStore.law.scopes) {
+      return true;
+    } else {
+      notify('Поля "Назва", "Посилання" та "Сфера застосування" обов’язкові для заповнення');
+      return false;
+    }
+  };
+
+  postNewLaw = () => {
+    this.addSelectedScope();
 
     const {new_name, new_url, files} = this.state;
     if (this.isNameAndUrlFilled()) {
       let formData = new FormData();
       formData.append('name', new_name);
       formData.append('url', new_url);
+      formData.append('scopes', JSON.stringify(corrStore.law.scopes));
+
       if (files?.length) {
         files.map((file) => {
           formData.append('files', file);
@@ -57,8 +68,8 @@ class Laws extends React.Component {
       }
 
       axiosPostRequest('new_law/', formData)
-        .then(response => this.addLaw(response))
-        .catch(error => notify(error));
+        .then((response) => this.addLaw(response))
+        .catch((error) => notify(error));
     }
   };
 
@@ -66,12 +77,12 @@ class Laws extends React.Component {
     e.preventDefault();
 
     let formData = new FormData();
-      formData.append('id', id);
-      formData.append('is_active', false);
+    formData.append('id', id);
+    formData.append('is_active', false);
 
     axiosPostRequest('del_law/', formData)
-      .then(response => this.removeLaw(response))
-      .catch(error => this.notify(error));
+      .then((response) => this.removeLaw(response))
+      .catch((error) => this.notify(error));
   };
 
   addLaw = (id) => {
@@ -81,6 +92,7 @@ class Laws extends React.Component {
       id: id,
       name: new_name,
       url: new_url,
+      scopes: corrStore.law.scopes,
       files: files
     });
     this.setState({
@@ -88,6 +100,7 @@ class Laws extends React.Component {
       new_url: '',
       files: []
     });
+    corrStore.law.scopes = [];
   };
 
   removeLaw = (id) => {
@@ -103,6 +116,16 @@ class Laws extends React.Component {
           </a>
         </div>
       </For>
+    );
+  };
+
+  arrangeLawScopes = (scopes) => {
+    return (
+      <ul><For each='scope' index='idx' of={scopes}>
+        <li key={idx} className={scopes.length > 1 ? 'mb-2' : null}>
+          {scope.name}
+        </li>
+      </For></ul>
     );
   };
 
@@ -143,6 +166,9 @@ class Laws extends React.Component {
                 onChange={this.onChange}
               />
             </div>
+
+            <LawScopes />
+
             <div className='d-flex mb-2'>
               <FilesUpload onChange={this.onFilesChange} files={files} fieldName={'Файли'} />
             </div>
@@ -150,7 +176,7 @@ class Laws extends React.Component {
           <button
             type='button'
             className='btn btn-sm btn-outline-success align-self-stretch'
-            onClick={this.postNewLaw}
+            onClick={() => this.postNewLaw()}
           >
             Додати
           </button>
@@ -165,6 +191,9 @@ class Laws extends React.Component {
               </th>
               <th className='text-center col-4'>
                 <small>Посилання</small>
+              </th>
+              <th className='text-center col-4'>
+                <small>Сфери застосування</small>
               </th>
               <th className='text-center col-3'>
                 <small>Файли</small>
@@ -181,6 +210,7 @@ class Laws extends React.Component {
                     {law.url}
                   </a>
                 </td>
+                <td className='align-middle col-4'>{this.arrangeLawScopes(law.scopes)}</td>
                 <td className='align-middle col-3 p-0'>{this.arrangeLawFiles(law.files)}</td>
                 <td className='text-center align-middle small text-danger col-1'>
                   <button className='btn btn-sm py-0' onClick={(e) => this.postDelLaw(e, law.id)}>

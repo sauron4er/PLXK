@@ -4,10 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from templates.components.try_except import try_except
 
-from .models import Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file
-from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm
+from .models import Scope, Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope
+from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
 from plxk.api.datetime_normalizers import datetime_to_json
@@ -23,8 +23,15 @@ def get_request_status(request_date, request_term, answer_date):
 
 
 @login_required(login_url='login')
+@try_except
 def index(request):
     if request.user.userprofile.is_correspondence_view:
+
+        scopes = [{
+            'id': scope.pk,
+            'name': scope.name
+        } for scope in
+            Scope.objects.all().filter(is_active=True)]
 
         products = [{
             'id': product.pk,
@@ -43,6 +50,11 @@ def index(request):
             'id': law.pk,
             'name': law.name,
             'url': law.url,
+            'scopes': [{
+                'id': scope.scope_id,
+                'name': scope.scope.name,
+            } for scope in
+                Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
             'files': [{
                 'id': file.pk,
                 'name': file.name,
@@ -63,6 +75,7 @@ def index(request):
         requests = [{
             'id': request.pk,
             'product_name': request.product_type.name,
+            'scope_name': request.scope.name,
             'client_name': request.client.name,
             'request_date': datetime_to_json(request.request_date),
             'request_term': datetime_to_json(request.request_term),
@@ -72,6 +85,7 @@ def index(request):
         } for request in Request.objects.all().filter(is_active=True).order_by('-id')]
 
         return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
+                                                             'scopes': json.dumps(scopes),
                                                              'products': json.dumps(products),
                                                              'laws': json.dumps(laws),
                                                              'requests': json.dumps(requests),
@@ -81,6 +95,7 @@ def index(request):
 
 
 #  --------------------------------------------------- Clients
+@try_except
 def new_client(request):
     try:
         client_form = NewClientForm(request.POST)
@@ -93,6 +108,7 @@ def new_client(request):
         raise err
 
 
+@try_except
 def del_client(request):
     try:
         client = get_object_or_404(Client, pk=request.POST['id'])
@@ -106,7 +122,36 @@ def del_client(request):
         raise err
 
 
+#  --------------------------------------------------- Scope
+@try_except
+def new_scope(request):
+    try:
+        scope_form = NewScopeForm(request.POST)
+        if scope_form.is_valid():
+            scope = scope_form.save()
+            return HttpResponse(scope.pk)
+        else:
+            raise ValidationError('form invalid')
+    except Exception as err:
+        raise err
+
+
+@try_except
+def del_scope(request):
+    try:
+        scope_instance = get_object_or_404(Scope, pk=request.POST['id'])
+        scope_form = DelScopeForm(request.POST, instance=scope_instance)
+        if scope_form.is_valid():
+            scope = scope_form.save()
+            return HttpResponse(scope.pk)
+        else:
+            raise ValidationError('form invalid')
+    except Exception as err:
+        raise err
+
+
 #  --------------------------------------------------- Laws
+@try_except
 def post_law(post_request):
     try:
         law_form = NewLawForm(post_request)
@@ -119,6 +164,7 @@ def post_law(post_request):
         raise err
 
 
+@try_except
 def post_law_files(files, post_request):
     law = get_object_or_404(Law, pk=post_request['id'])
 
@@ -130,15 +176,30 @@ def post_law_files(files, post_request):
         )
 
 
+@try_except
+def post_law_scopes(post_request):
+    scopes = json.loads(post_request['scopes'])
+    for scope in scopes:
+        post_request.update({'scope': scope['id']})
+        law_scope_form = NewLawScopeForm(post_request)
+        if law_scope_form.is_valid():
+            law_scope_form.save()
+        else:
+            raise ValidationError('law_scope_form invalid')
+
+
+@try_except
 def new_law(request):
     post_request = request.POST.copy()
     law = post_law(post_request)
     post_request.update({'law': law.pk, 'id': law.pk})
+    post_law_scopes(post_request)
     post_law_files(request.FILES, post_request)
 
     return HttpResponse(law.pk)
 
 
+@try_except
 def del_law(request):
     try:
         law = get_object_or_404(Law, pk=request.POST['id'])
@@ -153,6 +214,7 @@ def del_law(request):
 
 
 #  --------------------------------------------------- Requests
+@try_except
 def get_request(request, pk):
     try:
         req = get_object_or_404(Request, pk=pk)
@@ -208,6 +270,7 @@ def get_request(request, pk):
         raise err
 
 
+@try_except
 def new_request(request):
     try:
         post_request = request.POST.copy()
@@ -227,6 +290,7 @@ def new_request(request):
         raise err
 
 
+@try_except
 def edit_request(request):
     try:
         post_request = request.POST.copy()
@@ -246,6 +310,7 @@ def edit_request(request):
         raise err
 
 
+@try_except
 def del_request(request, pk):
     try:
         corr_api.deactivate_req(request, pk)

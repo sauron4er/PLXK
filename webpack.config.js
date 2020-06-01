@@ -14,6 +14,7 @@ module.exports = {
     my_docs: './static/index/my_docs_index.js',
     archive: './static/index/archive_index.js',
     sub_docs: './static/index/sub_docs_index.js',
+    tables: './static/index/tables_index.js',
     plhk_ads: './static/index/plhk_ads_index.js',
     orders: './static/index/orders.js',
     correspondence: './static/index/correspondence.js',
@@ -75,6 +76,7 @@ module.exports = {
     alias: {
       static: path.resolve(__dirname, 'static'),
       templates: path.resolve(__dirname, 'templates'),
+      edms: path.resolve(__dirname, 'edms'),
     }
   }
 };

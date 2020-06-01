@@ -229,3 +229,9 @@ class NewClientForm(forms.ModelForm):
     class Meta:
         model = Doc_Client
         fields = {'document', 'client'}
+
+
+class ApprovedDocForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = {'approved', 'approved_date'}

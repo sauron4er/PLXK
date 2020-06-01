@@ -18,6 +18,7 @@ from templates.components.convert_to_local_time import convert_to_localtime
 from .models import Doc_Approval, Doc_Recipient
 from .forms import NewApprovalForm, ApprovedApprovalForm
 # Система фаз:
+from .api.phases_handler import is_auto_approved_phase_used, post_auto_approve
 from .models import Doc_Type_Phase
 from .forms import MarkDemandForm, DeactivateMarkDemandForm, DeactivateDocForm, DeleteDocForm
 
@@ -166,7 +167,9 @@ def handle_phase_manual_approvals(doc_request, phase_info):
 
     # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
     if not any(approval['approve_queue'] == phase_info['phase'] for approval in manual_approvals_emp_seat):
-        new_phase(doc_request, phase_info['phase'] + 1, [])
+        auto_recipients = get_phase_recipient_list(phase_info['id'])
+        if not auto_recipients:
+            new_phase(doc_request, phase_info['phase'] + 1, [])
     else:
         for approval in manual_approvals_emp_seat:
             # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
@@ -266,14 +269,19 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
     if phases:
         for phase_info in phases:
-            # 1. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
-            if is_approvals_used(doc_request['document_type']):
-                handle_phase_approvals(doc_request, phase_info)
+            # 1. Опрацьовуємо документ, якщо ця фаза використовує mark = 20
+            # (автоматичне заповнення поля approved, approved_date)
+            if phase_info['mark_id'] == 20:
+                post_auto_approve(doc_request)
             else:
-                # 2. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
-                handle_phase_marks(doc_request, phase_info)
-            # 3. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
-            handle_phase_recipients(doc_request, phase_info, modules_recipients)
+                # 2. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
+                if is_approvals_used(doc_request['document_type']):
+                    handle_phase_approvals(doc_request, phase_info)
+                else:
+                    # 3. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
+                    handle_phase_marks(doc_request, phase_info)
+                # 4. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
+                handle_phase_recipients(doc_request, phase_info, modules_recipients)
 
 
 # Деактивація всіх MarkDemand документа:
@@ -786,7 +794,10 @@ def edms_get_doc(request, pk):
     if request.method == 'GET':
         # Всю інформацію про документ записуємо сюди
 
-        doc_info = {'is_changeable': doc.document_type.is_changeable}
+        doc_info = {
+            'is_changeable': doc.document_type.is_changeable,
+            'approved': doc.approved
+        }
 
         # Path потрібен для складання модулю approval_list, тому отримуємо його навіть якщо документ чернетка.
         path = [{
@@ -1172,6 +1183,8 @@ def edms_mark(request):
                     .count()
 
                 if remaining_required_md == 0:
+                    if is_auto_approved_phase_used(doc_type):
+                        doc_request.update({'approved': True})
                     new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # Відмовлено
@@ -1184,9 +1197,13 @@ def edms_mark(request):
                     doc_approvals = Doc_Approval.objects.values_list('id', flat=True).filter(document_id=doc_request['document'])
                     for approval in doc_approvals:
                         post_approve(doc_request, approval, None)
-                # Після чого відправляємо документ автору на позначку Доопрацьовано
-                zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-                post_mark_demand(doc_request, doc_author, zero_phase_id, 9)
+                if is_auto_approved_phase_used(doc_type):
+                    doc_request.update({'approved': False})
+                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                else:
+                    # відправляємо документ автору на позначку Доопрацьовано
+                    zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+                    post_mark_demand(doc_request, doc_author, zero_phase_id, 9)
 
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
@@ -1346,4 +1363,15 @@ def edms_get_seats(request):
 def edms_bag_design(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_seats()))
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_tables(request):
+    if request.method == 'GET':
+        my_seats = get_my_seats(request.user.userprofile.id)
+
+        return render(request, 'edms/tables/tables.html', {
+            'my_seats': my_seats,
+        })
     return HttpResponse(status=405)

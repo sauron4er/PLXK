@@ -82,6 +82,7 @@ class Doc_Type_Phase_Queue(models.Model):
     queue = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
+
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type')
     title = models.CharField(max_length=100, null=True, blank=True)
@@ -90,10 +91,12 @@ class Document(models.Model):
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents')
     is_draft = models.BooleanField(default=False)
     is_template = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True, null=True)
+    approved = models.NullBooleanField()
+    approved_date = models.DateTimeField(blank=True, null=True)
+    testing = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
-    date = models.DateTimeField(auto_now_add=True, null=True)
-    testing = models.BooleanField(default=False)
 
 
 # Document path models
