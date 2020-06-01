@@ -13,7 +13,7 @@ import {getTextByQueue} from 'templates/components/my_extras';
 class Info extends React.Component {
   render() {
     const {info, doc} = this.props;
-
+  
     if (info.path) {
       return (
         <div>
@@ -32,51 +32,64 @@ class Info extends React.Component {
           {/* Модульна система */}
           <If condition={info.type_modules}>
             <For each='module' index='index' of={info.type_modules}>
-              <Choose>
-                <When condition={module.module === 'recipient'}>
-                  <Recipient
-                    recipient={{
-                      name: info.recipient.name,
-                      seat: info.recipient.seat
-                    }}
-                    fieldName={module.field_name}
-                  />
-                </When>
-                <When condition={module.module === 'recipient_chief'}>
-                  <Recipient
-                    recipient={{
-                      name: info.recipient_chief.name,
-                      seat: info.recipient_chief.seat
-                    }}
-                    fieldName={module.field_name}
-                  />
-                </When>
-                <When condition={module.module === 'text'}>
-                  <Text
-                    text={getTextByQueue(info.text_list, index)}
-                    fieldName={module.field_name}
-                  />
-                </When>
-                <When condition={module.module === 'day'}>
-                  <Day day={info.day} fieldName={module.field_name} />
-                </When>
-                <When condition={module.module === 'gate'}>
-                  <Gate gate={info.gate} fieldName={module.field_name} />
-                </When>
-                <When condition={module.module === 'carry_out_items'}>
-                  <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
-                </When>
-                <When condition={module.module === 'files'}>
-                  <Files
-                    files={info.old_files}
-                    fieldName={module.field_name}
-                    is_editable={module.is_editable}
-                  />
-                </When>
-                <When condition={module.module === 'approval_list'}>
-                  <Approvals approvals={info.approval_list} />
-                </When>
-              </Choose>
+              <div key={index}>
+                <Choose>
+                  <When condition={module.module === 'recipient'}>
+                    <Recipient
+                      recipient={{
+                        name: info.recipient.name,
+                        seat: info.recipient.seat
+                      }}
+                      fieldName={module.field_name}
+                    />
+                  </When>
+                  <When condition={module.module === 'recipient_chief'}>
+                    <Recipient
+                      recipient={{
+                        name: info.recipient_chief.name,
+                        seat: info.recipient_chief.seat
+                      }}
+                      fieldName={module.field_name}
+                    />
+                  </When>
+                  <When
+                    condition={['text', 'dimensions', 'packaging_type'].includes(module.module)}
+                  >
+                    <Text
+                      text={getTextByQueue(info.text_list, index)}
+                      fieldName={module.field_name}
+                    />
+                  </When>
+                  <When condition={module.module === 'day'}>
+                    <Day day={info.day} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'gate'}>
+                    <Gate gate={info.gate} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'carry_out_items'}>
+                    <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'files'}>
+                    <Files
+                      files={info.old_files}
+                      fieldName={module.field_name}
+                      is_editable={module.is_editable}
+                    />
+                  </When>
+                  <When condition={module.module === 'approval_list'}>
+                    <Approvals approvals={info.approval_list} />
+                  </When>
+                  <When condition={module.module === 'mockup_type'}>
+                    <Text text={info.mockup_type.name} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'mockup_product_type'}>
+                    <Text text={info.mockup_product_type.name} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'client'}>
+                    <Text text={info.client.name + ' (' + info.client.country + ')'} fieldName={module.field_name} />
+                  </When>
+                </Choose>
+              </div>
             </For>
           </If>
 

@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Mockup_type, Mockup_product_type
+from correspondence.models import Client
 
 
 def get_mockup_types(request):
@@ -24,3 +25,13 @@ def get_mockup_product_types(request):
 
     return HttpResponse(json.dumps(mockup_product_types))
 
+
+def get_clients(request):
+    clients = [{
+        'id': client.pk,
+        'name': client.name,
+        'country': client.country
+    } for client in
+        Client.objects.all().filter(is_active=True)]
+
+    return HttpResponse(json.dumps(clients))

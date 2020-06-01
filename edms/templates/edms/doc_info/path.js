@@ -1,15 +1,20 @@
 'use strict';
 import React from 'react';
 
+// отримує історію документа в масиві path, рендерить її для doc_info
 class Path extends React.Component {
-  // отримує історію документа в масиві path, рендерить її для doc_info
+  
+  getPathColor = (mark_id) => {
+    if (mark_id === 3) return '#ffcccc'
+    return '#ccffcc'
+  };
 
   render() {
     return (
       <div>
         Історія:
         <For each='path' index='id' of={this.props.path}>
-          <div key={path.id} className='css_path p-2 my-1 mr-1'>
+          <div key={path.id} className='css_path p-2 my-1 mr-1' style={{background: this.getPathColor(path.mark_id)}}>
             <div className='d-flex justify-content-between'>
               <span className='font-weight-bold'>{path.emp}</span>
               <span>{path.time}</span>

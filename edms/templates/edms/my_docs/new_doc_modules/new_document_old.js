@@ -6,6 +6,10 @@ import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+// import Name from './name';
+// import Preamble from './preamble';
+// import Recipient from './recipient';
+// import Articles from './articles';
 import Text from './text';
 import RecipientChief from './recipient_chief';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
@@ -23,12 +27,12 @@ import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requ
 import {
   getTextByQueue,
   getIndexByProperty,
-  isBlankOrZero,
-  getToday
+  isBlankOrZero
 } from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from './new_doc_store';
+import newDocStore from './store';
 import 'static/css/my_styles.css';
+import corrStore from '../../../../../correspondence/templates/correspondence/store';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -84,6 +88,7 @@ class NewDocument extends React.Component {
       let {text} = this.state;
       let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
       const queue = getIndexByProperty(text, 'queue', parseInt(text_box_id));
+      console.log(queue);
       if (queue === -1) {
         text.push({
           queue: parseInt(text_box_id),
@@ -148,18 +153,8 @@ class NewDocument extends React.Component {
             day: response.data.day || '',
             gate: response.data.gate || '1',
             carry_out_items: response.data.carry_out_items || [],
-            client: response.data.client || [],
-            mockup_type: response.data.mockup_type || [],
-            mockup_product_type: response.data.mockup_product_type || [],
             render_ready: true
           });
-          newDocStore.new_document.client = response.data?.client.id;
-          newDocStore.new_document.client_name = response.data?.client.name;
-          newDocStore.new_document.mockup_type = response.data?.mockup_type.id;
-          newDocStore.new_document.mockup_type_name = response.data?.mockup_type.name;
-          newDocStore.new_document.mockup_product_type = response.data?.mockup_product_type.id;
-          newDocStore.new_document.mockup_product_type_name =
-            response.data?.mockup_product_type.name;
         })
         .catch((error) => {
           console.log('errorpost: ' + error);
@@ -182,31 +177,16 @@ class NewDocument extends React.Component {
       draggable: true
     });
 
-  isDimensionsFieldFilled = (module) => {
-    for (const i in newDocStore.new_document.dimensions) {
-      if (
-        newDocStore.new_document.dimensions.hasOwnProperty(i) &&
-        newDocStore.new_document.dimensions[i].queue === module.queue
-      ) {
-        return !isBlankOrZero(newDocStore.new_document.dimensions[i].text);
-      }
-    }
-    return false;
-  };
-
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
+    console.log(this.state.type_modules);
     for (const module of this.state.type_modules) {
+      console.log(module.module);
       if (module.required) {
-        if (module.module === 'dimensions') {
-          if (!this.isDimensionsFieldFilled(module)) {
-            this.notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
-            return false;
-          }
-        } else if (
-          ['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)
-        ) {
+        if (['mockup_type', 'mockup_product_type', 'client', 'dimensions', 'packaging_type'].includes(module.module)) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
+            console.log(newDocStore.new_document[module.module]);
+            console.log(isBlankOrZero(newDocStore.new_document[module.module]));
             this.notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
@@ -217,6 +197,13 @@ class NewDocument extends React.Component {
           }
         }
       }
+      // if (
+      //   module.required &&
+      //   (this.state[module.module].length === 0 || this.state[module.module].id === 0)
+      // ) {
+      //   this.notify('Поле "' + module.field_name + '" необхідно заповнити');
+      //   return false;
+      // }
     }
     return true;
   };
@@ -230,20 +217,7 @@ class NewDocument extends React.Component {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
         type_modules.map((module) => {
-          if (
-            [
-              'mockup_type',
-              'mockup_product_type',
-              'dimensions',
-              'client',
-              'packaging_type'
-            ].includes(module.module)
-          ) {
-            doc_modules[module.module] = {
-              queue: module.queue,
-              value: newDocStore.new_document[module.module]
-            };
-          } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
+          if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
         });
@@ -254,12 +228,7 @@ class NewDocument extends React.Component {
         formData.append('document_type', doc.type_id);
         formData.append('old_id', doc.id);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
-        
-        if (status !== 'change')
-          formData.append('old_files', JSON.stringify(old_files));
-        else
-          formData.append('old_files', JSON.stringify([]));
-        
+        formData.append('old_files', JSON.stringify(old_files));
         formData.append('status', type); // Документ, шаблон чи чернетка
 
         if (this.state.files.length > 0) {
@@ -268,19 +237,61 @@ class NewDocument extends React.Component {
           });
         }
 
-        axiosPostRequest('', formData)
+        axiosPostRequest('')
           .then((response) => {
+            const today = new Date();
             // опублікування документу оновлює таблицю документів:
-            this.props.addDoc(response.data, doc.type, getToday(), doc.type_id, type);
+            this.props.addDoc(
+              response.data,
+              doc.type,
+              today.getDate() +
+                '.' +
+                (today.getMonth() < 10 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1) +
+                '.' +
+                today.getFullYear(),
+              doc.type_id,
+              type
+            );
 
             // видаляємо чернетку чи шаблон:
             if (type === doc.status) {
               this.delDoc();
             }
           })
-          .catch((error) => this.notify(error));
+          .catch((error) => notify(error));
 
-        // this.props.onCloseModal();
+        // axios({
+        //   method: 'post',
+        //   url: '',
+        //   data: formData,
+        //   headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        //   }
+        // })
+        //   .then((response) => {
+        //     const today = new Date();
+        //     // опублікування документу оновлює таблицю документів:
+        //     this.props.addDoc(
+        //       response.data,
+        //       doc.type,
+        //       today.getDate() +
+        //         '.' +
+        //         (today.getMonth() < 10 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1) +
+        //         '.' +
+        //         today.getFullYear(),
+        //       doc.type_id,
+        //       type
+        //     );
+        //
+        //     // видаляємо чернетку чи шаблон:
+        //     if (type === doc.status) {
+        //       this.delDoc();
+        //     }
+        //   })
+        //   .catch((error) => {
+        //     console.log('error: ' + error);
+        //   });
+        this.props.onCloseModal();
       }
     } catch (e) {
       this.notify(e);
@@ -309,14 +320,17 @@ class NewDocument extends React.Component {
     this.props.onCloseModal();
   };
 
-  onCloseModal = () => {
-    this.setState({open: false});
+  onCloseModal = (e) => {
+    e.preventDefault();
+    this.setState({
+      open: false
+    });
     // Передаємо вверх інфу, що модальне вікно закрите
     this.props.onCloseModal();
   };
 
   render() {
-    const {doc, status} = this.props;
+    const {doc} = this.props;
     const {
       open,
       type_modules,
@@ -362,7 +376,7 @@ class NewDocument extends React.Component {
           <If condition={type_modules.length > 0 && render_ready}>
             <div className='modal-header d-flex justify-content-between'>
               <h4 className='modal-title'>{doc.type}</h4>
-              <button className='btn btn-link' onClick={() => this.onCloseModal()}>
+              <button className='btn btn-link' onClick={this.onCloseModal}>
                 <FontAwesomeIcon icon={faTimes} />
               </button>
             </div>
@@ -482,10 +496,7 @@ class NewDocument extends React.Component {
                       />
                     </When>
                     <When condition={module.module === 'packaging_type'}>
-                      <PackagingType
-                        packaging_type={getTextByQueue(text, index)}
-                        fieldName={module.field_name}
-                      />
+                      <PackagingType fieldName={module.field_name} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>
@@ -504,6 +515,14 @@ class NewDocument extends React.Component {
               </If>
               <button
                 className='float-sm-left btn btn-sm btn-outline-info mb-1'
+                onClick={() => {
+                  console.log(newDocStore.new_document);
+                }}
+              >
+                test
+              </button>
+              <button
+                className='float-sm-left btn btn-sm btn-outline-info mb-1'
                 onClick={() => this.newDocument('draft')}
               >
                 В чернетки
@@ -515,8 +534,8 @@ class NewDocument extends React.Component {
                 Зберегти як шаблон
               </button>
               <button
-                className='float-sm-left btn btn-success mb-1'
-                onClick={() => this.newDocument(status)}
+                className='float-sm-left btn btn-outline-success mb-1'
+                onClick={() => this.newDocument('doc')}
               >
                 Підтвердити
               </button>
@@ -536,8 +555,7 @@ class NewDocument extends React.Component {
       id: 0,
       type: '',
       type_id: 0
-    },
-    onCloseModal: () => {}
+    }
   };
 }
 

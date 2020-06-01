@@ -9,7 +9,7 @@ from edms.views import edms_archive  # Архів
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types
 
-from production.views import get_mockup_types, get_mockup_product_types
+from production.views import get_mockup_types, get_mockup_product_types, get_clients
 
 urlpatterns = [
   #  url(r'^$', RedirectView.as_view(url='/main', permanent=True)),
@@ -32,6 +32,7 @@ urlpatterns = [
 
     url(r'^my_docs/get_mockup_types/', get_mockup_types, name='mockup_types'),
     url(r'^my_docs/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
+    url(r'^my_docs/get_clients/', get_clients, name='clients'),
     url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),

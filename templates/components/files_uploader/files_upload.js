@@ -26,7 +26,7 @@ class FilesUpload extends React.Component {
   render() {
     const {fieldName} = this.props;
     return (
-      <>
+      <div className='mt-1'>
         <If condition={fieldName.length > 0}><div className='mr-2'>{fieldName}:</div></If>
         
         <If condition={this.props.files.length > 0}>
@@ -49,7 +49,7 @@ class FilesUpload extends React.Component {
             Додати файл(и)
           </Files>
         </If>
-      </>
+      </div>
     );
   }
 

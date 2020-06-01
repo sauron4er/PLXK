@@ -8,7 +8,7 @@ import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Modal from 'react-responsive-modal';
 import {Document, Page} from 'react-pdf';
-import {getItemById, testForBlankOrZero} from 'templates/components/my_extras';
+import {getItemById, isBlankOrZero} from 'templates/components/my_extras';
 import OrderMail from './order_mail';
 import {Loader} from 'templates/components/loaders';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -92,7 +92,7 @@ class Order extends React.Component {
     const keys = Object.keys(order);
     for (const key of keys) {
       if (required_fields.hasOwnProperty(key)) {
-        if (testForBlankOrZero(order[key])) {
+        if (isBlankOrZero(order[key])) {
           if (key === 'files') {
             const old_files = this.state.order.old_files.filter(
               (file) => file.is_added_or_cancelled

@@ -1,5 +1,5 @@
 'use strict';
-import React, {Fragment} from 'react';
+import React from 'react';
 
 class Text extends React.Component {
 
@@ -7,10 +7,10 @@ class Text extends React.Component {
     const {fieldName, text} = this.props;
 
     return (
-      <Fragment>
+      <>
         <div>{fieldName}:</div>
         <div className='css_note_text ml-1'>{text}</div>
-      </Fragment>
+      </>
     );
   }
 

@@ -1,19 +1,18 @@
 from django import forms
 
-from accounts import models as accounts
-from .models import Seat, Employee_Seat, Document, Document_Path, Carry_Out_Items, Mark_Demand
-from .models import File, Doc_Acquaint, Doc_Approval, Doc_Day, Doc_Text, Doc_Recipient, Doc_Gate, Vacation
+from edms.models import *
+from accounts.models import *
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
-        model = accounts.UserProfile
+        model = UserProfile
         fields = ('pip', 'on_vacation', 'acting', 'is_active')
 
 
 class UserVacationForm(forms.ModelForm):
     class Meta:
-        model = accounts.UserProfile
+        model = UserProfile
         fields = ('on_vacation', 'acting')
 
 
@@ -212,3 +211,21 @@ class CarryOutItemsForm(forms.ModelForm):
     class Meta:
         model = Carry_Out_Items
         fields = {'document', 'item_name', 'quantity', 'measurement'}
+
+
+class NewMockupTypeForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Mockup_Type
+        fields = {'document', 'mockup_type'}
+
+
+class NewMockupProductTypeForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Mockup_Product_Type
+        fields = {'document', 'mockup_product_type'}
+
+
+class NewClientForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Client
+        fields = {'document', 'client'}

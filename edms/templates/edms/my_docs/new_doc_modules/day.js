@@ -5,17 +5,19 @@ class Day extends React.Component {
   render() {
     const {day, fieldName, onChange} = this.props;
     return (
-      <label htmlFor='day'>
-        {fieldName}:
-        <input
-          className='form-control'
-          id='day'
-          name='day'
-          type='date'
-          value={day}
-          onChange={onChange}
-        />
-      </label>
+      <div className='mt-1'>
+        <label htmlFor='day'>
+          {fieldName}:
+          <input
+            className='form-control'
+            id='day'
+            name='day'
+            type='date'
+            value={day}
+            onChange={onChange}
+          />
+        </label>
+      </div>
     );
   }
 

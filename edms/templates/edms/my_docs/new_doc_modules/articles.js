@@ -1,5 +1,5 @@
 "use strict";
-import React, { Fragment } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -293,9 +293,9 @@ class Articles extends React.Component {
   render() {
     const {fieldName} = this.props;
     return (
-      <Fragment>
+      <>
         {/* Шапка */}
-        <div className="d-flex justify-content-center align-content-center">
+        <div className="mt-1 d-flex justify-content-center align-content-center">
           <h3 className="text-center">{fieldName}: </h3>
           <If condition={this.state.new_article_area === false}>
             <button
@@ -579,7 +579,7 @@ class Articles extends React.Component {
             // rowClassName="simple-drag-row"
           />
         </If>
-      </Fragment>
+      </>
     );
   }
 

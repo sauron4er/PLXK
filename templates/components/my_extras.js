@@ -85,6 +85,17 @@ export const getItemById = (id, list) => {
   return -1;
 };
 
-export const testForBlankOrZero = (item) => {
-    return item == null || item === 0 || item === '0' || item.length === 0;
-  };
+export const isBlankOrZero = (item) => {
+  return item == null || item === 0 || item === '0' || item.length === 0;
+};
+
+export const getToday = () => {
+  const today_date = new Date();
+  return (
+    today_date.getDate() +
+    '.' +
+    (today_date.getMonth() < 10 ? '0' + (today_date.getMonth() + 1) : today_date.getMonth() + 1) +
+    '.' +
+    today_date.getFullYear()
+  );
+};

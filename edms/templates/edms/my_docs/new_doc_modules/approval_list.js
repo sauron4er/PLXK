@@ -93,7 +93,7 @@ class ApprovalList extends React.Component {
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <div className='w-75 d-flex align-items-center mt-3'>
+          <div className='w-75 d-flex align-items-center mt-1'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval'>
               {fieldName}:
             </label>

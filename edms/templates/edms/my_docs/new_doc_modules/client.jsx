@@ -5,17 +5,17 @@ import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
 
-class MockupType extends React.Component {
+class Client extends React.Component {
   state = {
-    mockup_types: [],
+    clients: [],
     loading: true
   };
 
   componentDidMount() {
-    axiosGetRequest('get_mockup_types/')
+    axiosGetRequest('get_clients/')
       .then((response) => {
         this.setState({
-          mockup_types: response,
+          clients: response,
           loading: false
         });
       })
@@ -24,35 +24,35 @@ class MockupType extends React.Component {
 
   onChange = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.new_document.mockup_type = event.target.options[selectedIndex].getAttribute('data-key');
-    newDocStore.new_document.mockup_type_name = event.target.options[selectedIndex].getAttribute('value');
+    newDocStore.new_document.client = event.target.options[selectedIndex].getAttribute('data-key');
+    newDocStore.new_document.client_name = event.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
     const {fieldName} = this.props;
-    const {loading, mockup_types} = this.state;
+    const {loading, clients} = this.state;
   
     return (
       <Choose>
         <When condition={!loading}>
-          <div className='row align-items-center mt-1 mr-lg-1'>
-            <label className='col-lg-4' htmlFor='mockup_type'>
+          <div className='row align-items-center mr-lg-1'>
+            <label className='col-lg-4' htmlFor='client'>
               {fieldName}:
             </label>
             <select
               className='col-lg-8 form-control mx-3 mx-lg-0'
-              id='mockup_type'
-              name='mockup_type'
-              value={newDocStore.new_document.mockup_type_name}
+              id='client'
+              name='client'
+              value={newDocStore.new_document.client_name}
               onChange={this.onChange}
             >
               <option key={0} data-key={0} value='0'>
                 ------------
               </option>
-              {mockup_types.map((mtype) => {
+              {clients.map((client) => {
                 return (
-                  <option key={mtype.id} data-key={mtype.id} value={mtype.name}>
-                    {mtype.name}
+                  <option key={client.id} data-key={client.id} value={client.name}>
+                    {client.name} ({client.country})
                   </option>
                 );
               })}
@@ -67,9 +67,9 @@ class MockupType extends React.Component {
   }
 
   static defaultProps = {
-    mockup_type: [],
+    client: [],
     fieldName: '-'
   };
 }
 
-export default view(MockupType);
+export default view(Client);

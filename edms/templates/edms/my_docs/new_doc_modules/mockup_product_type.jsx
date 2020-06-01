@@ -2,7 +2,7 @@
 import React from 'react';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from './store';
+import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
 
 class MockupProductType extends React.Component {
@@ -24,8 +24,8 @@ class MockupProductType extends React.Component {
 
   onChange = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.mockup_product_type_id = event.target.options[selectedIndex].getAttribute('data-key');
-    newDocStore.mockup_product_type_name = event.target.options[selectedIndex].getAttribute('value');
+    newDocStore.new_document.mockup_product_type = event.target.options[selectedIndex].getAttribute('data-key');
+    newDocStore.new_document.mockup_product_type_name = event.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
@@ -36,21 +36,21 @@ class MockupProductType extends React.Component {
       <Choose>
         <When condition={!loading}>
           <div className='row align-items-center mt-1 mr-lg-1'>
-            <label className='col-lg-3' htmlFor='mockup_type'>
+            <label className='col-lg-4' htmlFor='mockup_product_type'>
               {fieldName}:
             </label>
             <select
-              className='col-lg-9 form-control mx-3 mx-lg-0'
-              id='mockup_type'
-              name='mockup_type'
-              value={newDocStore.mockup_product_type_name}
+              className='col-lg-8 form-control mx-3 mx-lg-0'
+              id='mockup_product_type'
+              name='mockup_product_type'
+              value={newDocStore.new_document.mockup_product_type_name}
               onChange={this.onChange}
             >
               <option key={0} data-key={0} value='0'>
                 ------------
               </option>
               {mockup_product_types.map((mptype) => {
-                if (mptype.mockup_type_id == newDocStore.mockup_type_id) {
+                if (mptype.mockup_type_id == newDocStore.new_document.mockup_type) {
                   return (
                     <option key={mptype.id} data-key={mptype.id} value={mptype.name}>
                       {mptype.name}
@@ -69,6 +69,7 @@ class MockupProductType extends React.Component {
   }
 
   static defaultProps = {
+    mockup_product_type: [],
     fieldName: '-'
   };
 }

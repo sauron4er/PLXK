@@ -22,6 +22,9 @@ import 'static/css/files_uploader.css';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+import {view, store} from '@risingstack/react-easy-state';
+import docInfoStore from './doc_info_modules/doc_info_store';
+import NewDocument from '../my_docs/new_doc_modules/new_document';
 
 class Document extends React.Component {
   state = {
@@ -46,6 +49,7 @@ class Document extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
     if (this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
+      docInfoStore.doc = this.props.doc;
       this.getDoc(this.props.doc);
     }
   }
@@ -84,6 +88,7 @@ class Document extends React.Component {
           info: response.data,
           ready_for_render: true
         });
+        docInfoStore.info = response.data;
 
         // Якщо в історії документа автор хоч одного запису не є автором документа - документ не видаляється.
         for (let i = 0; i <= response.data.path.length - 1; i++) {
@@ -336,8 +341,16 @@ class Document extends React.Component {
       modal_open: false
     });
   };
+  
+  addDoc = () => {
+    window.location.reload();
+  };
 
   render() {
+  
+    // console.log(docInfoStore.doc);
+    // console.log(docInfoStore.info);
+  
     if (this.state.ready_for_render === true) {
       if (
         this.props.doc !== '' &&
@@ -360,6 +373,7 @@ class Document extends React.Component {
             <div className='css_border bg-light p-2 mt-2 mr-1'>
               <Info doc={this.props.doc} info={this.state.info} />
             </div>
+            
             <If condition={this.props.closed === false}>
               <div className='mt-3'>Відреагувати:</div>
               <div className='css_border bg-light p-2 mt-1 mr-1'>
@@ -419,6 +433,19 @@ class Document extends React.Component {
               <ToastContainer />
               {this.state.modal}
             </Modal>
+            
+            <If condition={docInfoStore.view === 'new_document'}>
+              <NewDocument
+                doc={{
+                  id: docInfoStore.doc.id,
+                  type: docInfoStore.doc.type,
+                  type_id: docInfoStore.doc.type_id
+                }}
+                addDoc={this.addDoc}
+                status={'change'}
+                onCloseModal={() => docInfoStore.view = 'info'}
+              />
+            </If>
 
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />
@@ -443,4 +470,4 @@ class Document extends React.Component {
   }
 }
 
-export default Document;
+export default view(Document);

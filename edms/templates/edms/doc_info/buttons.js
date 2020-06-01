@@ -1,5 +1,7 @@
 'use strict';
 import React from 'react';
+import {view, store} from '@risingstack/react-easy-state';
+import docInfoStore from './doc_info_modules/doc_info_store';
 
 class Buttons extends React.Component {
   // отримує інформацію про документ в масиві doc та створює відповідні кнопки для doc_info
@@ -7,6 +9,7 @@ class Buttons extends React.Component {
   render() {
     const {doc, isChief, deletable, onClick} = this.props;
     const user_is_doc_author = doc.author_seat_id === parseInt(localStorage.getItem('my_seat'));
+
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -116,6 +119,16 @@ class Buttons extends React.Component {
         </If>
         {/* Якщо автор я */}
         <If condition={user_is_doc_author}>
+          {/*Якщо тип документа редагуємий*/}
+          <If condition={doc.expected_mark === 9 && docInfoStore?.info?.is_changeable}>
+            <button
+              type='button'
+              className='btn btn-secondary mr-1 mb-1'
+              onClick={() => (docInfoStore.view = 'new_document')}
+            >
+              Створити новий документ на основі цього
+            </button>
+          </If>
           {/* Якщо ніхто не встиг відреагувати - можна видалити документ */}
           <If condition={deletable === true}>
             <button
@@ -179,4 +192,4 @@ class Buttons extends React.Component {
   };
 }
 
-export default Buttons;
+export default view(Buttons);

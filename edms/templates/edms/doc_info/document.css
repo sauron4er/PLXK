@@ -26,7 +26,8 @@
 
 .css_path {
     border: solid lightgray 1px;
-    background-color: #ccffcc;
+    /*background-color: #ccffcc;*/
+    /*background-color: #fac1c9;*/
     -moz-border-radius: 5px;
 	-webkit-border-radius: 5px;
 }

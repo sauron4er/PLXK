@@ -15,7 +15,7 @@ import AnswerDate from './answer_date';
 import Responsible from './responsible';
 import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
-import {getItemById, testForBlankOrZero, uniqueArray, getIndex} from 'templates/components/my_extras';
+import {getItemById, isBlankOrZero, uniqueArray, getIndex} from 'templates/components/my_extras';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import {Loader} from 'templates/components/loaders';
 
@@ -35,30 +35,30 @@ class Request extends React.Component {
   };
 
   areAllFieldsFilled = () => {
-    if (testForBlankOrZero(corrStore.request.product_id)) {
+    if (isBlankOrZero(corrStore.request.product_id)) {
       notify('Оберіть тип продукту');
       return false;
     }
-    if (testForBlankOrZero(corrStore.request.client_id)) {
+    if (isBlankOrZero(corrStore.request.client_id)) {
       notify('Оберіть клієнта');
       return false;
     }
     if (
-      testForBlankOrZero(corrStore.request.new_request_files) &&
-      testForBlankOrZero(corrStore.request.old_request_files)
+      isBlankOrZero(corrStore.request.new_request_files) &&
+      isBlankOrZero(corrStore.request.old_request_files)
     ) {
       notify('Додайте файл запиту');
       return false;
     }
-    if (testForBlankOrZero(corrStore.request.request_date)) {
+    if (isBlankOrZero(corrStore.request.request_date)) {
       notify('Оберіть дату отримання запиту');
       return false;
     }
-    if (testForBlankOrZero(corrStore.request.responsible_id)) {
+    if (isBlankOrZero(corrStore.request.responsible_id)) {
       notify('Оберіть відповідального за запит');
       return false;
     }
-    if (testForBlankOrZero(corrStore.request.answer_responsible_id)) {
+    if (isBlankOrZero(corrStore.request.answer_responsible_id)) {
       notify('Оберіть відповідального за надання відповіді');
       return false;
     }

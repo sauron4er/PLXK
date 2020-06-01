@@ -37,7 +37,7 @@ class CarryOut extends React.Component {
     const {fieldName, carryOutItems} = this.props;
     const {carry_out_columns, carry_out_col_width} = this.state;
     return (
-      <Fragment>
+      <div className='mt-1'>
         <label>{fieldName}:</label>
         <DxTable
           rows={carryOutItems}
@@ -47,7 +47,7 @@ class CarryOut extends React.Component {
           getData={this.getCarryOutItems}
           paging
         />
-      </Fragment>
+      </div>
     );
   }
 

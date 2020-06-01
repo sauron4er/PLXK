@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
+from production.models import  Mockup_type, Mockup_product_type
+from correspondence.models import Client
 
 
 # models, related with users
@@ -40,6 +42,7 @@ class Document_Type(models.Model):
     document_type = models.CharField(max_length=50)
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True)
+    is_changeable = models.BooleanField(default=False)  # Якщо True, документ можна змінювати після опублікування.
     is_active = models.BooleanField(default=True)
     testing = models.BooleanField(default=False)
 
@@ -248,3 +251,24 @@ class Carry_Out_Items(models.Model):
     item_name = models.CharField(max_length=100)
     quantity = models.CharField(max_length=100)
     measurement = models.CharField(max_length=100)
+
+
+# Тип макету
+class Doc_Mockup_Type(models.Model):
+    document = models.ForeignKey(Document, related_name='document_mockup_type')
+    mockup_type = models.ForeignKey(Mockup_type, related_name='mt_documents')
+    is_active = models.BooleanField(default=True)
+
+
+# Тип продукції (пов’язано з типом макету)
+class Doc_Mockup_Product_Type(models.Model):
+    document = models.ForeignKey(Document, related_name='document_mockup_product_type')
+    mockup_product_type = models.ForeignKey(Mockup_product_type, related_name='mpt_documents')
+    is_active = models.BooleanField(default=True)
+
+
+# Клієнт
+class Doc_Client(models.Model):
+    document = models.ForeignKey(Document, related_name='document_client')
+    client = models.ForeignKey(Client, related_name='client_documents')
+    is_active = models.BooleanField(default=True)
