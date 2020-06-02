@@ -19,8 +19,8 @@ class Client(models.Model):
 
 
 class Law(models.Model):
-    name = models.CharField(max_length=200)
-    url = models.CharField(max_length=200)
+    name = models.CharField(max_length=500)
+    url = models.CharField(max_length=500)
     is_actual = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
