@@ -19,7 +19,7 @@ def user_can_edit(user):
 
 @login_required(login_url='login')
 def index(request):
-    docs = Document.objects.all()
+    docs = Document.objects.all().order_by('name')
     edit = user_can_edit(request.user)
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit})
 
@@ -27,11 +27,11 @@ def index(request):
 @login_required(login_url='login')
 def docs(request, fk):
     if fk == '0':
-        docs = Document.objects.all().filter(actuality=True)
+        docs = Document.objects.all().filter(actuality=True).order_by('name')
     elif fk == '666':
-        docs = Document.objects.all().filter(actuality=False)
+        docs = Document.objects.all().filter(actuality=False).order_by('name')
     else:
-        docs = Document.objects.all().filter(doc_group=fk).filter(actuality=True)
+        docs = Document.objects.all().filter(doc_group=fk).filter(actuality=True).order_by('name')
     edit = user_can_edit(request.user)
     return render(request, 'docs/index.html', {'docs': docs, 'edit': edit, 'fk': fk})
 
