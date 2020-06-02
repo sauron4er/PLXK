@@ -1,31 +1,24 @@
 'use strict';
 import React from 'react';
-// import {view, store} from '@risingstack/react-easy-state';
+import {view, store} from '@risingstack/react-easy-state';
 // import corrStore from './store';
 import DxTable from 'templates/components/dx_table';
+import ReactDOM from 'react-dom';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import {Loader} from 'templates/components/loaders';
+import 'static/css/my_styles.css';
 
-const columns = [
-  {name: 'id', title: 'id'},
-  {name: 'product_name', title: 'Продукт'},
-  {name: 'client_name', title: 'Клієнт'},
-  {name: 'responsible_name', title: 'Відповідальний'},
-  {name: 'request_date', title: 'Дата отримання'},
-  {name: 'request_term', title: 'Термін'},
-  {name: 'status', title: ''},
-];
-
-const col_width = [
-  {columnName: 'id', width: 30},
-  {columnName: 'product_name', width: 50},
-  {columnName: 'responsible_name', width: 200},
-  {columnName: 'request_date', width: 100},
-  {columnName: 'request_term', width: 100},
-  {columnName: 'status', width: 30},
-];
+const col_width = [{columnName: 'id', width: 35}, {columnName: 'status', width: 30}];
 
 class Tables extends React.Component {
   state = {
-    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
+    main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    doc_types: window.doc_types,
+    doc_type_id: 0,
+    doc_type_name: '',
+    loading: false,
+    header: [],
+    rows: []
   };
 
   componentDidMount() {
@@ -33,31 +26,85 @@ class Tables extends React.Component {
       main_div_height: this.mainDivRef.clientHeight
     });
   }
-  
+
+  onChange = (event) => {
+    const selectedIndex = event.target.options.selectedIndex;
+    this.setState(
+      {
+        doc_type_id: event.target.options[selectedIndex].getAttribute('data-key'),
+        doc_type_name: event.target.options[selectedIndex].getAttribute('value'),
+        loading: true
+      },
+      () => {
+        this.getTable();
+      }
+    );
+  };
+
+  getTable = () => {
+    axiosGetRequest('get_table/' + this.state.doc_type_id + '/')
+      .then((response) => {
+        this.setState({
+          header: response.header,
+          rows: response.rows,
+          loading: false
+        });
+      })
+      .catch((error) => notify(error));
+  };
+
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
 
-  onRowClick = (row) => {
-  
-  };
+  onRowClick = (row) => {};
 
   render() {
-    const {main_div_height} = this.state;
+    const {main_div_height, doc_types, doc_type_name, header, rows, loading} = this.state;
+  
     return (
-      <div ref={this.getMainDivRef}>
-      asd
-        {/*<DxTable*/}
-        {/*  rows={corrStore.requests}*/}
-        {/*  columns={columns}*/}
-        {/*  colWidth={col_width}*/}
-        {/*  onRowClick={this.onRowClick}*/}
-        {/*  height={main_div_height}*/}
-        {/*  filter*/}
-        {/*  coloredStatus*/}
-        {/*/>*/}
-      </div>
+      <Choose>
+        <When condition={!loading}>
+          <div className='css_main_div'>
+            <select
+              className='form-control mx-3 mx-lg-0'
+              id='doc_type'
+              name='doc_type'
+              value={doc_type_name}
+              onChange={this.onChange}
+            >
+              <option key={0} data-key={0} value='0'>
+                Оберіть тип документу
+              </option>
+              {doc_types.map((doc_type) => {
+                return (
+                  <option key={doc_type.id} data-key={doc_type.id} value={doc_type.name}>
+                    {doc_type.name}
+                  </option>
+                );
+              })}
+            </select>
+            <div ref={this.getMainDivRef}>
+              <If condition={header.length}>
+                <DxTable
+                  rows={rows}
+                  // rows={test_rows}
+                  columns={header}
+                  colWidth={col_width}
+                  onRowClick={this.onRowClick}
+                  height={main_div_height}
+                  filter
+                  coloredStatus
+                />
+              </If>
+            </div>
+          </div>
+        </When>
+        <Otherwise>
+          <Loader />
+        </Otherwise>
+      </Choose>
     );
   }
 
@@ -66,4 +113,4 @@ class Tables extends React.Component {
   };
 }
 
-export default view(Tables);
+ReactDOM.render(<Tables />, document.getElementById('tables'));

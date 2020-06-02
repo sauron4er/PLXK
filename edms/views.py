@@ -12,6 +12,7 @@ from .api.vacations import schedule_vacations_arrange, add_vacation, deactivate_
 from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
+from .api.tables_creater import create_table
 from templates.components.try_except import try_except
 from templates.components.convert_to_local_time import convert_to_localtime
 # Модульна система:
@@ -1369,9 +1370,25 @@ def edms_bag_design(request):
 @login_required(login_url='login')
 def edms_tables(request):
     if request.method == 'GET':
-        my_seats = get_my_seats(request.user.userprofile.id)
+
+        doc_types = [{
+            'id': doc_type.id,
+            'name': doc_type.description,
+        } for doc_type in Document_Type.objects
+            .filter(table_view=True)
+            .filter(is_active=True)]
 
         return render(request, 'edms/tables/tables.html', {
-            'my_seats': my_seats,
+            'doc_types': doc_types,
         })
     return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_get_table(request, pk):
+    if request.method == 'GET':
+        table = create_table(pk)
+
+        return HttpResponse(json.dumps(table))
+    return HttpResponse(status=405)
+

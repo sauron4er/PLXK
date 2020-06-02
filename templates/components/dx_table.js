@@ -294,7 +294,7 @@ class DxTable extends React.PureComponent {
 
           {/*Якщо в props є filter - таблиця дає можливість фільтрувати*/}
           <If condition={this.props.filter}>
-            <TableFilterRow rowHeight={1} messages={{filterPlaceholder: ''}} />
+            <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} />
           </If>
 
           {/*Якщо в props є paging - таблиця показує панель пажинації*/}

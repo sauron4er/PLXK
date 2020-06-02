@@ -1,6 +1,6 @@
 {% extends 'edms/main.html' %}
 {% load static %}
-{% block title %}EDMS - Архів{% endblock %}
+{% block title %}EDMS - Зведені таблиці{% endblock %}
 {% load render_bundle from webpack_loader %}
 
 {% block stylesheet %}
@@ -9,7 +9,9 @@
 
 {% block content %}
     <div class="container-fluid" id="tables">
-
+        <script>
+            window.doc_types = {{ doc_types|safe }};
+        </script>
     </div>
     {% render_bundle 'tables' %} <!-- Renders js files -->
 {% endblock %}

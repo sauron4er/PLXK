@@ -5,7 +5,7 @@ from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
-from edms.views import edms_archive, edms_tables
+from edms.views import edms_archive, edms_tables, edms_get_table
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types
 
@@ -51,6 +51,6 @@ urlpatterns = [
     url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
+    url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
     url(r'^tables/', edms_tables, name='tables'),
-
 ]
