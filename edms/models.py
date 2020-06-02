@@ -43,6 +43,7 @@ class Document_Type(models.Model):
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True)
     is_changeable = models.BooleanField(default=False)  # Якщо True, документ можна змінювати після опублікування.
+    table_view = models.BooleanField(default=False)  # True - система створює базу цих документів на сторінці tables
     is_active = models.BooleanField(default=True)
     testing = models.BooleanField(default=False)
 
@@ -154,6 +155,7 @@ class Document_Type_Module(models.Model):
     # is_tiny_text_box = models.BooleanField(default=False) # True - маленькі текстові поля, н-д номер документа (приймають до 10 символів)
     is_active = models.BooleanField(default=True)
     is_editable = models.BooleanField(default=False)
+    table_view = models.BooleanField(default=False)  # True - показує це поле як колонку у зведеній таблиці
     additional_info = models.CharField(max_length=200, null=True)  # Додаткова інфа про модуль, яка показується користувачу
 
 

@@ -271,7 +271,7 @@ class NewDocument extends React.Component {
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
-            this.props.addDoc(response.data, doc.type, getToday(), doc.type_id, type);
+            this.props.addDoc(response, doc.type, getToday(), doc.type_id, type);
 
             // видаляємо чернетку чи шаблон:
             if (type === doc.status) {
@@ -280,7 +280,7 @@ class NewDocument extends React.Component {
           })
           .catch((error) => this.notify(error));
 
-        // this.props.onCloseModal();
+        this.props.onCloseModal();
       }
     } catch (e) {
       this.notify(e);
