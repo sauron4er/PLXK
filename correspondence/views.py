@@ -223,6 +223,8 @@ def get_request(request, pk):
             'id': req.id,
             'client_id': req.client_id,
             'client_name': req.client.name,
+            'scope_id': req.scope_id,
+            'scope_name': req.scope.name,
             'product_id': req.product_type_id,
             'product_name': req.product_type.name,
             'answer': req.answer if req.answer else '',
