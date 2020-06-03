@@ -17,7 +17,7 @@ def get_request_status(request_date, request_term, answer_date):
     if answer_date:
         return 'ok'
     else:
-        if request_term and datetime.date(request_term) < date.today():
+        if request_term and request_term < date.today():
             return 'overdue'
     return 'in progress'
 
@@ -82,7 +82,7 @@ def index(request):
             'answer_date': date_to_json(request.answer_date),
             'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
             'status': get_request_status(request.request_date, request.request_term, request.answer_date),
-        } for request in Request.objects.all().filter(is_active=True).order_by('-id')]
+        } for request in Request.objects.filter(is_active=True).order_by('-id')]
 
         return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
                                                              'scopes': json.dumps(scopes),
