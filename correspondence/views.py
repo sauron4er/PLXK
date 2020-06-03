@@ -77,9 +77,9 @@ def index(request):
             'product_name': request.product_type.name,
             'scope_name': request.scope.name,
             'client_name': request.client.name,
-            'request_date': datetime_to_json(request.request_date),
-            'request_term': datetime_to_json(request.request_term),
-            'answer_date': datetime_to_json(request.answer_date),
+            'request_date': date_to_json(request.request_date),
+            'request_term': date_to_json(request.request_term),
+            'answer_date': date_to_json(request.answer_date),
             'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
             'status': get_request_status(request.request_date, request.request_term, request.answer_date),
         } for request in Request.objects.all().filter(is_active=True).order_by('-id')]
