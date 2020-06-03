@@ -54,11 +54,26 @@ def get_table_header(modules):
 
 @try_except
 def get_table_rows(doc_type, modules):
-    documents = [{
+    # documents = [{
+    #     'id': doc.id,
+    #     'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else ''
+    # } for doc in Document.objects.all()
+    #     .filter(document_type_id=doc_type)
+    #     .filter(closed=False)]
+
+    documents = Document.objects.all().select_related()\
+        .filter(document_type_id=doc_type)\
+        .filter(closed=False)
+
+    documents_arranged = [{
         'id': doc.id,
-        'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else ''
-    } for doc in Document.objects
-        .filter(document_type_id=doc_type)
-        .filter(closed=False)]
+        'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
+    } for doc in documents]
+
+    for module in modules:
+        if module['module_id'] == 24:  # Тип макету
+            for document in documents:
+                # documents_arranged[i][module['id']] = document['document_mockup_type']
+                test=1
 
     return documents

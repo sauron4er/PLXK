@@ -177,14 +177,14 @@ class Document_Type_Module(models.Model):
 
 # Список отримувачів на ознайомлення.
 class Doc_Acquaint(models.Model):
-    document = models.ForeignKey(Document, related_name='document_acquaint_list')
+    document = models.ForeignKey(Document, related_name='acquaint_list')
     acquaint_emp_seat = models.ForeignKey(Employee_Seat, related_name='emp_seat_acquaints')
     is_active = models.BooleanField(default=True)
 
 
 # Список отримувачів на ознайомлення.
 class Doc_Approval(models.Model):
-    document = models.ForeignKey(Document, related_name='document_approval_list')
+    document = models.ForeignKey(Document, related_name='approval_list')
     emp_seat = models.ForeignKey(Employee_Seat, related_name='emp_seat_approvals')
     approved = models.NullBooleanField()
     approve_path = models.ForeignKey(Document_Path, related_name='path_approvals', null=True)
@@ -223,14 +223,14 @@ class Doc_Approval(models.Model):
 
 # Адресат документу
 class Doc_Recipient(models.Model):
-    document = models.ForeignKey(Document, related_name='doc_recipient')
+    document = models.ForeignKey(Document, related_name='recipients')
     recipient = models.ForeignKey(Employee_Seat, related_name='recipient_doc')
     is_active = models.BooleanField(default=True)
 
 
 # Текст документу
 class Doc_Text(models.Model):
-    document = models.ForeignKey(Document, related_name='doc_text')
+    document = models.ForeignKey(Document, related_name='texts')
     text = models.CharField(max_length=5000, null=True, blank=True)
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
@@ -238,14 +238,14 @@ class Doc_Text(models.Model):
 
 # Дата, яка використовується у документі. Н-д, день дії звільнюючої
 class Doc_Day(models.Model):
-    document = models.ForeignKey(Document, related_name='document_day')
+    document = models.ForeignKey(Document, related_name='day')
     day = models.DateField(default=timezone.now)
     is_active = models.BooleanField(default=True)
 
 
 # Номер прохідної (для матеріального пропуску тощо)
 class Doc_Gate(models.Model):
-    document = models.ForeignKey(Document, related_name='document_gate')
+    document = models.ForeignKey(Document, related_name='gate')
     gate = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
@@ -260,20 +260,20 @@ class Carry_Out_Items(models.Model):
 
 # Тип макету
 class Doc_Mockup_Type(models.Model):
-    document = models.ForeignKey(Document, related_name='document_mockup_type')
-    mockup_type = models.ForeignKey(Mockup_type, related_name='mt_documents')
+    document = models.ForeignKey(Document, related_name='mockup_type')
+    mockup_type = models.ForeignKey(Mockup_type, related_name='documents')
     is_active = models.BooleanField(default=True)
 
 
 # Тип продукції (пов’язано з типом макету)
 class Doc_Mockup_Product_Type(models.Model):
-    document = models.ForeignKey(Document, related_name='document_mockup_product_type')
+    document = models.ForeignKey(Document, related_name='mockup_product_type')
     mockup_product_type = models.ForeignKey(Mockup_product_type, related_name='mpt_documents')
     is_active = models.BooleanField(default=True)
 
 
 # Клієнт
 class Doc_Client(models.Model):
-    document = models.ForeignKey(Document, related_name='document_client')
+    document = models.ForeignKey(Document, related_name='client')
     client = models.ForeignKey(Client, related_name='client_documents')
     is_active = models.BooleanField(default=True)

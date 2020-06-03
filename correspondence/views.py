@@ -10,7 +10,7 @@ from .models import Scope, Client, Product_type, Law, Law_file, Request, Request
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
-from plxk.api.datetime_normalizers import datetime_to_json
+from plxk.api.datetime_normalizers import datetime_to_json, date_to_json
 
 
 def get_request_status(request_date, request_term, answer_date):
@@ -228,9 +228,9 @@ def get_request(request, pk):
             'product_id': req.product_type_id,
             'product_name': req.product_type.name,
             'answer': req.answer if req.answer else '',
-            'request_date': datetime_to_json(req.request_date),
-            'request_term': datetime_to_json(req.request_term) if req.request_term else '',
-            'answer_date': datetime_to_json(req.answer_date) if req.answer_date else '',
+            'request_date': date_to_json(req.request_date),
+            'request_term': date_to_json(req.request_term) if req.request_term else '',
+            'answer_date': date_to_json(req.answer_date) if req.answer_date else '',
             'responsible_id': req.responsible_id,
             'responsible_name': req.responsible.last_name + ' ' + req.responsible.first_name,
             'answer_responsible_id': req.answer_responsible_id,

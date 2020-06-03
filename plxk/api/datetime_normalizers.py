@@ -6,6 +6,11 @@ def datetime_to_json(data):
         return data.date().__str__()
 
 
+def date_to_json(data):
+    if isinstance(data, datetime.date):
+        return data.__str__()
+
+
 def normalize_month(date):
     return '0' + str(date.month) if date.month < 10 else str(date.month)
 

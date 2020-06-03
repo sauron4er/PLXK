@@ -79,7 +79,8 @@
   display: flex;
   align-items: start;
   margin-bottom: 10px;
-  border-style: double;
+  border-style: solid;
+  border-width: thin;
   border-color: #2ba749;
   padding: 10px;
 }
