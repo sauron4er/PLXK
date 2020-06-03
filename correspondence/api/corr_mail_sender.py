@@ -38,8 +38,9 @@ def send_mails(post_request, req_type):
 
     mails = [author_mail, responsible_mail, answer_responsible_mail] + correspondence_mail_list
 
+    mails_without_duplicates = list(dict.fromkeys(mails))
+
     if not testing:
-        mails_without_duplicates = list(dict.fromkeys(mails))
         for mail in mails_without_duplicates:
             body = create_mail_body(post_request, mail, req_type)
             send_email(author_mail, body)
