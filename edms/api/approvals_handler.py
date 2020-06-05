@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from templates.components.try_except import try_except
+from plxk.api.try_except import try_except
 from ..models import Document_Type_Module, Doc_Approval
 from ..forms import ApproveForm, DeactivateApproveForm
 from ..models import Doc_Type_Phase

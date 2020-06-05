@@ -34,7 +34,7 @@ class Approvals extends React.Component {
           </thead>
           <tbody>
             <For each='approval' index='idx' of={approvals}>
-              <tr key={approval.emp_seat_id}>
+              <tr key={idx}>
                 <td className='align-middle text-center'>
                   <div className={this.getCheckedStyle(approval.approved)}>
                     <Choose>

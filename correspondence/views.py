@@ -1,16 +1,16 @@
 import json
-from datetime import date, datetime
+from datetime import date
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
-from templates.components.try_except import try_except
+from plxk.api.try_except import try_except
 
 from .models import Scope, Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
-from plxk.api.datetime_normalizers import datetime_to_json, date_to_json
+from plxk.api.datetime_normalizers import date_to_json
 
 
 def get_request_status(request_date, request_term, answer_date):

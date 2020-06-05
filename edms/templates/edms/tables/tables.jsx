@@ -83,7 +83,7 @@ class Tables extends React.Component {
       clicked_row,
       loading
     } = this.state;
-
+  
     return (
       <>
         <Choose>

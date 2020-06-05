@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-import threading
 
 from .models import Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
@@ -13,8 +12,8 @@ from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
 from .api.tables_creater import create_table
-from templates.components.try_except import try_except
-from templates.components.convert_to_local_time import convert_to_localtime
+from plxk.api.try_except import try_except
+from plxk.api.convert_to_local_time import convert_to_localtime
 # Модульна система:
 from .models import Doc_Approval, Doc_Recipient
 from .forms import NewApprovalForm, ApprovedApprovalForm
@@ -155,15 +154,34 @@ def handle_phase_recipients(doc_request, phase_info, recipients):
 
 
 @try_except
-def handle_phase_manual_approvals(doc_request, phase_info):
+# Опрацьовує автоматичний список візуючих при створенні документа
+def add_zero_phase_auto_approvals(doc_request, phase_info):
+    recipients = get_phase_recipient_list(phase_info['id'])
+
+    for recipient in recipients:
+        doc_request.update({'emp_seat': recipient})
+        doc_request.update({'approve_queue': phase_info['phase']})
+        doc_request.update({'approved': None})
+        doc_request.update({'approve_path': None})
+        approval_form = NewApprovalForm(doc_request)
+        if approval_form.is_valid():
+            approval_form.save()
+            # post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+            # new_mail('new', [{'id': recipient}], doc_request)
+        else:
+            raise ValidationError('edms/views post_approval_list approval_form invalid')
+
+
+@try_except
+def handle_phase_approvals(doc_request, phase_info):
     if global_approvals:
         # Ця глобальна змінна існує при створенні нового документа,
         # так як нові approvals ще не записані у бд
         manual_approvals_emp_seat = global_approvals
     else:
         manual_approvals_emp_seat = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
-            .filter(document_id=doc_request['document'])\
-            .filter(approve_queue=phase_info['phase'])\
+            .filter(document_id=doc_request['document']) \
+            .filter(approve_queue=phase_info['phase']) \
             .filter(is_active=True)
 
     # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
@@ -177,30 +195,6 @@ def handle_phase_manual_approvals(doc_request, phase_info):
             if approval['approve_queue'] == phase_info['phase']:
                 post_mark_demand(doc_request, approval['emp_seat_id'], phase_info['id'], phase_info['mark_id'])
                 new_mail('new', [{'id': approval['emp_seat_id']}], doc_request)
-
-
-@try_except
-# Опрацьовує автоматичний список візуючих
-def handle_phase_auto_approvals(doc_request, phase_info):
-    recipients = get_phase_recipient_list(phase_info['id'])
-    for recipient in recipients:
-        doc_request.update({'emp_seat': recipient})
-        doc_request.update({'approve_queue': 0})
-        doc_request.update({'approved': None})
-        doc_request.update({'approve_path': None})
-        approval_form = NewApprovalForm(doc_request)
-        if approval_form.is_valid():
-            approval_form.save()
-            post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
-            new_mail('new', [{'id': recipient}], doc_request)
-        else:
-            raise ValidationError('edms/views post_approval_list approval_form invalid')
-
-
-@try_except
-def handle_phase_approvals(doc_request, phase_info):
-    handle_phase_manual_approvals(doc_request, phase_info)
-    handle_phase_auto_approvals(doc_request, phase_info)
 
 
 # Створення mark_demand для отримувачів, визначених автоматично
@@ -256,9 +250,7 @@ def handle_phase_marks(doc_request, phase_info):
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
 
 
-# Створення першої фази документу
 def new_phase(doc_request, phase_number, modules_recipients):
-
     # Знаходимо id's фази.
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
     phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained') \
@@ -270,18 +262,22 @@ def new_phase(doc_request, phase_number, modules_recipients):
 
     if phases:
         for phase_info in phases:
-            # 1. Опрацьовуємо документ, якщо ця фаза використовує mark = 20
+            # 1. Створюємо таблицю візування для новоствореного документа:
+            if phase_number == 1:
+                if is_approvals_used(doc_request['document_type']):
+                    add_zero_phase_auto_approvals(doc_request, phase_info)
+            # 2. Опрацьовуємо документ, якщо ця фаза використовує mark = 20
             # (автоматичне заповнення поля approved, approved_date)
             if phase_info['mark_id'] == 20:
                 post_auto_approve(doc_request)
             else:
-                # 2. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
+                # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
                 if is_approvals_used(doc_request['document_type']):
                     handle_phase_approvals(doc_request, phase_info)
                 else:
-                    # 3. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
+                    # 4. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
                     handle_phase_marks(doc_request, phase_info)
-                # 4. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
+                # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
                 handle_phase_recipients(doc_request, phase_info, modules_recipients)
 
 
@@ -901,7 +897,7 @@ def edms_my_docs(request):
 
         my_seats = get_my_seats(request.user.userprofile.id)
 
-        new_docs_query = Document_Type.objects.all()
+        new_docs_query = Document_Type.objects.filter(is_active=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
         if not testing:
@@ -1151,7 +1147,7 @@ def edms_mark(request):
             doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
             doc_request.update({'document_type': doc_type})
 
-            # Отримуємо назву типу документа, назву позначки та ім’я автора позначки для формування листа автору документа
+            # Отримуємо назву типу документа, назву позначки та ім’я автора позначки для формування листа автору
             doc_request = get_additional_doc_info(doc_request)
 
             this_phase = get_phase_info(doc_request)
@@ -1159,6 +1155,13 @@ def edms_mark(request):
             doc_author = Document.objects.values_list('employee_seat_id', flat=True).filter(id=doc_request['document'])[0]
             new_path = post_path(doc_request)
             doc_request.update({'document_path': new_path.pk})
+
+            # Створення, оновлення документу
+            # Очищаємо поле auto_approved, якщо таке є і заповнене:
+            if int(doc_request['mark']) in [1, 18]:
+                if is_auto_approved_phase_used(doc_type):
+                    doc_request.update({'approved': None})
+                    post_auto_approve(doc_request)
 
             # Погоджую, Ознайомлений, Доопрацьовано, Виконано, Підписано, Віза
             if int(doc_request['mark']) in [2, 9, 11, 14, 17]:
@@ -1207,7 +1210,16 @@ def edms_mark(request):
                         post_approve(doc_request, approval, None)
                 if is_auto_approved_phase_used(doc_type):
                     doc_request.update({'approved': False})
-                    new_phase(doc_request, this_phase['phase'] + 1, [])
+
+                    next_phases_marks = Doc_Type_Phase.objects.values_list('mark_id', flat=True) \
+                        .filter(document_type_id=doc_request['document_type']).filter(phase=this_phase['phase'] + 1)
+                    # Якщо наступна фаза = 20, відправляємо на наступну фазу, якщо ні, то просто ставимо позначку у документ
+                    if next_phases_marks and 20 in next_phases_marks:
+                        new_phase(doc_request, this_phase['phase'] + 1, [])
+                    else:
+                        post_auto_approve(doc_request)
+                        zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+                        post_mark_demand(doc_request, doc_author, zero_phase_id, 9)
                 else:
                     # відправляємо документ автору на позначку Доопрацьовано
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -1378,16 +1390,18 @@ def edms_bag_design(request):
 def edms_tables(request):
     if request.method == 'GET':
 
+        doc_types_query = Document_Type.objects.filter(table_view=True).filter(is_active=True)
+
+        # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+        if not testing:
+            doc_types_query = doc_types_query.filter(testing=False)
+
         doc_types = [{
             'id': doc_type.id,
             'name': doc_type.description,
-        } for doc_type in Document_Type.objects
-            .filter(table_view=True)
-            .filter(is_active=True)]
+        } for doc_type in doc_types_query]
 
-        return render(request, 'edms/tables/tables.html', {
-            'doc_types': doc_types,
-        })
+        return render(request, 'edms/tables/tables.html', {'doc_types': doc_types})
     return HttpResponse(status=405)
 
 

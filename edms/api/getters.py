@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.utils.timezone import datetime
 
-from templates.components.convert_to_local_time import convert_to_localtime
+from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from ..models import Seat, Employee_Seat, Document, Document_Type, Mark, Document_Path, File
 from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient
 from ..models import Doc_Text, Doc_Day, Doc_Gate, Doc_Mockup_Type, Doc_Mockup_Product_Type, Doc_Client
-from templates.components.try_except import try_except
+from plxk.api.try_except import try_except
 from ..models import Document_Type_Module
 from ..models import Doc_Type_Phase, Doc_Type_Phase_Queue
 

@@ -1,8 +1,7 @@
-from datetime import date
-from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
+from django.conf import settings
 
-from templates.components.try_except import try_except
+testing = settings.STAS_DEBUG
+from plxk.api.try_except import try_except
 from ..models import Document_Type_Module, Document, File
 
 
@@ -76,6 +75,9 @@ def get_table_rows(doc_type, modules):
     documents = Document.objects.all().select_related()\
         .filter(document_type_id=doc_type)\
         .filter(closed=False).order_by('-id')
+
+    if not testing:
+        documents = documents.filter(testing=False)
 
     documents_arranged = [{
         'id': doc.id,

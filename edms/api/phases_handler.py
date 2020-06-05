@@ -1,12 +1,10 @@
-from datetime import date
+from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
-from templates.components.try_except import try_except
+from plxk.api.try_except import try_except
 from ..models import Doc_Type_Phase, Document
-from ..models import File, Document_Path
 from ..forms import ApprovedDocForm
-from .vacations import vacation_check
 
 
 @try_except
@@ -20,7 +18,7 @@ def is_auto_approved_phase_used(doc_type):
 
 @try_except
 def post_auto_approve(doc_request):
-    doc_request.update({'approved_date': date.today()})
+    doc_request.update({'approved_date': datetime.now()})
 
     doc = get_object_or_404(Document, pk=doc_request['document'])
 

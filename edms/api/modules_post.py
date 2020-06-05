@@ -2,7 +2,7 @@ import json
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
-from templates.components.try_except import try_except
+from plxk.api.try_except import try_except
 from ..models import File, Document_Path
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm
