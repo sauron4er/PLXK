@@ -13,22 +13,20 @@ import {getTextByQueue} from 'templates/components/my_extras';
 class Info extends React.Component {
   render() {
     const {info, doc} = this.props;
-
+  
     if (info.path) {
       return (
         <div>
           {/*Початкова інфа про документ:*/}
           <div className='d-flex justify-content-between'>
-            <span className='font-weight-bold'>{info.type}</span>
-          </div>
-          <div>
+            <span className='font-weight-bold'>{doc.type}</span>
             <span>
-              №: {doc.id}. Дата: {info.date}
+              №: {doc.id}. Дата: {doc.date}
             </span>
           </div>
           <div>
             Автор:
-            <span className='font-italic'> {info.author}</span>
+            <span className='font-italic'> {doc.author}</span>
           </div>
 
           {/* Модульна система */}
@@ -88,10 +86,7 @@ class Info extends React.Component {
                     <Text text={info.mockup_product_type.name} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'client'}>
-                    <Text
-                      text={info.client.name + ' (' + info.client.country + ')'}
-                      fieldName={module.field_name}
-                    />
+                    <Text text={info.client.name + ' (' + info.client.country + ')'} fieldName={module.field_name} />
                   </When>
                 </Choose>
               </div>
@@ -103,7 +98,7 @@ class Info extends React.Component {
           </If>
 
           {/*Резолюції керівника (показуються, якщо документ чекає позначку "Виконано")*/}
-          <If condition={this.props.doc?.expected_mark === 11}>
+          <If condition={this.props.doc.expected_mark === 11}>
             <Resolutions path={info.path} />
           </If>
         </div>

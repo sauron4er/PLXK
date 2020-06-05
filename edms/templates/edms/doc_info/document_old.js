@@ -45,14 +45,10 @@ class Document extends React.Component {
     comment_modal_open: false, // модальне вікно, яке просить користувача ввести коментар
     ready_for_render: true // при false рендериться loader
   };
-  
-  componentDidMount() {
-    if (this.props.doc) this.getDoc(this.props.doc);
-  }
-  
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
-    if (this.props.doc.id && this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
+    if (this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
       docInfoStore.doc = this.props.doc;
       this.getDoc(this.props.doc);
     }

@@ -1,40 +1,38 @@
 from plxk.api.mail_sender import send_email
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 # Складаємо лист новому отримувачу документа EDMS
 def send_email_new(doc_request, mail):
-    subject = "Новий електронний документ"
-    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}'\
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Новий електронний документ"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Вашої реакції очікує новий документ ({}, автор: {}). {}'\
+    text = 'Вашої реакції очікує новий документ ({}, автор: {}). {}' \
         .format(doc_request['doc_type_name'], doc_request['doc_author_name'], link)
 
-    body = u"\r\n".join((
-        "From: it@lxk.com.ua",
-        "To: " + mail,
-        "Subject: " + subject,
-        "",
-        text
-    )).encode('cp1251').strip()
+    message.attach(MIMEText(text, "plain"))
 
-    send_email(mail, body)
+    send_email(mail, message.as_string())
 
 
 # Складаємо лист автору документа про нову позначку EDMS:
 def send_email_mark(doc_request, mail):
-    subject = "Нова реакція на Ваш електронний документ"
-    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}'\
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Нова реакція на Ваш електронний документ"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
     text = 'Ваш документ #{} ({}) отримав позначку "{}". Автор позначки: {}. {}' \
         .format(doc_request['document'], doc_request['doc_type_name'],
                 doc_request['mark_name'], doc_request['mark_author_name'], link)
 
-    body = u"\r\n".join((
-        "From: it@lxk.com.ua",
-        "To: " + mail,
-        "Subject: " + subject,
-        "",
-        text
-    )).encode('cp1251').strip()
+    message.attach(MIMEText(text, "plain"))
 
-    send_email(mail, body)
+    send_email(mail, message.as_string())

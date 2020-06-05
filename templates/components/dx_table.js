@@ -2,10 +2,14 @@
 // https://devexpress.github.io/devextreme-reactive/react/grid/docs/guides/getting-started/
 
 /*
-* Якщо відправити в таблицю проп coloredStatus: колонка,
-* яка має назву status, стає зеленою, якщо її value = 'ok',
-* жовтою, коли value = 'in progress' і червоною в інших випадках.
-*/
+ * Якщо відправити в таблицю проп coloredStatus: колонка,
+ * яка має назву status, стає зеленою, якщо її value = 'ok',
+ * жовтою, коли value = 'in progress' і червоною в інших випадках.
+ */
+
+/*
+ * Компонент відображає список файлів у комірці, якщо ця комірка має name = files*
+ * */
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import {
@@ -32,6 +36,7 @@ import {
 } from '@devexpress/dx-react-grid';
 
 import './dx_table_styles.css';
+import corrStore from '../../correspondence/templates/correspondence/store';
 
 const styles = {
   true: {
@@ -163,11 +168,26 @@ class DxTable extends React.PureComponent {
       className='css_dx_table'
       {...restProps}
       // eslint-disable-next-line no-alert
-      onClick={() => this.onRowClick(row)}
+      // onClick={() => this.onRowClick(row)} - це опрацьовується в CellComponent
       style={this.ChooseStyle(row)}
     />
-  );
+  )
 
+  arrangeFiles = (files, style) => {
+    return (
+      <td style={style}>
+        <For each='file' index='id' of={files}>
+          <div key={file.id}>
+            <a href={'../../media/' + file.file} target='_blank'>
+              {file.name}{' '}
+            </a>
+          </div>
+        </For>
+      </td>
+    );
+  };
+
+  // Налаштування комірки
   CellComponent = (props) => {
     let style = {
       paddingLeft: 5,
@@ -176,14 +196,23 @@ class DxTable extends React.PureComponent {
       height: '5px',
       border: '1px solid #F0F0F0'
     };
+
+    // Налаштування комірки з назвою status
     if (this.props.coloredStatus && props.column.name === 'status') {
-      const color = props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red'
+      const color =
+        props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
       style = {
         backgroundColor: color,
         color: color
       };
     }
-    return <Table.Cell {...props} style={style} />;
+
+    // Налаштування комірки з назвою status
+    if (props.column.name === 'files' && Array.isArray(props.row.files)) {
+      return this.arrangeFiles(props.row.files, style);
+    }
+
+    return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} style={style} />;
   };
 
   HeaderCellComponent = (props) => (

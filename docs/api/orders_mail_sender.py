@@ -3,30 +3,30 @@ from plxk.api.mail_sender import send_email
 from docs.models import File
 import json
 from django.conf import settings
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 testing = settings.STAS_DEBUG
 
 
 def create_mail_body(post_request, mail):
-    subject = "Опубліковано {} № {}".format(post_request['type_name'], post_request['code'])
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Опубліковано {} № {}".format(post_request['type_name'], post_request['code'])
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/docs/orders/{}' \
         .format(post_request['id'])
 
     file = File.objects.values_list('file', flat=True).filter(order_id=post_request['id'])[0]
-    download = 'Щоб скачати документ, натисніть на посилання: http://10.10.10.22/media/{}'.format(file)
+    download = 'Щоб завантажити документ, натисніть на посилання: http://10.10.10.22/media/{}'.format(file)
 
     text = 'На сайті plhk.com.ua опубліковано {} №{} "{}". {}.\r\n{}' \
         .format(post_request['type_name'], post_request['code'], post_request['name'], link, download)
 
-    body = u"\r\n".join((
-        "From: it@lxk.com.ua",
-        "To: " + mail,
-        "Subject: " + subject,
-        "",
-        text
-    )).encode('cp1251').strip()
+    message.attach(MIMEText(text, "plain"))
 
-    return body
+    return message.as_string()
 
 
 def send_mails_default(post_request):

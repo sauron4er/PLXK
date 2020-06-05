@@ -229,6 +229,7 @@ class NewDocument extends React.Component {
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
+
         type_modules.map((module) => {
           if (
             [
@@ -243,6 +244,8 @@ class NewDocument extends React.Component {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
             };
+          } else if (module.module_id === 29) {
+            // Модуль auto_approved не показується в документі
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -254,12 +257,10 @@ class NewDocument extends React.Component {
         formData.append('document_type', doc.type_id);
         formData.append('old_id', doc.id);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
-        
-        if (status !== 'change')
-          formData.append('old_files', JSON.stringify(old_files));
-        else
-          formData.append('old_files', JSON.stringify([]));
-        
+
+        if (status === 'change') formData.append('old_files', JSON.stringify([]));
+        else formData.append('old_files', JSON.stringify(old_files));
+
         formData.append('status', type); // Документ, шаблон чи чернетка
 
         if (this.state.files.length > 0) {
@@ -316,7 +317,8 @@ class NewDocument extends React.Component {
   };
 
   render() {
-    const {doc, status} = this.props;
+    let {doc} = this.props;
+
     const {
       open,
       type_modules,
@@ -516,7 +518,7 @@ class NewDocument extends React.Component {
               </button>
               <button
                 className='float-sm-left btn btn-success mb-1'
-                onClick={() => this.newDocument(status)}
+                onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
               >
                 Підтвердити
               </button>

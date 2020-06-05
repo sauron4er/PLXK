@@ -1,14 +1,13 @@
 'use strict';
 import React from 'react';
-import {view, store} from '@risingstack/react-easy-state';
-// import corrStore from './store';
 import DxTable from 'templates/components/dx_table';
 import ReactDOM from 'react-dom';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {Loader} from 'templates/components/loaders';
+import {notify} from 'templates/components/my_extras';
 import 'static/css/my_styles.css';
-
-const col_width = [{columnName: 'id', width: 35}, {columnName: 'status', width: 30}];
+import Modal from 'react-responsive-modal';
+import Document from 'edms/templates/edms/doc_info/document';
 
 class Tables extends React.Component {
   state = {
@@ -18,7 +17,8 @@ class Tables extends React.Component {
     doc_type_name: '',
     loading: false,
     header: [],
-    rows: []
+    rows: [],
+    clicked_row: ''
   };
 
   componentDidMount() {
@@ -33,7 +33,7 @@ class Tables extends React.Component {
       {
         doc_type_id: event.target.options[selectedIndex].getAttribute('data-key'),
         doc_type_name: event.target.options[selectedIndex].getAttribute('value'),
-        loading: true
+        loading: event.target.options[selectedIndex].getAttribute('data-key') !== '0'
       },
       () => {
         this.getTable();
@@ -42,15 +42,23 @@ class Tables extends React.Component {
   };
 
   getTable = () => {
-    axiosGetRequest('get_table/' + this.state.doc_type_id + '/')
-      .then((response) => {
-        this.setState({
-          header: response.header,
-          rows: response.rows,
-          loading: false
-        });
-      })
-      .catch((error) => notify(error));
+    if (this.state.doc_type_id !== '0') {
+      axiosGetRequest('get_table/' + this.state.doc_type_id + '/')
+        .then((response) => {
+          this.setState({
+            column_widths: response.column_widths,
+            header: response.header,
+            rows: response.rows,
+            loading: false
+          });
+        })
+        .catch((error) => notify(error));
+    } else {
+      this.setState({
+        header: [],
+        rows: []
+      });
+    }
   };
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -58,53 +66,80 @@ class Tables extends React.Component {
     this.mainDivRef = input;
   };
 
-  onRowClick = (row) => {};
+  onRowClick = (row) => {
+    this.setState({
+      clicked_row: row
+    });
+  };
 
   render() {
-    const {main_div_height, doc_types, doc_type_name, header, rows, loading} = this.state;
-  
+    const {
+      main_div_height,
+      doc_types,
+      doc_type_name,
+      column_widths,
+      header,
+      rows,
+      clicked_row,
+      loading
+    } = this.state;
+
     return (
-      <Choose>
-        <When condition={!loading}>
-          <div className='css_main_div'>
-            <select
-              className='form-control mx-3 mx-lg-0'
-              id='doc_type'
-              name='doc_type'
-              value={doc_type_name}
-              onChange={this.onChange}
-            >
-              <option key={0} data-key={0} value='0'>
-                Оберіть тип документу
-              </option>
-              {doc_types.map((doc_type) => {
-                return (
-                  <option key={doc_type.id} data-key={doc_type.id} value={doc_type.name}>
-                    {doc_type.name}
-                  </option>
-                );
-              })}
-            </select>
-            <div ref={this.getMainDivRef}>
-              <If condition={header.length}>
-                <DxTable
-                  rows={rows}
-                  // rows={test_rows}
-                  columns={header}
-                  colWidth={col_width}
-                  onRowClick={this.onRowClick}
-                  height={main_div_height}
-                  filter
-                  coloredStatus
-                />
-              </If>
+      <>
+        <Choose>
+          <When condition={!loading}>
+            <div className='css_main_div'>
+              <select
+                className='form-control mx-3 mx-lg-0'
+                id='doc_type'
+                name='doc_type'
+                value={doc_type_name}
+                onChange={this.onChange}
+              >
+                <option key={0} data-key={0} value='0'>
+                  Оберіть тип документу
+                </option>
+                {doc_types.map((doc_type) => {
+                  return (
+                    <option key={doc_type.id} data-key={doc_type.id} value={doc_type.name}>
+                      {doc_type.name}
+                    </option>
+                  );
+                })}
+              </select>
+              <div ref={this.getMainDivRef}>
+                <If condition={header.length}>
+                  <DxTable
+                    rows={rows}
+                    // rows={test_rows}
+                    columns={header}
+                    colWidth={column_widths}
+                    onRowClick={this.onRowClick}
+                    height={main_div_height}
+                    filter
+                    coloredStatus
+                  />
+                </If>
+              </div>
             </div>
-          </div>
-        </When>
-        <Otherwise>
-          <Loader />
-        </Otherwise>
-      </Choose>
+          </When>
+          <Otherwise>
+            <Loader />
+          </Otherwise>
+        </Choose>
+        <Modal
+          open={!!clicked_row}
+          onClose={() => this.setState({clicked_row: ''})}
+          showCloseIcon={true}
+          closeOnOverlayClick={false}
+          styles={{modal: {marginTop: 50}}}
+        >
+          <Document
+            doc={clicked_row}
+            closed={true}
+          />
+        </Modal>
+      </>
     );
   }
 

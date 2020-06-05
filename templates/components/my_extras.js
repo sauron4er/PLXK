@@ -1,7 +1,17 @@
 import React from 'react';
-import axios from 'axios';
-import querystring from 'querystring';
-import {getEmpSeats} from '../../edms/api/get_emp_seats';
+import {getEmpSeats} from 'edms/api/get_emp_seats';
+import {toast} from 'react-toastify';
+
+// Спливаючі повідомлення
+export const notify = (message) =>
+    toast.error(message, {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true
+    });
 
 export const getIndex = (id, array) => {
   for (let i = 0; i < array.length; i++) {
