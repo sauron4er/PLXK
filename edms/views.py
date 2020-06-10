@@ -177,7 +177,8 @@ def handle_phase_approvals(doc_request, phase_info):
     if global_approvals:
         # Ця глобальна змінна існує при створенні нового документа,
         # так як нові approvals ще не записані у бд
-        manual_approvals_emp_seat = global_approvals
+        manual_approvals_emp_seat = global_approvals.copy()
+        global_approvals.clear()
     else:
         manual_approvals_emp_seat = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
             .filter(document_id=doc_request['document']) \
@@ -887,7 +888,6 @@ def edms_get_doc(request, pk):
         doc_info.update(get_doc_modules(doc))
 
         return HttpResponse(json.dumps(doc_info))
-
 
 @transaction.atomic
 @login_required(login_url='login')

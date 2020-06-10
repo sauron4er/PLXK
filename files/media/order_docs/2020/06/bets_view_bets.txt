@@ -1,0 +1,19 @@
+-- CREATE OR REPLACE
+-- VIEW `bets_view_bets` AS
+-- select
+--     `b`.`id` AS `id`,
+--     concat(`u`.`last_name`, ' ', `u`.`first_name`) AS `player`,
+--     concat(`t1`.`name`, ' - ', `t2`.`name`) AS `match`,
+--     concat(`b`.`team1_bet`, ':', `b`.`team2_bet`) AS `bet`
+-- from
+--     ((((`bets_bet` `b`
+-- join `auth_user` `u` on
+--     ((`b`.`player_id` = `u`.`id`)))
+-- join `bets_match` `m` on
+--     ((`b`.`match_id` = `m`.`id`)))
+-- join `bets_team` `t1` on
+--     ((`m`.`team1_id` = `t1`.`id`)))
+-- join `bets_team` `t2` on
+--     ((`m`.`team2_id` = `t2`.`id`)))
+-- where
+--     (`m`.`match_status` = 0)

@@ -146,15 +146,15 @@ def get_texts(modules, doc):
 @try_except
 def get_files(modules, doc):
     if any(module['module_id'] == 1 for module in modules):
-        first_doc_path = doc.path.filter(mark_id=1)
-
         files = [{
             'id': file.id,
             'file': file.file.name,
             'name': file.name,
+            'version': file.version
         } for file in File.objects
-            .filter(document_path=first_doc_path)
-            .filter(is_active=1)]
+            .filter(document_path__document=doc.id)
+            .filter(first_path=True)
+            .filter(is_active=True)]
 
         return files
     return None
