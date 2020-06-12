@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.db import transaction
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
@@ -11,6 +12,7 @@ from .forms import NewDocForm
 from docs.api.orders_mail_sender import arrange_mail
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table, deactivate_order
 from plxk.api.datetime_normalizers import normalize_day, normalize_month
+from plxk.api.try_except import try_except
 
 
 def user_can_edit(user):
@@ -18,6 +20,7 @@ def user_can_edit(user):
 
 
 @login_required(login_url='login')
+@try_except
 def index(request):
     docs = Document.objects.all().order_by('name')
     edit = user_can_edit(request.user)
@@ -25,6 +28,7 @@ def index(request):
 
 
 @login_required(login_url='login')
+@try_except
 def docs(request, fk):
     if fk == '0':
         docs = Document.objects.all().filter(actuality=True).order_by('name')
@@ -37,6 +41,7 @@ def docs(request, fk):
 
 
 @login_required(login_url='login')
+@try_except
 def new_doc(request):
     title = 'Новий документ'
     if request.user:
@@ -66,6 +71,7 @@ def new_doc(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edit_doc(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     title = 'Редагування'
@@ -88,6 +94,7 @@ def edit_doc(request, pk):
 
 # ------------------------------------------------------------------------------------------------------------ Orders
 @login_required(login_url='login')
+@try_except
 def orders(request):
     if request.user.id:
         is_orders_admin = UserProfile.objects.values_list('is_orders_admin', 'is_it_admin').filter(user_id=request.user.id)[0]
@@ -130,6 +137,42 @@ def orders(request):
 
 
 @login_required(login_url='login')
+@try_except
+def get_orders(request, page):
+    all_orders = Order_doc.objects.filter(is_act=True)
+    paginator = Paginator(all_orders, 50)
+
+    response = {'pagesCount': paginator.num_pages}
+
+    try:
+        orders_page = paginator.page(page)
+    except PageNotAnInteger:
+        orders_page = paginator.page(1)
+    except EmptyPage:
+        orders_page = paginator.page(1)
+
+    orders_list = [{
+        'id': order.id,
+        'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
+        'type_name': order.doc_type.name,
+        'name': order.name,
+        'author_name': order.author.last_name + ' ' + order.author.first_name,
+        'date_start': str(order.date_start.year) + '-' +
+                      normalize_month(order.date_start) + '-' +
+                      normalize_day(order.date_start) if order.date_start else '',
+        'date_canceled': str(order.date_canceled.year) + '-' +
+                         normalize_month(order.date_canceled) + '-' +
+                         normalize_day(order.date_canceled) if order.date_canceled else '',
+        'is_actual': order.is_act
+    } for order in orders_page.object_list]
+
+    response.update({'rows': orders_list})
+
+    return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
 def get_order(request, pk):
     order = get_object_or_404(Order_doc, pk=pk)
 
@@ -171,6 +214,7 @@ def get_order(request, pk):
 
 @login_required(login_url='login')
 @transaction.atomic
+@try_except
 def new_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
@@ -188,6 +232,7 @@ def new_order(request):
 
 @login_required(login_url='login')
 @transaction.atomic
+@try_except
 def edit_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
@@ -205,6 +250,7 @@ def edit_order(request):
 
 @login_required(login_url='login')
 @transaction.atomic
+@try_except
 def deact_order(request):
     post_request = request.POST.copy()
     # post_request.update({'updated_by': request.user.id})

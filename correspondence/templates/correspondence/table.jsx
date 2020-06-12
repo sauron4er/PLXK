@@ -2,7 +2,7 @@
 import React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from './store';
-import DxTable from 'templates/components/dx_table';
+import DxTable from 'templates/components/tables/dx_table';
 
 const columns = [
   {name: 'id', title: 'id'},
