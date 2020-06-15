@@ -10,7 +10,8 @@ from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
 from .forms import NewDocForm
 from docs.api.orders_mail_sender import arrange_mail
-from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, get_order_code, deactivate_files, get_order_code_for_table, deactivate_order
+from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, get_order_code, \
+    deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders
 from plxk.api.datetime_normalizers import normalize_day, normalize_month
 from plxk.api.try_except import try_except
 
@@ -118,9 +119,9 @@ def orders(request):
     orders_list = [{
         'id': order.id,
         'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-        'type_name': order.doc_type.name,
+        'doc_type': order.doc_type.name,
         'name': order.name,
-        'author_name': order.author.last_name + ' ' + order.author.first_name,
+        'author__last_name': order.author.last_name + ' ' + order.author.first_name,
         'date_start': str(order.date_start.year) + '-' +
                       normalize_month(order.date_start) + '-' +
                       normalize_day(order.date_start) if order.date_start else '',
@@ -139,13 +140,13 @@ def orders(request):
 @login_required(login_url='login')
 @try_except
 def get_orders(request, page):
-    all_orders = Order_doc.objects.filter(is_act=True)
-    paginator = Paginator(all_orders, 50)
+    orders = Order_doc.objects.filter(is_act=True)
+    orders = filter_orders(orders, json.loads(request.POST['filtering']))
+    orders = sort_orders(orders, request.POST['sort_name'], request.POST['sort_direction'])
 
-    response = {'pagesCount': paginator.num_pages}
-
+    paginator = Paginator(orders, 100)
     try:
-        orders_page = paginator.page(page)
+        orders_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
         orders_page = paginator.page(1)
     except EmptyPage:
@@ -154,9 +155,9 @@ def get_orders(request, page):
     orders_list = [{
         'id': order.id,
         'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-        'type_name': order.doc_type.name,
+        'doc_type': order.doc_type.name,
         'name': order.name,
-        'author_name': order.author.last_name + ' ' + order.author.first_name,
+        'author__last_name': order.author.last_name + ' ' + order.author.first_name,
         'date_start': str(order.date_start.year) + '-' +
                       normalize_month(order.date_start) + '-' +
                       normalize_day(order.date_start) if order.date_start else '',
@@ -166,8 +167,7 @@ def get_orders(request, page):
         'is_actual': order.is_act
     } for order in orders_page.object_list]
 
-    response.update({'rows': orders_list})
-
+    response = {'rows': orders_list, 'pagesCount': paginator.num_pages}
     return HttpResponse(json.dumps(response))
 
 

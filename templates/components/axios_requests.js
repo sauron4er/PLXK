@@ -16,7 +16,7 @@ export const axiosPostRequest = (url, data = []) => {
     });
 };
 
-export const axiosGetRequest = (url, data) => {
+export const axiosGetRequest = (url, data = []) => {
   return axios({
     method: 'get',
     url: url,

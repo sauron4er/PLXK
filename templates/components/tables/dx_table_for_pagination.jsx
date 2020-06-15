@@ -16,19 +16,11 @@ import {
   Table,
   VirtualTable,
   TableHeaderRow,
-  TableFilterRow,
-  PagingPanel,
-  TableEditRow,
-  TableEditColumn,
-  TableSelection
+  TableFilterRow
 } from '@devexpress/dx-react-grid-material-ui';
 import {
-  PagingState,
   SortingState,
   FilteringState,
-  IntegratedSorting,
-  IntegratedFiltering,
-  IntegratedPaging,
   EditingState,
   SelectionState,
   IntegratedSelection
@@ -40,9 +32,6 @@ const styles = {
   true: {
     // Колір рядка червоний, якщо заданий рядок == 'true'
     backgroundColor: 'rgba(255,51,54,0.36)'
-  },
-  clicked: {
-    backgroundColor: '#e6e6e6'
   }
 };
 
@@ -71,7 +60,7 @@ class DxTable extends React.PureComponent {
   // призначає в state нові props при їх зміні.
   // додав цю функцію, бо в більшості випадків при рендері
   // props чомусь не призначалися в state (rows: this.props.rows - не спрацьовує)
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.rows !== this.state.rows) {
       this.setState({rows: nextProps.rows});
     }
@@ -125,73 +114,61 @@ class DxTable extends React.PureComponent {
   // Стилі рядків
   ChooseStyle(row) {
     const {clicked_row_index} = this.state;
-    // TODO переробити правильно. Створити змінну style, яку міняти у switch і повертати
+
+    let style = {
+      cursor: 'pointer',
+      height: '30px',
+      estimatedRowHeight: '30px'
+    };
+
     if (row.id === clicked_row_index) {
       return {
-        cursor: 'pointer',
-        height: 30,
-        ...styles['clicked']
+        ...style,
+        backgroundColor: '#e6e6e6'
       };
     }
     if (this.props.redRow) {
       switch (this.props.redRow) {
         case 'is_vacant':
           return {
-            cursor: 'pointer',
-            height: 30,
+            ...style,
             ...styles[row.is_vacant]
           };
         case 'is_canceled':
           return {
-            cursor: 'pointer',
-            height: 30,
+            ...style,
             ...styles[row.date_canceled !== '']
           };
         default:
           return {
-            cursor: 'pointer',
-            height: 30
+            ...style
           };
       }
     }
     return {
-      cursor: 'pointer',
-      height: 30
+      ...style
     };
   }
 
   // внутрішні настройки рядка ReactGrid
   TableRow = ({row, ...restProps}) => (
     <Table.Row
-      className='css_dx_table'
+      className='css_dx_table_row'
       {...restProps}
       // eslint-disable-next-line no-alert
-      // onClick={() => this.onRowClick(row)} - це опрацьовується в CellComponent
       style={this.ChooseStyle(row)}
     />
   );
 
-  arrangeFiles = (files, style) => {
-    return (
-      <td style={style}>
-        <For each='file' index='id' of={files}>
-          <div key={file.id}>
-            <a href={'../../media/' + file.file} target='_blank'>
-              {file.name}{' '}
-            </a>
-          </div>
-        </For>
-      </td>
-    );
-  };
-
   // Налаштування комірки
   CellComponent = (props) => {
     let style = {
+      padding: 0,
       paddingLeft: 5,
       margin: 0,
       fontSize: '12px',
-      height: '5px',
+      height: '30px',
+      estimatedRowHeight: '30px',
       border: '1px solid #F0F0F0'
     };
 
@@ -213,6 +190,20 @@ class DxTable extends React.PureComponent {
     return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} style={style} />;
   };
 
+  arrangeFiles = (files, style) => {
+    return (
+      <td style={style}>
+        <For each='file' index='id' of={files}>
+          <div key={file.id}>
+            <a href={'../../media/' + file.file} target='_blank'>
+              {file.name}{' '}
+            </a>
+          </div>
+        </For>
+      </td>
+    );
+  };
+
   HeaderCellComponent = (props) => (
     <TableHeaderRow.Cell
       {...props}
@@ -231,38 +222,32 @@ class DxTable extends React.PureComponent {
   }
 
   render() {
-    const {rows, editingRowIds, rowChanges, addedRows} = this.state;
+    const {rows} = this.state;
+    const {height, columns, changeSorting, changeFiltering, colWidth, filters} = this.props;
 
-    const grid_height = !this.props.paging ? '100%' : {};
-    const virtual_height =
-      this.props.height && this.props.height !== null ? this.props.height : 750;
+    const table_height = height ? height : 750;
 
     return (
       <Grid
         rows={rows}
-        columns={this.props.columns}
+        columns={columns}
         getRowId={getRowId}
-        style={{height: {grid_height}}}
+        style={'100%'}
         hoverStateEnabled={true}
       >
-        <SortingState defaultSorting={this.props.defaultSorting} />
-        <FilteringState defaultFilters={[]} />
+        <SortingState onSortingChange={changeSorting} />
+        <FilteringState filters={filters} onFiltersChange={changeFiltering} defaultFilters={[]} />
         <EditingState onCommitChanges={this.commitChanges} />
         <SelectionState />
-
-        <IntegratedSorting />
-        <If condition={this.props.paging}>
-          <IntegratedPaging />
-        </If>
-        <IntegratedFiltering />
-        <IntegratedSelection />
         
+        <IntegratedSelection />
+
         <VirtualTable
           cellComponent={this.CellComponent}
           rowComponent={this.TableRow}
-          columnExtensions={this.props.colWidth}
+          columnExtensions={colWidth}
           messages={{noData: 'Немає даних'}}
-          height={virtual_height}
+          height={table_height}
         />
 
         <TableHeaderRow
@@ -271,37 +256,7 @@ class DxTable extends React.PureComponent {
           messages={{sortingHint: 'Сортувати'}}
         />
 
-        {/*Якщо в props є edited - таблиця дає можливість редагувати рядки*/}
-        <If condition={this.props.edit}>
-          <EditingState
-            editingRowIds={editingRowIds}
-            onEditingRowIdsChange={this.changeEditingRowIds}
-            rowChanges={rowChanges}
-            onRowChangesChange={this.changeRowChanges}
-            addedRows={addedRows}
-            onAddedRowsChange={this.changeAddedRows}
-            onCommitChanges={this.commitChanges}
-          />
-          <TableEditRow rowHeight={10} />
-          <TableEditColumn
-            width={220}
-            messages={{
-              addCommand: 'Додати',
-              editCommand: 'Редагувати',
-              deleteCommand: 'Видалити',
-              commitCommand: 'Зберегти',
-              cancelCommand: 'Відмінити'
-            }}
-            showAddCommand={!addedRows.length}
-            showEditCommand
-            showDeleteCommand
-          />
-        </If>
-
-        {/*Якщо в props є filter - таблиця дає можливість фільтрувати*/}
-        <If condition={this.props.filter}>
-          <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} />
-        </If>
+        <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} />
       </Grid>
     );
   }

@@ -2,10 +2,10 @@
     width: 100%;
 }
 
-.css_dx_table:hover {
+.css_dx_table_row:hover {
     background-color: #f0f0f0;
 }
 
-.css_dx_table:focus {
+.css_dx_table_row:focus {
     background-color: #e6e6e6;
 }

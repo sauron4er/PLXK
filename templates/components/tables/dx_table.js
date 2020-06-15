@@ -21,7 +21,6 @@ import {
   PagingPanel,
   TableEditRow,
   TableEditColumn,
-  TableSelection
 } from '@devexpress/dx-react-grid-material-ui';
 import {
   PagingState,
@@ -41,9 +40,6 @@ const styles = {
   true: {
     // Колір рядка червоний, якщо заданий рядок == 'true'
     backgroundColor: 'rgba(255,51,54,0.36)'
-  },
-  clicked: {
-    backgroundColor: '#e6e6e6'
   }
 };
 
@@ -126,45 +122,46 @@ class DxTable extends React.PureComponent {
   // Стилі рядків
   ChooseStyle(row) {
     const {clicked_row_index} = this.state;
-    // TODO переробити правильно. Створити змінну style, яку міняти у switch і повертати
+
+    let style = {
+      cursor: 'pointer',
+      height: '30px',
+      estimatedRowHeight: '30px'
+    };
+
     if (row.id === clicked_row_index) {
       return {
-        cursor: 'pointer',
-        height: 30,
-        ...styles['clicked']
+        ...style,
+        backgroundColor: '#e6e6e6'
       };
     }
     if (this.props.redRow) {
       switch (this.props.redRow) {
         case 'is_vacant':
           return {
-            cursor: 'pointer',
-            height: 30,
+            ...style,
             ...styles[row.is_vacant]
           };
         case 'is_canceled':
           return {
-            cursor: 'pointer',
-            height: 30,
+            ...style,
             ...styles[row.date_canceled !== '']
           };
         default:
           return {
-            cursor: 'pointer',
-            height: 30
+            ...style
           };
       }
     }
     return {
-      cursor: 'pointer',
-      height: 30
+      ...style
     };
   }
 
   // внутрішні настройки рядка ReactGrid
   TableRow = ({row, ...restProps}) => (
     <Table.Row
-      className='css_dx_table'
+      className='css_dx_table_row'
       {...restProps}
       // eslint-disable-next-line no-alert
       // onClick={() => this.onRowClick(row)} - це опрацьовується в CellComponent
@@ -189,10 +186,12 @@ class DxTable extends React.PureComponent {
   // Налаштування комірки
   CellComponent = (props) => {
     let style = {
+      padding: 0,
       paddingLeft: 5,
       margin: 0,
       fontSize: '12px',
-      height: '5px',
+      height: '30px',
+      estimatedRowHeight: '30px',
       border: '1px solid #F0F0F0'
     };
 

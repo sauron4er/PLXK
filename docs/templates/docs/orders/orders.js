@@ -1,15 +1,16 @@
 'use strict';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PaginatedTable from 'templates/components/tables/paginated_table';
+import DxTable from 'templates/components/tables/dx_table';
+// import PaginatedTable from 'templates/components/tables/paginated_table';
 import Order from './order_edit';
 
 const columns = [
   {name: 'id', title: 'id'},
-  {name: 'type_name', title: 'Тип'},
+  {name: 'doc_type', title: 'Тип'},
   {name: 'code', title: '№'},
   {name: 'name', title: 'Назва'},
-  {name: 'author_name', title: 'Автор'},
+  {name: 'author__last_name', title: 'Автор'},
   {name: 'date_start', title: 'Діє з'},
   {name: 'date_canceled', title: 'Діє до'}
 ];
@@ -17,8 +18,8 @@ const columns = [
 const col_width = [
   {columnName: 'id', width: 30},
   {columnName: 'code', width: 50},
-  {columnName: 'type_name', width: 110},
-  {columnName: 'author_name', width: 200},
+  {columnName: 'doc_type', width: 110},
+  {columnName: 'author__last_name', width: 200},
   {columnName: 'date_start', width: 80},
   {columnName: 'date_canceled', width: 100}
 ];
@@ -96,7 +97,7 @@ class Orders extends React.Component {
       );
     } else if (mode === 'deactivate') {
       let {orders_list} = this.state;
-      const new_list = orders_list.filter(order => order.id !== id);
+      const new_list = orders_list.filter((order) => order.id !== id);
       this.setState({
         orders_list: new_list,
         view: 'table',
@@ -127,8 +128,7 @@ class Orders extends React.Component {
                 Додати нормативний документ
               </button>
             </If>
-            <PaginatedTable
-              url={'get_orders'}
+            <DxTable
               rows={orders_list}
               columns={columns}
               defaultSorting={[{columnName: 'date_start', direction: 'desc'}, {columnName: 'code', direction: 'desc'}]}
@@ -138,6 +138,20 @@ class Orders extends React.Component {
               redRow='is_canceled'
               filter
             />
+            {/*<PaginatedTable*/}
+            {/*  url={'get_orders'}*/}
+            {/*  rows={orders_list}*/}
+            {/*  columns={columns}*/}
+            {/*  defaultSorting={[*/}
+            {/*    {columnName: 'date_start', direction: 'desc'},*/}
+            {/*    {columnName: 'code', direction: 'desc'}*/}
+            {/*  ]}*/}
+            {/*  colWidth={col_width}*/}
+            {/*  onRowClick={this.onRowClick}*/}
+            {/*  height={main_div_height}*/}
+            {/*  redRow='is_canceled'*/}
+            {/*  filter*/}
+            {/*/>*/}
           </div>
         </When>
         <Otherwise>
