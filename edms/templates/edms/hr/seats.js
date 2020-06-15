@@ -6,7 +6,7 @@ import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
 import Select from 'react-validation/build/select';
 import 'static/css/my_styles.css';
-import DxTable from '../../../../templates/components/dx_table';
+import DxTable from 'templates/components/tables/dx_table';
 import {required} from '../_else/validations.js';
 import {getIndex} from 'templates/components/my_extras.js';
 import axios from 'axios';

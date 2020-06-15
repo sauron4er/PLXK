@@ -2,7 +2,7 @@
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
 
-import DxTable from '../../../../templates/components/dx_table';
+import DxTable from 'templates/components/tables/dx_table';
 import Document from '../doc_info/document';
 import SeatChooser from '../components/seat_chooser';
 import 'static/css/my_styles.css';

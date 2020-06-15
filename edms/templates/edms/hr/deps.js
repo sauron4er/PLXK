@@ -9,7 +9,7 @@ import axios from 'axios';
 import querystring from 'querystring'; // for axios
 
 import 'static/css/my_styles.css';
-import DxTable from '../../../../templates/components/dx_table';
+import DxTable from 'templates/components/tables/dx_table';
 import {required} from '../_else/validations.js';
 import {getIndex} from 'templates/components/my_extras.js';
 
