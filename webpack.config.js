@@ -1,6 +1,6 @@
 let path = require('path');
 let BundleTracker = require('webpack-bundle-tracker');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 let pathsToClean = [
   './static/bundles/*.*',
 ];
@@ -26,7 +26,7 @@ module.exports = {
   },
 
   plugins: [
-    new CleanWebpackPlugin(pathsToClean, {watch: true, beforeEmit: true}),
+    new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: pathsToClean}),
     new BundleTracker({filename: './webpack-stats.json'})
     // new BundleAnalyzerPlugin()
   ],
