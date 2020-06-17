@@ -68,7 +68,7 @@ class DxTable extends React.PureComponent {
   // призначає в state нові props при їх зміні.
   // додав цю функцію, бо в більшості випадків при рендері
   // props чомусь не призначалися в state (rows: this.props.rows - не спрацьовує)
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.rows !== this.state.rows) {
       this.setState({rows: nextProps.rows});
     }
@@ -185,6 +185,9 @@ class DxTable extends React.PureComponent {
 
   // Налаштування комірки
   CellComponent = (props) => {
+    
+    let cell_value = props.value;
+    
     let style = {
       padding: 0,
       paddingLeft: 5,
@@ -198,19 +201,24 @@ class DxTable extends React.PureComponent {
     // Налаштування комірки з назвою status
     if (this.props.coloredStatus && props.column.name === 'status') {
       const color =
-        props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
+        props.value === 'in progress' ? 'yellow' :
+          props.value === 'ok' ? 'lightgreen' : 'red';
       style = {
         backgroundColor: color,
         color: color
       };
+      
+      // Очищаємо цю комірку, бо з текстом вона збільшує свою висоту.
+      cell_value = '';
     }
+    
 
     // Налаштування комірки з назвою status
     if (props.column.name === 'files' && Array.isArray(props.row.files)) {
       return this.arrangeFiles(props.row.files, style);
     }
 
-    return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} style={style} />;
+    return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} value={cell_value} style={style} />;
   };
 
   HeaderCellComponent = (props) => (
@@ -239,7 +247,7 @@ class DxTable extends React.PureComponent {
     const grid_height = !this.props.paging ? '100%' : {};
     const virtual_height =
       this.props.height && this.props.height !== null ? this.props.height : 750;
-
+  
     return (
       <Paper className='mt-2 full_width' style={{height: {paper_height}}}>
         <Grid

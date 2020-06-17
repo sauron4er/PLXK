@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class Product_type(models.Model):
+    name = models.CharField(max_length=50)
+    is_active = models.BooleanField(default=True)
+
+
 class Mockup_type(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)

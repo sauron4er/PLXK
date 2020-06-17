@@ -32,7 +32,7 @@ urlpatterns = [
 
     url(r'^my_docs/get_mockup_types/', get_mockup_types, name='mockup_types'),
     url(r'^my_docs/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
-    url(r'^my_docs/get_clients/', get_clients, name='clients'),
+    url(r'^my_docs/get_clients/(?P<product_type>\d+)/$', get_clients, name='clients'),
     url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),

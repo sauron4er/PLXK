@@ -23,7 +23,7 @@ def create_table(doc_type):
 
 @try_except
 def get_column_widths(modules):
-    column_widths = [{'columnName': 'id', 'width': 35}, {'columnName': 'status', 'width': 30}]
+    column_widths = [{'columnName': 'id', 'width': 40}, {'columnName': 'status', 'width': 30}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
         column_widths.append({'columnName': 'packaging_type', 'width': 35})

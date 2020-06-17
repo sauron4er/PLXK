@@ -10,7 +10,7 @@ import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'table' // table, request, clients, laws, scopes
+    view: 'table' // table, request, laws, scopes
   };
 
   componentDidMount() {
@@ -57,13 +57,13 @@ class Correspondence extends React.Component {
           >
             Запити
           </button>
-          <button
-            type='button'
-            className={this.getButtonStyle('clients')}
-            onClick={() => this.changeView('clients')}
-          >
-            Клієнти
-          </button>
+          {/*<button*/}
+          {/*  type='button'*/}
+          {/*  className={this.getButtonStyle('clients')}*/}
+          {/*  onClick={() => this.changeView('clients')}*/}
+          {/*>*/}
+          {/*  Клієнти*/}
+          {/*</button>*/}
           <button
             type='button'
             className={this.getButtonStyle('laws')}

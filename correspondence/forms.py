@@ -5,7 +5,7 @@ from .models import Client, Law, Request, Request_law, Request_file, Scope, Law_
 class NewClientForm(forms.ModelForm):
     class Meta:
         model = Client
-        fields = ['name', 'country']
+        fields = ['name', 'country', 'product_type']
 
 
 class DelClientForm(forms.ModelForm):
@@ -48,7 +48,7 @@ class NewRequestForm(forms.ModelForm):
     class Meta:
         model = Request
         # fields = ['product_type', 'client', 'request_date', 'responsible', 'answer_responsible']
-        fields = ['product_type', 'scope', 'client', 'request_date', 'responsible',
+        fields = ['scope', 'client', 'request_date', 'responsible',
                   'answer_responsible', 'answer', 'request_term', 'answer_date']
 
 

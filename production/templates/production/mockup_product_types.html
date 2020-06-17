@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Типи продукції для дизайн-макетів{% endblock %}
+{% block second_nav %}{% endblock %}
+{% block content %}
+
+  <hr/>
+  <form method="post" action="new_mockup_product_type">
+    {% csrf_token %}
+    <div class='font-weight-bold mb-1'>Додати тип продукції дизайн-макетів:</div>
+    <div class='d-flex w-100 align-items-center mb-2'>
+      <label for='name'>Назва:</label>
+      <input
+        class='form-control form-control-sm ml-2'
+        type='text'
+        id="name"
+        name="name"
+        maxlength="100"
+        required
+        oninput="setCustomValidity('')"
+        oninvalid="setCustomValidity('Заповніть, будь ласка, це поле')"
+      />
+    </div>
+    <div class='d-flex w-100 align-items-center mb-2'>
+      <label for='mockup_type'>Дизайн-макет:</label>
+      <select
+        id="mockup_type"
+        name="mockup_type"
+        class="form-control form-control-sm ml-2"
+        required
+        oninput="setCustomValidity('')"
+        oninvalid="setCustomValidity('Заповніть, будь ласка, це поле')" >
+        <option  value="" selected="selected">------</option>
+        {% for mockup_type in mockup_types %}
+         <option value="{{mockup_type.id}}">{{mockup_type.name|capfirst}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Зберегти</button>
+  </form>
+
+  <hr class="mt-5"/>
+
+  <div class="container-fluid p-2">
+    <div class='font-weight-bold mb-1'>Список продукції дизайн-макетів:</div>
+    <table class="table table-sm">
+      <thead class="thead-inverse">
+        <tr>
+          <th>Назва</th>
+          <th>Тип дизайн-макету</th>
+          <th><th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mockup_product_type in mockup_product_types %}
+          <tr>
+            <td>{{ mockup_product_type.name }}</td>
+            <td>{{ mockup_product_type.mockup_type }}</td>
+            <td>
+              <form method="post" action="del_mockup_product_type">
+                {% csrf_token %}
+                <input id="id" name="id" value={{ mockup_product_type.id }} hidden />
+                <button type="submit" class="close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

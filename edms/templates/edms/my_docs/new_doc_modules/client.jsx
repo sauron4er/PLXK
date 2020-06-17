@@ -4,6 +4,7 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
+import corrStore from '../../../../../correspondence/templates/correspondence/store';
 
 class Client extends React.Component {
   state = {
@@ -12,7 +13,7 @@ class Client extends React.Component {
   };
 
   componentDidMount() {
-    axiosGetRequest('get_clients/')
+    axiosGetRequest('get_clients/3/') // 3 - ДВП - дизайн-макети наразі формуються тільки для продукції ДВП
       .then((response) => {
         this.setState({
           clients: response,

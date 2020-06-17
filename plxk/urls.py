@@ -26,6 +26,7 @@ urlpatterns = [
 
     url(r'^docs/', include('docs.urls', namespace='docs')),
     url(r'^correspondence/', include('correspondence.urls', namespace='correspondence')),
+    url(r'^production/', include('production.urls', namespace='production')),
     url(r'^tickets/', include('tickets.urls', namespace='tickets')),
     url(r'^gi/', include('gi.urls', namespace='gi')),
     url(r'^departments/$',  accounts_views.departments, name='departments'),

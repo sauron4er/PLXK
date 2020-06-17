@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from production.models import Product_type
 
 
 class Scope(models.Model):
@@ -7,14 +8,10 @@ class Scope(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-class Product_type(models.Model):
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-
-
 class Client(models.Model):
     name = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    product_type = models.ForeignKey(Product_type, related_name='clients')
     is_active = models.BooleanField(default=True)
 
 
@@ -39,7 +36,6 @@ class Law_scope(models.Model):
 
 
 class Request(models.Model):
-    product_type = models.ForeignKey(Product_type, related_name='requests')
     scope = models.ForeignKey(Scope, related_name='requests')
     client = models.ForeignKey(Client, related_name='requests')
     request_date = models.DateField()

@@ -6,7 +6,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.decorators import login_required
 from plxk.api.try_except import try_except
 
-from .models import Scope, Client, Product_type, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope
+from production.models import Product_type
+from .models import Scope, Client, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
@@ -42,7 +43,8 @@ def index(request):
         clients = [{
             'id': client.pk,
             'name': client.name,
-            'country': client.country
+            'country': client.country,
+            'product_type_id': client.product_type.id,
         } for client in
             Client.objects.only('id', 'name').filter(is_active=True)]
 
@@ -74,7 +76,7 @@ def index(request):
 
         requests = [{
             'id': request.pk,
-            'product_name': request.product_type.name,
+            'product_name': request.client.product_type.name,
             'scope_name': request.scope.name,
             'client_name': request.client.name,
             'request_date': date_to_json(request.request_date),
@@ -225,8 +227,8 @@ def get_request(request, pk):
             'client_name': req.client.name,
             'scope_id': req.scope_id,
             'scope_name': req.scope.name,
-            'product_id': req.product_type_id,
-            'product_name': req.product_type.name,
+            'product_id': req.client.product_type_id,
+            'product_name': req.client.product_type.name,
             'answer': req.answer if req.answer else '',
             'request_date': date_to_json(req.request_date),
             'request_term': date_to_json(req.request_term) if req.request_term else '',

@@ -131,7 +131,7 @@ class Tables extends React.Component {
           open={!!clicked_row}
           onClose={() => this.setState({clicked_row: ''})}
           showCloseIcon={true}
-          closeOnOverlayClick={false}
+          closeOnOverlayClick={true}
           styles={{modal: {marginTop: 50}}}
         >
           <Document
