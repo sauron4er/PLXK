@@ -1,9 +1,7 @@
 let path = require('path');
 let BundleTracker = require('webpack-bundle-tracker');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-let pathsToClean = [
-  './static/bundles/*.*',
-];
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+let pathsToClean = ['./static/bundles/**.*'];
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // const isProduction = process.env.NODE_ENV === 'production';
 
@@ -21,12 +19,12 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
-    filename: '[name]-[chunkhash].js'
+    filename: '[name]-[hash].js'
     // chunkFilename: '[name].bundle.js',
   },
 
   plugins: [
-    new CleanWebpackPlugin(pathsToClean, {watch: true, beforeEmit: true}),
+    new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: pathsToClean}),
     new BundleTracker({filename: './webpack-stats.json'})
     // new BundleAnalyzerPlugin()
   ],
