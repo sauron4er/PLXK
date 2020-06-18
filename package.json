@@ -29,7 +29,7 @@
     "react-files": "^2.4.8",
     "react-paginate": "^6.3.2",
     "react-pdf": "^4.1.0",
-    "react-responsive-modal": "^4.0.0",
+    "react-responsive-modal": "^3.6.0",
     "react-toastify": "^6.0.5",
     "react-validation": "^3.0.7",
     "validator": "^13.1.1"
