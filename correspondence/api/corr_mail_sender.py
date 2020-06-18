@@ -40,8 +40,6 @@ def send_mails(post_request, req_type):
 
         mails_without_duplicates = list(dict.fromkeys(mails))
 
-        # for mail in mails_without_duplicates:
-        #     body = create_mail_body(post_request, mail, req_type)
-        #     send_email(mail, body)
-
-
+        for mail in mails_without_duplicates:
+            body = create_mail_body(post_request, mail, req_type)
+            send_email(mail, body)
