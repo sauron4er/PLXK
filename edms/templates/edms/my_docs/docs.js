@@ -141,6 +141,9 @@ class Docs extends React.Component {
       case 18:
         answer = 'Файли документу №' + id + ' оновлено.';
         break;
+      case 21:
+        answer = 'Відповідь на коментар додано';
+        break;
     }
     this.setState({
       row: {

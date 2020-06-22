@@ -1,0 +1,3 @@
+react-to-print не можна оновлювати вище версії 1.0.21 - перестає працювати нормально у firefox.
+webpack-bundle-tracker не можна оновлювати, бо перестає працювати з django-webpack-loader.
+react-responsive-modal не можна оновлювати, перестає показуватися модульно.

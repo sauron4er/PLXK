@@ -41,6 +41,17 @@ def get_phase_info(doc_request):
         .filter(id=phase_id)[0]
 
 
+@try_except
+def get_phase_id(doc_request):
+    # Якщо phase_id = 0 в doc_request, то на ознайомлення відправляє автор, тому браузер не знає ід фази. Знаходимо її.
+    phase = doc_request['phase_id']
+    if phase == '0':
+        phase = Doc_Type_Phase.objects.values_list('id', flat=True) \
+            .filter(document_type_id=doc_request['document_type']) \
+            .filter(phase=0) \
+            .filter(is_active=True)[0]
+    return phase
+
 # Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
 @try_except
 def get_sub_seats(seat):

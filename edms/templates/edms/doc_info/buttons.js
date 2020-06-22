@@ -21,7 +21,7 @@ class Buttons extends React.Component {
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 6)}
+                onClick={() => onClick(6)}
               >
                 Не заперечую
               </button>
@@ -29,7 +29,7 @@ class Buttons extends React.Component {
                 <button
                   type='button'
                   className='btn btn-secondary mr-1 mb-1'
-                  onClick={(e) => onClick(e, 3)}
+                  onClick={() => onClick(3)}
                 >
                   Відмовити
                 </button>
@@ -43,14 +43,14 @@ class Buttons extends React.Component {
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 2)}
+                onClick={() => onClick(2)}
               >
                 Погодити
               </button>
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 3)}
+                onClick={() => onClick(3)}
               >
                 Відмовити
               </button>
@@ -73,7 +73,7 @@ class Buttons extends React.Component {
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 8)}
+                onClick={() => onClick(8)}
               >
                 Ознайомлений
               </button>
@@ -83,7 +83,7 @@ class Buttons extends React.Component {
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 11)}
+                onClick={() => onClick(11)}
               >
                 Виконано
               </button>
@@ -92,7 +92,7 @@ class Buttons extends React.Component {
                 <button
                   type='button'
                   className='btn btn-secondary mr-1 mb-1'
-                  onClick={(e) => onClick(e, 10)}
+                  onClick={() => onClick(10)}
                 >
                   Резолюція
                 </button>
@@ -103,14 +103,14 @@ class Buttons extends React.Component {
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 17)}
+                onClick={() => onClick(17)}
               >
                 Візувати
               </button>
               <button
                 type='button'
                 className='btn btn-secondary mr-1 mb-1'
-                onClick={(e) => onClick(e, 3)}
+                onClick={() => onClick(3)}
               >
                 Відмовити
               </button>
@@ -134,7 +134,7 @@ class Buttons extends React.Component {
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
-              onClick={(e) => onClick(e, 13)}
+              onClick={() => onClick(13)}
             >
               Видалити
             </button>
@@ -143,7 +143,7 @@ class Buttons extends React.Component {
           <button
             type='button'
             className='btn btn-secondary mr-1 mb-1'
-            onClick={(e) => onClick(e, 7)}
+            onClick={() => onClick(7)}
           >
             В архів
           </button>
@@ -153,7 +153,7 @@ class Buttons extends React.Component {
           <button
             type='button'
             className='btn btn-secondary mr-1 mb-1'
-            onClick={(e) => onClick(e, 18)}
+            onClick={() => onClick(18)}
           >
             Додати/оновити документ
           </button>
@@ -162,21 +162,21 @@ class Buttons extends React.Component {
         <button
           type='button'
           className='btn btn-secondary mr-1 mb-1'
-          onClick={(e) => onClick(e, 4)}
+          onClick={() => onClick(4)}
         >
           Коментар
         </button>
         <button
           type='button'
           className='btn btn-secondary mr-1 mb-1'
-          onClick={(e) => onClick(e, 15)}
+          onClick={() => onClick(15)}
         >
           На ознайомлення
         </button>
         <button
           type='button'
           className='btn btn-secondary mr-1 mb-1'
-          onClick={(e) => onClick(e, 12)}
+          onClick={() => onClick(12)}
         >
           Додати файл
         </button>

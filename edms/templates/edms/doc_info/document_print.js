@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
-import ReactToPrint from 'react-to-print-advanced';
+import ReactToPrint from 'react-to-print';
+// import ReactToPrint from 'react-to-print-advanced';
 import {faPrint} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Info from './info';
@@ -38,7 +39,7 @@ class DocumentPrint extends React.Component {
             <div className='css_border bg-light p-2 mt-2 mr-1'>
               <Info doc={doc} info={info} />
             </div>
-            <Path path={info.path} />
+            <Path path={info.path} print={true} />
           </div>
         </div>
       </>

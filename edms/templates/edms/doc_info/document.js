@@ -12,6 +12,7 @@ import NewResolutions from './doc_info_modules/modals/new_resolutions';
 import NewAcquaints from './doc_info_modules/modals/new_acquaints';
 import EditFiles from './doc_info_modules/modals/edit_files';
 import RefusalComment from './doc_info_modules/modals/refusal_comment';
+import AnswerComment from 'edms/templates/edms/doc_info/doc_info_modules/modals/answer_comment';
 import Path from './path';
 import Flow from './flow';
 import Acquaints from './doc_info_modules/acquaints';
@@ -25,6 +26,7 @@ axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded,
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 import NewDocument from '../my_docs/new_doc_modules/new_document';
+import {notify} from 'templates/components/my_extras';
 
 class Document extends React.Component {
   state = {
@@ -61,17 +63,6 @@ class Document extends React.Component {
   onChange = (event) => {
     this.setState({[event.target.name]: event.target.value});
   };
-
-  // Спливаюче повідомлення
-  notify = (message) =>
-    toast.error(message, {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
 
   // функція для отримання з бази докладної інфи про документ
   getDoc = (doc) => {
@@ -112,7 +103,7 @@ class Document extends React.Component {
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
-    const {new_files, updated_files, deleted_files, comment, resolutions, acquaints} = this.state;
+    const {new_files, updated_files, deleted_files, comment, resolutions, acquaints, path_to_answer_id} = this.state;
     const {doc, removeRow} = this.props;
 
     let formData = new FormData();
@@ -132,6 +123,8 @@ class Document extends React.Component {
     formData.append('resolutions', JSON.stringify(resolutions));
     formData.append('acquaints', JSON.stringify(acquaints));
     formData.append('mark_demand_id', doc.mark_demand_id);
+    formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
+    formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
     formData.append('phase_id', doc.phase_id ? doc.phase_id : 0);
 
     axios({
@@ -166,8 +159,7 @@ class Document extends React.Component {
   };
 
   // опрацьовуємо нажаття кнопок реагування
-  onButtonClick = (e, mark_id) => {
-    e.preventDefault();
+  onButtonClick = (mark_id) => {
 
     // Якщо це пустий коментар, виводимо текст помилки
     if (mark_id === 4 && this.state.comment === '') {
@@ -178,7 +170,7 @@ class Document extends React.Component {
       this.notify('Оберіть файл.');
 
       // Кнопка "Резолюція" відкриває окремий модуль
-    } else if ([10, 15, 18].includes(mark_id)) {
+    } else if ([10, 15, 18, 21].includes(mark_id)) {
       this.openModal(mark_id);
       // this.setState((prevState) => ({
       //   show_aquaints_area: !prevState.show_aquaints_area
@@ -191,13 +183,23 @@ class Document extends React.Component {
       this.postMark(mark_id);
     }
   };
+  
+  onAnswerClick = (path) => {
+    docInfoStore.comment_to_answer = {
+      id: path.id,
+      text: path.comment,
+      author: path.emp,
+      author_id: path.emp_seat_id
+    };
+    this.openModal(21);
+  }
 
   openModal = (mark_id) => {
     switch (mark_id) {
       case 3:
         this.setState({
           modal: (
-            <RefusalComment onSubmit={this.handleRefusalComment} onCloseModal={this.onCloseModal} />
+            <RefusalComment onSubmit={comment => this.handleComment(comment,3)} onCloseModal={this.onCloseModal} />
           ),
           modal_open: true
         });
@@ -250,6 +252,17 @@ class Document extends React.Component {
           modal_open: true
         });
         break;
+      case 21:
+        this.setState({
+          modal: (
+            <AnswerComment
+              // originalComment={}
+              onSubmit={comment => this.handleComment(comment,21)}
+              onCloseModal={this.onCloseModal} />
+          ),
+          modal_open: true
+        });
+        break;
     }
   };
 
@@ -285,13 +298,13 @@ class Document extends React.Component {
     }
   };
 
-  handleRefusalComment = (comment) => {
+  handleComment = (comment, mark) => {
     this.setState(
       {
-        comment: comment
+        comment: comment,
       },
       () => {
-        this.postMark(3);
+        this.postMark(mark);
         this.onCloseModal();
       }
     );
@@ -351,9 +364,6 @@ class Document extends React.Component {
   };
 
   render() {
-  
-    // console.log(docInfoStore.doc);
-    // console.log(docInfoStore.info);
   
     if (this.state.ready_for_render === true) {
       if (
@@ -430,7 +440,7 @@ class Document extends React.Component {
             </If>
 
             {/*Історія документа*/}
-            <Path path={this.state.info.path} />
+            <Path path={this.state.info.path} onAnswerClick={this.onAnswerClick} />
 
             {/*Модальне вікно*/}
             <Modal open={this.state.modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} >

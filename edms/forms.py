@@ -72,6 +72,12 @@ class NewPathForm(forms.ModelForm):
         fields = {'document', 'employee_seat', 'mark', 'comment'}
 
 
+class NewAnswerForm(forms.ModelForm):
+    class Meta:
+        model = Document_Path
+        fields = {'document', 'employee_seat', 'mark', 'comment', 'path_to_answer'}
+
+
 class MarkDemandForm(forms.ModelForm):
     class Meta:
         model = Mark_Demand

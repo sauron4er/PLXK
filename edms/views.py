@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 
 from .models import Mark_Demand, Vacation
-from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm
+from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
 # Окремі функції:
 from .api.edms_mail_sender import send_email_new, send_email_mark
 from .api.vacations import schedule_vacations_arrange, add_vacation, deactivate_vacation
@@ -31,6 +31,15 @@ testing = settings.STAS_DEBUG
 global_approvals = []
 
 
+@try_except
+def is_mark_demand_exists(emp_seat_id, document_id):
+    return Mark_Demand.objects\
+        .filter(recipient_id=emp_seat_id)\
+        .filter(document_id=document_id)\
+        .filter(is_active=True)\
+        .exists()
+
+
 # Функція, яка відправляє листи:
 def new_mail(email_type, recipients, doc_request):
     if not testing:
@@ -44,11 +53,18 @@ def new_mail(email_type, recipients, doc_request):
 
 
 def post_path(doc_request):
-    path_form = NewPathForm(doc_request)
-    if path_form.is_valid():
-        return path_form.save()
+    if doc_request['path_to_answer'] == '0':
+        path_form = NewPathForm(doc_request)
+        if path_form.is_valid():
+            return path_form.save()
+        else:
+            raise ValidationError('edms/views: function post_path: path_form invalid')
     else:
-        raise ValidationError('edms/views: function post_path: path_form invalid')
+        path_form = NewAnswerForm(doc_request)
+        if path_form.is_valid():
+            return path_form.save()
+        else:
+            raise ValidationError('edms/views: function post_path: path_form invalid')
 
 
 def delete_doc(doc_request, doc_id):
@@ -81,6 +97,7 @@ def deactivate_doc(doc_request, doc_id):
         raise err
 
 
+@try_except
 def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     emp_seat_id = vacation_check(emp_seat_id)
     if not doc_request['comment']:
@@ -813,6 +830,7 @@ def edms_get_doc(request, pk):
             'emp': path.employee_seat.employee.pip,
             'seat': path.employee_seat.seat.seat if path.employee_seat.is_main else '(в.о.) ' + path.employee_seat.seat.seat,
             'comment': path.comment,
+            'original_path': path.path_to_answer_id,
         } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
 
         # Шукаємо path i flow документа, якщо це не чернетка:
@@ -1282,7 +1300,7 @@ def edms_mark(request):
                 for resolution in resolutions:
                     recipient = vacation_check(resolution['recipient_id'])
                     doc_request.update({'comment': resolution['comment']})
-                    post_mark_demand(doc_request, recipient, doc_request['phase_id'], 11)
+                    post_mark_demand(doc_request, recipient, get_phase_id(doc_request), 11)
                     new_mail('new', [{'id': recipient}], doc_request)
 
             # Видалено
@@ -1299,21 +1317,14 @@ def edms_mark(request):
             elif doc_request['mark'] == '15':
                 acquaints = json.loads(doc_request['acquaints'])
                 # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.
-                # Якщо phase_id = 0, то на ознайомлення відправляє автор, тому браузер не знає ід фази. Знаходимо її.
-                phase = doc_request['phase_id']
-                if phase == '0':
-                    phase = Doc_Type_Phase.objects.values_list('id', flat=True) \
-                        .filter(document_type_id=doc_request['document_type']) \
-                        .filter(phase=0) \
-                        .filter(is_active=True)[0]
 
                 for acquaint in acquaints:
                     acquaint = vacation_check(acquaint['emp_seat_id'])
-                    post_mark_demand(doc_request, acquaint, phase, 8)
+                    post_mark_demand(doc_request, acquaint, get_phase_id(doc_request), 8)
                     new_mail('new', [{'id': acquaint}], doc_request)
 
             # Оновлення документу
-            if doc_request['mark'] == '18':
+            elif doc_request['mark'] == '18':
                 # Деактивуємо всі MarkDemands даної фази
                 deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
@@ -1350,6 +1361,11 @@ def edms_mark(request):
                     update_files(request.FILES.getlist('updated_files'), doc_request)
                 if 'deleted_files' in request.POST:
                     deactivate_files(json.loads(doc_request['deleted_files']), new_path.pk)
+
+            # Відповідь на коментар (відправляємо документ у MarkDemand автору оригінального коментарю)
+            elif doc_request['mark'] == '21':
+                if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
+                    post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)
 
             if 'new_files' in request.FILES:
                 post_files(request.FILES.getlist('new_files'), doc_request, new_path.pk)

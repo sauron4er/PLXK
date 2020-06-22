@@ -1,20 +1,37 @@
 'use strict';
 import React from 'react';
+import {view, store} from '@risingstack/react-easy-state';
+import docInfoStore from './doc_info_modules/doc_info_store';
+import {getItemById} from 'templates/components/my_extras';
 
 // отримує історію документа в масиві path, рендерить її для doc_info
 class Path extends React.Component {
-  
   getPathColor = (mark_id) => {
-    if (mark_id === 3) return '#ffcccc'
-    return '#ccffcc'
+    if (mark_id === 3) return '#ffcccc';
+    return '#ccffcc';
+  };
+
+  getOriginalComment = (id) => {
+    const original_path = getItemById(id, docInfoStore.info.path);
+    return (
+      <blockquote>
+        <div className='font-italic'>{original_path.emp}</div>
+        <div>{original_path.comment}</div>
+      </blockquote>
+    );
   };
 
   render() {
+    const {print, onAnswerClick} = this.props;
     return (
       <div>
         Історія:
         <For each='path' index='id' of={this.props.path}>
-          <div key={path.id} className='css_path p-2 my-1 mr-1' style={{background: this.getPathColor(path.mark_id)}}>
+          <div
+            key={path.id}
+            className='css_path p-2 my-1 mr-1'
+            style={{background: this.getPathColor(path.mark_id)}}
+          >
             <div className='d-flex justify-content-between'>
               <span className='font-weight-bold'>{path.emp}</span>
               <span>{path.time}</span>
@@ -22,17 +39,28 @@ class Path extends React.Component {
             <div>{path.seat}</div>
             <div className='css_mark'>{path.mark}</div>
             <If condition={path.comment !== '' && path.comment !== null}>
-              <div className='text-right'>Коментар:</div>
+              <If condition={path.original_path}>
+                {this.getOriginalComment(path.original_path)}
+              </If>
               <div className='css_comment'>{path.comment}</div>
+              <If condition={!print}>
+                <div className='text-right'>
+                  <button
+                    type='button'
+                    className='btn btn-light btn-outline-secondary my-1'
+                    onClick={() => onAnswerClick(path)}
+                  >
+                    Відповісти
+                  </button>
+                </div>
+              </If>
             </If>
             <If condition={path.resolutions}>
               <ol className='list-group mt-1'>
                 {path.resolutions.map((res) => {
                   return (
                     <li className='list-group-item' key={res.id}>
-                      <div className='font-italic'>
-                        {res.emp_seat}
-                      </div>
+                      <div className='font-italic'>{res.emp_seat}</div>
                       <div>{res.comment}</div>
                     </li>
                   );
@@ -44,9 +72,7 @@ class Path extends React.Component {
                 {path.acquaints.map((acquaint) => {
                   return (
                     <li className='list-group-item' key={acquaint.id}>
-                      <div className='font-italic'>
-                        {acquaint.emp_seat}
-                      </div>
+                      <div className='font-italic'>{acquaint.emp_seat}</div>
                     </li>
                   );
                 })}
@@ -93,8 +119,10 @@ class Path extends React.Component {
   }
 
   static defaultProps = {
-    path: []
+    path: [],
+    onAnswerClick: (mark) => {},
+    print: false // при true кнопки Відповісти зникнуть (для друку)
   };
 }
 
-export default Path;
+export default view(Path);

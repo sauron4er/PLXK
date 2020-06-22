@@ -50,6 +50,8 @@
     display: inline-block;
     width: 100%;
     padding: 5px;
+    margin-top: 5px;
+    background: white;
     font-style: italic;
     white-space: pre-wrap;
     border: solid lightgray 1px;
@@ -89,4 +91,23 @@
 .css_modal_scroll {
     max-height: 100%;
     overflow-y: scroll;
+}
+
+blockquote {
+  background: #f3f0f0;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201D""\201D""\201D""\201D";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
 }

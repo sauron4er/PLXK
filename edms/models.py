@@ -103,6 +103,7 @@ class Document(models.Model):
 # Document path models
 class Document_Path(models.Model):
     document = models.ForeignKey(Document, related_name='path')
+    path_to_answer = models.ForeignKey('self', related_name='answers', null=True, blank=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='documents_path')
     mark = models.ForeignKey(Mark, related_name='documents_path')
     timestamp = models.DateTimeField(default=timezone.now)
