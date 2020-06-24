@@ -257,6 +257,7 @@ class NewDocument extends React.Component {
         formData.append('document_type', doc.type_id);
         formData.append('old_id', doc.id);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
+        formData.append('path_to_answer', '0');
 
         if (status === 'change') formData.append('old_files', JSON.stringify([]));
         else formData.append('old_files', JSON.stringify(old_files));
