@@ -51,6 +51,7 @@
                 <a class="nav-link dropdown-toggle" href="{% url 'docs:index' %} " id="navbardrop" data-toggle="dropdown">Документи</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{% url 'docs:orders' %}">Накази та розпорядження</a>
+{#                        <a class="dropdown-item" href="{% url 'docs:contracts' %}">Договори</a>#}
                         <a class="dropdown-item" href="{% url 'docs:index' %}">Система якості</a>
 {#                        <a class="dropdown-item" href="{% url 'edms:tables' %}">База дизайн-макетів</a>#}
                         {% if user.userprofile.is_correspondence_view   %}

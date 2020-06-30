@@ -83,22 +83,23 @@ def post_carry_out_items(doc_request, carry_out_items):
 @try_except
 def post_files(doc_request, files, new_path):
     # Додаємо файли зі старого варіанта файла:
-    old_files = json.loads(doc_request['old_files'])
-    if old_files:
-        for old_file in old_files:
-            file = get_object_or_404(File, pk=old_file['id'])
-            file_change_path_form = FileNewPathForm(doc_request, instance=file)
-            if file_change_path_form.is_valid():
-                file_change_path_form.save()
-            else:
-                raise ValidationError('post_modules/post_files/file_change_path_form invalid')
+    if 'old_files' in doc_request.keys():
+        old_files = json.loads(doc_request['old_files'])
+        if old_files:
+            for old_file in old_files:
+                file = get_object_or_404(File, pk=old_file['id'])
+                file_change_path_form = FileNewPathForm(doc_request, instance=file)
+                if file_change_path_form.is_valid():
+                    file_change_path_form.save()
+                else:
+                    raise ValidationError('post_modules/post_files/file_change_path_form invalid')
 
     # Додаємо нові файли:
     if files:
         # Поки що файли додаються тільки якщо документ публікується не як чернетка, тому що
         # для публікації файла необідно мати перший path_id документа, якого нема в чернетці
         if new_path is not None:
-            doc_path = get_object_or_404(Document_Path, pk=new_path.pk)
+            doc_path = get_object_or_404(Document_Path, pk=new_path)
             # Якщо у doc_request нема "Mark" - це створення нового документу, потрібно внести True у first_path:
             first_path = doc_request['mark'] == 1
 

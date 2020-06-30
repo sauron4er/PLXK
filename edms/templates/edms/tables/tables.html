@@ -12,6 +12,6 @@
         <script>
             window.doc_types = {{ doc_types|safe }};
         </script>
+        <div id="bundle">{% render_bundle 'edms' %}</div>
     </div>
-    {% render_bundle 'tables' %} <!-- Renders js files -->
 {% endblock %}

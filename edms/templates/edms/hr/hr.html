@@ -11,8 +11,8 @@
         window.my_id = {{ request.user.id }};
     </script>
 
-    <div class="container-fluid px-3" id="hr"></div>
-
-    {% render_bundle 'hr' %} <!-- Renders js files -->
+    <div class="container-fluid px-3" id="hr">
+      <div id="bundle">{% render_bundle 'edms' %}</div>
+    </div>
 
 {% endblock %}

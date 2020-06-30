@@ -103,7 +103,7 @@ class Document extends React.Component {
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
-    const {new_files, updated_files, deleted_files, comment, resolutions, acquaints, path_to_answer_id} = this.state;
+    const {new_files, updated_files, deleted_files, comment, resolutions, acquaints} = this.state;
     const {doc, removeRow} = this.props;
 
     let formData = new FormData();

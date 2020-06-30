@@ -1,0 +1,1 @@
+import 'docs/templates/docs/docs_index'

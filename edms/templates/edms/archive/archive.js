@@ -1,6 +1,5 @@
 'use strict';
-import React, {Fragment} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 
 import DxTable from 'templates/components/tables/dx_table';
 import Document from '../doc_info/document';
@@ -99,7 +98,7 @@ class Archive extends React.Component {
     } = this.state;
 
     return (
-      <Fragment>
+      <>
         <SeatChooser onSeatChange={this.onSeatChange} />
         <div className='row css_main_div' ref={this.getMainDivRef}>
           <div className='col-lg-4'>
@@ -132,9 +131,9 @@ class Archive extends React.Component {
             <Document doc={this.state.row} my_seat_id={this.state.seat_id} closed={true} />
           </div>
         </div>
-      </Fragment>
+      </>
     );
   }
 }
 
-ReactDOM.render(<Archive />, document.getElementById('archive'));
+export default Archive;

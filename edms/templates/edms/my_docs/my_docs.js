@@ -1,6 +1,5 @@
 'use strict';
-import React, {Fragment} from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react';
 import axios from 'axios';
 import 'static/css/my_styles.css';
 import NewDoc from './new_doc';
@@ -196,4 +195,4 @@ class MyDocs extends React.Component {
   }
 }
 
-ReactDOM.render(<MyDocs />, document.getElementById('my_docs'));
+export default MyDocs;

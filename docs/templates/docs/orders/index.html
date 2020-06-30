@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Нормативні документи{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+{% endblock %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" id="orders">
+        <script>
+            window.orders_list = {{ orders_list|safe }};
+            window.types_list = {{ types_list|safe }};
+            window.is_orders_admin = {{ is_orders_admin|safe }};
+            window.employee_list = {{ employee_list|safe }};
+        </script>
+        <div id="bundle">{% render_bundle 'docs' %}</div>
+    </div>
+{% endblock %}
+
+

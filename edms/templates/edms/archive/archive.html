@@ -15,7 +15,6 @@
             window.work_archive = {{ work_archive|safe }};
             window.my_id = {{ request.user.id }};
         </script>
+        <div id="bundle">{% render_bundle 'edms' %}</div>
     </div>
-
-    {% render_bundle 'archive' %} <!-- Renders js files -->
 {% endblock %}

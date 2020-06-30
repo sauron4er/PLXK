@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views
+from . import views_contracts
 
 urlpatterns = [
     url(r'^.+/get_order/(?P<pk>\d+)/$', views.get_order, name='get_order'),
@@ -15,8 +16,11 @@ urlpatterns = [
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),
     url(r'^orders/', views.orders, name='orders'),
 
+    url(r'^contracts/get_contract', views_contracts.get_contract, name='get_contract'),
+    url(r'^contracts/', views_contracts.index, name='contracts'),
+
     # url(r'^order/new/$', views.new_order, name='new_order'),
     # url(r'^order/edit/(?P<pk>\d+)/$', views.edit_order, name='edit_order'),
-    #url(r'^(?P<pk>\d+)/new/$', views.new_topics, name='new_topic'),
+    # url(r'^(?P<pk>\d+)/new/$', views.new_topics, name='new_topic'),
 ]
 

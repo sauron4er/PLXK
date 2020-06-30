@@ -1,0 +1,1 @@
+import 'edms/templates/edms/edms_index'

@@ -236,12 +236,35 @@ def get_doc_type_modules(doc_type):
 # назву типу документа і назву позначки для оформлення електронних листів отримувачам
 @try_except
 def get_additional_doc_info(doc_request):
-    doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
-    doc_author_name = Document.objects.values_list('employee_seat__employee__pip', flat=True).filter(id=doc_request['document'])[0]
+
+    document_info = Document.objects \
+        .values(
+            'employee_seat_id',
+            'employee_seat__employee__pip',
+            'document_type',
+            'document_type__description') \
+        .filter(id=doc_request['document'])[0]
+
+    # doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
+
     doc_request.update({
-        'doc_type_name': doc_type_name,
-        'doc_author_name': doc_author_name
+        'doc_author_id': document_info['employee_seat_id'],
+        'doc_author_name': document_info['employee_seat__employee__pip'],
+        'document_type': document_info['document_type'],
+        'doc_type_name': document_info['document_type__description'],
     })
+
+    # doc_author_name = Document.objects.values_list('employee_seat__employee__pip', flat=True).filter(id=doc_request['document'])[0]
+    # doc_request.update({
+    #     'doc_type_name': doc_type_name,
+    #     'doc_author_name': doc_author_name
+    # })
+
+    # doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
+    # doc_request.update({'document_type': doc_type})
+
+    # doc_author = Document.objects.values_list('employee_seat_id', flat=True).filter(id=doc_request['document'])[0]
+    # doc_request.update({'doc_author_id': doc_author})
 
     if 'mark' in doc_request.keys():
         mark_name = Mark.objects.values_list('mark', flat=True).filter(id=doc_request['mark'])[0]
@@ -295,7 +318,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
 
     sole = Doc_Type_Phase.objects.values_list('sole', flat=True).filter(id=phase_id)[0]
     if sole:
-        chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat)
+        chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat).filter(is_active=True)
         if chief_seat_id:  # False якщо у посади нема внесеного шефа
             chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
@@ -304,7 +327,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
                 chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id).filter(is_active=True)
                 if chief_seat_id:  # False якщо у посади нема внесеного шефа
                     chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                        .filter(seat_id=chief_seat_id[0]).filter(is_main=True)[0]
+                        .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
 
             return [chief_emp_seat_id]
     else:

@@ -1,20 +1,16 @@
 let path = require('path');
 let BundleTracker = require('webpack-bundle-tracker');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-let pathsToClean = ['./static/bundles/**.*'];
+let pathsToClean = ['./static/bundles/*.*'];
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 // const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   context: __dirname,
   entry: {
-    hr: './static/index/hr_index.js',
-    my_docs: './static/index/my_docs_index.js',
-    archive: './static/index/archive_index.js',
-    sub_docs: './static/index/sub_docs_index.js',
-    tables: './static/index/tables_index.js',
-    plhk_ads: './static/index/plhk_ads_index.js',
-    orders: './static/index/orders.js',
+    ads: './static/index/ads.js',
+    docs: './static/index/docs.js',
+    edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',
   },
   output: {
@@ -75,6 +71,7 @@ module.exports = {
       static: path.resolve(__dirname, 'static'),
       templates: path.resolve(__dirname, 'templates'),
       edms: path.resolve(__dirname, 'edms'),
+      docs: path.resolve(__dirname, 'docs'),
     }
   }
 };

@@ -14,6 +14,7 @@ from docs.api.orders_api import post_files, post_order, change_order, cancel_ano
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders
 from plxk.api.datetime_normalizers import normalize_day, normalize_month
 from plxk.api.try_except import try_except
+from plxk.api.global_getters import get_employees_list
 
 
 def user_can_edit(user):
@@ -107,14 +108,7 @@ def orders(request):
 
     types_list = list(Order_doc_type.objects.values())
 
-    employee_list = [{
-            'id': emp.pk,
-            'name': emp.last_name + ' ' + emp.first_name,
-            'mail': emp.email
-        } for emp in
-            User.objects.only('id', 'last_name', 'first_name')
-                .exclude(id=10)  # Викидуємо зі списка користувача Охорона
-                .order_by('last_name')]
+    employee_list = get_employees_list()
 
     orders_list = [{
         'id': order.id,
@@ -131,10 +125,10 @@ def orders(request):
         'is_actual': order.is_act
     } for order in Order_doc.objects.filter(is_act=True)]
 
-    return render(request, 'docs/orders/orders.html', {'orders_list': json.dumps(orders_list),
+    return render(request, 'docs/orders/index.html', {'orders_list': json.dumps(orders_list),
                                                        'types_list': json.dumps(types_list),
                                                        'is_orders_admin': is_orders_admin,
-                                                       'employee_list': employee_list})
+                                                       'employee_list': json.dumps(employee_list)})
 
 
 @login_required(login_url='login')

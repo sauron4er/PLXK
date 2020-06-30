@@ -53,7 +53,7 @@ def new_mail(email_type, recipients, doc_request):
 
 
 def post_path(doc_request):
-    if doc_request['path_to_answer'] == '0':
+    if 'path_to_answer' not in doc_request or doc_request['path_to_answer'] == '0':
         path_form = NewPathForm(doc_request)
         if path_form.is_valid():
             return path_form.save()
@@ -113,12 +113,21 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
         raise ValidationError('edms/views new_phase mark_demand_form invalid')
 
 
+@try_except
 def deactivate_mark_demand(doc_request, md_id):
     md = get_object_or_404(Mark_Demand, pk=md_id)
     doc_request.update({'is_active': False})
 
     deactivate_mark_demand_form = DeactivateMarkDemandForm(doc_request, instance=md)
     if deactivate_mark_demand_form.is_valid:
+        # md.is_active = False
+        # md.save()
+        # File.objects.create(
+        #     document_path=doc_path,
+        #     file=file,
+        #     name=file.name,
+        #     first_path=first_path
+        # )
         deactivate_mark_demand_form.save()
     else:
         raise ValidationError('edms/views deactivate_mark_demand deactivate_mark_demand_form invalid')
@@ -450,7 +459,7 @@ def post_modules(doc_request, doc_files, new_path):
             post_client(doc_request, doc_modules['client']['value'])
 
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
-            post_files(doc_request, doc_files, new_path)
+            post_files(doc_request, doc_files, new_path.pk)
 
         return recipients
     except ValidationError as err:
@@ -907,6 +916,7 @@ def edms_get_doc(request, pk):
 
         return HttpResponse(json.dumps(doc_info))
 
+
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
@@ -1149,6 +1159,7 @@ def edms_get_sub_docs(request, emp_seat, doc_type, sub_emp):
 
 @transaction.atomic
 @login_required(login_url='login')
+@try_except
 def edms_mark(request):
     try:
         if request.method == 'POST':
@@ -1162,22 +1173,16 @@ def edms_mark(request):
                     return HttpResponse('not deletable')
 
             doc_request = request.POST.copy()
-            doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
-            doc_request.update({'document_type': doc_type})
-
-            # Отримуємо назву типу документа, назву позначки та ім’я автора позначки для формування листа автору
             doc_request = get_additional_doc_info(doc_request)
-
             this_phase = get_phase_info(doc_request)
             mark_author = int(doc_request['employee_seat'])
-            doc_author = Document.objects.values_list('employee_seat_id', flat=True).filter(id=doc_request['document'])[0]
             new_path = post_path(doc_request)
             doc_request.update({'document_path': new_path.pk})
 
             # Створення, оновлення документу
             # Очищаємо поле auto_approved, якщо таке є і заповнене:
             if int(doc_request['mark']) in [1, 18]:
-                if is_auto_approved_phase_used(doc_type):
+                if is_auto_approved_phase_used(doc_request['document_type']):
                     doc_request.update({'approved': None})
                     post_auto_approve(doc_request)
 
@@ -1187,7 +1192,7 @@ def edms_mark(request):
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
                 # Якщо в документі використовується doc_approval, треба буде поставити позначку у таблицю візування:
-                if is_approval_module_used(doc_type):
+                if is_approval_module_used(doc_request['document_type']):
                     recipient = doc_request['employee_seat']
                     approve_id = Doc_Approval.objects.values_list('id', flat=True)\
                         .filter(document_id=doc_request['document'])\
@@ -1212,7 +1217,7 @@ def edms_mark(request):
                     .count()
 
                 if remaining_required_md == 0:
-                    if is_auto_approved_phase_used(doc_type):
+                    if is_auto_approved_phase_used(doc_request['document_type']):
                         doc_request.update({'approved': True})
                     new_phase(doc_request, this_phase['phase'] + 1, [])
 
@@ -1222,11 +1227,11 @@ def edms_mark(request):
                 deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
                 # Якщо в документі використовується модуль doc_approval, треба скасувати всі візування
-                if is_approvals_used(doc_type):
+                if is_approvals_used(doc_request['document_type']):
                     doc_approvals = Doc_Approval.objects.values_list('id', flat=True).filter(document_id=doc_request['document'])
                     for approval in doc_approvals:
                         post_approve(doc_request, approval, None)
-                if is_auto_approved_phase_used(doc_type):
+                if is_auto_approved_phase_used(doc_request['document_type']):
                     doc_request.update({'approved': False})
 
                     next_phases_marks = Doc_Type_Phase.objects.values_list('mark_id', flat=True) \
@@ -1237,11 +1242,11 @@ def edms_mark(request):
                     else:
                         post_auto_approve(doc_request)
                         zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-                        post_mark_demand(doc_request, doc_author, zero_phase_id, 9)
+                        post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 9)
                 else:
                     # відправляємо документ автору на позначку Доопрацьовано
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-                    post_mark_demand(doc_request, doc_author, zero_phase_id, 9)
+                    post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 9)
 
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
@@ -1256,7 +1261,7 @@ def edms_mark(request):
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
                 # Якщо в документі використовується модуль doc_approval, треба буде поставити позначку у таблицю візування:
-                if is_approval_module_used(doc_type):
+                if is_approval_module_used(doc_request['document_type']):
                     approve_id = Doc_Approval.objects.values_list('id', flat=True)\
                         .filter(document_id=doc_request['document'])\
                         .filter(emp_seat_id=doc_request['employee_seat'])[0]
@@ -1329,20 +1334,20 @@ def edms_mark(request):
                 deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
                 # Якщо в документі використовується doc_approval, треба скасувати всі візування:
-                if is_approval_module_used(doc_type):
+                if is_approval_module_used(doc_request['document_type']):
                     doc_approvals = Doc_Approval.objects.values('id', 'approved', 'emp_seat_id')\
                         .filter(document_id=doc_request['document'])\
                         .filter(is_active=True)
                     for approval in doc_approvals:
                         # Анулюємо тільки підписані візування
                         if approval['approved'] is not None:
-                            if doc_request['employee_seat'] == doc_author:
+                            if doc_request['employee_seat'] == doc_request['doc_author_id']:
                                 # Якщо автор оновлення = автор документа, йому відразу ставимо позначку "Погоджено"
                                 post_approve(doc_request, approval['id'], True)
                             else:
                                 post_approve(doc_request, approval['id'], None)
 
-                if mark_author == doc_author:
+                if mark_author == doc_request['doc_author_id']:
                     # Якщо автор оновлення = автор документа, ставимо йому галочку і відправляємо на першу фазу
                     approval_id = Doc_Approval.objects.values_list('id', flat=True) \
                         .filter(document_id=doc_request['document']) \
@@ -1354,7 +1359,7 @@ def edms_mark(request):
                     # Якщо ні, то створюємо автору документа mark_demand з позначкою "Не заперечую" (6)
                     # і відправляємо на нульову фазу:
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-                    post_mark_demand(doc_request, doc_author, zero_phase_id, 6)
+                    post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 6)
 
                 # Опрацьовуємо оновлені файли AAA
                 if 'updated_files' in request.FILES:
@@ -1368,11 +1373,11 @@ def edms_mark(request):
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)
 
             if 'new_files' in request.FILES:
-                post_files(request.FILES.getlist('new_files'), doc_request, new_path.pk)
+                post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
             # Надсилаємо листа автору документа:
-            if int(doc_request['employee_seat']) != doc_author:
-                new_mail('mark', [{'id': doc_author}], doc_request)
+            if int(doc_request['employee_seat']) != doc_request['doc_author_id']:
+                new_mail('mark', [{'id': doc_request['doc_author_id']}], doc_request)
 
             return HttpResponse(new_path.pk)
     except ValidationError as err:

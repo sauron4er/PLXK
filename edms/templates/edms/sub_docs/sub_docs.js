@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import axios from 'axios';
 import DxTable from 'templates/components/tables/dx_table';
 import Document from '../doc_info/document';
@@ -203,4 +202,4 @@ class SubDocs extends React.Component {
   }
 }
 
-ReactDOM.render(<SubDocs />, document.getElementById('sub_docs'));
+export default SubDocs

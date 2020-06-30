@@ -213,7 +213,7 @@ class DxTable extends React.PureComponent {
     }
     
 
-    // Налаштування комірки з назвою status
+    // Налаштування комірки з назвою files
     if (props.column.name === 'files' && Array.isArray(props.row.files)) {
       return this.arrangeFiles(props.row.files, style);
     }

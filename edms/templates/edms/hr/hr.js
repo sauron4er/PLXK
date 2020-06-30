@@ -1,6 +1,5 @@
 'use strict';
 import React, {Fragment} from 'react';
-import ReactDOM from 'react-dom';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -92,4 +91,4 @@ class HR extends React.Component {
   }
 }
 
-ReactDOM.render(<HR />, document.getElementById('hr'));
+export default HR;
