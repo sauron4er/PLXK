@@ -96,7 +96,7 @@ class Contract(models.Model):
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True)
     lawyers_received = models.BooleanField(default=False)
 
-    basic_contract = models.ForeignKey('self', related_name='additional_agreements', null=True, blank=True)
+    basic_contract = models.ForeignKey('self', related_name='additional_contracts', null=True, blank=True)
     # Якщо це поле пусте, то документ є основним договором,
     # в іншому разі це додаткова угода і це поле вказує на основний договір
 

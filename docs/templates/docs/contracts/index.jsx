@@ -32,6 +32,7 @@ class Contracts extends React.Component {
     contractsStore.contracts = window.contracts;
     contractsStore.is_contracts_admin = window.is_contracts_admin;
     contractsStore.employees = window.employees;
+    contractsStore.departments = window.departments;
     this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:

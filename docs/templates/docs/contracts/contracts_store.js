@@ -17,8 +17,11 @@ const contractsStore = store({
     department_id: 0,
     department: '',
     lawyers_received: false,
+    is_additional_contract: false,
     basic_contract_id: 0,
-    basic_contract_subject: ''
+    basic_contract_subject: '',
+    new_files: [],
+    old_files: []
   },
   employees: [],
   is_contracts_admin: false

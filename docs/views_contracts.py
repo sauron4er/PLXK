@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import json
 
 from plxk.api.try_except import try_except
-from plxk.api.global_getters import get_employees_list
+from plxk.api.global_getters import get_employees_list, get_departments_list
 from plxk.api.datetime_normalizers import date_to_json
 from .models import Contract, Contract_File
 
@@ -26,6 +26,8 @@ def index(request):
 
     employees = get_employees_list()
 
+    departments = get_departments_list()
+
     contracts = [{
         'id': contract.id,
         'number': contract.number,
@@ -42,7 +44,7 @@ def index(request):
         # 'lawyers_received': 'true' if contract.lawyers_received else 'false',
         # 'basic_contract_id': contract.basic_contract_id,
         # 'basic_contract_subject': contract.basic_contract,
-        'files': [{
+        'old_files': [{
             'id': file.id,
             'file': file.file.name,
             'name': file.name
@@ -52,6 +54,7 @@ def index(request):
     } for contract in Contract.objects.filter(is_active=True)]
 
     return render(request, 'docs/contracts/index.html', {'contracts': contracts,
+                                                         'departments': departments,
                                                          'is_contracts_admin': 'true',
                                                          'employees': employees})
 
@@ -82,9 +85,10 @@ def get_contract(request, pk):
     old_files = [{
         'id': file.id,
         'name': file.name,
-        'file': file.file.name
+        'file': file.file.name,
+        'status': 'old'
     } for file in Contract_File.objects.filter(is_active=True).filter(contract__id=contract['id'])]
 
-    contract.update({'old_files': old_files, 'files': []})
+    contract.update({'old_files': old_files, 'new_files': []})
 
     return HttpResponse(json.dumps(contract))

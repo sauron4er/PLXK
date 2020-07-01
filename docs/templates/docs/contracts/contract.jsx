@@ -1,34 +1,19 @@
 'use strict';
 import React from 'react';
-import FilesUpload from 'templates/components/files_uploader/files_upload';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
-import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import Modal from 'react-responsive-modal';
-import {Document, Page} from 'react-pdf';
 import {getItemById, isBlankOrZero, notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
-import corrStore from '../../../../correspondence/templates/correspondence/store';
-import UserSelect from 'templates/components/form_modules/user_select';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
-
-const required_fields = {
-  type_id: 'Тип документу',
-  code: '№',
-  name: 'Назва',
-  files: 'Файли',
-  author_id: 'Автор',
-  responsible_id: 'Відповідальний',
-  supervisory_id: 'Контролююча особа',
-  date_start: 'Діє з'
-};
+import Selector from 'templates/components/form_modules/selector';
+import TextInput from 'templates/components/form_modules/text_input';
+import DateInput from 'templates/components/form_modules/date_input';
+import Files from 'templates/components/form_modules/files';
+import Checkbox from 'templates/components/form_modules/checkbox';
 
 class Contract extends React.Component {
   state = {
@@ -43,7 +28,7 @@ class Contract extends React.Component {
     }
   }
 
-  getContract = (id) => {
+  getContract = () => {
     axiosGetRequest('get_contract/' + contractsStore.contract.id + '/')
       .then((response) => {
         contractsStore.contract = response;
@@ -53,42 +38,31 @@ class Contract extends React.Component {
   };
 
   areAllFieldsFilled = () => {
-    // if (isBlankOrZero(corrStore.request.product_id)) {
-    //   notify('Оберіть тип продукту');
-    //   return false;
-    // }
-    // if (isBlankOrZero(corrStore.request.scope_id)) {
-    //   notify('Оберіть сферу застосування');
-    //   return false;
-    // }
-    // if (isBlankOrZero(corrStore.request.client_id)) {
-    //   notify('Оберіть клієнта');
-    //   return false;
-    // }
-    // if (
-    //   isBlankOrZero(corrStore.request.new_request_files) &&
-    //   isBlankOrZero(corrStore.request.old_request_files)
-    // ) {
-    //   notify('Додайте файл запиту');
-    //   return false;
-    // }
-    // if (isBlankOrZero(corrStore.request.request_date)) {
-    //   notify('Оберіть дату отримання запиту');
-    //   return false;
-    // }
-    // if (isBlankOrZero(corrStore.request.responsible_id)) {
-    //   notify('Оберіть відповідального за запит');
-    //   return false;
-    // }
-    // if (isBlankOrZero(corrStore.request.answer_responsible_id)) {
-    //   notify('Оберіть відповідального за надання відповіді');
-    //   return false;
-    // }
+    if (isBlankOrZero(contractsStore.contract.number)) {
+      notify('Заповніть поле "Номер Договору"');
+      return false;
+    }
+    if (isBlankOrZero(contractsStore.contract.subject)) {
+      notify('Заповніть поле "Предмет Договору"');
+      return false;
+    }
+    if (isBlankOrZero(contractsStore.contract.counterparty)) {
+      notify('Заповніть поле "Контрагент"');
+      return false;
+    }
+    if (isBlankOrZero(contractsStore.contract.date_start)) {
+      notify('Оберіть дату початку дії Договору');
+      return false;
+    }
+    if (isBlankOrZero(contractsStore.contract.new_files) && isBlankOrZero(contractsStore.contract.old_files)) {
+      notify('Додайте підписаний файл Договору');
+      return false;
+    }
     return true;
   };
 
   areDatesInOrder = () => {
-    if (contractsStore.contract.date_end < contractsStore.contract.date_start) {
+    if (contractsStore.contract.date_end && contractsStore.contract.date_end < contractsStore.contract.date_start) {
       notify('Ви неправильно обрали термін дії Договору');
       return false;
     }
@@ -124,9 +98,11 @@ class Contract extends React.Component {
 
       const url = contractsStore.contract.id ? 'edit_contract/' : 'new_contract/';
 
-      axiosPostRequest(url, formData)
-        .then((response) => this.props.close('added'))
-        .catch((error) => notify(error));
+      console.log('ok');
+
+      // axiosPostRequest(url, formData)
+      //   .then((response) => this.props.close('added'))
+      //   .catch((error) => notify(error));
     }
   };
 
@@ -135,32 +111,91 @@ class Contract extends React.Component {
       .then((response) => this.props.close('deactivated'))
       .catch((error) => notify(error));
   };
-  
+
   clearContract = () => {
     contractsStore.contract = {
       id: 0,
-    number: '',
-    author_id: 0,
-    author: '',
-    subject: '',
-    counterparty: '',
-    nomenclature_group: '',
-    date_start: '',
-    date_end: '',
-    responsible_id: 0,
-    responsible: '',
-    department_id: 0,
-    department: '',
-    lawyers_received: false,
-    basic_contract_id: 0,
-    basic_contract_subject: ''
+      number: '',
+      author_id: 0,
+      author: '',
+      subject: '',
+      counterparty: '',
+      nomenclature_group: '',
+      date_start: '',
+      date_end: '',
+      responsible_id: 0,
+      responsible: '',
+      department_id: 0,
+      department: '',
+      lawyers_received: false,
+      basic_contract_id: 0,
+      basic_contract_subject: '',
+      old_files: [],
+      new_files: []
     };
-  }
-  
+  };
+
   onResponsibleChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     contractsStore.contract.responsible_id = e.target.options[selectedIndex].getAttribute('data-key');
     contractsStore.contract.responsible = e.target.options[selectedIndex].getAttribute('value');
+  };
+
+  onDepartmentChange = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    contractsStore.contract.department_id = e.target.options[selectedIndex].getAttribute('data-key');
+    contractsStore.contract.department = e.target.options[selectedIndex].getAttribute('value');
+  };
+
+  onNumberChange = (e) => {
+    contractsStore.contract.number = e.target.value;
+  };
+
+  onSubjectChange = (e) => {
+    contractsStore.contract.subject = e.target.value;
+  };
+
+  onCounterpartyChange = (e) => {
+    contractsStore.contract.counterparty = e.target.value;
+  };
+
+  onNomenclatureGroupChange = (e) => {
+    contractsStore.contract.nomenclature_group = e.target.value;
+  };
+
+  onDateStartChange = (e) => {
+    contractsStore.contract.date_start = e.target.value;
+  };
+
+  onDateEndChange = (e) => {
+    contractsStore.contract.date_end = e.target.value;
+  };
+
+  onFilesChange = (e) => {
+    contractsStore.contract.new_files = e.target.value;
+  };
+
+  onFilesDelete = (id) => {
+    for (const i in contractsStore.contract.old_files) {
+      if (contractsStore.contract.old_files.hasOwnProperty(i) && contractsStore.contract.old_files[i].id === id) {
+        contractsStore.contract.old_files[i].status = 'delete';
+        break;
+      }
+    }
+  };
+
+  onLawyersReceivedChange = (e) => {
+    contractsStore.contract.lawyers_received = !contractsStore.contract.lawyers_received;
+  };
+
+  onIsAdditionalContractChange = (e) => {
+    contractsStore.contract.is_additional_contract = !contractsStore.contract.is_additional_contract;
+  };
+
+  onBasicContractChange = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    contractsStore.contract.basic_contract_id = e.target.options[selectedIndex].getAttribute('data-key');
+    contractsStore.contract.basic_contract_subject = e.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
@@ -171,46 +206,77 @@ class Contract extends React.Component {
         <div className='shadow-lg p-3 mb-5 bg-white rounded'>
           <div className='modal-header d-flex'>
             <h5 className='ml-auto'>
-              {contractsStore.contract.number
-                ? 'Редагування Договору № ' + corrStore.request.number
-                : 'Додання Договору'}
+              {contractsStore.contract.id !== 0 ? 'Редагування Договору № ' + contractsStore.contract.id : 'Додання Договору'}
             </h5>
           </div>
-
           <div className='modal-body'>
-            <UserSelect
-              users={contractsStore.employees}
-              user_name={contractsStore.contract.responsible}
-              field_name={'Відповідальна особа'}
+            <TextInput text={contractsStore.contract.number} fieldName={'Номер Договору'} onChange={this.onNumberChange} maxLength={10} />
+            <hr />
+            <TextInput text={contractsStore.contract.subject} fieldName={'Предмет'} onChange={this.onSubjectChange} maxLength={1000} />
+            <hr />
+            <TextInput
+              text={contractsStore.contract.counterparty}
+              fieldName={'Контрагент'}
+              onChange={this.onCounterpartyChange}
+              maxLength={200}
+            />
+            <hr />
+            <TextInput
+              text={contractsStore.contract.nomenclature_group}
+              fieldName={'Номенклатурна група'}
+              onChange={this.onNomenclatureGroupChange}
+              maxLength={100}
+            />
+            <hr />
+            <DateInput date={contractsStore.contract.date_start} fieldName={'Початок дії Договору'} onChange={this.onDateStartChange} />
+            <hr />
+            <DateInput date={contractsStore.contract.date_end} fieldName={'Кінець дії Договору'} onChange={this.onDateEndChange} />
+            <hr />
+            <Selector
+              list={contractsStore.departments}
+              selectedName={contractsStore.contract.department}
+              fieldName={'Місцезнаходження договору'}
+              onChange={this.onDepartmentChange}
+            />
+            <hr />
+            <Selector
+              list={contractsStore.employees}
+              selectedName={contractsStore.contract.responsible}
+              fieldName={'Відповідальна особа'}
               onChange={this.onResponsibleChange}
             />
-            {/*<Product />*/}
-            {/*<hr />*/}
-            {/*<Scope />*/}
-            {/*<hr />*/}
-            {/*<Client />*/}
-            {/*<hr />*/}
-            {/*<RequestFiles />*/}
-            {/*<hr />*/}
-            {/*<Answer />*/}
-            {/*<hr />*/}
-            {/*<AnswerFiles />*/}
-            {/*<hr />*/}
-            {/*<Laws />*/}
-            {/*<hr />*/}
-            {/*<div className='d-md-flex'>*/}
-            {/*  <div className='mr-auto'>*/}
-            {/*    <RequestDate />*/}
-            {/*  </div>*/}
-            {/*  <div className='mr-auto'>*/}
-            {/*    <RequestTerm />*/}
-            {/*  </div>*/}
-            {/*  <AnswerDate />*/}
-            {/*</div>*/}
-            {/*<hr />*/}
-            {/*<Responsible />*/}
-            {/*<hr />*/}
-            {/*<AnswerResponsible />*/}
+            <hr />
+            <Checkbox
+              checked={contractsStore.contract.lawyers_received}
+              fieldName={'Юридично-адміністративний відділ отримав Договір'}
+              onChange={this.onLawyersReceivedChange}
+              defaultChecked={false}
+            />
+
+            <hr />
+            <Files
+              oldFiles={contractsStore.contract.old_files}
+              newFiles={contractsStore.contract.new_files}
+              fieldName={'Підписані файли'}
+              onChange={this.onFilesChange}
+              onDelete={this.onFilesDelete}
+            />
+            <hr />
+            <Checkbox
+              checked={contractsStore.contract.is_additional_contract}
+              fieldName={'Це додаткова угода'}
+              onChange={this.onIsAdditionalContractChange}
+            />
+            <If condition={contractsStore.contract.is_additional_contract}>
+              <Selector
+                list={contractsStore.contracts}
+                selectedName={contractsStore.contract.basic_contract_subject}
+                valueField={'subject'}
+                fieldName={'Основний Договір'}
+                onChange={this.onBasicContractChange}
+              />
+            </If>
+            <hr />
           </div>
           <div className='modal-footer'>
             <If condition={contractsStore.contract.id === 0}>
@@ -225,6 +291,9 @@ class Contract extends React.Component {
             </If>
             <button className='btn btn-outline-success' onClick={() => this.postContract()}>
               Зберегти
+            </button>
+            <button className='btn btn-outline-success' onClick={() => console.log(contractsStore.contract)}>
+              test
             </button>
           </div>
 
