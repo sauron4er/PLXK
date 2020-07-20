@@ -3,7 +3,7 @@ import React from 'react';
 
 class TextInput extends React.Component {
   render() {
-    const {fieldName, text, onChange, maxLength, type} = this.props;
+    const {fieldName, text, onChange, maxLength, type, edit_mode} = this.props;
 
     return (
       <Choose>
@@ -18,6 +18,7 @@ class TextInput extends React.Component {
               type='number'
               onChange={onChange}
               maxLength={maxLength}
+              disabled={!edit_mode}
             />
           </label>
         </When>
@@ -31,6 +32,7 @@ class TextInput extends React.Component {
               value={text}
               onChange={onChange}
               maxLength={maxLength}
+              disabled={!edit_mode}
             />
           </label>
         </When>
@@ -45,6 +47,7 @@ class TextInput extends React.Component {
               rows='1'
               onChange={onChange}
               maxLength={maxLength}
+              disabled={!edit_mode}
             />
           </label>
         </Otherwise>
@@ -57,7 +60,8 @@ class TextInput extends React.Component {
     fieldName: '-',
     onChange: () => {},
     maxLength: 5000,
-    type: 'default'
+    type: 'default',
+    edit_mode: false,
   };
 }
 

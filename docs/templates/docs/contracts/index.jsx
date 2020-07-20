@@ -12,12 +12,12 @@ const columns = [
   {name: 'counterparty', title: 'Контрагент'},
   {name: 'date_start', title: 'Діє з'},
   {name: 'date_end', title: 'Діє до'},
-  {name: 'files', title: 'Файли'}
+  {name: 'files', title: 'Файли'},
 ];
 
 const col_width = [
   {columnName: 'id', width: 30},
-  {columnName: 'number', width: 70},
+  {columnName: 'number', width: 80},
   {columnName: 'date_start', width: 80},
   {columnName: 'date_canceled', width: 100}
 ];
@@ -30,9 +30,9 @@ class Contracts extends React.Component {
 
   componentDidMount() {
     contractsStore.contracts = window.contracts;
-    contractsStore.is_contracts_admin = window.is_contracts_admin;
     contractsStore.employees = window.employees;
     contractsStore.departments = window.departments;
+    contractsStore.full_edit_access = window.full_edit_access;
     this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
@@ -61,7 +61,7 @@ class Contracts extends React.Component {
     this.changeView('contract');
   };
 
-  onContractClose = (mode='', contract, id) => {
+  onContractClose = (mode = '', contract, id) => {
     if (mode === 'added') {
       contract.id = id;
       contractsStore.contracts.push(contract);
@@ -77,16 +77,14 @@ class Contracts extends React.Component {
 
   render() {
     const {is_contracts_admin, main_div_height, view} = this.state;
-  
+
     return (
       <Choose>
         <When condition={view === 'table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <If condition={contractsStore.is_contracts_admin}>
-              <button onClick={() => this.changeView('contract')} className='btn btn-sm btn-success'>
-                Додати Договір
-              </button>
-            </If>
+            <button onClick={() => this.changeView('contract')} className='btn btn-sm btn-success'>
+              Додати Договір
+            </button>
             <DxTable
               rows={contractsStore.contracts}
               columns={columns}

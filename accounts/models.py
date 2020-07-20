@@ -31,6 +31,7 @@ class UserProfile(models.Model):
     is_doc_order_add = models.BooleanField(default=False)
     is_correspondence_view = models.BooleanField(default=False)  # Для можливості входу на сторінку "Листування з клієнтами"
     is_correspondence_mail = models.BooleanField(default=False)  # Для отримання пошти про листування з клієнтами
+    access_to_all_contracts = models.BooleanField(default=False)  # Доступ до перегляду всіх Договорів
     clients_add = models.BooleanField(default=False)  # Право редагування довідника клієнтів
     mockup_type_add = models.BooleanField(default=False)  # Право редагування довідника типів дизайн-макетів
     mockup_product_type_add = models.BooleanField(default=False)  # Право редагування довідника продукції, пов’язаної з типами дизайн-макетів

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Document, Order_doc
+from .models import Document, Order_doc, Contract, Contract_File
 
 
 class NewDocForm(forms.ModelForm):
@@ -46,3 +46,23 @@ class DeactivateOrderForm(forms.ModelForm):
     class Meta:
         model = Order_doc
         fields = ['is_act']
+
+
+#  --------------------------------------------------------- Contracts
+class NewContractForm(forms.ModelForm):
+    class Meta:
+        model = Contract
+        fields = ['number', 'subject', 'counterparty', 'nomenclature_group',
+                  'date_start', 'date_end', 'responsible', 'department', 'lawyers_received', 'basic_contract']
+
+
+class DeactivateContractForm(forms.ModelForm):
+    class Meta:
+        model = Contract
+        fields = ['is_active']
+
+
+class DeactivateContractFileForm(forms.ModelForm):
+    class Meta:
+        model = Contract_File
+        fields = ['is_active']

@@ -5,26 +5,25 @@ const contractsStore = store({
   contract: {
     id: 0,
     number: '',
-    author_id: 0,
-    author: '',
+    author: 0,
+    author_name: '',
     subject: '',
     counterparty: '',
     nomenclature_group: '',
     date_start: '',
     date_end: '',
-    responsible_id: 0,
-    responsible: '',
-    department_id: 0,
-    department: '',
+    responsible: null,
+    responsible_name: '',
+    department: null,
+    department_name: '',
     lawyers_received: false,
     is_additional_contract: false,
-    basic_contract_id: 0,
+    basic_contract: null,
     basic_contract_subject: '',
     new_files: [],
     old_files: []
   },
-  employees: [],
-  is_contracts_admin: false
+  employees: []
 });
 
 export default contractsStore;

@@ -4,7 +4,8 @@ import FilesUpload from 'templates/components/files_uploader/files_upload';
 
 class Files extends React.Component {
   render() {
-    const {oldFiles, newFiles, fieldName, onChange, onDelete} = this.props
+    const {oldFiles, newFiles, fieldName, onChange, onDelete, edit_mode} = this.props;
+    
     return (
       <>
         <div>{fieldName}</div>
@@ -15,22 +16,17 @@ class Files extends React.Component {
               <a href={'../../media/' + file.file} target='_blank'>
                 {file.name}{' '}
               </a>
-      
-              <button
-                className='btn btn-sm btn-link text-danger '
-                onClick={() => onDelete(file.id)}
-              >
+
+              <button className='btn btn-sm btn-link text-danger ' onClick={() => onDelete(file.id)} disabled={!edit_mode}>
                 <span aria-hidden='true'>&times;</span>
               </button>
             </div>
           </If>
         </For>
 
-        <FilesUpload
-          onChange={onChange}
-          files={newFiles}
-          fieldName={''}
-        />
+        <If condition={edit_mode}>
+          <FilesUpload onChange={onChange} files={newFiles} fieldName={''} />
+        </If>
       </>
     );
   }
@@ -40,8 +36,9 @@ class Files extends React.Component {
     newFiles: [],
     fieldName: '-',
     onChange: () => {},
-    onDelete: () => {}
-  }
+    onDelete: () => {},
+    edit_mode: false
+  };
 }
 
-export default Files
+export default Files;

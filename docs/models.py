@@ -92,7 +92,7 @@ class Contract(models.Model):
     nomenclature_group = models.CharField(max_length=100, null=True, blank=True)
     date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)
-    responsible = models.ForeignKey(User, related_name='responsible_for_contracts')
+    responsible = models.ForeignKey(User, null=True, blank=True, related_name='responsible_for_contracts')
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True)
     lawyers_received = models.BooleanField(default=False)
 

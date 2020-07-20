@@ -3,7 +3,7 @@ import React from 'react';
 
 class Selector extends React.Component {
   render() {
-    const {list, selectedName, valueField, onChange, fieldName} = this.props;
+    const {list, selectedName, valueField, onChange, fieldName, edit_mode} = this.props;
 
     return (
       <label className='full_width' htmlFor={fieldName}>
@@ -14,8 +14,9 @@ class Selector extends React.Component {
           name={fieldName}
           value={selectedName}
           onChange={onChange}
+          disabled={!edit_mode}
         >
-          <option key={0} data-key={0} value='0'>
+          <option key={0} data-key={null} value='0'>
             ------------
           </option>
           {list.map((item) => {
@@ -35,7 +36,8 @@ class Selector extends React.Component {
     fieldName: '',
     valueField: 'name', // Назва поля, яке буде відображатись у селекторі (для працівників це name)
     selectedName: '',
-    onChange: () => {}
+    onChange: () => {},
+    edit_mode: false
   };
 }
 

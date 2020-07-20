@@ -16,7 +16,9 @@ urlpatterns = [
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),
     url(r'^orders/', views.orders, name='orders'),
 
-    url(r'^contracts/get_contract', views_contracts.get_contract, name='get_contract'),
+    url(r'^contracts/get_contract/(?P<pk>\d+)/$', views_contracts.get_contract, name='get_contract'),
+    url(r'^contracts/add_contract', views_contracts.add_contract, name='add_contract'),
+    url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),
     url(r'^contracts/', views_contracts.index, name='contracts'),
 
     # url(r'^order/new/$', views.new_order, name='new_order'),

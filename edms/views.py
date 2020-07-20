@@ -1192,21 +1192,8 @@ def edms_mark(request):
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
                 # Якщо в документі використовується doc_approval, треба буде поставити позначку у таблицю візування:
-                if is_approval_module_used(doc_request['document_type']):
-                    recipient = doc_request['employee_seat']
-                    approve_id = Doc_Approval.objects.values_list('id', flat=True)\
-                        .filter(document_id=doc_request['document'])\
-                        .filter(emp_seat_id=recipient)
-
-                    if approve_id:
-                        post_approve(doc_request, approve_id[0], True)
-                    else:
-                        # Якщо для цього працівника нема approval, то approval є для того, замість кого цей в.о.
-                        main_employee = get_main_employee(recipient)
-                        approve_id = Doc_Approval.objects.values_list('id', flat=True) \
-                            .filter(document_id=doc_request['document']) \
-                            .filter(emp_seat_id=main_employee)
-                        post_approve(doc_request, approve_id[0], True)
+                if is_approvals_used(doc_request['document_type']):
+                    arrange_approve(doc_request, True)
 
                 # Отримуємо список необхідних (required) позначок на даній фазі, які ще не виконані
                 # Якщо таких немає, переходимо до наступної фази.
@@ -1218,24 +1205,33 @@ def edms_mark(request):
 
                 if remaining_required_md == 0:
                     if is_auto_approved_phase_used(doc_request['document_type']):
-                        doc_request.update({'approved': True})
+                        doc_request.update({'approved': is_doc_completely_approved(doc_request)})
                     new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
-                # Деактивуємо всі MarkDemands даної фази
-                deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
+                # Деактивуємо лише дану mark demand, якщо це погодження мішків
+                # (для того, щоб інші погоджуючі теж могли прокоментувати). В іншому разі деактивуємо всі.
+                if doc_request['document_type'] == 6:
+                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+                else:
+                    deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
                 # Якщо в документі використовується модуль doc_approval, треба скасувати всі візування
+                # if is_approvals_used(doc_request['document_type']):
+                #     doc_approvals = Doc_Approval.objects.values_list('id', flat=True).filter(document_id=doc_request['document'])
+                #     for approval in doc_approvals:
+                #         post_approve(doc_request, approval, None)
+
                 if is_approvals_used(doc_request['document_type']):
-                    doc_approvals = Doc_Approval.objects.values_list('id', flat=True).filter(document_id=doc_request['document'])
-                    for approval in doc_approvals:
-                        post_approve(doc_request, approval, None)
+                    arrange_approve(doc_request, False)
+
                 if is_auto_approved_phase_used(doc_request['document_type']):
                     doc_request.update({'approved': False})
 
                     next_phases_marks = Doc_Type_Phase.objects.values_list('mark_id', flat=True) \
                         .filter(document_type_id=doc_request['document_type']).filter(phase=this_phase['phase'] + 1)
+
                     # Якщо наступна фаза = 20, відправляємо на наступну фазу, якщо ні, то просто ставимо позначку у документ
                     if next_phases_marks and 20 in next_phases_marks:
                         new_phase(doc_request, this_phase['phase'] + 1, [])
@@ -1261,7 +1257,7 @@ def edms_mark(request):
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
                 # Якщо в документі використовується модуль doc_approval, треба буде поставити позначку у таблицю візування:
-                if is_approval_module_used(doc_request['document_type']):
+                if is_approvals_used(doc_request['document_type']):
                     approve_id = Doc_Approval.objects.values_list('id', flat=True)\
                         .filter(document_id=doc_request['document'])\
                         .filter(emp_seat_id=doc_request['employee_seat'])[0]

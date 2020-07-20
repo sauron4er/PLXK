@@ -2,9 +2,9 @@
 import React from 'react';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
-import {ToastContainer, toast} from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import {getItemById, isBlankOrZero, notify} from 'templates/components/my_extras';
+import {isBlankOrZero, notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
@@ -17,7 +17,8 @@ import Checkbox from 'templates/components/form_modules/checkbox';
 
 class Contract extends React.Component {
   state = {
-    data_received: false
+    data_received: false,
+    edit_mode: true
   };
 
   componentDidMount() {
@@ -72,37 +73,19 @@ class Contract extends React.Component {
   postContract = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
       let formData = new FormData();
-      // formData.append('request', corrStore.request.id);
-      // formData.append('product_type', corrStore.request.product_id);
-      // formData.append('scope', corrStore.request.scope_id);
-      // formData.append('client', corrStore.request.client_id);
-      // formData.append('answer', corrStore.request.answer);
-      // formData.append('old_request_files', JSON.stringify(corrStore.request.old_request_files));
-      // formData.append('request_date', corrStore.request.request_date);
-      // formData.append('request_term', corrStore.request.request_term);
-      // formData.append('answer_date', corrStore.request.answer_date);
-      // formData.append('responsible', corrStore.request.responsible_id);
-      // formData.append('answer_responsible', corrStore.request.answer_responsible_id);
-      // formData.append('laws', JSON.stringify(corrStore.request.laws));
-      // formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
-      // if (corrStore.request.new_request_files?.length > 0) {
-      //   corrStore.request.new_request_files.map((file) => {
-      //     formData.append('new_request_files', file);
-      //   });
-      // }
-      // if (corrStore.request.new_answer_files?.length > 0) {
-      //   corrStore.request.new_answer_files.map((file) => {
-      //     formData.append('new_answer_files', file);
-      //   });
-      // }
+      formData.append('contract', JSON.stringify(contractsStore.contract));
+      formData.append('old_files', JSON.stringify(contractsStore.contract.old_files)); // Файли додаємо окремо для простоти обробки на сервері
+      if (contractsStore.contract.new_files?.length > 0) {
+        contractsStore.contract.new_files.map((file) => {
+          formData.append('new_files', file);
+        });
+      }
 
-      const url = contractsStore.contract.id ? 'edit_contract/' : 'new_contract/';
+      const url = contractsStore.contract.id ? 'edit_contract/' : 'add_contract/';
 
-      console.log('ok');
-
-      // axiosPostRequest(url, formData)
-      //   .then((response) => this.props.close('added'))
-      //   .catch((error) => notify(error));
+      axiosPostRequest(url, formData)
+        .then((response) => this.props.close('added'))
+        .catch((error) => notify(error));
     }
   };
 
@@ -116,19 +99,20 @@ class Contract extends React.Component {
     contractsStore.contract = {
       id: 0,
       number: '',
-      author_id: 0,
-      author: '',
+      author: 0,
+      author_name: '',
       subject: '',
       counterparty: '',
       nomenclature_group: '',
       date_start: '',
       date_end: '',
-      responsible_id: 0,
-      responsible: '',
-      department_id: 0,
-      department: '',
+      responsible: null,
+      responsible_name: '',
+      department: null,
+      department_name: '',
       lawyers_received: false,
-      basic_contract_id: 0,
+      is_additional_contract: false,
+      basic_contract: null,
       basic_contract_subject: '',
       old_files: [],
       new_files: []
@@ -137,14 +121,14 @@ class Contract extends React.Component {
 
   onResponsibleChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
-    contractsStore.contract.responsible_id = e.target.options[selectedIndex].getAttribute('data-key');
-    contractsStore.contract.responsible = e.target.options[selectedIndex].getAttribute('value');
+    contractsStore.contract.responsible = e.target.options[selectedIndex].getAttribute('data-key');
+    contractsStore.contract.responsible_name = e.target.options[selectedIndex].getAttribute('value');
   };
 
   onDepartmentChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
-    contractsStore.contract.department_id = e.target.options[selectedIndex].getAttribute('data-key');
-    contractsStore.contract.department = e.target.options[selectedIndex].getAttribute('value');
+    contractsStore.contract.department = e.target.options[selectedIndex].getAttribute('data-key');
+    contractsStore.contract.department_name = e.target.options[selectedIndex].getAttribute('value');
   };
 
   onNumberChange = (e) => {
@@ -176,12 +160,15 @@ class Contract extends React.Component {
   };
 
   onFilesDelete = (id) => {
-    for (const i in contractsStore.contract.old_files) {
-      if (contractsStore.contract.old_files.hasOwnProperty(i) && contractsStore.contract.old_files[i].id === id) {
-        contractsStore.contract.old_files[i].status = 'delete';
+    // Необхідно проводити зміни через додаткову перемінну, бо  react-easy-state не помічає змін глибоко всередині перемінних, як тут.
+    let old_files = [...contractsStore.contract.old_files];
+    for (const i in old_files) {
+      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
+        old_files[i].status = 'delete';
         break;
       }
     }
+    contractsStore.contract.old_files = [...old_files];
   };
 
   onLawyersReceivedChange = (e) => {
@@ -194,12 +181,12 @@ class Contract extends React.Component {
 
   onBasicContractChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
-    contractsStore.contract.basic_contract_id = e.target.options[selectedIndex].getAttribute('data-key');
+    contractsStore.contract.basic_contract = e.target.options[selectedIndex].getAttribute('data-key');
     contractsStore.contract.basic_contract_subject = e.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
-    const {data_received} = this.state;
+    const {data_received, edit_mode} = this.state;
 
     if (data_received) {
       return (
@@ -210,15 +197,28 @@ class Contract extends React.Component {
             </h5>
           </div>
           <div className='modal-body'>
-            <TextInput text={contractsStore.contract.number} fieldName={'Номер Договору'} onChange={this.onNumberChange} maxLength={10} />
+            <TextInput
+              text={contractsStore.contract.number}
+              fieldName={'Номер Договору'}
+              onChange={this.onNumberChange}
+              maxLength={10}
+              edit_mode={edit_mode}
+            />
             <hr />
-            <TextInput text={contractsStore.contract.subject} fieldName={'Предмет'} onChange={this.onSubjectChange} maxLength={1000} />
+            <TextInput
+              text={contractsStore.contract.subject}
+              fieldName={'Предмет'}
+              onChange={this.onSubjectChange}
+              maxLength={1000}
+              edit_mode={edit_mode}
+            />
             <hr />
             <TextInput
               text={contractsStore.contract.counterparty}
               fieldName={'Контрагент'}
               onChange={this.onCounterpartyChange}
               maxLength={200}
+              edit_mode={edit_mode}
             />
             <hr />
             <TextInput
@@ -226,24 +226,37 @@ class Contract extends React.Component {
               fieldName={'Номенклатурна група'}
               onChange={this.onNomenclatureGroupChange}
               maxLength={100}
+              edit_mode={edit_mode}
             />
             <hr />
-            <DateInput date={contractsStore.contract.date_start} fieldName={'Початок дії Договору'} onChange={this.onDateStartChange} />
+            <DateInput
+              date={contractsStore.contract.date_start}
+              fieldName={'Початок дії Договору'}
+              onChange={this.onDateStartChange}
+              edit_mode={edit_mode}
+            />
             <hr />
-            <DateInput date={contractsStore.contract.date_end} fieldName={'Кінець дії Договору'} onChange={this.onDateEndChange} />
+            <DateInput
+              date={contractsStore.contract.date_end}
+              fieldName={'Кінець дії Договору'}
+              onChange={this.onDateEndChange}
+              edit_mode={edit_mode}
+            />
             <hr />
             <Selector
               list={contractsStore.departments}
-              selectedName={contractsStore.contract.department}
+              selectedName={contractsStore.contract.department_name}
               fieldName={'Місцезнаходження договору'}
               onChange={this.onDepartmentChange}
+              edit_mode={edit_mode}
             />
             <hr />
             <Selector
               list={contractsStore.employees}
-              selectedName={contractsStore.contract.responsible}
+              selectedName={contractsStore.contract.responsible_name}
               fieldName={'Відповідальна особа'}
               onChange={this.onResponsibleChange}
+              edit_mode={edit_mode}
             />
             <hr />
             <Checkbox
@@ -251,6 +264,8 @@ class Contract extends React.Component {
               fieldName={'Юридично-адміністративний відділ отримав Договір'}
               onChange={this.onLawyersReceivedChange}
               defaultChecked={false}
+              edit_mode={edit_mode && contractsStore.full_edit_access}
+              note={'Відзначають працівники ЮАВ'}
             />
 
             <hr />
@@ -260,42 +275,55 @@ class Contract extends React.Component {
               fieldName={'Підписані файли'}
               onChange={this.onFilesChange}
               onDelete={this.onFilesDelete}
+              edit_mode={edit_mode}
             />
             <hr />
             <Checkbox
               checked={contractsStore.contract.is_additional_contract}
               fieldName={'Це додаткова угода'}
               onChange={this.onIsAdditionalContractChange}
+              edit_mode={edit_mode}
             />
             <If condition={contractsStore.contract.is_additional_contract}>
               <Selector
                 list={contractsStore.contracts}
                 selectedName={contractsStore.contract.basic_contract_subject}
-                valueField={'subject'}
+                valueField={'selector_info'}
                 fieldName={'Основний Договір'}
                 onChange={this.onBasicContractChange}
+                edit_mode={edit_mode}
               />
+
+              <If condition={contractsStore.contract.basic_contract !== 0}>
+                <div>
+                  <a href={'./' + contractsStore.contract.basic_contract} target='_blank'>
+                    Перейти до основного Договору
+                  </a>
+                </div>
+              </If>
             </If>
             <hr />
           </div>
-          <div className='modal-footer'>
-            <If condition={contractsStore.contract.id === 0}>
-              <button className='btn btn-outline-dark' onClick={() => this.clearContract()}>
-                Очистити
+          <If condition={edit_mode}>
+            <div className='modal-footer'>
+              <If condition={contractsStore.contract.id === 0}>
+                <button className='btn btn-outline-dark' onClick={() => this.clearContract()}>
+                  Очистити
+                </button>
+              </If>
+              <If condition={contractsStore.contract.id !== 0}>
+                <button className='btn btn-outline-danger' onClick={() => this.postDelContract()}>
+                  Видалити
+                </button>
+              </If>
+              <button className='btn btn-outline-success' onClick={() => this.postContract()}>
+                Зберегти
               </button>
-            </If>
-            <If condition={contractsStore.contract.id !== 0}>
-              <button className='btn btn-outline-danger' onClick={() => this.postDelContract()}>
-                Видалити
+              <button className='btn btn-outline-success' onClick={() => console.log(contractsStore.contract)}>
+                test
               </button>
-            </If>
-            <button className='btn btn-outline-success' onClick={() => this.postContract()}>
-              Зберегти
-            </button>
-            <button className='btn btn-outline-success' onClick={() => console.log(contractsStore.contract)}>
-              test
-            </button>
-          </div>
+            </div>
+          </If>
 
           {/*Вспливаюче повідомлення*/}
           <ToastContainer />

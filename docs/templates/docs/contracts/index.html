@@ -14,9 +14,9 @@
     <div class="container-fluid" id="contracts">
         <script>
             window.contracts = {{ contracts|safe }};
-            window.is_contracts_admin = {{ is_contracts_admin|safe }};
             window.employees = {{ employees|safe }};
             window.departments = {{ departments|safe }};
+            window.full_edit_access = {{ full_edit_access|safe }};
         </script>
       <div id="bundle">{% render_bundle 'docs' %}</div>
     </div>

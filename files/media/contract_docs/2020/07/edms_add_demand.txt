@@ -1,0 +1,32 @@
+CREATE DEFINER=`root`@`10.10.10.18` PROCEDURE `plxk`.`edms_add_demand`(IN `docId` integer,IN `empSeatId` integer,IN `markId` integer,IN `pathId` integer)
+BEGIN
+	-- викликається з функції edms_add_demand_manage
+	
+	-- виявляємо, чи адресат у відпустці	
+	DECLARE onVacation tinyint DEFAULT FALSE;	-- чи у відпустці адресат
+	DECLARE actingId integer DEFAULT 0;	-- хто в.о.	
+	
+	SELECT au.on_vacation, au.acting_id INTO onVacation, actingId
+	FROM accounts_userprofile au
+	LEFT JOIN edms_employee_seat ees on au.id = ees.employee_id
+	WHERE ees.id = empSeatId;
+	
+	IF onVacation = TRUE THEN 
+		BEGIN
+			-- шукаємо посаду в.о., відповідну посаді адресата:
+			DECLARE actingEmpSeatId integer DEFAULT 0;			
+			SELECT id INTO actingEmpSeatId
+			FROM edms_employee_seat
+			WHERE acting_for_id = empSeatId AND is_active = TRUE;
+			
+			-- направляємо документ у flow в.о.
+			INSERT INTO edms_mark_demand (document_id, recipient_id, mark_id, document_path_id) VALUES (docId, actingEmpSeatId, markId, pathId);
+		END;		
+	ELSE 
+		-- направляємо документ у flow адресата
+		INSERT INTO edms_mark_demand (document_id, recipient_id, mark_id, document_path_id) VALUES (docId, empSeatId, markId, pathId);
+	END IF;
+	
+	
+
+END
