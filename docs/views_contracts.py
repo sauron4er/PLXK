@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.db import transaction
 import json
 
 from plxk.api.try_except import try_except
@@ -8,6 +9,7 @@ from plxk.api.global_getters import get_employees_list, get_departments_list, is
 from plxk.api.datetime_normalizers import date_to_json
 from .models import Contract, Contract_File
 from docs.api import contracts_api, contracts_mail_sender
+from edms.models import Employee_Seat
 
 
 @login_required(login_url='login')
@@ -16,16 +18,16 @@ def index(request):
     all_contracts = Contract.objects.filter(is_active=True)
     accessed_contracts = []
 
-    # TODO Подавати весь список документів тільки при full_edit_access або full_read_access,
-    #  в іншому разі шукати лише документи, які пов’язані з людиною особисто або через відділ
-
     full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
     full_read_access = request.user.userprofile.access_to_all_contracts
 
     if full_edit_access or full_read_access:
         accessed_contracts = all_contracts
     else:
-        accessed_contracts = all_contracts.filter(created_by=request.user)
+        users_department = Employee_Seat.objects.values_list('seat__department_id', flat=True) \
+            .filter(employee=request.user.userprofile) \
+            .filter(is_active=True).filter(is_main=True)[0]
+        accessed_contracts = all_contracts.filter(created_by=request.user) | all_contracts.filter(department_id=users_department)
 
     contracts = [{
         'id': contract.id,
@@ -98,6 +100,7 @@ def get_contract(request, pk):
     return HttpResponse(json.dumps(contract))
 
 
+@transaction.atomic
 @login_required(login_url='login')
 @try_except
 def add_contract(request):
@@ -112,6 +115,7 @@ def add_contract(request):
     return HttpResponse(new_contract_id)
 
 
+@transaction.atomic
 @login_required(login_url='login')
 @try_except
 def edit_contract(request):
@@ -122,4 +126,12 @@ def edit_contract(request):
 
     contracts_api.post_files(request.FILES, post_request)
 
+    return HttpResponse(contract_id)
+
+
+@login_required(login_url='login')
+@transaction.atomic
+@try_except
+def deactivate_contract(request, pk):
+    contracts_api.deactivate_contract(request, pk)
     return HttpResponse()

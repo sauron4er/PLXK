@@ -6,7 +6,7 @@ import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import Contract from 'docs/templates/docs/contracts/contract';
 
 const columns = [
-  {name: 'id', title: 'id'},
+  // {name: 'id', title: 'id'},
   {name: 'number', title: 'Номер'},
   {name: 'subject', title: 'Предмет'},
   {name: 'counterparty', title: 'Контрагент'},
@@ -16,10 +16,10 @@ const columns = [
 ];
 
 const col_width = [
-  {columnName: 'id', width: 30},
-  {columnName: 'number', width: 80},
+  // {columnName: 'id', width: 30},
+  {columnName: 'number', width: 100},
   {columnName: 'date_start', width: 80},
-  {columnName: 'date_canceled', width: 100}
+  {columnName: 'date_end', width: 80}
 ];
 
 class Contracts extends React.Component {
@@ -61,13 +61,7 @@ class Contracts extends React.Component {
     this.changeView('contract');
   };
 
-  onContractClose = (mode = '', contract, id) => {
-    if (mode === 'added') {
-      contract.id = id;
-      contractsStore.contracts.push(contract);
-    } else if (mode === 'deactivated') {
-      contractsStore.contracts = contractsStore.contracts.filter((contract) => contract.id !== id);
-    }
+  onContractClose = () => {
     this.changeView('table');
   };
 
@@ -76,8 +70,10 @@ class Contracts extends React.Component {
   };
 
   render() {
-    const {is_contracts_admin, main_div_height, view} = this.state;
-
+    const {main_div_height, view} = this.state;
+  
+    console.log(contractsStore.full_edit_access);
+  
     return (
       <Choose>
         <When condition={view === 'table'}>

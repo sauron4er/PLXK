@@ -204,7 +204,7 @@ class NewRecipientForm(forms.ModelForm):
 class NewDayForm(forms.ModelForm):
     class Meta:
         model = Doc_Day
-        fields = {'document', 'day'}
+        fields = {'document', 'day', 'queue_in_doc'}
 
 
 class NewGateForm(forms.ModelForm):

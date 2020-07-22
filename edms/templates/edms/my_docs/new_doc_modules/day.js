@@ -3,14 +3,15 @@ import React from 'react';
 
 class Day extends React.Component {
   render() {
-    const {day, fieldName, onChange} = this.props;
+    const {day, fieldName, onChange, queue} = this.props;
+    
     return (
       <div className='mt-1'>
-        <label htmlFor='day'>
+        <label htmlFor={'day-' + queue}>
           {fieldName}:
           <input
             className='form-control'
-            id='day'
+            id={'day-' + queue}
             name='day'
             type='date'
             value={day}
@@ -22,8 +23,9 @@ class Day extends React.Component {
   }
 
   static defaultProps = {
-    day: '1111-11-11',
-    fieldName: '???'
+    day: '',
+    fieldName: '???',
+    queue: 1,
   };
 }
 

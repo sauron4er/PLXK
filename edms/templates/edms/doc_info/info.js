@@ -8,7 +8,7 @@ import Gate from './doc_info_modules/gate';
 import CarryOut from './doc_info_modules/carry_out';
 import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
-import {getTextByQueue} from 'templates/components/my_extras';
+import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
 
 class Info extends React.Component {
   render() {
@@ -63,7 +63,11 @@ class Info extends React.Component {
                     />
                   </When>
                   <When condition={module.module === 'day'}>
-                    <Day day={info.day} fieldName={module.field_name} />
+                    <Day
+                      day={getDayByQueue(info.days, index)}
+                      fieldName={module.field_name}
+                      // day={info.day}
+                    />
                   </When>
                   <When condition={module.module === 'gate'}>
                     <Gate gate={info.gate} fieldName={module.field_name} />

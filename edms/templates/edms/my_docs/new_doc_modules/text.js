@@ -44,7 +44,7 @@ class Text extends React.Component {
 
   render() {
     const {fieldName, text, onChange, rows, maxLength, queue, type} = this.props;
-
+  
     return (
       <Choose>
         <When condition={type === 'dimensions'}>

@@ -6,14 +6,15 @@ class Day extends React.Component {
     const {fieldName, day} = this.props;
 
     return (
-      <div>
-        {fieldName}:<span className='font-italic ml-1'> {day}</span>
-      </div>
+      <>
+        <div>{fieldName}:</div>
+        <div className='css_note_text ml-1'>{day}</div>
+      </>
     );
   }
 
   static defaultProps = {
-    day: '???',
+    day: '---',
     fieldName: '1111-11-11'
   };
 }

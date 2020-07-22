@@ -11,9 +11,7 @@ class AcquaintList extends React.Component {
     acquaint_list: this.props.acquaintList,
     select_acquaint_id: 0,
     select_acquaint: '',
-    seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
-      ? JSON.parse(localStorage.getItem('emp_seat_list'))
-      : []
+    seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
   };
 
   onChange = (event) => {
@@ -98,23 +96,16 @@ class AcquaintList extends React.Component {
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_acquaint'>
               {fieldName}:
             </label>
-            <select
-              className='form-control'
-              id='select_acquaint'
-              name='select_acquaint'
-              value={select_acquaint}
-              onChange={this.onChange}
-            >
+            <select className='form-control' id='select_acquaint' name='select_acquaint' value={select_acquaint} onChange={this.onChange}>
               <option key={0} data-key={0} value='0'>
                 ------------
               </option>
-              {seat_list.map((seat) => {
-                return (
-                  <option key={seat.id} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
-                    {seat.emp + ', ' + seat.seat}
-                  </option>
-                );
-              })}
+
+              <For each='seat' index='index' of={seat_list}>
+                <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
+                  {seat.emp + ', ' + seat.seat}
+                </option>
+              </For>
             </select>
             <button
               className={
@@ -129,19 +120,17 @@ class AcquaintList extends React.Component {
           </div>
           <If condition={acquaint_list.length > 0}>
             <ul className='mt-1'>
-              {acquaint_list.map((seat) => {
-                return (
-                  <div key={seat.emp_seat_id} className='d-flex align-items-start'>
-                    <li>{seat.emp_seat}</li>
-                    <button
-                      className='btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1'
-                      onClick={(e) => this.delAcquaint(e, seat.id)}
-                    >
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </div>
-                );
-              })}
+              <For each='seat' index='index' of={acquaint_list}>
+                <div key={index} className='d-flex align-items-start'>
+                  <li>{seat.emp_seat}</li>
+                  <button
+                    className='btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1'
+                    onClick={(e) => this.delAcquaint(e, seat.id)}
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                </div>
+              </For>
             </ul>
           </If>
           <br />

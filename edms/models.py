@@ -236,11 +236,13 @@ class Doc_Text(models.Model):
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
+# TODO додати queue у всі документи
 
 # Дата, яка використовується у документі. Н-д, день дії звільнюючої
 class Doc_Day(models.Model):
     document = models.ForeignKey(Document, related_name='day')
     day = models.DateField(default=timezone.now)
+    queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
 

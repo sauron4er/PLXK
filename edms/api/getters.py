@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.utils.timezone import datetime
 
+from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
+from plxk.api.datetime_normalizers import date_to_json
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from ..models import Seat, Employee_Seat, Document, Document_Type, Mark, Document_Path, File
 from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient
 from ..models import Doc_Text, Doc_Day, Doc_Gate, Doc_Mockup_Type, Doc_Mockup_Product_Type, Doc_Client
-from plxk.api.try_except import try_except
+
 from ..models import Document_Type_Module
 from ..models import Doc_Type_Phase, Doc_Type_Phase_Queue
 
@@ -455,7 +457,6 @@ def get_doc_modules(doc):
     # збираємо з використовуваних модулів інфу про документ
     for module in type_modules:
         if module['module'] in ['text', 'dimensions', 'packaging_type']:
-        # if module['module'] == 'text':
             # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
             if 'text_list' not in doc_modules.keys():
                 text_list = [{
@@ -542,13 +543,15 @@ def get_doc_modules(doc):
             doc_modules.update({'old_files': files})
 
         elif module['module'] == 'day':
-            day = [{
-                'day': datetime.strftime(item.day, '%Y-%m-%d'),
-            } for item in Doc_Day.objects.filter(document_id=doc.id).filter(is_active=True)]
-
-            if day:
-                doc_modules.update({'day': day[0]['day']})
-
+            # Шукаємо список дат тільки для першого модуля, щоб не брати ту ж інфу ще раз
+            if 'days' not in doc_modules.keys():
+                days = [{
+                    'queue': item.queue_in_doc,
+                    'day': date_to_json(item.day)
+                } for item in Doc_Day.objects.filter(document_id=doc.id).filter(is_active=True)]
+                doc_modules.update({
+                    'days': days,
+                })
         elif module['module'] == 'gate':
             gate = [{
                 'gate': item.gate,

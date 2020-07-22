@@ -47,10 +47,10 @@ def edit_contract(request):
 
 @try_except
 def deactivate_contract(request, pk):
-    req_instance = get_object_or_404(Contract, pk=pk)
-    req_form = DeactivateContractForm(request, instance=req_instance)
-    if req_form.is_valid():
-        req = req_form.save(commit=False)
+    contract_instance = get_object_or_404(Contract, pk=pk)
+    contract_form = DeactivateContractForm(request, instance=contract_instance, initial={'is_active': False})
+    if contract_form.is_valid():
+        req = contract_form.save(commit=False)
         req.last_updated_by = request.user
         req.save()
     else:

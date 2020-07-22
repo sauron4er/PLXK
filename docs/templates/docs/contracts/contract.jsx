@@ -4,7 +4,7 @@ import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import {isBlankOrZero, notify} from 'templates/components/my_extras';
+import {getIndex, isBlankOrZero, notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
@@ -18,7 +18,7 @@ import Checkbox from 'templates/components/form_modules/checkbox';
 class Contract extends React.Component {
   state = {
     data_received: false,
-    edit_mode: true
+    edit_mode: contractsStore.full_edit_access
   };
 
   componentDidMount() {
@@ -70,6 +70,18 @@ class Contract extends React.Component {
     return true;
   };
 
+  changeContractTableAndClose = (mode) => {
+    if (mode === 'add') {
+      contractsStore.contracts.push(contractsStore.contract);
+    } else if (mode === 'edit') {
+      const index = getIndex(contractsStore.contract.id, contractsStore.contracts);
+      contractsStore.contracts[index] = contractsStore.contract;
+    } else if (mode === 'del') {
+      contractsStore.contracts = contractsStore.contracts.filter((contract) => contract.id !== contractsStore.contract.id);
+    }
+    this.props.close();
+  };
+
   postContract = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
       let formData = new FormData();
@@ -82,16 +94,22 @@ class Contract extends React.Component {
       }
 
       const url = contractsStore.contract.id ? 'edit_contract/' : 'add_contract/';
+      const mode = contractsStore.contract.id ? 'edit' : 'add';
 
       axiosPostRequest(url, formData)
-        .then((response) => this.props.close('added'))
+        .then((response) => {
+          contractsStore.contract.id = response;
+          this.changeContractTableAndClose(mode);
+        })
         .catch((error) => notify(error));
     }
   };
 
   postDelContract = () => {
-    axiosPostRequest('del_contract/' + contractsStore.contract.id)
-      .then((response) => this.props.close('deactivated'))
+    axiosPostRequest('deactivate_contract/' + contractsStore.contract.id + '/')
+      .then((response) => {
+        this.changeContractTableAndClose('del');
+      })
       .catch((error) => notify(error));
   };
 
@@ -319,9 +337,9 @@ class Contract extends React.Component {
               <button className='btn btn-outline-success' onClick={() => this.postContract()}>
                 Зберегти
               </button>
-              <button className='btn btn-outline-success' onClick={() => console.log(contractsStore.contract)}>
-                test
-              </button>
+              {/*<button className='btn btn-outline-success' onClick={() => console.log(contractsStore)}>*/}
+              {/*  test*/}
+              {/*</button>*/}
             </div>
           </If>
 

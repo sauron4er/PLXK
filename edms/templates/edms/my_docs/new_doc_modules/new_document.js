@@ -2,7 +2,6 @@
 import React from 'react';
 import Modal from 'react-responsive-modal';
 import 'react-drag-list/assets/index.css';
-import axios from 'axios';
 import {ToastContainer, toast} from 'react-toastify';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
@@ -20,18 +19,10 @@ import MockupProductType from './mockup_product_type';
 import Client from './client';
 import PackagingType from './packaging_type';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
-import {
-  getTextByQueue,
-  getIndexByProperty,
-  isBlankOrZero,
-  getToday
-} from 'templates/components/my_extras';
+import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 
 class NewDocument extends React.Component {
   state = {
@@ -56,7 +47,7 @@ class NewDocument extends React.Component {
     sign_list: [],
     old_files: [],
     files: [],
-    day: '',
+    days: [],
     gate: 1,
     carry_out_items: []
   };
@@ -80,51 +71,54 @@ class NewDocument extends React.Component {
       });
     } else if (event.target.name === 'gate_radio') {
       this.setState({gate: event.target.value});
-    } else if (event.target.name === 'text') {
-      let {text} = this.state;
-      let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
-      const queue = getIndexByProperty(text, 'queue', parseInt(text_box_id));
-      if (queue === -1) {
-        text.push({
-          queue: parseInt(text_box_id),
-          text: event.target.value
-        });
-      } else {
-        text[queue].text = event.target.value;
-      }
-      this.setState({text});
     } else {
       this.setState({[event.target.name]: event.target.value});
     }
   };
 
+  onChangeText = (event) => {
+    let {text} = this.state;
+    let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
+    const queue = getIndexByProperty(text, 'queue', parseInt(text_box_id));
+    if (queue === -1) {
+      text.push({
+        queue: parseInt(text_box_id),
+        text: event.target.value
+      });
+    } else {
+      text[queue].text = event.target.value;
+    }
+    this.setState({text});
+  };
+
+  onChangeDay = (event) => {
+    let {days} = this.state;
+    let day_id = event.target.id.substring(4); // видаляємо 'day-' з ід інпуту
+    const queue = getIndexByProperty(days, 'queue', parseInt(day_id));
+    if (queue === -1) {
+      days.push({
+        queue: parseInt(day_id),
+        day: event.target.value
+      });
+    } else {
+      days[queue].day = event.target.value;
+    }
+    this.setState({days});
+  };
+
   componentDidMount() {
     // Отримуємо з бд список модулів, які використовує даний тип документа:
-    axios({
-      method: 'get',
-      url: 'get_doc_type_modules/' + this.props.doc.type_id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    axiosGetRequest('get_doc_type_modules/' + this.props.doc.type_id + '/')
       .then((response) => {
         this.setState({
-          type_modules: response.data
+          type_modules: response
         });
       })
-      .catch((error) => {
-        console.log('errorpost: ' + error);
-      });
+      .catch((error) => notify(error));
 
     // Якщо це чернетка чи шаблон, отримуємо з бд дані:
     if (this.props.doc.id !== 0) {
-      axios({
-        method: 'get',
-        url: 'get_doc/' + this.props.doc.id + '/',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
+      axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
           this.setState({
             name: response.data.name || '',
@@ -145,7 +139,7 @@ class NewDocument extends React.Component {
             approval_list: response.data.approval_list || [],
             sign_list: response.data.sign_list || [],
             old_files: response.data.old_files || [],
-            day: response.data.day || '',
+            days: response.data.days || [],
             gate: response.data.gate || '1',
             carry_out_items: response.data.carry_out_items || [],
             client: response.data.client || [],
@@ -158,36 +152,15 @@ class NewDocument extends React.Component {
           newDocStore.new_document.mockup_type = response.data?.mockup_type.id;
           newDocStore.new_document.mockup_type_name = response.data?.mockup_type.name;
           newDocStore.new_document.mockup_product_type = response.data?.mockup_product_type.id;
-          newDocStore.new_document.mockup_product_type_name =
-            response.data?.mockup_product_type.name;
+          newDocStore.new_document.mockup_product_type_name = response.data?.mockup_product_type.name;
         })
-        .catch((error) => {
-          console.log('errorpost: ' + error);
-        });
-    } else {
-      this.setState({
-        render_ready: true
-      });
-    }
+        .catch((error) => notify(error));
+    } else this.setState({render_ready: true});
   }
-
-  // Спливаюче повідомлення
-  notify = (message) =>
-    toast.error(message, {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
 
   isDimensionsFieldFilled = (module) => {
     for (const i in newDocStore.new_document.dimensions) {
-      if (
-        newDocStore.new_document.dimensions.hasOwnProperty(i) &&
-        newDocStore.new_document.dimensions[i].queue === module.queue
-      ) {
+      if (newDocStore.new_document.dimensions.hasOwnProperty(i) && newDocStore.new_document.dimensions[i].queue === module.queue) {
         return !isBlankOrZero(newDocStore.new_document.dimensions[i].text);
       }
     }
@@ -200,19 +173,47 @@ class NewDocument extends React.Component {
       if (module.required) {
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
-            this.notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
+            notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (
-          ['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)
-        ) {
+        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
-            this.notify('Поле "' + module.field_name + '" необхідно заповнити');
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'text') {
+          const texts = this.state.text;
+
+          let text_exists = false;
+          for (const i in texts) {
+            if (texts[i].queue === module.queue) {
+              if (texts[i].text !== '') {
+                text_exists = true;
+              }
+            }
+          }
+          if (!text_exists) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'day') {
+          const days = this.state.days;
+
+          let day_exists = false;
+          for (const i in days) {
+            if (days[i].queue === module.queue) {
+              if (days[i].text !== '') {
+                day_exists = true;
+              }
+            }
+          }
+          if (!day_exists) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
-            this.notify('Поле "' + module.field_name + '" необхідно заповнити');
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
         }
@@ -229,28 +230,25 @@ class NewDocument extends React.Component {
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
-
+  
         type_modules.map((module) => {
-          if (
-            [
-              'mockup_type',
-              'mockup_product_type',
-              'dimensions',
-              'client',
-              'packaging_type'
-            ].includes(module.module)
-          ) {
+          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type'].includes(module.module)) {
+            
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
             };
           } else if (module.module_id === 29) {
             // Модуль auto_approved не показується в документі
-          } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
+          } else if (module.module === 'day') {
+            doc_modules['days'] = this.state.days;
+          }
+          else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
+          
         });
-
+        
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_modules', JSON.stringify(doc_modules));
@@ -269,7 +267,7 @@ class NewDocument extends React.Component {
             formData.append('file', file);
           });
         }
-
+  
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
@@ -280,32 +278,23 @@ class NewDocument extends React.Component {
               this.delDoc();
             }
           })
-          .catch((error) => this.notify(error));
+          .catch((error) => notify(error));
 
         this.props.onCloseModal();
       }
     } catch (e) {
-      this.notify(e);
+      notify(e);
     }
   };
 
   delDoc = () => {
     if (this.props.doc.id !== 0) {
       // Якщо це не створення нового документу:
-      axios({
-        method: 'post',
-        url: 'del_doc/' + this.props.doc.id + '/',
-        data: '',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      })
+      axiosPostRequest('del_doc/' + this.props.doc.id + '/')
         .then((response) => {
           this.props.removeDoc(this.props.doc.id);
         })
-        .catch(function(error) {
-          console.log('errorpost: ' + error);
-        });
+        .catch((error) => notify(error));
     }
 
     this.props.onCloseModal();
@@ -335,7 +324,7 @@ class NewDocument extends React.Component {
       sign_list,
       old_files,
       files,
-      day,
+      days,
       gate,
       carry_out_items
     } = this.state;
@@ -354,13 +343,7 @@ class NewDocument extends React.Component {
     }
 
     return (
-      <Modal
-        open={open}
-        onClose={this.onCloseModal}
-        showCloseIcon={false}
-        closeOnOverlayClick={false}
-        styles={{modal: {marginTop: 50}}}
-      >
+      <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>
           <If condition={type_modules.length > 0 && render_ready}>
             <div className='modal-header d-flex justify-content-between'>
@@ -378,15 +361,11 @@ class NewDocument extends React.Component {
                       <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'preamble'}>
-                      <Preamble
-                        onChange={this.onChange}
-                        preamble={preamble}
-                        fieldName={module.field_name}
-                      />
+                      <Preamble onChange={this.onChange} preamble={preamble} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'text'}>
                       <Text
-                        onChange={this.onChange}
+                        onChange={this.onChangeText}
                         text={getTextByQueue(text, index)}
                         fieldName={module.field_name}
                         id={module.id}
@@ -394,42 +373,29 @@ class NewDocument extends React.Component {
                         queue={module.queue}
                       />
                     </When>
-                    <When condition={module.module === 'recipient'}>
-                      <Recipient
-                        onChange={this.onChange}
-                        recipient={recipient}
+                    <When condition={module.module === 'day'}>
+                      <Day
+                        // day={day}
+                        day={getDayByQueue(days, index)}
+                        onChange={this.onChangeDay}
                         fieldName={module.field_name}
+                        queue={module.queue}
                       />
+                    </When>
+                    <When condition={module.module === 'recipient'}>
+                      <Recipient onChange={this.onChange} recipient={recipient} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'recipient_chief'}>
-                      <RecipientChief
-                        onChange={this.onChange}
-                        recipientChief={recipient_chief}
-                        fieldName={module.field_name}
-                      />
+                      <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'articles'}>
-                      <Articles
-                        onChange={this.onChange}
-                        articles={articles}
-                        modules={type_modules}
-                        fieldName={module.field_name}
-                      />
+                      <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'files'}>
-                      <FilesUpload
-                        onChange={this.onChange}
-                        oldFiles={old_files}
-                        files={files}
-                        fieldName={module.field_name}
-                      />
+                      <FilesUpload onChange={this.onChange} oldFiles={old_files} files={files} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'acquaint_list'}>
-                      <AcquaintList
-                        onChange={this.onChange}
-                        acquaintList={acquaint_list}
-                        fieldName={module.field_name}
-                      />
+                      <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'approval_list'}>
                       <ApprovalList
@@ -447,22 +413,11 @@ class NewDocument extends React.Component {
                         additionalInfo={module.additional_info}
                       />
                     </When>
-                    <When condition={module.module === 'day'}>
-                      <Day day={day} onChange={this.onChange} fieldName={module.field_name} />
-                    </When>
                     <When condition={module.module === 'gate'}>
-                      <Gate
-                        checkedGate={gate}
-                        onChange={this.onChange}
-                        fieldName={module.field_name}
-                      />
+                      <Gate checkedGate={gate} onChange={this.onChange} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'carry_out_items'}>
-                      <CarryOut
-                        carryOutItems={carry_out_items}
-                        onChange={this.onChange}
-                        fieldName={module.field_name}
-                      />
+                      <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'mockup_type'}>
                       <MockupType fieldName={module.field_name} />
@@ -485,10 +440,7 @@ class NewDocument extends React.Component {
                       />
                     </When>
                     <When condition={module.module === 'packaging_type'}>
-                      <PackagingType
-                        packaging_type={getTextByQueue(text, index)}
-                        fieldName={module.field_name}
-                      />
+                      <PackagingType packaging_type={getTextByQueue(text, index)} fieldName={module.field_name} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>
@@ -498,23 +450,14 @@ class NewDocument extends React.Component {
 
             <div className='modal-footer'>
               <If condition={this.props.doc.id !== 0}>
-                <button
-                  className='float-sm-left btn btn-sm btn-outline-danger mb-1'
-                  onClick={() => this.delDoc()}
-                >
+                <button className='float-sm-left btn btn-sm btn-outline-danger mb-1' onClick={() => this.delDoc()}>
                   Видалити
                 </button>
               </If>
-              <button
-                className='float-sm-left btn btn-sm btn-outline-info mb-1'
-                onClick={() => this.newDocument('draft')}
-              >
+              <button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('draft')}>
                 В чернетки
               </button>
-              <button
-                className='float-sm-left btn btn-sm btn-outline-info mb-1'
-                onClick={() => this.newDocument('template')}
-              >
+              <button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('template')}>
                 Зберегти як шаблон
               </button>
               <button

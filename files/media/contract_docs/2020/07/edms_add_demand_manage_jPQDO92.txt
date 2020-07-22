@@ -1,0 +1,267 @@
+CREATE DEFINER=`root`@`10.10.10.18` PROCEDURE `plxk`.`edms_add_demand_manage`(IN `docId` integer, IN `markId` integer, IN `empSeatId` integer, IN `pathId` integer)
+BEGIN
+	-- викликається трігером таблиці edms_document_path
+
+	-- шукаємо вид документу
+	DECLARE docType INT DEFAULT 0;	
+	SELECT document_type_id INTO docType 
+	FROM `edms_document` WHERE id = docId;
+
+	CASE
+		
+		WHEN markId = 1 THEN -- 1 - новостворений документ.
+			BEGIN
+				DECLARE chiefSeatID INT DEFAULT 0;
+				DECLARE chiefID INT DEFAULT 0;
+				
+				-- шукаємо ід посади керівника
+				SELECT es.chief_id INTO chiefSeatID 
+				FROM edms_employee_seat ees 
+				LEFT JOIN edms_seat es ON ees.seat_id = es.id
+				WHERE ees.id = empSeatId;
+				
+				-- шукаємо ід посади/людини керівника
+				SELECT id INTO chiefID
+				FROM edms_employee_seat
+				WHERE seat_id = chiefSeatID
+				AND is_active = TRUE
+				AND is_main = TRUE; -- не в.о.	
+				
+				-- якщо це звільнююча, додаємо у її flow безпосереднього керівника
+				IF docType = 1 THEN 
+					BEGIN	
+						DECLARE FreeTimePermissionId INT DEFAULT FALSE;
+						
+						-- шукаємо ід активного дозволу на погодження
+						SELECT id INTO FreeTimePermissionId 
+						FROM edms_document_type_permission
+						WHERE seat_id = chiefSeatID
+						AND document_type_id = 1
+						AND mark_id = 2
+						AND is_active = TRUE;
+						
+						-- додаємо у edms_mark_demand керівника (якщо шеф є)
+						IF chiefID <> 0 THEN
+							IF FreeTimePermissionId <> 0 THEN -- якщо шеф може підписувати звільнюючі - направляємо йому відразу запит на погодження
+								CALL edms_add_demand(docId, chiefId, 2, pathId); -- 2 - погоджено
+							ELSE
+								CALL edms_add_demand(docId, chiefId, 6, pathId); -- 6 - не заперечую
+							END IF;								
+						END IF;
+					END;
+				END IF;
+				
+				-- якщо це звільнююча, додаємо у flow звільнюючої охорону
+				IF docType = 1 THEN			
+					BEGIN		
+						DECLARE done INT DEFAULT FALSE;
+						DECLARE employee INT;						
+						-- шукаємо ід людей, які мають доступ до перегляду звільнюючих
+						DECLARE employees_with_permission CURSOR FOR 
+							SELECT es.id
+							FROM edms_document_type_permission dtp
+							LEFT JOIN edms_seat s ON dtp.seat_id = s.id
+							LEFT JOIN edms_employee_seat es ON s.id = es.seat_id
+							WHERE dtp.document_type_id = 1 AND dtp.mark_id = 8
+							AND es.is_main = TRUE -- не в.о.
+							AND es.is_active = TRUE
+							AND dtp.is_active = TRUE;							
+						DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+						OPEN employees_with_permission;
+							employees_loop: LOOP
+								FETCH employees_with_permission INTO employee;
+								IF done THEN
+									LEAVE employees_loop;
+								ELSE
+									CALL edms_add_demand(docId, employee, 8, pathId); -- 6 - не заперечую
+								END IF;
+							END LOOP;
+						CLOSE employees_with_permission;						
+					END;
+				END IF;
+				
+				-- якщо це мат.пропуск, додаємо у flow усіх, хто має право його підписати
+				IF docType = 2 THEN			
+					BEGIN
+						DECLARE done INT DEFAULT FALSE;
+						DECLARE employee INT;						
+						-- шукаємо ід людей, які мають доступ до перегляду звільнюючих
+						DECLARE employees_with_permission CURSOR FOR 
+							SELECT es.id
+							FROM edms_document_type_permission dtp
+							LEFT JOIN edms_seat s ON dtp.seat_id = s.id
+							LEFT JOIN edms_employee_seat es ON s.id = es.seat_id
+							WHERE dtp.document_type_id = 2 AND dtp.mark_id = 6
+							AND es.is_main = TRUE -- не в.о.
+							AND es.is_active = TRUE
+							AND dtp.is_active = TRUE;							
+						DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+						OPEN employees_with_permission;
+							employees_loop: LOOP
+								FETCH employees_with_permission INTO employee;
+								IF done THEN
+									LEAVE employees_loop;
+								ELSE
+									CALL edms_add_demand(docId, employee, 6, pathId); -- 6 - не заперечую
+								END IF;
+							END LOOP;
+						CLOSE employees_with_permission;
+					END;
+				END IF;
+			END;
+
+		WHEN markID = 6 THEN -- не заперечую
+			BEGIN
+				-- якщо це звільнююча - направляємо до керівника з правом підпису звільнюючої
+				IF docType = 1 THEN
+					BEGIN
+						DECLARE initiatorSeatId INT DEFAULT 0;
+						DECLARE seatId INT DEFAULT 0;
+						DECLARE chiefSeatId INT DEFAULT 0;
+						DECLARE chiefID INT DEFAULT 0;
+						DECLARE FreeTimePermissionId INT DEFAULT FALSE;
+						
+						-- шукаємо ід посади ініціатора документа
+						SELECT ees.seat_id INTO initiatorSeatId
+						FROM edms_document ed
+						LEFT JOIN edms_employee_seat ees on ed.employee_seat_id = ees.id
+						WHERE ed.id = docId
+						LIMIT 1;	
+						
+						SET seatId = initiatorSeatId; -- перше значення шефа = ід співробітника для початку циклу						
+						
+						-- цикл пошуку шефа, що має доступ до підпису звільнюючих:
+						chiefs: LOOP
+								SELECT chief_id INTO seatId
+								FROM edms_seat
+								WHERE id = seatId
+								LIMIT 1;
+								
+								-- шукаємо ід активного дозволу на погодження
+								SELECT id INTO FreeTimePermissionId 
+								FROM edms_document_type_permission
+								WHERE seat_id = chiefSeatID
+								AND document_type_id = 1
+								AND mark_id = 2
+								AND is_active = TRUE;
+								
+								IF FreeTimePermissionId = FALSE THEN						
+									SET chiefSeatId = seatId;
+									ITERATE chiefs;
+								ELSE
+									LEAVE chiefs;
+								END IF;
+						END LOOP chiefs;
+						
+						-- шукаємо ід посади/людини найвищого шефа
+						SELECT id INTO chiefID
+						FROM edms_employee_seat
+						WHERE seat_id = chiefSeatID
+						AND is_active = TRUE
+						AND is_main = TRUE; -- не в.о.	
+						
+						-- додаємо ід шефа і очікувану позначку у mark_demand документа
+						CALL edms_add_demand(docId, chiefID, 2, pathId); -- 2 - погоджено	
+					END;
+				END IF;
+				
+				-- якщо це мат.пропуск - направляємо на погодження
+				IF docType = 2 THEN
+					BEGIN						
+						DECLARE chiefID INT DEFAULT 0;	
+						
+						-- шукаємо ід людини, яка має доступ до погодження мат.пропусків
+						SELECT es.id INTO chiefId
+						FROM edms_document_type_permission dtp
+						LEFT JOIN edms_seat s ON dtp.seat_id = s.id
+						LEFT JOIN edms_employee_seat es ON s.id = es.seat_id
+						WHERE dtp.document_type_id = 2 
+						AND dtp.mark_id = 2
+						AND es.is_main = TRUE -- не в.о.
+						AND es.is_active = TRUE
+						AND dtp.is_active = TRUE;	
+						
+						-- додаємо ід шефа і очікувану позначку у flow документа
+						IF chiefId <> 0 THEN
+							CALL edms_add_demand(docId, chiefID, 2, pathId); -- 2 - погоджено
+						END IF;	
+					END;
+				END IF;
+				
+				-- видаляємо всі mark_demand "не заперечую"
+						UPDATE edms_mark_demand
+						SET is_active = FALSE
+						WHERE document_id = docId
+						AND mark_id = 6;
+			END;
+		
+		WHEN markID = 2 THEN	-- погоджено
+			BEGIN
+				-- повертаємо документ ініціатору				
+				-- шукаємо ід посадолюдини ініціатора
+				DECLARE initiator INT DEFAULT 0;
+				SELECT employee_seat_id INTO initiator
+				FROM edms_document
+				WHERE id = docId;
+				
+				-- якщо це мат.пропуск, додаємо у flow звільнюючої охорону
+				IF docType = 2 THEN			
+					BEGIN						
+						DECLARE guard INT DEFAULT 0;
+						
+						-- шукаємо ід охоронця, який має доступ до перегляду звільнюючих
+						SELECT es.id INTO guard
+						FROM edms_document_type_permission dtp
+						LEFT JOIN edms_seat s ON dtp.seat_id = s.id
+						LEFT JOIN edms_employee_seat es ON s.id = es.seat_id
+						WHERE dtp.document_type_id = 2 AND dtp.mark_id = 8
+						AND es.is_main = TRUE -- не в.о.
+						AND es.is_active = TRUE
+						AND dtp.is_active = TRUE;	
+						
+						IF guard <> 0 THEN
+							CALL edms_add_demand(docId, guard, 8, pathId); -- 8 - ознайомлений
+						END IF;	
+					END;
+				END IF;
+				
+				-- додаємо ініціатора в flow
+				CALL edms_add_demand(docId, initiator, 7, pathId); -- закрито
+				
+			END;	
+		
+		WHEN markID = 3 THEN	-- відмовлено
+			BEGIN
+				-- шукаємо ід посадолюдини ініціатора
+				DECLARE initiator INT DEFAULT 0;	
+				SELECT employee_seat_id INTO initiator -- повертаємо документ ініціатору
+				FROM edms_document
+				WHERE id = docId;
+				
+				CALL edms_del_demand_all (docId); -- видаляємо документ із усіх flow
+				-- додаємо ініціатора в flow
+				CALL edms_add_demand(docId, initiator, 7, pathId); -- закрито
+				
+			END;	
+		
+		WHEN markID = 5 THEN	-- на доопрацювання
+			BEGIN
+				-- повертаємо документ ініціатору				
+				-- шукаємо ід посадолюдини ініціатора
+				DECLARE initiator INT DEFAULT 0;
+				SELECT employee_seat_id INTO initiator
+				FROM edms_document
+				WHERE id = docId;
+				
+				-- додаємо ініціатора в flow
+				CALL edms_add_demand(docId, initiator, 9, pathId); -- допрацьовано
+				
+			END;	
+		
+		ELSE -- коментар
+			BEGIN
+			
+			END;
+	
+	END CASE;
+END

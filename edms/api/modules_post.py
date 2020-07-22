@@ -48,13 +48,15 @@ def post_acquaint_list(doc_request, acquaint_list):  # отримуючі на �
 
 
 @try_except
-def post_day(doc_request, day):
-    doc_request.update({'day': day})
-    day_form = NewDayForm(doc_request)
-    if day_form.is_valid():
-        day_form.save()
-    else:
-        raise ValidationError('post_modules/post_day/day_form invalid')
+def post_days(doc_request, days):
+    for day in days:
+        doc_request.update({'queue_in_doc': day['queue']})
+        doc_request.update({'day': day['day']})
+        day_form = NewDayForm(doc_request)
+        if day_form.is_valid():
+            day_form.save()
+        else:
+            raise ValidationError('post_modules/post_day/day_form invalid')
 
 
 @try_except

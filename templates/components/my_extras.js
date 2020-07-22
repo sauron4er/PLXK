@@ -77,6 +77,12 @@ export const getTextByQueue = (text_list, queue) => {
   }
 };
 
+export const getDayByQueue = (days, queue) => {
+  for (const i of days) {
+    if (i && i.queue === queue) return i.day;
+  }
+};
+
 export const getIndexByProperty = (list, key, value) => {
   for (let i = 0; i < list.length; i++) {
     if (list[i][key] === value) {

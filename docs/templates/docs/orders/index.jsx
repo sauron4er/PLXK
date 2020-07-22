@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import DxTable from 'templates/components/tables/dx_table';
 // import PaginatedTable from 'templates/components/tables/paginated_table';
 import Order from './order_edit';

@@ -15,7 +15,7 @@ def create_mail_body(post_request):
     message["To"] = "law@lxk.com.ua"
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/docs/contracts/{}' \
-        .format(post_request['request'])
+        .format(post_request['contract'])
     text = 'На сайті ПЛХК опубліковано новий Договір. {}.'.format(link)
 
     message.attach(MIMEText(text, "plain"))

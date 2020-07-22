@@ -4,7 +4,6 @@ import Modal from 'react-responsive-modal';
 import Files from 'react-files';
 import {ToastContainer, toast} from 'react-toastify'; // спливаючі повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
-import axios from 'axios';
 import Info from './info';
 import NewFilesList from 'templates/components/files_uploader/new_files_list';
 import Buttons from './buttons';
@@ -20,12 +19,10 @@ import DocumentPrint from '../doc_info/document_print';
 import './document.css';
 import 'static/css/loader_style.css';
 import 'static/css/files_uploader.css';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 import NewDocument from '../my_docs/new_doc_modules/new_document';
+import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 
 class Document extends React.Component {
@@ -69,25 +66,19 @@ class Document extends React.Component {
     this.setState({
       ready_for_render: false
     });
-
-    axios({
-      method: 'get',
-      url: 'get_doc/' + doc.id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    
+    axiosGetRequest('get_doc/' + doc.id + '/')
       .then((response) => {
         // Отримуємо інформацію щодо конкретних видів документів
         this.setState({
-          info: response.data,
+          info: response,
           ready_for_render: true
         });
-        docInfoStore.info = response.data;
+        docInfoStore.info = response;
 
         // Якщо в історії документа автор хоч одного запису не є автором документа - документ не видаляється.
-        for (let i = 0; i <= response.data.path.length - 1; i++) {
-          if (response.data.path[i].emp_seat_id !== parseInt(localStorage.getItem('my_seat'))) {
+        for (let i = 0; i <= response.path.length - 1; i++) {
+          if (response.path[i].emp_seat_id !== parseInt(localStorage.getItem('my_seat'))) {
             this.setState({deletable: false});
             break;
           } else {
@@ -95,9 +86,7 @@ class Document extends React.Component {
           }
         }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => notify(error));
     return 0;
   };
 
@@ -126,23 +115,16 @@ class Document extends React.Component {
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
     formData.append('phase_id', doc.phase_id ? doc.phase_id : 0);
-
-    axios({
-      method: 'post',
-      url: 'mark/',
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then((response) => {
-        if (response.data === 'not deletable') {
+    
+    axiosPostRequest('mark/', formData)
+        .then((response) => {
+        if (response === 'not deletable') {
           this.notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
           // this.filesRemoveAll();
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
-            new_path_id: response.data,
+            new_path_id: response,
             show_resolutions_area: false,
             show_aqcuaints_area: false,
             new_files: [],
@@ -153,9 +135,7 @@ class Document extends React.Component {
           removeRow(doc_id, mark_id, author_id);
         }
       })
-      .catch((error) => {
-        console.log('errorpost: ' + error);
-      });
+      .catch((error) => notify(error));
   };
 
   // опрацьовуємо нажаття кнопок реагування

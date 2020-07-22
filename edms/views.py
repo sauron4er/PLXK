@@ -440,8 +440,8 @@ def post_modules(doc_request, doc_files, new_path):
 
             post_approval_list(doc_request, approvals)
 
-        if 'day' in doc_modules:
-            post_day(doc_request, doc_modules['day'])
+        if 'days' in doc_modules:
+            post_days(doc_request, doc_modules['days'])
 
         if 'gate' in doc_modules:
             post_gate(doc_request, doc_modules['gate'])
@@ -842,7 +842,7 @@ def edms_get_doc(request, pk):
             'original_path': path.path_to_answer_id,
         } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
 
-        # Шукаємо path i flow документа, якщо це не чернетка:
+        # Шукаємо path i flow документа, якщо це не чернетка чи шаблон:
         if not doc.is_draft and not doc.is_template:
             # Перебираємо шлях документа:
             for step in path:

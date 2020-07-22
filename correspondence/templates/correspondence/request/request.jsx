@@ -16,19 +16,9 @@ import AnswerDate from './answer_date';
 import Responsible from './responsible';
 import AnswerResponsible from './answer_responsible';
 import Laws from './laws';
-import {getItemById, isBlankOrZero, uniqueArray, getIndex} from 'templates/components/my_extras';
+import {getItemById, isBlankOrZero, uniqueArray, getIndex, notify} from 'templates/components/my_extras';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import {Loader} from 'templates/components/loaders';
-
-const notify = (message) =>
-  toast.error(message, {
-    position: 'bottom-right',
-    autoClose: 5000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true
-  });
 
 class Request extends React.Component {
   state = {

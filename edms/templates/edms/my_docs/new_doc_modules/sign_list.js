@@ -97,29 +97,19 @@ class SignList extends React.Component {
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_sign'>
               {fieldName}:
             </label>
-            <select
-              className='form-control'
-              id='select_sign'
-              name='select_sign'
-              value={select_sign}
-              onChange={this.onChange}
-            >
+            <select className='form-control' id='select_sign' name='select_sign' value={select_sign} onChange={this.onChange}>
               <option key={0} data-key={0} value='0'>
                 ------------
               </option>
-              {seat_list.map((seat) => {
-                return (
-                  <option key={seat.id} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
-                    {seat.emp + ', ' + seat.seat}
-                  </option>
-                );
-              })}
+              <For each='seat' index='index' of={seat_list}>
+                <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
+                  {seat.emp + ', ' + seat.seat}
+                </option>
+              </For>
             </select>
             <button
               className={
-                select_sign
-                  ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
-                  : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
+                select_sign ? 'btn btn-sm font-weight-bold ml-1 css_flash_button' : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
               }
               onClick={this.addNewSign}
             >
@@ -131,19 +121,17 @@ class SignList extends React.Component {
           </If>
           <If condition={sign_list.length > 0}>
             <ul className='mt-1'>
-              {sign_list.map((seat) => {
-                return (
-                  <div key={seat.emp_seat_id} className='d-flex align-items-start'>
-                    <li>{seat.emp_seat}</li>
-                    <button
-                      className='btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1'
-                      onClick={(e) => this.delSign(e, seat.id)}
-                    >
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </div>
-                );
-              })}
+              <For each='seat' index='index' of={sign_list}>
+                <div key={index} className='d-flex align-items-start'>
+                  <li>{seat.emp_seat}</li>
+                  <button
+                    className='btn btn-sm btn-outline-secondary font-weight-bold align-self-start ml-1'
+                    onClick={(e) => this.delSign(e, seat.id)}
+                  >
+                    <FontAwesomeIcon icon={faTimes} />
+                  </button>
+                </div>
+              </For>
             </ul>
           </If>
           <br />
