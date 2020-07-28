@@ -8,7 +8,8 @@ const docInfoStore = store({
     id: 0,
     author: '',
     text: ''
-  }
+  },
+  signed_files: []
 });
 
 export default docInfoStore;

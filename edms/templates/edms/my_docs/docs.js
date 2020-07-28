@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
-import Document from '../doc_info/document';
+import Document from './doc_info/document';
 import 'static/css/my_styles.css';
 
 class Docs extends React.Component {
@@ -143,6 +143,9 @@ class Docs extends React.Component {
         break;
       case 21:
         answer = 'Відповідь на коментар додано';
+        break;
+      case 22:
+        answer = 'Підписані документи додано. Договір додано у базу Договорів';
         break;
     }
     this.setState({

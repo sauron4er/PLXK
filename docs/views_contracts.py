@@ -16,7 +16,6 @@ from edms.models import Employee_Seat
 @try_except
 def index(request):
     all_contracts = Contract.objects.filter(is_active=True)
-    accessed_contracts = []
 
     full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
     full_read_access = request.user.userprofile.access_to_all_contracts
@@ -38,11 +37,12 @@ def index(request):
         'selector_info': '№ ' + contract.number + ', "' + contract.subject + '"',
         'counterparty': contract.counterparty,
         # 'nomenclature_group': contract.nomenclature_group,
-        'date_start': date_to_json(contract.date_start),
+        'date_start': date_to_json(contract.date_start) if contract.date_start else '',
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
         # 'responsible_id': contract.responsible_id,
-        # 'responsible': contract.responsible.last_name + ' ' + contract.responsible.first_name,
-        # 'department': contract.department,
+        'responsible': contract.responsible.last_name + ' ' + contract.responsible.first_name
+            if contract.responsible else '',
+        'department': contract.department.name if contract.department else '',
         # 'lawyers_received': 'true' if contract.lawyers_received else 'false',
         # 'basic_contract_id': contract.basic_contract_id,
         # 'basic_contract_subject': contract.basic_contract,
@@ -54,6 +54,8 @@ def index(request):
             .filter(contract=contract.id)
             .filter(is_active=True)]
     } for contract in accessed_contracts]
+
+    # TODO актуальність має опрацьовуватися таблицею у браузері
 
     return render(request, 'docs/contracts/index.html', {'contracts': contracts,
                                                          'departments': get_departments_list(),
@@ -85,7 +87,9 @@ def get_contract(request, pk):
         'lawyers_received': contract.lawyers_received,
         'is_additional_contract': contract.basic_contract is not None,
         'basic_contract': contract.basic_contract_id if contract.basic_contract_id else 0,
-        'basic_contract_subject': '№ ' + contract.number + ', "' + contract.subject + '"' if contract.basic_contract else '',
+        'basic_contract_subject':
+            '№ ' + contract.basic_contract.number + ', "' + contract.basic_contract.subject + '"'
+            if contract.basic_contract else '',
     }
 
     old_files = [{
@@ -104,13 +108,13 @@ def get_contract(request, pk):
 @login_required(login_url='login')
 @try_except
 def add_contract(request):
-    post_request = request.POST.copy()
+    doc_request = request.POST.copy()
 
     new_contract_id = contracts_api.add_contract(request)
-    post_request.update({'contract': new_contract_id})
+    doc_request.update({'contract': new_contract_id})
 
-    contracts_api.post_files(request.FILES, post_request)
-    contracts_mail_sender.send_mail(post_request)
+    contracts_api.post_files(request.FILES, doc_request)
+    contracts_mail_sender.send_mail(doc_request)
 
     return HttpResponse(new_contract_id)
 
@@ -119,12 +123,12 @@ def add_contract(request):
 @login_required(login_url='login')
 @try_except
 def edit_contract(request):
-    post_request = request.POST.copy()
+    doc_request = request.POST.copy()
 
     contract_id = contracts_api.edit_contract(request)
-    post_request.update({'contract': contract_id})
+    doc_request.update({'contract': contract_id})
 
-    contracts_api.post_files(request.FILES, post_request)
+    contracts_api.post_files(request.FILES, doc_request)
 
     return HttpResponse(contract_id)
 

@@ -18,11 +18,11 @@ import Checkbox from 'templates/components/form_modules/checkbox';
 class Contract extends React.Component {
   state = {
     data_received: false,
-    edit_mode: contractsStore.full_edit_access
+    edit_mode: contractsStore.full_edit_access || contractsStore.contract.id === 0
   };
 
   componentDidMount() {
-    if (contractsStore.contract.id) {
+    if (contractsStore.contract.id !== 0) {
       this.getContract();
     } else {
       this.setState({data_received: true});
@@ -111,30 +111,6 @@ class Contract extends React.Component {
         this.changeContractTableAndClose('del');
       })
       .catch((error) => notify(error));
-  };
-
-  clearContract = () => {
-    contractsStore.contract = {
-      id: 0,
-      number: '',
-      author: 0,
-      author_name: '',
-      subject: '',
-      counterparty: '',
-      nomenclature_group: '',
-      date_start: '',
-      date_end: '',
-      responsible: null,
-      responsible_name: '',
-      department: null,
-      department_name: '',
-      lawyers_received: false,
-      is_additional_contract: false,
-      basic_contract: null,
-      basic_contract_subject: '',
-      old_files: [],
-      new_files: []
-    };
   };
 
   onResponsibleChange = (e) => {
@@ -325,7 +301,7 @@ class Contract extends React.Component {
           <If condition={edit_mode}>
             <div className='modal-footer'>
               <If condition={contractsStore.contract.id === 0}>
-                <button className='btn btn-outline-dark' onClick={() => this.clearContract()}>
+                <button className='btn btn-outline-dark' onClick={() => contractsStore.clearContract()}>
                   Очистити
                 </button>
               </If>

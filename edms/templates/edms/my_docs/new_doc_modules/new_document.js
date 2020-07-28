@@ -392,7 +392,7 @@ class NewDocument extends React.Component {
                       <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'files'}>
-                      <FilesUpload onChange={this.onChange} oldFiles={old_files} files={files} fieldName={module.field_name} />
+                      <FilesUpload onChange={this.onChange} files={files} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'acquaint_list'}>
                       <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} fieldName={module.field_name} />

@@ -14,6 +14,7 @@ from .api.getters import *
 from .api.tables_creater import create_table
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
+from docs.api.contracts_api import add_contract_from_edms
 # Модульна система:
 from .models import Doc_Approval, Doc_Recipient
 from .forms import NewApprovalForm, ApprovedApprovalForm
@@ -268,6 +269,12 @@ def handle_phase_marks(doc_request, phase_info):
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             new_mail('new', [{'id': recipient}], doc_request)
 
+    # Прикріплення підписаних скан-копій Договора.
+    elif phase_info['mark_id'] == 22:
+        recipient = vacation_check(doc_request['doc_author_id'])
+        new_mail('new', [{'id': recipient}], doc_request)
+        post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
         recipients = get_phase_recipient_list(phase_info['id'])
@@ -277,9 +284,11 @@ def handle_phase_marks(doc_request, phase_info):
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
 
 
-def new_phase(doc_request, phase_number, modules_recipients):
+def new_phase(doc_request, phase_number, modules_recipients=None):
     # Знаходимо id's фази.
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
+    if modules_recipients is None:
+        modules_recipients = []
     phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained') \
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
@@ -297,6 +306,9 @@ def new_phase(doc_request, phase_number, modules_recipients):
             # (автоматичне заповнення поля approved, approved_date)
             if phase_info['mark_id'] == 20:
                 post_auto_approve(doc_request)
+                new_phase(doc_request, phase_number+1)
+            elif phase_info['mark_id'] == 22:
+                handle_phase_marks(doc_request, phase_info)
             else:
                 # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
                 if is_approvals_used(doc_request['document_type']):
@@ -1367,6 +1379,12 @@ def edms_mark(request):
             elif doc_request['mark'] == '21':
                 if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)
+
+            # Додано скан-копії підписаних документів
+            elif doc_request['mark'] == '22':
+                # Деактивуємо MarkDemand цієї позначки
+                add_contract_from_edms(doc_request, request.FILES, request.user)
+                deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)

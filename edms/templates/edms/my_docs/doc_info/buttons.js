@@ -54,19 +54,6 @@ class Buttons extends React.Component {
               >
                 Відмовити
               </button>
-              {/*<If condition={this.props.doc.type_id !== 1}>*/}
-              {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
-              {/*</If>*/}
-              {/*<If condition={doc.type_id === 3}>*/}
-              {/*/!* Якщо це службова - додаємо резолюції *!/*/}
-              {/*<button*/}
-              {/*type="button"*/}
-              {/*className="btn btn-secondary mr-1 mb-1"*/}
-              {/*onClick={e => onClick(e, 10)}*/}
-              {/*>*/}
-              {/*Резолюція*/}
-              {/*</button>*/}
-              {/*</If>*/}
             </When>
             <When condition={doc.expected_mark === 8}>
               {/* Ознайомлений */}
@@ -113,6 +100,16 @@ class Buttons extends React.Component {
                 onClick={() => onClick(3)}
               >
                 Відмовити
+              </button>
+            </When>
+            <When condition={doc.expected_mark === 22}>
+              {/* Прикріплення сканів підписаних документів */}
+              <button
+                type='button'
+                className='btn btn-secondary mr-1 mb-1'
+                onClick={() => onClick(22)}
+              >
+                Прикріпити скан-копії підписаних документів
               </button>
             </When>
           </Choose>

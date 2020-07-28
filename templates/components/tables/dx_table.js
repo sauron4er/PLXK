@@ -2,9 +2,20 @@
 // https://devexpress.github.io/devextreme-reactive/react/grid/docs/guides/getting-started/
 
 /*
- * Якщо відправити в таблицю проп coloredStatus: колонка,
- * яка має назву status, стає зеленою, якщо її value = 'ok',
+ * Якщо відправити в таблицю проп coloredStatus:
+ * колонка, яка має назву status, стає зеленою, якщо її value = 'ok',
  * жовтою, коли value = 'in progress' і червоною в інших випадках.
+ */
+
+/*
+ * Якщо відправити в таблицю проп redRow зі значенням - назвою колонки (наприклад redRow='is_canceled'),
+ * то якщо колонка з відповідною назвою є True, то цілий рядок виділяється червоним
+ */
+
+/*
+ * Якщо у списку колонок є autoActuality, таблиця автоматично буде визначати актуальність документа,
+ * вираховуючи її з колонок date_start та date_end. Ця колонка буде зеленою, якщо документ актуальний,
+ * червоною, якщо вже не актуальний, жовтою, якщо актуальність ще не настала
  */
 
 /*
@@ -20,7 +31,7 @@ import {
   TableFilterRow,
   PagingPanel,
   TableEditRow,
-  TableEditColumn,
+  TableEditColumn
 } from '@devexpress/dx-react-grid-material-ui';
 import {
   PagingState,
@@ -59,7 +70,8 @@ class DxTable extends React.PureComponent {
       addedRows: [],
       editingRowIds: [],
       rowChanges: {},
-      clicked_row_index: ''
+      clicked_row_index: '',
+      today: new Date()
     };
   }
 
@@ -167,7 +179,7 @@ class DxTable extends React.PureComponent {
       // onClick={() => this.onRowClick(row)} - це опрацьовується в CellComponent
       style={this.ChooseStyle(row)}
     />
-  )
+  );
 
   arrangeFiles = (files, style) => {
     return (
@@ -183,11 +195,16 @@ class DxTable extends React.PureComponent {
     );
   };
 
+  autoActuality = (date_start, date_end) => {
+    if (new Date(date_start) > this.state.today) return 'yellow';
+    if (date_end !== '' && new Date(date_end) < this.state.today) return 'red';
+    return 'lightgreen';
+  };
+
   // Налаштування комірки
   CellComponent = (props) => {
-    
     let cell_value = props.value;
-    
+
     let style = {
       padding: 0,
       paddingLeft: 5,
@@ -198,22 +215,27 @@ class DxTable extends React.PureComponent {
       border: '1px solid #F0F0F0'
     };
 
-    // Налаштування комірки з назвою status
+    // status
     if (this.props.coloredStatus && props.column.name === 'status') {
-      const color =
-        props.value === 'in progress' ? 'yellow' :
-          props.value === 'ok' ? 'lightgreen' : 'red';
+      const color = props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
       style = {
         backgroundColor: color,
         color: color
       };
-      
-      // Очищаємо цю комірку, бо з текстом вона збільшує свою висоту.
       cell_value = '';
     }
-    
 
-    // Налаштування комірки з назвою files
+    // autoActuality
+    if (props.column.name === 'autoActuality' && (props.row.date_start || props.row.date_end)) {
+      const color = this.autoActuality(props.row.date_start, props.row.date_end);
+      style = {
+        backgroundColor: color,
+        color: color
+      };
+      cell_value = '';
+    }
+
+    // files
     if (props.column.name === 'files' && Array.isArray(props.row.files)) {
       return this.arrangeFiles(props.row.files, style);
     }
@@ -245,18 +267,11 @@ class DxTable extends React.PureComponent {
     const height = this.props.height && this.props.height !== null ? this.props.height : '100%';
     const paper_height = !this.props.paging ? height : {};
     const grid_height = !this.props.paging ? '100%' : {};
-    const virtual_height =
-      this.props.height && this.props.height !== null ? this.props.height : 750;
-  
+    const virtual_height = this.props.height && this.props.height !== null ? this.props.height : 750;
+
     return (
       <Paper className='mt-2 full_width' style={{height: {paper_height}}}>
-        <Grid
-          rows={rows}
-          columns={this.props.columns}
-          getRowId={getRowId}
-          style={{height: {grid_height}}}
-          hoverStateEnabled={true}
-        >
+        <Grid rows={rows} columns={this.props.columns} getRowId={getRowId} style={{height: {grid_height}}} hoverStateEnabled={true}>
           <SortingState defaultSorting={this.props.defaultSorting} />
           <If condition={this.props.paging}>
             <PagingState pageSize={this.props.pageSize ? this.props.pageSize : 8} />
@@ -294,11 +309,7 @@ class DxTable extends React.PureComponent {
             </Otherwise>
           </Choose>
 
-          <TableHeaderRow
-            cellComponent={this.HeaderCellComponent}
-            showSortingControls
-            messages={{sortingHint: 'Сортувати'}}
-          />
+          <TableHeaderRow cellComponent={this.HeaderCellComponent} showSortingControls messages={{sortingHint: 'Сортувати'}} />
 
           {/*Якщо в props є edited - таблиця дає можливість редагувати рядки*/}
           <If condition={this.props.edit}>

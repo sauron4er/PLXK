@@ -6,7 +6,7 @@ import {Loader} from 'templates/components/loaders';
 import {notify} from 'templates/components/my_extras';
 import 'static/css/my_styles.css';
 import Modal from 'react-responsive-modal';
-import Document from 'edms/templates/edms/doc_info/document';
+import Document from 'edms/templates/edms/my_docs/doc_info/document';
 
 class Tables extends React.Component {
   state = {

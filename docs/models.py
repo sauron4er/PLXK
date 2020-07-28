@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import Department
+from edms.models import Document as EdmsDocument
 
 
 class Doc_group(models.Model):
@@ -84,6 +85,7 @@ class File(models.Model):
 
 
 class Contract(models.Model):
+    # Не можна перейменовувати ці поля, це вплине на автоматичний переніс Договорів з системи EDMS
     number = models.CharField(max_length=10)
     created_by = models.ForeignKey(User, related_name='added_contracts', on_delete=models.CASCADE)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='updated_contracts', on_delete=models.CASCADE)
@@ -95,6 +97,7 @@ class Contract(models.Model):
     responsible = models.ForeignKey(User, null=True, blank=True, related_name='responsible_for_contracts')
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True)
     lawyers_received = models.BooleanField(default=False)
+    edms_doc = models.ForeignKey(EdmsDocument, related_name='contracts', null=True)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
 
     basic_contract = models.ForeignKey('self', related_name='additional_contracts', null=True, blank=True)
     # Якщо це поле пусте, то документ є основним договором,
@@ -110,4 +113,5 @@ class Contract_File(models.Model):
     file = models.FileField(upload_to='contract_docs/%Y/%m')
     name = models.CharField(max_length=100, null=True, blank=True)
     contract = models.ForeignKey(Contract, related_name='files', null=True)
+
     is_active = models.BooleanField(default=True)

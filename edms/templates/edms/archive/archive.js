@@ -2,7 +2,7 @@
 import React from 'react';
 
 import DxTable from 'templates/components/tables/dx_table';
-import Document from '../doc_info/document';
+import Document from '../my_docs/doc_info/document';
 import SeatChooser from '../components/seat_chooser';
 import 'static/css/my_styles.css';
 

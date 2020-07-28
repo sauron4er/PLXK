@@ -34,7 +34,7 @@ class DocumentPrint extends React.Component {
 
         <div style={this.hideStyle}>
           <div ref={(el) => (this.componentRef = el)}>
-            <img src="../../../../static/img/blank_header.png" alt="Italian Trulli" style={{width: '100%'}} />
+            <img src="../../../../../static/img/blank_header.png" alt="Italian Trulli" style={{width: '100%'}} />
             
             <div className='css_border bg-light p-2 mt-2 mr-1'>
               <Info doc={doc} info={info} />

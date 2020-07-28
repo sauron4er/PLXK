@@ -10,18 +10,19 @@ import Buttons from './buttons';
 import NewResolutions from './doc_info_modules/modals/new_resolutions';
 import NewAcquaints from './doc_info_modules/modals/new_acquaints';
 import EditFiles from './doc_info_modules/modals/edit_files';
+import PostSignedFiles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/post_signed_files';
 import RefusalComment from './doc_info_modules/modals/refusal_comment';
-import AnswerComment from 'edms/templates/edms/doc_info/doc_info_modules/modals/answer_comment';
+import AnswerComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/answer_comment';
 import Path from './path';
 import Flow from './flow';
 import Acquaints from './doc_info_modules/acquaints';
-import DocumentPrint from '../doc_info/document_print';
+import DocumentPrint from './document_print';
 import './document.css';
 import 'static/css/loader_style.css';
 import 'static/css/files_uploader.css';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
-import NewDocument from '../my_docs/new_doc_modules/new_document';
+import NewDocument from '../new_doc_modules/new_document';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 
@@ -44,11 +45,11 @@ class Document extends React.Component {
     comment_modal_open: false, // модальне вікно, яке просить користувача ввести коментар
     ready_for_render: true // при false рендериться loader
   };
-  
+
   componentDidMount() {
     if (this.props.doc) this.getDoc(this.props.doc);
   }
-  
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
     if (this.props.doc.id && this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
@@ -66,7 +67,7 @@ class Document extends React.Component {
     this.setState({
       ready_for_render: false
     });
-    
+
     axiosGetRequest('get_doc/' + doc.id + '/')
       .then((response) => {
         // Отримуємо інформацію щодо конкретних видів документів
@@ -99,6 +100,9 @@ class Document extends React.Component {
     new_files.map((file) => {
       formData.append('new_files', file);
     });
+    docInfoStore.signed_files.map((file) => {
+      formData.append('signed_files', file);
+    });
     updated_files.map((file) => {
       formData.append('updated_files', file);
     });
@@ -115,9 +119,9 @@ class Document extends React.Component {
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
     formData.append('phase_id', doc.phase_id ? doc.phase_id : 0);
-    
+
     axiosPostRequest('mark/', formData)
-        .then((response) => {
+      .then((response) => {
         if (response === 'not deletable') {
           this.notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
@@ -128,7 +132,7 @@ class Document extends React.Component {
             show_resolutions_area: false,
             show_aqcuaints_area: false,
             new_files: [],
-            updated_files: [],
+            updated_files: []
           });
           const doc_id = doc.id;
           const author_id = doc.author_seat_id;
@@ -140,7 +144,6 @@ class Document extends React.Component {
 
   // опрацьовуємо нажаття кнопок реагування
   onButtonClick = (mark_id) => {
-
     // Якщо це пустий коментар, виводимо текст помилки
     if (mark_id === 4 && this.state.comment === '') {
       this.notify('Введіть текст коментарю.');
@@ -150,11 +153,8 @@ class Document extends React.Component {
       this.notify('Оберіть файл.');
 
       // Кнопка "Резолюція" відкриває окремий модуль
-    } else if ([10, 15, 18, 21].includes(mark_id)) {
+    } else if ([10, 15, 18, 21, 22].includes(mark_id)) {
       this.openModal(mark_id);
-      // this.setState((prevState) => ({
-      //   show_aquaints_area: !prevState.show_aquaints_area
-      // }));
 
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
     } else if (mark_id === 3 && this.state.comment === '') {
@@ -163,7 +163,7 @@ class Document extends React.Component {
       this.postMark(mark_id);
     }
   };
-  
+
   onAnswerClick = (path) => {
     docInfoStore.comment_to_answer = {
       id: path.id,
@@ -172,15 +172,13 @@ class Document extends React.Component {
       author_id: path.emp_seat_id
     };
     this.openModal(21);
-  }
+  };
 
   openModal = (mark_id) => {
     switch (mark_id) {
       case 3:
         this.setState({
-          modal: (
-            <RefusalComment onSubmit={comment => this.handleComment(comment,3)} onCloseModal={this.onCloseModal} />
-          ),
+          modal: <RefusalComment onSubmit={(comment) => this.handleComment(comment, 3)} onCloseModal={this.onCloseModal} />,
           modal_open: true
         });
         break;
@@ -218,7 +216,6 @@ class Document extends React.Component {
       case 18:
         this.setState({
           modal: (
-            // TODO відправляти у компонент лише документи, які можна коригувати (не "звичайні" файли, додані іншими користувачами)
             <EditFiles
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleFilesChange}
@@ -237,9 +234,16 @@ class Document extends React.Component {
           modal: (
             <AnswerComment
               // originalComment={}
-              onSubmit={comment => this.handleComment(comment,21)}
-              onCloseModal={this.onCloseModal} />
+              onSubmit={(comment) => this.handleComment(comment, 21)}
+              onCloseModal={this.onCloseModal}
+            />
           ),
+          modal_open: true
+        });
+        break;
+      case 22:
+        this.setState({
+          modal: <PostSignedFiles onCloseModal={this.onCloseModal} notify={this.notify} onSubmit={this.handleAddingSignedFiles} />,
           modal_open: true
         });
         break;
@@ -281,7 +285,7 @@ class Document extends React.Component {
   handleComment = (comment, mark) => {
     this.setState(
       {
-        comment: comment,
+        comment: comment
       },
       () => {
         this.postMark(mark);
@@ -290,35 +294,10 @@ class Document extends React.Component {
     );
   };
 
-  handleFilesChange = (files, comment) => {
-    // Вимушений розбивати оновлені/додані і видалені файли на два масиви,
-    // бо видалені не є типом File і опрацьовуються в axios не правильно.
-    let updated_files = [];
-    let deleted_files = [];
-    
-    for (const file of files) {
-      if (file instanceof File) {
-        updated_files.push(file)
-      } else {
-        if (file.status !== '') {
-          deleted_files.push(file)
-        }
-      }
-    }
-    
-    this.setState(
-      {
-        updated_files: updated_files,
-        deleted_files: deleted_files,
-        comment: comment
-      },
-      () => {
-        this.postMark(18);
-        this.onCloseModal();
-      }
-    );
+  handleAddingSignedFiles = () => {
+    this.postMark(22);
+    this.onCloseModal();
   };
-
   onNewFiles = (new_files) => {
     this.setState({
       new_files
@@ -338,13 +317,12 @@ class Document extends React.Component {
       modal_open: false
     });
   };
-  
+
   addDoc = () => {
     window.location.reload();
   };
 
   render() {
-  
     if (this.state.ready_for_render === true) {
       if (
         this.props.doc !== '' &&
@@ -367,7 +345,7 @@ class Document extends React.Component {
             <div className='css_border bg-light p-2 mt-2 mr-1'>
               <Info doc={this.props.doc} info={this.state.info} />
             </div>
-            
+
             <If condition={this.props.closed === false}>
               <div className='mt-3'>Відреагувати:</div>
               <div className='css_border bg-light p-2 mt-1 mr-1'>
@@ -423,11 +401,11 @@ class Document extends React.Component {
             <Path path={this.state.info.path} onAnswerClick={this.onAnswerClick} />
 
             {/*Модальне вікно*/}
-            <Modal open={this.state.modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} >
+            <Modal open={this.state.modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
               <ToastContainer />
               {this.state.modal}
             </Modal>
-            
+
             <If condition={docInfoStore.view === 'new_document'}>
               <NewDocument
                 doc={{
@@ -437,7 +415,7 @@ class Document extends React.Component {
                 }}
                 addDoc={this.addDoc}
                 status={'change'}
-                onCloseModal={() => docInfoStore.view = 'info'}
+                onCloseModal={() => (docInfoStore.view = 'info')}
               />
             </If>
 
@@ -462,7 +440,7 @@ class Document extends React.Component {
       );
     }
   }
-  
+
   static defaultProps = {
     doc: [],
     directSubs: [],

@@ -150,10 +150,14 @@ class Document_Type_Module(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='module_types')
     module = models.ForeignKey(Module, related_name='type_modules')
     queue = models.IntegerField()
+
+    field = models.CharField(max_length=200, null=True, blank=True)
+    # Назва поля (наразі для текстових та дат), якщо це поле використовується декілька раз у документі,
+    # а потім використовується поза системою edms
+
     field_name = models.CharField(max_length=200)
     required = models.BooleanField(default=False)
     testing = models.BooleanField(default=False)
-    # is_tiny_text_box = models.BooleanField(default=False) # True - маленькі текстові поля, н-д номер документа (приймають до 10 символів)
     is_active = models.BooleanField(default=True)
     is_editable = models.BooleanField(default=False)
     table_view = models.BooleanField(default=False)  # True - показує це поле як колонку у зведеній таблиці
@@ -236,11 +240,10 @@ class Doc_Text(models.Model):
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
-# TODO додати queue у всі документи
 
 # Дата, яка використовується у документі. Н-д, день дії звільнюючої
 class Doc_Day(models.Model):
-    document = models.ForeignKey(Document, related_name='day')
+    document = models.ForeignKey(Document, related_name='days')
     day = models.DateField(default=timezone.now)
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)

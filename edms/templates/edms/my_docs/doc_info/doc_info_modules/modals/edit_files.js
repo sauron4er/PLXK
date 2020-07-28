@@ -3,7 +3,7 @@ import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Files from 'react-files';
-import '../../../../../../static/css/files_uploader.css';
+import 'static/css/files_uploader.css';
 
 class EditFiles extends React.Component {
   state = {
@@ -139,59 +139,51 @@ class EditFiles extends React.Component {
               <col className='col-md-2' />
             </colgroup>
             <tbody>
-              {files.map((file, index) => {
-                return (
-                  <If condition={file.first_path}>
-                    <tr style={this.getRowStyle(file)}>
-                      <td>
-                        <a href={'../../media/' + file.name} download>
-                          {file.name}{' '}
-                        </a>
-                        <If condition={file.version}>
-                          <span className='text-dark font-weight-bold'>v{file.version}</span>
-                        </If>
-                      </td>
-                      <td className='text-center'>
-                        <If condition={['', 'update'].includes(file.status)}>
-                          <Files
-                            className='btn btn-sm btn-outline-secondary'
-                            ref='update_file'
-                            onChange={(new_files) => this.updateFile(index, new_files[0])}
-                            onError={this.onFilesError}
-                            maxFiles={10}
-                            maxFileSize={10000000}
-                            minFileSize={0}
-                            clickable
-                            multiple={false}
-                          >
-                            Оновити
-                          </Files>
-                        </If>
-                      </td>
-                      <td className='text-center'>
-                        <Choose>
-                          <When condition={['delete', 'update'].includes(file.status)}>
-                            <button
-                              className='btn btn-sm btn-outline-secondary ml-1'
-                              onClick={(e) => this.unchangeFile(e, index)}
-                            >
-                              Відмінити
-                            </button>
-                          </When>
-                          <Otherwise>
-                            <button
-                              className='btn btn-sm btn-outline-secondary ml-1'
-                              onClick={(e) => this.deleteFile(e, index)}
-                            >
-                              Видалити
-                            </button>
-                          </Otherwise>
-                        </Choose>
-                      </td>
-                    </tr>
-                  </If>
-                );
-              })}
+              <For each='file' index='index' of={files}>
+                <If condition={file.first_path}>
+                  <tr key={index} style={this.getRowStyle(file)}>
+                    <td>
+                      <a href={'../../media/' + file.name} download>
+                        {file.name}{' '}
+                      </a>
+                      <If condition={file.version}>
+                        <span className='text-dark font-weight-bold'>v{file.version}</span>
+                      </If>
+                    </td>
+                    <td className='text-center'>
+                      <If condition={['', 'update'].includes(file.status)}>
+                        <Files
+                          className='btn btn-sm btn-outline-secondary'
+                          ref='update_file'
+                          onChange={(new_files) => this.updateFile(index, new_files[0])}
+                          onError={this.onFilesError}
+                          maxFiles={10}
+                          maxFileSize={10000000}
+                          minFileSize={0}
+                          clickable
+                          multiple={false}
+                        >
+                          Оновити
+                        </Files>
+                      </If>
+                    </td>
+                    <td className='text-center'>
+                      <Choose>
+                        <When condition={['delete', 'update'].includes(file.status)}>
+                          <button className='btn btn-sm btn-outline-secondary ml-1' onClick={(e) => this.unchangeFile(e, index)}>
+                            Відмінити
+                          </button>
+                        </When>
+                        <Otherwise>
+                          <button className='btn btn-sm btn-outline-secondary ml-1' onClick={(e) => this.deleteFile(e, index)}>
+                            Видалити
+                          </button>
+                        </Otherwise>
+                      </Choose>
+                    </td>
+                  </tr>
+                </If>
+              </For>
             </tbody>
           </table>
           <Files
@@ -221,6 +213,7 @@ class EditFiles extends React.Component {
         </div>
 
         <div className='modal-footer'>
+          <small>При оновленні прикріплених файлів даний електронний документ буде знов запропоновано на розгляд візуючим</small>
           <button className='btn btn-outline-success ml-1' onClick={this.onSubmit}>
             Зберегти зміни
           </button>

@@ -13,13 +13,17 @@ const columns = [
   {name: 'date_start', title: 'Діє з'},
   {name: 'date_end', title: 'Діє до'},
   {name: 'files', title: 'Файли'},
+  {name: 'department', title: 'Відділ'},
+  {name: 'responsible', title: 'Відповідальний'},
+  {name: 'autoActuality', title: ' '}
 ];
 
 const col_width = [
   // {columnName: 'id', width: 30},
   {columnName: 'number', width: 100},
   {columnName: 'date_start', width: 80},
-  {columnName: 'date_end', width: 80}
+  {columnName: 'date_end', width: 80},
+  {columnName: 'autoActuality', width: 30}
 ];
 
 class Contracts extends React.Component {
@@ -62,6 +66,7 @@ class Contracts extends React.Component {
   };
 
   onContractClose = () => {
+    contractsStore.clearContract();
     this.changeView('table');
   };
 
@@ -71,8 +76,6 @@ class Contracts extends React.Component {
 
   render() {
     const {main_div_height, view} = this.state;
-  
-    console.log(contractsStore.full_edit_access);
   
     return (
       <Choose>
@@ -88,12 +91,13 @@ class Contracts extends React.Component {
               colWidth={col_width}
               onRowClick={this.onRowClick}
               height={main_div_height}
+              startEndColumn
               filter
             />
           </div>
         </When>
         <Otherwise>
-          <button className='btn btn-sm btn-success my-2' onClick={() => this.changeView('table')}>
+          <button className='btn btn-sm btn-success my-2' onClick={() => this.onContractClose()}>
             Назад
           </button>
           <br />

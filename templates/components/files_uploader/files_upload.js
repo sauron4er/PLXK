@@ -56,7 +56,7 @@ class FilesUpload extends React.Component {
   static defaultProps = {
     multiple: true,
     files: [],
-    fieldName: '???',
+    fieldName: '',
     editable: true
   };
 }
