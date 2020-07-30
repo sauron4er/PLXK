@@ -222,8 +222,7 @@ def get_request(request, pk):
     try:
         req = get_object_or_404(Request, pk=pk)
 
-        edit_mode = request.user.pk in (req.added_by_id, req.responsible_id, req.answer_responsible_id)
-
+        edit_mode = request.user.pk in (req.added_by_id, req.responsible_id, req.answer_responsible_id, 693)  # Тимчасово захардкодений Чобаня
         user_is_author = request.user.pk == req.added_by_id
 
         req = {
