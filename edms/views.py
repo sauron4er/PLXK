@@ -1283,11 +1283,14 @@ def edms_mark(request):
                     new_phase(doc_request, this_phase['phase'], [{'id': doc_recipient[0], 'type': 'chief'}])
                 else:
                     # Якщо всі необхідні позначки проставлені, відправляємо документ у наступну фазу
-                    remaining_required_md = Mark_Demand.objects.filter(document_id=doc_request['document']) \
+                    remaining_required_md = Mark_Demand.objects\
+                        .filter(document_id=doc_request['document']) \
                         .filter(phase_id=doc_request['phase_id']) \
                         .filter(phase__required=True) \
                         .filter(is_active=True) \
+                        .exclude(mark_id=8) \
                         .count()
+                    # .exclude(mark_id=8) - не враховуємо активні запити на ознайомлення
 
                     if remaining_required_md == 0:
                         new_phase(doc_request, this_phase['phase'] + 1, [])

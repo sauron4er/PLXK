@@ -53,10 +53,11 @@ def post_days(doc_request, days):
         doc_request.update({'queue_in_doc': day['queue']})
         doc_request.update({'day': day['day']})
         day_form = NewDayForm(doc_request)
-        if day_form.is_valid():
-            day_form.save()
-        else:
-            raise ValidationError('post_modules/post_day/day_form invalid')
+        day_form.save()
+        # if day_form.is_valid():
+        #     day_form.save()
+        # else:
+        #     raise ValidationError('post_modules/post_day/day_form invalid')
 
 
 @try_except
