@@ -25,12 +25,12 @@ const col_width = [
 
 class CorrTable extends React.Component {
   state = {
-    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
+    main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
   };
 
   componentDidMount() {
     this.setState({
-      main_div_height: this.mainDivRef.clientHeight
+      main_div_height: this.mainDivRef.clientHeight,
     });
   }
 
@@ -41,22 +41,30 @@ class CorrTable extends React.Component {
 
   newRequest = (e) => {
     e.preventDefault();
+    corrStore.corr_type = this.props.corrType;
     this.props.showRequest(0);
   };
 
   onRowClick = (row) => {
+    corrStore.corr_type = this.props.corrType;
     this.props.showRequest(row.id);
+  };
+  
+  filterCorrespondence = () => {
+    return corrStore.correspondence.filter((corr) => this.props.corrType === corr.type);
   };
 
   render() {
     const {main_div_height} = this.state;
+    const {corrType} = this.props;
+    
     return (
       <div ref={this.getMainDivRef}>
         <button className='btn btn-outline-success' onClick={this.newRequest}>
-          Додати запит
+          {corrType === 1 ? 'Додати запит' : 'Додати рекламацію'}
         </button>
         <DxTable
-          rows={corrStore.requests}
+          rows={this.filterCorrespondence()}
           columns={columns}
           colWidth={col_width}
           onRowClick={this.onRowClick}
@@ -69,7 +77,8 @@ class CorrTable extends React.Component {
   }
 
   static defaultProps = {
-    showRequest: () => {}
+    showRequest: () => {},
+    corrType: 1
   };
 }
 

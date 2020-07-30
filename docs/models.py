@@ -57,8 +57,6 @@ class Order_doc(models.Model):
     doc_type = models.ForeignKey(Order_doc_type, related_name='Documents', on_delete='CASCADE')
     code = models.CharField(max_length=100, null=True, blank=True)
     cancels_code = models.CharField(max_length=100, null=True, blank=True)
-    # doc_file = models.FileField(upload_to='order_docs/%Y/%m')
-    # cancels_file = models.FileField(upload_to='order_docs/%Y/%m', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='added_orders', on_delete=models.CASCADE)

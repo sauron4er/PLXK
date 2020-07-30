@@ -55,8 +55,6 @@ def index(request):
             .filter(is_active=True)]
     } for contract in accessed_contracts]
 
-    # TODO актуальність має опрацьовуватися таблицею у браузері
-
     return render(request, 'docs/contracts/index.html', {'contracts': contracts,
                                                          'departments': get_departments_list(),
                                                          'employees': get_employees_list(),

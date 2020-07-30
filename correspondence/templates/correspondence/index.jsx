@@ -10,11 +10,11 @@ import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'table' // table, request, laws, scopes
+    view: 'requests' // requests, reclamations, request, laws, scopes
   };
 
   componentDidMount() {
-    corrStore.requests = window.requests;
+    corrStore.correspondence = window.correspondence;
     corrStore.laws = window.laws;
     corrStore.clients = window.clients;
     corrStore.products = window.products;
@@ -23,13 +23,14 @@ class Correspondence extends React.Component {
 
     // Визначаємо, чи відкриваємо просто список, чи це конкретне посилання:
     const arr = window.location.pathname.split('/');
-    let filtered = arr.filter(el => el !== '');
+    let filtered = arr.filter((el) => el !== '');
     const last_href_piece = parseInt(filtered[filtered.length - 1]);
     const is_link = !isNaN(last_href_piece);
     if (is_link) this.showRequest(last_href_piece);
   }
 
   changeView = (name) => {
+    name === 'requests' ? corrStore.request.type = 1 : corrStore.request.type = 2
     this.setState({view: name});
   };
 
@@ -39,9 +40,7 @@ class Correspondence extends React.Component {
   };
 
   getButtonStyle = (name) => {
-    if (name === this.state.view) {
-      return 'btn btn-sm btn-secondary mr-1 active';
-    }
+    if (name === this.state.view) return 'btn btn-sm btn-secondary mr-1 active';
     return 'btn btn-sm btn-secondary mr-1';
   };
 
@@ -50,39 +49,26 @@ class Correspondence extends React.Component {
     return (
       <>
         <div className='btn-group mb-2' role='group' aria-label='Basic example'>
-          <button
-            type='button'
-            className={this.getButtonStyle('table')}
-            onClick={() => this.changeView('table')}
-          >
+          <button type='button' className={this.getButtonStyle('requests')} onClick={() => this.changeView('requests')}>
             Запити
           </button>
-          {/*<button*/}
-          {/*  type='button'*/}
-          {/*  className={this.getButtonStyle('clients')}*/}
-          {/*  onClick={() => this.changeView('clients')}*/}
-          {/*>*/}
-          {/*  Клієнти*/}
-          {/*</button>*/}
-          <button
-            type='button'
-            className={this.getButtonStyle('laws')}
-            onClick={() => this.changeView('laws')}
-          >
+          <button type='button' className={this.getButtonStyle('reclamations')} onClick={() => this.changeView('reclamations')}>
+            Рекламації
+          </button>
+          <button type='button' className={this.getButtonStyle('laws')} onClick={() => this.changeView('laws')}>
             Законодавство
           </button>
-          <button
-            type='button'
-            className={this.getButtonStyle('scopes')}
-            onClick={() => this.changeView('scopes')}
-          >
+          <button type='button' className={this.getButtonStyle('scopes')} onClick={() => this.changeView('scopes')}>
             Сфери застосування
           </button>
         </div>
 
         <Choose>
-          <When condition={view === 'table'}>
-            <CorrTable showRequest={this.showRequest} />
+          <When condition={view === 'requests'}>
+            <CorrTable corrType={1} showRequest={this.showRequest} />
+          </When>
+          <When condition={view === 'reclamations'}>
+            <CorrTable corrType={2} showRequest={this.showRequest} />
           </When>
           <When condition={view === 'request'}>
             <Request close={this.changeView} />

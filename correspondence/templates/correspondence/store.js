@@ -1,10 +1,12 @@
 import {store} from '@risingstack/react-easy-state';
 
 const corrStore = store({
-  view: 'request', // table, request, clients, laws
-  requests: [],
+  view: 'requests', // requests, reclamations, request, clients, laws
+  corr_type: 1, // 1 - requests, 2 - reclamations
+  correspondence: [],
   request: {
     id: 0,
+    type: 1,
     client_id: 0,
     client_name: '',
     scope_id: 0,
@@ -23,8 +25,11 @@ const corrStore = store({
     responsible_name: '',
     answer_responsible_id: 0,
     answer_responsible_name: '',
+    selected_law_id: 0,
+    selected_law_name: '',
     laws: [],
     new_laws: [],
+    author_comment: '',
     delete_laws: []
   },
   law: {
@@ -32,8 +37,6 @@ const corrStore = store({
     scope_name: '',
     scopes: []
   },
-  selected_law_id: 0,
-  selected_law_name: '',
   laws: [],
   clients: [],
   employees: [],

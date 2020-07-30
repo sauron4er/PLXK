@@ -74,8 +74,9 @@ def index(request):
             .filter(is_it_admin=False)
         ]
 
-        requests = [{
+        correspondence = [{
             'id': request.pk,
+            'type': request.type,
             'product_name': request.client.product_type.name,
             'scope_name': request.scope.name,
             'client_name': request.client.name,
@@ -90,7 +91,7 @@ def index(request):
                                                              'scopes': json.dumps(scopes),
                                                              'products': json.dumps(products),
                                                              'laws': json.dumps(laws),
-                                                             'requests': json.dumps(requests),
+                                                             'correspondence': json.dumps(correspondence),
                                                              'employees': json.dumps(employees)})
     else:
         return render(request, 'correspondence/forbidden.html')
@@ -221,8 +222,13 @@ def get_request(request, pk):
     try:
         req = get_object_or_404(Request, pk=pk)
 
+        edit_mode = request.user.pk in (req.added_by_id, req.responsible_id, req.answer_responsible_id)
+
+        user_is_author = request.user.pk == req.added_by_id
+
         req = {
             'id': req.id,
+            'type': req.type,
             'client_id': req.client_id,
             'client_name': req.client.name,
             'scope_id': req.scope_id,
@@ -268,8 +274,8 @@ def get_request(request, pk):
         } for req_law in Request_law.objects.filter(is_active=True).filter(request_id=req['id'])]
 
         req.update({'old_request_files': old_request_files, 'old_answer_files': old_answer_files, 'laws': laws})
-
-        return HttpResponse(json.dumps(req))
+        response = {'request': req, 'edit_mode': edit_mode, 'user_is_author': user_is_author}
+        return HttpResponse(json.dumps(response))
     except Exception as err:
         raise err
 

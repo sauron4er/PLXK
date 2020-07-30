@@ -47,8 +47,7 @@ class NewLawScopeForm(forms.ModelForm):
 class NewRequestForm(forms.ModelForm):
     class Meta:
         model = Request
-        # fields = ['product_type', 'client', 'request_date', 'responsible', 'answer_responsible']
-        fields = ['scope', 'client', 'request_date', 'responsible',
+        fields = ['type', 'scope', 'client', 'request_date', 'responsible',
                   'answer_responsible', 'answer', 'request_term', 'answer_date']
 
 

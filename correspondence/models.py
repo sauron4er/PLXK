@@ -36,6 +36,7 @@ class Law_scope(models.Model):
 
 
 class Request(models.Model):
+    type = models.SmallIntegerField()  # 1 - запит, 2 - рекламація
     scope = models.ForeignKey(Scope, related_name='requests')
     client = models.ForeignKey(Client, related_name='requests')
     request_date = models.DateField()
@@ -44,6 +45,7 @@ class Request(models.Model):
     answer_responsible = models.ForeignKey(User, related_name='answer_responsible')
     answer = models.CharField(max_length=5000, blank=True, null=True, default=None)
     answer_date = models.DateField(null=True, blank=True, default=None)
+    author_comment = models.CharField(max_length=1000, null=True, blank=True)
     added_by = models.ForeignKey(User, related_name='requests_added')
     last_updated_by = models.ForeignKey(User, related_name='requests_updated', blank=True, null=True)
     is_active = models.BooleanField(default=True)
