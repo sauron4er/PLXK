@@ -323,6 +323,7 @@ class Document extends React.Component {
   };
 
   render() {
+    console.log(this.props.doc);
     if (this.state.ready_for_render === true) {
       if (
         this.props.doc !== '' &&

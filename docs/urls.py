@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from . import views
 from . import views_contracts
+from edms.views import edms_get_doc
 
 urlpatterns = [
     url(r'^.+/get_order/(?P<pk>\d+)/$', views.get_order, name='get_order'),
@@ -20,6 +21,7 @@ urlpatterns = [
     url(r'^contracts/add_contract', views_contracts.add_contract, name='add_contract'),
     url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),
     url(r'^contracts/deactivate_contract/(?P<pk>\d+)/$', views_contracts.deactivate_contract, name='deactivate_contract'),
+    url(r'^contracts/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
     url(r'^contracts/', views_contracts.index, name='contracts'),
 
     # url(r'^order/new/$', views.new_order, name='new_order'),

@@ -14,11 +14,14 @@ import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 import Files from 'templates/components/form_modules/files';
 import Checkbox from 'templates/components/form_modules/checkbox';
+import Document from 'edms/templates/edms/my_docs/doc_info/document';
+import Modal from 'react-responsive-modal';
 
 class Contract extends React.Component {
   state = {
     data_received: false,
-    edit_mode: contractsStore.full_edit_access || contractsStore.contract.id === 0
+    edit_mode: contractsStore.full_edit_access || contractsStore.contract.id === 0,
+    edms_doc_opened: false
   };
 
   componentDidMount() {
@@ -180,8 +183,8 @@ class Contract extends React.Component {
   };
 
   render() {
-    const {data_received, edit_mode} = this.state;
-
+    const {data_received, edit_mode, edms_doc_opened} = this.state;
+  
     if (data_received) {
       return (
         <div className='shadow-lg p-3 mb-5 bg-white rounded'>
@@ -297,6 +300,12 @@ class Contract extends React.Component {
               </If>
             </If>
             <hr />
+            <If condition={contractsStore.contract.edms_doc_id !== 0}>
+              <div>Документ в ЕДО: № {contractsStore.contract.edms_doc_id}</div>
+              <button className='btn btn-outline-success' onClick={() => this.setState({edms_doc_opened: true})}>
+                Показати
+              </button>
+            </If>
           </div>
           <If condition={edit_mode}>
             <div className='modal-footer'>
@@ -313,11 +322,18 @@ class Contract extends React.Component {
               <button className='btn btn-outline-success' onClick={() => this.postContract()}>
                 Зберегти
               </button>
-              {/*<button className='btn btn-outline-success' onClick={() => console.log(contractsStore)}>*/}
-              {/*  test*/}
-              {/*</button>*/}
             </div>
           </If>
+
+          <Modal
+            open={edms_doc_opened}
+            onClose={() => this.setState({edms_doc_opened: false})}
+            showCloseIcon={true}
+            closeOnOverlayClick={true}
+            styles={{modal: {marginTop: 50}}}
+          >
+            <Document doc={{id: contractsStore.contract.edms_doc_id}} closed={true} />
+          </Modal>
 
           {/*Вспливаюче повідомлення*/}
           <ToastContainer />

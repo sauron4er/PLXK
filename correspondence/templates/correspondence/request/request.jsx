@@ -277,6 +277,9 @@ class Request extends React.Component {
               </button>
               <h5 className='ml-auto'>{this.getTitle()}</h5>
             </div>
+            <If condition={corrStore.request.author}>
+              <div className='float-right'>Автор: {corrStore.request.author}</div>
+            </If>
 
             <div className='modal-body'>
               <Selector

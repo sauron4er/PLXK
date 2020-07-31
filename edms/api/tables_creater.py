@@ -1,9 +1,9 @@
 from django.conf import settings
+from plxk.api.try_except import try_except
+from ..models import Document_Type_Module, Document, File, Document_Path
+from plxk.api.datetime_normalizers import datetime_to_json
 
 testing = settings.STAS_DEBUG
-from plxk.api.try_except import try_except
-from ..models import Document_Type_Module, Document, File
-
 
 @try_except
 # Функція, яка повертає Boolean чи використовує документ фазу auto_approved
@@ -49,7 +49,7 @@ def get_modules_list(doc_type):
 
 @try_except
 def get_table_header(modules):
-    header = [{'name': 'id', 'title': '№'}]
+    header = [{'name': 'id', 'title': '№'}, {'name': 'author', 'title': 'Автор'}]
 
     for module in modules:
         if module['module_id'] == 29:  # auto_approved module
@@ -81,6 +81,8 @@ def get_table_rows(doc_type, modules):
 
     documents_arranged = [{
         'id': doc.id,
+        'author': doc.employee_seat.employee.pip,
+        'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),

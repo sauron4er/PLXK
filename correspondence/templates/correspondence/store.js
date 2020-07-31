@@ -6,6 +6,7 @@ const corrStore = store({
   correspondence: [],
   request: {
     id: 0,
+    author: '',
     type: 1,
     client_id: 0,
     client_name: '',

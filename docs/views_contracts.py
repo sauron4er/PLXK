@@ -88,6 +88,7 @@ def get_contract(request, pk):
         'basic_contract_subject':
             '№ ' + contract.basic_contract.number + ', "' + contract.basic_contract.subject + '"'
             if contract.basic_contract else '',
+        'edms_doc_id': contract.edms_doc_id if contract.edms_doc else 0
     }
 
     old_files = [{

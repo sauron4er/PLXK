@@ -2,6 +2,7 @@
 import React from 'react';
 
 class TextInput extends React.Component {
+  
   render() {
     const {fieldName, text, onChange, maxLength, type, edit_mode} = this.props;
 
@@ -40,11 +41,11 @@ class TextInput extends React.Component {
           <label className='full_width' htmlFor={fieldName}>
             {fieldName}:
             <textarea
-              className='form-control full_width'
+              className='autoExpand form-control full_width'
               name={fieldName}
               id={fieldName}
               value={text}
-              rows='1'
+              rows='2'
               onChange={onChange}
               maxLength={maxLength}
               disabled={!edit_mode}

@@ -26,75 +26,80 @@ def get_request_status(request_date, request_term, answer_date):
 @login_required(login_url='login')
 @try_except
 def index(request):
-    if request.user.userprofile.is_correspondence_view:
+    scopes = [{
+        'id': scope.pk,
+        'name': scope.name
+    } for scope in
+        Scope.objects.all().filter(is_active=True)]
 
-        scopes = [{
-            'id': scope.pk,
-            'name': scope.name
+    products = [{
+        'id': product.pk,
+        'name': product.name
+    } for product in
+        Product_type.objects.all().filter(is_active=True)]
+
+    clients = [{
+        'id': client.pk,
+        'name': client.name,
+        'country': client.country,
+        'product_type_id': client.product_type.id,
+    } for client in
+        Client.objects.only('id', 'name').filter(is_active=True)]
+
+    laws = [{
+        'id': law.pk,
+        'name': law.name,
+        'url': law.url,
+        'scopes': [{
+            'id': scope.scope_id,
+            'name': scope.scope.name,
         } for scope in
-            Scope.objects.all().filter(is_active=True)]
+            Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
+        'files': [{
+            'id': file.pk,
+            'name': file.name,
+            'file': file.file.name,
+        } for file in
+            Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
+    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
 
-        products = [{
-            'id': product.pk,
-            'name': product.name
-        } for product in
-            Product_type.objects.all().filter(is_active=True)]
+    employees = [{
+        'id': user.user.pk,
+        'name': user.pip,
+    } for user in UserProfile.objects.only('id', 'pip')
+        .filter(is_active=True)
+        .filter(is_correspondence_view=True)
+        .filter(is_it_admin=False)
+    ]
 
-        clients = [{
-            'id': client.pk,
-            'name': client.name,
-            'country': client.country,
-            'product_type_id': client.product_type.id,
-        } for client in
-            Client.objects.only('id', 'name').filter(is_active=True)]
+    all_correspondence = Request.objects.filter(is_active=True).order_by('-id')
 
-        laws = [{
-            'id': law.pk,
-            'name': law.name,
-            'url': law.url,
-            'scopes': [{
-                'id': scope.scope_id,
-                'name': scope.scope.name,
-            } for scope in
-                Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
-            'files': [{
-                'id': file.pk,
-                'name': file.name,
-                'file': file.file.name,
-            } for file in
-                Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
-        } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
-
-        employees = [{
-            'id': user.user.pk,
-            'name': user.pip,
-        } for user in UserProfile.objects.only('id', 'pip')
-            .filter(is_active=True)
-            .filter(is_correspondence_view=True)
-            .filter(is_it_admin=False)
-        ]
-
-        correspondence = [{
-            'id': request.pk,
-            'type': request.type,
-            'product_name': request.client.product_type.name,
-            'scope_name': request.scope.name,
-            'client_name': request.client.name,
-            'request_date': date_to_json(request.request_date),
-            'request_term': date_to_json(request.request_term),
-            'answer_date': date_to_json(request.answer_date),
-            'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
-            'status': get_request_status(request.request_date, request.request_term, request.answer_date),
-        } for request in Request.objects.filter(is_active=True).order_by('-id')]
-
-        return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
-                                                             'scopes': json.dumps(scopes),
-                                                             'products': json.dumps(products),
-                                                             'laws': json.dumps(laws),
-                                                             'correspondence': json.dumps(correspondence),
-                                                             'employees': json.dumps(employees)})
+    if request.user.userprofile.is_correspondence_view or request.user.userprofile.is_it_admin:
+        accessed_correspondence = all_correspondence
     else:
-        return render(request, 'correspondence/forbidden.html')
+        accessed_correspondence = all_correspondence.filter(added_by=request.user) | \
+                                  all_correspondence.filter(responsible=request.user) | \
+                                  all_correspondence.filter(answer_responsible=request.user)
+
+    correspondence = [{
+        'id': request.pk,
+        'type': request.type,
+        'product_name': request.client.product_type.name,
+        'scope_name': request.scope.name,
+        'client_name': request.client.name,
+        'request_date': date_to_json(request.request_date),
+        'request_term': date_to_json(request.request_term),
+        'answer_date': date_to_json(request.answer_date),
+        'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
+        'status': get_request_status(request.request_date, request.request_term, request.answer_date),
+    } for request in accessed_correspondence]
+
+    return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
+                                                         'scopes': json.dumps(scopes),
+                                                         'products': json.dumps(products),
+                                                         'laws': json.dumps(laws),
+                                                         'correspondence': json.dumps(correspondence),
+                                                         'employees': json.dumps(employees)})
 
 
 #  --------------------------------------------------- Clients
@@ -222,12 +227,15 @@ def get_request(request, pk):
     try:
         req = get_object_or_404(Request, pk=pk)
 
-        edit_mode = request.user.pk in (req.added_by_id, req.responsible_id, req.answer_responsible_id, 693)  # Тимчасово захардкодений Чобаня
+        edit_mode = request.user.pk in \
+                    (req.added_by_id, req.responsible_id, req.answer_responsible_id, 2, 692)
+                                                    # Тимчасово захардкодені Райчинець, Чобаня
         user_is_author = request.user.pk == req.added_by_id
 
         req = {
             'id': req.id,
             'type': req.type,
+            'author': req.added_by.userprofile.pip,
             'client_id': req.client_id,
             'client_name': req.client.name,
             'scope_id': req.scope_id,

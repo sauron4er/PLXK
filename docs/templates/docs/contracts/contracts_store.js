@@ -44,7 +44,8 @@ const contractsStore = store({
       basic_contract: null,
       basic_contract_subject: '',
       old_files: [],
-      new_files: []
+      new_files: [],
+      edms_doc_id: 0
     };
   }
 });
