@@ -51,6 +51,12 @@ class Request(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class Request_acquaint(models.Model):
+    request = models.ForeignKey(Request, related_name='acquaints')
+    acquaint = models.ForeignKey(User, related_name='requests_acquaint')
+    is_active = models.BooleanField(default=True)
+
+
 class Request_law(models.Model):
     request = models.ForeignKey(Request, related_name='request_laws')
     law = models.ForeignKey(Law, related_name='requests', blank=True, null=True)

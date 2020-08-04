@@ -1,5 +1,5 @@
 from django import forms
-from .models import Client, Law, Request, Request_law, Request_file, Scope, Law_scope
+from .models import Client, Law, Request, Request_law, Request_file, Scope, Law_scope, Request_acquaint
 
 
 class NewClientForm(forms.ModelForm):
@@ -65,7 +65,19 @@ class NewRequestLawForm(forms.ModelForm):
 
 class DeactivateRequestLawForm(forms.ModelForm):
     class Meta:
-        model = Request
+        model = Request_law
+        fields = ['is_active']
+
+
+class NewAcquaintForm(forms.ModelForm):
+    class Meta:
+        model = Request_acquaint
+        fields = ['request', 'acquaint']
+
+
+class DeactivateAcquaintForm(forms.ModelForm):
+    class Meta:
+        model = Request_acquaint
         fields = ['is_active']
 
 

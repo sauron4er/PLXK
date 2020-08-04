@@ -1,9 +1,9 @@
 import json
 from correspondence.forms import NewRequestForm, DeactivateRequestForm, NewRequestLawForm, DeactivateRequestLawForm, \
-    DeactivateRequestFileForm, DeactivateAnswerFileForm
+    DeactivateRequestFileForm, DeactivateAnswerFileForm, NewAcquaintForm, DeactivateAcquaintForm
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from correspondence.models import Request, Request_file, Answer_file, Request_law
+from correspondence.models import Request, Request_file, Answer_file, Request_law, Request_acquaint
 
 
 def new_req(request):
@@ -105,11 +105,30 @@ def post_req_laws(post_request):
                 if new_req_law_form.is_valid():
                     new_req_law_form.save()
             if law['status'] == 'delete':
-                req_law_instance = get_object_or_404(Request_law, pk=post_request['???'])
+                req_law_instance = get_object_or_404(Request_law, pk=law['req_law_id'])
                 post_request.update({'is_active': False})
                 deact_req_law_form = DeactivateRequestLawForm(post_request, instance=req_law_instance)
                 if deact_req_law_form.is_valid():
                     deact_req_law_form.save()
+    except Exception as err:
+        raise err
+
+
+def post_acquaints(post_request):
+    try:
+        acquaints = json.loads(post_request['acquaints'])
+        for acquaint in acquaints:
+            if acquaint['status'] == 'new':
+                post_request.update({'acquaint': acquaint['id']})
+                new_acquaint_form = NewAcquaintForm(post_request)
+                if new_acquaint_form.is_valid():
+                    new_acquaint_form.save()
+            if acquaint['status'] == 'delete':
+                acquaint_instance = get_object_or_404(Request_acquaint, pk=acquaint['acquaint_id'])
+                post_request.update({'is_active': False})
+                deact_acquaint_form = DeactivateAcquaintForm(post_request, instance=acquaint_instance)
+                if deact_acquaint_form.is_valid():
+                    deact_acquaint_form.save()
     except Exception as err:
         raise err
 

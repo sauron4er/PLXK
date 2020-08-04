@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from accounts.models import UserProfile
 from accounts.models import Department
 from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
@@ -35,3 +36,9 @@ def is_it_lawyer(id):
         if emp_seat == 50:  # 50 - id юридичного відділу
             return True
     return False
+
+
+@try_except
+def get_user_mail(id):
+    mail = User.objects.values_list('email', flat=True).filter(id=id)
+    return mail[0] if mail else ''

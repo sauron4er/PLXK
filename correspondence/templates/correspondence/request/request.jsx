@@ -8,6 +8,7 @@ import TextInput from 'templates/components/form_modules/text_input';
 import Selector from 'templates/components/form_modules/selector';
 import MultiSelector from 'templates/components/form_modules/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
+import List from 'templates/components/form_modules/list';
 import {getItemById, isBlankOrZero, uniqueArray, getIndex, notify} from 'templates/components/my_extras';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import {Loader} from 'templates/components/loaders';
@@ -74,6 +75,15 @@ class Request extends React.Component {
     }
   };
 
+  addSelectedAcquaint = () => {
+    // Додає до запису закон, якщо автор забув натиснути "+"
+    if (corrStore.request.selected_acquaint_id) {
+      const selected_acquaint = getItemById(corrStore.request.selected_acquaint_id, corrStore.acquaints);
+      corrStore.request.acquaints.push(selected_acquaint);
+      corrStore.request.acquaints = uniqueArray(corrStore.request.acquaints);
+    }
+  };
+
   componentDidMount() {
     if (corrStore.request.id !== 0) {
       this.getRequestInfo();
@@ -85,6 +95,7 @@ class Request extends React.Component {
     axiosGetRequest('get_request/' + corrStore.request.id + '/')
       .then((response) => {
         corrStore.request = response.request;
+        console.log(response.request);
         this.setState({
           edit_mode: response.edit_mode,
           user_is_author: response.user_is_author,
@@ -97,6 +108,7 @@ class Request extends React.Component {
   postRequest = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
       this.addSelectedLaw();
+      this.addSelectedAcquaint();
 
       let formData = new FormData();
       formData.append('request', corrStore.request.id);
@@ -113,6 +125,7 @@ class Request extends React.Component {
       formData.append('answer_responsible', corrStore.request.answer_responsible_id);
       formData.append('laws', JSON.stringify(corrStore.request.laws));
       formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
+      formData.append('acquaints', JSON.stringify(corrStore.request.acquaints))
       if (corrStore.request.new_request_files?.length > 0) {
         corrStore.request.new_request_files.map((file) => {
           formData.append('new_request_files', file);
@@ -128,7 +141,7 @@ class Request extends React.Component {
 
       axiosPostRequest(url, formData)
         .then((response) => {
-          corrStore.request.id === 0 ? this.addRequest(response) : this.editRequest(response)
+          corrStore.request.id === 0 ? this.addRequest(response) : this.editRequest(response);
         })
         .catch((error) => notify(error));
     }
@@ -152,7 +165,6 @@ class Request extends React.Component {
   };
 
   addRequest = (id) => {
-    console.log(corrStore.request.type);
     corrStore.request.status = this.checkRequestStatus();
     corrStore.request.id = id;
     corrStore.correspondence.push(corrStore.request);
@@ -160,13 +172,9 @@ class Request extends React.Component {
   };
 
   editRequest = (id) => {
-    console.log(id);
     corrStore.request.status = this.checkRequestStatus();
     const index = getIndex(id, corrStore.correspondence);
-    console.log(index);
-    console.log(corrStore.request);
     corrStore.correspondence[index] = corrStore.request;
-    console.log(corrStore.correspondence[index]);
     this.closeRequestView();
   };
 
@@ -230,7 +238,7 @@ class Request extends React.Component {
     // Необхідно проводити зміни через додаткову перемінну, бо  react-easy-state не помічає змін глибоко всередині перемінних, як тут.
     let old_files = [...corrStore.request[old_files_field]];
     for (const i in old_files) {
-      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
+      if (old_files[i].id === id) {
         old_files[i].status = 'delete';
         break;
       }
@@ -239,16 +247,26 @@ class Request extends React.Component {
   };
 
   addLaw = () => {
+    // if (corrStore.request.selected_law_id) {
+    //   let existing_law = getItemById(corrStore.request.selected_law_id, corrStore.request.laws);
+    //   if (existing_law !== -1) {
+    //     for (const i in corrStore.request.laws) {
+    //       if (corrStore.request.laws.hasOwnProperty(i) && corrStore.request.laws[i].id === parseInt(corrStore.request.selected_law_id)) {
+    //         corrStore.request.laws[i].status = 'old';
+    //         break;
+    //       }
+    //     }
+    //   } else {
+    //     let selected_law = getItemById(corrStore.request.selected_law_id, corrStore.laws);
+    //     selected_law = {...selected_law, status: 'new'};
+    //     corrStore.request.laws.push(selected_law);
+    //     corrStore.request.laws = uniqueArray(corrStore.request.laws);
+    //   }
+    //   corrStore.request.selected_law_name = '';
+    //   corrStore.request.selected_law_id = 0;
+    // }
     if (corrStore.request.selected_law_id) {
-      let existing_law = getItemById(corrStore.request.selected_law_id, corrStore.request.laws);
-      if (existing_law !== -1) {
-        for (const i in corrStore.request.laws) {
-          if (corrStore.request.laws.hasOwnProperty(i) && corrStore.request.laws[i].id === parseInt(corrStore.request.selected_law_id)) {
-            corrStore.request.laws[i].status = 'old';
-            break;
-          }
-        }
-      } else {
+      if (getItemById(corrStore.request.selected_law_id, corrStore.request.laws) === -1) {
         let selected_law = getItemById(corrStore.request.selected_law_id, corrStore.laws);
         selected_law = {...selected_law, status: 'new'};
         corrStore.request.laws.push(selected_law);
@@ -257,6 +275,36 @@ class Request extends React.Component {
       corrStore.request.selected_law_name = '';
       corrStore.request.selected_law_id = 0;
     }
+  };
+
+  addAcquaint = () => {
+    if (corrStore.request.selected_acquaint_id) {
+      if (getItemById(corrStore.request.selected_acquaint_id, corrStore.request.acquaints) === -1) {
+        let selected_acquaint = getItemById(corrStore.request.selected_acquaint_id, corrStore.employees);
+        selected_acquaint = {...selected_acquaint, status: 'new'};
+        corrStore.request.acquaints.push(selected_acquaint);
+        corrStore.request.acquaints = uniqueArray(corrStore.request.acquaints);
+      }
+      corrStore.request.selected_acquaint_name = '';
+      corrStore.request.selected_acquaint_id = 0;
+    }
+  };
+
+  deleteAcquaint = (id) => {
+    // Ці зміни необхідно проводити через окрему змінну, бо react-easy-state не розпізнає змін в глибині об’єктів
+    let acquaints = [...corrStore.request.acquaints]
+    for (const i in acquaints) {
+      if (acquaints[i].id === id) {
+        if (acquaints[i].status === 'new') {
+          acquaints.splice(i, 1);
+          break;
+        } else {
+          acquaints[i].status = 'delete';
+          break;
+        }
+      }
+    }
+    corrStore.request.acquaints = [...acquaints]
   };
 
   getTitle = () => {
@@ -341,7 +389,7 @@ class Request extends React.Component {
                 editMode={edit_mode}
               />
               <If condition={corrStore.request.laws.length > 0}>
-                <LawsList />
+                <LawsList disabled={!edit_mode} />
               </If>
               <hr />
               <div className='d-md-flex'>
@@ -370,7 +418,7 @@ class Request extends React.Component {
               </div>
               <hr />
               <Selector
-                list={corrStore.employees}
+                list={corrStore.employees.filter(employee => employee.correspondence_admin)}
                 selectedName={corrStore.request.responsible_name}
                 fieldName={'Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible_id', 'responsible_name')}
@@ -378,7 +426,7 @@ class Request extends React.Component {
               />
               <hr />
               <Selector
-                list={corrStore.employees}
+                list={corrStore.employees.filter(employee => employee.correspondence_admin)}
                 selectedName={corrStore.request.answer_responsible_name}
                 fieldName={'Відповідальний за надання відповіді'}
                 onChange={(e) => this.onSelectorChange(e, 'answer_responsible_id', 'answer_responsible_name')}
@@ -392,9 +440,22 @@ class Request extends React.Component {
                 maxLength={1000}
                 edit_mode={user_is_author}
               />
+              <hr />
+              <MultiSelector
+                list={corrStore.employees}
+                selectedName={corrStore.request.selected_acquaint_name}
+                fieldName={'На ознайомлення'}
+                onChange={(e) => this.onSelectorChange(e, 'selected_acquaint_id', 'selected_acquaint_name')}
+                addItem={this.addAcquaint}
+                editMode={edit_mode}
+              />
+              <List list={corrStore.request.acquaints} deleteItem={this.deleteAcquaint} disabled={!edit_mode} />
             </div>
             <If condition={edit_mode}>
               <div className='modal-footer'>
+                <button className='btn btn-outline-dark' onClick={() => console.log(corrStore.request)}>
+                  test
+                </button>
                 <If condition={corrStore.request.id === 0}>
                   <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
                     Очистити

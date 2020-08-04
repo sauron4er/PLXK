@@ -29,6 +29,9 @@ const corrStore = store({
     selected_law_id: 0,
     selected_law_name: '',
     laws: [],
+    selected_acquaint_id: 0,
+    selected_acquaint_name: '',
+    acquaints: [],
     new_laws: [],
     author_comment: '',
     delete_laws: []

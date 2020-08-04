@@ -56,6 +56,7 @@ class LawsList extends React.Component {
               <button
                 className='btn btn-sm btn-outline-secondary font-weight-bold ml-auto'
                 onClick={() => this.delLaw(law.id)}
+                disabled={this.props.disabled}
               >
                 <FontAwesomeIcon icon={faTimes}/>
               </button>
@@ -67,7 +68,8 @@ class LawsList extends React.Component {
   }
 
   static defaultProps = {
-    laws: []
+    laws: [],
+    disabled: true
   };
 }
 

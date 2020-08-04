@@ -1,4 +1,6 @@
+import json
 from plxk.api.mail_sender import send_email
+from plxk.api.global_getters import get_user_mail
 from correspondence.models import Request
 from accounts.models import UserProfile
 from django.conf import settings
@@ -10,7 +12,13 @@ testing = settings.STAS_DEBUG
 
 def create_mail_body(post_request, mail, req_type):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Додано новий запит клієнта" if req_type == 'new' else "Запит клієнта змінено"
+    if req_type == 'new':
+        message["Subject"] = "На сайті ПЛХК додано новий запит клієнта"
+    elif req_type == 'edit':
+        message["Subject"] = "Запит клієнта на сайті ПЛХК змінено"
+    else:  # 'acquaint'
+        message["Subject"] = "Вам запропоновано ознайомитися з запитом клієнта на сайті ПЛХК"
+
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 
@@ -19,8 +27,10 @@ def create_mail_body(post_request, mail, req_type):
 
     if req_type == 'new':
         text = 'На сайті ПЛХК опубліковано новий запит клієнта. {}.'.format(link)
-    else:
+    elif req_type == 'edit':
         text = 'На сайті ПЛХК відредаговано запит клієнта. {}.'.format(link)
+    else:  # 'acquaint'
+        text = 'Вас додано в список осіб для ознайомлення з запитом клієнта на сайті ПЛХК. {}.'.format(link)
 
     message.attach(MIMEText(text, "plain"))
 
@@ -42,4 +52,17 @@ def send_mails(post_request, req_type):
 
         for mail in mails_without_duplicates:
             body = create_mail_body(post_request, mail, req_type)
+            send_email(mail, body)
+
+
+def send_acquaints_mails(post_request):
+    if not testing:
+        acquaints = json.loads(post_request['acquaints'])
+        acquaints_mails = []
+        for acquaint in acquaints:
+            if acquaint['status'] == 'new':
+                acquaints_mails.append(get_user_mail(acquaint['id']))
+
+        for mail in acquaints_mails:
+            body = create_mail_body(post_request, mail, 'acquaint')
             send_email(mail, body)

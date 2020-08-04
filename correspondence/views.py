@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from itertools import chain, groupby
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.exceptions import ValidationError
@@ -7,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from plxk.api.try_except import try_except
 
 from production.models import Product_type
-from .models import Scope, Client, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope
+from .models import Scope, Client, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope,Request_acquaint
 from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
@@ -64,22 +65,26 @@ def index(request):
     } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
 
     employees = [{
-        'id': user.user.pk,
-        'name': user.pip,
-    } for user in UserProfile.objects.only('id', 'pip')
-        .filter(is_active=True)
-        .filter(is_correspondence_view=True)
-        .filter(is_it_admin=False)
+        'id': employee.user.pk,
+        'name': employee.pip,
+        'correspondence_admin': employee.is_correspondence_view
+    } for employee in UserProfile.objects.only('id', 'pip')
+        .filter(is_active=True).order_by('pip')
     ]
 
     all_correspondence = Request.objects.filter(is_active=True).order_by('-id')
+    acquainted_correspondence = []
 
     if request.user.userprofile.is_correspondence_view or request.user.userprofile.is_it_admin:
         accessed_correspondence = all_correspondence
     else:
         accessed_correspondence = all_correspondence.filter(added_by=request.user) | \
                                   all_correspondence.filter(responsible=request.user) | \
-                                  all_correspondence.filter(answer_responsible=request.user)
+                                  all_correspondence.filter(answer_responsible=request.user) | \
+                                  all_correspondence.filter(acquaints__acquaint=request.user).filter(
+                                      acquaints__is_active=True)
+        # Прибираємо дублікати, які чомусь створюються у великій кількості при фільтруванні по acquaints_acquaint
+        accessed_correspondence = [rows.__next__() for (key, rows) in groupby(accessed_correspondence, key=lambda obj: obj.id)]
 
     correspondence = [{
         'id': request.pk,
@@ -280,7 +285,17 @@ def get_request(request, pk):
                 Law_file.objects.all().filter(law_id=req_law.law.id).filter(is_active=True)]
         } for req_law in Request_law.objects.filter(is_active=True).filter(request_id=req['id'])]
 
-        req.update({'old_request_files': old_request_files, 'old_answer_files': old_answer_files, 'laws': laws})
+        acquaints = [{
+            'id': acquaint.acquaint.id,
+            'acquaint_id': acquaint.id,
+            'name': acquaint.acquaint.last_name + ' ' + acquaint.acquaint.first_name,
+            'status': 'old',
+        } for acquaint in Request_acquaint.objects.filter(is_active=True).filter(request_id=req['id'])]
+
+        req.update({'old_request_files': old_request_files,
+                    'old_answer_files': old_answer_files,
+                    'laws': laws,
+                    'acquaints': acquaints})
         response = {'request': req, 'edit_mode': edit_mode, 'user_is_author': user_is_author}
         return HttpResponse(json.dumps(response))
     except Exception as err:
@@ -299,6 +314,10 @@ def new_request(request):
 
         if json.loads(post_request['laws']):
             corr_api.post_req_laws(post_request)
+
+        if json.loads(post_request['acquaints']):
+            corr_api.post_acquaints(post_request)
+            corr_mail_sender.send_acquaints_mails(post_request)
 
         corr_mail_sender.send_mails(post_request, 'new')
 
@@ -319,6 +338,10 @@ def edit_request(request):
 
         if json.loads(post_request['laws']):
             corr_api.post_req_laws(post_request)
+
+        if json.loads(post_request['acquaints']):
+            corr_api.post_acquaints(post_request)
+            corr_mail_sender.send_acquaints_mails(post_request)
 
         corr_mail_sender.send_mails(post_request, 'edit')
 
