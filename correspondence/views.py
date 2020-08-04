@@ -73,7 +73,6 @@ def index(request):
     ]
 
     all_correspondence = Request.objects.filter(is_active=True).order_by('-id')
-    acquainted_correspondence = []
 
     if request.user.userprofile.is_correspondence_view or request.user.userprofile.is_it_admin:
         accessed_correspondence = all_correspondence
@@ -232,9 +231,9 @@ def get_request(request, pk):
     try:
         req = get_object_or_404(Request, pk=pk)
 
-        edit_mode = request.user.pk in \
-                    (req.added_by_id, req.responsible_id, req.answer_responsible_id, 2, 692)
-                                                    # Тимчасово захардкодені Райчинець, Чобаня
+        edit_mode = request.user.userprofile.is_it_admin or \
+                    request.user.pk in (req.added_by_id, req.responsible_id, req.answer_responsible_id, 2, 692)
+                                                                    # Тимчасово захардкодені Райчинець, Чобаня
         user_is_author = request.user.pk == req.added_by_id
 
         req = {
