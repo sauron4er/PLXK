@@ -24,7 +24,7 @@ SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = True
+STAS_DEBUG = False
 
 
 ALLOWED_HOSTS = ['10.10.10.0/24']
