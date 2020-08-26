@@ -98,12 +98,67 @@ def get_sub_emps(seat):
         return None
 
 
+@try_except
 def get_doc_types():
+    doc_types_query = Document_Type.objects.filter(is_active=True)
+
+    # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
+    if not testing:
+        doc_types_query = doc_types_query.filter(testing=False)
+
     return [{
         'id': doc_type.id,
         'description': doc_type.description,
-        'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
-    } for doc_type in Document_Type.objects.filter(is_active=True).filter(testing=False)]
+        # 'creator': '' if doc_type.creator_id is None else doc_type.creator.employee.pip,
+    } for doc_type in doc_types_query]
+
+
+@try_except
+def get_archive_by_doc_type(user_id, doc_type_id):
+    my_archive = [{  # Список документів, створених даним юзером
+        'id': path.document.id,
+        'type': path.document.document_type.description,
+        'type_id': path.document.document_type.id,
+        'date': convert_to_localtime(path.timestamp, 'day'),
+        'emp_seat_id': path.employee_seat.id,
+        'author': path.document.employee_seat.employee.pip,
+        'author_seat_id': path.employee_seat.id,
+    } for path in Document_Path.objects
+        .filter(document__document_type=doc_type_id)
+        .filter(mark=1)
+        .filter(employee_seat__employee_id=user_id)
+        .filter(document__testing=testing)
+        .filter(document__closed=False)]
+
+    work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
+        'id': path.document_id,
+        'type': path.document.document_type.description,
+        'type_id': path.document.document_type_id,
+        'date': convert_to_localtime(path.document.date, 'day'),
+        'emp_seat_id': path.employee_seat_id,
+        'author': path.document.employee_seat.employee.pip,
+        'author_seat_id': path.document.employee_seat_id,
+    } for path in Document_Path.objects.distinct()
+        .filter(document__document_type=doc_type_id)
+        .filter(employee_seat_id__employee_id=user_id)
+        .filter(document__testing=testing)
+        .filter(document__closed=False)
+        .exclude(document__employee_seat__employee=user_id)]
+
+    # Позбавляємось дублікатів:
+    work_archive = []
+    compare_list = []
+    for i in range(0, len(work_archive_with_duplicates)):
+        # Порівнюємо документи по ід та ід людино-посади, бо один документ може попасти до декількох людинопосад людини
+        entity = {
+            'id': work_archive_with_duplicates[i]['id'],
+            'emp_seat_id': work_archive_with_duplicates[i]['emp_seat_id']
+        }
+        if entity not in compare_list:
+            compare_list.append(entity)
+            work_archive.append(work_archive_with_duplicates[i])
+
+    return {'my_archive': my_archive, 'work_archive': work_archive}
 
 
 # Функція, яка рекурсією шукає всіх начальників посади користувача і їх начальників

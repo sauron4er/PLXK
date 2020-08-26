@@ -10,7 +10,7 @@ class NewDoc extends React.Component {
     new_doc_type: ''
   };
 
-  onChange = event => {
+  onChange = (event) => {
     if (event.target.name === 'new_doc_type') {
       const selectedIndex = event.target.options.selectedIndex;
       this.setState({
@@ -39,17 +39,11 @@ class NewDoc extends React.Component {
         <form className='form-inline'>
           <div className='form-group mb-1'>
             <label className='font-weight-bold mr-1'>Створити новий документ:</label>
-            <select
-              className='form-control'
-              id='new-doc-type-select'
-              name='new_doc_type'
-              value={new_doc_type_id}
-              onChange={this.onChange}
-            >
+            <select className='form-control' id='new-doc-type-select' name='new_doc_type' value={new_doc_type_id} onChange={this.onChange}>
               <option key={0} value={0}>
                 ---------------------
               </option>
-              {new_doc_types.map(type => {
+              {new_doc_types.map((type) => {
                 return (
                   <option key={type.id} data-key={type.id} value={type.description}>
                     {type.description}
@@ -59,19 +53,10 @@ class NewDoc extends React.Component {
             </select>
           </div>
         </form>
-        <Choose>
-          <When condition={new_doc_type_id !== 0}>
-            <NewDocument
-              doc={doc}
-              addDoc={this.props.addDoc}
-              onCloseModal={this.onCloseModal}
-              status={'doc'}
-            />
-          </When>
-          <Otherwise>
-          
-          </Otherwise>
-        </Choose>
+
+        <If condition={new_doc_type_id !== 0}>
+          <NewDocument doc={doc} addDoc={this.props.addDoc} onCloseModal={this.onCloseModal} status={'doc'} />
+        </If>
       </>
     );
   }

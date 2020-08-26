@@ -95,7 +95,6 @@ class Request extends React.Component {
     axiosGetRequest('get_request/' + corrStore.request.id + '/')
       .then((response) => {
         corrStore.request = response.request;
-        console.log(response.request);
         this.setState({
           edit_mode: response.edit_mode,
           user_is_author: response.user_is_author,

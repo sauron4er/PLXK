@@ -1,10 +1,25 @@
 'use strict';
 import React from 'react';
-
 import DxTable from 'templates/components/tables/dx_table';
 import Document from '../my_docs/doc_info/document';
-import SeatChooser from '../components/seat_chooser';
+import Selector from '../../../../templates/components/form_modules/selector';
 import 'static/css/my_styles.css';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import {notify} from 'templates/components/my_extras';
+
+// налаштування колонок для таблиць
+const my_archive_columns = [
+  {name: 'id', title: '№'},
+  {name: 'type', title: 'Тип'},
+  {name: 'date', title: 'Дата'}
+];
+const my_archive_col_width = [{columnName: 'id', width: 70}, {columnName: 'type'}, {columnName: 'date', width: 100}];
+const work_archive_columns = [
+  {name: 'id', title: '№'},
+  {name: 'type', title: 'Тип'},
+  {name: 'author', title: 'Ініціатор'}
+];
+const work_archive_col_width = [{columnName: 'id', width: 70}, {columnName: 'type', width: 150}, {columnName: 'author'}];
 
 class Archive extends React.Component {
   state = {
@@ -14,98 +29,62 @@ class Archive extends React.Component {
     row: '', // вибраний документ
     doc_info: '', // отримана з бд інфа про вибраний документ
     carry_out_items: [],
-
-    // налаштування колонок для таблиць
-    my_archive_columns: [
-      {name: 'id', title: '№'},
-      {name: 'type', title: 'Тип'},
-      {name: 'date', title: 'Дата'}
-    ],
-    my_archive_col_width: [
-      {columnName: 'id', width: 70},
-      {columnName: 'type'},
-      {columnName: 'date', width: 100}
-    ],
-    work_archive_columns: [
-      {name: 'id', title: '№'},
-      {name: 'type', title: 'Тип'},
-      {name: 'author', title: 'Ініціатор'}
-    ],
-    work_archive_col_width: [
-      {columnName: 'id', width: 70},
-      {columnName: 'type', width: 150},
-      {columnName: 'author'}
-    ],
-    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
+    main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    doc_type_id: 0,
+    doc_type_name: ''
   };
-
-  // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи
-  componentDidMount() {
-    const seat_id = parseInt(
-      localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id
-    );
-    this.setState({
-      seat_id: seat_id,
-      main_div_height: this.mainDivRef.clientHeight - 30
-    });
-    // this.updateLists(seat_id);
-  }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
 
-  // Оновлює списки документів
-  updateLists = (seat_id) => {
-    this.state.my_archive = [];
-    window.my_archive.map((doc) => {
-      if (doc.author_seat_id === seat_id) {
-        this.setState((prevState) => ({
-          my_archive: [...prevState.my_archive, doc]
-        }));
-      }
-    });
-
-    this.state.work_archive = [];
-    window.work_archive.map((doc) => {
-      if (doc.emp_seat_id === seat_id) {
-        this.setState((prevState) => ({
-          work_archive: [...prevState.work_archive, doc]
-        }));
-      }
-    });
-  };
-
-  // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
-  onSeatChange = (new_seat_id) => {
-    this.setState({seat_id: new_seat_id});
-
-    // this.updateLists(new_seat_id);
+  getArchive = (doc_type_id) => {
+    axiosGetRequest('get_archive/' + doc_type_id + '/')
+      .then((response) => {
+        this.setState({
+          my_archive: response.my_archive,
+          work_archive: response.work_archive
+        });
+      })
+      .catch((error) => notify(error));
   };
 
   onRowClick = (clicked_row) => {
     this.setState({row: clicked_row});
   };
 
+  onSelectorChange = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    this.setState({
+      doc_type_id: e.target.options[selectedIndex].getAttribute('data-key'),
+      doc_type_name: e.target.options[selectedIndex].getAttribute('value')
+    });
+    this.getArchive(e.target.options[selectedIndex].getAttribute('data-key'));
+  };
+
   render() {
-    const {
-      my_archive_columns,
-      my_archive_col_width,
-      work_archive_columns,
-      work_archive_col_width,
-      main_div_height
-    } = this.state;
+    const {main_div_height, doc_type_name, my_archive, work_archive} = this.state;
 
     return (
       <>
-        <SeatChooser onSeatChange={this.onSeatChange} />
+        <div className='d-flex justify-content-between'>
+          <div className='form-group'>
+            <Selector
+              list={window.doc_types}
+              selectedName={doc_type_name}
+              fieldName={'Оберіть тип документу'}
+              valueField={'description'}
+              onChange={(e) => this.onSelectorChange(e)}
+              edit_mode={true}
+            />
+          </div>
+        </div>
         <div className='row css_main_div' ref={this.getMainDivRef}>
           <div className='col-lg-4'>
             Створені вами документи
             <DxTable
-              // rows={this.state.my_archive}
-              rows={window.my_archive}
+              rows={my_archive}
               columns={my_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
               colWidth={my_archive_col_width}
@@ -117,8 +96,7 @@ class Archive extends React.Component {
           <div className='col-lg-4'>
             Документи, що були у роботі
             <DxTable
-              // rows={this.state.work_archive}
-              rows={window.work_archive}
+              rows={work_archive}
               columns={work_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
               colWidth={work_archive_col_width}
@@ -128,7 +106,7 @@ class Archive extends React.Component {
             />
           </div>
           <div className='col-lg-4 css_height_100'>
-            <Document doc={this.state.row} my_seat_id={this.state.seat_id} closed={true} />
+            <Document doc={this.state.row} closed={true} />
           </div>
         </div>
       </>

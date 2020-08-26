@@ -410,17 +410,16 @@ def post_modules(doc_request, doc_files, new_path):
             # TODO Не додавати нікого, якщо це шаблон чи чернетка
             approvals = doc_modules['approval_list']
             # Додаємо у список погоджуючих автора, керівника відділу та директора заводу
-            # Додаємо до списку погодження автора, видаляємо його з існуючого списку:
-            for i in approvals:
-                if int(i['id']) == int(doc_request['employee_seat']):
-                    approvals.remove(i)
+
+            # Видаляємо автора зі списку і додаємо, щоб він там був лише раз:
+            approvals[:] = [i for i in approvals if not (int(i['id']) == int(doc_request['employee_seat']))]
 
             approvals.append({
                 'id': doc_request['employee_seat'],
                 'approve_queue': 0  # Автор документа перший у списку погоджень
             })
 
-            # Додаємо до списку погодження директора, видаляємо його з існуючого списку:
+            # Видаляємо директора зі списку і додаємо, щоб він там був лише раз:
             director = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=16) \
                 .filter(is_active=True) \
@@ -428,22 +427,18 @@ def post_modules(doc_request, doc_files, new_path):
 
             acting_director = vacation_check(director)
 
-            for i in approvals:
-                if int(i['id']) == director or int(i['id']) == acting_director:
-                    approvals.remove(i)
+            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
 
             approvals.extend([{
-                'id': director,
+                'id': acting_director,
                 'approve_queue': 3  # Директор останній у списку погоджень
             }])
 
-            # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
+            # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
             dep_chief = get_dep_chief_id(doc_request['employee_seat'])
 
-            if dep_chief != int(doc_request['employee_seat']):
-                for i in approvals:
-                    if int(i['id']) == dep_chief:
-                        approvals.remove(i)
+            if dep_chief != int(doc_request['employee_seat']) and dep_chief != director:
+                approvals[:] = [i for i in approvals if not (int(i['id']) == dep_chief)]
 
                 approvals.append({
                     'id': dep_chief,
@@ -1095,52 +1090,14 @@ def edms_del_doc(request, pk):
 @login_required(login_url='login')
 def edms_archive(request):
     if request.method == 'GET':
-        my_seats = get_my_seats(request.user.userprofile.id)
+        return render(request, 'edms/archive/archive.html', {'doc_types': get_doc_types()})
+    return HttpResponse(status=405)
 
-        my_archive = [{  # Список документів, створених даним юзером
-            'id': path.document.id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type.id,
-            'date': convert_to_localtime(path.timestamp, 'day'),
-            'emp_seat_id': path.employee_seat.id,
-            'author': path.document.employee_seat.employee.pip,
-            'author_seat_id': path.employee_seat.id,
-        } for path in Document_Path.objects.filter(mark=1)
-            .filter(mark=1).filter(employee_seat__employee_id=request.user.userprofile.id)
-            .filter(document__testing=testing)
-            # .filter(document__is_active=False)
-            .filter(document__closed=False)]
 
-        work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
-            'id': path.document_id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type_id,
-            'date': convert_to_localtime(path.document.date, 'day'),
-            'emp_seat_id': path.employee_seat_id,
-            'author': path.document.employee_seat.employee.pip,
-            'author_seat_id': path.document.employee_seat_id,
-        } for path in Document_Path.objects.distinct()
-            .filter(employee_seat_id__employee_id=request.user.userprofile.id)
-            .filter(document__testing=testing)
-            .filter(document__closed=False)
-            .exclude(document__employee_seat__employee=request.user.userprofile.id)]
-
-        # Позбавляємось дублікатів:
-        work_archive = []
-        compare_list = []
-        for i in range(0, len(work_archive_with_duplicates)):
-            # Порівнюємо документи по ід та ід людино-посади, бо один документ може попасти до декількох людинопосад людини
-            entity = {
-                'id': work_archive_with_duplicates[i]['id'],
-                'emp_seat_id': work_archive_with_duplicates[i]['emp_seat_id']
-            }
-            if entity not in compare_list:
-                compare_list.append(entity)
-                work_archive.append(work_archive_with_duplicates[i])
-
-        return render(request, 'edms/archive/archive.html', {
-            'my_seats': my_seats, 'my_archive': my_archive, 'work_archive': work_archive,
-        })
+@login_required(login_url='login')
+def edms_get_archive(request, pk):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_archive_by_doc_type(request.user.userprofile.id, pk)))
     return HttpResponse(status=405)
 
 
