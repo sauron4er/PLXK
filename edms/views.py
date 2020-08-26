@@ -410,17 +410,16 @@ def post_modules(doc_request, doc_files, new_path):
             # TODO Не додавати нікого, якщо це шаблон чи чернетка
             approvals = doc_modules['approval_list']
             # Додаємо у список погоджуючих автора, керівника відділу та директора заводу
-            # Додаємо до списку погодження автора, видаляємо його з існуючого списку:
-            for i in approvals:
-                if int(i['id']) == int(doc_request['employee_seat']):
-                    approvals.remove(i)
+
+            # Видаляємо автора зі списку і додаємо, щоб він там був лише раз:
+            approvals[:] = [i for i in approvals if not (int(i['id']) == int(doc_request['employee_seat']))]
 
             approvals.append({
                 'id': doc_request['employee_seat'],
                 'approve_queue': 0  # Автор документа перший у списку погоджень
             })
 
-            # Додаємо до списку погодження директора, видаляємо його з існуючого списку:
+            # Видаляємо директора зі списку і додаємо, щоб він там був лише раз:
             director = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=16) \
                 .filter(is_active=True) \
@@ -428,22 +427,18 @@ def post_modules(doc_request, doc_files, new_path):
 
             acting_director = vacation_check(director)
 
-            for i in approvals:
-                if int(i['id']) == director or int(i['id']) == acting_director:
-                    approvals.remove(i)
+            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
 
             approvals.extend([{
-                'id': director,
+                'id': acting_director,
                 'approve_queue': 3  # Директор останній у списку погоджень
             }])
 
-            # Додаємо до списку погодження начальника відділу автора, видаляємо його з існуючого списку:
+            # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
             dep_chief = get_dep_chief_id(doc_request['employee_seat'])
 
-            if dep_chief != int(doc_request['employee_seat']):
-                for i in approvals:
-                    if int(i['id']) == dep_chief:
-                        approvals.remove(i)
+            if dep_chief != int(doc_request['employee_seat']) and dep_chief != director:
+                approvals[:] = [i for i in approvals if not (int(i['id']) == dep_chief)]
 
                 approvals.append({
                     'id': dep_chief,
