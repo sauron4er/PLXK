@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from accounts.models import UserProfile
 from accounts.models import Department
 from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
@@ -42,3 +41,13 @@ def is_it_lawyer(id):
 def get_user_mail(id):
     mail = User.objects.values_list('email', flat=True).filter(id=id)
     return mail[0] if mail else ''
+
+
+@try_except
+def get_deps():
+    deps = [{
+        'id': dep.pk,
+        'dep': dep.name,
+        'text': dep.text,
+    } for dep in Department.objects.filter(is_active=True).order_by('name')]
+    return deps

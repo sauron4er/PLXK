@@ -4,27 +4,27 @@ import React from 'react';
 class TextInput extends React.Component {
   
   render() {
-    const {fieldName, text, onChange, maxLength, type, edit_mode} = this.props;
-
+    const {fieldName, text, onChange, maxLength, type, disabled, className} = this.props;
+  
     return (
       <Choose>
         <When condition={type==='dimensions'}>
-          <label className='full_width' htmlFor={fieldName}>
+          <label className={className + ' full_width'} htmlFor={fieldName}>
             {fieldName}:
             <input
-              className='form-control full_width'
+              className=' form-control full_width'
               name={fieldName}
               id={fieldName}
               value={text}
               type='number'
               onChange={onChange}
               maxLength={maxLength}
-              disabled={!edit_mode}
+              disabled={disabled}
             />
           </label>
         </When>
         <When condition={maxLength <= 110}>
-          <label className='full_width' htmlFor={fieldName}>
+          <label className={className + ' full_width'} htmlFor={fieldName}>
             {fieldName}:
             <input
               className='form-control full_width'
@@ -33,22 +33,22 @@ class TextInput extends React.Component {
               value={text}
               onChange={onChange}
               maxLength={maxLength}
-              disabled={!edit_mode}
+              disabled={disabled}
             />
           </label>
         </When>
         <Otherwise>
-          <label className='full_width' htmlFor={fieldName}>
+          <label className={className + ' full_width'} htmlFor={fieldName}>
             {fieldName}:
             <textarea
               className='autoExpand form-control full_width'
               name={fieldName}
               id={fieldName}
               value={text}
-              rows='2'
+              rows={Math.round(text.length/100)}
               onChange={onChange}
               maxLength={maxLength}
-              disabled={!edit_mode}
+              disabled={disabled}
             />
           </label>
         </Otherwise>
@@ -62,7 +62,8 @@ class TextInput extends React.Component {
     onChange: () => {},
     maxLength: 5000,
     type: 'default',
-    edit_mode: false,
+    disabled: true,
+    className: {}
   };
 }
 

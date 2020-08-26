@@ -73,7 +73,7 @@ class Contract extends React.Component {
     return true;
   };
 
-  changeContractTableAndClose = (mode) => {
+  changeTableAndClose = (mode) => {
     if (mode === 'add') {
       contractsStore.contracts.push(contractsStore.contract);
     } else if (mode === 'edit') {
@@ -102,7 +102,7 @@ class Contract extends React.Component {
       axiosPostRequest(url, formData)
         .then((response) => {
           contractsStore.contract.id = response;
-          this.changeContractTableAndClose(mode);
+          this.changeTableAndClose(mode);
         })
         .catch((error) => notify(error));
     }
@@ -111,7 +111,7 @@ class Contract extends React.Component {
   postDelContract = () => {
     axiosPostRequest('deactivate_contract/' + contractsStore.contract.id + '/')
       .then((response) => {
-        this.changeContractTableAndClose('del');
+        this.changeTableAndClose('del');
       })
       .catch((error) => notify(error));
   };
@@ -199,7 +199,7 @@ class Contract extends React.Component {
               fieldName={'Номер Договору'}
               onChange={this.onNumberChange}
               maxLength={10}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <TextInput
@@ -207,7 +207,7 @@ class Contract extends React.Component {
               fieldName={'Предмет'}
               onChange={this.onSubjectChange}
               maxLength={1000}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <TextInput
@@ -215,7 +215,7 @@ class Contract extends React.Component {
               fieldName={'Контрагент'}
               onChange={this.onCounterpartyChange}
               maxLength={200}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <TextInput
@@ -223,21 +223,21 @@ class Contract extends React.Component {
               fieldName={'Номенклатурна група'}
               onChange={this.onNomenclatureGroupChange}
               maxLength={100}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <DateInput
               date={contractsStore.contract.date_start}
               fieldName={'Початок дії Договору'}
               onChange={this.onDateStartChange}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <DateInput
               date={contractsStore.contract.date_end}
               fieldName={'Кінець дії Договору'}
               onChange={this.onDateEndChange}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <Selector
@@ -245,7 +245,7 @@ class Contract extends React.Component {
               selectedName={contractsStore.contract.department_name}
               fieldName={'Місцезнаходження договору'}
               onChange={this.onDepartmentChange}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <Selector
@@ -253,7 +253,7 @@ class Contract extends React.Component {
               selectedName={contractsStore.contract.responsible_name}
               fieldName={'Відповідальна особа'}
               onChange={this.onResponsibleChange}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <Checkbox
@@ -261,7 +261,7 @@ class Contract extends React.Component {
               fieldName={'Юридично-адміністративний відділ отримав Договір'}
               onChange={this.onLawyersReceivedChange}
               defaultChecked={false}
-              edit_mode={edit_mode && contractsStore.full_edit_access}
+              disabled={!edit_mode && !contractsStore.full_edit_access}
               note={'Відзначають працівники ЮАВ'}
             />
 
@@ -272,14 +272,14 @@ class Contract extends React.Component {
               fieldName={'Підписані файли'}
               onChange={this.onFilesChange}
               onDelete={this.onFilesDelete}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <hr />
             <Checkbox
               checked={contractsStore.contract.is_additional_contract}
               fieldName={'Це додаткова угода'}
               onChange={this.onIsAdditionalContractChange}
-              edit_mode={edit_mode}
+              disabled={!edit_mode}
             />
             <If condition={contractsStore.contract.is_additional_contract}>
               <Selector
@@ -288,7 +288,7 @@ class Contract extends React.Component {
                 valueField={'selector_info'}
                 fieldName={'Основний Договір'}
                 onChange={this.onBasicContractChange}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
 
               <If condition={contractsStore.contract.basic_contract !== 0}>

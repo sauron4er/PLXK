@@ -10,11 +10,11 @@ from .models import Document, Ct, Order_doc, Order_doc_type, File
 from accounts.models import UserProfile
 from .forms import NewDocForm
 from docs.api.orders_mail_sender import arrange_mail
-from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, get_order_code, \
-    deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders
+from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, \
+    deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
 from plxk.api.datetime_normalizers import normalize_day, normalize_month
 from plxk.api.try_except import try_except
-from plxk.api.global_getters import get_employees_list
+from plxk.api.global_getters import get_employees_list, get_deps
 
 
 def user_can_edit(user):
@@ -106,11 +106,11 @@ def orders(request):
     # Переробляємо True у 'true', так його зрозуміє js
     is_orders_admin = 'true' if True in is_orders_admin else 'false'
 
-    types_list = list(Order_doc_type.objects.values())
+    types = list(Order_doc_type.objects.values())
 
-    employee_list = get_employees_list()
+    employees = get_employees_list()
 
-    orders_list = [{
+    orders = [{
         'id': order.id,
         'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
         'doc_type': order.doc_type.name,
@@ -122,17 +122,19 @@ def orders(request):
         'date_canceled': str(order.date_canceled.year) + '-' +
                          normalize_month(order.date_canceled) + '-' +
                          normalize_day(order.date_canceled) if order.date_canceled else '',
-        'is_actual': order.is_act
+        'is_actual': order.is_act,
+        'status': 'ok' if order.done else 'in progress'
     } for order in Order_doc.objects.filter(is_act=True)]
 
-    return render(request, 'docs/orders/index.html', {'orders_list': json.dumps(orders_list),
-                                                       'types_list': json.dumps(types_list),
+    return render(request, 'docs/orders/index.html', {'orders': json.dumps(orders),
+                                                       'types': json.dumps(types),
                                                        'is_orders_admin': is_orders_admin,
-                                                       'employee_list': json.dumps(employee_list)})
+                                                       'employees': json.dumps(employees)})
 
 
 @login_required(login_url='login')
 @try_except
+# Pagination
 def get_orders(request, page):
     orders = Order_doc.objects.filter(is_act=True)
     orders = filter_orders(orders, json.loads(request.POST['filtering']))
@@ -168,48 +170,20 @@ def get_orders(request, page):
 @login_required(login_url='login')
 @try_except
 def get_order(request, pk):
-    order = get_object_or_404(Order_doc, pk=pk)
+    deps = get_deps()
+    response = {'deps': deps}
 
-    order = {
-        'id': order.id,
-        'code': order.code,
-        'type_id': order.doc_type_id,
-        'type_name': order.doc_type.name,
-        'name': order.name,
-        'author_id': order.author_id,
-        'author_name': order.author.last_name + ' ' + order.author.first_name,
-        'canceled_by_id': order.canceled_by_id,
-        'canceled_by_code': get_order_code(order.canceled_by.id) if order.canceled_by_id else '',
-        'cancels_id': order.cancels_id if order.cancels_id else '',
-        'cancels_code': order.cancels_code if order.cancels_code else get_order_code(order.cancels_id),
-        'date_start': str(order.date_start.year) + '-' +
-                         normalize_month(order.date_start) + '-' +
-                         normalize_day(order.date_start) if order.date_start else '',
-        'date_canceled': str(order.date_canceled.year) + '-' +
-                         normalize_month(order.date_canceled) + '-' +
-                         normalize_day(order.date_canceled) if order.date_canceled else '',
-        'responsible_id': order.responsible_id,
-        'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name,
-        'supervisory_id': order.supervisory_id,
-        'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name
-    }
+    if pk != '0':
+        order = get_order_info(pk)
+        response.update({'order': order})
 
-    old_files = [{
-        'id': file.id,
-        'name': file.name,
-        'file': file.file.name,
-        'is_added_or_cancelled': file.is_added_or_cancelled
-    } for file in File.objects.filter(is_active=True).filter(order__id=order['id'])]
-
-    order.update({'old_files': old_files, 'files': []})
-
-    return HttpResponse(json.dumps(order))
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @transaction.atomic
 @try_except
-def new_order(request):
+def add_order(request):
     post_request = request.POST.copy()
     post_request.update({'created_by': request.user.id})
 

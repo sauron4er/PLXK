@@ -1,7 +1,63 @@
 from docs.forms import NewDocOrderForm, CancelOrderForm, DeactivateOrderForm
+from plxk.api.datetime_normalizers import normalize_day, normalize_month
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from docs.models import Order_doc, File
+
+
+def get_order_info(id):
+    order = get_object_or_404(Order_doc, pk=id)
+
+    order = {
+        'id': order.id,
+        'code': order.code,
+        'type_id': order.doc_type_id,
+        'type_name': order.doc_type.name,
+        'name': order.name,
+        'author_id': order.author_id,
+        'author_name': order.author.last_name + ' ' + order.author.first_name,
+        'canceled_by_id': order.canceled_by_id,
+        'canceled_by_code': get_order_code(order.canceled_by.id) if order.canceled_by_id else '',
+        'cancels_id': order.cancels_id if order.cancels_id else '',
+        'cancels_code': order.cancels_code if order.cancels_code else get_order_code(order.cancels_id),
+        'date_start': str(order.date_start.year) + '-' +
+                      normalize_month(order.date_start) + '-' +
+                      normalize_day(order.date_start) if order.date_start else '',
+        'date_canceled': str(order.date_canceled.year) + '-' +
+                         normalize_month(order.date_canceled) + '-' +
+                         normalize_day(order.date_canceled) if order.date_canceled else '',
+        'responsible_id': order.responsible_id,
+        'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name,
+        'supervisory_id': order.supervisory_id,
+        'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name
+    }
+
+    files = File.objects.filter(is_active=True).filter(order__id=order['id'])
+
+    files_old = [{
+        'id': file.id,
+        'name': file.name,
+        'file': file.file.name,
+        'is_added_or_canceled': file.is_added_or_canceled
+    } for file in files.filter(is_added_or_canceled=True)]
+
+    cancels_files_old = [{
+        'id': file.id,
+        'name': file.name,
+        'file': file.file.name,
+        'is_added_or_canceled': file.is_added_or_canceled
+    } for file in files.filter(is_added_or_canceled=False)]
+
+    order.update({
+        'files_old': files_old,
+        'cancels_files_old': cancels_files_old,
+        # Відсилаємо пусті поля, які повинні бути в orderStore (без відсилання вони не створюються)
+        'cancels_files': [],
+        'files': [],
+        'mail_list': []
+    })
+
+    return order
 
 
 def post_order(post_request):

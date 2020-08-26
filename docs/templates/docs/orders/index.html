@@ -13,10 +13,10 @@
 {% block content %}
     <div class="container-fluid" id="orders">
         <script>
-            window.orders_list = {{ orders_list|safe }};
-            window.types_list = {{ types_list|safe }};
+            window.orders = {{ orders|safe }};
+            window.types = {{ types|safe }};
             window.is_orders_admin = {{ is_orders_admin|safe }};
-            window.employee_list = {{ employee_list|safe }};
+            window.employees = {{ employees|safe }};
         </script>
         <div id="bundle">{% render_bundle 'docs' %}</div>
     </div>

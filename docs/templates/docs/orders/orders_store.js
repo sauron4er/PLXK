@@ -1,0 +1,67 @@
+import {store} from '@risingstack/react-easy-state';
+
+const ordersStore = store({
+  view: 'table', // order
+  orders: [],
+  order: {
+    id: 0,
+    type: 0,
+    type_name: '',
+    code: '',
+    name: '',
+    files: [],
+    files_old: [],
+    author: '0',
+    author_name: '',
+    responsible: '0',
+    responsible_name: '',
+    supervisory: '0',
+    supervisory_name: '',
+    date_start: '',
+    date_canceled: '',
+    canceled_by_code: '',
+    canceled_by_id: '0',
+    cancels_code: '',
+    cancels_files: [],
+    cancels_files_old: [],
+    cancels_id: '0',
+    articles: [],
+    mail_mode: '',
+    mail_list: []
+  },
+  employees: [],
+  types: [],
+  emp_seats: [],
+  is_orders_admin: false,
+
+  clearOrder: () => {
+    ordersStore.order = {
+      id: 0,
+      type: 0,
+      type_name: '',
+      code: '',
+      name: '',
+      files: [],
+      files_old: [],
+      author: '0',
+      author_name: '',
+      responsible: '0',
+      responsible_name: '',
+      supervisory: '0',
+      supervisory_name: '',
+      date_start: '',
+      date_canceled: '',
+      canceled_by_id: '0',
+      canceled_by_code: '',
+      cancels_id: '0',
+      cancels_code: '',
+      cancels_files: [],
+      cancels_files_old: [],
+      articles: [],
+      mail_mode: '',
+      mail_list: []
+    };
+  }
+});
+
+export default ordersStore;

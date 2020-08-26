@@ -1,43 +1,43 @@
 'use strict';
 import React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
+import {view, store} from '@risingstack/react-easy-state';
+import ordersStore from 'docs/templates/docs/orders/orders_store';
 // import PaginatedTable from 'templates/components/tables/paginated_table';
-import Order from './order_edit';
+import Order from './order';
 
 const columns = [
-  {name: 'id', title: 'id'},
-  {name: 'doc_type', title: 'Тип'},
+  // {name: 'id', title: 'id'},
   {name: 'code', title: '№'},
+  {name: 'doc_type', title: 'Тип'},
   {name: 'name', title: 'Назва'},
   {name: 'author__last_name', title: 'Автор'},
   {name: 'date_start', title: 'Діє з'},
-  {name: 'date_canceled', title: 'Діє до'}
+  {name: 'date_canceled', title: 'Діє до'},
+  {name: 'status', title: ''}
 ];
 
 const col_width = [
-  {columnName: 'id', width: 30},
-  {columnName: 'code', width: 50},
+  // {columnName: 'id', width: 30},
   {columnName: 'doc_type', width: 110},
+  {columnName: 'code', width: 60},
   {columnName: 'author__last_name', width: 200},
   {columnName: 'date_start', width: 80},
-  {columnName: 'date_canceled', width: 100}
+  {columnName: 'date_canceled', width: 80},
+  {columnName: 'status', width: 30}
 ];
 
 class Orders extends React.Component {
   state = {
-    is_orders_admin: window.is_orders_admin,
-    view: 'table', // table, order
-    orders_list: [],
-    row: {},
-    open_doc_id: 0,
     main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
   };
 
   componentDidMount() {
-    this.setState({
-      orders_list: window.orders_list,
-      main_div_height: this.mainDivRef.clientHeight - 30
-    });
+    ordersStore.employees = window.employees;
+    ordersStore.types = window.types;
+    ordersStore.is_orders_admin = window.is_orders_admin;
+    ordersStore.orders = window.orders;
+    this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
     const arr = window.location.href.split('/');
@@ -46,15 +46,13 @@ class Orders extends React.Component {
 
     if (is_link) {
       let row = [];
-      for (let i = 0; i < window.orders_list.length; i++) {
-        if (window.orders_list[i].id === last_href_piece) {
-          row = window.orders_list[i];
+      for (let i = 0; i < window.orders.length; i++) {
+        if (window.orders[i].id === last_href_piece) {
+          row = window.orders[i];
         }
       }
-      this.setState({
-        view: 'order',
-        row: row
-      });
+      ordersStore.order = row;
+      ordersStore.view = 'order';
     }
   }
 
@@ -64,77 +62,39 @@ class Orders extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
-    this.setState({
-      row: clicked_row,
-      view: 'order'
-    });
+    ordersStore.order = clicked_row;
+    ordersStore.view = 'order';
   };
 
-  onGoBack = (e) => {
-    e.preventDefault();
-    this.setState({
-      view: 'table',
-      row: {}
-    });
-  };
-
-  onChangesPosted = (mode, order, id) => {
-    if (mode === 'add') {
-      order.id = id;
-      let {orders_list} = this.state;
-      orders_list.push(order);
-      this.setState(
-        {
-          orders_list
-        },
-        () => {
-          this.setState({
-            view: 'table',
-            row: {}
-          });
-        }
-      );
-    } else if (mode === 'deactivate') {
-      let {orders_list} = this.state;
-      const new_list = orders_list.filter((order) => order.id !== id);
-      this.setState({
-        orders_list: new_list,
-        view: 'table',
-        row: {}
-      });
-    } else {
-      this.setState({
-        view: 'table',
-        row: {}
-      });
-    }
-  };
-
-  onAddOrder = () => {
-    this.setState({
-      view: 'order'
-    });
+  onOrderClose = () => {
+    ordersStore.clearOrder();
+    ordersStore.view = 'table';
   };
 
   render() {
-    const {is_orders_admin, orders_list, main_div_height, row, view} = this.state;
+    const {main_div_height} = this.state;
+    const {is_orders_admin, orders, view} = ordersStore;
     return (
       <Choose>
         <When condition={view === 'table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
             <If condition={is_orders_admin}>
-              <button onClick={this.onAddOrder} className='btn btn-sm btn-success'>
+              <button onClick={() => ordersStore.view = 'order'} className='btn btn-sm btn-success'>
                 Додати нормативний документ
               </button>
             </If>
             <DxTable
-              rows={orders_list}
+              rows={orders}
               columns={columns}
-              defaultSorting={[{columnName: 'date_start', direction: 'desc'}, {columnName: 'code', direction: 'desc'}]}
+              defaultSorting={[
+                {columnName: 'date_start', direction: 'desc'},
+                {columnName: 'code', direction: 'desc'}
+              ]}
               colWidth={col_width}
               onRowClick={this.onRowClick}
               height={main_div_height}
               redRow='is_canceled'
+              coloredStatus
               filter
             />
             {/*<PaginatedTable*/}
@@ -149,21 +109,21 @@ class Orders extends React.Component {
             {/*  onRowClick={this.onRowClick}*/}
             {/*  height={main_div_height}*/}
             {/*  redRow='is_canceled'*/}
+            {/*  coloredStatus*/}
             {/*  filter*/}
             {/*/>*/}
           </div>
         </When>
         <Otherwise>
-          <button className='btn btn-sm btn-success my-2' onClick={this.onGoBack}>
+          <button className='btn btn-sm btn-success my-2' onClick={() => this.onOrderClose()}>
             Назад
           </button>
           <br />
-          <Order id={row.id} editMode={is_orders_admin} close={this.onChangesPosted} />
+          <Order />
         </Otherwise>
       </Choose>
     );
   }
 }
 
-// ReactDOM.render(<Orders />, document.getElementById('orders'));
-export default Orders;
+export default view(Orders);

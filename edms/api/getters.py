@@ -98,6 +98,7 @@ def get_sub_emps(seat):
         return None
 
 
+@try_except
 def get_doc_types():
     return [{
         'id': doc_type.id,
@@ -168,17 +169,6 @@ def get_my_seats(emp_id):
                 'chief': chief['name'] + ', ' + chief['seat']
             })
     return my_seats
-
-
-# Функція, яка повертає з бд список відділів
-@try_except
-def get_deps():
-    deps = [{
-        'id': dep.pk,
-        'dep': dep.name,
-        'text': dep.text,
-    } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
-    return deps
 
 
 # Функція, яка повертає з бд елементарний список посад
