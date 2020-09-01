@@ -4,6 +4,7 @@ from django.utils.timezone import datetime
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
+from .vacations import vacation_check
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from ..models import Seat, Employee_Seat, Document, Document_Type, Mark, Document_Path, File
 from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient
@@ -196,6 +197,7 @@ def get_chief_emp_seat(emp_seat_id):
     if chief_seat_id:
         # Знаходимо людинопосаду начальника
         chief = [{
+            'emp_id': empSeat.employee.id,
             'emp_seat_id': empSeat.id,
             'name': empSeat.employee.pip,
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
@@ -349,7 +351,8 @@ def get_phase_recipient_list(phase_id):
             emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=recipient['seat_id']).filter(is_main=True).filter(is_active=True)
             if emp_seat_id:
-                recipients_emp_seat_list.append(emp_seat_id[0])
+                emp_seat_id = vacation_check(emp_seat_id[0])
+                recipients_emp_seat_list.append(emp_seat_id)
         elif recipient['employee_seat_id']:
             recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
 
@@ -379,6 +382,8 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
         if chief_seat_id:  # False якщо у посади нема внесеного шефа
             chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
+
+            chief_emp_seat_id = vacation_check(chief_emp_seat_id)
 
             while chief_emp_seat_id not in recipients:
                 chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id).filter(is_active=True)

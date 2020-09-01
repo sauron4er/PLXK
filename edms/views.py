@@ -235,17 +235,23 @@ def handle_phase_marks(doc_request, phase_info):
         if direct_chief:  # Можливо, ніхто не займає цю посаду
             # Якщо безпосередній керівник позначений як отримувач наступної фази,
             # то переходимо на наступну фазу одразу:
+
+            # Знаходимо усі посади начальника (можливо він в.о. директора)
+            direct_chief_seats = get_my_seats(direct_chief['emp_id'])
+
             next_phases = Doc_Type_Phase.objects.values('id', 'mark_id') \
                 .filter(document_type_id=doc_request['document_type']).filter(phase=phase_info['phase'] + 1)
             mark = phase_info['mark_id']
             phase_id = phase_info['id']
 
             for next_phase in next_phases:
-                if direct_chief['emp_seat_id'] in get_phase_recipient_list(next_phase['id']):
-                    mark = next_phase['mark_id']
-                    phase_id = next_phase['id']
-            direct_chief = vacation_check(direct_chief['emp_seat_id'])
-            post_mark_demand(doc_request, direct_chief, phase_id, mark)
+                next_phase_recipients = get_phase_recipient_list(next_phase['id'])
+                for direct_chief_seat in direct_chief_seats:
+                    if direct_chief_seat['id'] in next_phase_recipients:
+                        direct_chief['emp_seat_id'] = direct_chief_seat['id']
+                        mark = next_phase['mark_id']
+                        phase_id = next_phase['id']
+            post_mark_demand(doc_request, direct_chief['emp_seat_id'], phase_id, mark)
             new_mail('new', [{'id': direct_chief}], doc_request)
         else:
             test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
@@ -303,10 +309,12 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                 if is_approvals_used(doc_request['document_type']):
                     add_zero_phase_auto_approvals(doc_request, phase_info)
             # 2. Опрацьовуємо документ, якщо ця фаза використовує mark = 20
-            # (автоматичне заповнення поля approved, approved_date)
+            # (автоматичне заповнення полей approved, approved_date)
             if phase_info['mark_id'] == 20:
                 post_auto_approve(doc_request)
                 new_phase(doc_request, phase_number+1)
+            # 2. Опрацьовуємо документ, якщо ця фаза використовує mark = 22
+            # (додавання засканованих підписаних документів)
             elif phase_info['mark_id'] == 22:
                 handle_phase_marks(doc_request, phase_info)
             else:

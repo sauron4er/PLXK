@@ -55,9 +55,9 @@ def add_contract_from_edms(doc_request, files, doc_author):
                                  .exclude(field=None))
 
     fields_queue = {}
-    for cfq in contract_fields_queue:
+    for cf in contract_fields_queue:
         fields_queue.update(
-            {cfq['field']: cfq['queue']}
+            {cf['field']: cf['queue']}
         )
 
     contract = {
