@@ -4,7 +4,7 @@ import DxTable from 'templates/components/tables/dx_table';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 // import PaginatedTable from 'templates/components/tables/paginated_table';
-import Order from './order';
+import Order from './order/order';
 
 const columns = [
   // {name: 'id', title: 'id'},

@@ -25,9 +25,10 @@ const ordersStore = store({
     cancels_files: [],
     cancels_files_old: [],
     cancels_id: '0',
-    articles: [],
     mail_mode: '',
-    mail_list: []
+    mail_list: [],
+    
+    articles: [],
   },
   employees: [],
   types: [],
