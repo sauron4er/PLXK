@@ -252,7 +252,7 @@ def handle_phase_marks(doc_request, phase_info):
                         mark = next_phase['mark_id']
                         phase_id = next_phase['id']
             post_mark_demand(doc_request, direct_chief['emp_seat_id'], phase_id, mark)
-            new_mail('new', [{'id': direct_chief}], doc_request)
+            new_mail('new', [{'id': direct_chief['emp_seat_id']}], doc_request)
         else:
             test = 1  # TODO повернення помилки про відсутність безпосереднього керівника
 
