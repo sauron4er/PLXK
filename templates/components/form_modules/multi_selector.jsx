@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import corrStore from '../../../correspondence/templates/correspondence/store';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 

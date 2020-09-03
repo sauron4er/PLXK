@@ -18,6 +18,16 @@ def get_employees_list():
 
 
 @try_except
+def get_emp_seats_list():
+    return [{
+        'id': emp_seat.pk,
+        'name': emp_seat.employee.pip,
+        'seat': emp_seat.seat.seat
+    } for emp_seat in
+        Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
+
+
+@try_except
 def get_departments_list():
     return [{
         'id': dep.pk,

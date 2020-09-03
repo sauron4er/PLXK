@@ -4,7 +4,7 @@ import DxTable from 'templates/components/tables/dx_table';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 // import PaginatedTable from 'templates/components/tables/paginated_table';
-import Order from './order/order';
+import Order from './order';
 
 const columns = [
   // {name: 'id', title: 'id'},
@@ -34,6 +34,7 @@ class Orders extends React.Component {
 
   componentDidMount() {
     ordersStore.employees = window.employees;
+    ordersStore.emp_seats = window.emp_seats;
     ordersStore.types = window.types;
     ordersStore.is_orders_admin = window.is_orders_admin;
     ordersStore.orders = window.orders;

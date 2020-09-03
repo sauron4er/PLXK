@@ -10,7 +10,7 @@ class TextInput extends React.Component {
       <Choose>
         <When condition={type==='dimensions'}>
           <label className={className + ' full_width'} htmlFor={fieldName}>
-            {fieldName}:
+            <If condition={fieldName !== '-'}>{fieldName}:</If>
             <input
               className=' form-control full_width'
               name={fieldName}
@@ -25,7 +25,7 @@ class TextInput extends React.Component {
         </When>
         <When condition={maxLength <= 110}>
           <label className={className + ' full_width'} htmlFor={fieldName}>
-            {fieldName}:
+            <If condition={fieldName !== '-'}>{fieldName}:</If>
             <input
               className='form-control full_width'
               name={fieldName}
@@ -39,7 +39,7 @@ class TextInput extends React.Component {
         </When>
         <Otherwise>
           <label className={className + ' full_width'} htmlFor={fieldName}>
-            {fieldName}:
+            <If condition={fieldName !== '-'}>{fieldName}:</If>
             <textarea
               className='autoExpand form-control full_width'
               name={fieldName}

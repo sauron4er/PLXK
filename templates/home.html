@@ -5,11 +5,8 @@
 <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
 {% endblock %}
 
-{% block content %}
-  <div class="container-fluid">
-    <h1 class="text-center my-4 logo">
-      <a href="{% url 'home' %}">Головна сторінка</a>
-    </h1>
+{% block second_nav %}{% endblock %}
 
-  </div>
+{% block content %}
+  <img src='{% static 'img/site_map.svg' %}' alt="Карта сайту">
 {% endblock %}

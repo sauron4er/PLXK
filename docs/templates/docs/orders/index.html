@@ -17,6 +17,7 @@
             window.types = {{ types|safe }};
             window.is_orders_admin = {{ is_orders_admin|safe }};
             window.employees = {{ employees|safe }};
+            window.emp_seats = {{ emp_seats|safe }}; // для вибору відповідальних та контролюючих
         </script>
         <div id="bundle">{% render_bundle 'docs' %}</div>
     </div>

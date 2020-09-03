@@ -29,7 +29,8 @@ def get_order_info(id):
         'responsible_id': order.responsible_id,
         'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name,
         'supervisory_id': order.supervisory_id,
-        'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name
+        'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name,
+        'articles': []
     }
 
     files = File.objects.filter(is_active=True).filter(order__id=order['id'])

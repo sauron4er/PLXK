@@ -54,6 +54,7 @@ def get_phase_id(doc_request):
             .filter(is_active=True)[0]
     return phase
 
+
 # Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
 @try_except
 def get_sub_seats(seat):

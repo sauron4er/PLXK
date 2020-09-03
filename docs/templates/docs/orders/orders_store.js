@@ -27,12 +27,11 @@ const ordersStore = store({
     cancels_id: '0',
     mail_mode: '',
     mail_list: [],
-    
     articles: [],
   },
   employees: [],
-  types: [],
   emp_seats: [],
+  types: [],
   is_orders_admin: false,
 
   clearOrder: () => {

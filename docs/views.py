@@ -14,7 +14,7 @@ from docs.api.orders_api import post_files, post_order, change_order, cancel_ano
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
 from plxk.api.datetime_normalizers import normalize_day, normalize_month
 from plxk.api.try_except import try_except
-from plxk.api.global_getters import get_employees_list, get_deps
+from plxk.api.global_getters import get_employees_list, get_deps, get_emp_seats_list
 
 
 def user_can_edit(user):
@@ -109,6 +109,7 @@ def orders(request):
     types = list(Order_doc_type.objects.values())
 
     employees = get_employees_list()
+    emp_seats = get_emp_seats_list()
 
     orders = [{
         'id': order.id,
@@ -129,7 +130,8 @@ def orders(request):
     return render(request, 'docs/orders/index.html', {'orders': json.dumps(orders),
                                                        'types': json.dumps(types),
                                                        'is_orders_admin': is_orders_admin,
-                                                       'employees': json.dumps(employees)})
+                                                       'employees': json.dumps(employees),
+                                                       'emp_seats': json.dumps(emp_seats)})
 
 
 @login_required(login_url='login')
