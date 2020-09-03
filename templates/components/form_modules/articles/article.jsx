@@ -2,18 +2,16 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {getItemById, uniqueArray} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelector from 'templates/components/form_modules/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
-import {getItemById, uniqueArray} from 'templates/components/my_extras';
-import corrStore from '../../../../correspondence/templates/correspondence/store';
-import LawsList from '../../../../correspondence/templates/correspondence/request/laws_list';
+import List from 'templates/components/form_modules/list';
 
 class Article extends React.Component {
   state = {
     selected_responsible_id: 0,
-    selected_responsible_name: '',
-    responsibles: [],
+    selected_responsible: '',
     deadline: ''
   };
 
@@ -27,27 +25,48 @@ class Article extends React.Component {
     const selectedIndex = e.target.options.selectedIndex;
     this.setState({
       selected_responsible_id: e.target.options[selectedIndex].getAttribute('data-key'),
-      selected_responsible_name: e.target.options[selectedIndex].getAttribute('value')
+      selected_responsible: e.target.options[selectedIndex].getAttribute('value')
     });
   };
 
   addResponsible = () => {
-    const {selected_responsible_id, responsibles} = this.state;
+    let {article, index, emp_seats} = this.props;
+    const {selected_responsible_id} = this.state;
+    
     if (selected_responsible_id) {
-      console.log(selected_responsible_id);
-      const item = getItemById(selected_responsible_id, responsibles);
+      const item = getItemById(selected_responsible_id, article.responsibles);
       if (item === -1) {
-        const selected_responsible = {...item, status: 'new'};
-        let new_responsibles = [...responsibles];
+        const selected_responsible = {...getItemById(selected_responsible_id, emp_seats), status: 'new'};
+        let new_responsibles = [...article.responsibles];
         new_responsibles.push(selected_responsible);
-        this.setState({responsibles: [...new_responsibles]});
-        // new_responsibles = uniqueArray( new_responsibles);
+        new_responsibles = uniqueArray(new_responsibles);
+        article.responsibles = new_responsibles;
+        this.props.changeArticle(article, index);
       }
+  
       this.setState({
-        selected_responsible_name: '',
+        selected_responsible: '',
         selected_responsible_id: 0
       });
     }
+  };
+
+  delResponsible = (id) => {
+    let {article, index} = this.props;
+    
+    for (const i in article.responsibles) {
+      if (article.responsibles[i].id === id) {
+        if (article.responsibles[i].status === 'new') {
+          article.responsibles.splice(i, 1);
+          break;
+        } else {
+          article.responsibles[i].status = 'delete';
+          break;
+        }
+      }
+    }
+    
+    this.props.changeArticle(article, index);
   };
 
   delArticle = () => {
@@ -56,7 +75,7 @@ class Article extends React.Component {
 
   render() {
     const {article, index, disabled, emp_seats} = this.props;
-    const {selected_responsible_name, responsibles} = this.state;
+    const {selected_responsible} = this.state;
 
     return (
       <div className='border border-info rounded p-1 mb-2'>
@@ -69,17 +88,18 @@ class Article extends React.Component {
             </button>
           </div>
         </div>
+
         <MultiSelector
           list={emp_seats}
-          selectedName={selected_responsible_name}
+          selectedName={selected_responsible}
+          valueField={'emp_seat'}
           fieldName={'Відповідальні'}
           onChange={this.changeResponsibles}
           addItem={this.addResponsible}
           disabled={disabled}
         />
-        <If condition={responsibles}>
-          <List disabled={!edit_mode} />
-        </If>
+        <List list={article.responsibles} mainField={'emp_seat'} deleteItem={this.delResponsible} disabled={disabled} />
+
         <DateInput
           date={article.deadline}
           fieldName={'Строк виконання'}

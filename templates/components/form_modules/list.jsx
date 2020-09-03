@@ -22,6 +22,7 @@ class List extends React.Component {
   
   render() {
     const {list, mainField, sideFields, deleteItem, disabled} = this.props;
+    console.log(list);
     return (
       <div className='mt-2'>
         <For each='item' index='id' of={list}>

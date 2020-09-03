@@ -21,8 +21,9 @@ def get_employees_list():
 def get_emp_seats_list():
     return [{
         'id': emp_seat.pk,
-        'name': emp_seat.employee.pip,
-        'seat': emp_seat.seat.seat
+        'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
+        'emp_id': emp_seat.employee.id,
+        'seat_id': emp_seat.seat.id
     } for emp_seat in
         Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
 

@@ -26,8 +26,8 @@ class Order extends React.Component {
     pdf_view_address: '',
     pdf_num_pages: null,
     page_number: 1,
-    loading: false,
-    new_article_area: false
+    cancels_other_doc: false,
+    loading: false
   };
 
   componentDidMount() {
@@ -80,7 +80,7 @@ class Order extends React.Component {
     axiosGetRequest('get_order/' + ordersStore.order.id + '/')
       .then((response) => {
         if (ordersStore.order.id !== 0) ordersStore.order = response.order;
-        ordersStore.deps = response.deps
+        ordersStore.deps = response.deps;
         this.setState({loading: false});
       })
       .catch((error) => notify(error));
@@ -179,9 +179,9 @@ class Order extends React.Component {
   onInputChange = (e, field_name) => {
     ordersStore.order[field_name] = e.target.value;
   };
-  
+
   onArticlesChange = (articles) => {
-    ordersStore.order.articles = [...articles]
+    ordersStore.order.articles = [...articles];
   };
 
   onFilesDelete = (id, files_field) => {
@@ -196,6 +196,10 @@ class Order extends React.Component {
     ordersStore.order[files_field] = [...files];
   };
 
+  onCancelsChange = () => {
+    this.setState({cancels_other_doc: !this.state.cancels_other_doc});
+  };
+
   getCanceledDocId = () => {
     return './' + ordersStore.order.cancels_id;
   };
@@ -203,7 +207,7 @@ class Order extends React.Component {
   getCanceledByDocId = () => {
     return './' + ordersStore.order.canceled_by_id;
   };
-  
+
   // TODO Розбити форму на чотири сторінки:
   // TODO основна інформація, пункти-відповідальні-строки, скасовує документи, розсилка листів
 
@@ -227,7 +231,7 @@ class Order extends React.Component {
   render() {
     const {id, canceled_by_code, canceled_by_id, cancels_id} = ordersStore.order;
     const {is_orders_admin, employees, types} = ordersStore;
-    const {loading, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
+    const {loading, cancels_other_doc, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
 
     return (
       <Choose>
@@ -263,7 +267,7 @@ class Order extends React.Component {
               maxLength={500}
               disabled={!is_orders_admin}
             />
-            
+
             <Articles
               disabled={!is_orders_admin}
               articles={ordersStore.order.articles}
@@ -271,10 +275,6 @@ class Order extends React.Component {
               emp_seats={emp_seats}
             />
             <hr />
-            
-            <button className='btn btn-success my-2' onClick={() => {console.log(ordersStore.order.articles)}}>
-              test
-            </button>
 
             <hr />
             <Files
@@ -295,14 +295,16 @@ class Order extends React.Component {
               disabled={!is_orders_admin}
             />
 
-            <hr />
-            <Selector
-              list={employees}
-              selectedName={ordersStore.order.responsible_name}
-              fieldName={'Відповідальний'}
-              onChange={(e) => this.onSelectorChange(e, 'responsible', 'responsible_name')}
-              disabled={!is_orders_admin}
-            />
+            <If condition={ordersStore.order.responsible_name !== ''}>
+              <hr />
+              <Selector
+                list={employees}
+                selectedName={ordersStore.order.responsible_name}
+                fieldName={'Відповідальний'}
+                onChange={(e) => this.onSelectorChange(e, 'responsible', 'responsible_name')}
+                disabled={!is_orders_admin}
+              />
+            </If>
 
             <hr />
             <Selector
@@ -350,45 +352,53 @@ class Order extends React.Component {
             </If>
 
             <hr />
-            <Selector
-              list={orders}
-              selectedName={ordersStore.order.cancels_code}
-              fieldName={'Скасовує дію документу'}
-              onChange={(e) => this.onSelectorChange(e, 'cancels_id', 'cancels_code')}
-              disabled={!is_orders_admin}
-            />
+            <div className='d-flex'>
+              <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={cancels_other_doc} />
+              <label htmlFor='cancels' className='ml-1'>
+                Скасовує дію іншого документу
+              </label>
+            </div>
+            <If condition={cancels_other_doc}>
+              <Selector
+                list={orders}
+                selectedName={ordersStore.order.cancels_code}
+                fieldName={'Скасовує дію документу'}
+                onChange={(e) => this.onSelectorChange(e, 'cancels_id', 'cancels_code')}
+                disabled={!is_orders_admin}
+              />
 
-            <If condition={cancels_id && cancels_id !== '0'}>
-              <a className='col-lg-12 d-flex align-items-center' href={this.getCanceledDocId()} target='_blank'>
-                Перейти до скасованого документу
-              </a>
-            </If>
+              <If condition={cancels_id && cancels_id !== '0'}>
+                <a className='col-lg-12 d-flex align-items-center' href={this.getCanceledDocId()} target='_blank'>
+                  Перейти до скасованого документу
+                </a>
+              </If>
 
-            <If condition={!cancels_id || cancels_id === '0'}>
-              <hr />
-              <div className='row'>
-                <div className='col-lg-6 d-flex align-items-center'>
-                  <TextInput
-                    text={ordersStore.order.cancels_code}
-                    fieldName={'№ скасованих документів'}
-                    onChange={(e) => this.onInputChange(e, 'cancels_code')}
-                    maxLength={100}
-                    disabled={!is_orders_admin}
-                  />
-                  <div className='col-lg-6 mt-3 mt-lg-0'>
-                    <Files
-                      oldFiles={ordersStore.order.cancels_files_old}
-                      newFiles={ordersStore.order.cancels_files}
-                      fieldName={'Файли скасованих документів'}
-                      onChange={(e) => this.onInputChange(e, 'cancels_files')}
-                      onDelete={(id) => this.onFilesDelete(id, 'cancels_files_old')}
+              <If condition={!cancels_id || cancels_id === '0'}>
+                <hr />
+                <div className='row'>
+                  <div className='col-lg-6 d-flex align-items-center'>
+                    <TextInput
+                      text={ordersStore.order.cancels_code}
+                      fieldName={'№ скасованих документів'}
+                      onChange={(e) => this.onInputChange(e, 'cancels_code')}
+                      maxLength={100}
                       disabled={!is_orders_admin}
                     />
+                    <div className='col-lg-6 mt-3 mt-lg-0'>
+                      <Files
+                        oldFiles={ordersStore.order.cancels_files_old}
+                        newFiles={ordersStore.order.cancels_files}
+                        fieldName={'Файли скасованих документів'}
+                        onChange={(e) => this.onInputChange(e, 'cancels_files')}
+                        onDelete={(id) => this.onFilesDelete(id, 'cancels_files_old')}
+                        disabled={!is_orders_admin}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <If condition={is_orders_admin}>
-                <small className='text-danger'>Ці поля заповнюються в разі відсутності скасованого документу в системі.</small>
+                <If condition={is_orders_admin}>
+                  <small className='text-danger'>Ці поля заповнюються в разі відсутності скасованого документу в системі.</small>
+                </If>
               </If>
             </If>
 
