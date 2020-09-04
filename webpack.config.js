@@ -20,7 +20,7 @@ module.exports = {
   },
 
   plugins: [
-    new CleanWebpackPlugin({cleanOnceBeforeBuildPatterns: pathsToClean}),
+    new CleanWebpackPlugin({cleanAfterEveryBuildPatterns: pathsToClean}),
     new BundleTracker({filename: './webpack-stats.json'}),
     // new BundleAnalyzerPlugin()
   ],

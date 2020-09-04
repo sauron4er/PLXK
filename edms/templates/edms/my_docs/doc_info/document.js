@@ -190,7 +190,6 @@ class Document extends React.Component {
               directSubs={this.props.directSubs}
               onSubmit={this.handleResolutions}
               doc_id={this.props.doc.id}
-              // postMark={this.postMark}
               notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
@@ -205,7 +204,6 @@ class Document extends React.Component {
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleAcquaints}
               doc_id={this.props.doc.id}
-              // postMark={this.postMark}
               notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
@@ -221,7 +219,6 @@ class Document extends React.Component {
               onSubmit={this.handleFilesChange}
               files={this.state.info.old_files}
               // doc_id={this.props.doc.id}
-              // postMark={this.postMark}
               notify={this.notify}
               // new_path_id={this.state.new_path_id}
             />
@@ -265,7 +262,7 @@ class Document extends React.Component {
       this.notify('Додайте резолюції');
     }
   };
-
+  
   handleAcquaints = (acquaints) => {
     if (acquaints.length > 0) {
       this.setState(
@@ -293,11 +290,25 @@ class Document extends React.Component {
       }
     );
   };
+  
+  handleFilesChange = (files, comment) => {
+    this.setState(
+      {
+        updated_files: files,
+        comment: comment
+      },
+      () => {
+        this.postMark(18);
+        this.onCloseModal();
+      }
+    );
+  };
 
   handleAddingSignedFiles = () => {
     this.postMark(22);
     this.onCloseModal();
   };
+  
   onNewFiles = (new_files) => {
     this.setState({
       new_files
@@ -313,9 +324,7 @@ class Document extends React.Component {
   };
 
   onCloseModal = () => {
-    this.setState({
-      modal_open: false
-    });
+    this.setState({modal_open: false});
   };
 
   addDoc = () => {
