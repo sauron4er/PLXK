@@ -7,46 +7,59 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 class Articles extends React.Component {
-  state = {};
 
   addEmptyArticle = () => {
     let articles = [...this.props.articles];
-    articles.push({text: '', responsibles: [], deadline: ''});
+    articles.push({text: '', responsibles: [], deadline: '', status: 'new'});
     this.props.changeArticles(articles);
+  };
+  
+  changeDoneField = (article) => {
+    return article.responsibles.filter(resp => resp.status !== 'delete').every(resp => resp.done);
   };
 
   changeArticle = (article, index) => {
     let articles = [...this.props.articles];
     articles[index] = article;
-
+    if (articles[index].status === 'old') articles[index].status = 'change';
+    articles[index].done = this.changeDoneField(article)
+  
     this.props.changeArticles(articles);
   };
 
   delArticle = (index) => {
     let articles = [...this.props.articles];
-    articles.splice(index, 1);
+
+    if (articles[index].status === 'new') {
+      articles.splice(index, 1);
+    } else {
+      articles[index].status = 'delete';
+    }
 
     this.props.changeArticles(articles);
   };
 
   render() {
     const {articles, emp_seats, disabled} = this.props;
+
     return (
       <If condition={articles.length > 0 || !disabled}>
         <hr />
         <div>Пункти наказу:</div>
         <For each='article' index='idx' of={articles}>
-          <Article
-            key={idx}
-            article={article}
-            index={idx}
-            emp_seats={emp_seats}
-            changeArticle={this.changeArticle}
-            delArticle={this.delArticle}
-            disabled={disabled}
-          />
+          <If condition={article.status !== 'delete'}>
+            <Article
+              key={idx}
+              article={article}
+              index={idx}
+              emp_seats={emp_seats}
+              changeArticle={this.changeArticle}
+              delArticle={this.delArticle}
+              disabled={disabled}
+            />
+          </If>
         </For>
-        <button className='btn btn-sm btn-outline-secondary' onClick={this.addEmptyArticle}>
+        <button className='btn btn-sm btn-outline-secondary' onClick={this.addEmptyArticle} disabled={disabled}>
           <FontAwesomeIcon icon={faPlus} />
         </button>
       </If>

@@ -28,6 +28,12 @@ def get_emp_seats_list():
         Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
 
 
+# Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
+@try_except
+def get_users_emp_seat_ids(employee_id):
+    return list(Employee_Seat.objects.values_list('id', flat=True).filter(employee_id=employee_id).filter(is_active=True))
+
+
 @try_except
 def get_departments_list():
     return [{

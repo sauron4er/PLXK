@@ -2,11 +2,11 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import {getItemById, uniqueArray} from 'templates/components/my_extras';
+import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelector from 'templates/components/form_modules/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
-import List from 'templates/components/form_modules/list';
+import Responsible from 'templates/components/form_modules/articles/responsible';
 
 class Article extends React.Component {
   state = {
@@ -21,7 +21,7 @@ class Article extends React.Component {
     this.props.changeArticle(article, index);
   };
 
-  changeResponsibles = (e) => {
+  selectResponsible = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     this.setState({
       selected_responsible_id: e.target.options[selectedIndex].getAttribute('data-key'),
@@ -32,18 +32,26 @@ class Article extends React.Component {
   addResponsible = () => {
     let {article, index, emp_seats} = this.props;
     const {selected_responsible_id} = this.state;
-    
+  
     if (selected_responsible_id) {
       const item = getItemById(selected_responsible_id, article.responsibles);
       if (item === -1) {
-        const selected_responsible = {...getItemById(selected_responsible_id, emp_seats), status: 'new'};
+        const selected_responsible = {...getItemById(selected_responsible_id, emp_seats), status: 'new', done: false};
         let new_responsibles = [...article.responsibles];
         new_responsibles.push(selected_responsible);
         new_responsibles = uniqueArray(new_responsibles);
         article.responsibles = new_responsibles;
         this.props.changeArticle(article, index);
       }
-  
+      else {
+        if (item.status === 'delete') {
+          const responsible_index = getIndex(item.id, article.responsibles);
+          article.responsibles[responsible_index].status = 'old';
+          article.responsibles[responsible_index].done = 'false';
+          this.props.changeArticle(article, index);
+        }
+      }
+
       this.setState({
         selected_responsible: '',
         selected_responsible_id: 0
@@ -51,21 +59,25 @@ class Article extends React.Component {
     }
   };
 
-  delResponsible = (id) => {
+  delResponsible = (i) => {
     let {article, index} = this.props;
-    
-    for (const i in article.responsibles) {
-      if (article.responsibles[i].id === id) {
-        if (article.responsibles[i].status === 'new') {
-          article.responsibles.splice(i, 1);
-          break;
-        } else {
-          article.responsibles[i].status = 'delete';
-          break;
-        }
-      }
+
+    if (article.responsibles[i].status === 'new') {
+      article.responsibles.splice(i, 1);
+    } else {
+      article.responsibles[i].status = 'delete';
+      article.status = 'change';
     }
-    
+
+    this.props.changeArticle(article, index);
+  };
+
+  changeResponsible = (responsible, i) => {
+    let {article, index} = this.props;
+
+    article.responsibles[i] = responsible;
+    if (article.status === 'old') article.status = 'change';
+  
     this.props.changeArticle(article, index);
   };
 
@@ -73,17 +85,27 @@ class Article extends React.Component {
     this.props.delArticle(this.props.index);
   };
 
+  getBackground = () => {
+    const {text, deadline, responsibles} = this.props.article;
+    const {selected_responsible_id} = this.state;
+    if (text === '' || deadline === '' || responsibles.length === 0 || selected_responsible_id !== 0) {
+      return 'LightPink';
+    }
+    if (responsibles.filter(resp => resp.status !== 'delete').every(resp => resp.done)) return 'LightGreen';
+    return '';
+  };
+
   render() {
     const {article, index, disabled, emp_seats} = this.props;
     const {selected_responsible} = this.state;
 
     return (
-      <div className='border border-info rounded p-1 mb-2'>
+      <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
         <div className='font-weight-bold'>{index + 1}</div>
         <div className='d-flex'>
           <TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={500} disabled={disabled} />
           <div>
-            <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={this.delArticle}>
+            <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={this.delArticle} disabled={disabled}>
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
@@ -94,11 +116,24 @@ class Article extends React.Component {
           selectedName={selected_responsible}
           valueField={'emp_seat'}
           fieldName={'Відповідальні'}
-          onChange={this.changeResponsibles}
+          onChange={this.selectResponsible}
           addItem={this.addResponsible}
           disabled={disabled}
         />
-        <List list={article.responsibles} mainField={'emp_seat'} deleteItem={this.delResponsible} disabled={disabled} />
+
+        <div className='mt-2'>
+          <For each='responsible' index='idx' of={article.responsibles}>
+            <Responsible
+              key={idx}
+              responsible={responsible}
+              article_index={index}
+              index={idx}
+              onChange={this.changeResponsible}
+              onDelete={this.delResponsible}
+              disabled={disabled}
+            />
+          </For>
+        </div>
 
         <DateInput
           date={article.deadline}

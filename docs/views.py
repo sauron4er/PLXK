@@ -1,20 +1,25 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from django.db import transaction
-from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.utils import timezone
+from django.db import transaction
+from django.db.models import Q
+import collections
 import json
-from .models import Document, Ct, Order_doc, Order_doc_type, File
+from .models import Document, Ct, Order_doc, Order_doc_type, Order_article, Article_responsible, File
 from accounts.models import UserProfile
-from .forms import NewDocForm
+from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
 from docs.api.orders_mail_sender import arrange_mail
-from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, \
+from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
-from plxk.api.datetime_normalizers import normalize_day, normalize_month
+from docs.api.order_articles_api import post_articles, change_responsible
+from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json
 from plxk.api.try_except import try_except
 from plxk.api.global_getters import get_employees_list, get_deps, get_emp_seats_list
+from edms.models import Employee_Seat
 
 
 def user_can_edit(user):
@@ -114,9 +119,9 @@ def orders(request):
     orders = [{
         'id': order.id,
         'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-        'doc_type': order.doc_type.name,
+        'type_name': order.doc_type.name,
         'name': order.name,
-        'author__last_name': order.author.last_name + ' ' + order.author.first_name,
+        'author_name': order.author.last_name + ' ' + order.author.first_name,
         'date_start': str(order.date_start.year) + '-' +
                       normalize_month(order.date_start) + '-' +
                       normalize_day(order.date_start) if order.date_start else '',
@@ -162,11 +167,49 @@ def get_orders(request, page):
         'date_canceled': str(order.date_canceled.year) + '-' +
                          normalize_month(order.date_canceled) + '-' +
                          normalize_day(order.date_canceled) if order.date_canceled else '',
-        'is_actual': order.is_act
+        'is_actual': order.is_act,
+        'status': 'ok' if order.done else 'in progress'
     } for order in orders_page.object_list]
 
     response = {'rows': orders_list, 'pagesCount': paginator.num_pages}
     return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def get_calendar(request):
+    my_calendar = Article_responsible.objects\
+        .filter(done=False)\
+        .filter(is_active=True)\
+        .filter(article__is_active=True)\
+        .filter(article__order__is_act=True)
+    is_it_admin = UserProfile.objects\
+        .filter(user=request.user)\
+        .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
+        .order_by('article__deadline')\
+        .exists()
+
+    if not is_it_admin:
+        my_emp_seats = Employee_Seat.objects.values_list('id', flat=True).filter(employee__user=request.user)
+        my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
+
+    calendar = [{
+        'order_id': item.article.order.id,
+        'order_code': item.article.order.code,
+        'order_name': item.article.order.name,
+        'article_text': item.article.text,
+        'deadline': date_to_json(item.article.deadline),
+        'responsible': item.id,
+        'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat
+    } for item in my_calendar]
+
+    # Сортуємо список у підсписки по полю deadline
+    result = collections.defaultdict(list)
+    for d in calendar:
+        result[d['deadline']].append(d)
+    sorted_calendar = list(result.values())  # Python 3
+
+    return HttpResponse(json.dumps({'calendar': sorted_calendar, 'is_admin': is_it_admin}))
 
 
 @login_required(login_url='login')
@@ -176,7 +219,7 @@ def get_order(request, pk):
     response = {'deps': deps}
 
     if pk != '0':
-        order = get_order_info(pk)
+        order = get_order_info(pk, request.user.userprofile.id)
         response.update({'order': order})
 
     return HttpResponse(json.dumps(response))
@@ -192,12 +235,17 @@ def add_order(request):
     order = post_order(post_request)
     post_request.update({'order': order.pk, 'id': order.pk})
 
+    post_articles(post_request)
     post_files(request.FILES, post_request)
     cancel_another_order(post_request)
 
+    done = post_order_done(post_request)
+
     arrange_mail(post_request)
 
-    return HttpResponse(order.pk)
+    response = {'new_id': order.pk, 'done': done}
+
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
@@ -205,17 +253,22 @@ def add_order(request):
 @try_except
 def edit_order(request):
     post_request = request.POST.copy()
-    post_request.update({'created_by': request.user.id})
+    post_request.update({'created_by': request.user.id, 'order': post_request['id']})
 
     change_order(post_request)
 
+    post_articles(post_request)
     post_files(request.FILES, post_request)
-    deactivate_files(json.loads(post_request['old_files_to_delete']))
+    deactivate_files(json.loads(post_request['files_old']))
     cancel_another_order(post_request)
+
+    done = post_order_done(post_request)
 
     arrange_mail(post_request)
 
-    return HttpResponse()
+    response = {'done': done}
+
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
@@ -225,4 +278,37 @@ def deact_order(request):
     post_request = request.POST.copy()
     # post_request.update({'updated_by': request.user.id})
     deactivate_order(post_request)
+    return HttpResponse()
+
+
+@login_required(login_url='login')
+@transaction.atomic
+@try_except
+def responsible_done(request, pk):
+    post_request = request.POST.copy()
+    post_request.update({'done': True})
+    responsible_instance = get_object_or_404(Article_responsible, pk=pk)
+
+    responsible_done_form = ResponsibleDoneForm(post_request, instance=responsible_instance)
+    if responsible_done_form.is_valid():
+        responsible_done_form.save()
+    else:
+        raise ValidationError('docs/views/responsible_done: responsible_done_form invalid')
+
+    article_done = not responsible_instance.article.responsibles.filter(done=False).exists()
+    if article_done:
+        article_done_form = ArticleDoneForm(post_request, instance=responsible_instance.article)
+        if article_done_form.is_valid():
+            article_done_form.save()
+        else:
+            raise ValidationError('docs/views/responsible_done: article_done_form invalid')
+
+    order_done = not responsible_instance.article.order.articles.filter(done=False).exists()
+    if order_done:
+        order_done_form = OrderDoneForm(post_request, instance=responsible_instance.article.order)
+        if order_done_form.is_valid():
+            order_done_form.save()
+        else:
+            raise ValidationError('docs/views/responsible_done: order_done_form invalid')
+
     return HttpResponse()

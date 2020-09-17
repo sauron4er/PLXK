@@ -2,7 +2,7 @@
 import React from 'react';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
-import {ToastContainer, toast} from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Modal from 'react-responsive-modal';
 import {Document, Page} from 'react-pdf';
@@ -17,6 +17,8 @@ import TextInput from 'templates/components/form_modules/text_input';
 import Files from 'templates/components/form_modules/files';
 import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
+import {faCircle, faCheckCircle} from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 class Order extends React.Component {
   state = {
@@ -48,8 +50,12 @@ class Order extends React.Component {
       notify('Заповніть поле "Назва"');
       return false;
     }
-    // if (isBlankOrZero(contractsStore.contract.new_files) && isBlankOrZero(contractsStore.contract.old_files)) {
-    if (isBlankOrZero(ordersStore.order.files)) {
+    if (isBlankOrZero(ordersStore.order.articles)) {
+      notify('Внесіть інформацію про пункти наказу');
+      return false;
+    }
+    if (isBlankOrZero(ordersStore.order.files) && isBlankOrZero(ordersStore.order.files_old)) {
+      // if (isBlankOrZero(ordersStore.order.files)) {
       notify('Додайте файл документу');
       return false;
     }
@@ -76,6 +82,17 @@ class Order extends React.Component {
     return true;
   };
 
+  deleteBlankArticle = () => {
+    const articles = [...ordersStore.order.articles];
+
+    for (const i in articles) {
+      if (articles[i].text === '' && articles[i].deadline === '' && articles[i].responsibles.length === 0) {
+        articles.splice(i, 1);
+        ordersStore.order.articles = [...articles];
+      }
+    }
+  };
+
   getOrder = () => {
     axiosGetRequest('get_order/' + ordersStore.order.id + '/')
       .then((response) => {
@@ -87,6 +104,7 @@ class Order extends React.Component {
   };
 
   postOrder = () => {
+    this.deleteBlankArticle();
     if (this.isAllFieldsFilled() && this.areDatesInOrder()) {
       const {
         id,
@@ -95,6 +113,7 @@ class Order extends React.Component {
         code,
         name,
         author,
+        responsibles,
         responsible,
         supervisory,
         date_start,
@@ -119,6 +138,7 @@ class Order extends React.Component {
       formData.append('name', name);
       formData.append('author', author);
       formData.append('articles', JSON.stringify(articles));
+      formData.append('responsibles', JSON.stringify(responsibles));
       formData.append('responsible', responsible);
       formData.append('supervisory', supervisory);
       formData.append('date_start', date_start);
@@ -147,16 +167,24 @@ class Order extends React.Component {
       .then((response) => this.removeOrder(response))
       .catch((error) => notify(error));
   };
+  
+  checkOrderDone = (articles) => {
+    ordersStore.order.done = articles.every(article => article.done === true);
+    ordersStore.order.status = ordersStore.order.done ? 'ok' : 'in progress'
+  };
 
-  addOrder = (id) => {
-    ordersStore.order.id = id;
+  addOrder = (response) => {
+    ordersStore.order.id = response.new_id;
+    ordersStore.order.done = response.done;
     ordersStore.orders.push(ordersStore.order);
     this.closeOrderView();
   };
 
-  editOrder = (id) => {
-    const index = getIndex(id, ordersStore.orders);
+  editOrder = (response) => {
+    ordersStore.order.done = response.done;
+    const index = getIndex(ordersStore.order.id, ordersStore.orders);
     ordersStore.orders[index] = ordersStore.order;
+    console.log(ordersStore.orders[index]);
     this.closeOrderView();
   };
 
@@ -182,6 +210,7 @@ class Order extends React.Component {
 
   onArticlesChange = (articles) => {
     ordersStore.order.articles = [...articles];
+    this.checkOrderDone(articles)
   };
 
   onFilesDelete = (id, files_field) => {
@@ -197,7 +226,7 @@ class Order extends React.Component {
   };
 
   onCancelsChange = () => {
-    this.setState({cancels_other_doc: !this.state.cancels_other_doc});
+    ordersStore.order.cancels_other_doc = !ordersStore.order.cancels_other_doc;
   };
 
   getCanceledDocId = () => {
@@ -207,9 +236,6 @@ class Order extends React.Component {
   getCanceledByDocId = () => {
     return './' + ordersStore.order.canceled_by_id;
   };
-
-  // TODO Розбити форму на чотири сторінки:
-  // TODO основна інформація, пункти-відповідальні-строки, скасовує документи, розсилка листів
 
   // openPdf = (e, file) => {
   //   e.preventDefault();
@@ -227,28 +253,45 @@ class Order extends React.Component {
   // onDocumentLoadSuccess = ({numPages}) => {
   //   this.setState({pdf_num_pages: numPages});
   // };
+  
+  onOrderClose = () => {
+    ordersStore.clearOrder();
+    ordersStore.view = 'table';
+  };
 
   render() {
-    const {id, canceled_by_code, canceled_by_id, cancels_id} = ordersStore.order;
-    const {is_orders_admin, employees, types} = ordersStore;
-    const {loading, cancels_other_doc, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
-
+    const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done} = ordersStore.order;
+    const {is_orders_admin, employees, emp_seats, types} = ordersStore;
+    const {loading, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
+  
     return (
       <Choose>
         <When condition={!loading}>
+          <div className='d-flex'>
+            <button className='btn btn-sm btn-success my-2' onClick={() => this.onOrderClose()}>
+              Назад
+            </button>
+          </div>
           <div className='shadow-lg p-3 mb-5 bg-white rounded'>
-            <div className='row'>
-              <div className='col-md-10'>
-                <Selector
-                  className='mr-2'
-                  list={types}
-                  selectedName={ordersStore.order.type_name}
-                  fieldName={'Тип документа'}
-                  onChange={(e) => this.onSelectorChange(e, 'type', 'type_name')}
-                  disabled={!is_orders_admin}
-                />
-              </div>
-              <div className='col-md-2'>
+            <div className='d-flex flex-row'>
+              {done ? (
+                <h1 className='text-success mr-2 align-self-end'>
+                  <FontAwesomeIcon icon={faCheckCircle} />
+                </h1>
+              ) : (
+                <h1 className='text-danger mr-2 align-self-end'>
+                  <FontAwesomeIcon icon={faCircle} />
+                </h1>
+              )}
+              <Selector
+                className='mr-2 flex-fill'
+                list={types}
+                selectedName={ordersStore.order.type_name}
+                fieldName={'Тип документа'}
+                onChange={(e) => this.onSelectorChange(e, 'type', 'type_name')}
+                disabled={!is_orders_admin}
+              />
+              <div>
                 <TextInput
                   text={ordersStore.order.code}
                   fieldName={'№'}

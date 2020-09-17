@@ -1,5 +1,5 @@
 from django import forms
-from .models import Document, Order_doc, Contract, Contract_File
+from .models import Document, Order_doc, Order_article, Article_responsible, Contract, Contract_File
 
 
 class NewDocForm(forms.ModelForm):
@@ -27,13 +27,6 @@ class NewDocOrderForm(forms.ModelForm):
         fields = ['name', 'code', 'doc_type', 'created_by', 'author', 'responsible', 'supervisory', 'date_start',
                   'cancels_code', 'date_canceled', 'cancels'
                   ]
-        # labels = {'name': 'Назва',
-        #           'code': 'Код',
-        #           'doc_type': 'Тип',
-        #           'author': 'Автор',
-        #           'responsible': 'Відповідальний',
-        #           'date_start': 'Діє з',
-        #           }
 
 
 class CancelOrderForm(forms.ModelForm):
@@ -46,6 +39,48 @@ class DeactivateOrderForm(forms.ModelForm):
     class Meta:
         model = Order_doc
         fields = ['is_act']
+
+
+class OrderDoneForm(forms.ModelForm):
+    class Meta:
+        model = Order_doc
+        fields = ['done']
+
+
+class NewArticleForm(forms.ModelForm):
+    class Meta:
+        model = Order_article
+        fields = ['order', 'text', 'deadline']
+
+
+class ArticleDoneForm(forms.ModelForm):
+    class Meta:
+        model = Order_article
+        fields = ['done']
+
+
+class DeactivateArticleForm(forms.ModelForm):
+    class Meta:
+        model = Order_article
+        fields = ['is_active']
+
+
+class NewResponsibleForm(forms.ModelForm):
+    class Meta:
+        model = Article_responsible
+        fields = ['article', 'employee_seat', 'done']
+
+
+class ResponsibleDoneForm(forms.ModelForm):
+    class Meta:
+        model = Order_article
+        fields = ['done']
+
+
+class DeactivateResponsibleForm(forms.ModelForm):
+    class Meta:
+        model = Order_article
+        fields = ['is_active']
 
 
 #  --------------------------------------------------------- Contracts

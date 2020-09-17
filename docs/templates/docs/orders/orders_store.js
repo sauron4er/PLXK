@@ -1,7 +1,7 @@
 import {store} from '@risingstack/react-easy-state';
 
 const ordersStore = store({
-  view: 'table', // order
+  view: 'table', // order, calendar
   orders: [],
   order: {
     id: 0,
@@ -28,6 +28,8 @@ const ordersStore = store({
     mail_mode: '',
     mail_list: [],
     articles: [],
+    status: 'in progress',
+    done: false
   },
   employees: [],
   emp_seats: [],
@@ -57,9 +59,11 @@ const ordersStore = store({
       cancels_code: '',
       cancels_files: [],
       cancels_files_old: [],
-      articles: [],
       mail_mode: '',
-      mail_list: []
+      mail_list: [],
+      articles: [],
+      status: 'in progress',
+      done: false
     };
   }
 });
