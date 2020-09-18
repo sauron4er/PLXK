@@ -13,6 +13,7 @@ urlpatterns = [
     # url(r'^order/f(?P<fk>\d+)/$', views.orders, name='orders'),
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),
     url(r'^orders/get_calendar', views.get_calendar, name='get_calendar'),
+    url(r'^orders/reminders', views.reminders, name='reminders'),
     url(r'^orders/add_order', views.add_order, name='add_order'),
     url(r'^orders/edit_order', views.edit_order, name='edit_order'),
     url(r'^orders/deactivate_order', views.deact_order, name='deact_order'),

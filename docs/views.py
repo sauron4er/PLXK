@@ -12,7 +12,7 @@ import json
 from .models import Document, Ct, Order_doc, Order_doc_type, Order_article, Article_responsible, File
 from accounts.models import UserProfile
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
-from docs.api.orders_mail_sender import arrange_mail
+from docs.api.orders_mail_sender import arrange_mail, send_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
 from docs.api.order_articles_api import post_articles, change_responsible
@@ -183,6 +183,7 @@ def get_calendar(request):
         .filter(is_active=True)\
         .filter(article__is_active=True)\
         .filter(article__order__is_act=True)
+
     is_it_admin = UserProfile.objects\
         .filter(user=request.user)\
         .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
@@ -190,7 +191,7 @@ def get_calendar(request):
         .exists()
 
     if not is_it_admin:
-        my_emp_seats = Employee_Seat.objects.values_list('id', flat=True).filter(employee__user=request.user)
+        my_emp_seats = Employee_Seat.objects.values_list('id', flat=True).filter(employee__user=request.user).filter(is_active=True)
         my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
 
     calendar = [{
@@ -210,6 +211,12 @@ def get_calendar(request):
     sorted_calendar = list(result.values())  # Python 3
 
     return HttpResponse(json.dumps({'calendar': sorted_calendar, 'is_admin': is_it_admin}))
+
+
+@login_required(login_url='login')
+@try_except
+def reminders(request):
+    send_reminders(request)
 
 
 @login_required(login_url='login')

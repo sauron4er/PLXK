@@ -5,6 +5,8 @@ import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 // import PaginatedTable from 'templates/components/tables/paginated_table';
 import Order from './order';
+import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
+import {notify} from 'templates/components/my_extras';
 
 const columns = [
   // {name: 'id', title: 'id'},
@@ -40,6 +42,12 @@ class OrdersTable extends React.Component {
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
+  
+  sendReminders = () => {
+    axiosGetRequest('reminders/')
+      .then((response) => {})
+      .catch((error) => notify(error));
+  };
 
   onRowClick = (clicked_row) => {
     ordersStore.order = clicked_row;
@@ -54,6 +62,9 @@ class OrdersTable extends React.Component {
         <If condition={is_orders_admin}>
           <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-success'>
             Додати нормативний документ
+          </button>
+          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-success ml-auto'>
+            Розіслати нагадування про виконання наказів
           </button>
         </If>
         <DxTable

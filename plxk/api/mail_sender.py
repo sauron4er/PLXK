@@ -19,4 +19,5 @@ def send_email(mail, body):
             server.starttls()
             server.login('edms.lxk', 'J2NYEHb50nymRF1L')
             server.sendmail(sender, [mail], body)
+            # server.sendmail(sender, 'sauron4er@gmail.com', body)
             server.quit()

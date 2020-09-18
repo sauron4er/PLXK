@@ -98,6 +98,7 @@ class Order extends React.Component {
       .then((response) => {
         if (ordersStore.order.id !== 0) ordersStore.order = response.order;
         ordersStore.deps = response.deps;
+        ordersStore.order.mail_mode = 'to_default';
         this.setState({loading: false});
       })
       .catch((error) => notify(error));
