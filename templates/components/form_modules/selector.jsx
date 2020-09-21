@@ -3,10 +3,10 @@ import React from 'react';
 
 class Selector extends React.Component {
   render() {
-    const {list, selectedName, valueField, onChange, fieldName, disabled, className} = this.props;
-
+    const {list, selectedName, valueField, onChange, fieldName, disabled, classes} = this.props;
+  
     return (
-      <label className={className + ' full_width'} htmlFor={fieldName}>
+      <label className={classes + ' full_width'} htmlFor={fieldName}>
         {fieldName}:
         <select
           className='form-control full_width'
@@ -38,7 +38,7 @@ class Selector extends React.Component {
     selectedName: '',
     onChange: () => {},
     disabled: true,
-    className: {}
+    classes: {}
   };
 }
 

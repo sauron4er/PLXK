@@ -450,9 +450,6 @@ class Request extends React.Component {
             </div>
             <If condition={edit_mode}>
               <div className='modal-footer'>
-                <button className='btn btn-outline-dark' onClick={() => console.log(corrStore.request)}>
-                  test
-                </button>
                 <If condition={corrStore.request.id === 0}>
                   <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
                     Очистити

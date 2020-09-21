@@ -285,7 +285,7 @@ class Order extends React.Component {
                 </h1>
               )}
               <Selector
-                className='mr-2 flex-fill'
+                classes='mr-2 flex-fill'
                 list={types}
                 selectedName={ordersStore.order.type_name}
                 fieldName={'Тип документа'}
