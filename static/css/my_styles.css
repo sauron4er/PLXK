@@ -75,7 +75,7 @@
   -moz-animation-iteration-count: infinite;
 }
 
-.css_selected_law {
+.css_list_item {
   display: flex;
   align-items: start;
   margin-bottom: 10px;
@@ -103,3 +103,28 @@
   padding: 10px;
 }
 
+.css_calendar_header {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  background: #e7eaef;
+}
+
+.css_calendar_card {
+  display: flex;
+  background: #eff0f3;
+  padding: 3px;
+  margin-top: 3px;
+}
+
+.css_calendar_card:hover {
+  background: #c3f8cf;
+}
+
+.css_calendar_card:hover > button {
+  background-color: white;
+}
+
+.css_calendar_card > button:hover {
+  background-color: #28a745;
+}

@@ -1,6 +1,4 @@
 from plxk.api.mail_sender import send_email
-from correspondence.models import Request
-from accounts.models import UserProfile
 from django.conf import settings
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart

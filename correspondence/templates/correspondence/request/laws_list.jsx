@@ -40,7 +40,7 @@ class LawsList extends React.Component {
       <div className='mt-2'>
         <For each='law' index='id' of={corrStore.request.laws}>
           <If condition={law.status !== 'delete'}>
-            <div key={law.id} className='css_selected_law'>
+            <div key={law.id} className='css_list_item'>
               <div>
                 <div className='font-weight-bold'>{law.name}</div>
                 <div>

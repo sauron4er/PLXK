@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from accounts.models import UserProfile
 from accounts.models import Department
 from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
@@ -16,6 +15,23 @@ def get_employees_list():
             .exclude(id=10)  # Викидуємо зі списка користувача Охорона
             .filter(is_active=True)
             .order_by('last_name')]
+
+
+@try_except
+def get_emp_seats_list():
+    return [{
+        'id': emp_seat.pk,
+        'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
+        'emp_id': emp_seat.employee.id,
+        'seat_id': emp_seat.seat.id
+    } for emp_seat in
+        Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
+
+
+# Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
+@try_except
+def get_users_emp_seat_ids(employee_id):
+    return list(Employee_Seat.objects.values_list('id', flat=True).filter(employee_id=employee_id).filter(is_active=True))
 
 
 @try_except
@@ -42,3 +58,13 @@ def is_it_lawyer(id):
 def get_user_mail(id):
     mail = User.objects.values_list('email', flat=True).filter(id=id)
     return mail[0] if mail else ''
+
+
+@try_except
+def get_deps():
+    deps = [{
+        'id': dep.pk,
+        'dep': dep.name,
+        'text': dep.text,
+    } for dep in Department.objects.filter(is_active=True).order_by('name')]
+    return deps

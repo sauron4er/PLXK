@@ -302,7 +302,7 @@ def get_request(request, pk):
 
 
 @try_except
-def new_request(request):
+def add_request(request):
     try:
         post_request = request.POST.copy()
 
@@ -350,7 +350,7 @@ def edit_request(request):
 
 
 @try_except
-def del_request(request, pk):
+def deactivate_request(request, pk):
     try:
         corr_api.deactivate_req(request, pk)
         return HttpResponse(pk)

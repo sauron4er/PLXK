@@ -4,10 +4,12 @@ import {uniqueArray} from 'templates/components/my_extras';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import 'static/css/my_styles.css';
+import {view, store} from '@risingstack/react-easy-state';
+import ordersStore from 'docs/templates/docs/orders/orders_store';
+import Selector from 'templates/components/form_modules/selector';
 
 class OrderMail extends React.Component {
   state = {
-    employee_list: window.employee_list ? window.employee_list : [],
     to_default: true,
     everyone: false,
     list: false,
@@ -34,66 +36,52 @@ class OrderMail extends React.Component {
       [event.target.id]: true
     });
 
-    this.props.mailMode(event.target.id);
+    ordersStore.order.mail_mode = event.target.id;
   };
 
-  addReceiver = (e) => {
-    e.preventDefault();
+  addReceiver = () => {
     if (this.state.receiver_name !== '') {
-      let receivers = [...this.state.receivers];
+      let receivers = [...ordersStore.order.mail_list];
       receivers.push({
         id: this.state.receiver_id,
         name: this.state.receiver_name
       });
       const unique_receivers = uniqueArray(receivers);
       this.setState({
-        receivers: unique_receivers,
         receiver_id: '',
         receiver_name: ''
       });
-      // надсилаємо новий список у батьківський компонент
-      this.props.mailList(unique_receivers);
+
+      ordersStore.order.mail_list = [...unique_receivers];
     }
   };
 
-  delReceiver = (e, id) => {
-    e.preventDefault();
-    // надсилаємо новий список у батьківський компонент
-    this.props.mailList(this.state.receivers.filter((receiver) => receiver.id !== id));
-
-    this.setState((prevState) => ({
-      receivers: prevState.receivers.filter((receiver) => receiver.id !== id)
-    }));
+  delReceiver = (id) => {
+    // Необхідно проводити зміни через додаткову перемінну, бо  react-easy-state не помічає змін глибоко всередині перемінних, як тут.
+    let mail_list = [...ordersStore.order.mail_list];
+    mail_list = mail_list.filter((receiver) => receiver.id !== id)
+    ordersStore.order.mail_list = [...mail_list];
   };
 
   render() {
-    const {employee_list, to_default, everyone, list, none, receivers, receiver_name} = this.state;
-    
+    const {to_default, everyone, list, none, receiver_name} = this.state;
+    const {employees, is_orders_admin} = ordersStore;
+    const {mail_list} = ordersStore.order;
+
     return (
       <div className='shadow-lg p-3 bg-white rounded'>
         <div>Надіслати електронного листа про опублікування документу:</div>
-        <small className='text-danger'>
-          Система відсилає листи автору, відповідальному та контролючому, якщо не відмічений варіант
-          "нікому".
+        <small>
+          Система відсилає листи автору, відповідальним та контролючому, якщо не відмічений варіант "нікому".
         </small>
         <div>
-          <input
-            type='checkbox'
-            id='to_default'
-            checked={to_default}
-            onChange={this.arrangeCheckBoxes}
-          />
+          <input type='checkbox' id='to_default' checked={to_default} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='to_default'>
-            Автору, відповідальному, контролюючому
+            Автору, відповідальним, контролюючому
           </label>
         </div>
         <div>
-          <input
-            type='checkbox'
-            id='everyone'
-            checked={everyone}
-            onChange={this.arrangeCheckBoxes}
-          />
+          <input type='checkbox' id='everyone' checked={everyone} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='everyone'>
             Всім працівникам
           </label>
@@ -105,44 +93,30 @@ class OrderMail extends React.Component {
           </label>
           <If condition={list}>
             <div className='d-flex align-items-center mt-3'>
-              <select
-                className='flex-grow-1 form-control'
-                id='select_receiver'
-                name='select_receiver'
-                value={receiver_name}
+              <Selector
+                list={employees}
+                selectedName={receiver_name}
+                fieldName={'Контроль'}
                 onChange={this.onChange}
-              >
-                <option key={0} data-key={0} value='0'>
-                  ------------
-                </option>
-                {employee_list.map((employee) => {
-                  if (employee.mail) {
-                    return (
-                      <option key={employee.id} data-key={employee.id} value={employee.name}>
-                        {employee.name}
-                      </option>
-                    );
-                  }
-                })}
-              </select>
+                disabled={!is_orders_admin}
+              />
               <button
                 className={
                   receiver_name
                     ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
                     : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
                 }
-                onClick={this.addReceiver}
+                onClick={() => this.addReceiver()}
               >
                 <FontAwesomeIcon icon={faPlus} />
               </button>
             </div>
             <small className='text-danger'>
-              Якщо необхідного співробітника немає у списку, це означає, що у нього немає особистої
-              електронної пошти, або вона не внесена в базу даних. Зверніться до адміністратора.
+              Якщо необхідного співробітника немає у списку, зверніться до адміністратора.
             </small>
-            <If condition={receivers.length > 0}>
+            <If condition={mail_list.length > 0}>
               <ul className='mt-1'>
-                {receivers.map((receiver) => {
+                {mail_list.map((receiver) => {
                   return (
                     <div key={receiver.id} className='d-flex align-items-start'>
                       <li>{receiver.name}</li>
@@ -168,11 +142,6 @@ class OrderMail extends React.Component {
       </div>
     );
   }
-
-  static defaultProps = {
-    mailMode: {},
-    mailList: {}
-  };
 }
 
-export default OrderMail;
+export default view(OrderMail);

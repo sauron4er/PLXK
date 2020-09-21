@@ -14,6 +14,7 @@ from .api.getters import *
 from .api.tables_creater import create_table
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
+from plxk.api.global_getters import get_deps
 from docs.api.contracts_api import add_contract_from_edms
 # Модульна система:
 from .models import Doc_Approval, Doc_Recipient

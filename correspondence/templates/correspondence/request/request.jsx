@@ -21,6 +21,13 @@ class Request extends React.Component {
     user_is_author: true,
     loading: false
   };
+  
+  componentDidMount() {
+    if (corrStore.request.id !== 0) {
+      this.getRequestInfo();
+      this.setState({loading: true});
+    }
+  }
 
   areAllFieldsFilled = () => {
     if (isBlankOrZero(corrStore.request.product_id)) {
@@ -65,6 +72,19 @@ class Request extends React.Component {
     }
     return true;
   };
+  
+  getRequestInfo = () => {
+    axiosGetRequest('get_request/' + corrStore.request.id + '/')
+      .then((response) => {
+        corrStore.request = response.request;
+        this.setState({
+          edit_mode: response.edit_mode,
+          user_is_author: response.user_is_author,
+          loading: false
+        });
+      })
+      .catch((error) => notify(error));
+  };
 
   addSelectedLaw = () => {
     // Додає до запису закон, якщо автор забув натиснути "+"
@@ -84,25 +104,7 @@ class Request extends React.Component {
     }
   };
 
-  componentDidMount() {
-    if (corrStore.request.id !== 0) {
-      this.getRequestInfo();
-      this.setState({loading: true});
-    }
-  }
-
-  getRequestInfo = () => {
-    axiosGetRequest('get_request/' + corrStore.request.id + '/')
-      .then((response) => {
-        corrStore.request = response.request;
-        this.setState({
-          edit_mode: response.edit_mode,
-          user_is_author: response.user_is_author,
-          loading: false
-        });
-      })
-      .catch((error) => notify(error));
-  };
+  
 
   postRequest = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
@@ -136,7 +138,7 @@ class Request extends React.Component {
         });
       }
 
-      const url = corrStore.request.id === 0 ? 'new_request/' : 'edit_request/';
+      const url = corrStore.request.id === 0 ? 'add_request/' : 'edit_request/';
 
       axiosPostRequest(url, formData)
         .then((response) => {
@@ -147,7 +149,7 @@ class Request extends React.Component {
   };
 
   postDelRequest = () => {
-    axiosPostRequest('del_request/' + corrStore.request.id)
+    axiosPostRequest('deactivate_request/' + corrStore.request.id)
       .then((response) => this.removeRequest(response))
       .catch((error) => notify(error));
   };
@@ -227,10 +229,6 @@ class Request extends React.Component {
 
   onInputChange = (e, field_name) => {
     corrStore.request[field_name] = e.target.value;
-  };
-
-  onFilesChange = (e, new_files_field) => {
-    corrStore.request[new_files_field] = e.target.value;
   };
 
   onFilesDelete = (id, old_files_field) => {
@@ -334,7 +332,7 @@ class Request extends React.Component {
                 selectedName={corrStore.request.product_name}
                 fieldName={'Продукт'}
                 onChange={(e) => this.onSelectorChange(e, 'product_id', 'product_name')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <Selector
@@ -342,7 +340,7 @@ class Request extends React.Component {
                 selectedName={corrStore.request.scope_name}
                 fieldName={'Сфера застосування'}
                 onChange={(e) => this.onSelectorChange(e, 'scope_id', 'scope_name')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <Selector
@@ -350,16 +348,16 @@ class Request extends React.Component {
                 selectedName={corrStore.request.client_name}
                 fieldName={'Клієнт'}
                 onChange={(e) => this.onSelectorChange(e, 'client_id', 'client_name')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <Files
                 oldFiles={corrStore.request.old_request_files}
                 newFiles={corrStore.request.new_request_files}
                 fieldName={'Файли запиту (.eml)'}
-                onChange={(e) => this.onFilesChange(e, 'new_request_files')}
+                onChange={(e) => this.onInputChange(e, 'new_request_files')}
                 onDelete={(id) => this.onFilesDelete(id, 'old_request_files')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <TextInput
@@ -367,16 +365,16 @@ class Request extends React.Component {
                 fieldName={'Відповідь'}
                 onChange={(e) => this.onInputChange(e, 'answer')}
                 maxLength={5000}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <Files
                 oldFiles={corrStore.request.old_answer_files}
                 newFiles={corrStore.request.new_answer_files}
                 fieldName={'Файли відповіді'}
-                onChange={(e) => this.onFilesChange(e, 'new_answer_files')}
+                onChange={(e) => this.onInputChange(e, 'new_answer_files')}
                 onDelete={(id) => this.onFilesDelete(id, 'old_answer_files')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <MultiSelector
@@ -385,7 +383,7 @@ class Request extends React.Component {
                 fieldName={'Законодавство'}
                 onChange={(e) => this.onSelectorChange(e, 'selected_law_id', 'selected_law_name')}
                 addItem={this.addLaw}
-                editMode={edit_mode}
+                disabled={!edit_mode}
               />
               <If condition={corrStore.request.laws.length > 0}>
                 <LawsList disabled={!edit_mode} />
@@ -397,7 +395,7 @@ class Request extends React.Component {
                     date={corrStore.request.request_date}
                     fieldName={'Дата отримання'}
                     onChange={(e) => this.onInputChange(e, 'request_date')}
-                    edit_mode={edit_mode}
+                    disabled={!edit_mode}
                   />
                 </div>
                 <div className='mr-auto'>
@@ -405,14 +403,14 @@ class Request extends React.Component {
                     date={corrStore.request.request_term}
                     fieldName={'Термін виконання'}
                     onChange={(e) => this.onInputChange(e, 'request_term')}
-                    edit_mode={edit_mode}
+                    disabled={!edit_mode}
                   />
                 </div>
                 <DateInput
                   date={corrStore.request.answer_date}
                   fieldName={'Дата надання відповіді'}
                   onChange={(e) => this.onInputChange(e, 'answer_date')}
-                  edit_mode={edit_mode}
+                  disabled={!edit_mode}
                 />
               </div>
               <hr />
@@ -421,7 +419,7 @@ class Request extends React.Component {
                 selectedName={corrStore.request.responsible_name}
                 fieldName={'Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible_id', 'responsible_name')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <Selector
@@ -429,7 +427,7 @@ class Request extends React.Component {
                 selectedName={corrStore.request.answer_responsible_name}
                 fieldName={'Відповідальний за надання відповіді'}
                 onChange={(e) => this.onSelectorChange(e, 'answer_responsible_id', 'answer_responsible_name')}
-                edit_mode={edit_mode}
+                disabled={!edit_mode}
               />
               <hr />
               <TextInput
@@ -437,7 +435,7 @@ class Request extends React.Component {
                 fieldName={'Коментар автора'}
                 onChange={(e) => this.onInputChange(e, 'author_comment')}
                 maxLength={1000}
-                edit_mode={user_is_author}
+                disabled={!user_is_author}
               />
               <hr />
               <MultiSelector
@@ -446,15 +444,12 @@ class Request extends React.Component {
                 fieldName={'На ознайомлення'}
                 onChange={(e) => this.onSelectorChange(e, 'selected_acquaint_id', 'selected_acquaint_name')}
                 addItem={this.addAcquaint}
-                editMode={edit_mode}
+                disabled={!edit_mode}
               />
               <List list={corrStore.request.acquaints} deleteItem={this.deleteAcquaint} disabled={!edit_mode} />
             </div>
             <If condition={edit_mode}>
               <div className='modal-footer'>
-                <button className='btn btn-outline-dark' onClick={() => console.log(corrStore.request)}>
-                  test
-                </button>
                 <If condition={corrStore.request.id === 0}>
                   <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
                     Очистити

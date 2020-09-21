@@ -55,6 +55,7 @@ def get_phase_id(doc_request):
             .filter(is_active=True)[0]
     return phase
 
+
 # Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
 @try_except
 def get_sub_seats(seat):
@@ -225,17 +226,6 @@ def get_my_seats(emp_id):
                 'chief': chief['name'] + ', ' + chief['seat']
             })
     return my_seats
-
-
-# Функція, яка повертає з бд список відділів
-@try_except
-def get_deps():
-    deps = [{
-        'id': dep.pk,
-        'dep': dep.name,
-        'text': dep.text,
-    } for dep in accounts.Department.objects.filter(is_active=True).order_by('name')]
-    return deps
 
 
 # Функція, яка повертає з бд елементарний список посад

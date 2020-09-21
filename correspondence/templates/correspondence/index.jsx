@@ -48,7 +48,7 @@ class Correspondence extends React.Component {
     const {view} = this.state;
     return (
       <>
-        <div className='btn-group mb-2' role='group' aria-label='Basic example'>
+        <div className='btn-group mb-2' role='group' aria-label='corr_index'>
           <button type='button' className={this.getButtonStyle('requests')} onClick={() => this.changeView('requests')}>
             Запити
           </button>

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import Department
-from edms.models import Document as EdmsDocument
+from edms.models import Document as EdmsDocument, Employee_Seat
 
 
 class Doc_group(models.Model):
@@ -66,8 +66,9 @@ class Order_doc(models.Model):
     canceled_by = models.ForeignKey('self', related_name='cancels_order', null=True, blank=True)
     cancels = models.ForeignKey('self', related_name='cancelled_by_order', null=True, blank=True)
     author = models.ForeignKey(User, related_name='Created_documents')
-    responsible = models.ForeignKey(User, related_name='responsible_for_documents')
+    responsible = models.ForeignKey(User, related_name='responsible_for_documents', null=True, blank=True)
     supervisory = models.ForeignKey(User, related_name='supervisory_for_documents', null=True, blank=True)
+    done = models.BooleanField(default=False)
     is_act = models.BooleanField(default=True)
 
     def __str__(self):
@@ -78,7 +79,22 @@ class File(models.Model):
     file = models.FileField(upload_to='order_docs/%Y/%m')
     name = models.CharField(max_length=100, null=True, blank=True)
     order = models.ForeignKey(Order_doc, related_name='files', null=True)
-    is_added_or_cancelled = models.BooleanField(default=True)  # True - додані наказом документи, False - скасовані наказом документи
+    is_added_or_canceled = models.BooleanField(default=True)  # True - додані наказом документи, False - скасовані наказом документи
+    is_active = models.BooleanField(default=True)
+
+
+class Order_article(models.Model):
+    order = models.ForeignKey(Order_doc, related_name='articles')
+    text = models.CharField(max_length=5000)
+    deadline = models.DateField(null=True, blank=True)
+    done = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+
+class Article_responsible(models.Model):
+    article = models.ForeignKey(Order_article, related_name='responsibles')
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='orders_responsible')
+    done = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 

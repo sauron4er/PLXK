@@ -19,7 +19,7 @@ class LawScopesList extends React.Component {
     return (
       <div className='mt-2 mr-1'>
         <For each='scope' index='id' of={corrStore.law.scopes}>
-          <div key={scope.id} className='css_selected_law'>
+          <div key={scope.id} className='css_list_item'>
             <div>{scope.name}</div>
             <button
               className='btn btn-sm btn-outline-secondary font-weight-bold ml-auto'

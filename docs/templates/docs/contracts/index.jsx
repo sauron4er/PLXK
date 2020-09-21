@@ -91,7 +91,6 @@ class Contracts extends React.Component {
               colWidth={col_width}
               onRowClick={this.onRowClick}
               height={main_div_height}
-              startEndColumn
               filter
             />
           </div>
@@ -108,5 +107,4 @@ class Contracts extends React.Component {
   }
 }
 
-// ReactDOM.render(<Index />, document.getElementById('contracts'));
 export default view(Contracts);
