@@ -216,7 +216,7 @@ def get_calendar(request):
 @login_required(login_url='login')
 @try_except
 def reminders(request):
-    send_reminders(request)
+    send_reminders()
 
 
 @login_required(login_url='login')

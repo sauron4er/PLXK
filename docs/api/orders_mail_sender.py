@@ -95,18 +95,6 @@ def create_reminder_body(recipient):
                 link,
                 download)
 
-    # text = """\
-    # <html>
-    #   <head></head>
-    #   <body>
-    #     <p>Hi!<br>
-    #        How are you?<br>
-    #        Here is the <a href="https://www.python.org">link</a> you wanted.
-    #     </p>
-    #   </body>
-    # </html>
-    # """
-
     # message.attach(MIMEText(text, "plain"))
     message.attach(MIMEText(text, "html"))
 
@@ -162,27 +150,28 @@ def arrange_mail(post_request):
 
 
 @try_except
-def send_reminders(request):
-    today = datetime.date.today()
-    tomorrow = today + datetime.timedelta(days=1)
+def send_reminders():
+    if not testing:
+        today = datetime.date.today()
+        tomorrow = today + datetime.timedelta(days=1)
 
-    calendar = Article_responsible.objects \
-        .filter(article__deadline__lte=tomorrow) \
-        .filter(done=False) \
-        .filter(is_active=True) \
-        .filter(article__is_active=True) \
-        .filter(article__order__is_act=True)
+        calendar = Article_responsible.objects \
+            .filter(article__deadline__lte=tomorrow) \
+            .filter(done=False) \
+            .filter(is_active=True) \
+            .filter(article__is_active=True) \
+            .filter(article__order__is_act=True)
 
-    recipients = [{
-        'mail': item.employee_seat.employee.user.email,
-        'order_id': item.article.order_id,
-        'order_name': item.article.order.name,
-        'article': item.article.text,
-        'deadline': item.article.deadline,
-        'today': item.article.deadline == today,
-        'tomorrow': item.article.deadline == tomorrow
-    } for item in calendar]
+        recipients = [{
+            'mail': item.employee_seat.employee.user.email,
+            'order_id': item.article.order_id,
+            'order_name': item.article.order.name,
+            'article': item.article.text,
+            'deadline': item.article.deadline,
+            'today': item.article.deadline == today,
+            'tomorrow': item.article.deadline == tomorrow
+        } for item in calendar]
 
-    for recipient in recipients:
-        body = create_reminder_body(recipient)
-        send_email(recipient['mail'], body)
+        for recipient in recipients:
+            body = create_reminder_body(recipient)
+            send_email(recipient['mail'], body)
