@@ -1183,14 +1183,18 @@ def edms_mark(request):
 
                 if remaining_required_md == 0:
                     if is_auto_approved_phase_used(doc_request['document_type']):
-                        doc_request.update({'approved': is_doc_completely_approved(doc_request)})
-                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                        completely_approved = is_doc_completely_approved(doc_request)
+                        if completely_approved:
+                            doc_request.update({'approved': completely_approved})
+                            new_phase(doc_request, this_phase['phase'] + 1, [])
+                    else:
+                        new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
-                # Деактивуємо лише дану mark demand, якщо це погодження мішків
+                # Деактивуємо лише дану mark demand, якщо це погодження Договорів чи мішків
                 # (для того, щоб інші погоджуючі теж могли прокоментувати). В іншому разі деактивуємо всі.
-                if doc_request['document_type'] == 6:
+                if doc_request['document_type'] in [5, 6]:
                     deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
                 else:
                     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
