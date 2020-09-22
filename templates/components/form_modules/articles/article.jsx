@@ -12,7 +12,8 @@ class Article extends React.Component {
   state = {
     selected_responsible_id: 0,
     selected_responsible: '',
-    deadline: ''
+    deadline: '',
+    all_chiefs_added: false
   };
 
   changeField = (e, field) => {
@@ -29,10 +30,9 @@ class Article extends React.Component {
     });
   };
 
-  addResponsible = () => {
+  addResponsible = (selected_responsible_id) => {
     let {article, index, emp_seats} = this.props;
-    const {selected_responsible_id} = this.state;
-  
+
     if (selected_responsible_id) {
       const item = getItemById(selected_responsible_id, article.responsibles);
       if (item === -1) {
@@ -42,8 +42,7 @@ class Article extends React.Component {
         new_responsibles = uniqueArray(new_responsibles);
         article.responsibles = new_responsibles;
         this.props.changeArticle(article, index);
-      }
-      else {
+      } else {
         if (item.status === 'delete') {
           const responsible_index = getIndex(item.id, article.responsibles);
           article.responsibles[responsible_index].status = 'old';
@@ -77,12 +76,20 @@ class Article extends React.Component {
 
     article.responsibles[i] = responsible;
     if (article.status === 'old') article.status = 'change';
-  
+
     this.props.changeArticle(article, index);
   };
 
   delArticle = () => {
     this.props.delArticle(this.props.index);
+  };
+
+  addAllChiefs = () => {
+    this.props.emp_seats.map(emp_seat => {
+      if (emp_seat.is_dep_chief) this.addResponsible(emp_seat.id)
+    })
+    
+    this.setState({all_chiefs_added: true});
   };
 
   getBackground = () => {
@@ -91,13 +98,13 @@ class Article extends React.Component {
     if (text === '' || deadline === '' || responsibles.length === 0 || selected_responsible_id !== 0) {
       return 'LightPink';
     }
-    if (responsibles.filter(resp => resp.status !== 'delete').every(resp => resp.done)) return 'LightGreen';
+    if (responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return 'LightGreen';
     return '';
   };
 
   render() {
     const {article, index, disabled, emp_seats} = this.props;
-    const {selected_responsible} = this.state;
+    const {selected_responsible, selected_responsible_id, all_chiefs_added} = this.state;
 
     return (
       <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
@@ -117,9 +124,15 @@ class Article extends React.Component {
           valueField={'emp_seat'}
           fieldName={'Відповідальні'}
           onChange={this.selectResponsible}
-          addItem={this.addResponsible}
+          addItem={this.addResponsible(selected_responsible_id)}
           disabled={disabled}
         />
+
+        <If condition={!all_chiefs_added}>
+          <button className='btn btn-sm btn-outline-secondary mt-1' onClick={() => this.addAllChiefs()} disabled={disabled}>
+            Додати начальників всіх відділів
+          </button>
+        </If>
 
         <div className='mt-2'>
           <For each='responsible' index='idx' of={article.responsibles}>

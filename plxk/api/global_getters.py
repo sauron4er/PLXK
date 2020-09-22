@@ -23,7 +23,8 @@ def get_emp_seats_list():
         'id': emp_seat.pk,
         'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
         'emp_id': emp_seat.employee.id,
-        'seat_id': emp_seat.seat.id
+        'seat_id': emp_seat.seat.id,
+        'is_dep_chief': emp_seat.seat.is_dep_chief,
     } for emp_seat in
         Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
 
