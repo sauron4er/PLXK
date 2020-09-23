@@ -3,6 +3,7 @@ import React from 'react';
 import * as NPMFireworks from 'fireworks-canvas';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import Archive from 'edms/templates/edms/archive/archive';
 
 let container = '';
 const options = {
@@ -37,6 +38,8 @@ class Fireworks extends React.Component {
   }
 }
 
-if (document.getElementById('fireworks')) {
-  ReactDOM.render(<Fireworks />, document.getElementById('fireworks'));
-}
+// if (document.getElementById('fireworks')) {
+//   ReactDOM.render(<Fireworks />, document.getElementById('fireworks'));
+// }
+
+export default Fireworks;

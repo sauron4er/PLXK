@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from plxk.api.try_except import try_except
 from plxk.api.mail_sender import send_email
-from docs.models import File, Article_responsible
+from docs.models import File, Article_responsible, Order_article
 
 testing = settings.STAS_DEBUG
 
@@ -104,8 +104,7 @@ def create_reminder_body(recipient):
 @try_except
 def send_mails_default(post_request):
     author_mail = User.objects.values_list('email', flat=True).filter(id=post_request['author'])[0]
-    articles = json.loads(post_request['articles'])
-    article_ids = [item['id'] for item in articles]
+    article_ids = Order_article.objects.values_list('id', flat=True).filter(order_id=post_request['id'])
 
     author_body = create_mail_body(post_request, author_mail, False)
     send_email(author_mail, author_body)

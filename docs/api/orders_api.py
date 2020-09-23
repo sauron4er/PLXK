@@ -86,7 +86,7 @@ def post_order(post_request):
         order = order_form.save()
         return order
     else:
-        raise ValidationError('docs/orders: function post_order: order_form invalid')
+        raise ValidationError('docs/orders_api/post_order: order_form invalid')
 
 
 @try_except

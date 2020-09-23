@@ -1,0 +1,16 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}EDMS - Організаційна структура{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+{% block content %}
+    <script>
+        {#window.emps = {{ emps|safe }};#}
+    </script>
+
+    <div class="container-fluid px-3" id="org_structure">
+      <div id="bundle">{% render_bundle 'boards' %}</div>
+    </div>
+
+{% endblock %}

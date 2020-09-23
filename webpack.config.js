@@ -8,7 +8,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 module.exports = {
   context: __dirname,
   entry: {
-    ads: './static/index/ads.js',
+    boards: './static/index/boards.js',
     docs: './static/index/docs.js',
     edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',

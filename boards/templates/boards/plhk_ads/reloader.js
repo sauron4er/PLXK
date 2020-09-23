@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import Archive from 'edms/templates/edms/archive/archive';
 
 class Reloader extends React.Component {
   state = {
@@ -67,4 +68,6 @@ class Reloader extends React.Component {
   }
 }
 
-ReactDOM.render(<Reloader />, document.getElementById('reloader'));
+// ReactDOM.render(<Reloader />, document.getElementById('reloader'));
+
+export default Reloader;

@@ -18,7 +18,9 @@
         window.ads = {{ ads|safe }};
     </script>
 
-    <div id="reloader" ></div>
+    <div id="reloader" >
+      {% render_bundle 'boards' %}
+    </div>
         {% if birthdays %}
             <div style="height: 93vh; background-image: url('{% static 'img/birthday_bg/' %}{{bg}}.jpg')" id="bg">
                 <div class='css_happy_birthday'>Вітаємо з Днем народження!</div>
@@ -38,7 +40,9 @@
                         </div>
                     {% endfor %}
                 </div>
-                <div class="container-fluid" id="fireworks" ></div>
+                <div class="container-fluid" id="fireworks" >
+                  {% render_bundle 'boards' %}
+                </div>
             </div>
         {% else %}
             <div style="height: 93vh" class="gradient"></div>
@@ -54,5 +58,4 @@
                 {% endfor %}
             </div>
         </div>
-    {% render_bundle 'ads' %}
 </body>

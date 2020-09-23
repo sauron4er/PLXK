@@ -1,6 +1,5 @@
 from django.conf.urls import url
-
-from . import views
+from . import views, views_org_structure
 urlpatterns = [
     url(r'^$', views.forum, name='index'),
     url(r'^(?P<pk>\d+)/$', views.board_topics, name='topics'),
@@ -11,4 +10,6 @@ urlpatterns = [
     url(r'^edit_ads/', views.edit_ads, name='edit_ads'),
     url(r'^new_ad/', views.new_ad, name='new_ad'),
     url(r'^del_ad/(?P<pk>\d+)/$', views.del_ad, name='del_ad'),
+
+    url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
 ]
