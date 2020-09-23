@@ -40,14 +40,16 @@ class Archive extends React.Component {
   };
 
   getArchive = (doc_type_id) => {
-    axiosGetRequest('get_archive/' + doc_type_id + '/')
-      .then((response) => {
-        this.setState({
-          my_archive: response.my_archive,
-          work_archive: response.work_archive
-        });
-      })
-      .catch((error) => notify(error));
+    if (doc_type_id) {
+      axiosGetRequest('get_archive/' + doc_type_id + '/')
+        .then((response) => {
+          this.setState({
+            my_archive: response.my_archive,
+            work_archive: response.work_archive
+          });
+        })
+        .catch((error) => notify(error));
+    }
   };
 
   onRowClick = (clicked_row) => {
@@ -83,7 +85,7 @@ class Archive extends React.Component {
         <div className='row css_main_div' ref={this.getMainDivRef}>
           <div className='col-lg-4'>
             Створені вами документи
-            <If condition={my_archive}><DxTable
+            <DxTable
               rows={my_archive}
               columns={my_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
@@ -91,11 +93,11 @@ class Archive extends React.Component {
               onRowClick={this.onRowClick}
               height={main_div_height}
               filter
-            /></If>
+            />
           </div>
           <div className='col-lg-4'>
             Документи, що були у роботі
-            <If condition={work_archive}><DxTable
+            <DxTable
               rows={work_archive}
               columns={work_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
@@ -103,7 +105,7 @@ class Archive extends React.Component {
               onRowClick={this.onRowClick}
               height={main_div_height}
               filter
-            /></If>
+            />
           </div>
           <div className='col-lg-4 css_height_100'>
             <Document doc={this.state.row} closed={true} />

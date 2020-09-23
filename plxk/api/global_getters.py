@@ -13,7 +13,7 @@ def get_employees_list():
     } for emp in
         User.objects.only('id', 'last_name', 'first_name')
             .exclude(id=10)  # Викидуємо зі списка користувача Охорона
-            .filter(is_active=True)
+            .filter(is_active=True).filter(userprofile__is_active=True)
             .order_by('last_name')]
 
 
