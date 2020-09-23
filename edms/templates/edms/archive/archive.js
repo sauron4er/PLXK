@@ -83,7 +83,7 @@ class Archive extends React.Component {
         <div className='row css_main_div' ref={this.getMainDivRef}>
           <div className='col-lg-4'>
             Створені вами документи
-            <DxTable
+            <If condition={my_archive}><DxTable
               rows={my_archive}
               columns={my_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
@@ -91,11 +91,11 @@ class Archive extends React.Component {
               onRowClick={this.onRowClick}
               height={main_div_height}
               filter
-            />
+            /></If>
           </div>
           <div className='col-lg-4'>
             Документи, що були у роботі
-            <DxTable
+            <If condition={work_archive}><DxTable
               rows={work_archive}
               columns={work_archive_columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
@@ -103,7 +103,7 @@ class Archive extends React.Component {
               onRowClick={this.onRowClick}
               height={main_div_height}
               filter
-            />
+            /></If>
           </div>
           <div className='col-lg-4 css_height_100'>
             <Document doc={this.state.row} closed={true} />
