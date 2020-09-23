@@ -76,7 +76,7 @@ class Archive extends React.Component {
               fieldName={'Оберіть тип документу'}
               valueField={'description'}
               onChange={(e) => this.onSelectorChange(e)}
-              edit_mode={true}
+              disabled={false}
             />
           </div>
         </div>
