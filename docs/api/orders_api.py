@@ -25,8 +25,8 @@ def get_order_info(id, employee_id):
         'cancels_code': order.cancels_code if order.cancels_code else get_order_code(order.cancels_id),
         'date_start': date_to_json(order.date_start) if order.date_start else '',
         'date_canceled': date_to_json(order.date_canceled) if order.date_canceled else '',
-        'responsible': order.responsible_id,
-        'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name,
+        'responsible': order.responsible_id if order.responsible else 0,
+        'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name if order.responsible else '',
         'supervisory': order.supervisory_id,
         'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name,
         'done': order.done

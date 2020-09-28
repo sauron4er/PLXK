@@ -5,7 +5,7 @@ import 'static/css/my_styles.css';
 import NewDoc from './new_doc';
 import Docs from './docs';
 import Drafts from './drafts';
-import Templates from './templates'
+import Templates from './templates';
 import SeatChooser from '../components/seat_chooser';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -67,9 +67,7 @@ class MyDocs extends React.Component {
 
   // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи, керівники, підлеглі
   componentDidMount() {
-    const seat_id = parseInt(
-      localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id
-    );
+    const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
     this.getDirectSubs(seat_id);
     this.updateLists(seat_id);
 
@@ -83,23 +81,17 @@ class MyDocs extends React.Component {
       });
     }
   }
-  
+
   showDrafts = () => {
-    this.setState({
-      view: 'drafts'
-    })
+    this.setState({view: 'drafts'});
   };
-  
+
   showTemplates = () => {
-  this.setState({
-      view: 'templates'
-    })
+    this.setState({view: 'templates'});
   };
-  
+
   showDocs = () => {
-  this.setState({
-      view: 'docs'
-    })
+    this.setState({view: 'docs'});
   };
 
   // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
@@ -119,7 +111,7 @@ class MyDocs extends React.Component {
       type_id: type_id,
       status: status
     };
-
+  
     this.setState((prevState) => ({
       my_docs: [...prevState.my_docs, new_doc]
     }));

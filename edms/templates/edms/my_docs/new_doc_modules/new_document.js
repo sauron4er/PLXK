@@ -121,38 +121,38 @@ class NewDocument extends React.Component {
       axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
           this.setState({
-            name: response.data.name || '',
-            preamble: response.data.preamble || '',
-            text: response.data.text_list || [],
-            articles: response.data.articles || [],
-            recipient: response.data.recipient || {
+            name: response.name || '',
+            preamble: response.preamble || '',
+            text: response.text_list || [],
+            articles: response.articles || [],
+            recipient: response.recipient || {
               name: '------',
               seat: '------',
               id: 0
             },
-            recipient_chief: response.data.recipient_chief || {
+            recipient_chief: response.recipient_chief || {
               name: '------',
               seat: '------',
               id: 0
             },
-            acquaint_list: response.data.acquaint_list || [],
-            approval_list: response.data.approval_list || [],
-            sign_list: response.data.sign_list || [],
-            old_files: response.data.old_files || [],
-            days: response.data.days || [],
-            gate: response.data.gate || '1',
-            carry_out_items: response.data.carry_out_items || [],
-            client: response.data.client || [],
-            mockup_type: response.data.mockup_type || [],
-            mockup_product_type: response.data.mockup_product_type || [],
+            acquaint_list: response.acquaint_list || [],
+            approval_list: response.approval_list || [],
+            sign_list: response.sign_list || [],
+            old_files: response.old_files || [],
+            days: response.days || [],
+            gate: response.gate || '1',
+            carry_out_items: response.carry_out_items || [],
+            client: response.client || [],
+            mockup_type: response.mockup_type || [],
+            mockup_product_type: response.mockup_product_type || [],
             render_ready: true
           });
-          newDocStore.new_document.client = response.data?.client.id;
-          newDocStore.new_document.client_name = response.data?.client.name;
-          newDocStore.new_document.mockup_type = response.data?.mockup_type.id;
-          newDocStore.new_document.mockup_type_name = response.data?.mockup_type.name;
-          newDocStore.new_document.mockup_product_type = response.data?.mockup_product_type.id;
-          newDocStore.new_document.mockup_product_type_name = response.data?.mockup_product_type.name;
+          newDocStore.new_document.client = response?.client.id;
+          newDocStore.new_document.client_name = response?.client.name;
+          newDocStore.new_document.mockup_type = response?.mockup_type.id;
+          newDocStore.new_document.mockup_type_name = response?.mockup_type.name;
+          newDocStore.new_document.mockup_product_type = response?.mockup_product_type.id;
+          newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type.name;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -226,7 +226,7 @@ class NewDocument extends React.Component {
     try {
       const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
-
+  
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
@@ -261,22 +261,24 @@ class NewDocument extends React.Component {
         else formData.append('old_files', JSON.stringify(old_files));
 
         formData.append('status', type); // Документ, шаблон чи чернетка
+        formData.append('old_status', status); // Попередній статус - шаблон чи чернетка
 
         if (this.state.files.length > 0) {
           this.state.files.map((file) => {
             formData.append('file', file);
           });
         }
+        
+        // TODO Чому новий документ не додається в таблоицю?
   
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
             this.props.addDoc(response, doc.type, getToday(), doc.type_id, type);
 
-            // видаляємо чернетку чи шаблон:
-            if (type === doc.status) {
-              this.delDoc();
-            }
+            // видаляємо чернетку:
+            if (status === 'draft') this.delDoc();
+            
           })
           .catch((error) => notify(error));
 
@@ -290,11 +292,12 @@ class NewDocument extends React.Component {
   delDoc = () => {
     if (this.props.doc.id !== 0) {
       // Якщо це не створення нового документу:
-      axiosPostRequest('del_doc/' + this.props.doc.id + '/')
-        .then((response) => {
-          this.props.removeDoc(this.props.doc.id);
-        })
-        .catch((error) => notify(error));
+      this.props.removeDoc(this.props.doc.id);
+      // axiosPostRequest('del_doc/' + this.props.doc.id + '/')
+      //   .then((response) => {
+      //     this.props.removeDoc(this.props.doc.id);
+      //   })
+      //   .catch((error) => notify(error));
     }
 
     this.props.onCloseModal();
@@ -341,7 +344,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-
+  
     return (
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>

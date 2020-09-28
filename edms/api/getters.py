@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.utils.timezone import datetime
-
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
@@ -29,6 +28,13 @@ def get_main_employee(recipient):
 def get_acting_flag(is_main):
     return ' (в.о.)' if not is_main else ''
 
+
+@try_except
+def get_doc_create_day(doc):
+    create_day = doc.path.values_list('timestamp', flat=True).filter(mark_id=1)
+    if create_day:
+        return convert_to_localtime(create_day[0], 'day')
+    return ''
 
 # Функція, яка повертає інформацію про фазу документа
 @try_except

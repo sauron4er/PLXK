@@ -39,9 +39,7 @@ class Drafts extends React.Component {
 
   // обнуляє селект при закритті модального вікна
   onCloseModal = () => {
-    this.setState({
-      selected_draft: {type_id: 0}
-    });
+    this.setState({selected_draft: {type_id: 0}});
   };
   
   // видаляємо документ із списку чернеток

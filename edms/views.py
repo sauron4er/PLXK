@@ -77,7 +77,7 @@ def delete_doc(doc_request, doc_id):
         if delete_doc_form.is_valid():
             delete_doc_form.save()
         else:
-            raise ValidationError('edms/view func delete_doc: delete_doc_form invalid')
+            raise ValidationError('edms/view/delete_doc: delete_doc_form invalid')
     except ValidationError as err:
         raise err
     except Exception as err:
@@ -831,8 +831,8 @@ def edms_get_direct_subs(request, pk):
 @login_required(login_url='login')
 @try_except
 def edms_get_doc(request, pk):
-    doc = get_object_or_404(Document, pk=pk)
     if request.method == 'GET':
+        doc = get_object_or_404(Document, pk=pk)
         # Всю інформацію про документ записуємо сюди
 
         doc_info = {
@@ -840,7 +840,8 @@ def edms_get_doc(request, pk):
             'author_seat_id': doc.employee_seat.seat_id,
             'type_id': doc.document_type.id,
             'type': doc.document_type.description,
-            'date': convert_to_localtime(doc.path.values_list('timestamp', flat=True).filter(mark_id=1)[0], 'day'),
+            # 'date': get_doc_create_day(doc),
+            'date': convert_to_localtime(doc.path.values_list('timestamp', flat=True).filter(mark_id__in=[1, 16, 19])[0], 'day'),
             'is_changeable': doc.document_type.is_changeable,
             'approved': doc.approved
         }
@@ -1023,7 +1024,7 @@ def edms_my_docs(request):
             new_phase(doc_request, 1, module_recipients)
 
         # Деактивуємо стару чернетку
-        if doc_request['status'] == 'draft':
+        if doc_request['old_status'] == 'draft':
             delete_doc(doc_request, int(doc_request['old_id']))
 
         # Деактивуємо mark_demands документу на основі якого зробили новий
