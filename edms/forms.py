@@ -46,6 +46,12 @@ class SeatForm(forms.ModelForm):
         fields = ('seat', 'department', 'chief', 'is_dep_chief', 'is_active')
 
 
+class SeatInstructionForm(forms.ModelForm):
+    class Meta:
+        model = Seat
+        fields = ('instructions_file',)
+
+
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document

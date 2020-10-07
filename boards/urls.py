@@ -11,5 +11,7 @@ urlpatterns = [
     url(r'^new_ad/', views.new_ad, name='new_ad'),
     url(r'^del_ad/(?P<pk>\d+)/$', views.del_ad, name='del_ad'),
 
+    url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', views_org_structure.get_seat_info, name='get_seat_info'),
+    url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
     url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
 ]

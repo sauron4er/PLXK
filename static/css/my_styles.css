@@ -128,3 +128,13 @@
 .css_calendar_card > button:hover {
   background-color: #28a745;
 }
+
+.css_org_structure_item {
+  border: 1px solid #e6e9ec;
+  padding: 10px;
+  width: 260px;
+}
+
+.css_org_structure_item:hover {
+  background-color: #e6e9ec;
+}

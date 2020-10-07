@@ -11,6 +11,7 @@ class Seat(models.Model):
     department = models.ForeignKey(accounts.Department, related_name='positions', null=True, blank=True)
     chief = models.ForeignKey('self', related_name='subordinate', null=True, blank=True)
     is_dep_chief = models.BooleanField(default=False)
+    instructions_file = models.FileField(upload_to='boards/org_structure/%Y/%m', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
