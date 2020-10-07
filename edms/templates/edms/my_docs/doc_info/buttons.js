@@ -7,7 +7,7 @@ class Buttons extends React.Component {
   // отримує інформацію про документ в масиві doc та створює відповідні кнопки для doc_info
 
   render() {
-    const {doc, isChief, deletable, onClick} = this.props;
+    const {doc, isChief, deletable, onClick, archived} = this.props;
     const user_is_doc_author = doc.author_seat_id === parseInt(localStorage.getItem('my_seat'));
 
     return (
@@ -137,16 +137,18 @@ class Buttons extends React.Component {
             </button>
           </If>
           {/* Додаємо кнопку Закрити */}
-          <button
-            type='button'
-            className='btn btn-secondary mr-1 mb-1'
-            onClick={() => onClick(7)}
-          >
-            В архів
-          </button>
+          <If condition={!archived}>
+            <button
+              type='button'
+              className='btn btn-secondary mr-1 mb-1'
+              onClick={() => onClick(7)}
+            >
+              В архів
+            </button>
+          </If>
         </If>
         {/* Якщо документ використовує approvals, додаємо кнопку "оновити файл" */}
-        <If condition={doc.type_id === 5}>
+        <If condition={doc.type_id === 5 && !archived}>
           <button
             type='button'
             className='btn btn-secondary mr-1 mb-1'
@@ -155,7 +157,7 @@ class Buttons extends React.Component {
             Додати/оновити документ
           </button>
         </If>
-        {/* Кнопки "коментар", "на ознайомлення" та "файл" є завди */}
+        {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
         <button
           type='button'
           className='btn btn-secondary mr-1 mb-1'
@@ -185,7 +187,8 @@ class Buttons extends React.Component {
     isChief: false,
     deletable: false,
     onClick: () => {},
-    doc: []
+    doc: [],
+    archived: false,
   };
 }
 

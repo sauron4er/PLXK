@@ -347,7 +347,14 @@ def post_mark_delete(doc_request):
 
 def post_mark_deactivate(doc_request):
     deactivate_doc(doc_request, int(doc_request['document']))
-    deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
+
+    # Деактивуємо всі mаrk_demands крім на ознайомлення:
+    mark_demands = [{
+        'id': md.id,
+    } for md in Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True).exclude(mark_id=8)]
+
+    for md in mark_demands:
+        deactivate_mark_demand(doc_request, md['id'])
 
 
 # Функції модульних документів -----------------------------------------------------------------------------------------

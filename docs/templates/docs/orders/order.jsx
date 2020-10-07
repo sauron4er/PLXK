@@ -22,7 +22,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 class Order extends React.Component {
   state = {
-    mail_mode: 'to_default',
+    mail_mode: 'to_default', // 'everyone', 'list', 'none'
     mail_list: [],
     pdf_modal_open: false,
     pdf_view_address: '',
@@ -149,7 +149,7 @@ class Order extends React.Component {
       formData.append('cancels_code', cancels_code);
       formData.append('files_old', JSON.stringify(files_old));
       formData.append('cancels_files_old', JSON.stringify(cancels_files_old));
-      formData.append('mail_mode', mail_mode);
+      formData.append('mail_mode', ordersStore.is_orders_admin ? mail_mode : 'none');
       formData.append('mail_list', JSON.stringify(mail_list));
 
       if (files && files.length > 0) files.map((file) => formData.append('files', file));

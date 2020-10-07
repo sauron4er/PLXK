@@ -332,36 +332,41 @@ class Document extends React.Component {
   };
 
   render() {
+    const {doc, archived, directSubs} = this.props;
+    
     if (this.state.ready_for_render === true) {
       if (
-        this.props.doc !== '' &&
-        this.props.doc.id !== 0
+        doc !== '' &&
+        doc.id !== 0
         // && parseInt(localStorage.getItem('my_seat')) === this.props.doc.emp_seat_id
       ) {
+        const {info, deletable, comment, new_files, modal_open, modal} = this.state;
+        
         return (
           <div className='css_main'>
             <div className='d-flex justify-content-between mr-2'>
               <div>
-                <small>Посилання: http://plhk.com.ua/edms/my_docs/{this.props.doc.id}</small>
+                <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc.id}</small>
                 <div>Обраний документ: </div>
               </div>
               <div>
-                <DocumentPrint doc={this.props.doc} info={this.state.info} />
+                <DocumentPrint doc={doc} info={info} />
               </div>
             </div>
 
             {/*Початкова інфа про документ:*/}
             <div className='css_border bg-light p-2 mt-2 mr-1'>
-              <Info doc={this.props.doc} info={this.state.info} />
+              <Info doc={doc} info={info} />
             </div>
 
-            <If condition={this.props.closed === false}>
+            {/*<If condition={archived === false}>*/}
               <div className='mt-3'>Відреагувати:</div>
               <div className='css_border bg-light p-2 mt-1 mr-1'>
                 <Buttons
-                  doc={this.props.doc}
-                  isChief={this.props.directSubs.length > 0}
-                  deletable={this.state.deletable}
+                  archived={archived}
+                  doc={doc}
+                  isChief={directSubs.length > 0}
+                  deletable={deletable}
                   onClick={this.onButtonClick}
                 />
                 <div>
@@ -372,7 +377,7 @@ class Document extends React.Component {
                     rows='3'
                     id='comment'
                     onChange={this.onChange}
-                    value={this.state.comment}
+                    value={comment}
                   />
                 </div>
                 <hr />
@@ -390,29 +395,29 @@ class Document extends React.Component {
                 >
                   Обрати файл(и)
                 </Files>
-                <If condition={this.state.new_files.length > 0}>
-                  <NewFilesList files={this.state.new_files} fileRemove={this.filesRemoveOne} />
+                <If condition={new_files.length > 0}>
+                  <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
                 </If>
               </div>
-            </If>
+            {/*</If>*/}
 
             {/*У кого документ на черзі*/}
-            <If condition={this.state.info.flow}>
-              <Flow flow={this.state.info.flow} />
+            <If condition={info.flow}>
+              <Flow flow={info.flow} />
             </If>
 
             {/*У кого документ на ознайомленні*/}
-            <If condition={this.state.info.acquaints}>
-              <Acquaints acquaints={this.state.info.acquaints} />
+            <If condition={info.acquaints}>
+              <Acquaints acquaints={info.acquaints} />
             </If>
 
             {/*Історія документа*/}
-            <Path path={this.state.info.path} onAnswerClick={this.onAnswerClick} />
+            <Path path={info.path} onAnswerClick={this.onAnswerClick} />
 
             {/*Модальне вікно*/}
-            <Modal open={this.state.modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
+            <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
               <ToastContainer />
-              {this.state.modal}
+              {modal}
             </Modal>
 
             <If condition={docInfoStore.view === 'new_document'}>
@@ -432,9 +437,9 @@ class Document extends React.Component {
             <ToastContainer />
           </div>
         );
-      } else if (this.props.doc.id === 0) {
+      } else if (doc.id === 0) {
         //  // повідомлення при додаванні позначки
-        return <div className='font-italic'>{this.props.doc.type}</div>;
+        return <div className='font-italic'>{doc.type}</div>;
       } else {
         // якщо не вибрано жоден документ
         return <div> </div>;
@@ -454,7 +459,7 @@ class Document extends React.Component {
     doc: [],
     directSubs: [],
     removeRow: () => {},
-    closed: false
+    archived: false
   };
 }
 

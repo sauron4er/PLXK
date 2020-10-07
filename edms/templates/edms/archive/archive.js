@@ -64,6 +64,34 @@ class Archive extends React.Component {
     });
     this.getArchive(e.target.options[selectedIndex].getAttribute('data-key'));
   };
+  
+  onNewMark = (id, mark_id, author_id) => {
+    // рендеримо відповідь на подію:
+    let answer = '';
+    switch (mark_id) {
+      case 4:
+        answer = 'Коментар до документу №' + id + ' опубліковано.';
+        break;
+      case 8:
+        answer = 'Позначка "Ознайомлений" додана до документу №' + id + '.';
+        break;
+      case 12:
+        answer = 'Файл до документу №' + id + ' додано.';
+        break;
+      case 15:
+        answer = 'Документ №' + id + ' відправлено на ознайомлення.';
+        break;
+      case 21:
+        answer = 'Відповідь на коментар додано';
+        break;
+    }
+    this.setState({
+      row: {
+        id: 0,
+        type: answer
+      }
+    });
+  };
 
   render() {
     const {main_div_height, doc_type_name, my_archive, work_archive} = this.state;
@@ -108,7 +136,7 @@ class Archive extends React.Component {
             />
           </div>
           <div className='col-lg-4 css_height_100'>
-            <Document doc={this.state.row} closed={true} />
+            <Document doc={this.state.row} archived={true} removeRow={this.onNewMark} />
           </div>
         </div>
       </>

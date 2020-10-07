@@ -40,12 +40,16 @@ urlpatterns = [
     url(r'^my_docs/get_doc_type_modules/(?P<pk>\d+)/$', edms_get_doc_type_modules, name='my_docs_get_doc_type_modules'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
+    url(r'^archive/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),
+    url(r'^archive/mark/', edms_mark, name='my_docs_mark'),
     url(r'^archive/', edms_archive, name='archive'),
 
     url(r'^sub_docs/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
     url(r'^sub_docs/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
     url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
+    url(r'^sub_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
+    url(r'^sub_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
     url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),

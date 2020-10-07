@@ -219,7 +219,7 @@ class Docs extends React.Component {
             doc={this.state.row}
             directSubs={this.props.directSubs}
             removeRow={this.removeRow}
-            closed={false}
+            archived={false}
           />
         </div>
       </div>
