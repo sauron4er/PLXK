@@ -32,9 +32,7 @@ class MyDocs extends React.Component {
       .then((response) => {
         // Передаємо список у state, якщо він є
         if (response.data) {
-          this.setState({
-            direct_subs: response.data
-          });
+          this.setState({direct_subs: response.data});
         }
       })
       .catch((error) => {
@@ -48,9 +46,7 @@ class MyDocs extends React.Component {
     window.my_docs.map((doc) => {
       if (doc.author_seat_id === seat_id) {
         // сортування по посаді
-        this.setState((prevState) => ({
-          my_docs: [...prevState.my_docs, doc]
-        }));
+        this.setState((prevState) => ({my_docs: [...prevState.my_docs, doc]}));
       }
     });
 
@@ -58,9 +54,7 @@ class MyDocs extends React.Component {
     window.work_docs.map((doc) => {
       if (doc.emp_seat_id === seat_id) {
         // сортування по посаді
-        this.setState((prevState) => ({
-          work_docs: [...prevState.work_docs, doc]
-        }));
+        this.setState((prevState) => ({work_docs: [...prevState.work_docs, doc]}));
       }
     });
   };
@@ -76,9 +70,7 @@ class MyDocs extends React.Component {
     const last_href_piece = parseInt(arr[arr.length - 1]);
     const is_link = !isNaN(last_href_piece);
     if (is_link) {
-      this.setState({
-        open_doc_id: last_href_piece
-      });
+      this.setState({open_doc_id: last_href_piece});
     }
   }
 
@@ -111,7 +103,7 @@ class MyDocs extends React.Component {
       type_id: type_id,
       status: status
     };
-  
+
     this.setState((prevState) => ({
       my_docs: [...prevState.my_docs, new_doc]
     }));
@@ -136,10 +128,12 @@ class MyDocs extends React.Component {
   };
 
   render() {
+    const {view, seat_id, my_docs, work_docs, acting_docs, direct_subs, open_doc_id} = this.state;
+
     return (
       <>
         <Choose>
-          <When condition={this.state.view === 'docs'}>
+          <When condition={view === 'docs'}>
             <div className='d-flex justify-content-between'>
               <div className='d-flex'>
                 <NewDoc addDoc={this.addDoc} />
@@ -153,33 +147,33 @@ class MyDocs extends React.Component {
               <SeatChooser onSeatChange={this.onSeatChange} />
             </div>
             <Docs
-              my_seat_id={this.state.seat_id}
-              my_docs={this.state.my_docs}
-              work_docs={this.state.work_docs}
-              acting_docs={this.state.acting_docs}
+              my_seat_id={seat_id}
+              my_docs={my_docs}
+              work_docs={work_docs}
+              acting_docs={acting_docs}
               removeMyDoc={this.removeDoc}
               removeWorkDoc={this.removeWorkDoc}
-              directSubs={this.state.direct_subs}
-              openDocId={this.state.open_doc_id}
+              directSubs={direct_subs}
+              openDocId={open_doc_id}
             />
           </When>
-          <When condition={this.state.view === 'drafts'}>
+          <When condition={view === 'drafts'}>
             <div className='d-flex justify-content-between'>
               <button type='button' className='btn btn-link pb-2' onClick={this.showDocs}>
                 Назад
               </button>
               <SeatChooser onSeatChange={this.onSeatChange} />
             </div>
-            <Drafts drafts={this.state.my_docs} addDoc={this.addDoc} removeDoc={this.removeDoc} />
+            <Drafts drafts={my_docs} addDoc={this.addDoc} removeDoc={this.removeDoc} />
           </When>
-          <When condition={this.state.view === 'templates'}>
+          <When condition={view === 'templates'}>
             <div className='d-flex justify-content-between'>
               <button type='button' className='btn btn-link pb-2' onClick={this.showDocs}>
                 Назад
               </button>
               <SeatChooser onSeatChange={this.onSeatChange} />
             </div>
-            <Templates templates={this.state.my_docs} addDoc={this.addDoc} removeDoc={this.removeDoc} />
+            <Templates templates={my_docs} addDoc={this.addDoc} removeDoc={this.removeDoc} />
           </When>
         </Choose>
       </>

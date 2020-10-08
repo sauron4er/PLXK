@@ -4,19 +4,19 @@ import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 
 class Buttons extends React.Component {
-  // отримує інформацію про документ в масиві doc та створює відповідні кнопки для doc_info
+  // отримує інформацію про документ в масиві info та створює відповідні кнопки для doc_info
 
   render() {
-    const {doc, isChief, deletable, onClick, archived} = this.props;
-    const user_is_doc_author = doc.author_seat_id === parseInt(localStorage.getItem('my_seat'));
-
+    const {info, isChief, deletable, onClick, archived} = this.props;
+    const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
+  
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
-        <If condition={doc.expected_mark}>
+        <If condition={info.expected_mark}>
           {/* Дивимось, яку позначку очікує flow і показуємо відповідні кнопки */}
           <Choose>
-            <When condition={doc.expected_mark === 6}>
+            <When condition={info.expected_mark === 6}>
               {/* Не заперечую */}
               <button
                 type='button'
@@ -34,11 +34,8 @@ class Buttons extends React.Component {
                   Відмовити
                 </button>
               </If>
-              {/*<If condition={this.props.doc.type_id !== 1}>*/}
-              {/*<button type="button" className="btn btn-secondary mr-1 mb-1" onClick={(e) => this.props.onClick(e, 5)}>На доопрацювання</button>*/}
-              {/*</If>*/}
             </When>
-            <When condition={doc.expected_mark === 2}>
+            <When condition={info.expected_mark === 2}>
               {/* Погоджую */}
               <button
                 type='button'
@@ -55,7 +52,7 @@ class Buttons extends React.Component {
                 Відмовити
               </button>
             </When>
-            <When condition={doc.expected_mark === 8}>
+            <When condition={info.expected_mark === 8}>
               {/* Ознайомлений */}
               <button
                 type='button'
@@ -65,7 +62,7 @@ class Buttons extends React.Component {
                 Ознайомлений
               </button>
             </When>
-            <When condition={doc.expected_mark === 11}>
+            <When condition={info.expected_mark === 11}>
               {/* Виконано */}
               <button
                 type='button'
@@ -85,7 +82,7 @@ class Buttons extends React.Component {
                 </button>
               </If>
             </When>
-            <When condition={doc.expected_mark === 17}>
+            <When condition={info.expected_mark === 17}>
               {/* Віза */}
               <button
                 type='button'
@@ -102,7 +99,7 @@ class Buttons extends React.Component {
                 Відмовити
               </button>
             </When>
-            <When condition={doc.expected_mark === 22}>
+            <When condition={info.expected_mark === 22}>
               {/* Прикріплення сканів підписаних документів */}
               <button
                 type='button'
@@ -117,7 +114,7 @@ class Buttons extends React.Component {
         {/* Якщо автор я */}
         <If condition={user_is_doc_author}>
           {/*Якщо тип документа редагуємий*/}
-          <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable}>
+          <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
@@ -137,7 +134,8 @@ class Buttons extends React.Component {
             </button>
           </If>
           {/* Додаємо кнопку Закрити */}
-          <If condition={!archived}>
+          <If condition={!archived && !info.archived}>
+            {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
@@ -148,7 +146,7 @@ class Buttons extends React.Component {
           </If>
         </If>
         {/* Якщо документ використовує approvals, додаємо кнопку "оновити файл" */}
-        <If condition={doc.type_id === 5 && !archived}>
+        <If condition={info.type_id === 5 && !archived && !info.archived}>
           <button
             type='button'
             className='btn btn-secondary mr-1 mb-1'
@@ -187,7 +185,7 @@ class Buttons extends React.Component {
     isChief: false,
     deletable: false,
     onClick: () => {},
-    doc: [],
+    info: [],
     archived: false,
   };
 }

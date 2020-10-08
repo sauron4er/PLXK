@@ -3,6 +3,8 @@ import React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
 import Document from './doc_info/document';
 import 'static/css/my_styles.css';
+import {view, store} from '@risingstack/react-easy-state';
+import docInfoStore from './doc_info/doc_info_modules/doc_info_store';
 
 class Docs extends React.Component {
   state = {
@@ -27,6 +29,7 @@ class Docs extends React.Component {
       {columnName: 'author'}
     ],
     row: '',
+    opened_doc_id: 0,
     modal_row: '',
     doc_info: '',
     carry_out_items: [],
@@ -44,6 +47,10 @@ class Docs extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     // Якщо ми отримали посилання на документ, шукаємо його в таблиці Мої документи:
     if (prevProps.openDocId !== this.props.openDocId) {
+      this.setState({
+        opened_doc_id: this.props.openDocId,
+      });
+      
       let doc_info = '';
       for (let i = 0; i < this.props.my_docs.length; i++) {
         if (this.props.my_docs[i].id === this.props.openDocId) {
@@ -60,11 +67,10 @@ class Docs extends React.Component {
           }
         }
       }
-      // Якщо знайшли документ, показуємо його:
+      
+      //Якщо знайшли документ, показуємо його:
       if (doc_info !== '') {
-        this.setState({
-          row: doc_info
-        });
+        this.setState({row: doc_info});
       }
     }
   }
@@ -75,13 +81,12 @@ class Docs extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
-    this.setState({row: clicked_row});
+    this.setState({opened_doc_id: clicked_row.id});
   };
 
   // видаляє запис про виділений рядок, щоб очистити компонент DocInfo, передає інфу про закритий документ в MyDocs
   removeRow = (id, mark_id, author_id) => {
     // видаляємо документ зі списку, якщо реакція не коментар, файл чи "на ознайомлення" та якщо автор позначки не автор документу:
-
     // TODO реформатувати цей кошмарний код. (Переробити дві таблиці на одну і працювати з однією?)
     
     if (author_id === parseInt(localStorage.getItem('my_seat'))) {
@@ -148,12 +153,8 @@ class Docs extends React.Component {
         answer = 'Підписані документи додано. Договір додано у базу Договорів';
         break;
     }
-    this.setState({
-      row: {
-        id: 0,
-        type: answer
-      }
-    });
+    this.setState({opened_doc_id: 0});
+    docInfoStore.answer = answer;
   };
 
   render() {
@@ -162,12 +163,13 @@ class Docs extends React.Component {
       my_docs_columns,
       my_docs_col_width,
       work_docs_col_width,
-      main_div_height
+      main_div_height,
+      opened_doc_id
     } = this.state;
     
     const my_docs = this.props.my_docs ? this.props.my_docs.filter(doc => doc.status === 'doc') : [];
     const {work_docs} = this.props;
-
+  
     return (
       <div className='row css_main_div' ref={this.getMainDivRef}>
         <div className='col-lg-4'>
@@ -216,7 +218,8 @@ class Docs extends React.Component {
 
         <div className='col-lg-4 css_height_100'>
           <Document
-            doc={this.state.row}
+            // doc={this.state.row}
+            doc_id={opened_doc_id}
             directSubs={this.props.directSubs}
             removeRow={this.removeRow}
             archived={false}
@@ -232,4 +235,4 @@ class Docs extends React.Component {
   };
 }
 
-export default Docs;
+export default view(Docs);

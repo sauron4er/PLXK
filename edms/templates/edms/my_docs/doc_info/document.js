@@ -47,14 +47,12 @@ class Document extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.doc) this.getDoc(this.props.doc);
+    if (this.props.doc_id) this.getDoc(this.props.doc_id);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // при зміні ід документа (клік на інший документ) - запит інфи про документ з бд
-    if (this.props.doc.id && this.props.doc.id !== prevProps.doc.id && this.props.doc.id !== 0) {
-      docInfoStore.doc = this.props.doc;
-      this.getDoc(this.props.doc);
+    if (this.props.doc_id && this.props.doc_id !== prevProps.doc_id && this.props.doc_id !== 0) {
+      this.getDoc(this.props.doc_id);
     }
   }
 
@@ -63,12 +61,13 @@ class Document extends React.Component {
   };
 
   // функція для отримання з бази докладної інфи про документ
-  getDoc = (doc) => {
-    this.setState({
-      ready_for_render: false
-    });
+  getDoc = (doc_id) => {
+    this.setState({ready_for_render: false});
 
-    axiosGetRequest('get_doc/' + doc.id + '/')
+    let formData = new FormData();
+    formData.append('employee_seat', localStorage.getItem('my_seat'));
+
+    axiosPostRequest('get_doc/' + doc_id + '/', formData)
       .then((response) => {
         // Отримуємо інформацію щодо конкретних видів документів
         this.setState({
@@ -88,13 +87,14 @@ class Document extends React.Component {
         }
       })
       .catch((error) => notify(error));
+
     return 0;
   };
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
-    const {new_files, updated_files, deleted_files, comment, resolutions, acquaints} = this.state;
-    const {doc, removeRow} = this.props;
+    const {info, new_files, updated_files, deleted_files, comment, resolutions, acquaints} = this.state;
+    const {doc_id, removeRow} = this.props;
 
     let formData = new FormData();
     new_files.map((file) => {
@@ -109,23 +109,22 @@ class Document extends React.Component {
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('updated_files', JSON.stringify(updated_files));
     deleted_files.length > 0 ? formData.append('deleted_files', JSON.stringify(deleted_files)) : null;
-    formData.append('document', doc.id);
+    formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
     formData.append('mark', mark_id);
     formData.append('comment', comment);
     formData.append('resolutions', JSON.stringify(resolutions));
     formData.append('acquaints', JSON.stringify(acquaints));
-    formData.append('mark_demand_id', doc.mark_demand_id);
+    formData.append('mark_demand_id', info.mark_demand_id);
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
-    formData.append('phase_id', doc.phase_id ? doc.phase_id : 0);
+    formData.append('phase_id', info.phase_id ? info.phase_id : 0);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
         if (response === 'not deletable') {
           this.notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
-          // this.filesRemoveAll();
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response,
@@ -134,8 +133,7 @@ class Document extends React.Component {
             new_files: [],
             updated_files: []
           });
-          const doc_id = doc.id;
-          const author_id = doc.author_seat_id;
+          const author_id = info.author_seat_id;
           removeRow(doc_id, mark_id, author_id);
         }
       })
@@ -189,7 +187,7 @@ class Document extends React.Component {
               onCloseModal={this.onCloseModal}
               directSubs={this.props.directSubs}
               onSubmit={this.handleResolutions}
-              doc_id={this.props.doc.id}
+              doc_id={this.props.doc_id}
               notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
@@ -203,7 +201,7 @@ class Document extends React.Component {
             <NewAcquaints
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleAcquaints}
-              doc_id={this.props.doc.id}
+              doc_id={this.props.doc_id}
               notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
@@ -218,9 +216,7 @@ class Document extends React.Component {
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleFilesChange}
               files={this.state.info.old_files}
-              // doc_id={this.props.doc.id}
               notify={this.notify}
-              // new_path_id={this.state.new_path_id}
             />
           ),
           modal_open: true
@@ -228,13 +224,7 @@ class Document extends React.Component {
         break;
       case 21:
         this.setState({
-          modal: (
-            <AnswerComment
-              // originalComment={}
-              onSubmit={(comment) => this.handleComment(comment, 21)}
-              onCloseModal={this.onCloseModal}
-            />
-          ),
+          modal: <AnswerComment onSubmit={(comment) => this.handleComment(comment, 21)} onCloseModal={this.onCloseModal} />,
           modal_open: true
         });
         break;
@@ -249,48 +239,33 @@ class Document extends React.Component {
 
   handleResolutions = (resolutions) => {
     if (resolutions.length > 0) {
-      this.setState(
-        {
-          resolutions: resolutions
-        },
-        () => {
-          this.postMark(10);
-          this.onCloseModal();
-        }
-      );
+      this.setState({resolutions: resolutions}, () => {
+        this.postMark(10);
+        this.onCloseModal();
+      });
     } else {
       this.notify('Додайте резолюції');
     }
   };
-  
+
   handleAcquaints = (acquaints) => {
     if (acquaints.length > 0) {
-      this.setState(
-        {
-          acquaints: acquaints
-        },
-        () => {
-          this.postMark(15);
-          this.onCloseModal();
-        }
-      );
+      this.setState({acquaints: acquaints}, () => {
+        this.postMark(15);
+        this.onCloseModal();
+      });
     } else {
       this.notify('Додайте резолюції');
     }
   };
 
   handleComment = (comment, mark) => {
-    this.setState(
-      {
-        comment: comment
-      },
-      () => {
-        this.postMark(mark);
-        this.onCloseModal();
-      }
-    );
+    this.setState({comment: comment}, () => {
+      this.postMark(mark);
+      this.onCloseModal();
+    });
   };
-  
+
   handleFilesChange = (files, comment) => {
     this.setState(
       {
@@ -308,11 +283,9 @@ class Document extends React.Component {
     this.postMark(22);
     this.onCloseModal();
   };
-  
+
   onNewFiles = (new_files) => {
-    this.setState({
-      new_files
-    });
+    this.setState({new_files});
   };
 
   onFilesError = (error, file) => {
@@ -332,114 +305,114 @@ class Document extends React.Component {
   };
 
   render() {
-    const {doc, archived, directSubs} = this.props;
-    
-    if (this.state.ready_for_render === true) {
-      if (
-        doc !== '' &&
-        doc.id !== 0
-        // && parseInt(localStorage.getItem('my_seat')) === this.props.doc.emp_seat_id
-      ) {
+    const {doc_id, archived, directSubs} = this.props;
+    const {ready_for_render} = this.state;
+
+    if (ready_for_render === true) {
+      if (doc_id !== 0) {
         const {info, deletable, comment, new_files, modal_open, modal} = this.state;
-        
+
         return (
-          <div className='css_main'>
-            <div className='d-flex justify-content-between mr-2'>
-              <div>
-                <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc.id}</small>
-                <div>Обраний документ: </div>
-              </div>
-              <div>
-                <DocumentPrint doc={doc} info={info} />
-              </div>
-            </div>
-
-            {/*Початкова інфа про документ:*/}
-            <div className='css_border bg-light p-2 mt-2 mr-1'>
-              <Info doc={doc} info={info} />
-            </div>
-
-            {/*<If condition={archived === false}>*/}
-              <div className='mt-3'>Відреагувати:</div>
-              <div className='css_border bg-light p-2 mt-1 mr-1'>
-                <Buttons
-                  archived={archived}
-                  doc={doc}
-                  isChief={directSubs.length > 0}
-                  deletable={deletable}
-                  onClick={this.onButtonClick}
-                />
-                <div>
-                  <label htmlFor='comment'>Текст коментарю:</label>
-                  <textarea
-                    name='comment'
-                    className='form-control'
-                    rows='3'
-                    id='comment'
-                    onChange={this.onChange}
-                    value={comment}
-                  />
+          <Choose>
+            <When condition={info.access_granted}>
+              <div className='css_main'>
+                <div className='d-flex justify-content-between mr-2'>
+                  <div>
+                    <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc_id}</small>
+                    <div>Обраний документ:</div>
+                  </div>
+                  <div>
+                    <DocumentPrint info={info} />
+                  </div>
                 </div>
-                <hr />
-                <Files
-                  ref='new_files'
-                  className='btn btn-sm btn-outline-secondary'
-                  // className='files-dropzone-list'
-                  onChange={this.onNewFiles}
-                  onError={this.onFilesError}
-                  multiple
-                  maxFiles={10}
-                  maxFileSize={10000000}
-                  minFileSize={0}
-                  clickable
-                >
-                  Обрати файл(и)
-                </Files>
-                <If condition={new_files.length > 0}>
-                  <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
+
+                {/*Початкова інфа про документ:*/}
+                <div className='css_border bg-light p-2 mt-2 mr-1'>
+                  <Info info={info} />
+                </div>
+
+                {/*<If condition={archived === false}>*/}
+                <div className='mt-3'>Відреагувати:</div>
+                <div className='css_border bg-light p-2 mt-1 mr-1'>
+                  <Buttons
+                    info={info}
+                    archived={archived}
+                    isChief={directSubs.length > 0}
+                    deletable={deletable}
+                    onClick={this.onButtonClick}
+                  />
+                  <div>
+                    <label htmlFor='comment'>Текст коментарю:</label>
+                    <textarea name='comment' className='form-control' rows='3' id='comment' onChange={this.onChange} value={comment} />
+                  </div>
+                  <hr />
+                  <Files
+                    ref='new_files'
+                    className='btn btn-sm btn-outline-secondary'
+                    // className='files-dropzone-list'
+                    onChange={this.onNewFiles}
+                    onError={this.onFilesError}
+                    multiple
+                    maxFiles={10}
+                    maxFileSize={10000000}
+                    minFileSize={0}
+                    clickable
+                  >
+                    Обрати файл(и)
+                  </Files>
+                  <If condition={new_files.length > 0}>
+                    <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
+                  </If>
+                </div>
+                {/*</If>*/}
+
+                {/*У кого документ на черзі*/}
+                <If condition={info.flow}>
+                  <Flow flow={info.flow} />
                 </If>
+
+                {/*У кого документ на ознайомленні*/}
+                <If condition={info.acquaints}>
+                  <Acquaints acquaints={info.acquaints} />
+                </If>
+
+                {/*Історія документа*/}
+                <Path path={info.path} onAnswerClick={this.onAnswerClick} />
+
+                {/*Модальне вікно*/}
+                <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
+                  <ToastContainer />
+                  {modal}
+                </Modal>
+
+                <If condition={docInfoStore.view === 'new_document'}>
+                  <NewDocument
+                    doc={{
+                      id: docInfoStore.doc.id,
+                      type: docInfoStore.doc.type,
+                      type_id: docInfoStore.doc.type_id
+                    }}
+                    addDoc={this.addDoc}
+                    status={'change'}
+                    onCloseModal={() => (docInfoStore.view = 'info')}
+                  />
+                </If>
+
+                {/*Вспливаюче повідомлення*/}
+                <ToastContainer />
               </div>
-            {/*</If>*/}
-
-            {/*У кого документ на черзі*/}
-            <If condition={info.flow}>
-              <Flow flow={info.flow} />
-            </If>
-
-            {/*У кого документ на ознайомленні*/}
-            <If condition={info.acquaints}>
-              <Acquaints acquaints={info.acquaints} />
-            </If>
-
-            {/*Історія документа*/}
-            <Path path={info.path} onAnswerClick={this.onAnswerClick} />
-
-            {/*Модальне вікно*/}
-            <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
-              <ToastContainer />
-              {modal}
-            </Modal>
-
-            <If condition={docInfoStore.view === 'new_document'}>
-              <NewDocument
-                doc={{
-                  id: docInfoStore.doc.id,
-                  type: docInfoStore.doc.type,
-                  type_id: docInfoStore.doc.type_id
-                }}
-                addDoc={this.addDoc}
-                status={'change'}
-                onCloseModal={() => (docInfoStore.view = 'info')}
-              />
-            </If>
-
-            {/*Вспливаюче повідомлення*/}
-            <ToastContainer />
-          </div>
+            </When>
+            <Otherwise>
+              <div>Документ № {doc_id}</div>
+              <div>
+                У вас немає доступу до цього документа. Зверніться до його автора, щоб він відправив вам цей документ на ознайомлення
+              </div>
+            </Otherwise>
+          </Choose>
         );
-      } else if (doc.id === 0) {
+      } else if (doc_id === 0) {
         //  // повідомлення при додаванні позначки
-        return <div className='font-italic'>{doc.type}</div>;
+        return <div className='font-italic'>{docInfoStore.answer}</div>;
       } else {
         // якщо не вибрано жоден документ
         return <div> </div>;
@@ -457,6 +430,7 @@ class Document extends React.Component {
 
   static defaultProps = {
     doc: [],
+    doc_id: 0,
     directSubs: [],
     removeRow: () => {},
     archived: false

@@ -109,7 +109,7 @@ class OrdersCalendar extends React.Component {
                         </div>
                         <div>{`Завдання: ${order.article_text}`}</div>
                         <If condition={is_admin}>
-                          <div>{`Виконавець: ${order.responsible_name}`}</div>
+                          <div className='mt-1 font-weight-bold'>{`Виконавець: ${order.responsible_name}`}</div>
                         </If>
                       </div>
                       <button

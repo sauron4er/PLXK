@@ -12,8 +12,8 @@ import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
 
 class Info extends React.Component {
   render() {
-    const {info, doc} = this.props;
-
+    
+    const {info} = this.props;
     if (info.path) {
       return (
         <div>
@@ -23,7 +23,7 @@ class Info extends React.Component {
           </div>
           <div>
             <span>
-              №: {doc.id}. Дата: {info.date}
+              №: {info.id}. Дата: {info.date}
             </span>
           </div>
           <div>
@@ -107,13 +107,13 @@ class Info extends React.Component {
           </If>
 
           {/*Резолюції керівника (показуються, якщо документ чекає позначку "Виконано")*/}
-          <If condition={this.props.doc?.expected_mark === 11}>
+          <If condition={info?.expected_mark === 11}>
             <Resolutions path={info.path} />
           </If>
         </div>
       );
     } else {
-      return <div>xz</div>;
+      return <div>Щось пішло не так, зверніться до адміністратора</div>;
     }
   }
 }

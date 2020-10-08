@@ -7,6 +7,7 @@ import SeatChooser from '../components/seat_chooser';
 import DocTypeChooser from '../components/doc_type_chooser';
 import SubEmpChooser from '../components/sub_emp_chooser';
 import 'static/css/my_styles.css';
+import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
@@ -16,7 +17,7 @@ class SubDocs extends React.Component {
     seat_id: 0,
     sub_docs: [],
     sub_archive: [],
-    row: '',
+    opened_doc_id: 0,
     doc_info: '',
     carry_out_items: [],
 
@@ -50,9 +51,7 @@ class SubDocs extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({
-      main_div_height: this.mainDivRef.clientHeight - 30
-    });
+    this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -65,9 +64,8 @@ class SubDocs extends React.Component {
       localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id
     );
     const {doc_type, sub_emp} = this.state;
-    this.setState({
-      loading: true
-    });
+    this.setState({loading: true});
+    
     axios({
       // отримуємо з бази список документів
       method: 'get',
@@ -77,7 +75,6 @@ class SubDocs extends React.Component {
       }
     })
       .then((response) => {
-        
         this.setState({
           empty_response: response.data.length === 0,
           loading: false
@@ -94,32 +91,23 @@ class SubDocs extends React.Component {
 
     doc_list.map((doc) => {
       if (doc.is_active) {
-        this.setState((prevState) => ({
-          sub_docs: [...prevState.sub_docs, doc]
-        }));
+        this.setState((prevState) => ({sub_docs: [...prevState.sub_docs, doc]}));
       } else {
-        this.setState((prevState) => ({
-          sub_archive: [...prevState.sub_archive, doc]
-        }));
+        this.setState((prevState) => ({sub_archive: [...prevState.sub_archive, doc]}));
       }
     });
   };
 
   onChangeDocType = (doc_type) => {
-    this.setState({
-      doc_type: doc_type
-    });
+    this.setState({doc_type: doc_type});
   };
 
   onChangeSubEmp = (sub_emp) => {
-    this.setState({
-      sub_emp: sub_emp
-    });
+    this.setState({sub_emp: sub_emp});
   };
-
-  // Виклик історії документу
+  
   onRowClick = (clicked_row) => {
-    this.setState({row: clicked_row});
+    this.setState({opened_doc_id: clicked_row.id});
   };
   
   onNewMark = (id, mark_id, author_id) => {
@@ -142,12 +130,8 @@ class SubDocs extends React.Component {
         answer = 'Відповідь на коментар додано';
         break;
     }
-    this.setState({
-      row: {
-        id: 0,
-        type: answer
-      }
-    });
+    this.setState({opened_doc_id: 0});
+    docInfoStore.answer = answer;
   };
 
   render() {
@@ -159,7 +143,7 @@ class SubDocs extends React.Component {
       sub_emp,
       sub_docs,
       sub_archive,
-      row,
+      opened_doc_id,
       loading,
       empty_response
     } = this.state;
@@ -216,7 +200,7 @@ class SubDocs extends React.Component {
                 />
               </div>
               <div className='col-lg-4 css_height_100'>
-                <Document doc={row} archived={true} removeRow={this.onNewMark} />
+                <Document doc_id={opened_doc_id} archived={true} removeRow={this.onNewMark} />
               </div>
             </When>
             <When condition={empty_response}>

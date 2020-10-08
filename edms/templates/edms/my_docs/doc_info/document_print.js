@@ -18,7 +18,7 @@ class DocumentPrint extends React.Component {
   };
 
   render() {
-    const {doc, info} = this.props;
+    const {info} = this.props;
 
     return (
       <>
@@ -37,7 +37,7 @@ class DocumentPrint extends React.Component {
             <img src="../../../../../static/img/blank_header.png" alt="Italian Trulli" style={{width: '100%'}} />
             
             <div className='css_border bg-light p-2 mt-2 mr-1'>
-              <Info doc={doc} info={info} />
+              <Info info={info} />
             </div>
             <Path path={info.path} print={true} />
           </div>
@@ -47,7 +47,6 @@ class DocumentPrint extends React.Component {
   }
 
   static defaultProps = {
-    doc: [],
     info: []
   };
 }

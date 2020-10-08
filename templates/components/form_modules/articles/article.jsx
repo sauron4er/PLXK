@@ -105,7 +105,7 @@ class Article extends React.Component {
   render() {
     const {article, index, disabled, emp_seats} = this.props;
     const {selected_responsible, selected_responsible_id, all_chiefs_added} = this.state;
-
+  
     return (
       <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
         <div className='font-weight-bold'>{index + 1}</div>
@@ -128,7 +128,7 @@ class Article extends React.Component {
           disabled={disabled}
         />
 
-        <If condition={!all_chiefs_added}>
+        <If condition={!all_chiefs_added && !disabled}>
           <button className='btn btn-sm btn-outline-secondary mt-1' onClick={() => this.addAllChiefs()} disabled={disabled}>
             Додати начальників всіх відділів
           </button>

@@ -6,6 +6,7 @@ import Selector from '../../../../templates/components/form_modules/selector';
 import 'static/css/my_styles.css';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
+import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 
 // налаштування колонок для таблиць
 const my_archive_columns = [
@@ -26,7 +27,7 @@ class Archive extends React.Component {
     seat_id: 0, // посада
     my_archive: [], // список моїх документів
     work_archive: [], // список документів, що були в роботі
-    row: '', // вибраний документ
+    opened_doc_id: 0,
     doc_info: '', // отримана з бд інфа про вибраний документ
     carry_out_items: [],
     main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
@@ -53,7 +54,7 @@ class Archive extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
-    this.setState({row: clicked_row});
+    this.setState({opened_doc_id: clicked_row.id});
   };
 
   onSelectorChange = (e) => {
@@ -85,16 +86,12 @@ class Archive extends React.Component {
         answer = 'Відповідь на коментар додано';
         break;
     }
-    this.setState({
-      row: {
-        id: 0,
-        type: answer
-      }
-    });
+    this.setState({opened_doc_id: 0});
+    docInfoStore.answer = answer;
   };
 
   render() {
-    const {main_div_height, doc_type_name, my_archive, work_archive} = this.state;
+    const {main_div_height, doc_type_name, my_archive, work_archive, opened_doc_id} = this.state;
 
     return (
       <>
@@ -136,7 +133,7 @@ class Archive extends React.Component {
             />
           </div>
           <div className='col-lg-4 css_height_100'>
-            <Document doc={this.state.row} archived={true} removeRow={this.onNewMark} />
+            <Document doc_id={opened_doc_id} archived={true} removeRow={this.onNewMark} />
           </div>
         </div>
       </>

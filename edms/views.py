@@ -838,20 +838,35 @@ def edms_get_direct_subs(request, pk):
 @login_required(login_url='login')
 @try_except
 def edms_get_doc(request, pk):
-    if request.method == 'GET':
-        doc = get_object_or_404(Document, pk=pk)
-        # Всю інформацію про документ записуємо сюди
 
+    # TODO не показувати документ, якщо нема доступу
+
+    doc = get_object_or_404(Document, pk=pk)
+    # Всю інформацію про документ записуємо сюди
+
+    if is_access_granted(request.POST['employee_seat'], doc):
         doc_info = {
+            'access_granted': True,
+            'id': pk,
             'author': doc.employee_seat.employee.pip,
-            'author_seat_id': doc.employee_seat.seat_id,
+            'author_seat_id': doc.employee_seat_id,
             'type_id': doc.document_type.id,
             'type': doc.document_type.description,
-            # 'date': get_doc_create_day(doc),
             'date': convert_to_localtime(doc.path.values_list('timestamp', flat=True).filter(mark_id__in=[1, 16, 19])[0], 'day'),
             'is_changeable': doc.document_type.is_changeable,
-            'approved': doc.approved
+            'approved': doc.approved,
+            'archived': not doc.is_active
         }
+
+        mark_demand = Mark_Demand.objects.values('id', 'mark_id', 'phase_id')\
+                .filter(is_active=True).filter(document=doc).filter(recipient=request.POST['employee_seat'])
+
+        if mark_demand:
+            doc_info.update({
+                'expected_mark': mark_demand[0]['mark_id'],
+                'mark_demand_id': mark_demand[0]['id'],
+                'phase_id': mark_demand[0]['phase_id']
+            })
 
         # Path потрібен для складання модулю approval_list, тому отримуємо його навіть якщо документ чернетка.
         path = [{
@@ -937,8 +952,12 @@ def edms_get_doc(request, pk):
                 doc_info.update({'acquaints': acquaints})
 
         doc_info.update(get_doc_modules(doc))
+    else:
+        doc_info = {
+            'access_granted': False,
+        }
 
-        return HttpResponse(json.dumps(doc_info))
+    return HttpResponse(json.dumps(doc_info))
 
 
 @transaction.atomic

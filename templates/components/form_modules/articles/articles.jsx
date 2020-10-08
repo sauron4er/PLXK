@@ -1,7 +1,5 @@
 'use strict';
 import React from 'react';
-// import ReactDragList from 'react-drag-list';
-// import 'react-drag-list/assets/index.css';
 import Article from 'templates/components/form_modules/articles/article';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';

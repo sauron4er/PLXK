@@ -116,8 +116,9 @@ def send_mails_default(post_request):
         send_email(mail, responsible_body)
 
     supervisory_mail = User.objects.values_list('email', flat=True).filter(id=post_request['supervisory'])[0]
-    supervisory_body = create_mail_body(post_request, supervisory_mail, False)
-    send_email(supervisory_mail, supervisory_body)
+    if supervisory_mail != author_mail:
+        supervisory_body = create_mail_body(post_request, supervisory_mail, False)
+        send_email(supervisory_mail, supervisory_body)
 
 
 @try_except

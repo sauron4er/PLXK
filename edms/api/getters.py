@@ -122,6 +122,29 @@ def get_doc_types():
 
 
 @try_except
+def is_access_granted(emp_seat, doc):
+    if doc.employee_seat_id == emp_seat:
+        return True
+    if doc.path.filter(employee_seat=emp_seat).exists():
+        return True
+    if doc.document_demands.filter(recipient=emp_seat).exists():
+        return True
+
+    my_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat)[0]
+    sub_emps = get_sub_emps(my_seat)
+    sub_emps_flat = [sub_emp['id'] for sub_emp in sub_emps] if sub_emps else []
+
+    if doc.employee_seat_id in sub_emps_flat:
+        return True
+    if doc.path.filter(employee_seat__in=sub_emps_flat).exists():
+        return True
+    if doc.document_demands.filter(recipient__in=sub_emps_flat).exists():
+        return True
+
+    return False
+
+
+@try_except
 def get_archive_by_doc_type(user_id, doc_type_id):
     my_archive = [{  # Список документів, створених даним юзером
         'id': path.document.id,
