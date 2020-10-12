@@ -110,7 +110,7 @@ class Article extends React.Component {
       <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
         <div className='font-weight-bold'>{index + 1}</div>
         <div className='d-flex'>
-          <TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={500} disabled={disabled} />
+          <TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={5000} disabled={disabled} />
           <div>
             <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={this.delArticle} disabled={disabled}>
               <FontAwesomeIcon icon={faTimes} />
