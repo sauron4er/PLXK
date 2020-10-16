@@ -151,7 +151,7 @@ def arrange_mail(post_request):
 
 @try_except
 def send_reminders():
-    if not testing:
+    if testing:  # TODO if NOT testing
         today = datetime.date.today()
         tomorrow = today + datetime.timedelta(days=1)
 

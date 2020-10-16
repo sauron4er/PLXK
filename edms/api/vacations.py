@@ -9,16 +9,6 @@ from ..forms import VacationForm, DeactivateVacationForm, UserVacationForm, Star
     ActingEmpSeatForm, DeactivateEmpSeatForm, MarkDemandChangeRecipientForm
 
 
-def schedule_vacations_arrange():
-    # Обробка по розкладку відбувається з помилками при тому самому коді, тому вимушений обробляти кожен день кнопкою.
-    # schedule.every().day.at("14:44").do(arrange_vacations)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(5)
-
-    arrange_vacations()
-
-
 def arrange_vacations():
     today = datetime.today()
     vacations = [{

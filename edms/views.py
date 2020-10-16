@@ -7,7 +7,7 @@ from .models import Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
 # Окремі функції:
 from .api.edms_mail_sender import send_email_new, send_email_mark
-from .api.vacations import schedule_vacations_arrange, add_vacation, deactivate_vacation
+from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
@@ -666,15 +666,7 @@ def edms_deactivate_vacation(request):
 
 @login_required(login_url='login')
 def edms_start_vacations_arrange(request):
-    # Обробка по розкладку відбувається з помилками при тому самому коді, тому вимушений обробляти кожен день кнопкою.
-    # Запускає процес, який щоночі оновлює відпустки
-    # t = threading.Thread(target=schedule_vacations_arrange(), args=(), kwargs={})
-    # t.setDaemon(True)
-    # t.start()
-    # print('started')
-
-    schedule_vacations_arrange()
-
+    arrange_vacations()
     return HttpResponse(status=200)
 
 

@@ -10,7 +10,15 @@ from django.utils import timezone
 import pytz
 import json
 import random
+import time
+import schedule
+import threading
 from edms.models import Employee_Seat
+from boards.api.auto_orders import arrange_orders
+from boards.api.auto_vacations import arrange_vacations
+
+
+auto_functions_started = False
 
 
 def convert_to_localtime(utctime, frmt):
@@ -73,11 +81,30 @@ def forum(request):
 
 
 def about(request):
-    return render(request,'about.html')
+    return render(request, 'about.html')
+
+
+def auto_functions():
+    arrange_vacations()
+    arrange_orders()
+
+
+def start_auto_functions():
+    global auto_functions_started
+    auto_functions_started = True
+    schedule.every().day.at("08:22").do(auto_functions)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
 
 
 def home(request):
-    return render(request,'home.html')
+    if request.method == 'GET':
+        return render(request, 'home.html', {'auto_functions_started': auto_functions_started})
+    if request.method == 'POST':
+        t1 = threading.Thread(target=start_auto_functions(), args=(), kwargs={}, daemon=True)
+        t1.start()
+        return render(request, 'home.html', {'auto_functions_started': auto_functions_started})
 
 
 def phones(request, pk):

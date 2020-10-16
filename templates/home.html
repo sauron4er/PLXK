@@ -7,6 +7,22 @@
 
 {% block second_nav %}{% endblock %}
 
+
 {% block content %}
+  {% if user.userprofile.is_it_admin   %}
+
+    <div class="mb-3">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if auto_functions_started %}
+          <button type="submit" class="btn btn-success mt-4" disabled>Автоматичні функції запущено</button>
+        {% else %}
+          <button type="submit" class="btn btn-danger mt-4">Запустити автоматичні функції</button>
+          <div><small>Перезавантажте сторінку, щоб побачити зміни</small></div>
+        {% endif %}
+      </form>
+    </div>
+
+  {% endif %}
   <img src='{% static 'img/site_map.svg' %}' alt="Карта сайту">
 {% endblock %}
