@@ -1,6 +1,6 @@
 from docs.api.orders_mail_sender import send_reminders
 
 
-def arrange_orders():
+def send_orders_reminders():
     send_reminders()
-    print('orders')
+    print('orders reminders sent')

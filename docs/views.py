@@ -182,12 +182,12 @@ def get_calendar(request):
         .filter(done=False)\
         .filter(is_active=True)\
         .filter(article__is_active=True)\
-        .filter(article__order__is_act=True)
+        .filter(article__order__is_act=True)\
+        .order_by('article__deadline')\
 
     is_it_admin = UserProfile.objects\
         .filter(user=request.user)\
         .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
-        .order_by('article__deadline')\
         .exists()
 
     if not is_it_admin:

@@ -89,11 +89,45 @@ def create_reminder_body(recipient):
         </html>
         """\
         .format(get_deadline(recipient),
-                recipient['order_id'],
+                recipient['order_code'],
                 recipient['order_name'],
                 recipient['article'],
                 link,
                 download)
+
+    # message.attach(MIMEText(text, "plain"))
+    message.attach(MIMEText(text, "html"))
+
+    return message.as_string()
+
+
+@try_except
+def get_recipients_names(recipients):
+    recipients_string = ''
+    for recipient in recipients:
+        recipients_string += '<b>' + recipient['name'] + '</b>' + '. '
+        recipients_string += 'Наказ №' + recipient['order_code'] + ' "' + recipient['order_name'] + '", '
+        recipients_string += 'строк виконання: ' + recipient['deadline'].strftime("%d.%m.%Y") + '.<br/>'
+    return recipients_string
+
+
+@try_except
+def create_body_for_secretary(recipients, mail):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Нагадування про строки виконання наказу "
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    text = """\
+        <html>
+          <head></head>
+          <body>
+            <p>Нагадування про строки виконання наказів розіслано наступним особам:</p>
+            <p>{}</p>
+          </body>
+        </html>
+        """\
+        .format(get_recipients_names(recipients))
 
     # message.attach(MIMEText(text, "plain"))
     message.attach(MIMEText(text, "html"))
@@ -163,8 +197,10 @@ def send_reminders():
             .filter(article__order__is_act=True)
 
         recipients = [{
+            'name': item.employee_seat.employee.pip,
             'mail': item.employee_seat.employee.user.email,
             'order_id': item.article.order_id,
+            'order_code': item.article.order.code,
             'order_name': item.article.order.name,
             'article': item.article.text,
             'deadline': item.article.deadline,
@@ -175,3 +211,7 @@ def send_reminders():
         for recipient in recipients:
             body = create_reminder_body(recipient)
             send_email(recipient['mail'], body)
+
+        secretary_mail = 'referent@polyprom.com'
+        secretary_body = create_body_for_secretary(recipients, secretary_mail)
+        send_email(secretary_mail, secretary_body)

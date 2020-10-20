@@ -5,7 +5,7 @@ from .models import Board, Phones, Topic, Post, Ad
 from .forms import NewTopicForm, NewAdForm
 from django.db import connections
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import date
+from datetime import date, datetime
 from django.utils import timezone
 import pytz
 import json
@@ -14,9 +14,8 @@ import time
 import schedule
 import threading
 from edms.models import Employee_Seat
-from boards.api.auto_orders import arrange_orders
-from boards.api.auto_vacations import arrange_vacations
-
+from boards.api.auto_orders import send_orders_reminders
+from boards.api.auto_vacations import auto_arrange_vacations
 
 auto_functions_started = False
 
@@ -85,14 +84,15 @@ def about(request):
 
 
 def auto_functions():
-    arrange_vacations()
-    arrange_orders()
+    print("auto_functions executed: ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+    # auto_arrange_vacations()
+    send_orders_reminders()
 
 
 def start_auto_functions():
     global auto_functions_started
     auto_functions_started = True
-    schedule.every().day.at("08:22").do(auto_functions)
+    schedule.every().day.at("07:00").do(auto_functions)
     while True:
         schedule.run_pending()
         time.sleep(60)
