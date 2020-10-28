@@ -47,6 +47,7 @@ class Document extends React.Component {
   };
 
   componentDidMount() {
+    console.log(this.props.doc_id);
     if (this.props.doc_id) this.getDoc(this.props.doc_id);
   }
 
@@ -123,7 +124,7 @@ class Document extends React.Component {
     axiosPostRequest('mark/', formData)
       .then((response) => {
         if (response === 'not deletable') {
-          this.notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
+          notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
@@ -144,11 +145,11 @@ class Document extends React.Component {
   onButtonClick = (mark_id) => {
     // Якщо це пустий коментар, виводимо текст помилки
     if (mark_id === 4 && this.state.comment === '') {
-      this.notify('Введіть текст коментарю.');
+      notify('Введіть текст коментарю.');
 
       // Якщо файл не прикріплено, виводимо текст помилки
     } else if (mark_id === 12 && this.state.new_files.length === 0) {
-      this.notify('Оберіть файл.');
+      notify('Оберіть файл.');
 
       // Кнопка "Резолюція" відкриває окремий модуль
     } else if ([10, 15, 18, 21, 22].includes(mark_id)) {
@@ -188,7 +189,6 @@ class Document extends React.Component {
               directSubs={this.props.directSubs}
               onSubmit={this.handleResolutions}
               doc_id={this.props.doc_id}
-              notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
           ),
@@ -202,7 +202,6 @@ class Document extends React.Component {
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleAcquaints}
               doc_id={this.props.doc_id}
-              notify={this.notify}
               new_path_id={this.state.new_path_id}
             />
           ),
@@ -216,7 +215,6 @@ class Document extends React.Component {
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleFilesChange}
               files={this.state.info.old_files}
-              notify={this.notify}
             />
           ),
           modal_open: true
@@ -230,7 +228,7 @@ class Document extends React.Component {
         break;
       case 22:
         this.setState({
-          modal: <PostSignedFiles onCloseModal={this.onCloseModal} notify={this.notify} onSubmit={this.handleAddingSignedFiles} />,
+          modal: <PostSignedFiles onCloseModal={this.onCloseModal} onSubmit={this.handleAddingSignedFiles} />,
           modal_open: true
         });
         break;
@@ -244,7 +242,7 @@ class Document extends React.Component {
         this.onCloseModal();
       });
     } else {
-      this.notify('Додайте резолюції');
+      notify('Додайте резолюції');
     }
   };
 
@@ -255,7 +253,7 @@ class Document extends React.Component {
         this.onCloseModal();
       });
     } else {
-      this.notify('Додайте резолюції');
+      notify('Додайте отримувачів');
     }
   };
 

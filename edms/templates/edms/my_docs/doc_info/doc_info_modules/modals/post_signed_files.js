@@ -6,12 +6,13 @@ import 'static/css/files_uploader.css';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
+import {notify} from 'templates/components/my_extras';
 
 class PostSignedFiles extends React.Component {
 
   onSubmit = () => {
     if (docInfoStore.signed_files.length === 0) {
-      this.props.notify('Ви не додали жодного файлу');
+      notify('Ви не додали жодного файлу');
     } else {
       this.props.onSubmit();
     }

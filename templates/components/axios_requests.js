@@ -23,7 +23,8 @@ export const axiosGetRequest = (url, data = []) => {
   })
     .then((response) => response.data)
     .catch((error) => {
-      console.log('errorpost: ' + error);
+      console.log('error message: ' + error.response.data);
+      console.log('error: ' + error);
       throw error;
     });
 };

@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^orders/reminders', views.reminders, name='reminders'),
     url(r'^orders/add_order', views.add_order, name='add_order'),
     url(r'^orders/edit_order', views.edit_order, name='edit_order'),
+    url(r'^orders/post_responsible_file', views.post_responsible_file, name='post_responsible_file'),
     url(r'^orders/deactivate_order', views.deact_order, name='deact_order'),
     url(r'^orders/responsible_done/(?P<pk>\d+)/$', views.responsible_done, name='responsible_done'),
     url(r'^orders/', views.orders, name='orders'),

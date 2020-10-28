@@ -88,7 +88,9 @@ class OrdersCalendar extends React.Component {
 
   render() {
     const {calendar, is_admin, loading} = this.state;
-  
+
+    console.log(calendar);
+
     return (
       <Choose>
         <When condition={!loading}>
@@ -99,25 +101,25 @@ class OrdersCalendar extends React.Component {
             <Otherwise>
               <For each='day' index='day_idx' of={calendar}>
                 <div key={day_idx} className='mb-3 p-1 border shadow rounded'>
-                  <div className='css_calendar_header'>{this.getDate(day[0].deadline)}</div>
-                  <For each='order' index='order_idx' of={day}>
+                  <div className='css_calendar_header'>{day.date}</div>
+                  <For each='order' index='order_idx' of={day.orders}>
                     <div key={order_idx} className='css_calendar_card'>
-                      <div>
-                        <div className='font-weight-bold mb-2'>
-                          {`Наказ № ${order.order_code} `}
-                          <span>{order.order_name}</span>
+                      <a className='font-weight-bold mb-2 mx-1' href={order.id}>{`Наказ № ${order.order_code} "${order.order_name}"`}</a>
+                      <For each='article' index='article_idx' of={order.articles}>
+                        <div key={article_idx} className='css_calendar_article mx-1'>
+                          <div>{article.text}</div>
+                          <If condition={is_admin}>
+                            <div className='mb-2 font-weight-bold'>{`Виконавець: ${article.responsible_name}`}</div>
+                          </If>
+                          <button
+                            className='btn btn-sm btn-outline-success ml-auto'
+                            onClick={() => this.postResponsibleDone(day_idx, order_idx, article.responsible)}
+                          >
+                            Позначити виконаним
+                          </button>
+                          <hr className='m-1 mt-2'/>
                         </div>
-                        <div>{`Завдання: ${order.article_text}`}</div>
-                        <If condition={is_admin}>
-                          <div className='mt-1 font-weight-bold'>{`Виконавець: ${order.responsible_name}`}</div>
-                        </If>
-                      </div>
-                      <button
-                        className='btn btn-sm btn-outline-success ml-auto'
-                        onClick={() => this.postResponsibleDone(day_idx, order_idx, order.responsible)}
-                      >
-                        Позначити виконаним
-                      </button>
+                      </For>
                     </div>
                   </For>
                 </div>

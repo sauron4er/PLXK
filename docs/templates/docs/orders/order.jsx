@@ -4,8 +4,6 @@ import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import Modal from 'react-responsive-modal';
-import {Document, Page} from 'react-pdf';
 import {getIndex, isBlankOrZero, notify} from 'templates/components/my_extras';
 import OrderMail from 'docs/templates/docs/orders/order_mail';
 import {Loader} from 'templates/components/loaders';
@@ -29,7 +27,8 @@ class Order extends React.Component {
     pdf_num_pages: null,
     page_number: 1,
     cancels_other_doc: false,
-    loading: false
+    loading: false,
+    error404: false
   };
 
   componentDidMount() {
@@ -101,7 +100,9 @@ class Order extends React.Component {
         ordersStore.order.mail_mode = 'to_default';
         this.setState({loading: false});
       })
-      .catch((error) => notify(error));
+      .catch((error) => {
+        this.setState({error404: true});
+      });
   };
 
   postOrder = () => {
@@ -114,7 +115,6 @@ class Order extends React.Component {
         code,
         name,
         author,
-        responsibles,
         responsible,
         supervisory,
         date_start,
@@ -139,7 +139,6 @@ class Order extends React.Component {
       formData.append('name', name);
       formData.append('author', author);
       formData.append('articles', JSON.stringify(articles));
-      formData.append('responsibles', JSON.stringify(responsibles));
       formData.append('responsible', responsible);
       formData.append('supervisory', supervisory);
       formData.append('date_start', date_start);
@@ -158,9 +157,27 @@ class Order extends React.Component {
       const url = ordersStore.order.id === 0 ? 'add_order/' : 'edit_order/';
 
       axiosPostRequest(url, formData)
-        .then((response) => (ordersStore.order.id === 0 ? this.addOrder(response) : this.editOrder(response)))
+        .then((response) => {
+          this.postResponsibleFiles(articles);
+          ordersStore.order.id === 0 ? this.addOrder(response) : this.editOrder(response);
+        })
         .catch((error) => notify(error));
     }
+  };
+
+  postResponsibleFiles = (articles) => {
+    articles.map((article) => {
+      article.responsibles.map((resp) => {
+        if (resp?.files?.length > 0) {
+          let formData = new FormData();
+          formData.append('responsible_id', resp.responsible_id);
+          resp.files.map((file) => formData.append('files', file));
+          axiosPostRequest('post_responsible_file', formData)
+            .then((response) => {})
+            .catch((error) => notify(error));
+        }
+      });
+    });
   };
 
   deactivateOrder = () => {
@@ -168,10 +185,10 @@ class Order extends React.Component {
       .then((response) => this.removeOrder(response))
       .catch((error) => notify(error));
   };
-  
+
   checkOrderDone = (articles) => {
-    ordersStore.order.done = articles.every(article => article.done === true);
-    ordersStore.order.status = ordersStore.order.done ? 'ok' : 'in progress'
+    ordersStore.order.done = articles.every((article) => article.done === true);
+    ordersStore.order.status = ordersStore.order.done ? 'ok' : 'in progress';
   };
 
   addOrder = (response) => {
@@ -185,7 +202,6 @@ class Order extends React.Component {
     ordersStore.order.done = response.done;
     const index = getIndex(ordersStore.order.id, ordersStore.orders);
     ordersStore.orders[index] = ordersStore.order;
-    console.log(ordersStore.orders[index]);
     this.closeOrderView();
   };
 
@@ -211,7 +227,7 @@ class Order extends React.Component {
 
   onArticlesChange = (articles) => {
     ordersStore.order.articles = [...articles];
-    this.checkOrderDone(articles)
+    this.checkOrderDone(articles);
   };
 
   onFilesDelete = (id, files_field) => {
@@ -238,23 +254,6 @@ class Order extends React.Component {
     return './' + ordersStore.order.canceled_by_id;
   };
 
-  // openPdf = (e, file) => {
-  //   e.preventDefault();
-  //
-  //   this.setState({
-  //     pdf_view_address: file,
-  //     pdf_modal_open: true
-  //   });
-  // };
-  //
-  // pdfModalClose = () => {
-  //   this.setState({pdf_modal_open: false});
-  // };
-  //
-  // onDocumentLoadSuccess = ({numPages}) => {
-  //   this.setState({pdf_num_pages: numPages});
-  // };
-  
   onOrderClose = () => {
     ordersStore.clearOrder();
     ordersStore.view = 'table';
@@ -263,10 +262,13 @@ class Order extends React.Component {
   render() {
     const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done} = ordersStore.order;
     const {is_orders_admin, employees, emp_seats, types} = ordersStore;
-    const {loading, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
-  
+    const {loading, error404, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
+
     return (
       <Choose>
+        <When condition={error404}>
+          <div className='row'>Наказу під таким номером не існує.</div>
+        </When>
         <When condition={!loading}>
           <div className='d-flex'>
             <button className='btn btn-sm btn-success my-2' onClick={() => this.onOrderClose()}>
@@ -463,14 +465,6 @@ class Order extends React.Component {
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />
           </div>
-          {/*<Modal open={pdf_modal_open} onClose={this.pdfModalClose} center>*/}
-          {/*  <Document file={pdf_view_address} onLoadSuccess={this.onDocumentLoadSuccess}>*/}
-          {/*    <Page pageNumber={page_number} />*/}
-          {/*  </Document>*/}
-          {/*  <p>*/}
-          {/*    Page {page_number} of {pdf_num_pages}*/}
-          {/*  </p>*/}
-          {/*</Modal>*/}
         </When>
         <Otherwise>
           <Loader />

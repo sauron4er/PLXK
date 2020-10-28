@@ -2,6 +2,7 @@
 import React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {notify} from 'templates/components/my_extras';
 
 class NewResolutions extends React.Component {
   state = {
@@ -45,7 +46,7 @@ class NewResolutions extends React.Component {
         resolution_text: ''
       }));
     } else {
-      this.props.notify('Оберіть отримувача та введіть текст резолюції.');
+      notify('Оберіть отримувача та введіть текст резолюції.');
     }
   };
 

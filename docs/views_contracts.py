@@ -77,7 +77,6 @@ def get_contract(request, pk):
         'nomenclature_group': contract.nomenclature_group,
         'date_start': date_to_json(contract.date_start),
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
-
         'responsible': contract.responsible_id if contract.responsible_id else 0,
         'responsible_name': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',
         'department': contract.department_id if contract.department_id else 0,

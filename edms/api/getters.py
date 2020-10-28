@@ -122,14 +122,17 @@ def get_doc_types():
 
 
 @try_except
-def is_access_granted(emp_seat, doc):
-    if doc.employee_seat_id == emp_seat:
+def is_access_granted(user, emp_seat, doc):
+    emp_seats = user.userprofile.positions.all().values_list('id', flat=True)
+
+    if doc.employee_seat_id in emp_seats:
         return True
-    if doc.path.filter(employee_seat=emp_seat).exists():
+    if doc.path.filter(employee_seat__in=emp_seats).exists():
         return True
-    if doc.document_demands.filter(recipient=emp_seat).exists():
+    if doc.document_demands.filter(recipient__in=emp_seats).exists():
         return True
 
+    # TODO шукати усіх підлеглих усіх посад користувача, зараз шукаються лише підлеглі однієї посади
     my_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat)[0]
     sub_emps = get_sub_emps(my_seat)
     sub_emps_flat = [sub_emp['id'] for sub_emp in sub_emps] if sub_emps else []

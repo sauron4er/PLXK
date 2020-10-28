@@ -75,7 +75,7 @@ class Info extends React.Component {
                   <When condition={module.module === 'carry_out_items'}>
                     <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                   </When>
-                  <When condition={module.module === 'files'}>
+                  <When condition={module.module === 'files' && info.old_files.length > 0}>
                     <Files
                       files={info.old_files}
                       fieldName={module.field_name}

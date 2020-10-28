@@ -36,7 +36,12 @@ class Article extends React.Component {
     if (selected_responsible_id) {
       const item = getItemById(selected_responsible_id, article.responsibles);
       if (item === -1) {
-        const selected_responsible = {...getItemById(selected_responsible_id, emp_seats), status: 'new', done: false};
+        const selected_responsible = {
+          ...getItemById(selected_responsible_id, emp_seats),
+          status: 'new',
+          files_old: [],
+          done: false
+        };
         let new_responsibles = [...article.responsibles];
         new_responsibles.push(selected_responsible);
         new_responsibles = uniqueArray(new_responsibles);
@@ -85,10 +90,10 @@ class Article extends React.Component {
   };
 
   addAllChiefs = () => {
-    this.props.emp_seats.map(emp_seat => {
-      if (emp_seat.is_dep_chief) this.addResponsible(emp_seat.id)
-    })
-    
+    this.props.emp_seats.map((emp_seat) => {
+      if (emp_seat.is_dep_chief) this.addResponsible(emp_seat.id);
+    });
+
     this.setState({all_chiefs_added: true});
   };
 
@@ -105,7 +110,7 @@ class Article extends React.Component {
   render() {
     const {article, index, disabled, emp_seats} = this.props;
     const {selected_responsible, selected_responsible_id, all_chiefs_added} = this.state;
-  
+
     return (
       <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
         <div className='font-weight-bold'>{index + 1}</div>

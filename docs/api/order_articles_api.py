@@ -4,7 +4,7 @@ import json
 from plxk.api.try_except import try_except
 from docs.forms import NewArticleForm, DeactivateArticleForm, ArticleDoneForm, \
     NewResponsibleForm, DeactivateResponsibleForm
-from docs.models import Order_article, Article_responsible
+from docs.models import Order_article, Article_responsible, Responsible_file
 
 
 @try_except
@@ -96,7 +96,11 @@ def post_article_done(post_request, article_id):
 
 @try_except
 def add_responsible(responsible, post_request):
-    post_request.update({'employee_seat': responsible['id'], 'done': responsible['done']})
+    post_request.update({
+        'employee_seat': responsible['id'],
+        'comment': None,
+        'done': responsible['done']
+    })
 
     new_responsible_form = NewResponsibleForm(post_request)
     if new_responsible_form.is_valid():
@@ -107,7 +111,11 @@ def add_responsible(responsible, post_request):
 
 @try_except
 def change_responsible(responsible, post_request):
-    post_request.update({'employee_seat': responsible['id'], 'done': responsible['done']})
+    post_request.update({
+        'employee_seat': responsible['id'],
+        'comment': responsible['comment'] if responsible['comment'] != '' else None,
+        'done': responsible['done']
+    })
 
     responsible_instance = get_object_or_404(Article_responsible, pk=responsible['responsible_id'])
 
@@ -116,6 +124,8 @@ def change_responsible(responsible, post_request):
         responsible_form.save()
     else:
         raise ValidationError('docs/orders_articles_api: function change_responsible: responsible_form invalid')
+
+    delete_responsible_files(responsible_instance, responsible['files_old'])
 
 
 @try_except
@@ -128,3 +138,21 @@ def delete_responsible(responsible_id, post_request):
         delete_responsible_form.save()
     else:
         raise ValidationError('docs/orders_articles_api: function delete_responsible: delete_responsible_form invalid')
+
+
+@try_except
+def post_responsible_files(request):
+    responsible_inst = get_object_or_404(Article_responsible, pk=request.POST['responsible_id'])
+    for file in request.FILES.getlist('files'):
+        Responsible_file.objects.create(
+            responsible=responsible_inst,
+            file=file,
+            name=file.name
+        )
+
+
+@try_except
+def delete_responsible_files(responsible_inst, files_old):
+    for file in files_old:
+        if file['status'] == 'delete':
+            Responsible_file.objects.filter(id=file['id']).update(is_active=False)

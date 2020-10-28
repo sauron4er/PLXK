@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
 from django.db import transaction
+from django.http import Http404
 from django.db.models import Q
+from datetime import date
 import collections
 import json
 from .models import Document, Ct, Order_doc, Order_doc_type, Order_article, Article_responsible, File
@@ -15,7 +17,7 @@ from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneFo
 from docs.api.orders_mail_sender import arrange_mail, send_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
-from docs.api.order_articles_api import post_articles, change_responsible
+from docs.api.order_articles_api import post_articles, post_responsible_files
 from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json
 from plxk.api.try_except import try_except
 from plxk.api.global_getters import get_employees_list, get_deps, get_emp_seats_list
@@ -175,15 +177,56 @@ def get_orders(request, page):
     return HttpResponse(json.dumps(response))
 
 
+@try_except
+def sort_calendar_by_date(calendar):
+    sorted_by_date = []
+    date = ''
+    sort_index = -1
+    for item in calendar:
+        if item['deadline'] != date:
+            sorted_by_date.append({'date': item['deadline'], 'orders': [item]})
+            sort_index += 1
+            date = item['deadline']
+        else:
+            sorted_by_date[sort_index]['orders'].append(item)
+    return sorted_by_date
+
+
+@try_except
+def sort_calendar_by_order(calendar):
+    sorted_by_order = []
+    for date in calendar:
+        date_sorted_by_order = []
+        order_code = ''
+        sort_index = -1
+        for item in date['orders']:
+            if item['order_code'] != order_code:
+                date_sorted_by_order.append({
+                    'order_code': item['order_code'],
+                    'order_name': item['order_name'],
+                    'id': item['order_id'],
+                    'articles': [item]})
+                sort_index += 1
+                order_code = item['order_code']
+            else:
+                date_sorted_by_order[sort_index]['articles'].append(item)
+        date['orders'] = date_sorted_by_order
+        sorted_by_order.append(date)
+    return sorted_by_order
+
+
 @login_required(login_url='login')
 @try_except
 def get_calendar(request):
+    today = date.today()
+
     my_calendar = Article_responsible.objects\
         .filter(done=False)\
         .filter(is_active=True)\
         .filter(article__is_active=True)\
         .filter(article__order__is_act=True)\
-        .order_by('article__deadline')\
+        .filter(Q(article__order__date_canceled__isnull=True) | Q(article__order__date_canceled__gte=today))\
+        .order_by('article__deadline', 'article__order__code')
 
     is_it_admin = UserProfile.objects\
         .filter(user=request.user)\
@@ -191,26 +234,32 @@ def get_calendar(request):
         .exists()
 
     if not is_it_admin:
-        my_emp_seats = Employee_Seat.objects.values_list('id', flat=True).filter(employee__user=request.user).filter(is_active=True)
+        my_emp_seats = Employee_Seat.objects.values_list('id', flat=True)\
+            .filter(employee__user=request.user)\
+            .filter(is_active=True)
         my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
 
     calendar = [{
+        'date_canceled': item.article.order.date_canceled,
         'order_id': item.article.order.id,
         'order_code': item.article.order.code,
         'order_name': item.article.order.name,
-        'article_text': item.article.text,
+        'text': item.article.text,
         'deadline': date_to_json(item.article.deadline),
         'responsible': item.id,
         'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat
     } for item in my_calendar]
 
-    # Сортуємо список у підсписки по полю deadline
-    result = collections.defaultdict(list)
-    for d in calendar:
-        result[d['deadline']].append(d)
-    sorted_calendar = list(result.values())  # Python 3
+    sorted_by_date = sort_calendar_by_date(calendar)
+    sorted_by_date_and_order = sort_calendar_by_order(sorted_by_date)
 
-    return HttpResponse(json.dumps({'calendar': sorted_calendar, 'is_admin': is_it_admin}))
+    # Сортуємо список у підсписки по полю deadline
+    # result = collections.defaultdict(list)
+    # for d in calendar:
+    #     result[d['deadline']].append(d)
+    # sorted_calendar = list(result.values())
+
+    return HttpResponse(json.dumps({'calendar': sorted_by_date_and_order, 'is_admin': is_it_admin}))
 
 
 @login_required(login_url='login')
@@ -226,10 +275,16 @@ def get_order(request, pk):
     response = {'deps': deps}
 
     if pk != '0':
-        order = get_order_info(pk, request.user.userprofile.id)
-        response.update({'order': order})
+        try:
+            order = get_object_or_404(Order_doc, pk=pk)
+            response.update({'order': get_order_info(order, request.user.userprofile.id)})
+        except Http404:
+            return HttpResponse('Такого наказу не існує', status=404)
 
     return HttpResponse(json.dumps(response))
+
+
+
 
 
 @login_required(login_url='login')
@@ -318,4 +373,12 @@ def responsible_done(request, pk):
         else:
             raise ValidationError('docs/views/responsible_done: order_done_form invalid')
 
+    return HttpResponse()
+
+
+@transaction.atomic
+@login_required(login_url='login')
+@try_except
+def post_responsible_file(request):
+    post_responsible_files(request)
     return HttpResponse()

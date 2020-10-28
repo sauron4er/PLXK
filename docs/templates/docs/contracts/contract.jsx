@@ -335,7 +335,7 @@ class Contract extends React.Component {
             closeOnOverlayClick={true}
             styles={{modal: {marginTop: 50}}}
           >
-            <Document doc={{id: contractsStore.contract.edms_doc_id}} closed={true} />
+            <Document doc_id={contractsStore.contract.edms_doc_id} closed={true} />
           </Modal>
 
           {/*Вспливаюче повідомлення*/}

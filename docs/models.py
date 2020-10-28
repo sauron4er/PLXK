@@ -94,7 +94,15 @@ class Order_article(models.Model):
 class Article_responsible(models.Model):
     article = models.ForeignKey(Order_article, related_name='responsibles')
     employee_seat = models.ForeignKey(Employee_Seat, related_name='orders_responsible')
+    comment = models.CharField(max_length=500, null=True, blank=True)
     done = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+
+class Responsible_file(models.Model):
+    file = models.FileField(upload_to='order_docs/responsibles/%Y/%m')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    responsible = models.ForeignKey(Article_responsible, related_name='files', null=True)
     is_active = models.BooleanField(default=True)
 
 

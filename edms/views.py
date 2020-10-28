@@ -830,13 +830,10 @@ def edms_get_direct_subs(request, pk):
 @login_required(login_url='login')
 @try_except
 def edms_get_doc(request, pk):
-
-    # TODO не показувати документ, якщо нема доступу
-
     doc = get_object_or_404(Document, pk=pk)
     # Всю інформацію про документ записуємо сюди
 
-    if is_access_granted(request.POST['employee_seat'], doc):
+    if request.user.userprofile.is_it_admin or is_access_granted(request.user, request.POST['employee_seat'], doc):
         doc_info = {
             'access_granted': True,
             'id': pk,

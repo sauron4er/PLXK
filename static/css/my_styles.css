@@ -76,7 +76,6 @@
 }
 
 .css_list_item {
-  display: flex;
   align-items: start;
   margin-bottom: 10px;
   border-style: solid;
@@ -111,21 +110,20 @@
 }
 
 .css_calendar_card {
-  display: flex;
   background: #eff0f3;
   padding: 3px;
   margin-top: 3px;
 }
 
-.css_calendar_card:hover {
+.css_calendar_article:hover {
   background: #c3f8cf;
 }
 
-.css_calendar_card:hover > button {
+.css_calendar_article:hover > button {
   background-color: white;
 }
 
-.css_calendar_card > button:hover {
+.css_calendar_article > button:hover {
   background-color: #28a745;
 }
 

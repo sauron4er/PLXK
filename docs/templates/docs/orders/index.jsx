@@ -21,13 +21,7 @@ class Orders extends React.Component {
     const is_link = !isNaN(last_href_piece);
 
     if (is_link) {
-      let row = [];
-      for (let i = 0; i < window.orders.length; i++) {
-        if (window.orders[i].id === last_href_piece) {
-          row = window.orders[i];
-        }
-      }
-      ordersStore.order = row;
+      ordersStore.order.id = last_href_piece
       ordersStore.view = 'order';
     }
   }

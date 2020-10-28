@@ -68,7 +68,7 @@ class DeactivateArticleForm(forms.ModelForm):
 class NewResponsibleForm(forms.ModelForm):
     class Meta:
         model = Article_responsible
-        fields = ['article', 'employee_seat', 'done']
+        fields = ['article', 'employee_seat', 'comment', 'done']
 
 
 class ResponsibleDoneForm(forms.ModelForm):

@@ -3,6 +3,7 @@ import React from 'react';
 import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import {notify} from 'templates/components/my_extras';
 
 class NewAcquaints extends React.Component {
   state = {
@@ -60,7 +61,7 @@ class NewAcquaints extends React.Component {
         emp_seat: ''
       }));
     } else {
-      this.props.notify('Оберіть отримувача.');
+      notify('Оберіть отримувача.');
     }
   };
 

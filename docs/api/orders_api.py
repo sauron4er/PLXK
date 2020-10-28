@@ -3,13 +3,11 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.global_getters import get_users_emp_seat_ids
-from docs.models import Order_doc, File, Order_article, Article_responsible
+from docs.models import Order_doc, File, Order_article, Article_responsible, Responsible_file
 from docs.forms import NewDocOrderForm, CancelOrderForm, DeactivateOrderForm, OrderDoneForm
 
 
-def get_order_info(id, employee_id):
-    order = get_object_or_404(Order_doc, pk=id)
-
+def get_order_info(order, employee_id):
     order = {
         'id': order.id,
         'code': order.code,
@@ -43,6 +41,13 @@ def get_order_info(id, employee_id):
             'id': responsible.employee_seat.id,
             'emp_seat': responsible.employee_seat.employee.pip + ', ' + responsible.employee_seat.seat.seat,
             'done': responsible.done,
+            'comment': responsible.comment if responsible.comment else '',
+            'files_old': [{
+                'id': file.id,
+                'name': file.name,
+                'file': file.file.name,
+                'status': 'old'
+            } for file in Responsible_file.objects.filter(responsible_id=responsible.id).filter(is_active=True)],
             'user_is_responsible': responsible.employee_seat.id in get_users_emp_seat_ids(employee_id),
             'status': 'old',
         } for responsible in Article_responsible.objects.filter(article_id=article.id).filter(is_active=True)]

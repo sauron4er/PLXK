@@ -106,7 +106,7 @@ class Buttons extends React.Component {
                 className='btn btn-secondary mr-1 mb-1'
                 onClick={() => onClick(22)}
               >
-                Прикріпити скан-копії підписаних документів
+                Додати скан-копії підписаних документів
               </button>
             </When>
           </Choose>
@@ -152,7 +152,7 @@ class Buttons extends React.Component {
             className='btn btn-secondary mr-1 mb-1'
             onClick={() => onClick(18)}
           >
-            Додати/оновити документ
+            Додати/оновити файл(и)
           </button>
         </If>
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}

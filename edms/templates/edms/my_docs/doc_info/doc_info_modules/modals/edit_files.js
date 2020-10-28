@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Files from 'react-files';
 import 'static/css/files_uploader.css';
+import {notify} from 'templates/components/my_extras';
 
 class EditFiles extends React.Component {
   state = {
@@ -66,7 +67,7 @@ class EditFiles extends React.Component {
     let files = [...this.state.files];
 
     if (files[index].name !== new_file.name) {
-      this.props.notify('Назва оновленого файлу повинна відповідати назві оригіналу.');
+      notify('Назва оновленого файлу повинна відповідати назві оригіналу.');
     } else {
       const old_id = files[index].id;
       files[index] = new_file;
@@ -99,10 +100,10 @@ class EditFiles extends React.Component {
   onSubmit = () => {
     // Перевіряємо, чи не намагається користувач видалити всі файли:
     if (this.state.files.filter((file) => file.status !== 'delete').length === 0) {
-      this.props.notify('Не можна видалити всі файли, не буде що погоджувати.');
+      notify('Не можна видалити всі файли, не буде що погоджувати.');
       // Перевіряємо, чи не намагається користувач підтвердити форму, не внесши жодних змін:
     } else if (this.state.files.filter((file) => file.status !== '').length === 0) {
-      this.props.notify('Ви нічого не змінили.');
+      notify('Ви нічого не змінили.');
     } else {
       this.props.onSubmit(this.state.files, this.state.comment);
     }
