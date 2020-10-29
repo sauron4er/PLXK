@@ -104,12 +104,21 @@ class Document extends React.Component {
     docInfoStore.signed_files.map((file) => {
       formData.append('signed_files', file);
     });
-    updated_files.map((file) => {
-      formData.append('updated_files', file);
+    docInfoStore.changed_files.new_files.map((file) => {
+      formData.append('change__new_files', file);
     });
+    if (docInfoStore.changed_files.deleted_files.length > 0)
+      formData.append('change__deleted_files', JSON.stringify(docInfoStore.changed_files.deleted_files));
+    if (docInfoStore.changed_files.updated_files.length > 0) {
+      // Відправляємо окремо масив файлів і окремо масив з інформацією про ці файли
+      // Це потрібно тому що при передачі файлів на django губиться вся інформація про цей файл: ід, індекс тощо
+      formData.append('change__updated_files_info', JSON.stringify(docInfoStore.changed_files.updated_files_info));
+      docInfoStore.changed_files.updated_files.map((file) => {
+        formData.append('change__updated_files', file);
+      });
+    }
+
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
-    formData.append('updated_files', JSON.stringify(updated_files));
-    deleted_files.length > 0 ? formData.append('deleted_files', JSON.stringify(deleted_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
     formData.append('mark', mark_id);
@@ -210,13 +219,7 @@ class Document extends React.Component {
         break;
       case 18:
         this.setState({
-          modal: (
-            <EditFiles
-              onCloseModal={this.onCloseModal}
-              onSubmit={this.handleFilesChange}
-              files={this.state.info.old_files}
-            />
-          ),
+          modal: <EditFiles onCloseModal={this.onCloseModal} onSubmit={this.handleFilesChange} files={this.state.info.old_files} />,
           modal_open: true
         });
         break;
@@ -264,17 +267,11 @@ class Document extends React.Component {
     });
   };
 
-  handleFilesChange = (files, comment) => {
-    this.setState(
-      {
-        updated_files: files,
-        comment: comment
-      },
-      () => {
-        this.postMark(18);
-        this.onCloseModal();
-      }
-    );
+  handleFilesChange = (comment) => {
+    this.setState({comment: comment}, () => {
+      this.postMark(18);
+      this.onCloseModal();
+    });
   };
 
   handleAddingSignedFiles = () => {

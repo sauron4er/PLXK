@@ -541,35 +541,46 @@ def post_approval_list(doc_request, approvals):
             raise ValidationError('edms/views post_approval_list approval_form invalid')
 
 
+# Функція, яка додає файли у таблицю візування
+def changes_add_files(files, doc_request):
+    doc_request.update({'first_path': True})
+    doc_path = get_object_or_404(Document_Path, pk=doc_request['document_path'])
+    for index, file in enumerate(files):
+        File.objects.create(
+            document_path=doc_path,
+            file=file,
+            name=file.name,
+            first_path=True,
+            version=1
+        )
+
+
 # Функція, яка оновлює файли
 def update_files(files, doc_request):
-    updated_files = json.loads(doc_request['updated_files'])
+    updated_files_info = json.loads(doc_request['change__updated_files_info'])
     # Наразі функція update_files викликається виключно з оновлення документу,
     # тому first_path = 1 (щоб документ показувався в основній інформації):
     doc_request.update({'first_path': True})
     doc_path = get_object_or_404(Document_Path, pk=doc_request['document_path'])
 
-    for index, file in enumerate(files):
-        file_version = 1
-        # Якщо файл оновлюється - видаляємо старий файл, назначаємо нову версію.
-        if updated_files[index]['status'] == 'update':
-            old_version = File.objects.values_list('version', flat=True)\
-                .filter(id=updated_files[index]['old_id'])[0]
-            file_version = old_version + 1
-            File.objects.filter(id=updated_files[index]['old_id']).update(is_active=False)
+    for index, file in enumerate(updated_files_info):
+        # Видаляємо стару версію файлу
+        File.objects.filter(id=file['old_id']).update(is_active=False, deactivate_path_id=doc_request['document_path'])
+        # І додаємо нову
         File.objects.create(
             document_path=doc_path,
-            file=file,
-            name=file.name,
-            first_path=doc_request['first_path'],
-            version=file_version
+            file=files[index],
+            name=files[index].name,
+            first_path=True,
+            version=file['version'] + 1
         )
 
 
 # Функція, яка деактивує файли
-def deactivate_files(files, deactivate_path_id):
-    for file in files:
-        File.objects.filter(id=file['id']).update(is_active=False, deactivate_path_id=deactivate_path_id)
+def deactivate_files(doc_request):
+    deleted_files = json.loads(doc_request['change__deleted_files'])
+    for file in deleted_files:
+        File.objects.filter(id=file['id']).update(is_active=False, deactivate_path_id=doc_request['document_path'])
 # ---------------------------------------------------------------------------------------------------------------------
 
 
@@ -1359,10 +1370,14 @@ def edms_mark(request):
                     post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 6)
 
                 # Опрацьовуємо оновлені файли AAA
-                if 'updated_files' in request.FILES:
-                    update_files(request.FILES.getlist('updated_files'), doc_request)
-                if 'deleted_files' in request.POST:
-                    deactivate_files(json.loads(doc_request['deleted_files']), new_path.pk)
+                if 'change__new_files' in request.FILES:
+                    changes_add_files(request.FILES.getlist('change__new_files'), doc_request)
+
+                if 'change__deleted_files' in request.POST:
+                    deactivate_files(doc_request)
+
+                if 'change__updated_files' in request.FILES:
+                    update_files(request.FILES.getlist('change__updated_files'), doc_request)
 
             # Відповідь на коментар (відправляємо документ у MarkDemand автору оригінального коментарю)
             elif doc_request['mark'] == '21':

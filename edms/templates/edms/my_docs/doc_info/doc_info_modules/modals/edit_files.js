@@ -5,6 +5,7 @@ import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Files from 'react-files';
 import 'static/css/files_uploader.css';
 import {notify} from 'templates/components/my_extras';
+import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 
 class EditFiles extends React.Component {
   state = {
@@ -55,12 +56,10 @@ class EditFiles extends React.Component {
       file.first_path = true;
       file.status = 'new';
       files.push(file);
+      docInfoStore.changed_files.new_files.push(file);
     }
-    this.setState({files}, () => {
-      if (new_files.length > 0) {
-        this.refs.new_files.removeFiles();
-      }
-    });
+
+    this.setState({files});
   };
 
   updateFile = (index, new_file) => {
@@ -69,32 +68,52 @@ class EditFiles extends React.Component {
     if (files[index].name !== new_file.name) {
       notify('Назва оновленого файлу повинна відповідати назві оригіналу.');
     } else {
+      const file_name = files[index].name;
+      const version = files[index].version;
       const old_id = files[index].id;
-      files[index] = new_file;
+      files[index] = new_file; // тут json запис про файл замінються об’єктом File, тому додаткову інфу треба записувати ще раз
+      files[index].file_name = file_name;
       files[index].old_id = old_id;
       files[index].first_path = true;
       files[index].status = 'update';
-      files[index].version = '';
+      files[index].version = version;
+
+      docInfoStore.changed_files.updated_files.push(files[index]);
+      docInfoStore.changed_files.updated_files_info.push(files[index]);
     }
-    this.setState({files}, () => {
-      // this.refs.update_file.removeFile(file);
-    });
+    this.setState({files});
   };
 
   deleteFile = (e, index) => {
     let files = [...this.state.files];
     if (files[index].status === 'new') {
+      let {new_files} = docInfoStore.changed_files;
+      new_files = new_files.filter((file) => file.id !== files[index].id)
+      docInfoStore.changed_files.new_files = new_files;
       files.splice(index, 1);
     } else {
       files[index].status = 'delete';
+      docInfoStore.changed_files.deleted_files.push(files[index]);
     }
-    this.setState({files: files});
+    this.setState({files});
   };
 
   unchangeFile = (e, index) => {
+    // Забираємо файл зі списку на видалення/оновлення
+    const file_id = this.state.files[index].id;
+    let {deleted_files, updated_files, updated_files_info} = docInfoStore.changed_files;
+    deleted_files = deleted_files.filter((file) => file.id !== file_id);
+    updated_files = updated_files.filter((file) => file.id !== file_id);
+    updated_files_info = updated_files_info.filter((file) => file.id !== file_id);
+    docInfoStore.changed_files.deleted_files = deleted_files;
+    docInfoStore.changed_files.updated_files = updated_files;
+    docInfoStore.changed_files.updated_files_info = updated_files_info;
+    console.log(docInfoStore.changed_files);
+
+    // Очищаємо this.state.files, щоб очистити зовнішній вигляд таблиці
     let files = [...this.state.files];
     files[index].status = '';
-    this.setState({files: files});
+    this.setState({files});
   };
 
   onSubmit = () => {
@@ -105,7 +124,8 @@ class EditFiles extends React.Component {
     } else if (this.state.files.filter((file) => file.status !== '').length === 0) {
       notify('Ви нічого не змінили.');
     } else {
-      this.props.onSubmit(this.state.files, this.state.comment);
+      this.props.onSubmit(this.state.comment);
+      // this.props.onSubmit(this.state.files, this.state.comment);
     }
   };
 
@@ -118,7 +138,7 @@ class EditFiles extends React.Component {
       files: files,
       clear_changes: true
     });
-
+    docInfoStore.clearChangedFiles();
     this.props.onCloseModal();
   };
 

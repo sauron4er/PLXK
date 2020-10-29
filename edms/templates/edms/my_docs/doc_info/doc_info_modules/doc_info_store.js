@@ -9,7 +9,22 @@ const docInfoStore = store({
     author: '',
     text: ''
   },
-  signed_files: []
+  signed_files: [],
+  changed_files: {
+    new_files: [],
+    updated_files: [],
+    updated_files_info: [],
+    deleted_files: []
+  },
+
+  clearChangedFiles: () => {
+    docInfoStore.changed_files = {
+      new_files: [],
+      updated_files: [],
+      updated_files_info: [],
+      deleted_files: []
+    };
+  }
 });
 
 export default docInfoStore;
