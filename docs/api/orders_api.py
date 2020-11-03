@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+import datetime
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.global_getters import get_users_emp_seat_ids
@@ -105,7 +106,11 @@ def change_order(post_request):
 
 
 @try_except
-def deactivate_order(post_request):
+def deactivate_order(request):
+    post_request = request.POST.copy()
+    post_request.update({'updated_by': request.user.id})
+    post_request.update({'updated_at': datetime.datetime.now()})
+
     order = get_object_or_404(Order_doc, pk=post_request['id'])
     order_form = DeactivateOrderForm(post_request, instance=order)
     if order_form.is_valid():

@@ -9,16 +9,15 @@ from django.db import transaction
 from django.http import Http404
 from django.db.models import Q
 from datetime import date
-import collections
 import json
-from .models import Document, Ct, Order_doc, Order_doc_type, Order_article, Article_responsible, File
+from .models import Document, Order_doc, Order_doc_type, Article_responsible, Responsible_file
 from accounts.models import UserProfile
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
 from docs.api.orders_mail_sender import arrange_mail, send_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
 from docs.api.order_articles_api import post_articles, post_responsible_files
-from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json
+from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json, normalize_date
 from plxk.api.try_except import try_except
 from plxk.api.global_getters import get_employees_list, get_deps, get_emp_seats_list
 from edms.models import Employee_Seat
@@ -245,9 +244,17 @@ def get_calendar(request):
         'order_code': item.article.order.code,
         'order_name': item.article.order.name,
         'text': item.article.text,
-        'deadline': date_to_json(item.article.deadline),
+        'deadline': normalize_date(item.article.deadline),
         'responsible': item.id,
-        'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat
+        'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat,
+        # 'comment': item.comment if item.comment else '',
+        # 'files_old': [{
+        #         'id': file.id,
+        #         'name': file.name,
+        #         'file': file.file.name,
+        #         'status': 'old'
+        #     } for file in Responsible_file.objects.filter(responsible_id=item.id).filter(is_active=True)],
+        # 'files': []
     } for item in my_calendar]
 
     sorted_by_date = sort_calendar_by_date(calendar)
@@ -337,9 +344,7 @@ def edit_order(request):
 @transaction.atomic
 @try_except
 def deact_order(request):
-    post_request = request.POST.copy()
-    # post_request.update({'updated_by': request.user.id})
-    deactivate_order(post_request)
+    deactivate_order(request)
     return HttpResponse()
 
 

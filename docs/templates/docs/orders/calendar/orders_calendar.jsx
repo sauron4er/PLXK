@@ -9,6 +9,9 @@ import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
+import ordersCalendarStore from 'docs/templates/docs/orders/calendar/orders_calendar_store';
+import CalendarItem from 'docs/templates/docs/orders/calendar/calendar_item';
+import order from 'docs/templates/docs/orders/order';
 
 const getMonthName = (month) => {
   switch (month) {
@@ -41,8 +44,6 @@ const getMonthName = (month) => {
 
 class OrdersCalendar extends React.Component {
   state = {
-    is_admin: false,
-    calendar: [],
     loading: false
   };
 
@@ -54,42 +55,16 @@ class OrdersCalendar extends React.Component {
   getCalendar = () => {
     axiosGetRequest('get_calendar/')
       .then((response) => {
-        this.setState({
-          calendar: response.calendar,
-          is_admin: response.is_admin,
-          loading: false
-        });
+        ordersCalendarStore.calendar = response.calendar;
+        ordersCalendarStore.is_admin = response.is_admin;
+        this.setState({loading: false});
       })
       .catch((error) => notify(error));
   };
 
-  getDate = (day) => {
-    const date = new Date(day);
-    const today = new Date();
-    today.setHours(3, 0, 0, 0);
-    const text_color = +date <= +today ? 'red' : '';
-    const dayName = `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()} року`;
-
-    return <div style={{color: text_color}}>{dayName}</div>;
-  };
-
-  deleteResponsible = (day_idx, order_idx) => {
-    const {calendar} = this.state;
-    calendar[day_idx].splice(order_idx, 1);
-    if (calendar[day_idx].length === 0) calendar.splice(day_idx, 1);
-    this.setState({calendar});
-  };
-
-  postResponsibleDone = (day_idx, order_idx, responsible) => {
-    axiosPostRequest('responsible_done/' + responsible + '/')
-      .then((response) => this.deleteResponsible(day_idx, order_idx))
-      .catch((error) => notify(error));
-  };
-
   render() {
-    const {calendar, is_admin, loading} = this.state;
-
-    console.log(calendar);
+    const {loading} = this.state;
+    const {calendar, is_admin} = ordersCalendarStore;
 
     return (
       <Choose>
@@ -103,24 +78,15 @@ class OrdersCalendar extends React.Component {
                 <div key={day_idx} className='mb-3 p-1 border shadow rounded'>
                   <div className='css_calendar_header'>{day.date}</div>
                   <For each='order' index='order_idx' of={day.orders}>
-                    <div key={order_idx} className='css_calendar_card'>
-                      <a className='font-weight-bold mb-2 mx-1' href={order.id}>{`Наказ № ${order.order_code} "${order.order_name}"`}</a>
-                      <For each='article' index='article_idx' of={order.articles}>
-                        <div key={article_idx} className='css_calendar_article mx-1'>
-                          <div>{article.text}</div>
-                          <If condition={is_admin}>
-                            <div className='mb-2 font-weight-bold'>{`Виконавець: ${article.responsible_name}`}</div>
-                          </If>
-                          <button
-                            className='btn btn-sm btn-outline-success ml-auto'
-                            onClick={() => this.postResponsibleDone(day_idx, order_idx, article.responsible)}
-                          >
-                            Позначити виконаним
-                          </button>
-                          <hr className='m-1 mt-2'/>
-                        </div>
-                      </For>
-                    </div>
+                    <If condition={order.articles.length > 0}>
+                      <div key={order_idx} className='css_calendar_card'>
+                        <a className='font-weight-bold mb-2 mx-1' href={order.id}>{`Наказ № ${order.order_code} "${order.order_name}"`}</a>
+                        <For each='article' index='article_idx' of={order.articles}>
+                          <CalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
+                          <hr className='m-1' />
+                        </For>
+                      </div>
+                    </If>
                   </For>
                 </div>
               </For>

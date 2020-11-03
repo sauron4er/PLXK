@@ -38,7 +38,7 @@ class CancelOrderForm(forms.ModelForm):
 class DeactivateOrderForm(forms.ModelForm):
     class Meta:
         model = Order_doc
-        fields = ['is_act']
+        fields = ['is_act', 'updated_by', 'updated_at']
 
 
 class OrderDoneForm(forms.ModelForm):

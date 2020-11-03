@@ -4,7 +4,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 import Order from './order';
 import OrdersTable from 'docs/templates/docs/orders/orders_table';
-import OrdersCalendar from 'docs/templates/docs/orders/orders_calendar';
+import OrdersCalendar from 'docs/templates/docs/orders/calendar/orders_calendar';
 
 class Orders extends React.Component {
 

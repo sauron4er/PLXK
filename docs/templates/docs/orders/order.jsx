@@ -4,6 +4,8 @@ import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import {faCircle, faCheckCircle} from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {getIndex, isBlankOrZero, notify} from 'templates/components/my_extras';
 import OrderMail from 'docs/templates/docs/orders/order_mail';
 import {Loader} from 'templates/components/loaders';
@@ -15,8 +17,7 @@ import TextInput from 'templates/components/form_modules/text_input';
 import Files from 'templates/components/form_modules/files';
 import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
-import {faCircle, faCheckCircle} from '@fortawesome/free-regular-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class Order extends React.Component {
   state = {
@@ -38,7 +39,7 @@ class Order extends React.Component {
 
   isAllFieldsFilled = () => {
     if (isBlankOrZero(ordersStore.order.type)) {
-      notify('Заповніть поле "Тип документу"');
+      notify('Заповніть поле "Тип документа"');
       return false;
     }
     if (isBlankOrZero(ordersStore.order.code)) {
@@ -181,8 +182,10 @@ class Order extends React.Component {
   };
 
   deactivateOrder = () => {
-    axiosPostRequest('deactivate_order/' + ordersStore.order.id + '/')
-      .then((response) => this.removeOrder(response))
+    let formData = new FormData();
+    formData.append('id', ordersStore.order.id);
+    axiosPostRequest('deactivate_order', formData)
+      .then((response) => this.removeOrder(ordersStore.order.id))
       .catch((error) => notify(error));
   };
 
@@ -200,6 +203,7 @@ class Order extends React.Component {
 
   editOrder = (response) => {
     ordersStore.order.done = response.done;
+    response.done ? ordersStore.order.status = 'ok' : ordersStore.order.status = 'in progress';
     const index = getIndex(ordersStore.order.id, ordersStore.orders);
     ordersStore.orders[index] = ordersStore.order;
     this.closeOrderView();
@@ -453,13 +457,10 @@ class Order extends React.Component {
               <OrderMail />
             </If>
 
-            <button className='btn btn-success my-2' onClick={this.postOrder}>
-              Зберегти
-            </button>
+            <SubmitButton className='btn-success' text='Зберегти' onClick={this.postOrder} />
+
             <If condition={id && is_orders_admin}>
-              <button className='float-sm-right btn btn-danger my-2' onClick={this.deactivateOrder}>
-                Видалити
-              </button>
+              <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />
             </If>
 
             {/*Вспливаюче повідомлення*/}
