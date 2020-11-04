@@ -98,9 +98,9 @@ class Article extends React.Component {
   };
 
   getBackground = () => {
-    const {text, deadline, responsibles} = this.props.article;
+    const {text, constant, deadline, responsibles} = this.props.article;
     const {selected_responsible_id} = this.state;
-    if (text === '' || deadline === '' || responsibles.length === 0 || selected_responsible_id !== 0) {
+    if (text === '' || deadline === '' && constant === 'false'  || responsibles.length === 0 || selected_responsible_id !== 0) {
       return 'LightPink';
     }
     if (responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return 'LightGreen';
@@ -153,12 +153,76 @@ class Article extends React.Component {
           </For>
         </div>
 
-        <DateInput
-          date={article.deadline}
-          fieldName={'Строк виконання'}
-          onChange={(e) => this.changeField(e, 'deadline')}
-          disabled={disabled}
-        />
+        <div className={'form-inline mt-1'}>
+          <input
+            type='radio'
+            name='constant_radio'
+            id='deadline'
+            value='false'
+            onChange={(e) => this.changeField(e, 'constant')}
+            checked={article.constant === 'false'}
+          />
+          <label className='radio-inline mx-1' htmlFor='deadline'>
+            Строк виконання
+          </label>
+          <If condition={article.constant === 'false'}>
+            <DateInput
+              date={article.deadline}
+              className={'mr-2'}
+              fieldName={''}
+              onChange={(e) => this.changeField(e, 'deadline')}
+              disabled={disabled}
+            />
+            <input
+              type='radio'
+              name='periodicity_radio'
+              id='once'
+              value=''
+              onChange={(e) => this.changeField(e, 'periodicity')}
+              checked={article.periodicity === ''}
+            />
+            <label className='radio-inline mx-1' htmlFor='once'>
+              Один раз
+            </label>
+            <input
+              className='ml-2'
+              type='radio'
+              name='periodicity_radio'
+              id='monthly'
+              value='m'
+              onChange={(e) => this.changeField(e, 'periodicity')}
+              checked={article.periodicity === 'm'}
+            />
+            <label className='radio-inline mx-1' htmlFor='monthly'>
+              Щомісяця
+            </label>
+            <input
+              className='ml-2'
+              type='radio'
+              name='periodicity_radio'
+              id='annual'
+              value='y'
+              onChange={(e) => this.changeField(e, 'periodicity')}
+              checked={article.periodicity === 'y'}
+            />
+            <label className='radio-inline mx-1' htmlFor='annual'>
+              Щороку
+            </label>
+          </If>
+        </div>
+        <div className={'form-inline mt-1'}>
+          <input
+            type='radio'
+            name='constant_radio'
+            id='constant'
+            value='true'
+            onChange={(e) => this.changeField(e, 'constant')}
+            checked={article.constant === 'true'}
+          />
+          <label className='radio-inline mx-1' htmlFor='constant'>
+            Виконувати постійно
+          </label>
+        </div>
       </div>
     );
   }

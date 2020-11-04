@@ -25,7 +25,8 @@ def add_article(article, post_request):
     post_request.update({
         'text': article['text'],
         'deadline': article['deadline'],
-        'order': post_request['id']
+        'order': post_request['id'],
+        'periodicity': article['periodicity']
     })
 
     new_article_form = NewArticleForm(post_request)
@@ -47,7 +48,8 @@ def change_article(article, post_request):
     post_request.update({
         'text': article['text'],
         'deadline': article['deadline'],
-        'article': article['id']
+        'article': article['id'],
+        'periodicity': article['periodicity']
     })
 
     for responsible in article['responsibles']:
