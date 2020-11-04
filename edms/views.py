@@ -1387,8 +1387,9 @@ def edms_mark(request):
             # Додано скан-копії підписаних документів
             elif doc_request['mark'] == '22':
                 # Деактивуємо MarkDemand цієї позначки
-                add_contract_from_edms(doc_request, request.FILES, request.user)
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
+                add_contract_from_edms(doc_request, request.FILES, request.user)
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
