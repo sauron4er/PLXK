@@ -3,12 +3,12 @@ import React from 'react';
 
 class DateInput extends React.Component {
   render() {
-    const {date, fieldName, onChange, disabled} = this.props;
+    const {date, fieldName, onChange, disabled, className} = this.props;
     return (
-      <div className='form-inline mt-1'>
-        <label className='text-nowrap mr-auto mr-md-1' htmlFor={fieldName}>
+      <div className={'form-inline mt-1 ' + className}>
+        <If condition={fieldName}><label className='text-nowrap mr-auto mr-md-1' htmlFor={fieldName}>
           {fieldName}:
-        </label>
+        </label></If>
         <input
           className='form-control'
           id={fieldName}
@@ -23,9 +23,10 @@ class DateInput extends React.Component {
 
   static defaultProps = {
     date: '',
-    fieldName: '-',
+    fieldName: '',
     onChange: () => {},
-    disabled: true
+    disabled: true,
+    className: ''
   };
 }
 

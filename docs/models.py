@@ -86,7 +86,8 @@ class File(models.Model):
 class Order_article(models.Model):
     order = models.ForeignKey(Order_doc, related_name='articles')
     text = models.CharField(max_length=5000)
-    deadline = models.DateField(null=True, blank=True)
+    deadline = models.DateField(null=True, blank=True)  # якщо null=true, значить пункт треба виконувати "постійно"
+    periodicity = models.CharField(max_length=1, null=True, blank=True)  # null - одноразовий пункт, 'm' - щомісяця, 'y' - щороку
     done = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 

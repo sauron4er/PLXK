@@ -50,7 +50,7 @@ class OrderDoneForm(forms.ModelForm):
 class NewArticleForm(forms.ModelForm):
     class Meta:
         model = Order_article
-        fields = ['order', 'text', 'deadline']
+        fields = ['order', 'text', 'deadline', 'periodicity']
 
 
 class ArticleDoneForm(forms.ModelForm):
