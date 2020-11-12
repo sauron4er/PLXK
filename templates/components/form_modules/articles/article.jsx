@@ -148,81 +148,91 @@ class Article extends React.Component {
               index={idx}
               onChange={this.changeResponsible}
               onDelete={this.delResponsible}
+              constant={article.constant}
               disabled={disabled}
             />
           </For>
         </div>
 
-        <div className={'form-inline mt-1'}>
-          <input
-            type='radio'
-            name='constant_radio'
-            id='deadline'
-            value='false'
-            onChange={(e) => this.changeField(e, 'constant')}
-            checked={article.constant === 'false'}
-          />
-          <label className='radio-inline mx-1' htmlFor='deadline'>
-            Строк виконання
-          </label>
-          <If condition={article.constant === 'false'}>
-            <DateInput
-              date={article.deadline}
-              className={'mr-2'}
-              fieldName={''}
-              onChange={(e) => this.changeField(e, 'deadline')}
+        <If condition={article.constant === 'false' || !disabled}>
+          <div className={"form-inline mt-1"}>
+            <input
+              type='radio'
+              name={index + "constant_radio"}
+              id={index + "deadline"}
+              value='false'
+              onChange={(e) => this.changeField(e, "constant")}
+              checked={article.constant === "false"}
               disabled={disabled}
             />
+            <label className='radio-inline mx-1' htmlFor={index + "deadline"}>
+              Строк виконання
+            </label>
+            <If condition={article.constant === "false"}>
+              <DateInput
+                date={article.deadline}
+                className={"mr-2"}
+                fieldName={""}
+                onChange={(e) => this.changeField(e, "deadline")}
+                disabled={disabled}
+              />
+              <If condition={article.periodicity === "" || !disabled}><input
+                type='radio'
+                name={index + "periodicity_radio"}
+                id={index + "once"}
+                value=''
+                onChange={(e) => this.changeField(e, "periodicity")}
+                checked={article.periodicity === ""}
+                disabled={disabled}
+              />
+                <label className='radio-inline mx-1' htmlFor={index + "once"}>
+                  Один раз
+                </label></If>
+              <If condition={article.periodicity === "m" || !disabled}><input
+                className='ml-2'
+                type='radio'
+                name={index + "periodicity_radio"}
+                id={index + "monthly"}
+                value='m'
+                onChange={(e) => this.changeField(e, "periodicity")}
+                checked={article.periodicity === "m"}
+                disabled={disabled}
+              />
+                <label className='radio-inline mx-1' htmlFor={index + "monthly"}>
+                  Щомісяця
+                </label></If>
+              <If condition={article.periodicity === "y" || !disabled}><input
+                className='ml-2'
+                type='radio'
+                name={index + "periodicity_radio"}
+                id={index + "yearly"}
+                value='y'
+                onChange={(e) => this.changeField(e, "periodicity")}
+                checked={article.periodicity === "y"}
+                disabled={disabled}
+              />
+                <label className='radio-inline mx-1' htmlFor={index + "yearly"}>
+                  Щороку
+                </label></If>
+            </If>
+          </div>
+        </If>
+        <If condition={article.constant === 'true' || !disabled}>
+          <div className={"form-inline mt-1"}>
             <input
               type='radio'
-              name='periodicity_radio'
-              id='once'
-              value=''
-              onChange={(e) => this.changeField(e, 'periodicity')}
-              checked={article.periodicity === ''}
+              name={index + "constant_radio"}
+              id={index + "constant"}
+              value='true'
+              onChange={(e) => this.changeField(e, "constant")}
+              checked={article.constant === "true"}
+              disabled={disabled}
             />
-            <label className='radio-inline mx-1' htmlFor='once'>
-              Один раз
+            <label className='radio-inline mx-1' htmlFor={index + "constant"}>
+              Виконувати постійно
             </label>
-            <input
-              className='ml-2'
-              type='radio'
-              name='periodicity_radio'
-              id='monthly'
-              value='m'
-              onChange={(e) => this.changeField(e, 'periodicity')}
-              checked={article.periodicity === 'm'}
-            />
-            <label className='radio-inline mx-1' htmlFor='monthly'>
-              Щомісяця
-            </label>
-            <input
-              className='ml-2'
-              type='radio'
-              name='periodicity_radio'
-              id='annual'
-              value='y'
-              onChange={(e) => this.changeField(e, 'periodicity')}
-              checked={article.periodicity === 'y'}
-            />
-            <label className='radio-inline mx-1' htmlFor='annual'>
-              Щороку
-            </label>
-          </If>
-        </div>
-        <div className={'form-inline mt-1'}>
-          <input
-            type='radio'
-            name='constant_radio'
-            id='constant'
-            value='true'
-            onChange={(e) => this.changeField(e, 'constant')}
-            checked={article.constant === 'true'}
-          />
-          <label className='radio-inline mx-1' htmlFor='constant'>
-            Виконувати постійно
-          </label>
-        </div>
+          </div>
+        </If>
       </div>
     );
   }

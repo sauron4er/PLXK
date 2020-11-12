@@ -12,6 +12,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import ordersCalendarStore from 'docs/templates/docs/orders/calendar/orders_calendar_store';
 import CalendarItem from 'docs/templates/docs/orders/calendar/calendar_item';
 import order from 'docs/templates/docs/orders/order';
+import ConstantCalendarItem from "docs/templates/docs/orders/calendar/constant_calendar_item";
 
 const getMonthName = (month) => {
   switch (month) {
@@ -64,7 +65,7 @@ class OrdersCalendar extends React.Component {
 
   render() {
     const {loading} = this.state;
-    const {calendar, is_admin} = ordersCalendarStore;
+    const {calendar} = ordersCalendarStore;
 
     return (
       <Choose>
@@ -80,9 +81,19 @@ class OrdersCalendar extends React.Component {
                   <For each='order' index='order_idx' of={day.orders}>
                     <If condition={order.articles.length > 0}>
                       <div key={order_idx} className='css_calendar_card'>
-                        <a className='font-weight-bold mb-2 mx-1' href={order.id}>{`Наказ № ${order.order_code} "${order.order_name}"`}</a>
+                        <a
+                          className='font-weight-bold mb-2 mx-1'
+                          href={order.id}
+                        >{`${order.type} № ${order.order_code} "${order.order_name}"`}</a>
                         <For each='article' index='article_idx' of={order.articles}>
-                          <CalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
+                          <Choose>
+                            <When condition={article.constant}>
+                              <ConstantCalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
+                            </When>
+                            <Otherwise>
+                              <CalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
+                            </Otherwise>
+                          </Choose>
                           <hr className='m-1' />
                         </For>
                       </div>

@@ -45,14 +45,14 @@ class Responsible extends React.Component {
   };
 
   render() {
-    const {article_index, index, disabled, onDelete} = this.props;
+    const {article_index, index, disabled, onDelete, constant} = this.props;
     const {id, emp_seat, done, user_is_responsible, status, comment, files_old, files} = this.props.responsible;
 
     return (
       <If condition={status !== 'delete'}>
         <div key={id} className='css_list_item' style={{background: done ? 'lightGreen' : ''}}>
           <div className='d-flex'>
-            <input
+            <If condition={constant === 'false'}><input
               className='css_checkbox'
               type='checkbox'
               // id={'done' + index}
@@ -61,7 +61,9 @@ class Responsible extends React.Component {
               onChange={() => this.changeDone()}
               disabled={disabled && !user_is_responsible}
             />
-            <label htmlFor={`done_${article_index}_${index}`} /> {/* Елемент необхідний для правильної роботи CSS оформлення чекбоксу*/}
+              <label
+                htmlFor={`done_${article_index}_${index}`}/> {/* Елемент необхідний для правильної роботи CSS оформлення чекбоксу*/}
+            </If>
             <div className='font-weight-bold'>{emp_seat}</div>
             <button
               className='btn btn-sm btn-outline-secondary font-weight-bold ml-auto'
@@ -102,6 +104,7 @@ class Responsible extends React.Component {
     status: 'old',
     changeResponsible: () => {},
     onDelete: () => {},
+    constant: 'false', //, 'true'
     disabled: true
   };
 }

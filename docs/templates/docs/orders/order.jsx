@@ -23,18 +23,15 @@ class Order extends React.Component {
   state = {
     mail_mode: 'to_default', // 'everyone', 'list', 'none'
     mail_list: [],
-    pdf_modal_open: false,
-    pdf_view_address: '',
-    pdf_num_pages: null,
-    page_number: 1,
-    cancels_other_doc: false,
     loading: false,
     error404: false
   };
 
   componentDidMount() {
-    this.getOrder();
-    this.setState({loading: true});
+    if (ordersStore.order.id !== 0) { // Якщо 0 - то це створення нового наказу
+      this.getOrder();
+      this.setState({ loading: true });
+    }
   }
 
   isAllFieldsFilled = () => {
@@ -96,8 +93,7 @@ class Order extends React.Component {
   getOrder = () => {
     axiosGetRequest('get_order/' + ordersStore.order.id + '/')
       .then((response) => {
-        if (ordersStore.order.id !== 0) ordersStore.order = response.order;
-        ordersStore.deps = response.deps;
+        ordersStore.order = response.order;
         ordersStore.order.mail_mode = 'to_default';
         this.setState({loading: false});
       })
@@ -189,7 +185,7 @@ class Order extends React.Component {
       .catch((error) => notify(error));
   };
 
-  checkOrderDone = (articles) => {
+  isOrderDone = (articles) => {
     ordersStore.order.done = articles.every((article) => article.done === true);
     ordersStore.order.status = ordersStore.order.done ? 'ok' : 'in progress';
   };
@@ -231,7 +227,7 @@ class Order extends React.Component {
 
   onArticlesChange = (articles) => {
     ordersStore.order.articles = [...articles];
-    this.checkOrderDone(articles);
+    this.isOrderDone(articles);
   };
 
   onFilesDelete = (id, files_field) => {
@@ -264,9 +260,11 @@ class Order extends React.Component {
   };
 
   render() {
-    const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done} = ordersStore.order;
-    const {is_orders_admin, employees, emp_seats, types} = ordersStore;
-    const {loading, error404, pdf_modal_open, pdf_view_address, pdf_num_pages, page_number} = this.state;
+    // const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done, articles} = ordersStore.order;
+    const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
+    const {loading, error404} = this.state;
+
+
 
     return (
       <Choose>
@@ -281,7 +279,7 @@ class Order extends React.Component {
           </div>
           <div className='shadow-lg p-3 mb-5 bg-white rounded'>
             <div className='d-flex flex-row'>
-              {done ? (
+              {order.done ? (
                 <h1 className='text-success mr-2 align-self-end'>
                   <FontAwesomeIcon icon={faCheckCircle} />
                 </h1>
@@ -293,14 +291,14 @@ class Order extends React.Component {
               <Selector
                 classes='mr-2 flex-fill'
                 list={types}
-                selectedName={ordersStore.order.type_name}
+                selectedName={order.type_name}
                 fieldName={'Тип документа'}
                 onChange={(e) => this.onSelectorChange(e, 'type', 'type_name')}
                 disabled={!is_orders_admin}
               />
               <div>
                 <TextInput
-                  text={ordersStore.order.code}
+                  text={order.code}
                   fieldName={'№'}
                   onChange={(e) => this.onInputChange(e, 'code')}
                   maxLength={100}
@@ -311,7 +309,7 @@ class Order extends React.Component {
 
             <hr />
             <TextInput
-              text={ordersStore.order.name}
+              text={order.name}
               fieldName={'Назва'}
               onChange={(e) => this.onInputChange(e, 'name')}
               maxLength={500}
@@ -320,7 +318,7 @@ class Order extends React.Component {
 
             <Articles
               disabled={!is_orders_admin}
-              articles={ordersStore.order.articles}
+              articles={order.articles}
               changeArticles={this.onArticlesChange}
               emp_seats={emp_seats}
             />
@@ -328,8 +326,8 @@ class Order extends React.Component {
 
             <hr />
             <Files
-              oldFiles={ordersStore.order.files_old}
-              newFiles={ordersStore.order.files}
+              oldFiles={order.files_old}
+              newFiles={order.files}
               fieldName={'Файли'}
               onChange={(e) => this.onInputChange(e, 'files')}
               onDelete={(id) => this.onFilesDelete(id, 'files_old')}
@@ -339,17 +337,17 @@ class Order extends React.Component {
             <hr />
             <Selector
               list={employees}
-              selectedName={ordersStore.order.author_name}
+              selectedName={order.author_name}
               fieldName={'Автор'}
               onChange={(e) => this.onSelectorChange(e, 'author', 'author_name')}
               disabled={!is_orders_admin}
             />
 
-            <If condition={ordersStore.order.responsible_name !== ''}>
+            <If condition={order.responsible_name !== ''}>
               <hr />
               <Selector
                 list={employees}
-                selectedName={ordersStore.order.responsible_name}
+                selectedName={order.responsible_name}
                 fieldName={'Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible', 'responsible_name')}
                 disabled={!is_orders_admin}
@@ -359,7 +357,7 @@ class Order extends React.Component {
             <hr />
             <Selector
               list={employees}
-              selectedName={ordersStore.order.supervisory_name}
+              selectedName={order.supervisory_name}
               fieldName={'Контроль'}
               onChange={(e) => this.onSelectorChange(e, 'supervisory', 'supervisory_name')}
               disabled={!is_orders_admin}
@@ -369,7 +367,7 @@ class Order extends React.Component {
             <div className='row'>
               <div className='col-md-3'>
                 <DateInput
-                  date={ordersStore.order.date_start}
+                  date={order.date_start}
                   fieldName={'Діє з'}
                   onChange={(e) => this.onInputChange(e, 'date_start')}
                   disabled={!is_orders_admin}
@@ -377,7 +375,7 @@ class Order extends React.Component {
               </div>
               <div className='col-md-3'>
                 <DateInput
-                  date={ordersStore.order.date_canceled}
+                  date={order.date_canceled}
                   fieldName={'Діє до'}
                   onChange={(e) => this.onInputChange(e, 'date_canceled')}
                   disabled={!is_orders_admin}
@@ -385,12 +383,12 @@ class Order extends React.Component {
               </div>
             </div>
 
-            <If condition={canceled_by_id && canceled_by_id !== '0'}>
+            <If condition={order.canceled_by_id && order.canceled_by_id !== '0'}>
               <hr />
               <div className='row'>
                 <div className='col-12 d-flex mt-2'>
                   <label className='text-nowrap mr-1' htmlFor='canceled_by'>
-                    Скасовано документом: {canceled_by_code}.
+                    Скасовано документом: {order.canceled_by_code}.
                   </label>
                   <div>
                     <a href={this.getCanceledByDocId()} target='_blank'>
@@ -403,32 +401,34 @@ class Order extends React.Component {
 
             <hr />
             <div className='d-flex'>
-              <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={cancels_other_doc} />
+              <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={order.cancels_other_doc} disabled={true}/>
+              {/*TODO Щоб розблокувати цю опцію при пажинованій сторінці, треба вивести її в окремий компонент, який буде отримувати */}
+              {/*TODO  з серверу список наказів для обрання. Бо при пажинації того списку фактично у нас нема.*/}
               <label htmlFor='cancels' className='ml-1'>
                 Скасовує дію іншого документу
               </label>
             </div>
-            <If condition={cancels_other_doc}>
+            <If condition={order.cancels_other_doc}>
               <Selector
                 list={orders}
-                selectedName={ordersStore.order.cancels_code}
+                selectedName={order.cancels_code}
                 fieldName={'Скасовує дію документу'}
                 onChange={(e) => this.onSelectorChange(e, 'cancels_id', 'cancels_code')}
                 disabled={!is_orders_admin}
               />
 
-              <If condition={cancels_id && cancels_id !== '0'}>
+              <If condition={order?.cancels_id !== '0'}>
                 <a className='col-lg-12 d-flex align-items-center' href={this.getCanceledDocId()} target='_blank'>
                   Перейти до скасованого документу
                 </a>
               </If>
 
-              <If condition={!cancels_id || cancels_id === '0'}>
+              <If condition={!order.cancels_id || order.cancels_id === '0'}>
                 <hr />
                 <div className='row'>
                   <div className='col-lg-6 d-flex align-items-center'>
                     <TextInput
-                      text={ordersStore.order.cancels_code}
+                      text={order.cancels_code}
                       fieldName={'№ скасованих документів'}
                       onChange={(e) => this.onInputChange(e, 'cancels_code')}
                       maxLength={100}
@@ -436,8 +436,8 @@ class Order extends React.Component {
                     />
                     <div className='col-lg-6 mt-3 mt-lg-0'>
                       <Files
-                        oldFiles={ordersStore.order.cancels_files_old}
-                        newFiles={ordersStore.order.cancels_files}
+                        oldFiles={order.cancels_files_old}
+                        newFiles={order.cancels_files}
                         fieldName={'Файли скасованих документів'}
                         onChange={(e) => this.onInputChange(e, 'cancels_files')}
                         onDelete={(id) => this.onFilesDelete(id, 'cancels_files_old')}
@@ -459,7 +459,7 @@ class Order extends React.Component {
 
             <SubmitButton className='btn-success' text='Зберегти' onClick={this.postOrder} />
 
-            <If condition={id && is_orders_admin}>
+            <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />
             </If>
 

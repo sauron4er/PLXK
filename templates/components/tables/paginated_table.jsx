@@ -65,16 +65,19 @@ class PaginatedTable extends React.Component {
   changeFiltering = (data) => {
     clearTimeout(delayTimeout);
     delayTimeout = setTimeout(() => {
-      this.setState({
-        filtering: data
-      }, () => {
-        this.getPage(0);
-      });
+      this.setState(
+        {
+          filtering: data
+        },
+        () => {
+          this.getPage(0);
+        }
+      );
     }, 1000);
   };
 
   render() {
-    const {columns, defaultSorting, colWidth, onRowClick, height, redRow, filter} = this.props;
+    const {columns, defaultSorting, colWidth, onRowClick, height, redRow, filter, coloredStatus} = this.props;
 
     const {rows, pagesCount, loading, page} = this.state;
 
@@ -101,22 +104,25 @@ class PaginatedTable extends React.Component {
               filter={filter}
               changeSorting={this.changeSorting}
               changeFiltering={this.changeFiltering}
+              coloredStatus
             />
-            <If condition={pagesCount > 1}><ReactPaginate
-              previousLabel={'Назад'}
-              nextLabel={'Вперед'}
-              breakLabel={'...'}
-              breakClassName={'break-me'}
-              pageCount={pagesCount}
-              marginPagesDisplayed={2}
-              pageRangeDisplayed={5}
-              onPageChange={this.handlePageClick}
-              containerClassName={'paginator'}
-              activeClassName={'active'}
-              pageClassName={'btn btn-sm'}
-              previousClassName={'btn btn-sm'}
-              nextClassName={'btn btn-sm'}
-            /></If>
+            <If condition={pagesCount > 1}>
+              <ReactPaginate
+                previousLabel={'Назад'}
+                nextLabel={'Вперед'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={pagesCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'paginator'}
+                activeClassName={'active'}
+                pageClassName={'btn btn-sm'}
+                previousClassName={'btn btn-sm'}
+                nextClassName={'btn btn-sm'}
+              />
+            </If>
           </When>
           <Otherwise>
             <Loader />

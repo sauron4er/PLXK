@@ -1,5 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from datetime import date
+from copy import deepcopy
+import calendar
 import json
 from plxk.api.try_except import try_except
 from docs.forms import NewArticleForm, DeactivateArticleForm, ArticleDoneForm, \
@@ -47,7 +50,7 @@ def add_article(article, post_request):
 def change_article(article, post_request):
     post_request.update({
         'text': article['text'],
-        'deadline': article['deadline'],
+        'deadline': None if article['constant'] == 'true' else article['deadline'],
         'article': article['id'],
         'periodicity': article['periodicity']
     })
@@ -67,7 +70,12 @@ def change_article(article, post_request):
     else:
         raise ValidationError('docs/orders_articles_api/change_article: article_form invalid')
 
-    post_article_done(post_request, article['id'])
+    article_done = post_article_done(post_request, article['id'])
+    if article_done:
+        if article['periodicity'] == 'm':
+            clone_monthly_article(article_instance)
+        elif article['periodicity'] == 'y':
+            clone_yearly_article(article_instance)
 
 
 @try_except
@@ -94,6 +102,50 @@ def post_article_done(post_request, article_id):
             article_done_form.save()
         else:
             raise ValidationError('docs/orders_articles_api/post_article_done: article_done_form invalid')
+    return done
+
+
+@try_except
+def clone_monthly_article(article):
+    if article.first_instance:
+        first_deadline = article.first_instance.deadline
+    else:
+        first_deadline = article.deadline
+
+    if article.deadline.month == 12:
+        new_year = article.deadline.year + 1
+        new_month = 1
+    else:
+        new_year = article.deadline.year
+        new_month = article.deadline.month + 1
+
+    if first_deadline.day > 28:
+       num_of_days_in_new_month = calendar.monthrange(new_year, new_month)[1]
+       if num_of_days_in_new_month < first_deadline.day:
+           new_day = num_of_days_in_new_month
+       else:
+           new_day = first_deadline.day
+    else:
+        new_day = first_deadline.day
+
+    new_deadline = date(new_year, new_month, new_day)
+
+    # Зберігаємо новий пункт:
+    new_article = deepcopy(article)
+    new_article.deadline = new_deadline
+    new_article.first_instance_id = article.pk
+    new_article.pk = None
+    new_article.save()
+
+    # TODO скопіювати всіх відповідальних з попереднього article
+
+    a = 1
+    # TODO додати перевірку на те, чи буде ще дійсний сам наказ через місяць, якщо ні, то не створювати клон.
+
+
+@try_except
+def clone_yearly_article(article):
+    a=1
 
 
 @try_except

@@ -35,7 +35,7 @@ def get_order_info(order, employee_id):
         'id': article.id,
         'text': article.text,
         'constant': 'true' if article.deadline is None else 'false',
-        'deadline': date_to_json(article.deadline),
+        'deadline': date_to_json(article.deadline) if article.deadline else '',
         'status': 'old',
         'periodicity': article.periodicity if article.periodicity else '',
         'done': article.done,
@@ -65,6 +65,8 @@ def get_order_info(order, employee_id):
         'is_added_or_canceled': file.is_added_or_canceled,
         'status': 'old'
     } for file in files.filter(is_added_or_canceled=True)]
+
+    # TODO написати створення нових пунктів по щомісячних та щорічних повторах
 
     cancels_files_old = [{
         'id': file.id,

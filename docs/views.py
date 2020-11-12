@@ -117,23 +117,25 @@ def orders(request):
     employees = get_employees_list()
     emp_seats = get_emp_seats_list()
 
-    orders = [{
-        'id': order.id,
-        'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-        'type_name': order.doc_type.name,
-        'name': order.name,
-        'author_name': order.author.last_name + ' ' + order.author.first_name,
-        'date_start': str(order.date_start.year) + '-' +
-                      normalize_month(order.date_start) + '-' +
-                      normalize_day(order.date_start) if order.date_start else '',
-        'date_canceled': str(order.date_canceled.year) + '-' +
-                         normalize_month(order.date_canceled) + '-' +
-                         normalize_day(order.date_canceled) if order.date_canceled else '',
-        'is_actual': order.is_act,
-        'status': 'ok' if order.done else 'in progress'
-    } for order in Order_doc.objects.filter(is_act=True)]
+    # orders - цей список потрібен для непажинованої таблиці.
+    # orders = [{
+    #     'id': order.id,
+    #     'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
+    #     'doc_type__name': order.doc_type.name,
+    #     'name': order.name,
+    #     'author__last_name': order.author.last_name + ' ' + order.author.first_name,
+    #     'date_start': str(order.date_start.year) + '-' +
+    #                   normalize_month(order.date_start) + '-' +
+    #                   normalize_day(order.date_start) if order.date_start else '',
+    #     'date_canceled': str(order.date_canceled.year) + '-' +
+    #                      normalize_month(order.date_canceled) + '-' +
+    #                      normalize_day(order.date_canceled) if order.date_canceled else '',
+    #     'is_actual': order.is_act,
+    #     'status': 'ok' if order.done else 'in progress'
+    # } for order in Order_doc.objects.filter(is_act=True)]
 
-    return render(request, 'docs/orders/index.html', {'orders': json.dumps(orders),
+    return render(request, 'docs/orders/index.html', {
+                                                    # 'orders': json.dumps(orders),
                                                        'types': json.dumps(types),
                                                        'is_orders_admin': is_orders_admin,
                                                        'employees': json.dumps(employees),
@@ -148,7 +150,7 @@ def get_orders(request, page):
     orders = filter_orders(orders, json.loads(request.POST['filtering']))
     orders = sort_orders(orders, request.POST['sort_name'], request.POST['sort_direction'])
 
-    paginator = Paginator(orders, 100)
+    paginator = Paginator(orders, 30)
     try:
         orders_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
@@ -159,7 +161,7 @@ def get_orders(request, page):
     orders_list = [{
         'id': order.id,
         'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-        'doc_type': order.doc_type.name,
+        'doc_type__name': order.doc_type.name,
         'name': order.name,
         'author__last_name': order.author.last_name + ' ' + order.author.first_name,
         'date_start': str(order.date_start.year) + '-' +
@@ -201,6 +203,7 @@ def sort_calendar_by_order(calendar):
         for item in date['orders']:
             if item['order_code'] != order_code:
                 date_sorted_by_order.append({
+                    'type': item['type'],
                     'order_code': item['order_code'],
                     'order_name': item['order_name'],
                     'id': item['order_id'],
@@ -239,12 +242,14 @@ def get_calendar(request):
         my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
 
     calendar = [{
+        'type': item.article.order.doc_type.name,
         'date_canceled': item.article.order.date_canceled,
         'order_id': item.article.order.id,
         'order_code': item.article.order.code,
         'order_name': item.article.order.name,
         'text': item.article.text,
-        'deadline': normalize_date(item.article.deadline),
+        'constant': False if item.article.deadline else True,
+        'deadline': normalize_date(item.article.deadline) if item.article.deadline else 'Постійно',
         'responsible': item.id,
         'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat,
         # 'comment': item.comment if item.comment else '',
@@ -260,11 +265,9 @@ def get_calendar(request):
     sorted_by_date = sort_calendar_by_date(calendar)
     sorted_by_date_and_order = sort_calendar_by_order(sorted_by_date)
 
-    # Сортуємо список у підсписки по полю deadline
-    # result = collections.defaultdict(list)
-    # for d in calendar:
-    #     result[d['deadline']].append(d)
-    # sorted_calendar = list(result.values())
+    if sorted_by_date_and_order and sorted_by_date_and_order[0]['date'] == 'Постійно':
+        sorted_by_date_and_order.append(sorted_by_date_and_order[0])
+        del sorted_by_date_and_order[0]
 
     return HttpResponse(json.dumps({'calendar': sorted_by_date_and_order, 'is_admin': is_it_admin}))
 
@@ -278,20 +281,12 @@ def reminders(request):
 @login_required(login_url='login')
 @try_except
 def get_order(request, pk):
-    deps = get_deps()
-    response = {'deps': deps}
-
-    if pk != '0':
-        try:
-            order = get_object_or_404(Order_doc, pk=pk)
-            response.update({'order': get_order_info(order, request.user.userprofile.id)})
-        except Http404:
-            return HttpResponse('Такого наказу не існує', status=404)
-
-    return HttpResponse(json.dumps(response))
-
-
-
+    try:
+        order = get_object_or_404(Order_doc, pk=pk)
+        response = {'order': get_order_info(order, request.user.userprofile.id)}
+        return HttpResponse(json.dumps(response))
+    except Http404:
+        return HttpResponse('Такого наказу не існує', status=404)
 
 
 @login_required(login_url='login')
