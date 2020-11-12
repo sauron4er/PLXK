@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('docs', '0028_order_article_periodicity'),
+        ('docs', '0028_auto_20201104_1136'),
     ]
 
     operations = [

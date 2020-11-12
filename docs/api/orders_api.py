@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 import datetime
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
@@ -31,6 +32,9 @@ def get_order_info(order, employee_id):
         'done': order.done
     }
 
+    articles = Order_article.objects.filter(order_id=order['id']).filter(is_active=True)
+    filtered_articles = articles.filter(~Q(periodicity='') & Q(done=False))
+
     articles = [{
         'id': article.id,
         'text': article.text,
@@ -54,7 +58,7 @@ def get_order_info(order, employee_id):
             'user_is_responsible': responsible.employee_seat.id in get_users_emp_seat_ids(employee_id),
             'status': 'old',
         } for responsible in Article_responsible.objects.filter(article_id=article.id).filter(is_active=True)]
-    } for article in Order_article.objects.filter(order_id=order['id']).filter(is_active=True)]
+    } for article in filtered_articles]
 
     files = File.objects.filter(is_active=True).filter(order__id=order['id'])
 

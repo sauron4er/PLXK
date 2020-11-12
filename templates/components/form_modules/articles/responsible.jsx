@@ -50,7 +50,7 @@ class Responsible extends React.Component {
 
     return (
       <If condition={status !== 'delete'}>
-        <div key={id} className='css_list_item' style={{background: done ? 'lightGreen' : ''}}>
+        <div key={id} className='css_list_item' style={{background: constant === 'false' && done ? 'lightGreen' : ''}}>
           <div className='d-flex'>
             <If condition={constant === 'false'}><input
               className='css_checkbox'

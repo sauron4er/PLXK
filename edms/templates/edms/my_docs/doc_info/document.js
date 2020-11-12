@@ -302,7 +302,7 @@ class Document extends React.Component {
   render() {
     const {doc_id, archived, directSubs} = this.props;
     const {ready_for_render} = this.state;
-
+  
     if (ready_for_render === true) {
       if (doc_id !== 0) {
         const {info, deletable, comment, new_files, modal_open, modal} = this.state;

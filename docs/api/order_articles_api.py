@@ -7,7 +7,7 @@ import json
 from plxk.api.try_except import try_except
 from docs.forms import NewArticleForm, DeactivateArticleForm, ArticleDoneForm, \
     NewResponsibleForm, DeactivateResponsibleForm
-from docs.models import Order_article, Article_responsible, Responsible_file
+from docs.models import Order_article, Article_responsible, Responsible_file, Order_doc
 
 
 @try_except
@@ -48,6 +48,12 @@ def add_article(article, post_request):
 
 @try_except
 def change_article(article, post_request):
+    article_instance = get_object_or_404(Order_article, pk=article['id'])
+
+    article_already_done = is_article_done(article_instance)
+    # В разі, якщо зберегли зміни у документі, в якому цей наказ уже виконано, клонувати його не потрібно
+    # Перевіряємо це перед тим, як вносити зміни у responsibles, бо саме вони впливають на done.
+
     post_request.update({
         'text': article['text'],
         'deadline': None if article['constant'] == 'true' else article['deadline'],
@@ -63,7 +69,6 @@ def change_article(article, post_request):
         elif responsible['status'] == 'delete':
             delete_responsible(responsible['responsible_id'], post_request)
 
-    article_instance = get_object_or_404(Order_article, pk=article['id'])
     article_form = NewArticleForm(post_request, instance=article_instance)
     if article_form.is_valid():
         article_form.save()
@@ -71,11 +76,11 @@ def change_article(article, post_request):
         raise ValidationError('docs/orders_articles_api/change_article: article_form invalid')
 
     article_done = post_article_done(post_request, article['id'])
-    if article_done:
-        if article['periodicity'] == 'm':
-            clone_monthly_article(article_instance)
-        elif article['periodicity'] == 'y':
-            clone_yearly_article(article_instance)
+
+    if article_done and article['periodicity'] != '' and not article_already_done:
+        new_deadline = get_new_deadline(article['periodicity'], article_instance)
+        if not order_is_canceled_by_then(new_deadline, article_instance.order_id):
+            clone_article(article_instance, new_deadline)
 
 
 @try_except
@@ -91,10 +96,23 @@ def delete_article(article_id, post_request):
 
 
 @try_except
+def is_article_done(article):
+    return not Article_responsible.objects.filter(article_id=article.id).filter(done=False).filter(
+        is_active=True).exists()
+
+
+@try_except
+def order_is_canceled_by_then(new_deadline, order_id):
+    order_canceled_on = Order_doc.objects.values_list('date_canceled', flat=True).filter(id=order_id)[0]
+    if order_canceled_on and order_canceled_on < new_deadline:
+        return True
+    return False
+
+
+@try_except
 def post_article_done(post_request, article_id):
     article = get_object_or_404(Order_article, pk=article_id)
-    done = not Article_responsible.objects.filter(article_id=article_id).filter(done=False).filter(is_active=True).exists()
-
+    done = is_article_done(article)
     if done != article.done:
         post_request.update({'done': done})
         article_done_form = ArticleDoneForm(post_request, instance=article)
@@ -106,41 +124,62 @@ def post_article_done(post_request, article_id):
 
 
 @try_except
-def clone_monthly_article(article):
+def get_new_deadline(period, article):
     if article.first_instance:
         first_deadline = article.first_instance.deadline
     else:
         first_deadline = article.deadline
 
-    if article.deadline.month == 12:
+    new_year, new_month, new_day = '', '', ''
+
+    if period == 'm':
+        if article.deadline.month == 12:
+            new_year = article.deadline.year + 1
+            new_month = 1
+        else:
+            new_year = article.deadline.year
+            new_month = article.deadline.month + 1
+
+        if first_deadline.day > 28:
+            num_of_days_in_new_month = calendar.monthrange(new_year, new_month)[1]
+            if num_of_days_in_new_month < first_deadline.day:
+                new_day = num_of_days_in_new_month
+            else:
+                new_day = first_deadline.day
+        else:
+            new_day = first_deadline.day
+
+    elif period == 'y':
         new_year = article.deadline.year + 1
-        new_month = 1
-    else:
-        new_year = article.deadline.year
-        new_month = article.deadline.month + 1
+        new_month = article.deadline.month
+        if first_deadline.day == 29 and first_deadline.month == 2:
+            num_of_days_in_new_month = calendar.monthrange(new_year, new_month)[1]
+            if num_of_days_in_new_month == 28:
+                new_day = 28
+            else:
+                new_day = 29
+        else:
+            new_day = first_deadline.day
 
-    if first_deadline.day > 28:
-       num_of_days_in_new_month = calendar.monthrange(new_year, new_month)[1]
-       if num_of_days_in_new_month < first_deadline.day:
-           new_day = num_of_days_in_new_month
-       else:
-           new_day = first_deadline.day
-    else:
-        new_day = first_deadline.day
+    return date(new_year, new_month, new_day)
 
-    new_deadline = date(new_year, new_month, new_day)
 
-    # Зберігаємо новий пункт:
+@try_except
+def clone_article(article, deadline):
+    # Клонуємо пункт:
     new_article = deepcopy(article)
-    new_article.deadline = new_deadline
-    new_article.first_instance_id = article.pk
+    new_article.deadline = deadline
+    if not article.first_instance:
+        new_article.first_instance_id = article.pk
     new_article.pk = None
     new_article.save()
 
-    # TODO скопіювати всіх відповідальних з попереднього article
-
-    a = 1
-    # TODO додати перевірку на те, чи буде ще дійсний сам наказ через місяць, якщо ні, то не створювати клон.
+    # Клонуємо всіх відповідальних
+    for responsible in article.responsibles.all():
+        responsible.done = False
+        responsible.article_id = new_article.id
+        responsible.pk = None
+        responsible.save()
 
 
 @try_except

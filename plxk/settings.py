@@ -24,7 +24,7 @@ SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = True
+STAS_DEBUG = False
 
 
 ALLOWED_HOSTS = ['10.10.10.0/24']
@@ -75,8 +75,7 @@ ROOT_URLCONF = 'plxk.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -105,6 +104,7 @@ if STAS_DEBUG:
             'HOST': 'localhost',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
+            # 'CONN_MAX_AGE': 28700
         },
     }
 else:
@@ -117,6 +117,7 @@ else:
             'HOST': '10.10.10.22',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
+            # 'CONN_MAX_AGE': 28700
         },
 
         'lite': {

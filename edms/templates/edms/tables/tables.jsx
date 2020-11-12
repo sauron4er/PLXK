@@ -17,7 +17,7 @@ class Tables extends React.Component {
     loading: false,
     header: [],
     rows: [],
-    clicked_row: ''
+    clicked_row_id: 0
   };
 
   componentDidMount() {
@@ -67,7 +67,7 @@ class Tables extends React.Component {
 
   onRowClick = (row) => {
     this.setState({
-      clicked_row: row
+      clicked_row_id: row.id
     });
   };
 
@@ -79,7 +79,7 @@ class Tables extends React.Component {
       column_widths,
       header,
       rows,
-      clicked_row,
+      clicked_row_id,
       loading
     } = this.state;
   
@@ -127,14 +127,14 @@ class Tables extends React.Component {
           </Otherwise>
         </Choose>
         <Modal
-          open={!!clicked_row}
-          onClose={() => this.setState({clicked_row: ''})}
+          open={clicked_row_id !== 0}
+          onClose={() => this.setState({clicked_row_id: 0})}
           showCloseIcon={true}
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 50}}}
         >
           <Document
-            doc={clicked_row}
+            doc_id={clicked_row_id}
             closed={true}
           />
         </Modal>
