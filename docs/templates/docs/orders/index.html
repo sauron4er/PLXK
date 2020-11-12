@@ -13,7 +13,7 @@
 {% block content %}
     <div class="container-fluid p-2" id="orders">
         <script>
-            window.orders = {{ orders|safe }};
+            {#window.orders = {{ orders|safe }};#}
             window.types = {{ types|safe }};
             window.is_orders_admin = {{ is_orders_admin|safe }};
             window.employees = {{ employees|safe }};

@@ -160,36 +160,6 @@ class DxTable extends React.PureComponent {
     />
   );
 
-  // Налаштування комірки
-  CellComponent = (props) => {
-    let style = {
-      padding: 0,
-      paddingLeft: 5,
-      margin: 0,
-      fontSize: '12px',
-      height: '30px',
-      estimatedRowHeight: '30px',
-      border: '1px solid #F0F0F0'
-    };
-
-    // Налаштування комірки з назвою status
-    if (this.props.coloredStatus && props.column.name === 'status') {
-      const color =
-        props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
-      style = {
-        backgroundColor: color,
-        color: color
-      };
-    }
-
-    // Налаштування комірки з назвою status
-    if (props.column.name === 'files' && Array.isArray(props.row.files)) {
-      return this.arrangeFiles(props.row.files, style);
-    }
-
-    return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} style={style} />;
-  };
-
   arrangeFiles = (files, style) => {
     return (
       <td style={style}>
@@ -203,6 +173,56 @@ class DxTable extends React.PureComponent {
       </td>
     );
   };
+
+  autoActuality = (date_start, date_end) => {
+    if (new Date(date_start) > this.state.today) return 'yellow';
+    if (date_end !== '' && new Date(date_end) < this.state.today) return 'red';
+    return 'lightgreen';
+  };
+
+  // Налаштування комірки
+  CellComponent = (props) => {
+    let cell_value = props.value;
+
+    let style = {
+      padding: 0,
+      paddingLeft: 5,
+      margin: 0,
+      fontSize: '12px',
+      height: '30px',
+      estimatedRowHeight: '30px',
+      border: '1px solid #F0F0F0'
+    };
+
+    // status
+    if (this.props.coloredStatus && props.column.name === 'status') {
+      const color = props.value === 'in progress' ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
+      style = {
+        backgroundColor: color,
+        color: color
+      };
+      cell_value = '';
+    }
+
+    // autoActuality
+    if (props.column.name === 'autoActuality' && (props.row.date_start || props.row.date_end)) {
+      const color = this.autoActuality(props.row.date_start, props.row.date_end);
+      style = {
+        backgroundColor: color,
+        color: color
+      };
+      cell_value = '';
+    }
+
+    // files
+    if (props.column.name === 'files' && Array.isArray(props.row.files)) {
+      return this.arrangeFiles(props.row.files, style);
+    }
+
+    return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} value={cell_value} style={style} />;
+  };
+
+
 
   HeaderCellComponent = (props) => (
     <TableHeaderRow.Cell

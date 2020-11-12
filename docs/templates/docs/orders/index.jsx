@@ -13,7 +13,7 @@ class Orders extends React.Component {
     ordersStore.emp_seats = window.emp_seats;
     ordersStore.types = window.types;
     ordersStore.is_orders_admin = window.is_orders_admin;
-    ordersStore.orders = window.orders;
+    // ordersStore.orders = window.orders;
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
     const arr = window.location.href.split('/');

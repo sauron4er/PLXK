@@ -12,7 +12,7 @@ class Articles extends React.Component {
     this.props.changeArticles(articles);
   };
   
-  changeDoneField = (article) => {
+  isArticleDone = (article) => {
     return article.responsibles.filter(resp => resp.status !== 'delete').every(resp => resp.done);
   };
 
@@ -20,7 +20,7 @@ class Articles extends React.Component {
     let articles = [...this.props.articles];
     articles[index] = article;
     if (articles[index].status === 'old') articles[index].status = 'change';
-    articles[index].done = this.changeDoneField(article)
+    articles[index].done = this.isArticleDone(article)
   
     this.props.changeArticles(articles);
   };

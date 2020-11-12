@@ -89,6 +89,7 @@ class Order_article(models.Model):
     deadline = models.DateField(null=True, blank=True)  # якщо null=true, значить пункт треба виконувати "постійно"
     periodicity = models.CharField(max_length=1, null=True, blank=True)  # null - одноразовий пункт, 'm' - щомісяця, 'y' - щороку
     done = models.BooleanField(default=False)
+    first_instance = models.ForeignKey('self', related_name='next_instances', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 
