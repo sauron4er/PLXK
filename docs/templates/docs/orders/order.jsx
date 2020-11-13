@@ -211,7 +211,6 @@ class Order extends React.Component {
   };
 
   closeOrderView = () => {
-    ordersStore.clearOrder();
     ordersStore.view = 'table';
   };
 
@@ -254,17 +253,10 @@ class Order extends React.Component {
     return './' + ordersStore.order.canceled_by_id;
   };
 
-  onOrderClose = () => {
-    ordersStore.clearOrder();
-    ordersStore.view = 'table';
-  };
-
   render() {
     // const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done, articles} = ordersStore.order;
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
     const {loading, error404} = this.state;
-
-
 
     return (
       <Choose>
@@ -273,7 +265,7 @@ class Order extends React.Component {
         </When>
         <When condition={!loading}>
           <div className='d-flex'>
-            <button className='btn btn-sm btn-success my-2' onClick={() => this.onOrderClose()}>
+            <button className='btn btn-sm btn-success my-2' onClick={() => this.closeOrderView()}>
               Назад
             </button>
           </div>

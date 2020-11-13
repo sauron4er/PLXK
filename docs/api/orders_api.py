@@ -32,8 +32,9 @@ def get_order_info(order, employee_id):
         'done': order.done
     }
 
-    articles = Order_article.objects.filter(order_id=order['id']).filter(is_active=True)
-    filtered_articles = articles.filter(~Q(periodicity='') & Q(done=False))
+    articles_raw = Order_article.objects.filter(order_id=order['id']).filter(is_active=True)
+    filtered_articles = articles_raw.exclude((Q(periodicity='m') | Q(periodicity='y')), Q(done=True))
+    # TODO треба додати перевірку на те, чи не закінчилася дія Договору, в такому разі треба останній article показувати
 
     articles = [{
         'id': article.id,

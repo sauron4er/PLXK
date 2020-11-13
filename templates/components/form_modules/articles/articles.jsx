@@ -39,7 +39,7 @@ class Articles extends React.Component {
 
   render() {
     const {articles, emp_seats, disabled} = this.props;
-
+  
     return (
       <If condition={articles.length > 0 || !disabled}>
         <hr />

@@ -36,6 +36,7 @@ class OrdersTable extends React.Component {
 
   componentDidMount() {
     this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
+    ordersStore.clearOrder()
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
