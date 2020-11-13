@@ -42,7 +42,7 @@ class FilesUpload extends React.Component {
             onError={this.onFilesError}
             multiple={this.props.multiple}
             maxFiles={10}
-            maxFileSize={10000000}
+            maxFileSize={50000000}
             minFileSize={0}
             clickable
           >

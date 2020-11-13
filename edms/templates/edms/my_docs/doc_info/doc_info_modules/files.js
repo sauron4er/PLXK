@@ -11,7 +11,7 @@ class Files extends React.Component {
         <For each='file' index='id' of={files}>
           <If condition={file.first_path}>
             <div key={file.id}>
-              <a href={'../../media/' + file.file} download={file.name}>
+              <a href={'../../media/' + file.file} target='_blank'>
                 {file.name}{' '}
               </a>
               <If condition={is_editable}>
