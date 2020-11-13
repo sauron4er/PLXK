@@ -14,6 +14,7 @@ import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requ
 import {Loader} from 'templates/components/loaders';
 import Files from 'templates/components/form_modules/files';
 import LawsList from './laws_list';
+import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class Request extends React.Component {
   state = {
@@ -21,7 +22,7 @@ class Request extends React.Component {
     user_is_author: true,
     loading: false
   };
-  
+
   componentDidMount() {
     if (corrStore.request.id !== 0) {
       this.getRequestInfo();
@@ -72,7 +73,7 @@ class Request extends React.Component {
     }
     return true;
   };
-  
+
   getRequestInfo = () => {
     axiosGetRequest('get_request/' + corrStore.request.id + '/')
       .then((response) => {
@@ -104,8 +105,6 @@ class Request extends React.Component {
     }
   };
 
-  
-
   postRequest = () => {
     if (this.areAllFieldsFilled() && this.areDatesInOrder()) {
       this.addSelectedLaw();
@@ -126,7 +125,7 @@ class Request extends React.Component {
       formData.append('answer_responsible', corrStore.request.answer_responsible_id);
       formData.append('laws', JSON.stringify(corrStore.request.laws));
       formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
-      formData.append('acquaints', JSON.stringify(corrStore.request.acquaints))
+      formData.append('acquaints', JSON.stringify(corrStore.request.acquaints));
       if (corrStore.request.new_request_files?.length > 0) {
         corrStore.request.new_request_files.map((file) => {
           formData.append('new_request_files', file);
@@ -289,7 +288,7 @@ class Request extends React.Component {
 
   deleteAcquaint = (id) => {
     // Ці зміни необхідно проводити через окрему змінну, бо react-easy-state не розпізнає змін в глибині об’єктів
-    let acquaints = [...corrStore.request.acquaints]
+    let acquaints = [...corrStore.request.acquaints];
     for (const i in acquaints) {
       if (acquaints[i].id === id) {
         if (acquaints[i].status === 'new') {
@@ -301,7 +300,7 @@ class Request extends React.Component {
         }
       }
     }
-    corrStore.request.acquaints = [...acquaints]
+    corrStore.request.acquaints = [...acquaints];
   };
 
   getTitle = () => {
@@ -415,7 +414,7 @@ class Request extends React.Component {
               </div>
               <hr />
               <Selector
-                list={corrStore.employees.filter(employee => employee.correspondence_admin)}
+                list={corrStore.employees.filter((employee) => employee.correspondence_admin)}
                 selectedName={corrStore.request.responsible_name}
                 fieldName={'Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible_id', 'responsible_name')}
@@ -423,7 +422,7 @@ class Request extends React.Component {
               />
               <hr />
               <Selector
-                list={corrStore.employees.filter(employee => employee.correspondence_admin)}
+                list={corrStore.employees.filter((employee) => employee.correspondence_admin)}
                 selectedName={corrStore.request.answer_responsible_name}
                 fieldName={'Відповідальний за надання відповіді'}
                 onChange={(e) => this.onSelectorChange(e, 'answer_responsible_id', 'answer_responsible_name')}
@@ -456,13 +455,9 @@ class Request extends React.Component {
                   </button>
                 </If>
                 <If condition={corrStore.request.id !== 0 && user_is_author}>
-                  <button className='btn btn-outline-danger' onClick={() => this.postDelRequest()}>
-                    Видалити
-                  </button>
+                  <SubmitButton className='btn-outline-danger' text='Видалити' onClick={() => this.postDelRequest()} />
                 </If>
-                <button className='btn btn-outline-success' onClick={() => this.postRequest()}>
-                  Зберегти
-                </button>
+                <SubmitButton className='btn-outline-success' text='Зберегти' onClick={() => this.postRequest()} />
               </div>
             </If>
 

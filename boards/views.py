@@ -84,18 +84,20 @@ def about(request):
 
 
 def auto_functions():
-    print("auto_functions executed: ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
     # auto_arrange_vacations()
     send_orders_reminders()
+    print("auto_functions executed: ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
 
 def start_auto_functions():
-    global auto_functions_started
-    auto_functions_started = True
-    schedule.every().day.at("07:00").do(auto_functions)
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
+    test = True
+    # global auto_functions_started
+    # auto_functions_started = True
+    #
+    # schedule.every().day.at("07:00").do(auto_functions)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(60)
 
 
 def home(request):

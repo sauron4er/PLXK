@@ -14,6 +14,7 @@ class Info extends React.Component {
   render() {
     
     const {info} = this.props;
+    
     if (info.path) {
       return (
         <div>

@@ -16,6 +16,7 @@ import Files from 'templates/components/form_modules/files';
 import Checkbox from 'templates/components/form_modules/checkbox';
 import Document from 'edms/templates/edms/my_docs/doc_info/document';
 import Modal from 'react-responsive-modal';
+import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class Contract extends React.Component {
   state = {
@@ -315,16 +316,9 @@ class Contract extends React.Component {
                 </button>
               </If>
               <If condition={contractsStore.contract.id !== 0}>
-                <button className='btn btn-outline-danger' onClick={() => this.postDelContract()}>
-                  Видалити
-                </button>
+                <SubmitButton className='btn-outline-danger' onClick={() => this.postDelContract()} text='Видалити' />
               </If>
-              <button className='btn btn-outline-success' onClick={() => this.postContract()}>
-                Зберегти
-              </button>
-              <button className='btn btn-outline-success' onClick={() => this.postContract()}>
-                Зберегти
-              </button>
+              <SubmitButton className='btn btn-outline-success' onClick={() => this.postContract()} text='Зберегти' />
             </div>
           </If>
 
