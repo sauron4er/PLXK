@@ -219,7 +219,7 @@ def sort_calendar_by_order(calendar):
 
 @login_required(login_url='login')
 @try_except
-def get_calendar(request):
+def get_calendar(request, view):
     today = date.today()
 
     my_calendar = Article_responsible.objects\
@@ -240,6 +240,11 @@ def get_calendar(request):
             .filter(employee__user=request.user)\
             .filter(is_active=True)
         my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
+
+    if view == 'constant_calendar':
+        my_calendar = my_calendar.filter(article__deadline__isnull=True)
+    else:
+        my_calendar = my_calendar.filter(article__deadline__isnull=False)
 
     calendar = [{
         'type': item.article.order.doc_type.name,

@@ -12,36 +12,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import ordersCalendarStore from 'docs/templates/docs/orders/calendar/orders_calendar_store';
 import CalendarItem from 'docs/templates/docs/orders/calendar/calendar_item';
 import order from 'docs/templates/docs/orders/order';
-import ConstantCalendarItem from "docs/templates/docs/orders/calendar/constant_calendar_item";
-
-const getMonthName = (month) => {
-  switch (month) {
-    case 0:
-      return 'січня';
-    case 1:
-      return 'лютого';
-    case 2:
-      return 'березня';
-    case 3:
-      return 'квітня';
-    case 4:
-      return 'травня';
-    case 5:
-      return 'червня';
-    case 6:
-      return 'липня';
-    case 7:
-      return 'серпня';
-    case 8:
-      return 'вересня';
-    case 9:
-      return 'жовтня';
-    case 10:
-      return 'листопада';
-    case 11:
-      return 'грудня';
-  }
-};
+import ConstantCalendarItem from 'docs/templates/docs/orders/calendar/constant_calendar_item';
 
 class OrdersCalendar extends React.Component {
   state = {
@@ -53,8 +24,16 @@ class OrdersCalendar extends React.Component {
     this.setState({loading: true});
   }
 
+  componentDidUpdate(prevProps, prevState, shapshot) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.type !== prevProps.type) {
+      this.getCalendar();
+      this.setState({loading: true});
+    }
+  }
+
   getCalendar = () => {
-    axiosGetRequest('get_calendar/')
+    axiosGetRequest('get_calendar/' + this.props.type)
       .then((response) => {
         ordersCalendarStore.calendar = response.calendar;
         ordersCalendarStore.is_admin = response.is_admin;
@@ -112,6 +91,10 @@ class OrdersCalendar extends React.Component {
       </Choose>
     );
   }
+
+  static defaultProps = {
+    type: 'calendar' //, constant_calendar
+  };
 }
 
 export default view(OrdersCalendar);

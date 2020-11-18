@@ -16,10 +16,10 @@ export const axiosPostRequest = (url, data = []) => {
     });
 };
 
-export const axiosGetRequest = (url, data = []) => {
+export const axiosGetRequest = (url) => {
   return axios({
     method: 'get',
-    url: url,
+    url: url
   })
     .then((response) => response.data)
     .catch((error) => {

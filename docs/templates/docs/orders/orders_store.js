@@ -1,7 +1,7 @@
 import {store} from '@risingstack/react-easy-state';
 
 const ordersStore = store({
-  view: 'table', // order, calendar
+  view: 'table', //, order, calendar, constant_calendar
   orders: [],
   order: {
     id: 0,

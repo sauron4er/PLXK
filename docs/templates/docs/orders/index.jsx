@@ -46,6 +46,9 @@ class Orders extends React.Component {
           <button type='button' className={this.getButtonStyle('calendar')} onClick={() => this.changeView('calendar')}>
             Календар виконання наказів
           </button>
+          <button type='button' className={this.getButtonStyle('constant_calendar')} onClick={() => this.changeView('constant_calendar')}>
+            Безстрокові накази
+          </button>
         </div>
 
         <Choose>
@@ -55,8 +58,8 @@ class Orders extends React.Component {
           <When condition={view === 'order'}>
             <Order />
           </When>
-          <When condition={view === 'calendar'}>
-            <OrdersCalendar />
+          <When condition={view === 'calendar' || view === 'constant_calendar'}>
+            <OrdersCalendar type={view} />
           </When>
         </Choose>
       </>
