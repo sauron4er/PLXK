@@ -29,9 +29,7 @@ class CorrTable extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({
-      main_div_height: this.mainDivRef.clientHeight,
-    });
+    this.setState({main_div_height: this.mainDivRef.clientHeight,});
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -57,11 +55,11 @@ class CorrTable extends React.Component {
   render() {
     const {main_div_height} = this.state;
     const {corrType} = this.props;
-    
+  
     return (
       <div ref={this.getMainDivRef}>
         <button className='btn btn-outline-success' onClick={this.newRequest}>
-          {corrType === 1 ? 'Додати запит' : 'Додати рекламацію'}
+          {corrType === 1 ? 'Додати запит' : corrType === 2 ? 'Додати рекламацію' : 'Додати запит на взірець'}
         </button>
         <DxTable
           rows={this.filterCorrespondence()}

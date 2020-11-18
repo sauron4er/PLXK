@@ -116,7 +116,7 @@ class Scopes extends React.Component {
           <tbody>
             <For each='scope' index='idx' of={corrStore.scopes}>
               <tr key={idx}>
-                <td className='align-middle col-4'>{scope.name}</td>
+                <td className='align-middle col-11'>{scope.name}</td>
                 <td className='text-center align-middle small text-danger col-1'>
                   <button className='btn btn-sm py-0' onClick={(e) => this.postDelScope(e, scope.id)}>
                     <FontAwesomeIcon icon={faTimes} />

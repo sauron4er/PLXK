@@ -329,7 +329,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.products}
                 selectedName={corrStore.request.product_name}
-                fieldName={'Продукт'}
+                fieldName={'Продукція'}
                 onChange={(e) => this.onSelectorChange(e, 'product_id', 'product_name')}
                 disabled={!edit_mode}
               />
@@ -407,7 +407,7 @@ class Request extends React.Component {
                 </div>
                 <DateInput
                   date={corrStore.request.answer_date}
-                  fieldName={'Дата надання відповіді'}
+                  fieldName={'Дата виконання'}
                   onChange={(e) => this.onInputChange(e, 'answer_date')}
                   disabled={!edit_mode}
                 />
@@ -424,7 +424,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.employees.filter((employee) => employee.correspondence_admin)}
                 selectedName={corrStore.request.answer_responsible_name}
-                fieldName={'Відповідальний за надання відповіді'}
+                fieldName={corrStore.request.type === 3 ? 'Відповідальний за надання взірців' : 'Відповідальний за надання відповіді'}
                 onChange={(e) => this.onSelectorChange(e, 'answer_responsible_id', 'answer_responsible_name')}
                 disabled={!edit_mode}
               />

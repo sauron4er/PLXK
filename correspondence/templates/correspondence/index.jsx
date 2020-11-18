@@ -10,7 +10,7 @@ import corrStore from './store';
 
 class Correspondence extends React.Component {
   state = {
-    view: 'requests' // requests, reclamations, request, laws, scopes
+    view: 'requests' // requests, reclamations, samples, request, laws, scopes
   };
 
   componentDidMount() {
@@ -30,7 +30,9 @@ class Correspondence extends React.Component {
   }
 
   changeView = (name) => {
-    name === 'requests' ? corrStore.request.type = 1 : corrStore.request.type = 2
+    if (name === 'requests') corrStore.request.type = 1
+    else if (name === 'reclamations') corrStore.request.type = 2
+    else if (name === 'samples') corrStore.request.type = 3
     this.setState({view: name});
   };
 
@@ -55,6 +57,9 @@ class Correspondence extends React.Component {
           <button type='button' className={this.getButtonStyle('reclamations')} onClick={() => this.changeView('reclamations')}>
             Рекламації
           </button>
+          {/*<button type='button' className={this.getButtonStyle('samples')} onClick={() => this.changeView('samples')}>*/}
+          {/*  Заявки на взірці*/}
+          {/*</button>*/}
           <button type='button' className={this.getButtonStyle('laws')} onClick={() => this.changeView('laws')}>
             Законодавство
           </button>
@@ -70,6 +75,9 @@ class Correspondence extends React.Component {
           <When condition={view === 'reclamations'}>
             <CorrTable corrType={2} showRequest={this.showRequest} />
           </When>
+          {/*<When condition={view === 'samples'}>*/}
+          {/*  <CorrTable corrType={3} showRequest={this.showRequest} />*/}
+          {/*</When>*/}
           <When condition={view === 'request'}>
             <Request close={this.changeView} />
           </When>
