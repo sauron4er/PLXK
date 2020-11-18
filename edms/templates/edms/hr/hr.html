@@ -3,6 +3,8 @@
 {% block title %}Відділ кадрів ПЛХК{% endblock %}
 {% load render_bundle from webpack_loader %}
 
+{% block second_nav %}{% endblock %}
+
 {% block content %}
     <script>
         window.emps = {{ emps|safe }};

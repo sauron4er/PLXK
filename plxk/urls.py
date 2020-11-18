@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^menu/', board_views.menu, name='menu'),
     url(r'^polls/', include('polls.urls', namespace='polls')),
     url(r'^crm/', include('crm.urls', namespace='crm')),
-    url(r'^bets/', include('bets.urls', namespace='bets')),
     url(r'^boards/', include('boards.urls', namespace='boards')),
     url(r'^reload/', board_views.reload, name='reload'),  # Якщо запит на 'boards/reload' - повертається пустий response
 

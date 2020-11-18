@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'webpack_loader',
 
     'accounts',
-    'bets',
     'boards',
     'crm',
     'docs',
