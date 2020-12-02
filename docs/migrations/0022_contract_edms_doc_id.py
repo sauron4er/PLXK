@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contract',
             name='edms_doc_id',
-            field=models.ForeignKey(null=True, related_name='contracts', to='edms.Document'),
+            field=models.ForeignKey(null=True, related_name='contracts', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
     ]

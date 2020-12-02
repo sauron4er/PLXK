@@ -3,6 +3,8 @@ from . import views
 from . import views_contracts
 from edms.views import edms_get_doc
 
+app_name = 'docs'
+
 urlpatterns = [
     url(r'^.+/get_order/(?P<pk>\d+)/$', views.get_order, name='get_order'),
     url(r'^$', views.index, name='index'),

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
 
 class Files extends React.Component {

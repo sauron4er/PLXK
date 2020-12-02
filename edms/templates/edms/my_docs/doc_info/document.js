@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import Modal from 'react-responsive-modal';
 import Files from 'react-files';
 import {ToastContainer, toast} from 'react-toastify'; // спливаючі повідомлення:
@@ -47,7 +47,6 @@ class Document extends React.Component {
   };
 
   componentDidMount() {
-    console.log(this.props.doc_id);
     if (this.props.doc_id) this.getDoc(this.props.doc_id);
   }
 

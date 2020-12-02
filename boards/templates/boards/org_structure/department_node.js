@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import OneSeatNode from './one_seat_node';
 
 class DepartmentNode extends React.Component {

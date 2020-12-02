@@ -38,16 +38,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_article',
             name='order',
-            field=models.ForeignKey(related_name='articles', to='docs.Order_doc'),
+            field=models.ForeignKey(related_name='articles', to='docs.Order_doc', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='article_responsible',
             name='article',
-            field=models.ForeignKey(related_name='responsibles', to='docs.Order_article'),
+            field=models.ForeignKey(related_name='responsibles', to='docs.Order_article', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='article_responsible',
             name='employee_seat',
-            field=models.ForeignKey(related_name='orders_responsible', to='edms.Employee_Seat'),
+            field=models.ForeignKey(related_name='orders_responsible', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
         ),
     ]

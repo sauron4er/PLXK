@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mark_demand',
             name='phase_id',
-            field=models.ForeignKey(null=True, related_name='phase_mark_demands', to='edms.Doc_Type_Phase'),
+            field=models.ForeignKey(null=True, related_name='phase_mark_demands', to='edms.Doc_Type_Phase', on_delete=models.deletion.RESTRICT),
         ),
     ]

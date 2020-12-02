@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import ReactToPrint from 'react-to-print';
 // import ReactToPrint from 'react-to-print-advanced';
 import {faPrint} from '@fortawesome/free-solid-svg-icons';

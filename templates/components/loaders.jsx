@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import 'static/css/loader_style.css';
 
 export function Loader() {

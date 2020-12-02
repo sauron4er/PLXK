@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {uniqueArray} from 'templates/components/my_extras';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';

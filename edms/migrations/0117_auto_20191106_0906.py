@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='vacation',
             name='acting',
-            field=models.ForeignKey(null=True, related_name='acting_for', to='accounts.UserProfile'),
+            field=models.ForeignKey(null=True, related_name='acting_for', to='accounts.UserProfile', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table_for_pagination';
 import Paper from '@material-ui/core/Paper';
 import ReactPaginate from 'react-paginate';

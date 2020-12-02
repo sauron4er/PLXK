@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 

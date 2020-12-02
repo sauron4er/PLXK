@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import ReactDOM from 'react-dom'
 import MyDocs from 'edms/templates/edms/my_docs/my_docs'
 import HR from 'edms/templates/edms/hr/hr'

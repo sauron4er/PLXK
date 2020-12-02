@@ -1,5 +1,4 @@
 from django.conf.urls import include, url
-
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_user, \
     edms_new_vacation, edms_deactivate_vacation, edms_start_vacations_arrange, edms_get_vacations  # Відділ кадрів
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
@@ -8,8 +7,9 @@ from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types
-
 from production.views import get_mockup_types, get_mockup_product_types, get_clients
+
+app_name = 'edms'
 
 urlpatterns = [
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
@@ -47,7 +47,7 @@ urlpatterns = [
 
     url(r'^sub_docs/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
     url(r'^sub_docs/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
-    url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
+    url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_meta_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
     url(r'^sub_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^sub_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),

@@ -1,16 +1,18 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import 'static/css/my_styles.css';
 import ReactFlow from 'react-flow-renderer';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import orgStructureStore from './org_structure_store';
+import ChiefSeatNode from './chief_seat_node';
 import OneSeatNode from './one_seat_node';
 import DepartmentNode from './department_node';
 import SeatCard from './seat_card';
 import structure_data from './structure_data'
 
 const nodeTypes = {
+  chiefSeatNode: ChiefSeatNode,
   oneSeatNode: OneSeatNode,
   departmentNode: DepartmentNode
 };
@@ -18,7 +20,8 @@ const nodeTypes = {
 class OrgStructure extends React.Component {
   state = {
     clicked_seat_id: 0,
-    seat_info_opened: false
+    seat_info_opened: false,
+    elements: []
   };
 
   componentDidMount() {
@@ -36,7 +39,7 @@ class OrgStructure extends React.Component {
     return (
       <div className='text-center'>
         <h2>Організаційна структура ПЛХК</h2>
-        <div>Натисніть на посаду, щоб відкрити більше інформації</div>
+        <div>Натисніть на посаду або відділ, щоб відкрити більше інформації</div>
         <ReactFlow
           defaultZoom={0.8}
           className='border border-dark mt-2'

@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_doc',
             name='supervisory',
-            field=models.ForeignKey(blank=True, null=True, related_name='Supervisory_for_documents', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='Supervisory_for_documents', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
     ]

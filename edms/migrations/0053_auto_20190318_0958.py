@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('number', models.IntegerField(null=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='document_number', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='document_number', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.RemoveField(

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {compareById} from 'templates/components/my_extras';
 
 class SeatChooser extends React.PureComponent {

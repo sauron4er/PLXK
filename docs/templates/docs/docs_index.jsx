@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import ReactDOM from 'react-dom'
 import Orders from './orders/index'
 import Contracts from './contracts/index'

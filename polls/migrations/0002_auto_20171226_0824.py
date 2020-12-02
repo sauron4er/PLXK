@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
             name='User_Choice',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('choice', models.ForeignKey(on_delete='CASCADE', to='polls.Choice')),
-                ('employee', models.ForeignKey(null=True, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('choice', models.ForeignKey(on_delete=models.deletion.RESTRICT, to='polls.Choice')),
+                ('employee', models.ForeignKey(null=True, related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.AddField(
@@ -30,6 +30,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user_choice',
             name='question',
-            field=models.ForeignKey(on_delete='CASCADE', to='polls.Question'),
+            field=models.ForeignKey(on_delete=models.deletion.RESTRICT, to='polls.Question'),
         ),
     ]

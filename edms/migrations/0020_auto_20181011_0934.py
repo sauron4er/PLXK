@@ -22,12 +22,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mark_demand',
             name='employee_seat',
-            field=models.ForeignKey(default=10, related_name='demands_employees', to='edms.Employee_Seat'),
+            field=models.ForeignKey(default=10, related_name='demands_employees', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='mark_demand',
             name='employee_seat_control',
-            field=models.ForeignKey(blank=True, null=True, related_name='demands_controled', to='edms.Employee_Seat'),
+            field=models.ForeignKey(blank=True, null=True, related_name='demands_controled', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
         ),
     ]

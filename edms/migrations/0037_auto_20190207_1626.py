@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='doc_article_dep',
             name='department',
-            field=models.ForeignKey(default=1, related_name='articles_to_response', to='accounts.Department'),
+            field=models.ForeignKey(default=1, related_name='articles_to_response', to='accounts.Department', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

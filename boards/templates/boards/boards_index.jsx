@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import ReactDOM from 'react-dom'
 import Fireworks from './plhk_ads/fireworks';
 import Reloader from './plhk_ads/reloader';

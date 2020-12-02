@@ -5,7 +5,7 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
 from .vacations import vacation_check
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
-from ..models import Seat, Employee_Seat, Document, Document_Type, Mark, Document_Path, File
+from ..models import Seat, Employee_Seat, Document, Document_Meta_Type, Document_Type, Mark, Document_Path, File
 from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient
 from ..models import Doc_Text, Doc_Day, Doc_Gate, Doc_Mockup_Type, Doc_Mockup_Product_Type, Doc_Client
 
@@ -36,6 +36,7 @@ def get_doc_create_day(doc):
         return convert_to_localtime(create_day[0], 'day')
     return ''
 
+
 # Функція, яка повертає інформацію про фазу документа
 @try_except
 def get_phase_info(doc_request):
@@ -47,7 +48,7 @@ def get_phase_info(doc_request):
             .filter(is_active=True)
 
     return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id')\
-        .filter(id=phase_id)[0]
+        .filter(id=phase_id[0])[0]
 
 
 @try_except
@@ -107,8 +108,8 @@ def get_sub_emps(seat):
 
 
 @try_except
-def get_doc_types():
-    doc_types_query = Document_Type.objects.filter(is_active=True)
+def get_meta_doc_types():
+    doc_types_query = Document_Meta_Type.objects.filter(is_active=True)
 
     # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
     if not testing:
@@ -148,7 +149,7 @@ def is_access_granted(user, emp_seat, doc):
 
 
 @try_except
-def get_archive_by_doc_type(user_id, doc_type_id):
+def get_archive_by_doc_meta_type(user_id, doc_type_id):
     my_archive = [{  # Список документів, створених даним юзером
         'id': path.document.id,
         'type': path.document.document_type.description,
@@ -158,7 +159,7 @@ def get_archive_by_doc_type(user_id, doc_type_id):
         'author': path.document.employee_seat.employee.pip,
         'author_seat_id': path.employee_seat.id,
     } for path in Document_Path.objects
-        .filter(document__document_type=doc_type_id)
+        .filter(document__document_type__meta_doc_type_id=doc_type_id)
         .filter(mark=1)
         .filter(employee_seat__employee_id=user_id)
         .filter(document__testing=testing)
@@ -173,7 +174,7 @@ def get_archive_by_doc_type(user_id, doc_type_id):
         'author': path.document.employee_seat.employee.pip,
         'author_seat_id': path.document.employee_seat_id,
     } for path in Document_Path.objects.distinct()
-        .filter(document__document_type=doc_type_id)
+        .filter(document__document_type__meta_doc_type_id=doc_type_id)
         .filter(employee_seat_id__employee_id=user_id)
         .filter(document__testing=testing)
         .filter(document__closed=False)
@@ -235,7 +236,7 @@ def get_chief_emp_seat(emp_seat_id):
             'name': empSeat.employee.pip,
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
         } for empSeat in
-            Employee_Seat.objects.filter(seat_id=chief_seat_id).filter(is_active=True).filter(
+            Employee_Seat.objects.filter(seat_id=chief_seat_id[0]).filter(is_active=True).filter(
                 employee__on_vacation=False)]
         if chief:
             return chief[0]  # БД має завжди повертати тільки один запис, який одночасно активний і не у відпустці
@@ -404,6 +405,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
         if chief_seat_id:  # False якщо у посади нема внесеного шефа
             chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
+
             chief_emp_seat_id = vacation_check(chief_emp_seat_id)
 
             while chief_emp_seat_id not in recipients:
@@ -468,7 +470,7 @@ def get_emp_seat_docs(emp_seat, sub_emp):
 
 
 @try_except
-def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type):
+def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
     return [{
         'id': path.document_id,
         'type': path.document.document_type.description,
@@ -480,7 +482,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type):
         'is_active': path.document.is_active,
         'emp_seat_id': int(emp_seat)
     } for path in Document_Path.objects
-        .filter(document__document_type_id=doc_type)
+        .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(mark_id=1)
         .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
@@ -488,7 +490,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type):
 
 
 @try_except
-def get_doc_type_docs(emp_seat, doc_type):
+def get_doc_type_docs(emp_seat, doc_meta_type):
     # Отримуємо ід посади з ід людинопосади
     seat_id = Employee_Seat.objects.filter(id=emp_seat).values_list('seat_id')[0][0]
 
@@ -512,7 +514,7 @@ def get_doc_type_docs(emp_seat, doc_type):
             'emp_seat_id': int(emp_seat),
             'is_active': path.document.is_active,
         } for path in Document_Path.objects
-            .filter(document__document_type_id=doc_type)
+            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(mark_id=1)
             .filter(employee_seat__seat_id__in=subs)
             .filter(document__testing=testing)

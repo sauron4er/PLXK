@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='file',
             name='deactivate_path',
-            field=models.ForeignKey(null=True, related_name='deactivate_files', to='edms.Document_Path'),
+            field=models.ForeignKey(null=True, related_name='deactivate_files', to='edms.Document_Path', on_delete=models.deletion.RESTRICT),
         ),
     ]

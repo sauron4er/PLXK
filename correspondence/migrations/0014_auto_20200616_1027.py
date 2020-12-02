@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='client',
             name='product_type',
-            field=models.ForeignKey(default=2, related_name='clients', to='production.Product_type'),
+            field=models.ForeignKey(default=2, related_name='clients', to='production.Product_type', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

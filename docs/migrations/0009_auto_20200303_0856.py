@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_doc',
             name='canceled_by',
-            field=models.ForeignKey(blank=True, null=True, related_name='cancels_order', to='docs.Order_doc'),
+            field=models.ForeignKey(blank=True, null=True, related_name='cancels_order', to='docs.Order_doc', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='order_doc',
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_doc',
             name='cancels',
-            field=models.ForeignKey(blank=True, null=True, related_name='cancelled_by_order', to='docs.Order_doc'),
+            field=models.ForeignKey(blank=True, null=True, related_name='cancelled_by_order', to='docs.Order_doc', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='order_doc',

@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='doc_approval',
             name='seat',
-            field=models.ForeignKey(default=1, related_name='seat_approvals', to='edms.Seat'),
+            field=models.ForeignKey(default=1, related_name='seat_approvals', to='edms.Seat', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

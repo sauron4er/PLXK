@@ -24,7 +24,7 @@ from edms.models import Employee_Seat
 
 
 def user_can_edit(user):
-    return user.is_authenticated() and user.has_perm("docs.change_document")
+    return user.is_authenticated and user.has_perm("docs.change_document")
 
 
 @login_required(login_url='login')

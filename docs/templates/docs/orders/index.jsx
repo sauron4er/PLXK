@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 import Order from './order';

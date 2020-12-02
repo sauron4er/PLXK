@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {getEmpSeats} from 'edms/api/get_emp_seats';
 import {toast} from 'react-toastify';
 

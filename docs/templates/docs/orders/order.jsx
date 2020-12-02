@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
@@ -93,6 +93,7 @@ class Order extends React.Component {
   getOrder = () => {
     axiosGetRequest('get_order/' + ordersStore.order.id + '/')
       .then((response) => {
+        console.log(response);
         ordersStore.order = response.order;
         ordersStore.order.mail_mode = 'to_default';
         this.setState({loading: false});

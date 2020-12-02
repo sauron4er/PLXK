@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import NewDocument from './new_doc_modules/new_document';
 import 'static/css/my_styles.css';
 

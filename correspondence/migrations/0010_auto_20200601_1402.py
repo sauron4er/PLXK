@@ -14,13 +14,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='law',
             name='scope',
-            field=models.ForeignKey(default=1, related_name='laws', to='correspondence.Scope'),
+            field=models.ForeignKey(default=1, related_name='laws', to='correspondence.Scope', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='request',
             name='scope',
-            field=models.ForeignKey(default=1, related_name='products', to='correspondence.Scope'),
+            field=models.ForeignKey(default=1, related_name='products', to='correspondence.Scope', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

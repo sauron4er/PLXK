@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_doc',
             name='responsible',
-            field=models.ForeignKey(default=3, related_name='Responsible_for_documents', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(default=3, related_name='Responsible_for_documents', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

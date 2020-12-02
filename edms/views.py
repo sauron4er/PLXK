@@ -594,7 +594,7 @@ def edms_main(request):
 @login_required(login_url='login')
 def edms_get_doc_types(request):
     if request.method == 'GET':
-        return HttpResponse(json.dumps(get_doc_types()))
+        return HttpResponse(json.dumps(get_meta_doc_types()))
 
 
 @login_required(login_url='login')
@@ -858,15 +858,16 @@ def edms_get_doc(request, pk):
             'archived': not doc.is_active
         }
 
-        mark_demand = Mark_Demand.objects.values('id', 'mark_id', 'phase_id')\
+        if request.POST.get('employee_seat'):
+            mark_demand = Mark_Demand.objects.values('id', 'mark_id', 'phase_id')\
                 .filter(is_active=True).filter(document=doc).filter(recipient=request.POST['employee_seat'])
 
-        if mark_demand:
-            doc_info.update({
-                'expected_mark': mark_demand[0]['mark_id'],
-                'mark_demand_id': mark_demand[0]['id'],
-                'phase_id': mark_demand[0]['phase_id']
-            })
+            if mark_demand:
+                doc_info.update({
+                    'expected_mark': mark_demand[0]['mark_id'],
+                    'mark_demand_id': mark_demand[0]['id'],
+                    'phase_id': mark_demand[0]['phase_id']
+                })
 
         # Path потрібен для складання модулю approval_list, тому отримуємо його навіть якщо документ чернетка.
         path = [{
@@ -1126,14 +1127,14 @@ def edms_del_doc(request, pk):
 @login_required(login_url='login')
 def edms_archive(request):
     if request.method == 'GET':
-        return render(request, 'edms/archive/archive.html', {'doc_types': get_doc_types()})
+        return render(request, 'edms/archive/archive.html', {'doc_types': get_meta_doc_types()})
     return HttpResponse(status=405)
 
 
 @login_required(login_url='login')
 def edms_get_archive(request, pk):
     if request.method == 'GET':
-        return HttpResponse(json.dumps(get_archive_by_doc_type(request.user.userprofile.id, pk)))
+        return HttpResponse(json.dumps(get_archive_by_doc_meta_type(request.user.userprofile.id, pk)))
     return HttpResponse(status=405)
 
 
@@ -1149,16 +1150,16 @@ def edms_sub_docs(request):
 
 
 @login_required(login_url='login')
-def edms_get_sub_docs(request, emp_seat, doc_type, sub_emp):
+def edms_get_sub_docs(request, emp_seat, doc_meta_type, sub_emp):
     if request.method == 'GET':
-        if doc_type == '0' and sub_emp != '0':
+        if doc_meta_type == '0' and sub_emp != '0':
             return HttpResponse(json.dumps(get_emp_seat_docs(emp_seat, sub_emp)))
-        elif doc_type != '0' and sub_emp != '0':
-            return HttpResponse(json.dumps(get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_type)))
-        elif doc_type == '0' and sub_emp == '0':
+        elif doc_meta_type != '0' and sub_emp != '0':
+            return HttpResponse(json.dumps(get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type)))
+        elif doc_meta_type == '0' and sub_emp == '0':
             return HttpResponse(json.dumps(get_all_subs_docs(emp_seat)))
-        elif doc_type != '0' and sub_emp == '0':
-            return HttpResponse(json.dumps(get_doc_type_docs(emp_seat, doc_type)))
+        elif doc_meta_type != '0' and sub_emp == '0':
+            return HttpResponse(json.dumps(get_doc_type_docs(emp_seat, doc_meta_type)))
     return HttpResponse(status=405)
 
 

@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from . import views
 
+app_name = 'production'
+
 urlpatterns = [
     url(r'^clients', views.clients, name='clients'),
     url(r'^new_client', views.new_client, name='new_client'),

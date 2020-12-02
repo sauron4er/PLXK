@@ -14,51 +14,51 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='doc_acquaint',
             name='document',
-            field=models.ForeignKey(related_name='acquaint_list', to='edms.Document'),
+            field=models.ForeignKey(related_name='acquaint_list', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_approval',
             name='document',
-            field=models.ForeignKey(related_name='approval_list', to='edms.Document'),
+            field=models.ForeignKey(related_name='approval_list', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_client',
             name='document',
-            field=models.ForeignKey(related_name='client', to='edms.Document'),
+            field=models.ForeignKey(related_name='client', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_day',
             name='document',
-            field=models.ForeignKey(related_name='day', to='edms.Document'),
+            field=models.ForeignKey(related_name='day', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_gate',
             name='document',
-            field=models.ForeignKey(related_name='gate', to='edms.Document'),
+            field=models.ForeignKey(related_name='gate', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_mockup_product_type',
             name='document',
-            field=models.ForeignKey(related_name='mockup_product_type', to='edms.Document'),
+            field=models.ForeignKey(related_name='mockup_product_type', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_mockup_type',
             name='document',
-            field=models.ForeignKey(related_name='mockup_type', to='edms.Document'),
+            field=models.ForeignKey(related_name='mockup_type', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_mockup_type',
             name='mockup_type',
-            field=models.ForeignKey(related_name='documents', to='production.Mockup_type'),
+            field=models.ForeignKey(related_name='documents', to='production.Mockup_type', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_recipient',
             name='document',
-            field=models.ForeignKey(related_name='recipients', to='edms.Document'),
+            field=models.ForeignKey(related_name='recipients', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_text',
             name='document',
-            field=models.ForeignKey(related_name='texts', to='edms.Document'),
+            field=models.ForeignKey(related_name='texts', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('acquaint', models.ForeignKey(related_name='requests_acquaint', to=settings.AUTH_USER_MODEL)),
-                ('request', models.ForeignKey(related_name='acquaints', to='correspondence.Request')),
+                ('acquaint', models.ForeignKey(related_name='requests_acquaint', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT)),
+                ('request', models.ForeignKey(related_name='acquaints', to='correspondence.Request', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

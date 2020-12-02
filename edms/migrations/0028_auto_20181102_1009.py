@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_type_permission',
             name='mark',
-            field=models.ForeignKey(default=2, related_name='type_permissions', to='edms.Mark'),
+            field=models.ForeignKey(default=2, related_name='type_permissions', to='edms.Mark', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

@@ -14,21 +14,21 @@ class Board(models.Model):
 class Topic(models.Model):
     subject = models.CharField(max_length=255)
     last_updated = models.DateTimeField(auto_now_add=True)
-    board = models.ForeignKey(Board, related_name='topics', on_delete=models.CASCADE)
-    starter = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, related_name='topics', on_delete=models.RESTRICT)
+    starter = models.ForeignKey(User, related_name='topics', on_delete=models.RESTRICT)
 
 
 class Post(models.Model):
     message = models.TextField(max_length=4000)
-    topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.RESTRICT)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
-    created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
-    updated_by = models.ForeignKey(User, null=True, related_name='+', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name='posts', on_delete=models.RESTRICT)
+    updated_by = models.ForeignKey(User, null=True, related_name='+', on_delete=models.RESTRICT)
 
 
 class Phones(models.Model):
-    name = models.ForeignKey(User, related_name='pones', on_delete=models.CASCADE)
+    name = models.ForeignKey(User, related_name='pones', on_delete=models.RESTRICT)
     n_main = models.CharField(max_length=4,null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)
     n_mobile = models.CharField(max_length=4, null=True, blank=True)
@@ -39,5 +39,5 @@ class Phones(models.Model):
 
 class Ad(models.Model):
     ad = models.CharField(max_length=500)
-    author = models.ForeignKey(UserProfile, related_name='ads', on_delete=models.CASCADE)
+    author = models.ForeignKey(UserProfile, related_name='ads', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

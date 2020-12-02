@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import orgStructureStore from './org_structure_store';
 import 'static/css/my_styles.css';

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {Collapse} from 'react-collapse';
 import axios from 'axios';

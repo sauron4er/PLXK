@@ -20,7 +20,7 @@ def get_order_info(order, employee_id):
         'author_name': order.author.last_name + ' ' + order.author.first_name,
         'canceled_by_id': order.canceled_by_id,
         'canceled_by_code': get_order_code(order.canceled_by.id) if order.canceled_by_id else '',
-        'cancels_other_doc': order.cancels_id is not None or order.cancels_code != '',
+        'cancels_other_doc': order.cancels_id is not None and order.cancels_code != '',
         'cancels_id': order.cancels_id if order.cancels_id else '',
         'cancels_code': order.cancels_code if order.cancels_code else get_order_code(order.cancels_id),
         'date_start': date_to_json(order.date_start) if order.date_start else '',

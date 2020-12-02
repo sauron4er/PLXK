@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import Modal from 'react-responsive-modal';
 import 'react-drag-list/assets/index.css';
 import {ToastContainer, toast} from 'react-toastify';

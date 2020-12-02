@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document_type', models.ForeignKey(related_name='option_types', to='edms.Document_Type')),
+                ('document_type', models.ForeignKey(related_name='option_types', to='edms.Document_Type', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -30,16 +30,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document_type_permission',
             name='mark',
-            field=models.ForeignKey(related_name='permission_marks', to='edms.Mark'),
+            field=models.ForeignKey(related_name='permission_marks', to='edms.Mark', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='document_type_permission',
             name='seat',
-            field=models.ForeignKey(related_name='permission_seats', to='edms.Seat'),
+            field=models.ForeignKey(related_name='permission_seats', to='edms.Seat', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='document_type_option',
             name='option',
-            field=models.ForeignKey(related_name='type_options', to='edms.Option'),
+            field=models.ForeignKey(related_name='type_options', to='edms.Option', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('date_start', models.DateField(null=True)),
                 # ('author', models.CharField(max_length=100, blank=True, null=True)),
                 # ('responsible', models.CharField(max_length=100, blank=True, null=True)),
-                ('created_by', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -38,11 +38,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_doc',
             name='doc_type',
-            field=models.ForeignKey(related_name='Documents', on_delete='CASCADE', to='docs.Order_doc_type'),
+            field=models.ForeignKey(related_name='Documents', on_delete=models.deletion.RESTRICT, to='docs.Order_doc_type'),
         ),
         migrations.AddField(
             model_name='order_doc',
             name='updated_by',
-            field=models.ForeignKey(blank=True, null=True, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
     ]

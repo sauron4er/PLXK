@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='employee_seat',
             name='acting_for',
-            field=models.ForeignKey(blank=True, null=True, related_name='acting_for_me', to='edms.Employee_Seat'),
+            field=models.ForeignKey(blank=True, null=True, related_name='acting_for_me', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
         ),
     ]

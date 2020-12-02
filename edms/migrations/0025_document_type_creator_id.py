@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_type',
             name='creator_id',
-            field=models.ForeignKey(null=True, related_name='creator', to='edms.Employee_Seat'),
+            field=models.ForeignKey(null=True, related_name='creator', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
         ),
     ]

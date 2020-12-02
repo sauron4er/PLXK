@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userprofile',
             name='acting',
-            field=models.ForeignKey(blank=True, null=True, to='accounts.UserProfile'),
+            field=models.ForeignKey(blank=True, null=True, to='accounts.UserProfile', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='userprofile',

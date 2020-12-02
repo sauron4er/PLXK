@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order_article',
             name='first_instance',
-            field=models.ForeignKey(blank=True, null=True, related_name='next_instances', to='docs.Order_article'),
+            field=models.ForeignKey(blank=True, null=True, related_name='next_instances', to='docs.Order_article', on_delete=models.deletion.RESTRICT),
         ),
     ]

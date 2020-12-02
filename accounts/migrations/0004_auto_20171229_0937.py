@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='department',
             name='manager',
-            field=models.ForeignKey(blank=True, null=True, related_name='department_manager', on_delete='CASCADE', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='department_manager', on_delete=models.deletion.RESTRICT, to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='department',
@@ -31,6 +31,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userprofile',
             name='department',
-            field=models.ForeignKey(blank=True, null=True, default=1, related_name='+', on_delete='CASCADE', to='accounts.Department'),
+            field=models.ForeignKey(blank=True, null=True, default=1, related_name='+', on_delete=models.deletion.RESTRICT, to='accounts.Department'),
         ),
     ]

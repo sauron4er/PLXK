@@ -25,16 +25,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='request',
             name='scope',
-            field=models.ForeignKey(related_name='requests', to='correspondence.Scope'),
+            field=models.ForeignKey(related_name='requests', to='correspondence.Scope', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='law_scope',
             name='law',
-            field=models.ForeignKey(related_name='scopes', to='correspondence.Law'),
+            field=models.ForeignKey(related_name='scopes', to='correspondence.Law', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AddField(
             model_name='law_scope',
             name='scope',
-            field=models.ForeignKey(related_name='laws', to='correspondence.Scope'),
+            field=models.ForeignKey(related_name='laws', to='correspondence.Scope', on_delete=models.deletion.RESTRICT),
         ),
     ]

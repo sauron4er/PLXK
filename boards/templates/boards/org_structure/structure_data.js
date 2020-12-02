@@ -3,28 +3,28 @@
   {
     id: '1',
     data: {name: 'Генеральний директор', seat_id: 16},
-    type: 'oneSeatNode',
+    type: 'chiefSeatNode',
     position: {x: 720, y: 20}
   },
-  {id: 'e1-2', source: '1', target: '2', type: 'step'},
+  {id: 'e1-2', source: '1', target: '2', type: 'step', style: { stroke: 'black' }},
   {
     id: '2',
     data: {name: 'Директор з виробництва', seat_id: 41},
-    type: 'oneSeatNode',
+    type: 'chiefSeatNode',
     position: {x: 20, y: 120}
   },
   {id: 'e1-3', source: '1', target: '3', type: 'step'},
   {
     id: '3',
     data: {name: 'Головний інженер', seat_id: 17},
-    type: 'oneSeatNode',
+    type: 'chiefSeatNode',
     position: {x: 580, y: 120}
   },
   {id: 'e1-4', source: '1', target: '4', type: 'step'},
   {
     id: '4',
     data: {name: 'Директор з якості та екології', seat_id: 42},
-    type: 'oneSeatNode',
+    type: 'chiefSeatNode',
     position: {x: 860, y: 120}
   }
 ];

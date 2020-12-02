@@ -27,6 +27,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='file',
             name='order',
-            field=models.ForeignKey(null=True, related_name='files', to='docs.Order_doc'),
+            field=models.ForeignKey(null=True, related_name='files', to='docs.Order_doc', on_delete=models.deletion.RESTRICT),
         ),
     ]

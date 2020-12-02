@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
 import 'static/css/my_styles.css';
 import NewDocument from './new_doc_modules/new_document';

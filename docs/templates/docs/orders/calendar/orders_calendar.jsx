@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import 'static/css/my_styles.css';
@@ -51,7 +51,7 @@ class OrdersCalendar extends React.Component {
         <When condition={!loading}>
           <Choose>
             <When condition={calendar?.length === 0}>
-              <div>Схоже, у вашому календарі пусто.</div>
+              <div>{this.props.type === 'calendar' ? 'Схоже, у вашому календарі пусто.' : 'Наказів для постійного виконання немає'}</div>
             </When>
             <Otherwise>
               <For each='day' index='day_idx' of={calendar}>

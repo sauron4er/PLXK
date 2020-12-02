@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='Document_Flow',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
-                ('document', models.ForeignKey(related_name='flow', to='edms.Document')),
-                ('employee', models.ForeignKey(related_name='documents_in_flow', to='accounts.UserProfile')),
+                ('document', models.ForeignKey(related_name='flow', to='edms.Document', on_delete=models.deletion.RESTRICT)),
+                ('employee', models.ForeignKey(related_name='documents_in_flow', to='accounts.UserProfile', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

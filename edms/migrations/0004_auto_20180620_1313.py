@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='employee_seat',
-            field=models.ForeignKey(default=1, related_name='initiated_documents', to='edms.Employee_Seat'),
+            field=models.ForeignKey(default=1, related_name='initiated_documents', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

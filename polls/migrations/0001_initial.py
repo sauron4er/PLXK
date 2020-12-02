@@ -29,6 +29,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='choice',
             name='question',
-            field=models.ForeignKey(on_delete='CASCADE', to='polls.Question'),
+            field=models.ForeignKey(on_delete=models.deletion.RESTRICT, to='polls.Question'),
         ),
     ]

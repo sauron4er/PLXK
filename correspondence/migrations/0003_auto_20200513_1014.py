@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request_file',
             name='request',
-            field=models.ForeignKey(related_name='request_files', to='correspondence.Request'),
+            field=models.ForeignKey(related_name='request_files', to='correspondence.Request', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('gate', models.IntegerField(default=1)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.ForeignKey(related_name='document_gate', to='edms.Document')),
+                ('document', models.ForeignKey(related_name='document_gate', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

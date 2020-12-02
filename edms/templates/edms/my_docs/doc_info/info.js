@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import Approvals from './doc_info_modules/approvals';
 import Recipient from './doc_info_modules/recipient';
 import Text from './doc_info_modules/text';

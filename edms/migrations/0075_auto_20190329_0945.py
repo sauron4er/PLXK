@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='mark_demand',
             name='phase',
-            field=models.ForeignKey(default=1, related_name='md_phase', to='edms.Doc_Type_Phase'),
+            field=models.ForeignKey(default=1, related_name='md_phase', to='edms.Doc_Type_Phase', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

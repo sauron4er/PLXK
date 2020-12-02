@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='contract',
             name='basic_contract',
-            field=models.ForeignKey(blank=True, null=True, related_name='additional_contracts', to='docs.Contract'),
+            field=models.ForeignKey(blank=True, null=True, related_name='additional_contracts', to='docs.Contract', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='contract',
             name='responsible',
-            field=models.ForeignKey(blank=True, null=True, related_name='responsible_for_contracts', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='responsible_for_contracts', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
     ]

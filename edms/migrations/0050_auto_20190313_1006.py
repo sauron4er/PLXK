@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('name', models.CharField(max_length=500)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='document_name', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='document_name', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('number', models.IntegerField(null=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='document_number', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='document_number', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('preamble', models.CharField(max_length=1000)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='document_preamble', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='document_preamble', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -43,8 +43,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('signed', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='document_sign', to='edms.Document')),
-                ('sign_path', models.ForeignKey(null=True, related_name='path_sign', to='edms.Document_Path')),
+                ('document', models.OneToOneField(related_name='document_sign', to='edms.Document', on_delete=models.deletion.RESTRICT)),
+                ('sign_path', models.ForeignKey(null=True, related_name='path_sign', to='edms.Document_Path', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -54,12 +54,12 @@ class Migration(migrations.Migration):
                 ('is_valid', models.BooleanField(default=True)),
                 ('validity_start', models.DateTimeField(null=True)),
                 ('validity_end', models.DateTimeField(null=True)),
-                ('document', models.OneToOneField(related_name='document_validity', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='document_validity', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.AlterField(
             model_name='doc_approval',
             name='document',
-            field=models.ForeignKey(related_name='document_approvals', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_approvals', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {Loader} from 'templates/components/loaders';

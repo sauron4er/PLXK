@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order_doc',
             name='responsible',
-            field=models.ForeignKey(related_name='responsible_for_documents', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='responsible_for_documents', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='order_doc',
             name='supervisory',
-            field=models.ForeignKey(blank=True, null=True, related_name='supervisory_for_documents', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='supervisory_for_documents', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
     ]

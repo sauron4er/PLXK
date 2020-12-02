@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('ad', models.CharField(max_length=500)),
                 ('is_active', models.BooleanField(default=True)),
-                ('author', models.ForeignKey(related_name='ads', to='accounts.UserProfile')),
+                ('author', models.ForeignKey(related_name='ads', to='accounts.UserProfile', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.RemoveField(

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import Files from 'react-files';
 import 'static/css/files_uploader.css';
 import NewFilesList from 'templates/components/files_uploader/new_files_list';

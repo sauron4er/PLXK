@@ -1,6 +1,8 @@
 from django.conf.urls import url
 from . import views
 
+app_name = 'correspondence'
+
 urlpatterns = [
     url(r'^new_client', views.new_client, name='new_client'),
     url(r'^del_client', views.del_client, name='del_client'),

@@ -1,5 +1,8 @@
 from django.conf.urls import url
 from . import views, views_org_structure
+
+app_name = 'boards'
+
 urlpatterns = [
     url(r'^$', views.forum, name='index'),
     url(r'^(?P<pk>\d+)/$', views.board_topics, name='topics'),

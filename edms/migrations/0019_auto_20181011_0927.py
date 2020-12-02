@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='mark_demand',
             name='employee_control',
-            field=models.ForeignKey(blank=True, null=True, related_name='demands_controled', to='accounts.UserProfile'),
+            field=models.ForeignKey(blank=True, null=True, related_name='demands_controled', to='accounts.UserProfile', on_delete=models.deletion.RESTRICT),
         ),
     ]

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='request',
             name='last_updated_by',
-            field=models.ForeignKey(blank=True, null=True, related_name='requests_updated', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, null=True, related_name='requests_updated', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='request',
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='request',
             name='law',
-            field=models.ForeignKey(blank=True, null=True, related_name='requests', to='correspondence.Law'),
+            field=models.ForeignKey(blank=True, null=True, related_name='requests', to='correspondence.Law', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='request',

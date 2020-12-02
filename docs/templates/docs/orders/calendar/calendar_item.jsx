@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import 'static/css/my_styles.css';
 import {notify} from 'templates/components/my_extras';
 import {axiosPostRequest} from 'templates/components/axios_requests';

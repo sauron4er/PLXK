@@ -24,10 +24,10 @@ SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = False
+STAS_DEBUG = True
 
 
-ALLOWED_HOSTS = ['10.10.10.0/24']
+ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1']
 
 
 # Application definition
@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'edms',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -123,24 +123,25 @@ else:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         },
-        'fb_test': {
-            'ENGINE': 'firebird',
-            'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-            'USER': 'SYSDBA',  # Your db user
-            'PASSWORD': 'Cvjhjlbyf11',  # db user password
-            'HOST': '10.10.10.8',  # Your host machine
-            'PORT': '3050',  # If is empty, use default 3050
-            'OPTIONS': {'charset': 'win1251'}
-        },
-        'fb1': {
-            'ENGINE': 'firebird',
-            'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-            'USER': 'SYSDBA',  # Your db user
-            'PASSWORD': 'masterke',  # db user password
-            'HOST': '10.10.10.7',  # Your host machine
-            'PORT': '3050',  # If is empty, use default 3050
-            'OPTIONS': {'charset': 'win1251'}
-        },
+        # ці підключення не працюють після оновлення django.
+        # 'fb_test': {
+        #     'ENGINE': 'firebird',
+        #     'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
+        #     'USER': 'SYSDBA',  # Your db user
+        #     'PASSWORD': 'Cvjhjlbyf11',  # db user password
+        #     'HOST': '10.10.10.8',  # Your host machine
+        #     'PORT': '3050',  # If is empty, use default 3050
+        #     'OPTIONS': {'charset': 'win1251'}
+        # },
+        # 'fb1': {
+        #     'ENGINE': 'firebird',
+        #     'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
+        #     'USER': 'SYSDBA',  # Your db user
+        #     'PASSWORD': 'masterke',  # db user password
+        #     'HOST': '10.10.10.7',  # Your host machine
+        #     'PORT': '3050',  # If is empty, use default 3050
+        #     'OPTIONS': {'charset': 'win1251'}
+        # },
     }
 
 # Password validation

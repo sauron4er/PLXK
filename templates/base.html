@@ -30,22 +30,25 @@
 {#                        <a class="dropdown-item" href="{% url 'menu' %}" target="_blank">Меню столової</a>#}
 {#                        <a class="dropdown-item" href="{% url 'phones' 0 %}">Телефонний довідник</a>#}
 {#                        <a class="dropdown-item" href="{% url 'polls:index' %}">Опитування</a>#}
-                        <a class="dropdown-item" href="{% url 'tickets:index_f' 0 %}">Заявки ІТ</a>
+{#                        <a class="dropdown-item" href="{% url 'tickets:index_f' 0 %}">Заявки ІТ</a>#}
 {#                        <a class="dropdown-item" href="{% url 'gi:news' %}">Новини</a>#}
                     </div>
              </li>
 {#             <li class="nav-item">#}
 {#                <a class="nav-link" href="{% url 'boards:index' %}">Форум</a>#}
 {#             </li>#}
-             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'crm:index' %}" id="navbardrop" data-toggle="dropdown">CRM</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'crm:index' %}">Вагова система</a>
-                        {% if user.userprofile.is_graph %}<a class="dropdown-item" href="{% url 'crm:graph_scales' %}">Діаграми</a>{% endif %}
+
+{#              Вагова система не працює після оновлення django - не працює підключення до firebird#}
+{#             <li class="nav-item dropdown">#}
+{#                <a class="nav-link dropdown-toggle" href="{% url 'crm:index' %}" id="navbardrop" data-toggle="dropdown">CRM</a>#}
+{#                    <div class="dropdown-menu">#}
+{#                        <a class="dropdown-item" href="{% url 'crm:index' %}">Вагова система</a>#}
+{#                        {% if user.userprofile.is_graph %}<a class="dropdown-item" href="{% url 'crm:graph_scales' %}">Діаграми</a>{% endif %}#}
 {#                        <a class="dropdown-item" href="{% url 'departments' %}">Підрозділи</a>#}
 {#                       {% if user.userprofile.is_it_admin %}<a class="dropdown-item" href="{% url 'crm:employee' 4 %}">Співробітники</a>{% endif %}#}
-                    </div>
-             </li>
+{#                    </div>#}
+{#             </li>#}
+
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="{% url 'docs:index' %} " id="navbardrop" data-toggle="dropdown">Документи</a>
                     <div class="dropdown-menu">

@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ct',
             name='u',
-            field=models.ForeignKey(blank=True, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(blank=True, related_name='+', to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT),
         ),
     ]

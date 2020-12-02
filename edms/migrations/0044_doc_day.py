@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('day', models.DateField(default=django.utils.timezone.now)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.ForeignKey(related_name='document_day', to='edms.Document')),
+                ('document', models.ForeignKey(related_name='document_day', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.ForeignKey(related_name='doc_recipient', to='edms.Document')),
-                ('recipient', models.ForeignKey(related_name='recipient_doc', to='edms.Employee_Seat')),
+                ('document', models.ForeignKey(related_name='doc_recipient', to='edms.Document', on_delete=models.deletion.RESTRICT)),
+                ('recipient', models.ForeignKey(related_name='recipient_doc', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('text', models.CharField(max_length=1000, blank=True, null=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.OneToOneField(related_name='doc_text', to='edms.Document')),
+                ('document', models.OneToOneField(related_name='doc_text', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

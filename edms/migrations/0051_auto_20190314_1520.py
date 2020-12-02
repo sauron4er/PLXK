@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document_type', models.ForeignKey(related_name='module_types', to='edms.Document_Type')),
+                ('document_type', models.ForeignKey(related_name='module_types', to='edms.Document_Type', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -30,6 +30,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_type_module',
             name='module',
-            field=models.ForeignKey(related_name='type_modules', to='edms.Module'),
+            field=models.ForeignKey(related_name='type_modules', to='edms.Module', on_delete=models.deletion.RESTRICT),
         ),
     ]

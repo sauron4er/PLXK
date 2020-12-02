@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='doc_day',
             name='document',
-            field=models.ForeignKey(related_name='days', to='edms.Document'),
+            field=models.ForeignKey(related_name='days', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
     ]

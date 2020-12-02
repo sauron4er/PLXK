@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 
 class Checkbox extends React.Component {
   render() {

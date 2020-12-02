@@ -28,6 +28,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='responsible_file',
             name='responsible',
-            field=models.ForeignKey(null=True, related_name='files', to='docs.Article_responsible'),
+            field=models.ForeignKey(null=True, related_name='files', to='docs.Article_responsible', on_delete=models.deletion.RESTRICT),
         ),
     ]

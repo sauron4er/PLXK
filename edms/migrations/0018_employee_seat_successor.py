@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='employee_seat',
             name='successor',
-            field=models.ForeignKey(blank=True, null=True, related_name='heir', to='edms.Employee_Seat'),
+            field=models.ForeignKey(blank=True, null=True, related_name='heir', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
         ),
     ]

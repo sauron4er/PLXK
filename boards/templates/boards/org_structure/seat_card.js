@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {LoaderSmall} from 'templates/components/loaders';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';

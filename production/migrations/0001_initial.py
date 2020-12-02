@@ -29,6 +29,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mockup_product_type',
             name='mockup_type',
-            field=models.ForeignKey(related_name='product_types', to='production.Mockup_type'),
+            field=models.ForeignKey(related_name='product_types', to='production.Mockup_type', on_delete=models.deletion.RESTRICT),
         ),
     ]

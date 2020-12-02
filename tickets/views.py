@@ -1,13 +1,13 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import connections
 from django.contrib.auth.decorators import login_required
-from tickets.forms import NewTicketForm,NewTicketContentForm
-from .models import Ticket,State,Group,Ticket_content
+from tickets.forms import NewTicketForm, NewTicketContentForm
+from .models import Ticket, State, Group, Ticket_content
 from django.contrib.auth.models import User
 
 

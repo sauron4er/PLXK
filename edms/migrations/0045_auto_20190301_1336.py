@@ -19,6 +19,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='doc_approval',
             name='declined_path',
-            field=models.ForeignKey(null=True, related_name='path_decline', to='edms.Document_Path'),
+            field=models.ForeignKey(null=True, related_name='path_decline', to='edms.Document_Path', on_delete=models.deletion.RESTRICT),
         ),
     ]

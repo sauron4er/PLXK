@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class Department(models.Model):
     name = models.CharField(max_length=200)
-    text = models.CharField(max_length=4000, blank=True,null=True)
-    manager = models.ForeignKey(User, related_name='department_manager', blank=True, null=True, on_delete='CASCADE')
+    text = models.CharField(max_length=4000, blank=True, null=True)
+    manager = models.ForeignKey(User, related_name='department_manager', blank=True, null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -13,10 +13,10 @@ class Department(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.RESTRICT)
     pip = models.CharField(max_length=100,blank=True,null=True)
-    avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар',blank=True,null=True)
-    department = models.ForeignKey(Department,blank=True,null=True, on_delete='CASCADE',related_name='+', default=1)
+    avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар', blank=True, null=True)
+    department = models.ForeignKey(Department,blank=True,null=True, on_delete=models.RESTRICT, related_name='+', default=1)
     is_ticked_admin = models.BooleanField(default=False)
     is_orders_admin = models.BooleanField(default=False)
     is_it_admin = models.BooleanField(default=False)
@@ -39,7 +39,7 @@ class UserProfile(models.Model):
     work = models.CharField(max_length=200,blank=True, null=True)
     on_vacation = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    acting = models.ForeignKey('self', blank=True, null=True)
+    acting = models.ForeignKey('self', blank=True, null=True, on_delete=models.RESTRICT)
     is_hr = models.BooleanField(default=False)  # Для відображення вкладки "Відділ кадрів" в EDMS
     is_pc_user = models.BooleanField(default=True)  # Для відображення користувача на сторінці відділу кадрів у EDMS
     birthday = models.DateField(null=True)

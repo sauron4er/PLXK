@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 import {getItemById} from 'templates/components/my_extras';
@@ -14,7 +14,7 @@ class Path extends React.Component {
   getOriginalComment = (id) => {
     const original_path = getItemById(id, docInfoStore.info.path);
     return (
-      <blockquote>
+      <blockquote key={id}>
         <div className='font-italic'>{original_path.emp}</div>
         <div>{original_path.comment}</div>
       </blockquote>
@@ -26,9 +26,9 @@ class Path extends React.Component {
     return (
       <div>
         Історія:
-        <For each='path' index='id' of={this.props.path}>
+        <For each='path' index='idx' of={this.props.path}>
           <div
-            key={path.id}
+            key={idx}
             className='css_path p-2 my-1 mr-1'
             style={{background: this.getPathColor(path.mark_id)}}
           >

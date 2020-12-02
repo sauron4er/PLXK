@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_flow',
             name='expected_mark',
-            field=models.ForeignKey(blank=True, null=True, related_name='in_flow', to='edms.Mark'),
+            field=models.ForeignKey(blank=True, null=True, related_name='in_flow', to='edms.Mark', on_delete=models.deletion.RESTRICT),
         ),
     ]

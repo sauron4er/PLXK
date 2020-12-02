@@ -18,8 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('client', models.ForeignKey(related_name='client_documents', to='correspondence.Client')),
-                ('document', models.ForeignKey(related_name='document_client', to='edms.Document')),
+                ('client', models.ForeignKey(related_name='client_documents', to='correspondence.Client', on_delete=models.deletion.RESTRICT)),
+                ('document', models.ForeignKey(related_name='document_client', to='edms.Document', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -27,8 +27,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.ForeignKey(related_name='document_mockup_product_type', to='edms.Document')),
-                ('mockup_product_type', models.ForeignKey(related_name='mpt_documents', to='production.Mockup_product_type')),
+                ('document', models.ForeignKey(related_name='document_mockup_product_type', to='edms.Document', on_delete=models.deletion.RESTRICT)),
+                ('mockup_product_type', models.ForeignKey(related_name='mpt_documents', to='production.Mockup_product_type', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.CreateModel(
@@ -36,8 +36,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('document', models.ForeignKey(related_name='document_mockup_type', to='edms.Document')),
-                ('mockup_type', models.ForeignKey(related_name='mt_documents', to='production.Mockup_type')),
+                ('document', models.ForeignKey(related_name='document_mockup_type', to='edms.Document', on_delete=models.deletion.RESTRICT)),
+                ('mockup_type', models.ForeignKey(related_name='mt_documents', to='production.Mockup_type', on_delete=models.deletion.RESTRICT)),
             ],
         ),
     ]

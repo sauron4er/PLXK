@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import axios from 'axios';
 import 'static/css/my_styles.css';
 import NewDoc from './new_doc';
@@ -137,9 +137,9 @@ class MyDocs extends React.Component {
             <div className='d-flex justify-content-between'>
               <div className='d-flex'>
                 <NewDoc addDoc={this.addDoc} />
-                <button type='button' className='btn btn-link pb-2' onClick={this.showDrafts}>
-                  Чернетки
-                </button>
+                {/*<button type='button' className='btn btn-link pb-2' onClick={this.showDrafts}>*/}
+                {/*  Чернетки*/}
+                {/*</button>*/}
                 <button type='button' className='btn btn-link pb-2' onClick={this.showTemplates}>
                   Шаблони
                 </button>

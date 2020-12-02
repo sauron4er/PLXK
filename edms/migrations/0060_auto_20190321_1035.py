@@ -14,31 +14,31 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='doc_name',
             name='document',
-            field=models.ForeignKey(related_name='document_name', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_name', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_preamble',
             name='document',
-            field=models.ForeignKey(related_name='document_preamble', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_preamble', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_sign',
             name='document',
-            field=models.ForeignKey(related_name='document_sign', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_sign', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_text',
             name='document',
-            field=models.ForeignKey(related_name='doc_text', to='edms.Document'),
+            field=models.ForeignKey(related_name='doc_text', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_type_unique_number',
             name='document',
-            field=models.ForeignKey(related_name='document_number', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_number', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
         migrations.AlterField(
             model_name='doc_validity',
             name='document',
-            field=models.ForeignKey(related_name='document_validity', to='edms.Document'),
+            field=models.ForeignKey(related_name='document_validity', to='edms.Document', on_delete=models.deletion.RESTRICT),
         ),
     ]

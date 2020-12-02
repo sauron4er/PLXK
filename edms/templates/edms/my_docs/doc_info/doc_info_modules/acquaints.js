@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 
 class Acquaints extends React.Component {
   // отримує список користувачів в масиві flow, рендерить її для doc_info

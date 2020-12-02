@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
@@ -131,6 +131,7 @@ class Contract extends React.Component {
 
   onNumberChange = (e) => {
     contractsStore.contract.number = e.target.value;
+    console.log(contractsStore.contract.number);
   };
 
   onSubjectChange = (e) => {
@@ -185,6 +186,7 @@ class Contract extends React.Component {
 
   render() {
     const {data_received, edit_mode, edms_doc_opened} = this.state;
+    console.log(contractsStore.contract.number);
   
     if (data_received) {
       return (
@@ -199,7 +201,7 @@ class Contract extends React.Component {
               text={contractsStore.contract.number}
               fieldName={'Номер Договору'}
               onChange={this.onNumberChange}
-              maxLength={10}
+              maxLength={50}
               disabled={!edit_mode}
             />
             <hr />

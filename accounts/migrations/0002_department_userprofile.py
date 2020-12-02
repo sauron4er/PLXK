@@ -25,8 +25,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('avatar', models.ImageField(verbose_name='Аватар', upload_to='images/users')),
-                ('department', models.ForeignKey(blank=True, default=1, related_name='+', on_delete='CASCADE', to='accounts.Department')),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('department', models.ForeignKey(blank=True, default=1, related_name='+', on_delete=models.deletion.RESTRICT, to='accounts.Department')),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.deletion.RESTRICT)),
             ],
             options={
                 'verbose_name': 'Профіль',

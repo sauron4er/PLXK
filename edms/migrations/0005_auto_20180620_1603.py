@@ -22,13 +22,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_flow',
             name='employee_seat',
-            field=models.ForeignKey(default=1, related_name='documents_in_flow', to='edms.Employee_Seat'),
+            field=models.ForeignKey(default=1, related_name='documents_in_flow', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='document_path',
             name='employee_seat',
-            field=models.ForeignKey(default=1, related_name='documents_path', to='edms.Employee_Seat'),
+            field=models.ForeignKey(default=1, related_name='documents_path', to='edms.Employee_Seat', on_delete=models.deletion.RESTRICT),
             preserve_default=False,
         ),
     ]

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
 import Document from '../my_docs/doc_info/document';
 import Selector from '../../../../templates/components/form_modules/selector';

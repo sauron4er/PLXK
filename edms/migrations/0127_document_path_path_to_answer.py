@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document_path',
             name='path_to_answer',
-            field=models.ForeignKey(blank=True, null=True, related_name='answers', to='edms.Document_Path'),
+            field=models.ForeignKey(blank=True, null=True, related_name='answers', to='edms.Document_Path', on_delete=models.deletion.RESTRICT),
         ),
     ]

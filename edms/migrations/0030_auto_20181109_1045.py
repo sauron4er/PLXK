@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('doc_file', models.FileField(upload_to='edms_files/%Y/%m')),
-                ('document_path', models.ForeignKey(null=True, related_name='files', to='edms.Document_Path')),
+                ('document_path', models.ForeignKey(null=True, related_name='files', to='edms.Document_Path', on_delete=models.deletion.RESTRICT)),
             ],
         ),
         migrations.RemoveField(

@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import axios from 'axios';
 
 class SubEmpChooser extends React.PureComponent {

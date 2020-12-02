@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';

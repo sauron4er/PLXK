@@ -1,5 +1,5 @@
 'use strict';
-import React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from './store';
 import DxTable from 'templates/components/tables/dx_table';
