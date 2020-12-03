@@ -37,6 +37,7 @@ class Law_scope(models.Model):
 
 class Request(models.Model):
     type = models.SmallIntegerField()  # 1 - запит, 2 - рекламація
+    unique_number = models.CharField(max_length=20, null=True, blank=True)
     scope = models.ForeignKey(Scope, related_name='requests', on_delete=models.RESTRICT)
     client = models.ForeignKey(Client, related_name='requests', on_delete=models.RESTRICT)
     request_date = models.DateField()

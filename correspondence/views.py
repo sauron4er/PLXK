@@ -87,6 +87,7 @@ def index(request):
 
     correspondence = [{
         'id': request.pk,
+        'unique_number': request.unique_number,
         'type': request.type,
         'product_name': request.client.product_type.name,
         'scope_name': request.scope.name,
@@ -238,6 +239,7 @@ def get_request(request, pk):
 
         req = {
             'id': req.id,
+            'unique_number': req.unique_number if req.unique_number else '',
             'type': req.type,
             'author': req.added_by.userprofile.pip,
             'client_id': req.client_id,
@@ -254,6 +256,7 @@ def get_request(request, pk):
             'responsible_name': req.responsible.last_name + ' ' + req.responsible.first_name,
             'answer_responsible_id': req.answer_responsible_id,
             'answer_responsible_name': req.answer_responsible.last_name + ' ' + req.answer_responsible.first_name,
+            'author_comment': req.author_comment if req.author_comment else ''
         }
 
         old_request_files = [{

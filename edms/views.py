@@ -16,6 +16,7 @@ from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.global_getters import get_deps
 from docs.api.contracts_api import add_contract_from_edms
+from docs.models import Contract
 # Модульна система:
 from .models import Doc_Approval, Doc_Recipient
 from .forms import NewApprovalForm, ApprovedApprovalForm
@@ -810,6 +811,17 @@ def edms_get_emp_seats(request):
                 .filter(is_active=True).order_by('employee__pip')]
 
         return HttpResponse(json.dumps(emp_seats))
+
+
+@login_required(login_url='login')
+def edms_get_contracts(request):
+    if request.method == 'GET':
+        contracts = [{
+            'id': contract.pk,
+            'name': contract.number + ', "' + contract.subject + '"',
+        } for contract in Contract.objects.filter(is_active=True)]
+
+        return HttpResponse(json.dumps(contracts))
 
 
 @login_required(login_url='login')

@@ -57,9 +57,9 @@ class Correspondence extends React.Component {
           <button type='button' className={this.getButtonStyle('reclamations')} onClick={() => this.changeView('reclamations')}>
             Рекламації
           </button>
-          {/*<button type='button' className={this.getButtonStyle('samples')} onClick={() => this.changeView('samples')}>*/}
-          {/*  Заявки на взірці*/}
-          {/*</button>*/}
+          <button type='button' className={this.getButtonStyle('samples')} onClick={() => this.changeView('samples')}>
+            Заявки на взірці
+          </button>
           <button type='button' className={this.getButtonStyle('laws')} onClick={() => this.changeView('laws')}>
             Законодавство
           </button>
@@ -75,9 +75,9 @@ class Correspondence extends React.Component {
           <When condition={view === 'reclamations'}>
             <CorrTable corrType={2} showRequest={this.showRequest} />
           </When>
-          {/*<When condition={view === 'samples'}>*/}
-          {/*  <CorrTable corrType={3} showRequest={this.showRequest} />*/}
-          {/*</When>*/}
+          <When condition={view === 'samples'}>
+            <CorrTable corrType={3} showRequest={this.showRequest} />
+          </When>
           <When condition={view === 'request'}>
             <Request close={this.changeView} />
           </When>

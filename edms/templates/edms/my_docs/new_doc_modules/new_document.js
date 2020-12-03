@@ -23,6 +23,7 @@ import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getTod
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
+import ChooseContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_contract';
 
 class NewDocument extends React.Component {
   state = {
@@ -40,6 +41,10 @@ class NewDocument extends React.Component {
     },
     recipient_chief: {
       name: '------------',
+      id: 0
+    },
+    contract: {
+      name: '---',
       id: 0
     },
     acquaint_list: [],
@@ -145,6 +150,10 @@ class NewDocument extends React.Component {
             client: response.client || [],
             mockup_type: response.mockup_type || [],
             mockup_product_type: response.mockup_product_type || [],
+            contract_link: response.contract_link || {
+              name: '---',
+              id: 0
+            },
             render_ready: true
           });
           newDocStore.new_document.client = response?.client.id;
@@ -329,7 +338,8 @@ class NewDocument extends React.Component {
       files,
       days,
       gate,
-      carry_out_items
+      carry_out_items,
+      contract
     } = this.state;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -444,6 +454,9 @@ class NewDocument extends React.Component {
                     </When>
                     <When condition={module.module === 'packaging_type'}>
                       <PackagingType packaging_type={getTextByQueue(text, index)} fieldName={module.field_name} />
+                    </When>
+                    <When condition={module.module === 'contract_link'}>
+                      <ChooseContract onChange={this.onChange} contract={contract} fieldName={module.field_name} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>

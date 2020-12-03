@@ -1,6 +1,6 @@
 'use strict';
 import * as React from 'react';
-import {ToastContainer, toast} from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
@@ -113,6 +113,7 @@ class Request extends React.Component {
       let formData = new FormData();
       formData.append('request', corrStore.request.id);
       formData.append('type', corrStore.corr_type);
+      formData.append('unique_number', corrStore.request.unique_number);
       formData.append('product_type', corrStore.request.product_id);
       formData.append('scope', corrStore.request.scope_id);
       formData.append('client', corrStore.request.client_id);
@@ -123,6 +124,7 @@ class Request extends React.Component {
       formData.append('answer_date', corrStore.request.answer_date);
       formData.append('responsible', corrStore.request.responsible_id);
       formData.append('answer_responsible', corrStore.request.answer_responsible_id);
+      formData.append('author_comment', corrStore.request.author_comment);
       formData.append('laws', JSON.stringify(corrStore.request.laws));
       formData.append('old_answer_files', JSON.stringify(corrStore.request.old_answer_files));
       formData.append('acquaints', JSON.stringify(corrStore.request.acquaints));
@@ -305,7 +307,8 @@ class Request extends React.Component {
 
   getTitle = () => {
     const type = corrStore.corr_type === 1 ? 'запиту' : 'рекламації';
-    return corrStore.request.id ? 'Редагування ' + type + ' № ' + corrStore.request.id : 'Додання ' + type;
+    return corrStore.request.unique_number ? 'Редагування ' + type + ' № ' + corrStore.request.unique_number : 'Додання ' + type;
+    // return corrStore.request.id ? 'Редагування ' + type + ' № ' + corrStore.request.id : 'Додання ' + type;
   };
 
   render() {
@@ -326,6 +329,13 @@ class Request extends React.Component {
             </If>
 
             <div className='modal-body'>
+              <TextInput
+                text={corrStore.request.unique_number}
+                fieldName={'Номер'}
+                onChange={(e) => this.onInputChange(e, 'unique_number')}
+                maxLength={20}
+                disabled={!edit_mode}
+              />
               <Selector
                 list={corrStore.products}
                 selectedName={corrStore.request.product_name}

@@ -1,7 +1,7 @@
 from django.conf.urls import include, url
 from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_emp_seat, edms_get_user, \
     edms_new_vacation, edms_deactivate_vacation, edms_start_vacations_arrange, edms_get_vacations  # Відділ кадрів
-from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats  # Мої документи get
+from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats, edms_get_contracts  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table
@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^my_docs/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
     url(r'^my_docs/get_clients/(?P<product_type>\d+)/$', get_clients, name='clients'),
     url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
+    url(r'^my_docs/get_contracts/', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),
     url(r'^my_docs/get_chiefs/(?P<pk>\d+)/$', edms_get_chiefs, name='my_docs_get_chiefs'),
