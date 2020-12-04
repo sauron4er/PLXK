@@ -186,7 +186,6 @@ class Contract extends React.Component {
 
   render() {
     const {data_received, edit_mode, edms_doc_opened} = this.state;
-    console.log(contractsStore.contract.number);
   
     if (data_received) {
       return (

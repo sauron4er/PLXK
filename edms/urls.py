@@ -7,6 +7,7 @@ from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types
+from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_clients
 
 app_name = 'edms'
@@ -27,6 +28,7 @@ urlpatterns = [
     url(r'^hr/start_vacations_arrange/', edms_start_vacations_arrange, name='start_vacations_arrange'),
     url(r'^hr/', edms_hr, name='hr'),
 
+    url(r'^my_docs/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
     url(r'^my_docs/get_mockup_types/', get_mockup_types, name='mockup_types'),
     url(r'^my_docs/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
     url(r'^my_docs/get_clients/(?P<product_type>\d+)/$', get_clients, name='clients'),

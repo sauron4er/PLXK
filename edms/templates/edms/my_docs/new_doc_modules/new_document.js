@@ -23,7 +23,7 @@ import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getTod
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
-import ChooseContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_contract';
+import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
 
 class NewDocument extends React.Component {
   state = {
@@ -79,6 +79,16 @@ class NewDocument extends React.Component {
     } else {
       this.setState({[event.target.name]: event.target.value});
     }
+  };
+
+  onChangeContract = (event) => {
+    const selectedIndex = event.target.options.selectedIndex;
+    this.setState({
+      contract: {
+        name: event.target.options[selectedIndex].getAttribute('value'),
+        id: parseInt(event.target.options[selectedIndex].getAttribute('data-key'))
+      }
+    });
   };
 
   onChangeText = (event) => {
@@ -235,14 +245,13 @@ class NewDocument extends React.Component {
     try {
       const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
-  
+
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
-  
+
         type_modules.map((module) => {
           if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type'].includes(module.module)) {
-            
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
@@ -251,13 +260,11 @@ class NewDocument extends React.Component {
             // Модуль auto_approved не показується в документі
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
-          }
-          else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
+          } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
-          
         });
-        
+
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_modules', JSON.stringify(doc_modules));
@@ -277,9 +284,9 @@ class NewDocument extends React.Component {
             formData.append('file', file);
           });
         }
-        
+
         // TODO Чому новий документ не додається в таблоицю?
-  
+
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
@@ -287,7 +294,6 @@ class NewDocument extends React.Component {
 
             // видаляємо чернетку:
             if (status === 'draft') this.delDoc();
-            
           })
           .catch((error) => notify(error));
 
@@ -354,7 +360,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-  
+
     return (
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>
@@ -456,7 +462,7 @@ class NewDocument extends React.Component {
                       <PackagingType packaging_type={getTextByQueue(text, index)} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'contract_link'}>
-                      <ChooseContract onChange={this.onChange} contract={contract} fieldName={module.field_name} />
+                      <ChooseMainContract onChange={this.onChangeContract} contract={contract} fieldName={module.field_name} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>
