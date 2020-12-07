@@ -360,7 +360,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-
+  
     return (
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>

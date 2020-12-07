@@ -44,6 +44,7 @@ class Vacation(models.Model):
 class Document_Meta_Type(models.Model):
     document_type = models.CharField(max_length=50)
     description = models.CharField(max_length=100)
+    table_view = models.BooleanField(default=False)  # True - система створює базу цих документів на сторінці tables
     testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -54,7 +55,6 @@ class Document_Type(models.Model):
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True, on_delete=models.RESTRICT)
     is_changeable = models.BooleanField(default=False)  # Якщо True, документ можна змінювати після опублікування.
-    table_view = models.BooleanField(default=False)  # True - система створює базу цих документів на сторінці tables
     is_active = models.BooleanField(default=True)
     testing = models.BooleanField(default=False)
 
