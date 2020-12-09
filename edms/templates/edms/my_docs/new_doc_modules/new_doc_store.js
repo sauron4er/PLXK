@@ -14,6 +14,8 @@ const newDocStore = store({
       text: ''
     },
     dimensions: [],
+    contract_link: 0,
+    contract_link_name: ''
   }
 });
 

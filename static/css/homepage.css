@@ -1,0 +1,77 @@
+.css_homepage_section {
+  margin-top: 15px;
+  margin-bottom: 3px;
+}
+
+.css_homepage_button {
+  background: #3eacba;
+  color: #fff;
+  border: none;
+  position: relative;
+  height: 50px;
+  /*font-size:1.6em;*/
+  padding: 0 2em;
+  cursor: pointer;
+  transition: 800ms ease all;
+  outline: none;
+}
+.css_homepage_button:hover {
+  background: #ffffff;
+  color: #3eacba;
+}
+.css_homepage_button:before,
+.css_homepage_button:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 2px;
+  width: 0;
+  background: #3eacba;
+  transition: 400ms ease all;
+}
+.css_homepage_button:after {
+  right: inherit;
+  top: inherit;
+  left: 0;
+  bottom: 0;
+}
+.css_homepage_button:hover:before,
+.css_homepage_button:hover:after {
+  width: 100%;
+  transition: 800ms ease all;
+}
+
+.css_homepage_happy_birthday {
+  font-family: 'Lobster', cursive;
+  color: #3eacba;
+  font-size: 2vw;
+  /*line-height: 20vw;*/
+  font-weight: normal;
+  /*padding-top: 12vh;*/
+  /*margin-bottom: 5vh;*/
+  text-align: center;
+  text-shadow: 0 1px 1px #ffffff;
+}
+
+.css_homepage_birthday_card {
+  text-align: center;
+  /*width: 15vw;*/
+  /*min-height: 15vh;*/
+  background: Cornsilk;
+}
+
+.css_homepage_birthday_card h5 {
+  font-size: 1.3vw;
+}
+
+.css_homepage_birthday_card p {
+  font-size: 1.1vw;
+}
+
+#bg {
+  /*background-size: contain;*/
+  background-repeat: no-repeat;
+  background-position: top;
+  background-attachment: fixed;
+}

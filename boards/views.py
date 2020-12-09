@@ -102,11 +102,19 @@ def start_auto_functions():
 
 def home(request):
     if request.method == 'GET':
-        return render(request, 'home.html', {'auto_functions_started': auto_functions_started})
+        return render(request, 'home.html', {
+            'auto_functions_started': auto_functions_started,
+            'birthdays': get_bds(),
+            'ads': get_ads(),
+            'bg': random.randint(1, 10)})
     if request.method == 'POST':
         t1 = threading.Thread(target=start_auto_functions(), args=(), kwargs={}, daemon=True)
         t1.start()
-        return render(request, 'home.html', {'auto_functions_started': auto_functions_started})
+        return render(request, 'home.html', {
+            'auto_functions_started': auto_functions_started,
+            'birthdays': get_bds(),
+            'ads': get_ads(),
+            'bg': random.randint(1, 9)})
 
 
 def phones(request, pk):

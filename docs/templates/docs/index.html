@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Документи{% endblock %}
+{% block title %}Документи СМЯ{% endblock %}
 {% block second_nav %}
     </div>
     <div style="padding: 10px">
         {% if user.is_authenticated %}
-            <a href="{% url 'docs:new_doc'  %}"> <button type="button" class="btn btn-outline-success">Новий документ</button> </a>
+            <a href="{% url 'docs:new_doc'  %}"> <button type="button" class="btn btn-outline-info">Новий документ</button> </a>
         {% endif %}
         <div class="btn-group float-md-right">
             <a href="{% url 'docs:docs' 1 %}" style="text-decoration: none;color:black" class="{% if fk == '1' %} btn btn-info {% else %}btn btn-outline-info{% endif %}">ISO 9001</a>

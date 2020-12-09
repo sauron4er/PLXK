@@ -304,7 +304,7 @@ class Contract extends React.Component {
             <hr />
             <If condition={contractsStore.contract.edms_doc_id !== 0}>
               <div>Документ в системі електронного документообігу: № {contractsStore.contract.edms_doc_id}</div>
-              <button className='btn btn-outline-success' onClick={() => this.setState({edms_doc_opened: true})}>
+              <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
                 Показати
               </button>
             </If>
@@ -319,7 +319,7 @@ class Contract extends React.Component {
               <If condition={contractsStore.contract.id !== 0}>
                 <SubmitButton className='btn-outline-danger' onClick={() => this.postDelContract()} text='Видалити' />
               </If>
-              <SubmitButton className='btn btn-outline-success' onClick={() => this.postContract()} text='Зберегти' />
+              <SubmitButton className='btn btn-outline-info' onClick={() => this.postContract()} text='Зберегти' />
             </div>
           </If>
 

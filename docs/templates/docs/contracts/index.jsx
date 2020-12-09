@@ -81,7 +81,7 @@ class Contracts extends React.Component {
       <Choose>
         <When condition={view === 'table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <button onClick={() => this.changeView('contract')} className='btn btn-sm btn-success'>
+            <button onClick={() => this.changeView('contract')} className='btn btn-sm btn-info'>
               Додати Договір
             </button>
             <DxTable
@@ -96,7 +96,7 @@ class Contracts extends React.Component {
           </div>
         </When>
         <Otherwise>
-          <button className='btn btn-sm btn-success my-2' onClick={() => this.onContractClose()}>
+          <button className='btn btn-sm btn-info my-2' onClick={() => this.onContractClose()}>
             Назад
           </button>
           <br />

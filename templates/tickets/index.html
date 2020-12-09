@@ -9,7 +9,7 @@
 {% block second_nav %}
         <div class="container-fluid" style="padding: 10px">
          {% if user.is_authenticated %}
-            <a href="{% url 'tickets:new'  %}"> <button type="button" class="btn btn-outline-success">Нова заявка</button> </a>
+            <a href="{% url 'tickets:new'  %}"> <button type="button" class="btn btn-outline-info">Нова заявка</button> </a>
          {% endif %}
 
             <div class="btn-group float-md-right">

@@ -61,10 +61,10 @@ class OrdersTable extends React.Component {
     return (
       <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
         <If condition={is_orders_admin}>
-          <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-success'>
+          <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-info'>
             Додати нормативний документ
           </button>
-          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-success ml-auto'>
+          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-info ml-auto'>
             Розіслати нагадування про виконання наказів
           </button>
         </If>

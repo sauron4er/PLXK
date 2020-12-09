@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
-from production.models import  Mockup_type, Mockup_product_type
+from production.models import Mockup_type, Mockup_product_type
 from correspondence.models import Client
+# from docs.models import Contract # - напряму функцію імпортувати не можна, буде помилка circular import
+# import docs.models as docs
 
 
 # models, related with users
@@ -283,3 +285,10 @@ class Doc_Client(models.Model):
     document = models.ForeignKey(Document, related_name='client', on_delete=models.RESTRICT)
     client = models.ForeignKey(Client, related_name='client_documents', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+# Договір (як Основний Договір у погодженні Договору)
+# class Doc_Contract(models.Model):
+#     document = models.ForeignKey(Document, related_name='documents', on_delete=models.RESTRICT)
+#     contract = models.ForeignKey(docs.Contract, related_name='contracts', on_delete=models.RESTRICT)
+#     is_active = models.BooleanField(default=True)

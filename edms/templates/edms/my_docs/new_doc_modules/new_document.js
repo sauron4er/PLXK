@@ -43,10 +43,6 @@ class NewDocument extends React.Component {
       name: '------------',
       id: 0
     },
-    contract: {
-      name: '---',
-      id: 0
-    },
     acquaint_list: [],
     approval_list: [],
     sign_list: [],
@@ -83,12 +79,8 @@ class NewDocument extends React.Component {
 
   onChangeContract = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
-    this.setState({
-      contract: {
-        name: event.target.options[selectedIndex].getAttribute('value'),
-        id: parseInt(event.target.options[selectedIndex].getAttribute('data-key'))
-      }
-    });
+    newDocStore.new_document.contract_link = parseInt(event.target.options[selectedIndex].getAttribute('data-key'))
+    newDocStore.new_document.contract_link_name = event.target.options[selectedIndex].getAttribute('value')
   };
 
   onChangeText = (event) => {
@@ -160,10 +152,6 @@ class NewDocument extends React.Component {
             client: response.client || [],
             mockup_type: response.mockup_type || [],
             mockup_product_type: response.mockup_product_type || [],
-            contract_link: response.contract_link || {
-              name: '---',
-              id: 0
-            },
             render_ready: true
           });
           newDocStore.new_document.client = response?.client.id;
@@ -172,6 +160,8 @@ class NewDocument extends React.Component {
           newDocStore.new_document.mockup_type_name = response?.mockup_type.name;
           newDocStore.new_document.mockup_product_type = response?.mockup_product_type.id;
           newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type.name;
+          newDocStore.new_document.contract_link = response?.contract_link.id;
+          newDocStore.new_document.contract_link_name = response?.contract_link.name;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -251,7 +241,7 @@ class NewDocument extends React.Component {
         let doc_modules = {};
 
         type_modules.map((module) => {
-          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type'].includes(module.module)) {
+          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(module.module)) {
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
@@ -285,7 +275,7 @@ class NewDocument extends React.Component {
           });
         }
 
-        // TODO Чому новий документ не додається в таблоицю?
+        // TODO Чому новий документ не додається в таблицю?
 
         axiosPostRequest('', formData)
           .then((response) => {
@@ -345,7 +335,7 @@ class NewDocument extends React.Component {
       days,
       gate,
       carry_out_items,
-      contract
+      contract_link
     } = this.state;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -360,7 +350,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-  
+
     return (
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>
@@ -462,7 +452,7 @@ class NewDocument extends React.Component {
                       <PackagingType packaging_type={getTextByQueue(text, index)} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'contract_link'}>
-                      <ChooseMainContract onChange={this.onChangeContract} contract={contract} fieldName={module.field_name} />
+                      <ChooseMainContract onChange={this.onChangeContract} contract={contract_link} fieldName={module.field_name} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>
@@ -483,7 +473,7 @@ class NewDocument extends React.Component {
                 Зберегти як шаблон
               </button>
               <button
-                className='float-sm-left btn btn-success mb-1'
+                className='float-sm-left btn btn-info mb-1'
                 onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
               >
                 Підтвердити

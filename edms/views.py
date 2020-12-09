@@ -485,6 +485,9 @@ def post_modules(doc_request, doc_files, new_path):
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
             post_files(doc_request, doc_files, new_path.pk)
 
+        if 'contract_link' in doc_modules:
+            a=1
+
         return recipients
     except ValidationError as err:
         raise err

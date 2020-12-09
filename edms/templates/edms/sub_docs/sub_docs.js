@@ -161,7 +161,7 @@ class SubDocs extends React.Component {
               <div className='mr-3'>
                 <SubEmpChooser subEmp={sub_emp} changeSubEmp={this.onChangeSubEmp} />
               </div>
-              <button className='btn btn-outline-success' onClick={this.updateLists}>
+              <button className='btn btn-outline-info' onClick={this.updateLists}>
                 Знайти
               </button>
           </div>

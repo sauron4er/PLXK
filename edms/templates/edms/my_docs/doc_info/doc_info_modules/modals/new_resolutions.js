@@ -128,7 +128,7 @@ class NewResolutions extends React.Component {
                     );
                   })}
                 </ol>
-                <button className='btn btn-success' onClick={this.onClick}>
+                <button className='btn btn-info' onClick={this.onClick}>
                   Відправити
                 </button>
               </If>

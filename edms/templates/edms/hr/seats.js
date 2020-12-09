@@ -346,7 +346,7 @@ class Seats extends React.Component {
             <br />
             <br />
 
-            <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
+            <Button className='float-sm-left btn btn-outline-info mb-1'>Підтвердити</Button>
             <Button
               className='float-sm-right btn btn-outline-secondary mb-1'
               onClick={this.handleDelete}
@@ -425,7 +425,7 @@ class Seats extends React.Component {
             <br />
             <br />
 
-            <Button className='btn btn-outline-success float-sm-left'>Підтвердити</Button>
+            <Button className='btn btn-outline-info float-sm-left'>Підтвердити</Button>
           </Form>
         </Modal>
       </Fragment>

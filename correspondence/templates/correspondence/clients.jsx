@@ -108,7 +108,7 @@ class Clients extends React.Component {
           />
           <button
             type='button'
-            className='btn btn-sm btn-outline-success'
+            className='btn btn-sm btn-outline-info'
             onClick={this.postNewClient}
           >
             Додати

@@ -41,7 +41,7 @@ class PostSignedFiles extends React.Component {
 
         <div className='modal-footer'>
           <small>Після додавання скан-копій підписаних документів даний Договір потрапить у список Договорів на відповідній сторінці</small>
-          <button className='btn btn-outline-success ml-1' onClick={this.onSubmit}>
+          <button className='btn btn-outline-info ml-1' onClick={this.onSubmit}>
             Зберегти зміни
           </button>
         </div>

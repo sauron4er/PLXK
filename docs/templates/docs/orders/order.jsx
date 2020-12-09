@@ -266,7 +266,7 @@ class Order extends React.Component {
         </When>
         <When condition={!loading}>
           <div className='d-flex'>
-            <button className='btn btn-sm btn-success my-2' onClick={() => this.closeOrderView()}>
+            <button className='btn btn-sm btn-info my-2' onClick={() => this.closeOrderView()}>
               Назад
             </button>
           </div>
@@ -450,7 +450,7 @@ class Order extends React.Component {
               <OrderMail />
             </If>
 
-            <SubmitButton className='btn-success' text='Зберегти' onClick={this.postOrder} />
+            <SubmitButton className='btn-info' text='Зберегти' onClick={this.postOrder} />
 
             <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />

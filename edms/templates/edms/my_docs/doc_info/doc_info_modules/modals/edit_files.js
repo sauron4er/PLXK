@@ -235,7 +235,7 @@ class EditFiles extends React.Component {
 
         <div className='modal-footer'>
           <small>При оновленні прикріплених файлів даний електронний документ буде знов запропоновано на розгляд візуючим</small>
-          <button className='btn btn-outline-success ml-1' onClick={this.onSubmit}>
+          <button className='btn btn-outline-info ml-1' onClick={this.onSubmit}>
             Зберегти зміни
           </button>
         </div>

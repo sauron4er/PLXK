@@ -319,7 +319,7 @@ class Request extends React.Component {
         <When condition={!this.state.loading}>
           <div className='shadow-lg p-3 mb-5 bg-white rounded'>
             <div className='modal-header d-flex'>
-              <button className='btn btn-outline-success' onClick={() => this.closeRequestView()}>
+              <button className='btn btn-outline-info' onClick={() => this.closeRequestView()}>
                 Назад
               </button>
               <h5 className='ml-auto'>{this.getTitle()}</h5>
@@ -467,7 +467,7 @@ class Request extends React.Component {
                 <If condition={corrStore.request.id !== 0 && user_is_author}>
                   <SubmitButton className='btn-outline-danger' text='Видалити' onClick={() => this.postDelRequest()} />
                 </If>
-                <SubmitButton className='btn-outline-success' text='Зберегти' onClick={() => this.postRequest()} />
+                <SubmitButton className='btn-outline-info' text='Зберегти' onClick={() => this.postRequest()} />
               </div>
             </If>
 

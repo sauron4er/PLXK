@@ -236,7 +236,7 @@ class Deps extends React.Component {
             <br />
             <br />
 
-            <Button className='btn btn-outline-success float-sm-left' name='new_dep'>
+            <Button className='btn btn-outline-info float-sm-left' name='new_dep'>
               Підтвердити
             </Button>
           </Form>
@@ -274,7 +274,7 @@ class Deps extends React.Component {
             <br />
             <br />
 
-            <Button className='float-sm-left btn btn-outline-success mb-1'>Підтвердити</Button>
+            <Button className='float-sm-left btn btn-outline-info mb-1'>Підтвердити</Button>
             <Button
               className='float-sm-right btn btn-outline-secondary mb-1'
               onClick={this.handleDelete.bind(this)}

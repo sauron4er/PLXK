@@ -73,14 +73,14 @@ class SeatCard extends React.Component {
                   {/*{old_file.split('/').slice(-1)[0]}*/}
                   Посадова інструкція
                 </a>
-                <button className='float-sm-right btn btn-sm btn-outline-success' onClick={() => this.setState({old_file: ''})}>
+                <button className='float-sm-right btn btn-sm btn-outline-info' onClick={() => this.setState({old_file: ''})}>
                   Замінити
                 </button>
               </When>
               <Otherwise>
                 <div>Додати посадову інструкцію:</div>
                 <FilesUpload onChange={this.onFileChange} files={new_file} fieldName={''} multiple={false} />
-                <button className='float-sm-right btn btn-sm btn-success' onClick={this.postInstruction}>
+                <button className='float-sm-right btn btn-sm btn-info' onClick={this.postInstruction}>
                   Зберегти
                 </button>
               </Otherwise>

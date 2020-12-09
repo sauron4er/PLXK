@@ -49,7 +49,7 @@ class AnswerComment extends React.Component {
           />
         </div>
         <div className='modal-footer'>
-          <button className='btn btn-outline-success' onClick={this.onClick}>
+          <button className='btn btn-outline-info' onClick={this.onClick}>
             Відправити
           </button>
         </div>

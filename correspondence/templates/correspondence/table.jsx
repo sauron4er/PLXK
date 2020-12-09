@@ -60,7 +60,7 @@ class CorrTable extends React.Component {
   
     return (
       <div ref={this.getMainDivRef}>
-        <button className='btn btn-outline-success' onClick={this.newRequest}>
+        <button className='btn btn-outline-info' onClick={this.newRequest}>
           {corrType === 1 ? 'Додати запит' : corrType === 2 ? 'Додати рекламацію' : 'Додати запит на взірець'}
         </button>
         <DxTable

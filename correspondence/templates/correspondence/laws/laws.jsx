@@ -175,7 +175,7 @@ class Laws extends React.Component {
           </div>
           <button
             type='button'
-            className='btn btn-sm btn-outline-success align-self-stretch'
+            className='btn btn-sm btn-outline-info align-self-stretch'
             onClick={() => this.postNewLaw()}
           >
             Додати

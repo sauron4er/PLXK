@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import Department
-from edms.models import Document as EdmsDocument, Employee_Seat
+# from edms.models import Document as EdmsDocument, Employee_Seat
+import edms.models as edms
 
 
 class Doc_group(models.Model):
@@ -95,7 +96,7 @@ class Order_article(models.Model):
 
 class Article_responsible(models.Model):
     article = models.ForeignKey(Order_article, related_name='responsibles', on_delete=models.RESTRICT)
-    employee_seat = models.ForeignKey(Employee_Seat, related_name='orders_responsible', on_delete=models.RESTRICT)
+    employee_seat = models.ForeignKey(edms.Employee_Seat, related_name='orders_articles_responsible', on_delete=models.RESTRICT)
     comment = models.CharField(max_length=500, null=True, blank=True)
     done = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -121,7 +122,7 @@ class Contract(models.Model):
     responsible = models.ForeignKey(User, null=True, blank=True, related_name='responsible_for_contracts', on_delete=models.RESTRICT)
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True, on_delete=models.RESTRICT)
     lawyers_received = models.BooleanField(default=False)
-    edms_doc = models.ForeignKey(EdmsDocument, related_name='contracts', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
+    edms_doc = models.ForeignKey(edms.Document, related_name='edms_docs', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
 
     basic_contract = models.ForeignKey('self', related_name='additional_contracts', null=True, blank=True, on_delete=models.RESTRICT)
     # Якщо це поле пусте, то документ є основним договором,
@@ -137,5 +138,4 @@ class Contract_File(models.Model):
     file = models.FileField(upload_to='contract_docs/%Y/%m')
     name = models.CharField(max_length=100, null=True, blank=True)
     contract = models.ForeignKey(Contract, related_name='files', null=True, on_delete=models.RESTRICT)
-
     is_active = models.BooleanField(default=True)

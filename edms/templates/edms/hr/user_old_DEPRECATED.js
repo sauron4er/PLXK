@@ -436,7 +436,7 @@ class User extends React.Component {
           </div>
           <br />
 
-          <Button className='float-sm-left btn btn-outline-success mb-1' onClick={this.handleSubmit}>Підтвердити</Button>
+          <Button className='float-sm-left btn btn-outline-info mb-1' onClick={this.handleSubmit}>Підтвердити</Button>
           <Button
             className='float-sm-right btn btn-outline-secondary mb-1'
             onClick={this.handleDelete}

@@ -96,7 +96,7 @@ class Scopes extends React.Component {
 
           <button
             type='button'
-            className='btn btn-sm btn-outline-success align-self-stretch'
+            className='btn btn-sm btn-outline-info align-self-stretch'
             onClick={this.postNewScope}
           >
             Додати

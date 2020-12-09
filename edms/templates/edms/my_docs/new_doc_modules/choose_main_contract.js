@@ -79,7 +79,7 @@ class ChooseMainContract extends React.Component {
               </label>
 
               <If condition={id !== 0}>
-                <button className='btn btn-outline-success' onClick={() => this.setState({contract_modal_open: true})}>
+                <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
                   Переглянути Договір
                 </button>
               </If>
