@@ -111,7 +111,7 @@ class Responsible_file(models.Model):
 
 class Contract(models.Model):
     # Не можна перейменовувати ці поля, це вплине на автоматичний переніс Договорів з системи EDMS
-    number = models.CharField(max_length=50)
+    number = models.CharField(max_length=100)
     created_by = models.ForeignKey(User, related_name='added_contracts', on_delete=models.RESTRICT)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='updated_contracts', on_delete=models.RESTRICT)
     subject = models.CharField(max_length=1000)

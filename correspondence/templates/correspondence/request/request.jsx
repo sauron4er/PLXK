@@ -306,7 +306,7 @@ class Request extends React.Component {
   };
 
   getTitle = () => {
-    const type = corrStore.corr_type === 1 ? 'запиту' : 'рекламації';
+    const type = corrStore.corr_type === 1 ? 'запиту' : corrStore.corr_type === 2 ? 'рекламації' : 'запиту на взірець';
     return corrStore.request.unique_number ? 'Редагування ' + type + ' № ' + corrStore.request.unique_number : 'Додання ' + type;
     // return corrStore.request.id ? 'Редагування ' + type + ' № ' + corrStore.request.id : 'Додання ' + type;
   };
