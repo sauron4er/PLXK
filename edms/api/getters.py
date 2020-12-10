@@ -47,8 +47,8 @@ def get_phase_info(doc_request):
             .filter(phase=0)\
             .filter(is_active=True)
 
-    return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id')\
-        .filter(id=phase_id[0])[0]
+    return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id') \
+        .filter(id=phase_id)[0]
 
 
 @try_except
