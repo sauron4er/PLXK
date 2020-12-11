@@ -43,50 +43,57 @@ class Text extends React.Component {
   };
 
   render() {
-    const {fieldName, text, onChange, rows, maxLength, queue, type} = this.props;
-  
+    const {module_info, text, onChange, rows, maxLength, type} = this.props;
+
     return (
       <Choose>
         <When condition={type === 'dimensions'}>
           <div className='row align-items-center mr-lg-1'>
-            <label className='col-lg-4' htmlFor={'text-' + queue}>
-              {fieldName}:
+            <label className='col-lg-4' htmlFor={'text-' + module_info.queue}>
+              <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
             </label>
             <input
               className='form-control col-lg-2'
               name='text'
               type='number'
-              id={'text-' + queue}
+              id={'text-' + module_info.queue}
               // value={newDocStore.new_document.dimensions[queue]?.text}
-              value={this.getDimension(queue)}
+              value={this.getDimension(module_info.queue)}
               onChange={this.onDimensionsChange}
               maxLength={maxLength}
             />
           </div>
+          <small className='text-danger'>{module_info?.additional_info}</small>
         </When>
         <Otherwise>
-          <label className='full_width' htmlFor={'text-' + queue}>
-            {fieldName}:
+          <label className='full_width' htmlFor={'text-' + module_info.queue}>
+            <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
             <textarea
               className='form-control full_width'
               name='text'
-              id={'text-' + queue}
+              id={'text-' + module_info.queue}
               value={text}
               rows={rows}
               onChange={onChange}
               maxLength={maxLength}
             />
+            <small className='text-danger'>{module_info?.additional_info}</small>
           </label>
+
         </Otherwise>
       </Choose>
     );
   }
 
   static defaultProps = {
+    module_info: {
+      field_name: '---',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
     text: '',
-    fieldName: '-',
     rows: 1,
-    queue: 1,
     maxLength: 5000,
     type: 'default'
   };

@@ -28,17 +28,16 @@ class CarryOut extends React.Component {
       }
     };
     this.props.onChange(changed_event);
-    // this.setState({
-    //   carry_out_items: carry_out_items
-    // });
   };
 
   render() {
-    const {fieldName, carryOutItems} = this.props;
+    const {module_info, carryOutItems} = this.props;
     const {carry_out_columns, carry_out_col_width} = this.state;
+
+    console.log(module_info);
     return (
       <div className='mt-1'>
-        <label>{fieldName}:</label>
+        <If condition={module_info.required}>{'* '}</If> <label>{module_info.field_name}:</label>
         <DxTable
           rows={carryOutItems}
           columns={carry_out_columns}
@@ -47,13 +46,19 @@ class CarryOut extends React.Component {
           getData={this.getCarryOutItems}
           paging
         />
+        <small className='text-danger'>{module_info?.additional_info}</small>
       </div>
     );
   }
 
   static defaultProps = {
     carryOutItems: [],
-    fieldName: '???'
+    module_info: {
+      field_name: '---',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
   };
 }
 

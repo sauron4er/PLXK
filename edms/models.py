@@ -288,7 +288,7 @@ class Doc_Client(models.Model):
 
 
 # Договір (як Основний Договір у погодженні Договору)
-# class Doc_Contract(models.Model):
-#     document = models.ForeignKey(Document, related_name='documents', on_delete=models.RESTRICT)
-#     contract = models.ForeignKey(docs.Contract, related_name='contracts', on_delete=models.RESTRICT)
-#     is_active = models.BooleanField(default=True)
+class Doc_Contract(models.Model):
+    document = models.ForeignKey(Document, related_name='documents', on_delete=models.RESTRICT)
+    contract_id = models.IntegerField()
+    is_active = models.BooleanField(default=True)

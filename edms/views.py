@@ -486,7 +486,7 @@ def post_modules(doc_request, doc_files, new_path):
             post_files(doc_request, doc_files, new_path.pk)
 
         if 'contract_link' in doc_modules:
-            a=1
+            post_contract(doc_request, doc_modules['contract_link']['value'])
 
         return recipients
     except ValidationError as err:

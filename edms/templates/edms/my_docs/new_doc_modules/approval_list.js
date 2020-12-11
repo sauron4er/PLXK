@@ -32,14 +32,10 @@ class ApprovalList extends React.Component {
         // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
         // але список не оновлять, тому оновлюємо список самі
         this.state.seat_list.length === 0
-          ? this.setState({
-              seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
-            })
+          ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))})
           : null;
       } else {
-        this.setState({
-          seat_list: result
-        });
+        this.setState({seat_list: result});
       }
     });
   }
@@ -82,20 +78,18 @@ class ApprovalList extends React.Component {
     // надсилаємо новий список у батьківський компонент
     this.changeList(this.state.approval_list.filter((seat) => seat.id !== seat_id));
 
-    this.setState((prevState) => ({
-      approval_list: prevState.approval_list.filter((seat) => seat.id !== seat_id)
-    }));
+    this.setState((prevState) => ({approval_list: prevState.approval_list.filter((seat) => seat.id !== seat_id)}));
   };
 
   render() {
     const {seat_list, select_approval, approval_list} = this.state;
-    const {fieldName, additionalInfo} = this.props;
+    const {module_info} = this.props;
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
           <div className='w-75 d-flex align-items-center mt-1'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval'>
-              {fieldName}:
+              <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
             </label>
             <select className='form-control' id='select_approval' name='select_approval' value={select_approval} onChange={this.onChange}>
               <option key={0} data-key={0} value='0'>
@@ -118,9 +112,8 @@ class ApprovalList extends React.Component {
               <FontAwesomeIcon icon={faPlus} />
             </button>
           </div>
-          <If condition={additionalInfo}>
-            <small className='text-danger'>{additionalInfo}</small>
-          </If>
+          <small className='text-danger'>{module_info?.additional_info}</small>
+
           <If condition={approval_list.length > 0}>
             <ul className='mt-1'>
               <For each='seat' index='index' of={approval_list}>
@@ -149,7 +142,12 @@ class ApprovalList extends React.Component {
 
   static defaultProps = {
     approvalList: [],
-    fieldName: 'Список на погодження',
+    module_info: {
+      field_name: 'Список на погодження',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
     additionalInfo: ''
   };
 }

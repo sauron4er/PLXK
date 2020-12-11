@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from '../../../../api/get_emp_seats';
+import {getEmpSeats} from "edms/api/get_emp_seats";
 import 'static/css/my_styles.css';
 
 class AcquaintList extends React.Component {
@@ -32,14 +32,10 @@ class AcquaintList extends React.Component {
         // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
         // але список не оновлять, тому оновлюємо список самі
         this.state.seat_list.length === 0
-          ? this.setState({
-              seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
-            })
+          ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))})
           : null;
       } else {
-        this.setState({
-          seat_list: result
-        });
+        this.setState({seat_list: result});
       }
     });
   }
@@ -88,13 +84,13 @@ class AcquaintList extends React.Component {
 
   render() {
     const {seat_list, select_acquaint, acquaint_list} = this.state;
-    const {fieldName} = this.props;
+    const {module_info} = this.props;
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
           <div className='w-75 d-flex align-items-center mt-1'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_acquaint'>
-              {fieldName}:
+              <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
             </label>
             <select className='form-control' id='select_acquaint' name='select_acquaint' value={select_acquaint} onChange={this.onChange}>
               <option key={0} data-key={0} value='0'>
@@ -146,7 +142,12 @@ class AcquaintList extends React.Component {
 
   static defaultProps = {
     acquaintList: [],
-    fieldName: 'Список отримувачів'
+    module_info: {
+      field_name: 'Список отримувачів',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
   };
 }
 

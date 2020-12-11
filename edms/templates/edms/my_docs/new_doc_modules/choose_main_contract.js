@@ -4,6 +4,8 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import ContractView from "docs/templates/docs/contracts/contract_view";
 import Modal from 'react-responsive-modal';
+import {view, store} from '@risingstack/react-easy-state';
+import newDocStore from './new_doc_store';
 
 class ChooseMainContract extends React.Component {
   state = {
@@ -29,8 +31,8 @@ class ChooseMainContract extends React.Component {
 
   render() {
     const {is_main_contract, contracts, contract_modal_open} = this.state;
-    const {name, id} = this.props.contract;
-    const {fieldName, onChange} = this.props;
+    const {contract_link, contract_link_name} = newDocStore.new_document;
+    const {module_info, onChange} = this.props;
 
     return (
       <>
@@ -58,13 +60,14 @@ class ChooseMainContract extends React.Component {
         <label className='radio-inline mx-1' htmlFor={'not_main'}>
           Це додаткова Угода
         </label>
+        <small className='text-danger'>{module_info?.additional_info}</small>
 
         <If condition={!is_main_contract}>
           <Choose>
             <When condition={contracts?.length > 0}>
               <label className='full_width' htmlFor='contract_select'>
-                {fieldName}:
-                <select id='contract_select' name='contract' className='form-control full_width' value={name} onChange={onChange}>
+                <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
+                <select id='contract_select' name='contract' className='form-control full_width' value={contract_link_name} onChange={onChange}>
                   <option key={0} data-key={0} value='0'>
                     ------------
                   </option>
@@ -78,7 +81,7 @@ class ChooseMainContract extends React.Component {
                 </select>
               </label>
 
-              <If condition={id !== 0}>
+              <If condition={contract_link !== 0}>
                 <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
                   Переглянути Договір
                 </button>
@@ -99,16 +102,21 @@ class ChooseMainContract extends React.Component {
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 50}}}
         >
-          <ContractView id={id} />
+          <ContractView id={contract_link} />
         </Modal>
       </>
     );
   }
 
   static defaultProps = {
-    contract: {},
-    fieldName: 'Посилання на основний Договір'
+    module_info: {
+      field_name: 'Посилання на основний Договір',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
+    onChange: () => {}
   };
 }
 
-export default ChooseMainContract;
+export default view(ChooseMainContract);

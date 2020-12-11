@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
-    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm
+    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm
 from .vacations import vacation_check
 
 
@@ -142,5 +142,15 @@ def post_client(doc_request, client):
     client_form = NewClientForm(doc_request)
     if client_form.is_valid():
         client_form.save()
+    else:
+        raise ValidationError('post_modules/post_client/client_form invalid')
+
+
+@try_except
+def post_contract(doc_request, contract_id):
+    doc_request.update({'contract_id': contract_id})
+    contract_form = NewDocContractForm(doc_request)
+    if contract_form.is_valid():
+        contract_form.save()
     else:
         raise ValidationError('post_modules/post_client/client_form invalid')

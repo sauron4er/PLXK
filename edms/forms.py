@@ -247,3 +247,9 @@ class ApprovedDocForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = {'approved', 'approved_date'}
+
+
+class NewDocContractForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Contract
+        fields = {'document', 'contract_id'}

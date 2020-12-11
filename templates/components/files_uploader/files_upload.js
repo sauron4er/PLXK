@@ -24,15 +24,16 @@ class FilesUpload extends React.Component {
   };
 
   render() {
-    const {fieldName} = this.props;
+    const {module_info, files, editable, multiple} = this.props;
     return (
       <div className='mt-1'>
-        <If condition={fieldName.length > 0}><div className='mr-2'>{fieldName}:</div></If>
+        <If condition={module_info.required}>{'* '}</If>
+        <If condition={module_info.field_name.length > 0}><span className='mr-2'>{module_info.field_name}:</span></If>
         
-        <If condition={this.props.files.length > 0}>
-          <NewFilesList files={this.props.files} fileRemove={this.filesRemoveOne} />
+        <If condition={files.length > 0}>
+          <NewFilesList files={files} fileRemove={this.filesRemoveOne} />
         </If>
-        <If condition={this.props.editable}>
+        <If condition={editable}>
           <Files
             ref='new_files'
             className='btn btn-sm btn-outline-secondary'
@@ -40,7 +41,7 @@ class FilesUpload extends React.Component {
             // style={{height: '100px'}}
             onChange={this.onFilesChange}
             onError={this.onFilesError}
-            multiple={this.props.multiple}
+            multiple={multiple}
             maxFiles={10}
             maxFileSize={50000000}
             minFileSize={0}
@@ -56,7 +57,12 @@ class FilesUpload extends React.Component {
   static defaultProps = {
     multiple: true,
     files: [],
-    fieldName: '',
+    module_info: {
+      field_name: 'Додати файли',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
     editable: true
   };
 }

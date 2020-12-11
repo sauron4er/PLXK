@@ -30,7 +30,7 @@ class Client extends React.Component {
   };
 
   render() {
-    const {fieldName} = this.props;
+    const {module_info} = this.props;
     const {loading, clients} = this.state;
   
     return (
@@ -38,7 +38,7 @@ class Client extends React.Component {
         <When condition={!loading}>
           <div className='row align-items-center mr-lg-1'>
             <label className='col-lg-4' htmlFor='client'>
-              {fieldName}:
+              {module_info.field_name}:
             </label>
             <select
               className='col-lg-8 form-control mx-3 mx-lg-0'
@@ -59,6 +59,7 @@ class Client extends React.Component {
               })}
             </select>
           </div>
+          <small className='text-danger'>{module_info?.additional_info}</small>
         </When>
         <Otherwise>
           <LoaderSmall />
@@ -69,7 +70,12 @@ class Client extends React.Component {
 
   static defaultProps = {
     client: [],
-    fieldName: '-'
+    module_info: {
+      field_name: '---',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
   };
 }
 

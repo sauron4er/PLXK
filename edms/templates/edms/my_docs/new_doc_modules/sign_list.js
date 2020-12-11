@@ -88,14 +88,14 @@ class SignList extends React.Component {
 
   render() {
     const {seat_list, select_sign, sign_list} = this.state;
-    const {fieldName, additionalInfo} = this.props;
+    const {module_info} = this.props;
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
           <br />
           <div className='w-75 d-flex align-items-start mt-1'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_sign'>
-              {fieldName}:
+              {module_info.field_name}:
             </label>
             <select className='form-control' id='select_sign' name='select_sign' value={select_sign} onChange={this.onChange}>
               <option key={0} data-key={0} value='0'>
@@ -116,9 +116,7 @@ class SignList extends React.Component {
               <FontAwesomeIcon icon={faPlus} />
             </button>
           </div>
-          <If condition={additionalInfo}>
-            <small className='text-danger'>{additionalInfo}</small>
-          </If>
+          <small className='text-danger'>{module_info?.additional_info}</small>
           <If condition={sign_list.length > 0}>
             <ul className='mt-1'>
               <For each='seat' index='index' of={sign_list}>
@@ -147,8 +145,12 @@ class SignList extends React.Component {
 
   static defaultProps = {
     signList: [],
-    additionalInfo: '',
-    fieldName: 'Список отримувачів'
+    module_info: {
+      field_name: 'Список отримувачів',
+      queue: 0,
+      required: false,
+      additional_info: null
+    }
   };
 }
 
