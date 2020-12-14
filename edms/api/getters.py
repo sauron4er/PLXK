@@ -45,7 +45,7 @@ def get_phase_info(doc_request):
         phase_id = Doc_Type_Phase.objects.values_list('id', flat=True)\
             .filter(document_type_id=doc_request['document_type'])\
             .filter(phase=0)\
-            .filter(is_active=True)
+            .filter(is_active=True)[0]
 
     return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id') \
         .filter(id=phase_id)[0]
