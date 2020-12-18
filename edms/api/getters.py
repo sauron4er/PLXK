@@ -51,6 +51,7 @@ def get_phase_info(doc_request):
         .filter(id=phase_id)[0]
 
 
+
 @try_except
 def get_phase_id(doc_request):
     # Якщо phase_id = 0 в doc_request, то на ознайомлення відправляє автор, тому браузер не знає ід фази. Знаходимо її.
@@ -288,8 +289,25 @@ def get_dep_chief_id(emp_seat_id):
 
         if dep_chief_emp_seat_id:
             return dep_chief_emp_seat_id[0]
-        else:
-            return 0
+    return None
+
+
+# Функція, яка повертає посаду безпосереднього керівника людинопосади
+@try_except
+def get_chief_id(emp_seat_id):
+    # Посада людинопосади:
+    seat_id = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat_id)[0]
+    chief_id = Seat.objects.values_list('chief_id', flat=True).filter(id=seat_id)
+
+    if chief_id:  # В БД може не бути запису, хто керівник відділу
+        # Активна людино-посада безпосереднього керівника:
+        chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+            .filter(seat_id=chief_id[0]).filter(is_main=True).filter(is_active=True)
+
+        if chief_emp_seat_id:
+            return chief_emp_seat_id[0]
+
+    return 0
 
 
 # Функція, яка вертає список модулів, що використовуються даним типом документу

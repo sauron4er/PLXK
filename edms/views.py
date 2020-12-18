@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import Mark_Demand, Vacation
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
@@ -452,15 +453,20 @@ def post_modules(doc_request, doc_files, new_path):
             }])
 
             # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
-            dep_chief = get_dep_chief_id(doc_request['employee_seat'])
+            chief = get_dep_chief_id(doc_request['employee_seat'])
+            # якщо у відділа нема керівника, призначаємо безпос. керівника автора:
+            if chief is None:
+                chief = get_chief_id(doc_request['employee_seat'])
 
-            if dep_chief != int(doc_request['employee_seat']) and dep_chief != director:
-                approvals[:] = [i for i in approvals if not (int(i['id']) == dep_chief)]
+            if chief is not None and chief != int(doc_request['employee_seat']) and chief != director:
+                approvals[:] = [i for i in approvals if not (int(i['id']) == chief)]
 
                 approvals.append({
-                    'id': dep_chief,
+                    'id': chief,
                     'approve_queue': 1  # Керівник відділу другий у списку погоджень
                 })
+            else:
+                raise ObjectDoesNotExist('У автора нема безпосереднього начальника')
 
             post_approval_list(doc_request, approvals)
 
