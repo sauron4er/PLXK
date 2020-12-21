@@ -30,11 +30,11 @@ def index(request):
 
     contracts = [{
         'id': contract.id,
-        'number': contract.number,
+        'number': contract.number if contract.number else 'б/н',
         # 'author_id': contract.created_by.id,
         # 'author': contract.created_by.last_name + ' ' + contract.created_by.first_name,
         'subject': contract.subject,
-        'selector_info': '№ ' + contract.number + ', "' + contract.subject + '"',
+        'selector_info': '№ ' + (contract.number if contract.number else '---') + ', "' + contract.subject + '"',
         'counterparty': contract.counterparty,
         # 'nomenclature_group': contract.nomenclature_group,
         'date_start': date_to_json(contract.date_start) if contract.date_start else '',
@@ -69,12 +69,13 @@ def get_contract(request, pk):
 
     contract = {
         'id': contract.id,
-        'number': contract.number,
+        'number': contract.number if contract.number else 'б/н',
+        'company': contract.company,
         'author': contract.created_by.id,
         'author_name': contract.created_by.last_name + ' ' + contract.created_by.first_name,
         'subject': contract.subject,
         'counterparty': contract.counterparty,
-        'nomenclature_group': contract.nomenclature_group,
+        'nomenclature_group': contract.nomenclature_group if contract.nomenclature_group else '',
         'date_start': date_to_json(contract.date_start),
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
         'responsible': contract.responsible_id if contract.responsible_id else 0,

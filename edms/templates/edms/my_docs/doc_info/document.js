@@ -292,6 +292,7 @@ class Document extends React.Component {
 
   onCloseModal = () => {
     this.setState({modal_open: false});
+    docInfoStore.button_clicked = false
   };
 
   addDoc = () => {

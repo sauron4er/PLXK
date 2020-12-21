@@ -76,7 +76,7 @@ class Contracts extends React.Component {
 
   render() {
     const {main_div_height, view} = this.state;
-  
+
     return (
       <Choose>
         <When condition={view === 'table'}>

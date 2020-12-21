@@ -18,12 +18,14 @@ import MockupType from './mockup_type';
 import MockupProductType from './mockup_product_type';
 import Client from './client';
 import PackagingType from './packaging_type';
+import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
+import ChooseCompany from "edms/templates/edms/my_docs/new_doc_modules/choose_company";
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
-import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
+
 
 class NewDocument extends React.Component {
   state = {
@@ -31,9 +33,6 @@ class NewDocument extends React.Component {
     render_ready: false,
     type_modules: [],
     text: [],
-
-    name: '',
-    preamble: '',
     articles: [],
     recipient: {
       name: '------------',
@@ -160,6 +159,7 @@ class NewDocument extends React.Component {
           newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type.name;
           newDocStore.new_document.contract_link = response?.contract_link.id;
           newDocStore.new_document.contract_link_name = response?.contract_link.name;
+          newDocStore.new_document.company = response?.company;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -248,6 +248,8 @@ class NewDocument extends React.Component {
             // Модуль auto_approved не показується в документі
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
+          } else if (module.module === 'choose_company') {
+            doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -319,8 +321,6 @@ class NewDocument extends React.Component {
       open,
       type_modules,
       render_ready,
-      name,
-      preamble,
       text,
       articles,
       recipient,
@@ -328,7 +328,6 @@ class NewDocument extends React.Component {
       acquaint_list,
       approval_list,
       sign_list,
-      old_files,
       files,
       days,
       gate,
@@ -439,6 +438,9 @@ class NewDocument extends React.Component {
                     </When>
                     <When condition={module.module === 'contract_link'}>
                       <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
+                    </When>
+                    <When condition={module.module === 'choose_company'}>
+                      <ChooseCompany module_info={module} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>

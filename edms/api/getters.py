@@ -6,11 +6,13 @@ from plxk.api.datetime_normalizers import date_to_json
 from .vacations import vacation_check
 from accounts import models as accounts  # імпортує моделі Department, UserProfile
 from ..models import Seat, Employee_Seat, Document, Document_Meta_Type, Document_Type, Mark, Document_Path, File
-from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient
+from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient, Doc_Contract
 from ..models import Doc_Text, Doc_Day, Doc_Gate, Doc_Mockup_Type, Doc_Mockup_Product_Type, Doc_Client
 
 from ..models import Document_Type_Module
 from ..models import Doc_Type_Phase, Doc_Type_Phase_Queue
+
+from docs.models import Contract
 
 testing = settings.STAS_DEBUG
 
@@ -41,11 +43,11 @@ def get_doc_create_day(doc):
 @try_except
 def get_phase_info(doc_request):
     phase_id = doc_request['phase_id']
-    if doc_request['phase_id'] == '0':
+    if phase_id == '0':
         phase_id = Doc_Type_Phase.objects.values_list('id', flat=True)\
             .filter(document_type_id=doc_request['document_type'])\
             .filter(phase=0)\
-            .filter(is_active=True)
+            .filter(is_active=True)[0]
 
     return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id') \
         .filter(id=phase_id)[0]
@@ -707,21 +709,27 @@ def get_doc_modules(doc):
                         'name': client[0]['name'],
                         'country': client[0]['country']
                 }})
-        elif module['module'] == 'client':
-            client = [{
-                'id': item.client.id,
-                'name': item.client.name,
-                'country': item.client.country,
-            } for item in Doc_Client.objects.all()
-                .filter(document_id=doc.id)
-                .filter(is_active=True)]
+        elif module['module'] == 'contract_link':
+            contract_link_id = Doc_Contract.objects.values_list('contract_id', flat=True)\
+                .filter(document_id=doc.id)\
+                .filter(is_active=True)
 
-            if client:
-                doc_modules.update({
-                    'client': {
-                        'id': client[0]['id'],
-                        'name': client[0]['name'],
-                        'country': client[0]['country']
+            if contract_link_id:
+                contract = [{
+                    'subject': item.subject,
+                    'number': item.number if item.number else '',
+                } for item in Contract.objects
+                    .filter(id=contract_link_id[0])]
+                doc_modules.update({'contract_link': {
+                    'id': contract_link_id[0],
+                    'subject': contract[0]['subject'],
+                    'number': contract[0]['number']
                 }})
+            else:
+                doc_modules.update({'contract_link': {'id': 0}})
+
+        elif module['module'] == 'choose_company':
+            company = Document.objects.values_list('company', flat=True).filter(id=doc.id)[0]
+            doc_modules.update({'company': company})
 
     return doc_modules

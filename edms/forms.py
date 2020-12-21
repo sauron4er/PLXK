@@ -55,7 +55,7 @@ class SeatInstructionForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'is_template', 'testing'}
+        fields = {'document_type', 'employee_seat', 'is_draft', 'is_template', 'testing'}
 
 
 #  Деактивація документа (буде показуватися в архівах)

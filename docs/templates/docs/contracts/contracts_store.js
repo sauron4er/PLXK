@@ -5,6 +5,7 @@ const contractsStore = store({
   contract: {
     id: 0,
     number: '',
+    company: 'рдб',
     author: 0,
     author_name: '',
     subject: '',
@@ -28,6 +29,7 @@ const contractsStore = store({
     contractsStore.contract = {
       id: 0,
       number: '',
+      company: 'рдб',
       author: 0,
       author_name: '',
       subject: '',

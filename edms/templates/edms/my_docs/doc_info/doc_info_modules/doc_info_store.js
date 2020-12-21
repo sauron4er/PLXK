@@ -16,6 +16,7 @@ const docInfoStore = store({
     updated_files_info: [],
     deleted_files: []
   },
+  button_clicked: false,
 
   clearChangedFiles: () => {
     docInfoStore.changed_files = {

@@ -8,7 +8,7 @@ class Day extends React.Component {
     return (
       <>
         <div>{fieldName}:</div>
-        <div className='css_note_text ml-1'>{day}</div>
+        <div className='css_note_text'>{day}</div>
       </>
     );
   }

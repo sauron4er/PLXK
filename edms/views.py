@@ -365,7 +365,6 @@ def post_document(request):
     try:
         doc_request = request.POST.copy()
         doc_request.update({'employee': request.user.userprofile.id})
-        doc_request.update({'text': request.POST.get('text', None)})  # Якщо поля text немає, у форму надсилається null
         doc_request.update({'testing': testing})
         if doc_request['status'] == 'draft':
             doc_request.update({'is_draft': True})
@@ -385,7 +384,7 @@ def post_document(request):
 # Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
 # Повертає список отримувачів документа (якщо використовуються модулі recipient або recipient_chief)
 @try_except
-def post_modules(doc_request, doc_files, new_path):
+def post_modules(doc_request, doc_files, new_path, new_doc):
     try:
         doc_modules = json.loads(doc_request['doc_modules'])
         recipients = []
@@ -444,12 +443,17 @@ def post_modules(doc_request, doc_files, new_path):
 
             acting_director = vacation_check(director)
 
-            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+            if doc_modules['choose_company'] == 'ТДВ':
+                approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
 
-            approvals.extend([{
-                'id': acting_director,
-                'approve_queue': 3  # Директор останній у списку погоджень
-            }])
+                approvals.extend([{
+                    'id': acting_director,
+                    'approve_queue': 3  # Директор останній у списку погоджень
+                }])
+            else:
+                zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+                post_mark_demand(doc_request, acting_director, zero_phase_id, 8)
+                new_mail('new', [{'id': acting_director}], doc_request)
 
             # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
             dep_chief = get_dep_chief_id(doc_request['employee_seat'])
@@ -487,6 +491,9 @@ def post_modules(doc_request, doc_files, new_path):
 
         if 'contract_link' in doc_modules:
             post_contract(doc_request, doc_modules['contract_link']['value'])
+
+        if 'choose_company' in doc_modules and doc_modules['choose_company'] != 'ТДВ':
+            post_company(new_doc, doc_modules['choose_company'])
 
         return recipients
     except ValidationError as err:
@@ -821,7 +828,7 @@ def edms_get_contracts(request):
     if request.method == 'GET':
         contracts = [{
             'id': contract.pk,
-            'name': contract.number + ', "' + contract.subject + '"',
+            'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
         } for contract in Contract.objects.filter(is_active=True)]
 
         return HttpResponse(json.dumps(contracts))
@@ -969,9 +976,7 @@ def edms_get_doc(request, pk):
 
         doc_info.update(get_doc_modules(doc))
     else:
-        doc_info = {
-            'access_granted': False,
-        }
+        doc_info = {'access_granted': False}
 
     return HttpResponse(json.dumps(doc_info))
 
@@ -1060,7 +1065,7 @@ def edms_my_docs(request):
         # Модульна система:
         # В деяких модулях прямо може бути вказано отримувачів,
         # тому post_modules повертає їх в array, який може бути і пустий
-        module_recipients = post_modules(doc_request, doc_files, new_path)
+        module_recipients = post_modules(doc_request, doc_files, new_path, new_doc)
 
         if doc_request['status'] in ['doc', 'change']:
             new_phase(doc_request, 1, module_recipients)

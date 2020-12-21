@@ -100,14 +100,13 @@ class Doc_Type_Phase_Queue(models.Model):
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type', on_delete=models.RESTRICT)
     title = models.CharField(max_length=100, null=True, blank=True)
-    text = models.CharField(max_length=1000, null=True, blank=True)
-    image = models.BinaryField(editable=True, null=True)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents', on_delete=models.RESTRICT)
     is_draft = models.BooleanField(default=False)
     is_template = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True, null=True)
     approved = models.BooleanField(null=True)
     approved_date = models.DateTimeField(blank=True, null=True)
+    company = models.CharField(max_length=3, null=True, blank=True, default='ТДВ')  # ТОВ або ТДВ
     testing = models.BooleanField(default=False)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
@@ -289,6 +288,6 @@ class Doc_Client(models.Model):
 
 # Договір (як Основний Договір у погодженні Договору)
 class Doc_Contract(models.Model):
-    document = models.ForeignKey(Document, related_name='documents', on_delete=models.RESTRICT)
+    document = models.ForeignKey(Document, related_name='contract', on_delete=models.RESTRICT)
     contract_id = models.IntegerField()
     is_active = models.BooleanField(default=True)

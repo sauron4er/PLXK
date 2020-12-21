@@ -184,28 +184,63 @@ class Contract extends React.Component {
     contractsStore.contract.basic_contract_subject = e.target.options[selectedIndex].getAttribute('value');
   };
 
+  onCompanyChange = (event) => {
+    contractsStore.contract.company = event.target.value;
+  };
+
   render() {
     const {data_received, edit_mode, edms_doc_opened} = this.state;
-  
+    const {contract} = contractsStore;
+    console.log(contract.company);
+
     if (data_received) {
       return (
         <div className='shadow-lg p-3 mb-5 bg-white rounded'>
           <div className='modal-header d-flex'>
-            <h5 className='ml-auto'>
-              {contractsStore.contract.id !== 0 ? 'Редагування Договору № ' + contractsStore.contract.id : 'Додання Договору'}
-            </h5>
+            <h5 className='ml-auto'>{contract.id !== 0 ? 'Редагування Договору № ' + contract.id : 'Додання Договору'}</h5>
           </div>
           <div className='modal-body'>
             <TextInput
-              text={contractsStore.contract.number}
+              text={contract.number}
               fieldName={'Номер Договору'}
               onChange={this.onNumberChange}
               maxLength={50}
               disabled={!edit_mode}
             />
             <hr />
+            <label className='mr-1'>Компанія:</label>
+            <input type='radio' name='gate_radio' value='ТДВ' id='TDV' onChange={this.onCompanyChange} checked={contract.company === 'ТДВ'} />
+            <label className='radio-inline mx-1' htmlFor='TDV'> ТДВ "ПЛХК"</label>
+            <input type='radio' name='gate_radio' value='ТОВ' id='TOV' onChange={this.onCompanyChange} checked={contract.company === 'ТОВ'} />
+            <label className='radio-inline mx-1' htmlFor='TOV'> ТОВ "ПЛХК"</label>
+            <hr />
+            <Checkbox
+              checked={contract.is_additional_contract}
+              fieldName={'Це додаткова угода'}
+              onChange={this.onIsAdditionalContractChange}
+              disabled={!edit_mode}
+            />
+            <If condition={contract.is_additional_contract}>
+              <Selector
+                list={contracts}
+                selectedName={contract.basic_contract_subject}
+                valueField={'selector_info'}
+                fieldName={'Основний Договір'}
+                onChange={this.onBasicContractChange}
+                disabled={!edit_mode}
+              />
+
+              <If condition={contract.basic_contract !== 0}>
+                <div>
+                  <a href={'./' + contract.basic_contract} target='_blank'>
+                    Перейти до основного Договору
+                  </a>
+                </div>
+              </If>
+            </If>
+            <hr />
             <TextInput
-              text={contractsStore.contract.subject}
+              text={contract.subject}
               fieldName={'Предмет'}
               onChange={this.onSubjectChange}
               maxLength={1000}
@@ -213,7 +248,7 @@ class Contract extends React.Component {
             />
             <hr />
             <TextInput
-              text={contractsStore.contract.counterparty}
+              text={contract.counterparty}
               fieldName={'Контрагент'}
               onChange={this.onCounterpartyChange}
               maxLength={200}
@@ -221,7 +256,7 @@ class Contract extends React.Component {
             />
             <hr />
             <TextInput
-              text={contractsStore.contract.nomenclature_group}
+              text={contract.nomenclature_group}
               fieldName={'Номенклатурна група'}
               onChange={this.onNomenclatureGroupChange}
               maxLength={100}
@@ -229,22 +264,17 @@ class Contract extends React.Component {
             />
             <hr />
             <DateInput
-              date={contractsStore.contract.date_start}
+              date={contract.date_start}
               fieldName={'Початок дії Договору'}
               onChange={this.onDateStartChange}
               disabled={!edit_mode}
             />
             <hr />
-            <DateInput
-              date={contractsStore.contract.date_end}
-              fieldName={'Кінець дії Договору'}
-              onChange={this.onDateEndChange}
-              disabled={!edit_mode}
-            />
+            <DateInput date={contract.date_end} fieldName={'Кінець дії Договору'} onChange={this.onDateEndChange} disabled={!edit_mode} />
             <hr />
             <Selector
               list={contractsStore.departments}
-              selectedName={contractsStore.contract.department_name}
+              selectedName={contract.department_name}
               fieldName={'Місцезнаходження договору'}
               onChange={this.onDepartmentChange}
               disabled={!edit_mode}
@@ -252,14 +282,14 @@ class Contract extends React.Component {
             <hr />
             <Selector
               list={contractsStore.employees}
-              selectedName={contractsStore.contract.responsible_name}
+              selectedName={contract.responsible_name}
               fieldName={'Відповідальна особа'}
               onChange={this.onResponsibleChange}
               disabled={!edit_mode}
             />
             <hr />
             <Checkbox
-              checked={contractsStore.contract.lawyers_received}
+              checked={contract.lawyers_received}
               fieldName={'Юридично-адміністративний відділ отримав Договір'}
               onChange={this.onLawyersReceivedChange}
               defaultChecked={false}
@@ -269,41 +299,16 @@ class Contract extends React.Component {
 
             <hr />
             <Files
-              oldFiles={contractsStore.contract.old_files}
-              newFiles={contractsStore.contract.new_files}
+              oldFiles={contract.old_files}
+              newFiles={contract.new_files}
               fieldName={'Підписані файли'}
               onChange={this.onFilesChange}
               onDelete={this.onFilesDelete}
               disabled={!edit_mode}
             />
             <hr />
-            <Checkbox
-              checked={contractsStore.contract.is_additional_contract}
-              fieldName={'Це додаткова угода'}
-              onChange={this.onIsAdditionalContractChange}
-              disabled={!edit_mode}
-            />
-            <If condition={contractsStore.contract.is_additional_contract}>
-              <Selector
-                list={contractsStore.contracts}
-                selectedName={contractsStore.contract.basic_contract_subject}
-                valueField={'selector_info'}
-                fieldName={'Основний Договір'}
-                onChange={this.onBasicContractChange}
-                disabled={!edit_mode}
-              />
-
-              <If condition={contractsStore.contract.basic_contract !== 0}>
-                <div>
-                  <a href={'./' + contractsStore.contract.basic_contract} target='_blank'>
-                    Перейти до основного Договору
-                  </a>
-                </div>
-              </If>
-            </If>
-            <hr />
-            <If condition={contractsStore.contract.edms_doc_id !== 0}>
-              <div>Документ в системі електронного документообігу: № {contractsStore.contract.edms_doc_id}</div>
+            <If condition={contract.edms_doc_id !== 0}>
+              <div>Документ в системі електронного документообігу: № {contract.edms_doc_id}</div>
               <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
                 Показати
               </button>
@@ -311,12 +316,12 @@ class Contract extends React.Component {
           </div>
           <If condition={edit_mode}>
             <div className='modal-footer'>
-              <If condition={contractsStore.contract.id === 0}>
+              <If condition={contract.id === 0}>
                 <button className='btn btn-outline-dark' onClick={() => contractsStore.clearContract()}>
                   Очистити
                 </button>
               </If>
-              <If condition={contractsStore.contract.id !== 0}>
+              <If condition={contract.id !== 0}>
                 <SubmitButton className='btn-outline-danger' onClick={() => this.postDelContract()} text='Видалити' />
               </If>
               <SubmitButton className='btn btn-outline-info' onClick={() => this.postContract()} text='Зберегти' />
@@ -330,7 +335,7 @@ class Contract extends React.Component {
             closeOnOverlayClick={true}
             styles={{modal: {marginTop: 50}}}
           >
-            <Document doc_id={contractsStore.contract.edms_doc_id} closed={true} />
+            <Document doc_id={contract.edms_doc_id} closed={true} />
           </Modal>
 
           {/*Вспливаюче повідомлення*/}
