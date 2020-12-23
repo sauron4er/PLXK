@@ -36,7 +36,7 @@ class PostSignedFiles extends React.Component {
           </button>
         </div>
         <div className='modal-body'>
-          <FilesUpload onChange={this.onChange} files={docInfoStore.signed_files}/>
+          <FilesUpload onChange={this.onChange} files={docInfoStore.signed_files} module_info={{ field_name: '' }}/>
         </div>
 
         <div className='modal-footer'>

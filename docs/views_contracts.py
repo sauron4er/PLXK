@@ -15,7 +15,18 @@ from edms.models import Employee_Seat
 @login_required(login_url='login')
 @try_except
 def index(request):
-    all_contracts = Contract.objects.filter(is_active=True)
+    full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
+
+    return render(request, 'docs/contracts/index.html', {'departments': get_departments_list(),
+                                                         'employees': get_employees_list(),
+                                                         'full_edit_access': 'true' if full_edit_access else 'false'
+                                                         })
+
+
+@login_required(login_url='login')
+@try_except
+def get_contracts(request, company):
+    all_contracts = Contract.objects.filter(company=company).filter(is_active=True)
 
     full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
     full_read_access = request.user.userprofile.access_to_all_contracts
@@ -26,26 +37,18 @@ def index(request):
         users_department = Employee_Seat.objects.values_list('seat__department_id', flat=True) \
             .filter(employee=request.user.userprofile) \
             .filter(is_active=True).filter(is_main=True)[0]
-        accessed_contracts = all_contracts.filter(created_by=request.user) | all_contracts.filter(department_id=users_department)
+        accessed_contracts = all_contracts.filter(created_by=request.user) | all_contracts.filter(
+            department_id=users_department)
 
     contracts = [{
         'id': contract.id,
         'number': contract.number if contract.number else 'б/н',
-        # 'author_id': contract.created_by.id,
-        # 'author': contract.created_by.last_name + ' ' + contract.created_by.first_name,
         'subject': contract.subject,
         'selector_info': '№ ' + (contract.number if contract.number else '---') + ', "' + contract.subject + '"',
         'counterparty': contract.counterparty,
-        # 'nomenclature_group': contract.nomenclature_group,
         'date_start': date_to_json(contract.date_start) if contract.date_start else '',
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
-        # 'responsible_id': contract.responsible_id,
-        'responsible': contract.responsible.last_name + ' ' + contract.responsible.first_name
-            if contract.responsible else '',
-        'department': contract.department.name if contract.department else '',
-        # 'lawyers_received': 'true' if contract.lawyers_received else 'false',
-        # 'basic_contract_id': contract.basic_contract_id,
-        # 'basic_contract_subject': contract.basic_contract,
+        'responsible': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',
         'files': [{
             'id': file.id,
             'file': file.file.name,
@@ -55,11 +58,7 @@ def index(request):
             .filter(is_active=True)]
     } for contract in accessed_contracts]
 
-    return render(request, 'docs/contracts/index.html', {'contracts': contracts,
-                                                         'departments': get_departments_list(),
-                                                         'employees': get_employees_list(),
-                                                         'full_edit_access': 'true' if full_edit_access else 'false'
-                                                         })
+    return HttpResponse(json.dumps(contracts))
 
 
 @login_required(login_url='login')
@@ -76,7 +75,7 @@ def get_contract(request, pk):
         'subject': contract.subject,
         'counterparty': contract.counterparty,
         'nomenclature_group': contract.nomenclature_group if contract.nomenclature_group else '',
-        'date_start': date_to_json(contract.date_start),
+        'date_start': date_to_json(contract.date_start) if contract.date_start else '',
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
         'responsible': contract.responsible_id if contract.responsible_id else 0,
         'responsible_name': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',

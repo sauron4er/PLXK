@@ -9,6 +9,7 @@ class SubmitButton extends React.Component {
   onClick = () => {
     this.setState({clicked: true});
     this.props.onClick();
+    setTimeout(() => this.setState({clicked: false}), 10000)
   };
   
   render() {

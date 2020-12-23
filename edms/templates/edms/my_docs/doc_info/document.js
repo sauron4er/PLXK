@@ -25,6 +25,7 @@ import docInfoStore from './doc_info_modules/doc_info_store';
 import NewDocument from '../new_doc_modules/new_document';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
+import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
 
 class Document extends React.Component {
   state = {
@@ -53,6 +54,7 @@ class Document extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.doc_id && this.props.doc_id !== prevProps.doc_id && this.props.doc_id !== 0) {
       this.getDoc(this.props.doc_id);
+      docInfoStore.button_clicked = false;
     }
   }
 
@@ -154,10 +156,12 @@ class Document extends React.Component {
     // Якщо це пустий коментар, виводимо текст помилки
     if (mark_id === 4 && this.state.comment === '') {
       notify('Введіть текст коментарю.');
+      docInfoStore.button_clicked = false;
 
       // Якщо файл не прикріплено, виводимо текст помилки
     } else if (mark_id === 12 && this.state.new_files.length === 0) {
       notify('Оберіть файл.');
+      docInfoStore.button_clicked = false;
 
       // Кнопка "Резолюція" відкриває окремий модуль
     } else if ([10, 15, 18, 21, 22].includes(mark_id)) {
@@ -165,6 +169,8 @@ class Document extends React.Component {
 
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
     } else if (mark_id === 3 && this.state.comment === '') {
+      this.openModal(mark_id);
+    } else if (mark_id === 17 && this.state.comment !== '') {
       this.openModal(mark_id);
     } else {
       this.postMark(mark_id);
@@ -213,6 +219,12 @@ class Document extends React.Component {
               new_path_id={this.state.new_path_id}
             />
           ),
+          modal_open: true
+        });
+        break;
+      case 17:
+        this.setState({
+          modal: <ApprovalWithComment onCloseModal={this.onCloseModal} onSubmit={(mark) => this.postApprovalOrDecline(mark)} />,
           modal_open: true
         });
         break;
@@ -273,6 +285,11 @@ class Document extends React.Component {
     });
   };
 
+  postApprovalOrDecline = (mark) => {
+    this.postMark(mark);
+    this.onCloseModal();
+  };
+
   handleAddingSignedFiles = () => {
     this.postMark(22);
     this.onCloseModal();
@@ -292,7 +309,7 @@ class Document extends React.Component {
 
   onCloseModal = () => {
     this.setState({modal_open: false});
-    docInfoStore.button_clicked = false
+    docInfoStore.button_clicked = false;
   };
 
   addDoc = () => {
@@ -302,7 +319,7 @@ class Document extends React.Component {
   render() {
     const {doc_id, archived, directSubs} = this.props;
     const {ready_for_render} = this.state;
-  
+
     if (ready_for_render === true) {
       if (doc_id !== 0) {
         const {info, deletable, comment, new_files, modal_open, modal} = this.state;

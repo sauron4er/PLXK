@@ -1,43 +1,16 @@
 'use strict';
 import * as React from 'react';
-import DxTable from 'templates/components/tables/dx_table';
 import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import Contract from 'docs/templates/docs/contracts/contract';
-
-const columns = [
-  // {name: 'id', title: 'id'},
-  {name: 'number', title: 'Номер'},
-  {name: 'subject', title: 'Предмет'},
-  {name: 'counterparty', title: 'Контрагент'},
-  {name: 'date_start', title: 'Діє з'},
-  {name: 'date_end', title: 'Діє до'},
-  {name: 'files', title: 'Файли'},
-  {name: 'department', title: 'Відділ'},
-  {name: 'responsible', title: 'Відповідальний'},
-  {name: 'autoActuality', title: ' '}
-];
-
-const col_width = [
-  // {columnName: 'id', width: 30},
-  {columnName: 'number', width: 100},
-  {columnName: 'date_start', width: 80},
-  {columnName: 'date_end', width: 80},
-  {columnName: 'autoActuality', width: 30}
-];
+import ContractsTable from 'docs/templates/docs/contracts/table';
 
 class Contracts extends React.Component {
-  state = {
-    view: 'table', // table, contract
-    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
-  };
-
   componentDidMount() {
-    contractsStore.contracts = window.contracts;
     contractsStore.employees = window.employees;
     contractsStore.departments = window.departments;
     contractsStore.full_edit_access = window.full_edit_access;
-    this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
+    contractsStore.main_div_height = this.mainDivRef.clientHeight - 30; // розмір головного div, з якого вираховується розмір таблиць
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
     const arr = window.location.href.split('/');
@@ -48,10 +21,13 @@ class Contracts extends React.Component {
       for (let i = 0; i < contractsStore.contracts.length; i++) {
         if (contractsStore.contracts[i].id === last_href_piece) {
           contractsStore.contract = contractsStore.contracts[i];
-          this.changeView('contract');
+          contractsStore.contract_view = true;
           break;
         }
       }
+    }
+    else {
+      contractsStore.get_contracts('ТДВ')
     }
   }
 
@@ -62,37 +38,51 @@ class Contracts extends React.Component {
 
   onRowClick = (clicked_row) => {
     contractsStore.contract = clicked_row;
-    this.changeView('contract');
+    contractsStore.contract_view = true;
   };
 
   onContractClose = () => {
     contractsStore.clearContract();
-    this.changeView('table');
+    contractsStore.contract_view = false;
   };
 
   changeView = (name) => {
-    this.setState({view: name});
+    contractsStore.view = name
+    if (name !== 'contract') contractsStore.get_contracts(name)
+  };
+
+  getButtonStyle = (name) => {
+    if (name === contractsStore.view) return 'btn btn-sm btn-secondary mr-1 active';
+    return 'btn btn-sm btn-secondary mr-1';
   };
 
   render() {
-    const {main_div_height, view} = this.state;
+    const {view, contract_view} = contractsStore;
 
     return (
       <Choose>
-        <When condition={view === 'table'}>
+        <When condition={!contract_view}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <button onClick={() => this.changeView('contract')} className='btn btn-sm btn-info'>
+            <button onClick={() => contractsStore.contract_view = true} className='btn btn-sm btn-info mr-auto'>
               Додати Договір
             </button>
-            <DxTable
-              rows={contractsStore.contracts}
-              columns={columns}
-              defaultSorting={[{columnName: 'number', direction: 'desc'}]}
-              colWidth={col_width}
-              onRowClick={this.onRowClick}
-              height={main_div_height}
-              filter
-            />
+            <div className='btn-group' role='group' aria-label='contracts_index'>
+              <button type='button' className={this.getButtonStyle('ТДВ')} onClick={() => this.changeView('ТДВ')}>
+                ТДВ ПЛХК
+              </button>
+              <button type='button' className={this.getButtonStyle('ТОВ')} onClick={() => this.changeView('ТОВ')}>
+                ТОВ ПЛХК
+              </button>
+            </div>
+
+            <Choose>
+              <When condition={view === 'ТДВ'}>
+                <ContractsTable />
+              </When>
+              <When condition={view === 'ТОВ'}>
+                <ContractsTable />
+              </When>
+            </Choose>
           </div>
         </When>
         <Otherwise>

@@ -79,7 +79,7 @@ class SeatCard extends React.Component {
               </When>
               <Otherwise>
                 <div>Додати посадову інструкцію:</div>
-                <FilesUpload onChange={this.onFileChange} files={new_file} fieldName={''} multiple={false} />
+                <FilesUpload onChange={this.onFileChange} files={new_file}  module_info={{ field_name: '' }} multiple={false} />
                 <button className='float-sm-right btn btn-sm btn-info' onClick={this.postInstruction}>
                   Зберегти
                 </button>

@@ -24,7 +24,7 @@ SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = False
+STAS_DEBUG = True
 
 
 ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', 'plxk.com.ua']

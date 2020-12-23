@@ -5,8 +5,11 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
-    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm
+    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
+from edms.api.getters import get_zero_phase_id, get_dep_chief_id
+from edms.api.setters import post_mark_demand, new_mail
+from edms.api.phases_handler import post_approval_list
 
 
 @try_except
@@ -54,10 +57,67 @@ def post_days(doc_request, days):
         doc_request.update({'day': day['day']})
         day_form = NewDayForm(doc_request)
         day_form.save()
-        # if day_form.is_valid():
-        #     day_form.save()
-        # else:
-        #     raise ValidationError('post_modules/post_day/day_form invalid')
+
+
+@try_except
+def post_approvals(doc_request, approvals, company):
+    # TODO Не додавати нікого, якщо це шаблон чи чернетка
+    # Додаємо у список погоджуючих автора, керівника відділу та директора
+
+    # Видаляємо автора зі списку і додаємо, щоб він там був лише раз:
+    approvals[:] = [i for i in approvals if not (int(i['id']) == int(doc_request['employee_seat']))]
+
+    approvals.append({
+        'id': doc_request['employee_seat'],
+        'approve_queue': 0  # Автор документа перший у списку погоджень
+    })
+
+    # Видаляємо директора зі списку і додаємо, щоб він там був лише раз:
+    director = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=16) \
+        .filter(is_active=True) \
+        .filter(is_main=True)[0]
+
+    acting_director = vacation_check(director)
+
+    if company == 'ТДВ':
+        approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+
+        approvals.extend([{
+            'id': acting_director,
+            'approve_queue': 3  # Директор останній у списку погоджень
+        }])
+    else:
+        zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+        post_mark_demand(doc_request, acting_director, zero_phase_id, 8)
+        new_mail('new', [{'id': acting_director}], doc_request)
+
+        tov_director = Employee_Seat.objects.values_list('id', flat=True) \
+            .filter(seat_id=247) \
+            .filter(is_active=True) \
+            .filter(is_main=True)[0]
+
+        acting_tov_director = vacation_check(tov_director)
+
+        approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+
+        approvals.extend([{
+            'id': acting_tov_director,
+            'approve_queue': 3  # Директор останній у списку погоджень
+        }])
+
+    # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
+    dep_chief = get_dep_chief_id(doc_request['employee_seat'])
+
+    if dep_chief != int(doc_request['employee_seat']) and dep_chief != director:
+        approvals[:] = [i for i in approvals if not (int(i['id']) == dep_chief)]
+
+        approvals.append({
+            'id': dep_chief,
+            'approve_queue': 1  # Керівник відділу другий у списку погоджень
+        })
+
+    post_approval_list(doc_request, approvals)
 
 
 @try_except
@@ -123,7 +183,6 @@ def post_mockup_type(doc_request, mockup_type):
         mockup_type_form.save()
     else:
         raise ValidationError('post_modules/post_mockup_type/mockup_type_form invalid')
-
 
 
 @try_except

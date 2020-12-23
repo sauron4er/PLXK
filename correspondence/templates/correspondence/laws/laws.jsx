@@ -170,7 +170,7 @@ class Laws extends React.Component {
             <LawScopes />
 
             <div className='d-flex mb-2'>
-              <FilesUpload onChange={this.onFilesChange} files={files} fieldName={'Файли'} />
+              <FilesUpload onChange={this.onFilesChange} files={files}  module_info={{ field_name: 'Файли' }} />
             </div>
           </div>
           <button

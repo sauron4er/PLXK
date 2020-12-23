@@ -190,8 +190,7 @@ class Contract extends React.Component {
 
   render() {
     const {data_received, edit_mode, edms_doc_opened} = this.state;
-    const {contract} = contractsStore;
-    console.log(contract.company);
+    const {contract, contracts} = contractsStore;
 
     if (data_received) {
       return (
@@ -200,18 +199,19 @@ class Contract extends React.Component {
             <h5 className='ml-auto'>{contract.id !== 0 ? 'Редагування Договору № ' + contract.id : 'Додання Договору'}</h5>
           </div>
           <div className='modal-body'>
+            <div className='d-flex'><small className='ml-auto'>Поля, позначені зірочкою, є обов’язковими</small></div>
             <TextInput
               text={contract.number}
-              fieldName={'Номер Договору'}
+              fieldName={'* Номер Договору'}
               onChange={this.onNumberChange}
               maxLength={50}
               disabled={!edit_mode}
             />
             <hr />
             <label className='mr-1'>Компанія:</label>
-            <input type='radio' name='gate_radio' value='ТДВ' id='TDV' onChange={this.onCompanyChange} checked={contract.company === 'ТДВ'} />
+            <input type='radio' name='gate_radio' value='ТДВ' id='TDV' onChange={this.onCompanyChange} checked={contract.company === 'ТДВ'} disabled={!edit_mode} />
             <label className='radio-inline mx-1' htmlFor='TDV'> ТДВ "ПЛХК"</label>
-            <input type='radio' name='gate_radio' value='ТОВ' id='TOV' onChange={this.onCompanyChange} checked={contract.company === 'ТОВ'} />
+            <input type='radio' name='gate_radio' value='ТОВ' id='TOV' onChange={this.onCompanyChange} checked={contract.company === 'ТОВ'} disabled={!edit_mode} />
             <label className='radio-inline mx-1' htmlFor='TOV'> ТОВ "ПЛХК"</label>
             <hr />
             <Checkbox
@@ -241,7 +241,7 @@ class Contract extends React.Component {
             <hr />
             <TextInput
               text={contract.subject}
-              fieldName={'Предмет'}
+              fieldName={'* Предмет'}
               onChange={this.onSubjectChange}
               maxLength={1000}
               disabled={!edit_mode}
@@ -249,23 +249,32 @@ class Contract extends React.Component {
             <hr />
             <TextInput
               text={contract.counterparty}
-              fieldName={'Контрагент'}
+              fieldName={'* Контрагент'}
               onChange={this.onCounterpartyChange}
               maxLength={200}
               disabled={!edit_mode}
             />
             <hr />
-            <TextInput
-              text={contract.nomenclature_group}
-              fieldName={'Номенклатурна група'}
-              onChange={this.onNomenclatureGroupChange}
-              maxLength={100}
+            <Files
+              oldFiles={contract.old_files}
+              newFiles={contract.new_files}
+              fieldName={'* Підписані файли'}
+              onChange={this.onFilesChange}
+              onDelete={this.onFilesDelete}
               disabled={!edit_mode}
             />
             <hr />
+            {/*<TextInput*/}
+            {/*  text={contract.nomenclature_group}*/}
+            {/*  fieldName={'Номенклатурна група'}*/}
+            {/*  onChange={this.onNomenclatureGroupChange}*/}
+            {/*  maxLength={100}*/}
+            {/*  disabled={!edit_mode}*/}
+            {/*/>*/}
+            {/*<hr />*/}
             <DateInput
               date={contract.date_start}
-              fieldName={'Початок дії Договору'}
+              fieldName={'* Початок дії Договору'}
               onChange={this.onDateStartChange}
               disabled={!edit_mode}
             />
@@ -297,22 +306,13 @@ class Contract extends React.Component {
               note={'Відзначають працівники ЮАВ'}
             />
 
-            <hr />
-            <Files
-              oldFiles={contract.old_files}
-              newFiles={contract.new_files}
-              fieldName={'Підписані файли'}
-              onChange={this.onFilesChange}
-              onDelete={this.onFilesDelete}
-              disabled={!edit_mode}
-            />
-            <hr />
-            <If condition={contract.edms_doc_id !== 0}>
-              <div>Документ в системі електронного документообігу: № {contract.edms_doc_id}</div>
-              <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
-                Показати
-              </button>
-            </If>
+            {/*<hr />*/}
+            {/*<If condition={contract.edms_doc_id !== 0}>*/}
+            {/*  <div>Документ в системі електронного документообігу: № {contract.edms_doc_id}</div>*/}
+            {/*  <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>*/}
+            {/*    Показати*/}
+            {/*  </button>*/}
+            {/*</If>*/}
           </div>
           <If condition={edit_mode}>
             <div className='modal-footer'>

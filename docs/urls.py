@@ -11,6 +11,9 @@ urlpatterns = [
     url(r'^f(?P<fk>\d+)/$', views.docs, name='docs'),
     url(r'^new/$', views.new_doc, name='new_doc'),
     url(r'^(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
+    url(r'^export_table_csv//docs/(?P<type>\w+)/$', views.export_table_csv, name='export_table_csv'),
+    url(r'^export_table_csv//(?P<type>\w+)/$', views.export_table_csv, name='export_table_csv'),
+    url(r'^export_table_csv/$', views.export_table_csv, name='export_table_csv'),
 
     # url(r'^order/f(?P<fk>\d+)/$', views.orders, name='orders'),
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),
@@ -23,6 +26,7 @@ urlpatterns = [
     url(r'^orders/responsible_done/(?P<pk>\d+)/$', views.responsible_done, name='responsible_done'),
     url(r'^orders/', views.orders, name='orders'),
 
+    url(r'^contracts/get_contracts/(?P<company>\w+)/$', views_contracts.get_contracts, name='get_contracts'),
     url(r'^contracts/get_contract/(?P<pk>\d+)/$', views_contracts.get_contract, name='get_contract'),
     url(r'^contracts/add_contract', views_contracts.add_contract, name='add_contract'),
     url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),

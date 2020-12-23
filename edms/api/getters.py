@@ -4,14 +4,7 @@ from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
 from .vacations import vacation_check
-from accounts import models as accounts  # імпортує моделі Department, UserProfile
-from ..models import Seat, Employee_Seat, Document, Document_Meta_Type, Document_Type, Mark, Document_Path, File
-from ..models import Carry_Out_Items, Doc_Acquaint, Doc_Approval, Doc_Recipient, Doc_Contract
-from ..models import Doc_Text, Doc_Day, Doc_Gate, Doc_Mockup_Type, Doc_Mockup_Product_Type, Doc_Client
-
-from ..models import Document_Type_Module
-from ..models import Doc_Type_Phase, Doc_Type_Phase_Queue
-
+from ..models import *
 from docs.models import Contract
 
 testing = settings.STAS_DEBUG
@@ -733,3 +726,12 @@ def get_doc_modules(doc):
             doc_modules.update({'company': company})
 
     return doc_modules
+
+
+@try_except
+def is_mark_demand_exists(emp_seat_id, document_id):
+    return Mark_Demand.objects\
+        .filter(recipient_id=emp_seat_id)\
+        .filter(document_id=document_id)\
+        .filter(is_active=True)\
+        .exists()
