@@ -1,13 +1,12 @@
 import json
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
-
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
-from edms.api.getters import get_zero_phase_id, get_dep_chief_id
+from edms.api.getters import get_zero_phase_id, get_dep_chief_id, get_chief_id
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.phases_handler import post_approval_list
 
@@ -107,15 +106,20 @@ def post_approvals(doc_request, approvals, company):
         }])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
-    dep_chief = get_dep_chief_id(doc_request['employee_seat'])
+    chief = get_dep_chief_id(doc_request['employee_seat'])
+    # якщо у відділа нема керівника, призначаємо безпос. керівника автора:
+    if chief is None:
+        chief = get_chief_id(doc_request['employee_seat'])
 
-    if dep_chief != int(doc_request['employee_seat']) and dep_chief != director:
-        approvals[:] = [i for i in approvals if not (int(i['id']) == dep_chief)]
+    if chief is not None and chief != int(doc_request['employee_seat']) and chief != director:
+        approvals[:] = [i for i in approvals if not (int(i['id']) == chief)]
 
         approvals.append({
-            'id': dep_chief,
+            'id': chief,
             'approve_queue': 1  # Керівник відділу другий у списку погоджень
         })
+    else:
+        raise ObjectDoesNotExist('У автора нема безпосереднього начальника')
 
     post_approval_list(doc_request, approvals)
 
