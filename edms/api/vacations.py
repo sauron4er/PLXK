@@ -1,5 +1,3 @@
-import schedule
-import time
 from django.utils.timezone import datetime, timedelta
 from django.shortcuts import get_object_or_404
 

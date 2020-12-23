@@ -5,19 +5,16 @@ import docInfoStore from './doc_info_modules/doc_info_store';
 
 class Buttons extends React.Component {
   // отримує інформацію про документ в масиві info та створює відповідні кнопки для doc_info
-  state = {
-    clicked: false
-  };
 
   onClick = (mark_id) => {
-    this.setState({clicked: true});
+    docInfoStore.button_clicked = true;
     this.props.onClick(mark_id);
   };
 
   render() {
-    const {info, isChief, deletable, onClick, archived} = this.props;
+    const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
-    const {clicked} = this.state;
+    const {button_clicked} = docInfoStore;
 
     return (
       <>
@@ -27,54 +24,54 @@ class Buttons extends React.Component {
           <Choose>
             <When condition={info.expected_mark === 6}>
               {/* Не заперечую */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(6)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(6)} disabled={button_clicked}>
                 Не заперечую
               </button>
               <If condition={!user_is_doc_author}>
-                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={clicked}>
+                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
                   Відмовити
                 </button>
               </If>
             </When>
             <When condition={info.expected_mark === 2}>
               {/* Погоджую */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(2)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(2)} disabled={button_clicked}>
                 Погодити
               </button>
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
                 Відмовити
               </button>
             </When>
             <When condition={info.expected_mark === 8}>
               {/* Ознайомлений */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(8)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(8)} disabled={button_clicked}>
                 Ознайомлений
               </button>
             </When>
             <When condition={info.expected_mark === 11}>
               {/* Виконано */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>
                 Виконано
               </button>
               <If condition={isChief === true}>
                 {/* Якщо є підлеглі - додаємо резолюції */}
-                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(10)} disabled={clicked}>
+                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(10)} disabled={button_clicked}>
                   Резолюція
                 </button>
               </If>
             </When>
             <When condition={info.expected_mark === 17}>
               {/* Віза */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(17)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(17)} disabled={button_clicked}>
                 Візувати
               </button>
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={clicked}>
-                Відмовити
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
+                Запит на зміни
               </button>
             </When>
             <When condition={info.expected_mark === 22}>
               {/* Прикріплення сканів підписаних документів */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(22)} disabled={clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(22)} disabled={button_clicked}>
                 Додати скан-копії підписаних документів
               </button>
             </When>
@@ -88,39 +85,39 @@ class Buttons extends React.Component {
               type='button'
               className='btn btn-secondary mr-1 mb-1'
               onClick={() => (docInfoStore.view = 'new_document')}
-              disabled={clicked}
+              disabled={button_clicked}
             >
               Створити новий документ на основі цього
             </button>
           </If>
           {/* Якщо ніхто не встиг відреагувати - можна видалити документ */}
           <If condition={deletable === true}>
-            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(13)} disabled={clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(13)} disabled={button_clicked}>
               Видалити
             </button>
           </If>
           {/* Додаємо кнопку Закрити */}
           <If condition={!archived && !info.archived}>
             {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
-            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(7)} disabled={clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(7)} disabled={button_clicked}>
               В архів
             </button>
           </If>
         </If>
         {/* Якщо документ використовує approvals, додаємо кнопку "оновити файл" */}
-        <If condition={info.type_id === 5 && !archived && !info.archived}>
-          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={clicked}>
+        <If condition={info.meta_type_id === 5 && !archived && !info.archived}>
+          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
             Додати/оновити файл(и)
           </button>
         </If>
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
-        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={clicked}>
+        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={button_clicked}>
           Коментар
         </button>
-        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(15)} disabled={clicked}>
+        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(15)} disabled={button_clicked}>
           На ознайомлення
         </button>
-        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(12)} disabled={clicked}>
+        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(12)} disabled={button_clicked}>
           Додати файл
         </button>
       </>

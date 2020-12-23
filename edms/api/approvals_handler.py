@@ -1,9 +1,19 @@
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from datetime import datetime
 from plxk.api.try_except import try_except
-from ..models import Document_Type_Module, Doc_Approval, Doc_Type_Phase, Document_Path
-from ..forms import ApproveForm, DeactivateApproveForm
-from .getters import get_main_employee
+from ..models import Document_Type_Module, Doc_Approval, Doc_Type_Phase
+from ..forms import ApproveForm, DeactivateApproveForm, ApprovedDocForm, Document, NewApprovalForm, ApprovedApprovalForm
+from .getters import get_main_employee, get_phase_recipient_list
+
+
+@try_except
+# Функція, яка повертає Boolean чи використовує документ фазу auto_approved
+def is_auto_approved_phase_used(doc_type):
+    return Doc_Type_Phase.objects.values('id') \
+        .filter(document_type_id=doc_type) \
+        .filter(mark_id=20) \
+        .exists()
 
 
 # Функція, яка повертає Boolean чи використовує документ систему візування
@@ -24,6 +34,25 @@ def is_approval_module_used(doc_type):
 
 
 @try_except
+# Опрацьовує автоматичний список візуючих при створенні документа
+def add_zero_phase_auto_approvals(doc_request, phase_info):
+    recipients = get_phase_recipient_list(phase_info['id'])
+
+    for recipient in recipients:
+        doc_request.update({'emp_seat': recipient})
+        doc_request.update({'approve_queue': phase_info['phase']})
+        doc_request.update({'approved': None})
+        doc_request.update({'approve_path': None})
+        approval_form = NewApprovalForm(doc_request)
+        if approval_form.is_valid():
+            approval_form.save()
+            # post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+            # new_mail('new', [{'id': recipient}], doc_request)
+        else:
+            raise ValidationError('edms/views post_approval_list approval_form invalid')
+
+
+@try_except
 def post_approve(doc_request, approve_id, is_approved):
     approve = get_object_or_404(Doc_Approval, pk=approve_id)
     doc_request.update({'approved': is_approved})
@@ -36,6 +65,19 @@ def post_approve(doc_request, approve_id, is_approved):
         approve_form.save()
     else:
         raise ValidationError('edms/views post_approve approve_form invalid')
+
+
+@try_except
+def post_auto_approve(doc_request):
+    doc_request.update({'approved_date': datetime.now()})
+
+    doc = get_object_or_404(Document, pk=doc_request['document'])
+
+    approved_doc_form = ApprovedDocForm(doc_request, instance=doc)
+    if approved_doc_form.is_valid():
+        approved_doc_form.save()
+    else:
+        raise ValidationError('phases_handler/post_auto_approve/approved_doc_item_form invalid')
 
 
 def is_doc_completely_approved(doc_request):

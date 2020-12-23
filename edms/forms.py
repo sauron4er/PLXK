@@ -55,7 +55,7 @@ class SeatInstructionForm(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
-        fields = {'document_type', 'text', 'employee_seat', 'is_draft', 'is_template', 'testing'}
+        fields = {'document_type', 'employee_seat', 'is_draft', 'is_template', 'testing'}
 
 
 #  Деактивація документа (буде показуватися в архівах)
@@ -247,3 +247,9 @@ class ApprovedDocForm(forms.ModelForm):
     class Meta:
         model = Document
         fields = {'approved', 'approved_date'}
+
+
+class NewDocContractForm(forms.ModelForm):
+    class Meta:
+        model = Doc_Contract
+        fields = {'document', 'contract_id'}

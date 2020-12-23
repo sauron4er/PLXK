@@ -18,12 +18,14 @@ import MockupType from './mockup_type';
 import MockupProductType from './mockup_product_type';
 import Client from './client';
 import PackagingType from './packaging_type';
+import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
+import ChooseCompany from "edms/templates/edms/my_docs/new_doc_modules/choose_company";
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
-import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
+
 
 class NewDocument extends React.Component {
   state = {
@@ -31,9 +33,6 @@ class NewDocument extends React.Component {
     render_ready: false,
     type_modules: [],
     text: [],
-
-    name: '',
-    preamble: '',
     articles: [],
     recipient: {
       name: '------------',
@@ -117,9 +116,7 @@ class NewDocument extends React.Component {
     // Отримуємо з бд список модулів, які використовує даний тип документа:
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.type_id + '/')
       .then((response) => {
-        this.setState({
-          type_modules: response
-        });
+        this.setState({type_modules: response});
       })
       .catch((error) => notify(error));
 
@@ -162,6 +159,7 @@ class NewDocument extends React.Component {
           newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type.name;
           newDocStore.new_document.contract_link = response?.contract_link.id;
           newDocStore.new_document.contract_link_name = response?.contract_link.name;
+          newDocStore.new_document.company = response?.company;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -250,6 +248,8 @@ class NewDocument extends React.Component {
             // Модуль auto_approved не показується в документі
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
+          } else if (module.module === 'choose_company') {
+            doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -321,8 +321,6 @@ class NewDocument extends React.Component {
       open,
       type_modules,
       render_ready,
-      name,
-      preamble,
       text,
       articles,
       recipient,
@@ -330,12 +328,10 @@ class NewDocument extends React.Component {
       acquaint_list,
       approval_list,
       sign_list,
-      old_files,
       files,
       days,
       gate,
-      carry_out_items,
-      contract_link
+      carry_out_items
     } = this.state;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -355,104 +351,96 @@ class NewDocument extends React.Component {
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>
           <If condition={type_modules.length > 0 && render_ready}>
-            <div className='modal-header d-flex justify-content-between'>
-              <h4 className='modal-title'>{doc.type}</h4>
-              <button className='btn btn-link' onClick={() => this.onCloseModal()}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
+
+              <div className='modal-header d-flex justify-content-between'>
+                <h4 className='modal-title'>{doc.type}</h4>
+                <button className='btn btn-link' onClick={() => this.onCloseModal()}>
+                  <FontAwesomeIcon icon={faTimes}/>
+                </button>
+              </div>
+
+            <small>Обов’язкові поля позначені зірочкою</small>
 
             <div className='modal-body p-0'>
               <For each='module' index='index' of={type_modules}>
                 <div key={module.id} className='css_new_doc_module mt-1'>
                   <Choose>
-                    <When condition={module.module === 'name'}>
-                      <Name onChange={this.onChange} name={name} fieldName={module.field_name} />
-                    </When>
-                    <When condition={module.module === 'preamble'}>
-                      <Preamble onChange={this.onChange} preamble={preamble} fieldName={module.field_name} />
-                    </When>
                     <When condition={module.module === 'text'}>
                       <Text
+                        module_info={module}
                         onChange={this.onChangeText}
                         text={getTextByQueue(text, index)}
-                        fieldName={module.field_name}
-                        id={module.id}
                         rows={rows}
-                        queue={module.queue}
                       />
                     </When>
                     <When condition={module.module === 'day'}>
                       <Day
-                        // day={day}
+                        module_info={module}
                         day={getDayByQueue(days, index)}
                         onChange={this.onChangeDay}
-                        fieldName={module.field_name}
-                        queue={module.queue}
                       />
                     </When>
                     <When condition={module.module === 'recipient'}>
-                      <Recipient onChange={this.onChange} recipient={recipient} fieldName={module.field_name} />
+                      <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
                     </When>
                     <When condition={module.module === 'recipient_chief'}>
-                      <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} fieldName={module.field_name} />
+                      <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
                     </When>
                     <When condition={module.module === 'articles'}>
                       <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
                     </When>
                     <When condition={module.module === 'files'}>
-                      <FilesUpload onChange={this.onChange} files={files} fieldName={module.field_name} />
+                      <FilesUpload onChange={this.onChange} files={files} module_info={module} />
                     </When>
                     <When condition={module.module === 'acquaint_list'}>
-                      <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} fieldName={module.field_name} />
+                      <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
                     </When>
                     <When condition={module.module === 'approval_list'}>
                       <ApprovalList
                         onChange={this.onChange}
                         approvalList={approval_list}
-                        fieldName={module.field_name}
-                        additionalInfo={module.additional_info}
+                        module_info={module}
                       />
                     </When>
                     <When condition={module.module === 'sign_list'}>
                       <SignList
                         onChange={this.onChange}
                         signList={sign_list}
-                        fieldName={module.field_name}
-                        additionalInfo={module.additional_info}
+                        module_info={module}
                       />
                     </When>
                     <When condition={module.module === 'gate'}>
-                      <Gate checkedGate={gate} onChange={this.onChange} fieldName={module.field_name} />
+                      <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
                     </When>
                     <When condition={module.module === 'carry_out_items'}>
-                      <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} fieldName={module.field_name} />
+                      <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
                     </When>
                     <When condition={module.module === 'mockup_type'}>
-                      <MockupType fieldName={module.field_name} />
+                      <MockupType module_info={module} />
                     </When>
                     <When condition={module.module === 'mockup_product_type'}>
-                      <MockupProductType fieldName={module.field_name} />
+                      <MockupProductType module_info={module} />
                     </When>
                     <When condition={module.module === 'client'}>
-                      <Client fieldName={module.field_name} />
+                      <Client module_info={module} />
                     </When>
                     <When condition={module.module === 'dimensions'}>
                       <Text
                         onChange={this.onChange}
                         text={getTextByQueue(text, index)}
-                        fieldName={module.field_name}
-                        id={module.id}
+                        module_info={module}
                         rows={rows}
-                        queue={module.queue}
                         type='dimensions'
                       />
                     </When>
                     <When condition={module.module === 'packaging_type'}>
-                      <PackagingType packaging_type={getTextByQueue(text, index)} fieldName={module.field_name} />
+                      <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                     </When>
                     <When condition={module.module === 'contract_link'}>
-                      <ChooseMainContract onChange={this.onChangeContract} contract={contract_link} fieldName={module.field_name} />
+                      <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
+                    </When>
+                    <When condition={module.module === 'choose_company'}>
+                      <ChooseCompany module_info={module} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>

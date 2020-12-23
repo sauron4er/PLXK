@@ -15,7 +15,8 @@ const newDocStore = store({
     },
     dimensions: [],
     contract_link: 0,
-    contract_link_name: ''
+    contract_link_name: '',
+    company: 'ТДВ'
   }
 });
 

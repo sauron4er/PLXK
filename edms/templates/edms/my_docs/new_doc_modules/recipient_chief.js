@@ -31,13 +31,13 @@ class RecipientChief extends React.Component {
   render() {
     const {chiefs, is_loading} = this.state;
     const {name, seat, id} = this.props.recipientChief;
-    const {fieldName, onChange} = this.props;
+    const {module_info, onChange} = this.props;
     return (
       <Choose>
         <When condition={is_loading === true}> </When>
         <When condition={chiefs && chiefs.length > 0}>
           <label className='full_width' htmlFor='recipient_chief_select'>
-            {fieldName}:
+            <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
             <select
               id='recipient_chief_select'
               name='recipient_chief'
@@ -69,7 +69,12 @@ class RecipientChief extends React.Component {
 
   static defaultProps = {
     recipientChief: {},
-    fieldName: 'Кому'
+    module_info: {
+      field_name: 'Кому',
+      queue: 0,
+      required: false,
+      additional_info: null
+    }
   };
 }
 

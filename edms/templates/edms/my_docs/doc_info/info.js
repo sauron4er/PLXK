@@ -8,13 +8,13 @@ import Gate from './doc_info_modules/gate';
 import CarryOut from './doc_info_modules/carry_out';
 import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
+import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
 import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
 
 class Info extends React.Component {
   render() {
-    
     const {info} = this.props;
-    
+
     if (info.path) {
       return (
         <div>
@@ -55,20 +55,11 @@ class Info extends React.Component {
                       fieldName={module.field_name}
                     />
                   </When>
-                  <When
-                    condition={['text', 'dimensions', 'packaging_type'].includes(module.module)}
-                  >
-                    <Text
-                      text={getTextByQueue(info.text_list, index)}
-                      fieldName={module.field_name}
-                    />
+                  <When condition={['text', 'dimensions', 'packaging_type'].includes(module.module)}>
+                    <Text text={getTextByQueue(info.text_list, index)} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'day'}>
-                    <Day
-                      day={getDayByQueue(info.days, index)}
-                      fieldName={module.field_name}
-                      // day={info.day}
-                    />
+                    <Day day={getDayByQueue(info.days, index)} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'gate'}>
                     <Gate gate={info.gate} fieldName={module.field_name} />
@@ -77,11 +68,7 @@ class Info extends React.Component {
                     <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'files' && info.old_files.length > 0}>
-                    <Files
-                      files={info.old_files}
-                      fieldName={module.field_name}
-                      is_editable={module.is_editable}
-                    />
+                    <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
                   </When>
                   <When condition={module.module === 'approval_list'}>
                     <Approvals approvals={info.approval_list} />
@@ -93,10 +80,13 @@ class Info extends React.Component {
                     <Text text={info.mockup_product_type.name} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'client'}>
-                    <Text
-                      text={info.client.name + ' (' + info.client.country + ')'}
-                      fieldName={module.field_name}
-                    />
+                    <Text text={info.client.name + ' (' + info.client.country + ')'} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'contract_link'}>
+                    <ContractInfo contract={info.contract_link} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'choose_company'}>
+                    <div>Компанія:<span className='font-italic'> {info.company} "ПЛХК"</span></div>
                   </When>
                 </Choose>
               </div>

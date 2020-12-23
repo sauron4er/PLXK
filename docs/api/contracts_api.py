@@ -18,7 +18,7 @@ def add_contract(request):
 
 @try_except
 def post_contract(contract):
-    new_contract_form = NewContractForm(contract, initial={'nomenclature_group': None, 'date_end': None,
+    new_contract_form = NewContractForm(contract, initial={'number': None, 'nomenclature_group': None, 'date_end': None,
                                                            'department': None, 'responsible': None,
                                                            'lawyers_received': False, 'basic_contract': None})
 
@@ -60,8 +60,13 @@ def add_contract_from_edms(doc_request, files, doc_author):
             {cf['field']: cf['queue']}
         )
 
+    basic_contract = edms_doc.contract.values_list('contract_id', flat=True)
+    basic_contract = basic_contract[0] if len(basic_contract) > 0 else None
+
     contract = {
         'edms_doc': edms_doc,
+        'company': edms_doc.company,
+        'basic_contract': basic_contract,
         'number': get_texts_from_edms(edms_doc, fields_queue['number']),
         'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
         'counterparty': get_texts_from_edms(edms_doc, fields_queue['counterparty']),

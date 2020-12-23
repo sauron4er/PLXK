@@ -29,7 +29,7 @@ class MockupType extends React.Component {
   };
 
   render() {
-    const {fieldName} = this.props;
+    const {module_info} = this.props;
     const {loading, mockup_types} = this.state;
   
     return (
@@ -37,7 +37,7 @@ class MockupType extends React.Component {
         <When condition={!loading}>
           <div className='row align-items-center mt-1 mr-lg-1'>
             <label className='col-lg-4' htmlFor='mockup_type'>
-              {fieldName}:
+              <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
             </label>
             <select
               className='col-lg-8 form-control mx-3 mx-lg-0'
@@ -58,6 +58,7 @@ class MockupType extends React.Component {
               })}
             </select>
           </div>
+          <small className='text-danger'>{module_info?.additional_info}</small>
         </When>
         <Otherwise>
           <LoaderSmall />
@@ -68,7 +69,12 @@ class MockupType extends React.Component {
 
   static defaultProps = {
     mockup_type: [],
-    fieldName: '-'
+    module_info: {
+      field_name: '---',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
   };
 }
 

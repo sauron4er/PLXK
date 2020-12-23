@@ -25,7 +25,7 @@ class Files extends React.Component {
         </For>
 
         <If condition={!disabled}>
-          <FilesUpload onChange={onChange} files={newFiles} fieldName={''} />
+          <FilesUpload onChange={onChange} files={newFiles} module_info={{ field_name: '' }} />
         </If>
       </>
     );

@@ -13,12 +13,12 @@ class PackagingType extends React.Component {
   }
   
   render() {
-    const {fieldName} = this.props;
+    const {module_info} = this.props;
   
     return (
       <div className='row align-items-center mt-1 mr-lg-1'>
         <label className='col-lg-4' htmlFor='packaging_type'>
-          {fieldName}:
+          <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
         </label>
         <select
           className='col-lg-8 form-control mx-3 mx-lg-0'
@@ -37,12 +37,18 @@ class PackagingType extends React.Component {
             Кг.
           </option>
         </select>
+        <small className='text-danger'>{module_info?.additional_info}</small>
       </div>
     );
   }
 
   static defaultProps = {
-    fieldName: '-',
+    module_info: {
+      field_name: '---',
+      queue: 0,
+      required: false,
+      additional_info: null
+    },
     packaging_type: '---'
   };
 }

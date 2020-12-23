@@ -10,6 +10,7 @@ from django.http import Http404
 from django.db.models import Q
 from datetime import date
 import json
+import csv
 from .models import Document, Order_doc, Order_doc_type, Article_responsible, Responsible_file
 from accounts.models import UserProfile
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
@@ -98,6 +99,21 @@ def edit_doc(request, pk):
     else:
         form = NewDocForm(instance=doc)
     return render(request, 'docs/new_doc.html', {'form': form, 'title': title})
+
+
+@login_required(login_url='login')
+@try_except
+def export_table_csv(request, type):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Група', 'Тип', 'Код', 'Назва', 'Автор', 'Відповідальний', 'Діє з'])
+
+    if type == 'docs':
+        docs = Document.objects.all().values_list('doc_group__name', 'doc_type__name', 'code', 'name', 'author', 'responsible', 'date_start').order_by('-date_start')
+        for doc in docs:
+            writer.writerow(doc)
+        return response
 
 
 # ------------------------------------------------------------------------------------------------------------ Orders

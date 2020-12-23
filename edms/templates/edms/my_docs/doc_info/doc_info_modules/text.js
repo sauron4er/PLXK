@@ -9,7 +9,7 @@ class Text extends React.Component {
     return (
       <>
         <div>{fieldName}:</div>
-        <div className='css_note_text ml-1'>{text}</div>
+        <div className='css_note_text'>{text}</div>
       </>
     );
   }
