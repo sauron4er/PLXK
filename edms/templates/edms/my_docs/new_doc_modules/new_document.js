@@ -454,9 +454,9 @@ class NewDocument extends React.Component {
                   Видалити
                 </button>
               </If>
-              <button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('draft')}>
-                В чернетки
-              </button>
+              {/*<button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('draft')}>*/}
+              {/*  В чернетки*/}
+              {/*</button>*/}
               <button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('template')}>
                 Зберегти як шаблон
               </button>

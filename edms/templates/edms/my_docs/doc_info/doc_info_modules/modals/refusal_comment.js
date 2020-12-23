@@ -24,7 +24,7 @@ class RefusalComment extends React.Component {
       <>
         <div className='modal-header d-flex justify-content-between'>
           <h5 className='modal-title font-weight-bold'>
-            Можливо, ви хочете пояснити своє рішення?
+            Можливо, ви хочете прокоментувати, що саме потрібно змінити?
           </h5>
           <button className='btn btn-link' onClick={onCloseModal}>
             <FontAwesomeIcon icon={faTimes} />
