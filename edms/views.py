@@ -101,7 +101,8 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
-            post_approvals(doc_request, doc_modules['approval_list'], doc_modules['choose_company'])
+            company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
+            post_approvals(doc_request, doc_modules['approval_list'], company)
 
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])

@@ -111,15 +111,15 @@ def post_approvals(doc_request, approvals, company):
     if chief is None:
         chief = get_chief_id(doc_request['employee_seat'])
 
-    if chief is not None and chief != int(doc_request['employee_seat']) and chief != director:
+    if chief is None:
+        raise ObjectDoesNotExist('У автора нема безпосереднього начальника')
+    elif chief != int(doc_request['employee_seat']) and chief != director:
         approvals[:] = [i for i in approvals if not (int(i['id']) == chief)]
 
         approvals.append({
             'id': chief,
             'approve_queue': 1  # Керівник відділу другий у списку погоджень
         })
-    else:
-        raise ObjectDoesNotExist('У автора нема безпосереднього начальника')
 
     post_approval_list(doc_request, approvals)
 
