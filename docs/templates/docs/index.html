@@ -1,5 +1,42 @@
 {% extends 'base.html' %}
 {% block title %}Документи СМЯ{% endblock %}
+{% block script %}
+  <script type="text/javascript">
+  function fnExcelReport()
+    {
+      let tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+      let textRange; var j=0;
+      let tab = document.getElementById('headerTable'); // id of table
+
+      for(j = 0 ; j < tab.rows.length ; j++)
+      {
+          tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+          //tab_text=tab_text+"</tr>";
+      }
+
+      tab_text= tab_text+"</table>";
+      tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+      tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+      tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+      let ua = window.navigator.userAgent;
+      let msie = ua.indexOf("MSIE ");
+
+      if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+      {
+          txtArea1.document.open("txt/html","replace");
+          txtArea1.document.write(tab_text);
+          txtArea1.document.close();
+          txtArea1.focus();
+          sa=txtArea1.document.execCommand("SaveAs",true,"Say Thanks to Sumit.xls");
+      }
+      else                 //other browser not tested on IE 11
+          sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+      return (sa);}
+    </script>
+
+{% endblock %}
 {% block second_nav %}
     </div>
     <div style="padding: 10px">
@@ -25,8 +62,10 @@
 
 {% block content %}
 {#    <div class="d-flex"><a class="ml-auto mr-2" href="{% url 'docs:export_table_csv' %}{{ request.path }}">Експорт в Excel</a></div>#}
+    <div class="d-flex"><div class="btn btn-sm btn-outline-primary ml-auto mr-2" onclick="fnExcelReport();">Експорт в Excel</div></div>
+{#    <iframe id="txtArea1" style="display:none"></iframe>#}
     <div class="container-fluid p-2">
-        <table class="table table-sm">
+        <table class="table table-sm" id="headerTable">
         <thead class="thead-inverse">
             <tr>
                 <th>Група</th>
