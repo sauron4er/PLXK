@@ -135,9 +135,16 @@ class DxTable extends React.PureComponent {
             ...styles[row.is_vacant]
           };
         case 'is_canceled':
+          let today = new Date();
+          const dd = String(today.getDate()).padStart(2, '0');
+          const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+          const yyyy = today.getFullYear();
+          today = yyyy + '-' + mm + '-' + dd;
+  
           return {
             ...style,
-            ...styles[row.date_canceled !== '']
+            // ...styles[row.date_canceled !== '']
+            ...styles[row.date_canceled !== '' && row.date_canceled < today]
           };
         default:
           return {

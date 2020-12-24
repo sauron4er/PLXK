@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
-import ContractView from "docs/templates/docs/contracts/contract_view";
+import ContractView from 'docs/templates/docs/contracts/contract_view';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
@@ -11,26 +11,36 @@ class ChooseMainContract extends React.Component {
   state = {
     is_main_contract: true,
     contracts: {},
-    contract_modal_open: false
+    contract_modal_open: false,
+    loading: false
   };
 
   // отримуємо з бд список шефів
-  getContracts() {
-    axiosGetRequest('get_contracts/')
-      .then((response) => {
-        this.setState({contracts: response});
-      })
-      .catch((error) => notify(error));
+  getContracts(company) {
+    this.setState({loading: true}, () => {
+      axiosGetRequest('get_contracts/' + company + '/')
+        .then((response) => {
+          this.setState({
+            contracts: response,
+            loading: false
+          });
+        })
+        .catch((error) => notify(error));
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState !== this.state) {
-      if (this.state.is_main_contract !== true && !this.state.contracts?.length) this.getContracts();
+    if (prevState.is_main_contract !== this.state.is_main_contract) {
+      if (this.state.is_main_contract !== true && !this.state.contracts?.length) {
+        this.getContracts(this.props.company);
+      }
+    } else if (prevProps.company !== this.props.company) {
+      this.getContracts(this.props.company);
     }
   }
 
   render() {
-    const {is_main_contract, contracts, contract_modal_open} = this.state;
+    const {is_main_contract, contracts, contract_modal_open, loading} = this.state;
     const {contract_link, contract_link_name} = newDocStore.new_document;
     const {module_info, onChange} = this.props;
 
@@ -61,13 +71,18 @@ class ChooseMainContract extends React.Component {
           Це додаткова Угода
         </label>
         <small className='text-danger'>{module_info?.additional_info}</small>
-
         <If condition={!is_main_contract}>
+          <div>{module_info.field_name}:</div>
           <Choose>
-            <When condition={contracts?.length > 0}>
+            <When condition={!loading && contracts?.length > 0}>
               <label className='full_width' htmlFor='contract_select'>
-                <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
-                <select id='contract_select' name='contract' className='form-control full_width' value={contract_link_name} onChange={onChange}>
+                <select
+                  id='contract_select'
+                  name='contract'
+                  className='form-control full_width'
+                  value={contract_link_name}
+                  onChange={onChange}
+                >
                   <option key={0} data-key={0} value='0'>
                     ------------
                   </option>
@@ -115,6 +130,7 @@ class ChooseMainContract extends React.Component {
       required: false,
       additional_info: null
     },
+    company: 'ТДВ',
     onChange: () => {}
   };
 }

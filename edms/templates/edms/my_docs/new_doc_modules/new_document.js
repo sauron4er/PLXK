@@ -437,7 +437,7 @@ class NewDocument extends React.Component {
                       <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                     </When>
                     <When condition={module.module === 'contract_link'}>
-                      <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
+                      <ChooseMainContract onChange={this.onChangeContract} module_info={module} company={newDocStore.new_document.company} />
                     </When>
                     <When condition={module.module === 'choose_company'}>
                       <ChooseCompany module_info={module} />

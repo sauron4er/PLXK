@@ -407,12 +407,13 @@ def edms_get_emp_seats(request):
 
 
 @login_required(login_url='login')
-def edms_get_contracts(request):
+def edms_get_contracts(request, company):
     if request.method == 'GET':
         contracts = [{
             'id': contract.pk,
             'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
-        } for contract in Contract.objects.filter(is_active=True)]
+            'company': contract.company
+        } for contract in Contract.objects.filter(is_active=True).filter(company=company)]
 
         return HttpResponse(json.dumps(contracts))
 
