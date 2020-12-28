@@ -595,6 +595,7 @@ def edms_my_docs(request):
             'emp_seat_id': path.employee_seat.id,
             'author': request.user.userprofile.pip,
             'author_seat_id': path.employee_seat.id,
+            'main_field': get_main_field(path.document),
             'status': 'draft' if path.document.is_draft else ('template' if path.document.is_template else 'doc'),
         } for path in Document_Path.objects
             .filter(mark__in=[1, 16, 19])
@@ -613,6 +614,7 @@ def edms_my_docs(request):
             'expected_mark': demand.mark.id,
             'author': demand.document.employee_seat.employee.pip,
             'author_seat_id': demand.document.employee_seat_id,
+            'main_field': get_main_field(demand.document),
             'mark_demand_id': demand.id,
             'phase_id': demand.phase_id,
         } for demand in Mark_Demand.objects

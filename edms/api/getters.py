@@ -154,6 +154,7 @@ def get_archive_by_doc_meta_type(user_id, doc_type_id):
         'emp_seat_id': path.employee_seat.id,
         'author': path.document.employee_seat.employee.pip,
         'author_seat_id': path.employee_seat.id,
+        'main_field': get_main_field(path.document),
     } for path in Document_Path.objects
         .filter(document__document_type__meta_doc_type_id=doc_type_id)
         .filter(mark=1)
@@ -169,6 +170,7 @@ def get_archive_by_doc_meta_type(user_id, doc_type_id):
         'emp_seat_id': path.employee_seat_id,
         'author': path.document.employee_seat.employee.pip,
         'author_seat_id': path.document.employee_seat_id,
+        'main_field': get_main_field(path.document),
     } for path in Document_Path.objects.distinct()
         .filter(document__document_type__meta_doc_type_id=doc_type_id)
         .filter(employee_seat_id__employee_id=user_id)
@@ -474,6 +476,7 @@ def get_emp_seat_docs(emp_seat, sub_emp):
         'author': path.employee_seat.employee.pip,
         'dep': path.employee_seat.seat.department.name,
         'is_active': path.document.is_active,
+        'main_field': get_main_field(path.document),
         'emp_seat_id': int(emp_seat)
     } for path in Document_Path.objects
         .filter(mark_id=1)
@@ -753,3 +756,24 @@ def is_mark_demand_exists(emp_seat_id, document_id):
         .filter(document_id=document_id)\
         .filter(is_active=True)\
         .exists()
+
+
+@try_except
+def get_main_field(document):
+    main_field_data = Document_Type_Module.objects.values('module_id', 'queue')\
+        .filter(document_type_id=document.document_type_id)\
+        .filter(is_main_field=True)[0]
+
+    main_field = ''
+
+    if main_field_data['module_id'] == 16:  # Текст
+        main_field = Doc_Text.objects.values_list('text', flat=True)\
+            .filter(document=document)\
+            .filter(queue_in_doc=main_field_data['queue'])\
+            .filter(is_active=True)[0]
+    elif main_field_data['module_id'] == 26:  # Клієнт
+        main_field = Doc_Client.objects.values_list('client__name', flat=True) \
+            .filter(document=document) \
+            .filter(is_active=True)[0]
+
+    return main_field

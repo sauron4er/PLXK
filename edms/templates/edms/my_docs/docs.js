@@ -11,22 +11,24 @@ class Docs extends React.Component {
     my_docs_columns: [
       {name: 'id', title: '№'},
       {name: 'type', title: 'Тип'},
+      {name: 'main_field', title: 'Зміст'},
       {name: 'date', title: 'Дата'}
     ],
     work_docs_columns: [
       {name: 'id', title: '№'},
       {name: 'type', title: 'Тип'},
+      {name: 'main_field', title: 'Зміст'},
       {name: 'author', title: 'Ініціатор'}
     ],
     my_docs_col_width: [
       {columnName: 'id', width: 70},
-      {columnName: 'type'},
-      {columnName: 'date', width: 100}
+      {columnName: 'type', width: 100},
+      {columnName: 'date', width: 80}
     ],
     work_docs_col_width: [
       {columnName: 'id', width: 70},
-      {columnName: 'type', width: 150},
-      {columnName: 'author'}
+      {columnName: 'type', width: 100},
+      {columnName: 'author', width: 100},
     ],
     row: '',
     opened_doc_id: 0,

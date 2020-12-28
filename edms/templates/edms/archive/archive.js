@@ -7,20 +7,34 @@ import 'static/css/my_styles.css';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
+import {LoaderSmall} from 'templates/components/loaders';
 
 // налаштування колонок для таблиць
 const my_archive_columns = [
   {name: 'id', title: '№'},
   {name: 'type', title: 'Тип'},
+  {name: 'main_field', title: 'Зміст'},
   {name: 'date', title: 'Дата'}
 ];
-const my_archive_col_width = [{columnName: 'id', width: 70}, {columnName: 'type'}, {columnName: 'date', width: 100}];
+
+const my_archive_col_width = [
+  {columnName: 'id', width: 70},
+  {columnName: 'type', width: 100},
+  {columnName: 'date', width: 80}
+];
+
 const work_archive_columns = [
   {name: 'id', title: '№'},
   {name: 'type', title: 'Тип'},
+  {name: 'main_field', title: 'Зміст'},
   {name: 'author', title: 'Ініціатор'}
 ];
-const work_archive_col_width = [{columnName: 'id', width: 70}, {columnName: 'type', width: 150}, {columnName: 'author'}];
+
+const work_archive_col_width = [
+  {columnName: 'id', width: 70},
+  {columnName: 'type', width: 100},
+  {columnName: 'author', width: 100}
+];
 
 class Archive extends React.Component {
   state = {
@@ -32,7 +46,8 @@ class Archive extends React.Component {
     carry_out_items: [],
     main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
     doc_type_id: 0,
-    doc_type_name: ''
+    doc_type_name: '',
+    loading: false
   };
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -42,14 +57,17 @@ class Archive extends React.Component {
 
   getArchive = (doc_type_id) => {
     if (doc_type_id) {
-      axiosGetRequest('get_archive/' + doc_type_id + '/')
-        .then((response) => {
-          this.setState({
-            my_archive: response.my_archive,
-            work_archive: response.work_archive
-          });
-        })
-        .catch((error) => notify(error));
+      this.setState({loading: true}, () => {
+        axiosGetRequest('get_archive/' + doc_type_id + '/')
+          .then((response) => {
+            this.setState({
+              my_archive: response.my_archive,
+              work_archive: response.work_archive,
+              loading: false
+            });
+          })
+          .catch((error) => notify(error));
+      });
     }
   };
 
@@ -65,7 +83,7 @@ class Archive extends React.Component {
     });
     this.getArchive(e.target.options[selectedIndex].getAttribute('data-key'));
   };
-  
+
   onNewMark = (id, mark_id, author_id) => {
     // рендеримо відповідь на подію:
     let answer = '';
@@ -91,20 +109,27 @@ class Archive extends React.Component {
   };
 
   render() {
-    const {main_div_height, doc_type_name, my_archive, work_archive, opened_doc_id} = this.state;
+    const {main_div_height, doc_type_name, my_archive, work_archive, opened_doc_id, loading} = this.state;
 
     return (
       <>
         <div className='d-flex justify-content-between'>
           <div className='form-group'>
-            <Selector
-              list={window.doc_types}
-              selectedName={doc_type_name}
-              fieldName={'Оберіть тип документу'}
-              valueField={'description'}
-              onChange={(e) => this.onSelectorChange(e)}
-              disabled={false}
-            />
+            <Choose>
+              <When condition={!loading}>
+                <Selector
+                  list={window.doc_types}
+                  selectedName={doc_type_name}
+                  fieldName={'Оберіть тип документу'}
+                  valueField={'description'}
+                  onChange={(e) => this.onSelectorChange(e)}
+                  disabled={false}
+                />
+              </When>
+              <Otherwise>
+                <LoaderSmall />
+              </Otherwise>
+            </Choose>
           </div>
         </div>
         <div className='row css_main_div' ref={this.getMainDivRef}>
