@@ -31,7 +31,8 @@ const col_width = [
 
 class OrdersTable extends React.Component {
   state = {
-    main_div_height: 0 // розмір головного div, з якого вираховується розмір таблиць
+    main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    reminders_sent: false
   };
 
   componentDidMount() {
@@ -46,7 +47,9 @@ class OrdersTable extends React.Component {
   
   sendReminders = () => {
     axiosGetRequest('reminders/')
-      .then((response) => {})
+      .then((response) => {
+        this.setState({reminders_sent: true})
+      })
       .catch((error) => notify(error));
   };
 
@@ -56,7 +59,7 @@ class OrdersTable extends React.Component {
   };
 
   render() {
-    const {main_div_height} = this.state;
+    const {main_div_height, reminders_sent} = this.state;
     const {is_orders_admin, orders} = ordersStore;
     return (
       <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
@@ -64,8 +67,8 @@ class OrdersTable extends React.Component {
           <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-info'>
             Додати нормативний документ
           </button>
-          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-info ml-auto'>
-            Розіслати нагадування про виконання наказів
+          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-info ml-auto' disabled={reminders_sent}>
+            {reminders_sent ? 'Нагадування розіслано' : 'Розіслати нагадування про виконання наказів'}
           </button>
         </If>
         {/*<DxTable*/}

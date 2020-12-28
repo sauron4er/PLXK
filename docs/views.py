@@ -297,6 +297,7 @@ def get_calendar(request, view):
 @try_except
 def reminders(request):
     send_reminders()
+    return HttpResponse(200)
 
 
 @login_required(login_url='login')
