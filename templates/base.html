@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" href="{% static 'css/snow.css' %}">
   {% block stylesheet %}  {% endblock %}
  {% block script %}  {% endblock %}
 </head>
@@ -110,6 +111,40 @@
 
 </nav>
  {% endblock %}
+  {% block snow %}
+    <div class="snowflakes" aria-hidden="true">
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+      <div class="snowflake">
+      ❅
+      </div>
+      <div class="snowflake">
+      ❆
+      </div>
+      <div class="snowflake">
+      ❄
+      </div>
+    </div>
+  {% endblock %}
 {% block content_fluid %}
 
  <div class="container">
