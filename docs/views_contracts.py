@@ -25,8 +25,11 @@ def index(request):
 
 @login_required(login_url='login')
 @try_except
-def get_contracts(request, company):
+def get_contracts(request, company, with_add):
     all_contracts = Contract.objects.filter(company=company).filter(is_active=True)
+
+    if with_add == 'false':
+        all_contracts = all_contracts.filter(basic_contract__isnull=True)
 
     full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
     full_read_access = request.user.userprofile.access_to_all_contracts
@@ -48,7 +51,7 @@ def get_contracts(request, company):
         'counterparty': contract.counterparty,
         'date_start': date_to_json(contract.date_start) if contract.date_start else '',
         'date_end': date_to_json(contract.date_end) if contract.date_end else '',
-        'responsible': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',
+        'responsible_name': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',
         'files': [{
             'id': file.id,
             'file': file.file.name,
@@ -59,6 +62,18 @@ def get_contracts(request, company):
     } for contract in accessed_contracts]
 
     return HttpResponse(json.dumps(contracts))
+
+
+@login_required(login_url='login')
+@try_except
+def get_additional_contracts(request, pk):
+    additional_contracts = [{
+        'id': contract.id,
+        'number': contract.number,
+        'subject': contract.subject
+    } for contract in Contract.objects.filter(basic_contract_id=pk).filter(is_active=True)]
+
+    return HttpResponse(json.dumps(additional_contracts))
 
 
 @login_required(login_url='login')

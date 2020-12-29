@@ -4,6 +4,7 @@ import { axiosGetRequest } from "templates/components/axios_requests";
 const contractsStore = store({
   contracts: [],
   view: 'ТДВ', // ТДВ, ТОВ
+  with_additional: false,
   contract_view: false, // перегляд чи додавання договору
   contract: {
     id: 0,
@@ -54,8 +55,9 @@ const contractsStore = store({
       edms_doc_id: 0
     };
   },
+  
   get_contracts: (company) => {
-    axiosGetRequest('get_contracts/' + company + '/')
+    axiosGetRequest('get_contracts/' + company + '/' + contractsStore.with_additional + '/')
       .then((response) => {
         contractsStore.contracts = response
       })

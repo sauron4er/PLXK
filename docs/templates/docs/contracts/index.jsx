@@ -25,9 +25,8 @@ class Contracts extends React.Component {
           break;
         }
       }
-    }
-    else {
-      contractsStore.get_contracts('ТДВ')
+    } else {
+      contractsStore.get_contracts('ТДВ');
     }
   }
 
@@ -47,9 +46,14 @@ class Contracts extends React.Component {
   };
 
   changeView = (name) => {
-    contractsStore.view = name
-    if (name !== 'contract') contractsStore.get_contracts(name)
+    contractsStore.view = name;
+    if (name !== 'contract') contractsStore.get_contracts(name);
   };
+  
+  onWithAdditionalChange = () => {
+    contractsStore.with_additional = !contractsStore.with_additional;
+    contractsStore.get_contracts(contractsStore.view);
+  }
 
   getButtonStyle = (name) => {
     if (name === contractsStore.view) return 'btn btn-sm btn-secondary mr-1 active';
@@ -57,15 +61,26 @@ class Contracts extends React.Component {
   };
 
   render() {
-    const {view, contract_view} = contractsStore;
+    const {contract_view, contract, with_additional} = contractsStore;
 
     return (
       <Choose>
         <When condition={!contract_view}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <button onClick={() => contractsStore.contract_view = true} className='btn btn-sm btn-info mr-auto'>
-              Додати Договір
-            </button>
+            <div className='mr-auto'>
+              <button onClick={() => (contractsStore.contract_view = true)} className='btn btn-sm btn-info mr-2'>
+                Додати Договір
+              </button>
+    
+              <input
+                type='checkbox' id='with_additional' name='with_additional'
+                checked={with_additional}
+                onChange={() => this.onWithAdditionalChange()}
+              />
+              <label className='ml-1 form-check-label' htmlFor='with_additional'>
+                <small>Показувати у списку додаткові угоди</small>
+              </label></div>
+
             <div className='btn-group' role='group' aria-label='contracts_index'>
               <button type='button' className={this.getButtonStyle('ТДВ')} onClick={() => this.changeView('ТДВ')}>
                 ТДВ ПЛХК
@@ -75,14 +90,7 @@ class Contracts extends React.Component {
               </button>
             </div>
 
-            <Choose>
-              <When condition={view === 'ТДВ'}>
-                <ContractsTable />
-              </When>
-              <When condition={view === 'ТОВ'}>
-                <ContractsTable />
-              </When>
-            </Choose>
+            <ContractsTable />
           </div>
         </When>
         <Otherwise>
@@ -90,7 +98,7 @@ class Contracts extends React.Component {
             Назад
           </button>
           <br />
-          <Contract close={this.onContractClose} />
+          <Contract id={contract.id} close={this.onContractClose} />
         </Otherwise>
       </Choose>
     );

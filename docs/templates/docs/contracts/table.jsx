@@ -13,7 +13,7 @@ const columns = [
   {name: 'date_end', title: 'Діє до'},
   {name: 'files', title: 'Файли'},
   // {name: 'department', title: 'Відділ'},
-  {name: 'responsible', title: 'Відповідальний'},
+  {name: 'responsible_name', title: 'Відповідальний'},
   {name: 'autoActuality', title: ' '}
 ];
 
@@ -22,6 +22,7 @@ const col_width = [
   {columnName: 'number', width: 100},
   {columnName: 'date_start', width: 80},
   {columnName: 'date_end', width: 80},
+  {columnName: 'responsible_name', width: 150},
   {columnName: 'autoActuality', width: 30}
 ];
 

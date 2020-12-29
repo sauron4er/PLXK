@@ -26,8 +26,9 @@ urlpatterns = [
     url(r'^orders/responsible_done/(?P<pk>\d+)/$', views.responsible_done, name='responsible_done'),
     url(r'^orders/', views.orders, name='orders'),
 
-    url(r'^contracts/get_contracts/(?P<company>\w+)/$', views_contracts.get_contracts, name='get_contracts'),
+    url(r'^contracts/get_contracts/(?P<company>\w+)/(?P<with_add>\w+)/$', views_contracts.get_contracts, name='get_contracts'),
     url(r'^contracts/get_contract/(?P<pk>\d+)/$', views_contracts.get_contract, name='get_contract'),
+    url(r'^contracts/get_additional_contracts/(?P<pk>\d+)/$', views_contracts.get_additional_contracts, name='get_additional_contracts'),
     url(r'^contracts/add_contract', views_contracts.add_contract, name='add_contract'),
     url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),
     url(r'^contracts/deactivate_contract/(?P<pk>\d+)/$', views_contracts.deactivate_contract, name='deactivate_contract'),
