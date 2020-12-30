@@ -4,12 +4,14 @@ from django.http import HttpResponse
 from django.db import transaction
 import json
 
+from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.try_except import try_except
 from plxk.api.global_getters import get_employees_list, get_departments_list, is_it_lawyer
 from plxk.api.datetime_normalizers import date_to_json
 from .models import Contract, Contract_File
 from docs.api import contracts_api, contracts_mail_sender
 from edms.models import Employee_Seat
+
 
 
 @login_required(login_url='login')
@@ -49,8 +51,8 @@ def get_contracts(request, company, with_add):
         'subject': contract.subject,
         'selector_info': '№ ' + (contract.number if contract.number else '---') + ', "' + contract.subject + '"',
         'counterparty': contract.counterparty,
-        'date_start': date_to_json(contract.date_start) if contract.date_start else '',
-        'date_end': date_to_json(contract.date_end) if contract.date_end else '',
+        'date_start': convert_to_localtime(contract.date_start, 'day') if contract.date_start else '',
+        'date_end': convert_to_localtime(contract.date_end, 'day') if contract.date_end else '',
         'responsible_name': contract.responsible.last_name + ' ' + contract.responsible.first_name if contract.responsible else '',
         'files': [{
             'id': file.id,
@@ -81,6 +83,8 @@ def get_additional_contracts(request, pk):
 def get_contract(request, pk):
     contract = get_object_or_404(Contract, pk=pk)
 
+    is_author = request.user == contract.created_by
+
     contract = {
         'id': contract.id,
         'number': contract.number if contract.number else 'б/н',
@@ -102,7 +106,8 @@ def get_contract(request, pk):
         'basic_contract_subject':
             '№ ' + contract.basic_contract.number + ', "' + contract.basic_contract.subject + '"'
             if contract.basic_contract else '',
-        'edms_doc_id': contract.edms_doc_id if contract.edms_doc else 0
+        'edms_doc_id': contract.edms_doc_id if contract.edms_doc else 0,
+        'is_author': request.user == contract.created_by
     }
 
     old_files = [{

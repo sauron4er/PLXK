@@ -30,7 +30,7 @@ class Contract extends React.Component {
   state = {
     view: 'contract', //, 'additional'
     data_received: false,
-    edit_mode: contractsStore.full_edit_access || contractsStore.contract.id === 0,
+    edit_mode: contractsStore.full_edit_access || this.props.id === 0,
     edms_doc_opened: false,
     additional_contracts: [],
     additional_contract_id: 0,
@@ -55,7 +55,8 @@ class Contract extends React.Component {
       basic_contract_subject: '',
       new_files: [],
       old_files: [],
-      edms_doc_id: 0
+      edms_doc_id: 0,
+      is_author: false
     },
     main_contract_info_changed: false
   };
@@ -77,6 +78,7 @@ class Contract extends React.Component {
       .then((response) => {
         this.setState({
           contract: response,
+          edit_mode: contractsStore.full_edit_access || response.is_author,
           data_received: true
         });
       })
@@ -492,17 +494,17 @@ class Contract extends React.Component {
                     fieldName={'Юридично-адміністративний відділ отримав Договір'}
                     onChange={this.onLawyersReceivedChange}
                     defaultChecked={false}
-                    disabled={!edit_mode && !contractsStore.full_edit_access}
+                    disabled={!contractsStore.full_edit_access}
                     note={'Відзначають працівники ЮАВ'}
                   />
 
-                  {/*<hr />*/}
-                  {/*<If condition={contract.edms_doc_id !== 0}>*/}
-                  {/*  <div>Документ в системі електронного документообігу: № {contract.edms_doc_id}</div>*/}
-                  {/*  <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>*/}
-                  {/*    Показати*/}
-                  {/*  </button>*/}
-                  {/*</If>*/}
+                  <hr />
+                  <If condition={contract.edms_doc_id !== 0}>
+                    <div>Документ в системі електронного документообігу: № {contract.edms_doc_id}</div>
+                    <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
+                      Показати
+                    </button>
+                  </If>
                 </div>
                 <If condition={edit_mode}>
                   <div className='modal-footer'>

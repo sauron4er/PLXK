@@ -6,7 +6,6 @@ import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import './pagination.css';
-import corrStore from '../../../correspondence/templates/correspondence/store';
 
 let delayTimeout;
 
@@ -114,9 +113,10 @@ class PaginatedTable extends React.Component {
                 breakClassName={'break-me'}
                 pageCount={pagesCount}
                 marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
+                pageRangeDisplayed={0}
                 onPageChange={this.handlePageClick}
-                containerClassName={'paginator'}
+                containerClassName={'pagination'}
+                // subContainerClassName={'pages pagination'}
                 activeClassName={'active'}
                 pageClassName={'btn btn-sm'}
                 previousClassName={'btn btn-sm'}
