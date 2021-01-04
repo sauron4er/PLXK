@@ -75,19 +75,19 @@ class OrderMail extends React.Component {
           Система відсилає листи автору, відповідальним та контролючому, якщо не відмічений варіант "нікому".
         </small>
         <div>
-          <input type='checkbox' id='to_default' checked={to_default} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='to_default' name='mail_to' checked={to_default} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='to_default'>
             Автору, відповідальним, контролюючому
           </label>
         </div>
         <div>
-          <input type='checkbox' id='everyone' checked={everyone} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='everyone' name='mail_to' checked={everyone} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='everyone'>
             Всім працівникам
           </label>
         </div>
         <div>
-          <input type='checkbox' id='list' checked={list} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='list' name='mail_to' checked={list} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='list'>
             Обрати список співробітників
           </label>
@@ -134,7 +134,7 @@ class OrderMail extends React.Component {
           </If>
         </div>
         <div>
-          <input type='checkbox' id='none' checked={none} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='none' name='mail_to' checked={none} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='none'>
             Нікому
           </label>

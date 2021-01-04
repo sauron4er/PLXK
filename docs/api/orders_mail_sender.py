@@ -20,7 +20,7 @@ def responsible_text(is_it_responsible):
 @try_except
 def create_mail_body(post_request, mail, is_it_responsible):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Опубліковано {} № {}".format(post_request['type_name'], post_request['code'])
+    message["Subject"] = "{} № {}. {}".format(post_request['type_name'], post_request['code'], post_request['name'])
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 
@@ -143,8 +143,9 @@ def send_mails_default(post_request):
     author_body = create_mail_body(post_request, author_mail, False)
     send_email(author_mail, author_body)
 
-    responsible_mails = Article_responsible.objects.values_list('employee_seat__employee__user__email', flat=True) \
+    responsible_mails_with_duplicates = Article_responsible.objects.values_list('employee_seat__employee__user__email', flat=True) \
         .filter(article_id__in=article_ids).filter(is_active=True).filter(done=False)
+    responsible_mails = list(set(responsible_mails_with_duplicates))  # Видаляємо дублікати (якщо хтось є відповідальним по декілька пунктам.
     for mail in responsible_mails:
         responsible_body = create_mail_body(post_request, mail, True)
         send_email(mail, responsible_body)
@@ -158,7 +159,7 @@ def send_mails_default(post_request):
 @try_except
 def send_mails_everyone(post_request):
     mail = 'all_users@lxk.com.ua'
-    body = create_mail_body(post_request, mail)
+    body = create_mail_body(post_request, mail, False)
 
     send_email(mail, body)
 
@@ -173,6 +174,7 @@ def send_mails_list(post_request):
 
 
 def arrange_mail(post_request):
+    # if testing:
     if not testing:
         if post_request['mail_mode'] == 'to_default':
             send_mails_default(post_request)
