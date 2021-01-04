@@ -10,10 +10,10 @@ import Selector from 'templates/components/form_modules/selector';
 
 class OrderMail extends React.Component {
   state = {
-    to_default: true,
+    to_default: false,
     everyone: false,
     list: false,
-    none: false,
+    none: true,
     receivers: [],
     receiver_id: 0,
     receiver_name: ''
