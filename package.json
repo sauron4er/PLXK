@@ -18,7 +18,7 @@
     "@material-ui/icons": "^4.9.1",
     "@mrblenny/react-flow-chart": "0.0.14",
     "@risingstack/react-easy-state": "^6.3.0",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "fireworks-canvas": "^2.5.0",
     "js-cookie": "^2.2.1",
     "querystring": "^0.2.0",
