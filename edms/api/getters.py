@@ -321,6 +321,7 @@ def get_doc_type_modules(doc_type):
         'module': type_module.module.module,
         'module_id': type_module.module_id,
         'field_name': None if type_module.field_name is None else type_module.field_name,
+        'field': None if type_module.field is None else type_module.field,
         'required': type_module.required,
         'queue': type_module.queue,
         'additional_info': type_module.additional_info

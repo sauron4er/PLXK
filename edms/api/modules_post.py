@@ -14,13 +14,14 @@ from edms.api.phases_handler import post_approval_list
 @try_except
 def post_text(doc_request, text_list):
     for text in text_list:
-        doc_request.update({'queue_in_doc': text['queue']})
-        doc_request.update({'text': text['text']})
-        text_form = NewTextForm(doc_request)
-        if text_form.is_valid():
-            text_form.save()
-        else:
-            raise ValidationError('post_modules/post_text/text_form invalid')
+        if 'queue' in text.keys():
+            doc_request.update({'queue_in_doc': text['queue']})
+            doc_request.update({'text': text['text']})
+            text_form = NewTextForm(doc_request)
+            if text_form.is_valid():
+                text_form.save()
+            else:
+                raise ValidationError('post_modules/post_text/text_form invalid')
 
 
 @try_except

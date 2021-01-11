@@ -38,7 +38,7 @@ class Client extends React.Component {
         <When condition={!loading}>
           <div className='row align-items-center mr-lg-1'>
             <label className='col-lg-4' htmlFor='client'>
-              {module_info.field_name}:
+              <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
             </label>
             <select
               className='col-lg-8 form-control mx-3 mx-lg-0'

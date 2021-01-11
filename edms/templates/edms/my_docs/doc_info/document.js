@@ -142,7 +142,8 @@ class Document extends React.Component {
             show_resolutions_area: false,
             show_aqcuaints_area: false,
             new_files: [],
-            updated_files: []
+            updated_files: [],
+            comment: ''
           });
           const author_id = info.author_seat_id;
           removeRow(doc_id, mark_id, author_id);

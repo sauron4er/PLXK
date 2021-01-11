@@ -33,8 +33,7 @@ class CarryOut extends React.Component {
   render() {
     const {module_info, carryOutItems} = this.props;
     const {carry_out_columns, carry_out_col_width} = this.state;
-
-    console.log(module_info);
+    
     return (
       <div className='mt-1'>
         <If condition={module_info.required}>{'* '}</If> <label>{module_info.field_name}:</label>

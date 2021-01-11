@@ -43,7 +43,7 @@ class Text extends React.Component {
   };
 
   render() {
-    const {module_info, text, onChange, rows, maxLength, type} = this.props;
+    const {module_info, text, onChange, rows, cols, maxLength, type} = this.props;
 
     return (
       <Choose>
@@ -57,7 +57,7 @@ class Text extends React.Component {
               name='text'
               type='number'
               id={'text-' + module_info.queue}
-              // value={newDocStore.new_document.dimensions[queue]?.text}
+              // value={newDocStore.new_document.dimensions[module_info.queue]?.text}
               value={this.getDimension(module_info.queue)}
               onChange={this.onDimensionsChange}
               maxLength={maxLength}
@@ -74,6 +74,7 @@ class Text extends React.Component {
               id={'text-' + module_info.queue}
               value={text}
               rows={rows}
+              cols={cols}
               onChange={onChange}
               maxLength={maxLength}
             />
@@ -94,6 +95,7 @@ class Text extends React.Component {
     },
     text: '',
     rows: 1,
+    cols: 50,
     maxLength: 5000,
     type: 'default'
   };
