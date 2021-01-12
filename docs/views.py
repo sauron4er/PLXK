@@ -305,7 +305,10 @@ def reminders(request):
 def get_order(request, pk):
     try:
         order = get_object_or_404(Order_doc, pk=pk)
-        response = {'order': get_order_info(order, request.user.userprofile.id)}
+        if order.is_act:
+            response = {'is_active': True, 'order': get_order_info(order, request.user.userprofile.id)}
+        else:
+            response = {'is_active': False}
         return HttpResponse(json.dumps(response))
     except Http404:
         return HttpResponse('Такого наказу не існує', status=404)
