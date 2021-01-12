@@ -847,12 +847,12 @@ def edms_mark(request):
                         .filter(document_type_id=doc_request['document_type']).filter(phase=this_phase['phase'] + 1)
 
                     # Якщо наступна фаза = 20, відправляємо на наступну фазу, якщо ні, то просто ставимо позначку у документ
-                    if next_phases_marks and 20 in next_phases_marks:
-                        new_phase(doc_request, this_phase['phase'] + 1, [])
-                    else:
-                        post_auto_approve(doc_request)
-                        zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-                        post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 9)
+                    # if next_phases_marks and 20 in next_phases_marks:
+                    #     new_phase(doc_request, this_phase['phase'] + 1, [])
+                    # else:
+                    post_auto_approve(doc_request)
+                    zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+                    post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 9)
                 elif doc_meta_type in [5, 6]:
                     # відправляємо документ автору на позначку Доопрацьовано
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -992,7 +992,10 @@ def edms_mark(request):
                     mark_demand_id = Mark_Demand.objects.values_list('id', flat=True).filter(document_path_id=doc_request['path_to_answer'])[0]
                     deactivate_mark_demand(doc_request, mark_demand_id)
                     if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
-                        post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
+                        if doc_request['path_to_answer_author'] in ['813', '935']:  # Генеральні директори Лебедєв і Лишак
+                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
+                        else:
+                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
                     new_mail('new', [{'id': doc_request['path_to_answer_author']}], doc_request)
                 elif not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)

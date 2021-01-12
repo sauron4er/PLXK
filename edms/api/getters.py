@@ -46,7 +46,6 @@ def get_phase_info(doc_request):
         .filter(id=phase_id)[0]
 
 
-
 @try_except
 def get_phase_id(doc_request):
     # Якщо phase_id = 0 в doc_request, то на ознайомлення відправляє автор, тому браузер не знає ід фази. Знаходимо її.

@@ -39,7 +39,7 @@ class Buttons extends React.Component {
                 Погодити
               </button>
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
-                Відмовити
+                {info.meta_type_id === 5 ? 'Запит на зміни' : 'Відмовити'}
               </button>
             </When>
             <When condition={info.expected_mark === 8}>
