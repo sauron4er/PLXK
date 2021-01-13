@@ -45,7 +45,9 @@ class OrdersCalendar extends React.Component {
   render() {
     const {loading} = this.state;
     const {calendar} = ordersCalendarStore;
-
+  
+    console.log(calendar);
+  
     return (
       <Choose>
         <When condition={!loading}>
@@ -66,7 +68,7 @@ class OrdersCalendar extends React.Component {
                         >{`${order.type} № ${order.order_code} "${order.order_name}"`}</a>
                         <For each='article' index='article_idx' of={order.articles}>
                           <Choose>
-                            <When condition={article.constant}>
+                            <When condition={article.term==='constant'}>
                               <ConstantCalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
                             </When>
                             <Otherwise>

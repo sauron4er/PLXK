@@ -87,7 +87,8 @@ class File(models.Model):
 class Order_article(models.Model):
     order = models.ForeignKey(Order_doc, related_name='articles', on_delete=models.RESTRICT)
     text = models.CharField(max_length=5000)
-    deadline = models.DateField(null=True, blank=True)  # якщо null=true, значить пункт треба виконувати "постійно"
+    term = models.CharField(max_length=8, default='term')  # 'term', 'constant', 'no_term'
+    deadline = models.DateField(null=True, blank=True)
     periodicity = models.CharField(max_length=1, null=True, blank=True)  # null - одноразовий пункт, 'm' - щомісяця, 'y' - щороку
     done = models.BooleanField(default=False)
     first_instance = models.ForeignKey('self', related_name='next_instances', null=True, blank=True, on_delete=models.RESTRICT)

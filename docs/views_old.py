@@ -258,9 +258,9 @@ def get_calendar(request, view):
         my_calendar = my_calendar.filter(employee_seat_id__in=my_emp_seats)
 
     if view == 'constant_calendar':
-        my_calendar = my_calendar.filter(article__term='constant')
+        my_calendar = my_calendar.filter(article__deadline__isnull=True)
     else:
-        my_calendar = my_calendar.exclude(article__term='constant')
+        my_calendar = my_calendar.filter(article__deadline__isnull=False)
 
     calendar = [{
         'type': item.article.order.doc_type.name,
@@ -270,7 +270,7 @@ def get_calendar(request, view):
         'order_name': item.article.order.name,
         'text': item.article.text,
         'constant': False if item.article.deadline else True,
-        'deadline': get_deadline(item.article),
+        'deadline': normalize_date(item.article.deadline) if item.article.deadline else 'Постійно',
         'responsible': item.id,
         'responsible_name': item.employee_seat.employee.pip + ', ' + item.employee_seat.seat.seat,
         # 'comment': item.comment if item.comment else '',
@@ -292,14 +292,6 @@ def get_calendar(request, view):
 
     return HttpResponse(json.dumps({'calendar': sorted_by_date_and_order, 'is_admin': is_it_admin}))
 
-
-@try_except
-def get_deadline(article):
-    if article.term == 'term':
-        return normalize_date(article.deadline)
-    elif article.term == 'constant':
-        return 'Постійно'
-    return 'Без строку'
 
 @login_required(login_url='login')
 @try_except

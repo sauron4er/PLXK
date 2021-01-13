@@ -39,6 +39,7 @@ def get_order_info(order, employee_id):
     articles = [{
         'id': article.id,
         'text': article.text,
+        'term': article.term,
         'constant': 'true' if article.deadline is None else 'false',
         'deadline': date_to_json(article.deadline) if article.deadline else '',
         'status': 'old',

@@ -93,7 +93,6 @@ class Order extends React.Component {
   getOrder = () => {
     axiosGetRequest('get_order/' + ordersStore.order.id + '/')
       .then((response) => {
-        console.log(response);
         ordersStore.order = response.order;
         ordersStore.order.mail_mode = 'to_default';
         this.setState({loading: false});

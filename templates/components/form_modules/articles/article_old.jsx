@@ -98,11 +98,12 @@ class Article extends React.Component {
   };
 
   getBackground = () => {
-    const {text, deadline, responsibles, term} = this.props.article;
-    if (text === '' || (term === 'term' && deadline === '')) {
+    const {text, constant, deadline, responsibles} = this.props.article;
+    const {selected_responsible_id} = this.state;
+    if (text === '' || (deadline === '' && constant === 'false') || responsibles.length === 0 || selected_responsible_id !== 0) {
       return 'LightPink';
     }
-    if (term !== 'constant' && responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return 'LightGreen';
+    if (constant === 'false' && responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return 'LightGreen';
     return '';
   };
 
@@ -147,26 +148,26 @@ class Article extends React.Component {
               index={idx}
               onChange={this.changeResponsible}
               onDelete={this.delResponsible}
-              term={article.term}
+              constant={article.constant}
               disabled={disabled}
             />
           </For>
         </div>
 
-        <If condition={article.term === 'term' || !disabled}>
+        <If condition={article.constant === 'false' || !disabled}>
           <div className={'form-inline mt-1'}>
             <input
               type='radio'
-              name={index + 'term_radio'}
+              name={index + 'constant_radio'}
               id={index + 'deadline'}
-              value='term'
-              onChange={(e) => this.changeField(e, 'term')}
-              checked={article.term === 'term'}
+              value='false'
+              onChange={(e) => this.changeField(e, 'constant')}
+              checked={article.constant === 'false'}
             />
             <label className='radio-inline mx-1' htmlFor={index + 'deadline'}>
               Строк виконання
             </label>
-            <If condition={article.term === 'term'}>
+            <If condition={article.constant === 'false'}>
               <DateInput
                 date={article.deadline}
                 className={'mr-2'}
@@ -221,35 +222,19 @@ class Article extends React.Component {
             </If>
           </div>
         </If>
-        <If condition={article.term === 'constant' || !disabled}>
+        <If condition={article.constant === 'true' || !disabled}>
           <div className={'form-inline mt-1'}>
             <input
               type='radio'
-              name={index + 'term_radio'}
+              name={index + 'constant_radio'}
               id={index + 'constant'}
-              value='constant'
-              onChange={(e) => this.changeField(e, 'term')}
-              checked={article.term === 'constant'}
+              value='true'
+              onChange={(e) => this.changeField(e, 'constant')}
+              checked={article.constant === 'true'}
               disabled={disabled}
             />
             <label className='radio-inline mx-1' htmlFor={index + 'constant'}>
               Виконувати постійно
-            </label>
-          </div>
-        </If>
-        <If condition={article.term === 'no_term' || !disabled}>
-          <div className={'form-inline mt-1'}>
-            <input
-              type='radio'
-              name={index + 'term_radio'}
-              id={index + 'no_term'}
-              value='no_term'
-              onChange={(e) => this.changeField(e, 'term')}
-              checked={article.term === 'no_term'}
-              disabled={disabled}
-            />
-            <label className='radio-inline mx-1' htmlFor={index + 'no_term'}>
-              Без строку виконання
             </label>
           </div>
         </If>

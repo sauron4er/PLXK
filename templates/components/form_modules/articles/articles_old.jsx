@@ -8,7 +8,7 @@ class Articles extends React.Component {
 
   addEmptyArticle = () => {
     let articles = [...this.props.articles];
-    articles.push({text: '', responsibles: [], deadline: '', status: 'new', periodicity: '', term: 'term'});
+    articles.push({text: '', responsibles: [], deadline: '', status: 'new', periodicity: '', constant: 'false'});
     this.props.changeArticles(articles);
   };
   
