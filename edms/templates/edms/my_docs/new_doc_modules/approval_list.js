@@ -59,7 +59,7 @@ class ApprovalList extends React.Component {
       approval_list.push({
         id: this.state.select_approval_id,
         emp_seat: this.state.select_approval,
-        approve_queue: 2 // Всі обрані користувачем особи ідуть в черзі після автора, його керівника і перед директором
+        approve_queue: 1 // Всі обрані користувачем особи ідуть в черзі після автора і перед директором
       });
       const unique_seats = uniqueArray(approval_list);
       this.setState({

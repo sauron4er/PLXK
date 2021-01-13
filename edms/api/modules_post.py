@@ -85,7 +85,7 @@ def post_approvals(doc_request, approvals, company):
 
         approvals.extend([{
             'id': acting_director,
-            'approve_queue': 3  # Директор останній у списку погоджень
+            'approve_queue': 2  # Директор останній у списку погоджень
         }])
     else:
         zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -103,7 +103,7 @@ def post_approvals(doc_request, approvals, company):
 
         approvals.extend([{
             'id': acting_tov_director,
-            'approve_queue': 3  # Директор останній у списку погоджень
+            'approve_queue': 2  # Директор останній у списку погоджень
         }])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):

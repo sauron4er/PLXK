@@ -560,7 +560,7 @@ def get_doc_modules(doc):
             if 'text_list' not in doc_modules.keys():
                 text_list = [{
                     'queue': item.queue_in_doc,
-                    'text': item.text}
+                    'text': item.text if item.text else '---'}
                     for item in Doc_Text.objects.filter(document_id=doc.id).filter(is_active=True)]
                 doc_modules.update({
                     'text_list': text_list,
