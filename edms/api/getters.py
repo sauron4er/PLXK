@@ -555,7 +555,7 @@ def get_doc_modules(doc):
 
     # збираємо з використовуваних модулів інфу про документ
     for module in type_modules:
-        if module['module'] in ['text', 'dimensions', 'packaging_type']:
+        if module['module'] in ['text', 'dimensions', 'packaging_type', 'select']:
             # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
             if 'text_list' not in doc_modules.keys():
                 text_list = [{
@@ -743,8 +743,11 @@ def get_doc_modules(doc):
                 doc_modules.update({'contract_link': {'id': 0}})
 
         elif module['module'] == 'choose_company':
-            company = Document.objects.values_list('company', flat=True).filter(id=doc.id)[0]
-            doc_modules.update({'company': company})
+            # company = Document.objects.values_list('company', flat=True).filter(id=doc.id)[0]
+            doc_modules.update({'company': doc.company})
+
+        elif module['module'] == 'stage':
+            doc_modules.update({'stage': doc.stage})
 
     return doc_modules
 

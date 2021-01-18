@@ -23,10 +23,25 @@ def create_table(doc_type):
 
 @try_except
 def get_column_widths(modules):
-    column_widths = [{'columnName': 'id', 'width': 40}, {'columnName': 'status', 'width': 30}]
+    column_widths = [
+        {'columnName': 'id', 'width': 40},
+        {'columnName': 'author', 'width': 200},
+        {'columnName': 'status', 'width': 30},
+        {'columnName': 'stage', 'width': 30},
+        {'columnName': 'importancy', 'width': 90},
+        {'columnName': 'files', 'width': 300},
+        {'columnName': 'choose_company', 'width': 85}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
         column_widths.append({'columnName': 'packaging_type', 'width': 35})
+
+    for module in modules:
+        if module['field'] == 'importancy':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 105})
+        elif module['field'] == 'accounting':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 150})
+        elif module['field'] == 'type':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 150})
 
     return column_widths
 
@@ -37,6 +52,7 @@ def get_modules_list(doc_type):
         'id': module.id,
         'module': module.module.module,
         'field_name': module.field_name,
+        'field': module.field,
         'queue': module.queue,
         'module_id': module.module_id
     } for module in Document_Type_Module.objects
@@ -56,7 +72,8 @@ def get_table_header(modules):
             header.append({
                 'name': 'status', 'title': module['field_name']
             })
-        elif module['module_id'] == 16:  # text module
+        # elif module['module_id'] == 16:  # text module
+        elif module['module_id'] in [16, 32]:  # text, select
             header.append({
                 'name': 'text-' + str(module['queue']), 'title': module['field_name']
             })
@@ -74,6 +91,8 @@ def get_table_rows(doc_type, modules):
 
     documents = Document.objects.all().select_related()\
         .filter(document_type_id=doc_type)\
+        .filter(is_template=False)\
+        .filter(is_draft=False)\
         .filter(closed=False).order_by('-id')
 
     if not testing:
@@ -84,13 +103,15 @@ def get_table_rows(doc_type, modules):
         'author': doc.employee_seat.employee.pip,
         'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
+        'stage': doc.stage if doc.stage is not None else '',
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
         'mockup_product_type': get_mockup_product_type(modules, doc),
         'client': get_client(modules, doc),
         'packaging_type': get_packaging_type(modules, doc),
         'doc_gate': doc.gate.all()[0].gate_id if doc.gate.all() else None,
-        'files': get_files(modules, doc)
+        'files': get_files(modules, doc),
+        'choose_company': doc.company + ' ПЛХК'
     } for doc in documents]
 
     for document in documents_arranged:
@@ -132,10 +153,10 @@ def get_packaging_type(modules, doc):
 
 @try_except
 def get_texts(modules, doc):
-    if any(module['module_id'] == 16 for module in modules):
+    if any(module['module_id'] in [16, 32] for module in modules):
         texts = []
         for module in modules:
-            if module['module_id'] == 16:
+            if module['module_id'] in [16, 32]:
                 queue = module['queue']
                 texts.append(
                     {'name': 'text-' + str(queue),

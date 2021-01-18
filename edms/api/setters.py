@@ -12,6 +12,13 @@ testing = settings.STAS_DEBUG
 
 
 @try_except
+def set_stage(doc_id, stage):
+    doc = get_object_or_404(Document, pk=doc_id)
+    doc.stage = stage
+    doc.save()
+
+
+@try_except
 def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     request = doc_request.copy()
     emp_seat_id = vacation_check(emp_seat_id)

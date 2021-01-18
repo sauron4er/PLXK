@@ -9,6 +9,7 @@ import CarryOut from './doc_info_modules/carry_out';
 import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
 import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
+import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
 import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
 
 class Info extends React.Component {
@@ -55,7 +56,7 @@ class Info extends React.Component {
                       fieldName={module.field_name}
                     />
                   </When>
-                  <When condition={['text', 'dimensions', 'packaging_type'].includes(module.module)}>
+                  <When condition={['text', 'dimensions', 'packaging_type', 'select'].includes(module.module)}>
                     <Text text={getTextByQueue(info.text_list, index)} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'day'}>
@@ -88,6 +89,9 @@ class Info extends React.Component {
                   <When condition={module.module === 'choose_company'}>
                     <div>Компанія:<span className='font-italic'> {info.company} "ПЛХК"</span></div>
                   </When>
+                  <When condition={module.module === 'stage'}>
+                    <Stage stage={info.stage} />
+                  </When>
                 </Choose>
               </div>
             </For>
@@ -98,9 +102,9 @@ class Info extends React.Component {
           </If>
 
           {/*Резолюції керівника (показуються, якщо документ чекає позначку "Виконано")*/}
-          <If condition={info?.expected_mark === 11}>
-            <Resolutions path={info.path} />
-          </If>
+          {/*<If condition={info?.expected_mark === 11}>*/}
+          {/*  <Resolutions path={info.path} />*/}
+          {/*</If>*/}
         </div>
       );
     } else {

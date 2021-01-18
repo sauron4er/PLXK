@@ -108,6 +108,7 @@ class Document(models.Model):
     approved_date = models.DateTimeField(blank=True, null=True)
     company = models.CharField(max_length=3, null=True, blank=True, default='ТДВ')  # ТОВ або ТДВ
     testing = models.BooleanField(default=False)
+    stage = models.CharField(max_length=7, null=True)  # 'in work', 'denied', 'done', None (created)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
 

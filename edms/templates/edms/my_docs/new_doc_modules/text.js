@@ -30,9 +30,22 @@ class Text extends React.Component {
       newDocStore.new_document.dimensions[queue].text = event.target.value;
     }
   };
+  
+  onTextChange = (event) => {
+    let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
+    const queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(text_box_id));
+    if (queue === -1) {
+      newDocStore.new_document.text.push({
+        queue: parseInt(text_box_id),
+        text: event.target.value
+      });
+    } else {
+      newDocStore.new_document.text[queue].text = event.target.value;
+    }
+  };
 
   getDimension = (queue) => {
-    let text = this.props.text;
+    let text = '';
     const dimension_queue = getIndexByProperty(
       newDocStore.new_document.dimensions,
       'queue',
@@ -41,10 +54,22 @@ class Text extends React.Component {
     if (dimension_queue !== -1) text = newDocStore.new_document.dimensions[dimension_queue].text;
     return text;
   };
+  
+  getText = (queue) => {
+    let text = '';
+    const text_queue = getIndexByProperty(
+      newDocStore.new_document.text,
+      'queue',
+      parseInt(queue)
+    );
+    if (text_queue !== -1) text = newDocStore.new_document.text[text_queue].text;
+    return text;
+  };
 
   render() {
-    const {module_info, text, onChange, rows, cols, maxLength, type} = this.props;
-
+    const {module_info, rows, cols, maxLength, type} = this.props;
+    const {text} = newDocStore.new_document;
+  
     return (
       <Choose>
         <When condition={type === 'dimensions'}>
@@ -72,10 +97,10 @@ class Text extends React.Component {
               className='form-control full_width'
               name='text'
               id={'text-' + module_info.queue}
-              value={text}
+              value={this.getText(module_info.queue)}
               rows={rows}
               cols={cols}
-              onChange={onChange}
+              onChange={this.onTextChange}
               maxLength={maxLength}
             />
             <small className='text-danger'>{module_info?.additional_info}</small>
@@ -93,11 +118,11 @@ class Text extends React.Component {
       required: false,
       additional_info: null
     },
-    text: '',
     rows: 1,
     cols: 50,
     maxLength: 5000,
-    type: 'default'
+    type: 'default',
+    onChange: () => {}
   };
 }
 

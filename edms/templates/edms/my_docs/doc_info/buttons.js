@@ -48,17 +48,25 @@ class Buttons extends React.Component {
                 Ознайомлений
               </button>
             </When>
-            <When condition={info.expected_mark === 11}>
-              {/* Виконано */}
+            <When condition={info.expected_mark === 11}> {/* Виконано */}
+              <If condition={info.stage !== 'in work'}>
+                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)}
+                        disabled={button_clicked}>
+                  Взяти в роботу
+                </button>
+              </If>
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>
                 Виконано
               </button>
-              <If condition={isChief === true}>
-                {/* Якщо є підлеглі - додаємо резолюції */}
-                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(10)} disabled={button_clicked}>
-                  Резолюція
-                </button>
-              </If>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
+                Відмовити
+              </button>
+              {/*<If condition={isChief === true}>*/}
+              {/*  /!* Якщо є підлеглі - додаємо резолюції *!/*/}
+              {/*  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(10)} disabled={button_clicked}>*/}
+              {/*    Резолюція*/}
+              {/*  </button>*/}
+              {/*</If>*/}
             </When>
             <When condition={info.expected_mark === 17}>
               {/* Віза */}
@@ -73,6 +81,15 @@ class Buttons extends React.Component {
               {/* Прикріплення сканів підписаних документів */}
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(22)} disabled={button_clicked}>
                 Додати скан-копії підписаних документів
+              </button>
+            </When>
+            <When condition={info.expected_mark === 24}>
+              {/* Підтвердження виконання */}
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(24)} disabled={button_clicked}>
+                Підтвердити виконання
+              </button>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(5)} disabled={button_clicked}>
+                На доопрацювання
               </button>
             </When>
           </Choose>

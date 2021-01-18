@@ -61,7 +61,7 @@ const ordersStore = store({
       cancels_files: [],
       cancels_files_old: [],
       cancels_other_doc: false,
-      mail_mode: 'to_default',
+      mail_mode: 'none',
       mail_list: [],
       articles: [],
       status: 'in progress',

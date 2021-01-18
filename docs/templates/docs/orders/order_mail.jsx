@@ -10,10 +10,6 @@ import Selector from 'templates/components/form_modules/selector';
 
 class OrderMail extends React.Component {
   state = {
-    to_default: false,
-    everyone: false,
-    list: false,
-    none: true,
     receivers: [],
     receiver_id: 0,
     receiver_name: ''
@@ -28,14 +24,6 @@ class OrderMail extends React.Component {
   };
 
   arrangeCheckBoxes = (event) => {
-    this.setState({
-      to_default: false,
-      everyone: false,
-      list: false,
-      none: false,
-      [event.target.id]: true
-    });
-
     ordersStore.order.mail_mode = event.target.id;
   };
 
@@ -64,9 +52,9 @@ class OrderMail extends React.Component {
   };
 
   render() {
-    const {to_default, everyone, list, none, receiver_name} = this.state;
+    const {receiver_name} = this.state;
     const {employees, is_orders_admin} = ordersStore;
-    const {mail_list} = ordersStore.order;
+    const {mail_list, mail_mode} = ordersStore.order;
 
     return (
       <div className='shadow-lg p-3 bg-white rounded'>
@@ -75,23 +63,23 @@ class OrderMail extends React.Component {
           Система відсилає листи автору, відповідальним та контролючому, якщо не відмічений варіант "нікому".
         </small>
         <div>
-          <input type='radio' id='to_default' name='mail_to' checked={to_default} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='to_default' name='mail_to' checked={mail_mode==='to_default'} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='to_default'>
             Автору, відповідальним, контролюючому
           </label>
         </div>
         <div>
-          <input type='radio' id='everyone' name='mail_to' checked={everyone} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='everyone' name='mail_to' checked={mail_mode==='everyone'} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='everyone'>
             Всім працівникам
           </label>
         </div>
         <div>
-          <input type='radio' id='list' name='mail_to' checked={list} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='list' name='mail_to' checked={mail_mode==='list'} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='list'>
             Обрати список співробітників
           </label>
-          <If condition={list}>
+          <If condition={mail_mode==='list'}>
             <div className='d-flex align-items-center mt-3'>
               <Selector
                 list={employees}
@@ -134,7 +122,7 @@ class OrderMail extends React.Component {
           </If>
         </div>
         <div>
-          <input type='radio' id='none' name='mail_to' checked={none} onChange={this.arrangeCheckBoxes} />
+          <input type='radio' id='none' name='mail_to' checked={mail_mode==='none'} onChange={this.arrangeCheckBoxes} />
           <label className='ml-2 form-check-label' htmlFor='none'>
             Нікому
           </label>

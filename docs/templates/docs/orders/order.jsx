@@ -21,8 +21,6 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class Order extends React.Component {
   state = {
-    mail_mode: 'to_default', // 'everyone', 'list', 'none'
-    mail_list: [],
     loading: false,
     error404: false
   };
@@ -127,7 +125,7 @@ class Order extends React.Component {
         mail_mode,
         mail_list
       } = ordersStore.order;
-
+  
       let formData = new FormData();
       formData.append('doc_type', type);
       formData.append('type_name', type_name);

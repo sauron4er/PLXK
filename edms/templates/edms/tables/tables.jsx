@@ -21,9 +21,7 @@ class Tables extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({
-      main_div_height: this.mainDivRef.clientHeight
-    });
+    this.setState({main_div_height: this.mainDivRef.clientHeight});
   }
 
   onChange = (event) => {
@@ -34,9 +32,7 @@ class Tables extends React.Component {
         doc_type_name: event.target.options[selectedIndex].getAttribute('value'),
         loading: event.target.options[selectedIndex].getAttribute('data-key') !== '0'
       },
-      () => {
-        this.getTable();
-      }
+      () => {this.getTable();}
     );
   };
 
@@ -66,9 +62,7 @@ class Tables extends React.Component {
   };
 
   onRowClick = (row) => {
-    this.setState({
-      clicked_row_id: row.id
-    });
+    this.setState({clicked_row_id: row.id});
   };
 
   render() {
@@ -117,6 +111,7 @@ class Tables extends React.Component {
                     height={main_div_height}
                     filter
                     coloredStatus
+                    coloredStage
                   />
                 </If>
               </div>

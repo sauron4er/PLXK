@@ -19,13 +19,13 @@ import MockupProductType from './mockup_product_type';
 import Client from './client';
 import PackagingType from './packaging_type';
 import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
-import ChooseCompany from "edms/templates/edms/my_docs/new_doc_modules/choose_company";
+import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
-
+import CustomSelect from 'edms/templates/edms/my_docs/new_doc_modules/custom_select';
 
 class NewDocument extends React.Component {
   state = {
@@ -78,11 +78,11 @@ class NewDocument extends React.Component {
 
   onChangeContract = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.new_document.contract_link = parseInt(event.target.options[selectedIndex].getAttribute('data-key'))
-    newDocStore.new_document.contract_link_name = event.target.options[selectedIndex].getAttribute('value')
+    newDocStore.new_document.contract_link = parseInt(event.target.options[selectedIndex].getAttribute('data-key'));
+    newDocStore.new_document.contract_link_name = event.target.options[selectedIndex].getAttribute('value');
   };
 
-  onChangeText = (event) => {
+  onChangeCustomSelect = (event) => {
     let {text} = this.state;
     let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
     const queue = getIndexByProperty(text, 'queue', parseInt(text_box_id));
@@ -151,6 +151,7 @@ class NewDocument extends React.Component {
             mockup_product_type: response.mockup_product_type || [],
             render_ready: true
           });
+          newDocStore.new_document.texts = response?.text_list || [];
           newDocStore.new_document.client = response?.client.id;
           newDocStore.new_document.client_name = response?.client.name;
           newDocStore.new_document.mockup_type = response?.mockup_type.id;
@@ -174,6 +175,15 @@ class NewDocument extends React.Component {
     return false;
   };
 
+  isTextFieldFilled = (module) => {
+    for (const i in newDocStore.new_document.text) {
+      if (newDocStore.new_document.text.hasOwnProperty(i) && newDocStore.new_document.text[i].queue === module.queue) {
+        return !isBlankOrZero(newDocStore.new_document.text[i].text);
+      }
+    }
+    return false;
+  };
+
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
@@ -188,18 +198,8 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
-        } else if (module.module === 'text') {
-          const texts = this.state.text;
-
-          let text_exists = false;
-          for (const i in texts) {
-            if (texts[i].queue === module.queue) {
-              if (texts[i].text !== '') {
-                text_exists = true;
-              }
-            }
-          }
-          if (!text_exists) {
+        } else if ([16, 32].includes(module.module_id)) { // text, select
+          if (!this.isTextFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
@@ -239,13 +239,19 @@ class NewDocument extends React.Component {
         let doc_modules = {};
 
         type_modules.map((module) => {
-          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(module.module)) {
+          if (
+            ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(
+              module.module
+            )
+          ) {
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
             };
-          } else if (module.module_id === 29) {
-            // Модуль auto_approved не показується в документі
+          } else if ([16, 32].includes(module.module_id)) { // text, select
+            doc_modules.text = newDocStore.new_document.text;
+          } else if ([29, 33].includes(module.module_id)) {
+            // Модулі auto_approved, phases не створюються у браузері
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'choose_company') {
@@ -254,7 +260,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.state[module.module];
           }
         });
-
+  
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_modules', JSON.stringify(doc_modules));
@@ -275,17 +281,19 @@ class NewDocument extends React.Component {
           });
         }
 
-        // TODO Чому новий документ не додається в таблицю?
-
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
             this.props.addDoc(response, doc.type, getToday(), doc.type_id, type);
+            newDocStore.clean_fields()
 
             // видаляємо чернетку:
             if (status === 'draft') this.delDoc();
           })
-          .catch((error) => notify(error));
+          .catch((error) => {
+            newDocStore.clean_fields();
+            notify(error);
+          });
 
         this.props.onCloseModal();
       }
@@ -312,6 +320,7 @@ class NewDocument extends React.Component {
     this.setState({open: false});
     // Передаємо вверх інфу, що модальне вікно закрите
     this.props.onCloseModal();
+    newDocStore.clean_fields();
   };
 
   render() {
@@ -351,13 +360,12 @@ class NewDocument extends React.Component {
       <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
         <div ref={(divElement) => (this.divElement = divElement)}>
           <If condition={type_modules.length > 0 && render_ready}>
-
-              <div className='modal-header d-flex justify-content-between'>
-                <h4 className='modal-title'>{doc.type}</h4>
-                <button className='btn btn-link' onClick={() => this.onCloseModal()}>
-                  <FontAwesomeIcon icon={faTimes}/>
-                </button>
-              </div>
+            <div className='modal-header d-flex justify-content-between'>
+              <h4 className='modal-title'>{doc.type}</h4>
+              <button className='btn btn-link' onClick={() => this.onCloseModal()}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
 
             <small>Обов’язкові поля позначені зірочкою</small>
 
@@ -366,19 +374,10 @@ class NewDocument extends React.Component {
                 <div key={module.id} className='css_new_doc_module mt-1'>
                   <Choose>
                     <When condition={module.module === 'text'}>
-                      <Text
-                        module_info={module}
-                        onChange={this.onChangeText}
-                        text={getTextByQueue(text, index)}
-                        rows={rows}
-                      />
+                      <Text module_info={module} rows={rows} />
                     </When>
                     <When condition={module.module === 'day'}>
-                      <Day
-                        module_info={module}
-                        day={getDayByQueue(days, index)}
-                        onChange={this.onChangeDay}
-                      />
+                      <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
                     </When>
                     <When condition={module.module === 'recipient'}>
                       <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
@@ -396,18 +395,10 @@ class NewDocument extends React.Component {
                       <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
                     </When>
                     <When condition={module.module === 'approval_list'}>
-                      <ApprovalList
-                        onChange={this.onChange}
-                        approvalList={approval_list}
-                        module_info={module}
-                      />
+                      <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
                     </When>
                     <When condition={module.module === 'sign_list'}>
-                      <SignList
-                        onChange={this.onChange}
-                        signList={sign_list}
-                        module_info={module}
-                      />
+                      <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
                     </When>
                     <When condition={module.module === 'gate'}>
                       <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
@@ -425,22 +416,23 @@ class NewDocument extends React.Component {
                       <Client module_info={module} />
                     </When>
                     <When condition={module.module === 'dimensions'}>
-                      <Text
-                        onChange={this.onChange}
-                        text={getTextByQueue(text, index)}
-                        module_info={module}
-                        rows={rows}
-                        type='dimensions'
-                      />
+                      <Text module_info={module} rows={rows} type='dimensions' />
                     </When>
                     <When condition={module.module === 'packaging_type'}>
                       <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                     </When>
                     <When condition={module.module === 'contract_link'}>
-                      <ChooseMainContract onChange={this.onChangeContract} module_info={module} company={newDocStore.new_document.company} />
+                      <ChooseMainContract
+                        onChange={this.onChangeContract}
+                        module_info={module}
+                        company={newDocStore.new_document.company}
+                      />
                     </When>
                     <When condition={module.module === 'choose_company'}>
                       <ChooseCompany module_info={module} />
+                    </When>
+                    <When condition={module.module === 'select'}>
+                      <CustomSelect module_info={module} />
                     </When>
                     <Otherwise> </Otherwise>
                   </Choose>

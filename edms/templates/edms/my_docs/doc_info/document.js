@@ -95,7 +95,7 @@ class Document extends React.Component {
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
-    const {info, new_files, updated_files, deleted_files, comment, resolutions, acquaints} = this.state;
+    const {info, new_files, comment, resolutions, acquaints} = this.state;
     const {doc_id, removeRow} = this.props;
 
     let formData = new FormData();
@@ -146,7 +146,7 @@ class Document extends React.Component {
             comment: ''
           });
           const author_id = info.author_seat_id;
-          removeRow(doc_id, mark_id, author_id);
+          removeRow(doc_id, mark_id, author_id); // 23 - Прийнято в роботу
         }
       })
       .catch((error) => notify(error));
@@ -169,7 +169,7 @@ class Document extends React.Component {
       this.openModal(mark_id);
 
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
-    } else if (mark_id === 3 && this.state.comment === '') {
+    } else if ([3, 5].includes(mark_id) && this.state.comment === '') {
       this.openModal(mark_id);
     } else if (mark_id === 17 && this.state.comment !== '') {
       this.openModal(mark_id);
@@ -190,9 +190,9 @@ class Document extends React.Component {
 
   openModal = (mark_id) => {
     switch (mark_id) {
-      case 3:
+      case 3: case 5:
         this.setState({
-          modal: <RefusalComment onSubmit={(comment) => this.handleComment(comment, 3)} onCloseModal={this.onCloseModal} />,
+          modal: <RefusalComment onSubmit={(comment) => this.handleComment(comment, mark_id)} onCloseModal={this.onCloseModal} />,
           modal_open: true
         });
         break;

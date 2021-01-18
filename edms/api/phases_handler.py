@@ -155,19 +155,19 @@ def handle_phase_marks(doc_request, phase_info):
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             new_mail('new', [{'id': recipient}], doc_request)
 
+    # Прикріплення підписаних скан-копій Договора, Підтвердження виконання заявки
+    elif phase_info['mark_id'] in [22, 24]:
+        recipient = vacation_check(doc_request['doc_author_id'])
+        new_mail('new', [{'id': recipient}], doc_request)
+        post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+
+    # Якщо користувач не обирає самостійно візуючих, але такі є обрані автоматично:
     elif not is_approval_module_used(doc_request['document_type']) and phase_info['mark_id'] == 17:
-        # Якщо користувач не обирає самостійно візуючих, але такі є обрані автоматично:
         recipients = get_phase_recipient_list(phase_info['id'])
         for recipient in recipients:
             recipient = vacation_check(recipient)
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             new_mail('new', [{'id': recipient}], doc_request)
-
-    # Прикріплення підписаних скан-копій Договора.
-    elif phase_info['mark_id'] == 22:
-        recipient = vacation_check(doc_request['doc_author_id'])
-        new_mail('new', [{'id': recipient}], doc_request)
-        post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
 
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
@@ -196,14 +196,14 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
             if phase_number == 1:
                 if is_approvals_used(doc_request['document_type']):
                     add_zero_phase_auto_approvals(doc_request, phase_info)
-            # 2. Опрацьовуємо документ, якщо ця фаза використовує mark = 20
-            # (автоматичне заповнення полей approved, approved_date)
+
             if phase_info['mark_id'] == 20:
+                # автоматичне заповнення полей approved, approved_date
                 post_auto_approve(doc_request)
                 new_phase(doc_request, phase_number+1)
-            # 2. Опрацьовуємо документ, якщо ця фаза використовує mark = 22
-            # (додавання засканованих підписаних документів)
-            elif phase_info['mark_id'] == 22:
+
+            elif phase_info['mark_id'] in [22, 24]:
+                # додавання засканованих підписаних документів, Підтвердження виконання заявки
                 handle_phase_marks(doc_request, phase_info)
             else:
                 # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):

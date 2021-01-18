@@ -828,6 +828,10 @@ def edms_mark(request):
                     else:
                         new_phase(doc_request, this_phase['phase'] + 1, [])
 
+                if doc_request['mark'] == '11':  # Виконано
+                    # Перетворюємо фазу документу на "Виконано"
+                    set_stage(doc_request['document'], 'done')
+
             # Відмовлено
             elif doc_request['mark'] == '3':
                 # Деактивуємо лише дану mark demand, якщо це погодження Договорів чи мішків
@@ -858,12 +862,22 @@ def edms_mark(request):
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
                     post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 9)
 
+                # Перетворюємо фазу документу на "Відмовлено"
+                set_stage(doc_request['document'], 'denied')
+
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
             # На доопрацювання
             elif doc_request['mark'] == '5':
-                # Деактивуємо всі MarkDemands даної фази, перетворюємо документ на чернетку
-                test = 'test'
+                # Деактивуємо MarkDemand цієї позначки
+                deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
+                # Повертаємо виконавцю в роботу
+                executant_id = Mark_Demand.objects.values_list('document_path__employee_seat_id', flat=True).filter(id=doc_request['mark_demand_id'])[0]
+                post_mark_demand(doc_request, executant_id, int(get_phase_id(doc_request))-1, 11)
+
+                # Перетворюємо фазу документу на "Відмовлено"
+                set_stage(doc_request['document'], 'in work')
 
             # Не заперечую
             elif doc_request['mark'] == '6':
@@ -1007,6 +1021,25 @@ def edms_mark(request):
 
                 add_contract_from_edms(doc_request, request.FILES, request.user)
 
+            # Взято у роботу
+            elif doc_request['mark'] == '23':
+                # Перетворюємо фазу документу на "Взято у роботу"
+                set_stage(doc_request['document'], 'in work')
+
+                # Деактивуємо MarkDemand інших виконавців
+                executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
+                    .filter(document=doc_request['document'])\
+                    .filter(mark_id=11)\
+                    .exclude(recipient_id=doc_request['employee_seat'])\
+                    .filter(is_active=True)
+                for md in executants_mark_demands:
+                    deactivate_mark_demand(doc_request, md)
+
+            # Підтвердження виконання
+            elif doc_request['mark'] == '24':
+                # Деактивуємо MarkDemand цієї позначки
+                deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
@@ -1046,7 +1079,7 @@ def edms_bag_design(request):
 def edms_tables(request):
     if request.method == 'GET':
 
-        doc_types_query = Document_Meta_Type.objects.filter(table_view=True).filter(is_active=True)
+        doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
         if not testing:

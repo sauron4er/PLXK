@@ -224,6 +224,16 @@ class DxTable extends React.PureComponent {
       };
       cell_value = '';
     }
+    
+    // stage
+    if (this.props.coloredStage && props.column.name === 'stage') {
+      const color = props.value === 'in work' ? 'yellow' : props.value === 'done' ? 'lightgreen' : props.value === 'denied' ? 'red'  : '';
+      style = {
+        backgroundColor: color,
+        color: color
+      };
+      cell_value = '';
+    }
 
     // autoActuality
     if (props.column.name === 'autoActuality' && (props.row.date_start || props.row.date_end)) {
