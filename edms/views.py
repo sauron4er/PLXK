@@ -451,7 +451,10 @@ def edms_get_doc(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     # Всю інформацію про документ записуємо сюди
 
-    if request.user.userprofile.is_it_admin or is_access_granted(request.user, request.POST['employee_seat'], doc):
+    # Якщо employee_seat нема в запиті, значить запит прийшов зі створення нового документа, доступ треба дати
+    if request.user.userprofile.is_it_admin or \
+            'employee_seat' not in request.POST or \
+            is_access_granted(request.user, request.POST['employee_seat'], doc):
         doc_info = {
             'access_granted': True,
             'id': pk,
