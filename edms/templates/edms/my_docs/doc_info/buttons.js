@@ -15,8 +15,8 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-
-    return (
+    
+      return (
       <>
         {/*Якщо є очікувана позначка:*/}
         <If condition={info.expected_mark}>

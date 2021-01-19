@@ -16,11 +16,7 @@ class Text extends React.Component {
 
   onDimensionsChange = (event) => {
     let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
-    const queue = getIndexByProperty(
-      newDocStore.new_document.dimensions,
-      'queue',
-      parseInt(text_box_id)
-    );
+    const queue = getIndexByProperty(newDocStore.new_document.dimensions, 'queue', parseInt(text_box_id));
     if (queue === -1) {
       newDocStore.new_document.dimensions.push({
         queue: parseInt(text_box_id),
@@ -30,7 +26,7 @@ class Text extends React.Component {
       newDocStore.new_document.dimensions[queue].text = event.target.value;
     }
   };
-  
+
   onTextChange = (event) => {
     let text_box_id = event.target.id.substring(5); // видаляємо 'text-' з ід інпуту
     const queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(text_box_id));
@@ -45,31 +41,27 @@ class Text extends React.Component {
   };
 
   getDimension = (queue) => {
+    // Цю херню можна переробити, забравши взагалі массив dimensions, а працюючи лише з text. Сервер так і робить.
     let text = '';
-    const dimension_queue = getIndexByProperty(
-      newDocStore.new_document.dimensions,
-      'queue',
-      parseInt(queue)
-    );
+    let dimension_queue = getIndexByProperty(newDocStore.new_document.dimensions, 'queue', parseInt(queue));
     if (dimension_queue !== -1) text = newDocStore.new_document.dimensions[dimension_queue].text;
+    else {
+      dimension_queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(queue));
+      if (dimension_queue !== -1) text = newDocStore.new_document.text[dimension_queue].text;
+    }
     return text;
   };
-  
+
   getText = (queue) => {
     let text = '';
-    const text_queue = getIndexByProperty(
-      newDocStore.new_document.text,
-      'queue',
-      parseInt(queue)
-    );
+    const text_queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(queue));
     if (text_queue !== -1) text = newDocStore.new_document.text[text_queue].text;
     return text;
   };
 
   render() {
     const {module_info, rows, cols, maxLength, type} = this.props;
-    const {text} = newDocStore.new_document;
-  
+
     return (
       <Choose>
         <When condition={type === 'dimensions'}>
@@ -92,7 +84,8 @@ class Text extends React.Component {
         </When>
         <Otherwise>
           <label className='full_width' htmlFor={'text-' + module_info.queue}>
-            <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
+            <If condition={module_info.required}>{'* '}</If>
+            {module_info.field_name}:
             <textarea
               className='form-control full_width'
               name='text'
@@ -105,7 +98,6 @@ class Text extends React.Component {
             />
             <small className='text-danger'>{module_info?.additional_info}</small>
           </label>
-
         </Otherwise>
       </Choose>
     );

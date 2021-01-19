@@ -320,7 +320,7 @@ class Document extends React.Component {
   render() {
     const {doc_id, archived, directSubs} = this.props;
     const {ready_for_render} = this.state;
-
+  
     if (ready_for_render === true) {
       if (doc_id !== 0) {
         const {info, deletable, comment, new_files, modal_open, modal} = this.state;
@@ -401,9 +401,9 @@ class Document extends React.Component {
                 <If condition={docInfoStore.view === 'new_document'}>
                   <NewDocument
                     doc={{
-                      id: docInfoStore.doc.id,
-                      type: docInfoStore.doc.type,
-                      type_id: docInfoStore.doc.type_id
+                      id: docInfoStore.info.id,
+                      type: docInfoStore.info.type,
+                      type_id: docInfoStore.info.type_id
                     }}
                     addDoc={this.addDoc}
                     status={'change'}

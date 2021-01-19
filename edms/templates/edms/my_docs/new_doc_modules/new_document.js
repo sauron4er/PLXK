@@ -151,7 +151,7 @@ class NewDocument extends React.Component {
             mockup_product_type: response.mockup_product_type || [],
             render_ready: true
           });
-          newDocStore.new_document.texts = response?.text_list || [];
+          newDocStore.new_document.text = response?.text_list || [];
           newDocStore.new_document.client = response?.client.id;
           newDocStore.new_document.client_name = response?.client.name;
           newDocStore.new_document.mockup_type = response?.mockup_type.id;
@@ -325,7 +325,7 @@ class NewDocument extends React.Component {
 
   render() {
     let {doc} = this.props;
-
+    
     const {
       open,
       type_modules,
