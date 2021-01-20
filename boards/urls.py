@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views, views_org_structure
+from . import views, views_org_structure, views_providers
 
 app_name = 'boards'
 
@@ -17,4 +17,6 @@ urlpatterns = [
     url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', views_org_structure.get_seat_info, name='get_seat_info'),
     url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
     url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
+
+    url(r'^providers/', views_providers.providers, name='providers'),
 ]

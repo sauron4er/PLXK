@@ -27,6 +27,7 @@
                             <a class="dropdown-item" href="{% url 'boards:edit_ads' %}">Редагування оголошень</a>
                         {% endif %}
                         <a class="dropdown-item" href="{% url 'boards:plhk_ads' %}" target="_blank">Оголошення</a>
+                        <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
 {#                        <a class="dropdown-item" href="{% url 'boards:tickets' %}">Заявки 1С8</a>#}
 {#                        <a class="dropdown-item" href="{% url 'boards:org_structure' %}">Організаційна структура</a>#}
 {#                        <a class="dropdown-item" href="{% url 'menu' %}" target="_blank">Меню столової</a>#}
@@ -58,10 +59,15 @@
                         <a class="dropdown-item" href="{% url 'docs:contracts' %}">Договори</a>
                         <a class="dropdown-item" href="{% url 'docs:index' %}">Система якості</a>
                         <a class="dropdown-item" href="{% url 'correspondence:index' %}">Листування з клієнтами</a>
-{#                        <a class="dropdown-item" href="#">Погоджені макети</a>#}
                         <a class="dropdown-item" href="{% url 'edms:my_docs' %}">Електронні документи</a>
                     </div>
              </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Контрагенти</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
+              </div>
+            </li>
               <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Довідники</a>
                         <div class="dropdown-menu">

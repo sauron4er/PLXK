@@ -13,7 +13,6 @@ from docs.api import contracts_api, contracts_mail_sender
 from edms.models import Employee_Seat
 
 
-
 @login_required(login_url='login')
 @try_except
 def index(request):

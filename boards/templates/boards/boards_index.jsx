@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import Fireworks from './plhk_ads/fireworks';
 import Reloader from './plhk_ads/reloader';
 import OrgStructure from './org_structure/org_structure';
+import ProvidersIndex from './providers';
 
 class Boards extends React.Component {
   state = {
@@ -13,13 +14,16 @@ class Boards extends React.Component {
     return (
       <Choose>
         <When condition={this.state.main_div === 'fireworks'}>
-          <Fireworks/> {/* Використовується на сторінці plhk_ads */}
+          <Fireworks/> {/* Р¤РµС”СЂРІРµСЂРєРё РґР»СЏ plhk_ads */}
         </When>
         <When condition={this.state.main_div === 'reloader'}>
-          <Reloader/> {/* Використовується на сторінці plhk_ads */}
+          <Reloader/> {/* РћРЅРѕРІР»РµРЅРЅСЏ СЃС‚РѕСЂС–РЅРєРё plhk_ads */}
         </When>
         <When condition={this.state.main_div === 'org_structure'}>
           <OrgStructure/>
+        </When>
+        <When condition={this.state.main_div === 'providers'}>
+          <ProvidersIndex/>
         </When>
       </Choose>
     );
