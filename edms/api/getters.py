@@ -121,11 +121,19 @@ def get_meta_doc_types():
 def is_access_granted(user, emp_seat, doc):
     emp_seats = user.userprofile.positions.all().values_list('id', flat=True)
 
-    if doc.employee_seat_id in emp_seats:
+    if doc.employee_seat_id in emp_seats:  # Це автор документу
         return True
-    if doc.path.filter(employee_seat__in=emp_seats).exists():
+    if doc.path.filter(employee_seat__in=emp_seats).exists():  # Мав документ у роботі
         return True
-    if doc.document_demands.filter(recipient__in=emp_seats).exists():
+    if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Мав документ у mark_demands
+        return True
+
+    # Є дозвіл на перегляд усіх документів цього мета-типу
+    is_view_granted = User_Doc_Type_View.objects\
+        .filter(employee=user.userprofile)\
+        .filter(meta_doc_type=doc.document_type.meta_doc_type)\
+        .filter(is_active=True).exists()
+    if is_view_granted:
         return True
 
     # TODO шукати усіх підлеглих усіх посад користувача, зараз шукаються лише підлеглі однієї посади
