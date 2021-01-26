@@ -65,6 +65,7 @@ module.exports = {
       'node_modules',
       path.resolve(__dirname, 'static'),
       path.resolve(__dirname, 'templates'),
+      path.resolve(__dirname, 'plxk'),
     ],
     extensions: ['.js', '.jsx', '.json'],
     alias: {
@@ -72,6 +73,7 @@ module.exports = {
       templates: path.resolve(__dirname, 'templates'),
       edms: path.resolve(__dirname, 'edms'),
       docs: path.resolve(__dirname, 'docs'),
+      plxk: path.resolve(__dirname, 'plxk'),
     }
   }
 };

@@ -3,6 +3,7 @@ from django.db import models
 
 class Product_type(models.Model):
     name = models.CharField(max_length=50)
+    direction = models.CharField(max_length=4, default='sale')  # Постачання чи продаж, buy чи sale
     is_active = models.BooleanField(default=True)
 
 

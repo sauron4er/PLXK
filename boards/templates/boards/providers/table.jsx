@@ -1,8 +1,6 @@
 'use strict';
 import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
-import {view, store} from '@risingstack/react-easy-state';
-import providersStore from './providers_store';
 
 const columns = [
   {name: 'id', title: 'id'},

@@ -1,9 +1,7 @@
 'use strict';
 import * as React from 'react';
-import {view, store} from '@risingstack/react-easy-state';
-import Provider from './provider';
+import Provider from './provider/provider';
 import ProvidersTable from './table';
-import providersStore from './providers_store';
 
 class ProvidersIndex extends React.Component {
   state = {
@@ -79,4 +77,4 @@ class ProvidersIndex extends React.Component {
   }
 }
 
-export default view(ProvidersIndex);
+export default ProvidersIndex;

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
+from production.models import Product_type
 
 
 class Board(models.Model):
@@ -29,7 +30,7 @@ class Post(models.Model):
 
 class Phones(models.Model):
     name = models.ForeignKey(User, related_name='pones', on_delete=models.RESTRICT)
-    n_main = models.CharField(max_length=4,null=True, blank=True)
+    n_main = models.CharField(max_length=4, null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)
     n_mobile = models.CharField(max_length=4, null=True, blank=True)
     n_out = models.CharField(max_length=11, null=True, blank=True)
@@ -40,4 +41,39 @@ class Phones(models.Model):
 class Ad(models.Model):
     ad = models.CharField(max_length=500)
     author = models.ForeignKey(UserProfile, related_name='ads', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Counterparty
+class Counterparty(models.Model):
+    name = models.CharField(max_length=100)
+    is_provider = models.BooleanField(default=True)  # True - постачальник, False - покупець
+    legal_address = models.CharField(max_length=200, null=True)
+    actual_address = models.CharField(max_length=200, null=True)
+    added = models.DateField(auto_now_add=True)
+    author = models.ForeignKey(UserProfile, related_name='providers_added', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Counterparty_product(models.Model):
+    counterparty = models.ForeignKey(Counterparty, related_name='products', on_delete=models.RESTRICT)
+    product_type = models.ForeignKey(Product_type, related_name='providers', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Counterparty_certificate(models.Model):
+    counterparty = models.ForeignKey(Counterparty, related_name='certificates', on_delete=models.RESTRICT)
+    type = models.CharField(max_length=10, null=True)  # FSC, PEFS, None
+    number = models.CharField(max_length=20)
+    start = models.DateField(null=True)
+    end = models.DateField(null=True)
+    old_plhk_number = models.CharField(max_length=10, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Counterparty_certificate_pause(models.Model):
+    certificate = models.ForeignKey(Counterparty_certificate, related_name='pauses', on_delete=models.RESTRICT)
+    pause_start = models.DateField(null=True)
+    pause_end = models.DateField(null=True)
     is_active = models.BooleanField(default=True)

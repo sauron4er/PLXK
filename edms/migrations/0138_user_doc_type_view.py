@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('is_active', models.BooleanField(default=True)),
                 ('employee', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='view_doc_types_permissions', to='accounts.userprofile')),
-                ('meta_doc_type', models.ForeignKey(null=True, on_delete=django.db.models.deletion.RESTRICT, related_name='users_with_view_permission', to='edms.document_meta_type')),
+                ('meta_doc_type', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='users_with_view_permission', to='edms.document_meta_type')),
             ],
         ),
     ]

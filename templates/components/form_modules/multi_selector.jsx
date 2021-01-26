@@ -55,7 +55,7 @@ class MultiSelector extends React.Component {
     list: [],
     fieldName: '',
     hint: '',
-    valueField: 'name', // Íàçâà ïîëÿ, ÿêå áóäå â³äîáðàæàòèñü ó ñåëåêòîð³ (äëÿ ïðàö³âíèê³â öå name)
+    valueField: 'name', // ÐÐ°Ð·Ð²Ð° Ð¿Ð¾Ð»Ñ, ÑÐºÐµ Ð±ÑƒÐ´Ðµ Ð²Ñ–Ð´Ð¾Ð±Ñ€Ð°Ð¶Ð°Ñ‚Ð¸ÑÑŒ Ñƒ ÑÐµÐ»ÐµÐºÑ‚Ð¾Ñ€Ñ– (Ð´Ð»Ñ Ð¿Ñ€Ð°Ñ†Ñ–Ð²Ð½Ð¸ÐºÑ–Ð² Ñ†Ðµ name)
     selectedName: '',
     onChange: () => {},
     addItem: () => {},

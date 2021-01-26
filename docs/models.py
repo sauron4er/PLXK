@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from accounts.models import Department
 # from edms.models import Document as EdmsDocument, Employee_Seat
 import edms.models as edms
+from boards.models import Counterparty
 
 
 class Doc_group(models.Model):
@@ -114,10 +115,11 @@ class Contract(models.Model):
     # Не можна перейменовувати ці поля, це вплине на автоматичний переніс Договорів з системи EDMS
     number = models.CharField(max_length=100, null=True, blank=True)
     company = models.CharField(max_length=3, null=True, blank=True, default='ТДВ')  # ТОВ або ТДВ
+    counterparty_link = models.ForeignKey(Counterparty, related_name='contracts', on_delete=models.RESTRICT, null=True)
     created_by = models.ForeignKey(User, related_name='added_contracts', on_delete=models.RESTRICT)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='updated_contracts', on_delete=models.RESTRICT)
     subject = models.CharField(max_length=1000)
-    counterparty = models.CharField(max_length=200)
+    counterparty = models.CharField(max_length=200)  # Заповнюється якшо не можна взяти контрагента з довідника
     nomenclature_group = models.CharField(max_length=100, null=True, blank=True)
     date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)
@@ -125,7 +127,8 @@ class Contract(models.Model):
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True, on_delete=models.RESTRICT)
     lawyers_received = models.BooleanField(default=False)
     edms_doc = models.ForeignKey(edms.Document, related_name='edms_docs', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
-
+    incoterms = models.CharField(max_length=5000, null=True)
+    purchase_terms = models.CharField(max_length=5000, null=True)
     basic_contract = models.ForeignKey('self', related_name='additional_contracts', null=True, blank=True, on_delete=models.RESTRICT)
     # Якщо це поле пусте, то документ є основним договором,
     # в іншому разі це додаткова угода і це поле вказує на основний договір
