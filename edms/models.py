@@ -126,7 +126,7 @@ class Document_Path(models.Model):
 class Mark_Demand(models.Model):
     document = models.ForeignKey(Document, related_name='document_demands', on_delete=models.RESTRICT)
     document_path = models.ForeignKey(Document_Path, related_name='path_demands', null=True, on_delete=models.RESTRICT)
-    comment = models.CharField(max_length=500, null=True, blank=True)
+    comment = models.CharField(max_length=5000, null=True, blank=True)
     employee_seat_control = models.ForeignKey(Employee_Seat, related_name='demands_controled', null=True, blank=True, on_delete=models.RESTRICT)
     recipient = models.ForeignKey(Employee_Seat, related_name='demands_employees', on_delete=models.RESTRICT)
     mark = models.ForeignKey(Mark, related_name='mark_demands', on_delete=models.RESTRICT)
