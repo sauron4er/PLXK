@@ -8,3 +8,10 @@ from plxk.api.try_except import try_except
 def providers(request):
     providers = []
     return render(request, 'boards/providers/providers.html', {'providers': providers})
+
+
+@login_required(login_url='login')
+@try_except
+def post_provider(request):
+    providers = []
+    return render(request, 'boards/providers/providers.html', {'providers': providers})

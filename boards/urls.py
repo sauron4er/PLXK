@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
     url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
 
+    url(r'^providers/post_provider/', views_providers.post_provider, name='post_provider'),
     url(r'^providers/', views_providers.providers, name='providers'),
 ]

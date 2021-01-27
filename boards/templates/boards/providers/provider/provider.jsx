@@ -59,11 +59,11 @@ class Provider extends React.Component {
     if (this.areAllFieldsFilled()) {
       
       let formData = new FormData();
-      formData.append('contract', JSON.stringify(contract));
+      formData.append('provider', JSON.stringify(providerStore.provider));
       
       axiosPostRequest('post_provider/', formData)
       .then((response) => {
-        location.reload();
+        // location.reload();
       })
       .catch((error) => notify(error));
     }
