@@ -1013,9 +1013,10 @@ def edms_mark(request):
                             post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
                         else:
                             post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
-                    new_mail('new', [{'id': doc_request['path_to_answer_author']}], doc_request)
-                elif not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
+                elif not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document'])\
+                        and int(doc_request['path_to_answer_author']) != doc_request['doc_author_id']:
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)
+                new_mail('answer', [{'id': doc_request['path_to_answer_author']}], doc_request)
 
             # Додано скан-копії підписаних документів
             elif doc_request['mark'] == '22':

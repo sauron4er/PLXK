@@ -775,16 +775,18 @@ def get_main_field(document):
         .filter(document_type_id=document.document_type_id)\
         .filter(is_main_field=True)[0]
 
-    main_field = ''
+    main_field = []
 
     if main_field_data['module_id'] == 16:  # Текст
         main_field = Doc_Text.objects.values_list('text', flat=True)\
             .filter(document=document)\
             .filter(queue_in_doc=main_field_data['queue'])\
-            .filter(is_active=True)[0]
+            .filter(is_active=True)
     elif main_field_data['module_id'] == 26:  # Клієнт
         main_field = Doc_Client.objects.values_list('client__name', flat=True) \
             .filter(document=document) \
-            .filter(is_active=True)[0]
+            .filter(is_active=True)
 
-    return main_field
+    if len(main_field) > 0:
+        return main_field[0]
+    return ''

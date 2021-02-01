@@ -36,3 +36,21 @@ def send_email_mark(doc_request, mail):
     message.attach(MIMEText(text, "plain"))
 
     send_email(mail, message.as_string())
+
+
+# Лист автору оригінального коментарю про отримання відповіді:
+def send_email_answer(doc_request, mail):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Ви отримали відповідь на коментар"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
+        .format(doc_request['document'])
+    text = 'Ви отримали відповідь на коментар до документу № {} ({}). {}' \
+        .format(doc_request['document'], doc_request['doc_type_name'], link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email(mail, message.as_string())
+

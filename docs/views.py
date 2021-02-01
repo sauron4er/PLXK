@@ -301,6 +301,7 @@ def get_deadline(article):
         return 'Постійно'
     return 'Без строку'
 
+
 @login_required(login_url='login')
 @try_except
 def reminders(request):
