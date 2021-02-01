@@ -54,3 +54,25 @@ def send_email_answer(doc_request, mail):
 
     send_email(mail, message.as_string())
 
+
+# Лист щодо створення нового документа особі, яка має доступ до перегляду всіх таких документів.
+# Наприклад Терещенко і заявки по 1С8:
+def send_email_supervisor(stage, doc_request, mail):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Створена нова заявка по 1С8" if type == 'new' else 'Змінився статус заявки по 1С8'
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
+        .format(doc_request['document'])
+
+    if stage == 'new':
+        text = 'На внутрішньому сайті ПЛХК опубліковано нову заявку по 1С8 № {}. Автор: {} {}' \
+            .format(doc_request['document'], doc_request['doc_author_name'], link)
+    else:
+        text = 'Новий статус заявки по 1С8 № {} (автор: {}) – "{}". {}' \
+            .format(doc_request['document'], doc_request['doc_author_name'], stage, link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email(mail, message.as_string())

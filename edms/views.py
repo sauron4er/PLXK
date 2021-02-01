@@ -15,6 +15,7 @@ from .api.getters import *
 from .api.setters import *
 from .api.tables_creater import create_table
 from .api.phases_handler import new_phase
+from .api.edms_mail_sender import send_email_supervisor
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -631,6 +632,7 @@ def edms_my_docs(request):
 
     elif request.method == 'POST':
         doc_request = request.POST.copy()
+
         doc_files = request.FILES.getlist('file')
 
         # Записуємо документ і отримуємо його ід, тип
@@ -670,6 +672,12 @@ def edms_my_docs(request):
         if doc_request['status'] == 'change':
             doc_request.update({'document': doc_request['old_id']})
             post_mark_deactivate(doc_request)
+
+        if not testing:
+            supervisors = get_supervisors(
+                doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+            for supervisor in supervisors:
+                send_email_supervisor('new', doc_request, supervisor)
 
         return HttpResponse(new_doc.pk)
 
@@ -834,6 +842,11 @@ def edms_mark(request):
                 if doc_request['mark'] == '11':  # Виконано
                     # Перетворюємо фазу документу на "Виконано"
                     set_stage(doc_request['document'], 'done')
+                    if not testing:
+                        supervisors = get_supervisors(
+                            doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                        for supervisor in supervisors:
+                            send_email_supervisor('Виконано', doc_request, supervisor)
 
             # Відмовлено
             elif doc_request['mark'] == '3':
@@ -867,6 +880,11 @@ def edms_mark(request):
 
                 # Перетворюємо фазу документу на "Відмовлено"
                 set_stage(doc_request['document'], 'denied')
+                if not testing:
+                    supervisors = get_supervisors(
+                        doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                    for supervisor in supervisors:
+                        send_email_supervisor('Відмовлено', doc_request, supervisor)
 
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
@@ -881,6 +899,11 @@ def edms_mark(request):
 
                 # Перетворюємо фазу документу на "Відмовлено"
                 set_stage(doc_request['document'], 'in work')
+                if not testing:
+                    supervisors = get_supervisors(
+                        doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                    for supervisor in supervisors:
+                        send_email_supervisor('Взято у роботу', doc_request, supervisor)
 
             # Не заперечую
             elif doc_request['mark'] == '6':
@@ -1038,6 +1061,12 @@ def edms_mark(request):
                     .filter(is_active=True)
                 for md in executants_mark_demands:
                     deactivate_mark_demand(doc_request, md)
+
+                if not testing:
+                    supervisors = get_supervisors(
+                        doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                    for supervisor in supervisors:
+                        send_email_supervisor('Взято у роботу', doc_request, supervisor)
 
             # Підтвердження виконання
             elif doc_request['mark'] == '24':
