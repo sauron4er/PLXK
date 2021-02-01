@@ -8,14 +8,14 @@ const columns = [
   {name: 'certificates', title: 'Сертифікати'},
   {name: 'added_date', title: 'Додано'},
   {name: 'author', title: 'Відповідальний'},
-  {name: 'autoActuality', title: ' '}
+  {name: 'status', title: ' '}
 ];
 
 const col_width = [
   {columnName: 'id', width: 30},
   {columnName: 'added_date', width: 90},
   {columnName: 'author', width: 180},
-  {columnName: 'autoActuality', width: 30}
+  {columnName: 'status', width: 30}
 ];
 
 class ProvidersTable extends React.Component {
@@ -30,6 +30,7 @@ class ProvidersTable extends React.Component {
         onRowClick={this.props.onRowClick}
         // height={this.props.mainDivHeight}
         filter
+        coloredStatus
       />
     );
   }

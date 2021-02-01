@@ -66,7 +66,7 @@ class ProvidersIndex extends React.Component {
           </div>
         </When>
         <Otherwise>
-          <button className='btn btn-sm btn-info my-2' onClick={() => this.changeView('table')}>
+          <button className='btn btn-sm btn-info my-2' onClick={() => location.reload()}>
             Назад
           </button>
           <br />

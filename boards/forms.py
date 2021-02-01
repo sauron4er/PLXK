@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic, Ad
+from .models import Topic, Ad, Counterparty
 
 
 class NewTopicForm(forms.ModelForm):
@@ -26,3 +26,9 @@ class NewAdForm(forms.ModelForm):
     class Meta:
         model = Ad
         fields = ['ad']
+
+
+# class ProviderForm(forms.ModelForm):
+#     class Meta:
+#         model = Counterparty
+#         fields = ('name', 'acting')

@@ -19,14 +19,14 @@ import {ToastContainer} from 'react-toastify';
 
 class Provider extends React.Component {
   state = {
-    data_received: false
+    loading: true
   };
 
   componentDidMount() {
     if (this.props.id !== 0) {
       this.getProvider();
     } else {
-      this.setState({data_received: true});
+      this.setState({loading: false});
       providerStore.edit_access = true;
     }
   }
@@ -40,7 +40,7 @@ class Provider extends React.Component {
       .then((response) => {
         this.setState({
           provider: response.provider,
-          data_received: true
+          loading: false
         });
         providerStore.edit_access = response.edit_access;
       })
@@ -63,7 +63,7 @@ class Provider extends React.Component {
       
       axiosPostRequest('post_provider/', formData)
       .then((response) => {
-        // location.reload();
+        location.reload();
       })
       .catch((error) => notify(error));
     }
@@ -78,42 +78,51 @@ class Provider extends React.Component {
   };
 
   render() {
+    const {loading} = this.state;
     return (
-      <div className='shadow-lg p-3 mb-5 bg-white rounded'>
-        <Tabs>
-          <TabList>
-            <Tab>Загальна інформація</Tab>
-            <Tab>Договори</Tab>
-            <Tab>Сертифікація</Tab>
-            <Tab>Постачальник на мапі</Tab>
-          </TabList>
-
-          <TabPanel>
-            <ProviderInfo />
-            <If condition={providerStore.edit_access}>
-              <div className='modal-footer'>
-                <SubmitButton className='btn-info' text='Зберегти' onClick={this.postProvider} />
-
-                <If condition={providerStore.provider.id !== 0}>
-                  <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateProvider} />
+      <Choose>
+        <When condition={!loading}>
+          <div className='shadow-lg p-3 mb-5 bg-white rounded'>
+            <Tabs>
+              <TabList>
+                <Tab>Загальна інформація</Tab>
+                <Tab>Договори</Tab>
+                <Tab>Сертифікація</Tab>
+                <Tab>Постачальник на мапі</Tab>
+              </TabList>
+        
+              <TabPanel>
+                <ProviderInfo/>
+                <If condition={providerStore.edit_access}>
+                  <div className='modal-footer'>
+                    <SubmitButton className='btn-info' text='Зберегти' onClick={this.postProvider}/>
+              
+                    <If condition={providerStore.provider.id !== 0}>
+                      <SubmitButton className='float-sm-right btn-danger' text='Видалити'
+                                    onClick={this.deactivateProvider}/>
+                    </If>
+                  </div>
                 </If>
-              </div>
-            </If>
-          </TabPanel>
-          <TabPanel>
-            <ProviderContracts />
-          </TabPanel>
-          <TabPanel>
-            <ProviderCertification />
-          </TabPanel>
-          <TabPanel>
-            <ProviderMap />
-          </TabPanel>
-        </Tabs>
-
-        {/*Вспливаюче повідомлення*/}
-        <ToastContainer />
-      </div>
+              </TabPanel>
+              <TabPanel>
+                <ProviderContracts/>
+              </TabPanel>
+              <TabPanel>
+                <ProviderCertification/>
+              </TabPanel>
+              <TabPanel>
+                <ProviderMap/>
+              </TabPanel>
+            </Tabs>
+      
+            {/*Вспливаюче повідомлення*/}
+            <ToastContainer/>
+          </div>
+        </When>
+        <Otherwise>
+          <Loader/>
+        </Otherwise>
+      </Choose>
     );
   }
 
