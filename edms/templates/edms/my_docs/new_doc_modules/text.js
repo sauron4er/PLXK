@@ -91,7 +91,7 @@ class Text extends React.Component {
               name='text'
               id={'text-' + module_info.queue}
               value={this.getText(module_info.queue)}
-              rows={rows}
+              rows={module_info.id === 69 ? 6 : rows} // Зміст заявки по 1С8 широкий.
               cols={cols}
               onChange={this.onTextChange}
               maxLength={maxLength}

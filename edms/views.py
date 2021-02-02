@@ -687,7 +687,15 @@ def edms_get_doc_type_modules(request, pk):
     if request.method == 'GET':
         doc_type = get_object_or_404(Document_Type, pk=pk)
         doc_type_modules = get_doc_type_modules(doc_type)
-        return HttpResponse(json.dumps(doc_type_modules))
+        main_field_queue = Document_Type_Module.objects.values_list('queue', flat=True)\
+            .filter(document_type=doc_type)\
+            .filter(is_main_field=True)\
+            .filter(is_active=True)[0]
+        response = {
+            'doc_type_modules': doc_type_modules,
+            'main_field_queue': main_field_queue
+        }
+        return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
