@@ -310,6 +310,9 @@ class NewDocument extends React.Component {
         return newDocStore.new_document.text[x].text
       }
     }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'client') {
+      return newDocStore.new_document.client_name
+    }
     return 0
   }
 
