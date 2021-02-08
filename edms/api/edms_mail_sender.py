@@ -59,7 +59,8 @@ def send_email_answer(doc_request, mail):
 # Наприклад Терещенко і заявки по 1С8:
 def send_email_supervisor(stage, doc_request, mail):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Створена нова заявка по 1С8" if type == 'new' else 'Змінився статус заявки по 1С8'
+    message["Subject"] = "Створена нова заявка по 1С8" if stage == 'new' \
+        else 'Змінився статус заявки по 1С8 ({})'.format(stage)
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 
