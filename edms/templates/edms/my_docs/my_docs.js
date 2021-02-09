@@ -93,9 +93,10 @@ class MyDocs extends React.Component {
   };
 
   // Додає новий документ, створений у компоненті NewDoc, у список
-  addDoc = (id, type, date, type_id, status) => {
+  addDoc = (id, type, main_field, date, type_id, status) => {
     const new_doc = {
       author_seat_id: parseInt(localStorage.getItem('my_seat')),
+      main_field: main_field,
       date: date,
       emp_seat_id: parseInt(localStorage.getItem('my_seat')),
       id: id,

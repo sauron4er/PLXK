@@ -790,3 +790,15 @@ def get_main_field(document):
     if len(main_field) > 0:
         return main_field[0]
     return ''
+
+
+@try_except
+def get_supervisors(doc_type):
+    meta_doc_type = Document_Type.objects.values_list('meta_doc_type', flat=True).filter(id=doc_type)[0]
+    supervisors = User_Doc_Type_View.objects.values_list('employee__user__email', flat=True)\
+        .filter(meta_doc_type_id=meta_doc_type)\
+        .filter(send_mails=True)\
+        .filter(is_active=True)
+    if supervisors:
+        return supervisors
+    return []

@@ -49,7 +49,8 @@ class NewDocument extends React.Component {
     files: [],
     days: [],
     gate: 1,
-    carry_out_items: []
+    carry_out_items: [],
+    main_field_queue: 0
   };
 
   onChange = (event) => {
@@ -116,7 +117,10 @@ class NewDocument extends React.Component {
     // Отримуємо з бд список модулів, які використовує даний тип документа:
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.type_id + '/')
       .then((response) => {
-        this.setState({type_modules: response});
+        this.setState({
+          type_modules: response.doc_type_modules,
+          main_field_queue: response.main_field_queue
+        });
       })
       .catch((error) => notify(error));
 
@@ -198,7 +202,8 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
-        } else if ([16, 32].includes(module.module_id)) { // text, select
+        } else if ([16, 32].includes(module.module_id)) {
+          // text, select
           if (!this.isTextFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
@@ -239,16 +244,13 @@ class NewDocument extends React.Component {
         let doc_modules = {};
 
         type_modules.map((module) => {
-          if (
-            ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(
-              module.module
-            )
-          ) {
+          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(module.module)) {
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
             };
-          } else if ([16, 32].includes(module.module_id)) { // text, select
+          } else if ([16, 32].includes(module.module_id)) {
+            // text, select
             doc_modules.text = newDocStore.new_document.text;
           } else if ([29, 33].includes(module.module_id)) {
             // Модулі auto_approved, phases не створюються у браузері
@@ -260,7 +262,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.state[module.module];
           }
         });
-  
+
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_modules', JSON.stringify(doc_modules));
@@ -284,8 +286,8 @@ class NewDocument extends React.Component {
         axiosPostRequest('', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
-            this.props.addDoc(response, doc.type, getToday(), doc.type_id, type);
-            newDocStore.clean_fields()
+            this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
+            newDocStore.clean_fields();
 
             // видаляємо чернетку:
             if (status === 'draft') this.delDoc();
@@ -301,6 +303,18 @@ class NewDocument extends React.Component {
       notify(e);
     }
   };
+  
+  getMainField = () => {
+    for (const x in newDocStore.new_document.text) {
+      if (newDocStore.new_document.text[x].queue === this.state.main_field_queue) {
+        return newDocStore.new_document.text[x].text
+      }
+    }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'client') {
+      return newDocStore.new_document.client_name
+    }
+    return 0
+  }
 
   delDoc = () => {
     if (this.props.doc.id !== 0) {
@@ -325,7 +339,7 @@ class NewDocument extends React.Component {
 
   render() {
     let {doc} = this.props;
-    
+
     const {
       open,
       type_modules,

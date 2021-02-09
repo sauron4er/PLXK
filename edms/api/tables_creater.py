@@ -5,6 +5,7 @@ from plxk.api.datetime_normalizers import datetime_to_json
 
 testing = settings.STAS_DEBUG
 
+
 @try_except
 # Функція, яка повертає Boolean чи використовує документ фазу auto_approved
 def create_table(doc_type):
@@ -27,7 +28,7 @@ def get_column_widths(modules):
         {'columnName': 'id', 'width': 40},
         {'columnName': 'author', 'width': 200},
         {'columnName': 'status', 'width': 30},
-        {'columnName': 'stage', 'width': 30},
+        {'columnName': 'stage', 'width': 100},
         {'columnName': 'importancy', 'width': 90},
         {'columnName': 'files', 'width': 300},
         {'columnName': 'choose_company', 'width': 85}]
@@ -103,7 +104,7 @@ def get_table_rows(doc_type, modules):
         'author': doc.employee_seat.employee.pip,
         'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
-        'stage': doc.stage if doc.stage is not None else '',
+        'stage': get_stage(doc.stage),
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
         'mockup_product_type': get_mockup_product_type(modules, doc),
@@ -120,6 +121,17 @@ def get_table_rows(doc_type, modules):
                 document.update({text['name']: text['text']})
 
     return documents_arranged
+
+
+@try_except
+def get_stage(stage):
+    if stage == 'done':
+        return 'Виконано'
+    elif stage == 'in work':
+        return 'В роботі'
+    elif stage == 'denied':
+        return 'Відмовлено'
+    return 'Ініційовано'
 
 
 @try_except
