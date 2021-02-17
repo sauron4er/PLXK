@@ -51,6 +51,7 @@ class Counterparty(models.Model):
     is_provider = models.BooleanField(default=True)  # True - постачальник, False - покупець
     legal_address = models.CharField(max_length=200, null=True)
     actual_address = models.CharField(max_length=200, null=True)
+    edrpou = models.CharField(max_length=8, null=True)
     added = models.DateField(auto_now_add=True)
     author = models.ForeignKey(UserProfile, related_name='providers_added', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

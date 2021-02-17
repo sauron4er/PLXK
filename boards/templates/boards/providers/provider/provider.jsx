@@ -38,10 +38,8 @@ class Provider extends React.Component {
   getProvider = () => {
     axiosGetRequest('get_provider/' + this.props.id + '/')
       .then((response) => {
-        this.setState({
-          provider: response.provider,
-          loading: false
-        });
+        this.setState({loading: false});
+        providerStore.provider = response.provider
         providerStore.edit_access = response.edit_access;
       })
       .catch((error) => notify(error));
@@ -79,6 +77,7 @@ class Provider extends React.Component {
 
   render() {
     const {loading} = this.state;
+    const {provider} = providerStore;
     return (
       <Choose>
         <When condition={!loading}>
@@ -98,7 +97,7 @@ class Provider extends React.Component {
                     <SubmitButton className='btn-info' text='Зберегти' onClick={this.postProvider}/>
               
                     <If condition={providerStore.provider.id !== 0}>
-                      <SubmitButton className='float-sm-right btn-danger' text='Видалити'
+                      <SubmitButton className='float-sm-right btn-danger btn-sm' text='Видалити'
                                     onClick={this.deactivateProvider}/>
                     </If>
                   </div>

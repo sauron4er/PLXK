@@ -14,6 +14,7 @@ def providers(request):
         'id': provider.pk,
         'name': provider.name,
         'certificates': [],
+        'edrpou': provider.edrpou,
         'added': convert_to_localtime(provider.added, 'day'),
         'author': provider.author.pip,
         'status': 'ok'
@@ -28,25 +29,35 @@ def get_provider(request, pk):
     provider = {
         'id': provider_instance.id,
         'name': provider_instance.name,
-        'certificates': [],
+        'legal_address': provider_instance.legal_address,
+        'actual_address': provider_instance.actual_address,
+        'edrpou': provider_instance.edrpou,
         'added': convert_to_localtime(provider_instance.added, 'day'),
         'author': provider_instance.author.pip,
         'status': 'ok'
     }
-    a=1
+    edit_access = True
+    response = {'provider': provider, 'edit_access': edit_access}
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @try_except
 def post_provider(request):
-    provider = json.loads(request.POST.copy()['provider'])
+    data = json.loads(request.POST.copy()['provider'])
 
-    new_provider = Counterparty(name=provider['name'],
-                                is_provider=True,
-                                legal_address=provider['legal_address'],
-                                actual_address=provider['actual_address'],
-                                author=request.user.userprofile)
+    if data['id'] == 0:
+        provider = Counterparty(is_provider=True, author=request.user.userprofile)
+    else:
+        provider = get_object_or_404(Counterparty, pk=data['id'])
 
-    new_provider.save()
+    provider.name = data['name']
+    if data['legal_address'] != '':
+        provider.legal_address = data['legal_address']
+    if data['actual_address'] != '':
+        provider.actual_address = data['actual_address']
+    if data['edrpou'] != '':
+        provider.edrpou = data['edrpou']
 
-    return HttpResponse(new_provider.pk)
+    provider.save()
+    return HttpResponse(provider.pk)

@@ -6,14 +6,14 @@ const columns = [
   {name: 'id', title: 'id'},
   {name: 'name', title: 'Назва'},
   {name: 'certificates', title: 'Сертифікати'},
-  {name: 'added_date', title: 'Додано'},
+  {name: 'added', title: 'Додано'},
   {name: 'author', title: 'Відповідальний'},
   {name: 'status', title: ' '}
 ];
 
 const col_width = [
   {columnName: 'id', width: 30},
-  {columnName: 'added_date', width: 90},
+  {columnName: 'added', width: 90},
   {columnName: 'author', width: 180},
   {columnName: 'status', width: 30}
 ];

@@ -1,5 +1,4 @@
 import {store} from '@risingstack/react-easy-state';
-import {axiosGetRequest} from 'templates/components/axios_requests';
 
 const providerStore = store({
   edit_access: false,
@@ -8,6 +7,7 @@ const providerStore = store({
     name: '',
     legal_address: '',
     actual_address: '',
+    edrpou: '',
     added_date: '',
     author: '',
     is_active: true
@@ -18,6 +18,7 @@ const providerStore = store({
       name: '',
       legal_address: '',
       actual_address: '',
+      edrpou: '',
       added_date: '',
       author: '',
       is_active: true

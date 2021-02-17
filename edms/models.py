@@ -297,7 +297,7 @@ class Doc_Contract(models.Model):
 # Доступ користувачів до перегляду усіх документів певного типу
 class User_Doc_Type_View(models.Model):
     employee = models.ForeignKey(accounts.UserProfile, related_name='view_doc_types_permissions', on_delete=models.RESTRICT)
-    meta_doc_type = models.ForeignKey(Document_Meta_Type, related_name='users_with_view_permission', null=True, on_delete=models.RESTRICT)
+    meta_doc_type = models.ForeignKey(Document_Meta_Type, related_name='users_with_view_permission', on_delete=models.RESTRICT)
     send_mails = models.BooleanField(default=False)  # Надсилання листів про створення нових документів/зміну статусу
     is_active = models.BooleanField(default=True)
 
