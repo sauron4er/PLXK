@@ -580,16 +580,7 @@ def edms_my_docs(request):
 
         my_seats = get_my_seats(request.user.userprofile.id)
 
-        new_docs_query = Document_Type.objects.filter(is_active=True)
-
-        # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
-        if not testing:
-            new_docs_query = new_docs_query.filter(testing=False)
-
-        new_docs = [{  # Список документів, які може створити юзер
-            'id': doc_type.id,
-            'description': doc_type.description,
-        } for doc_type in new_docs_query]  # В режимі тестування показуються типи документів, що тестуються
+        new_docs = get_allowed_new_doc_types(request)
 
         my_docs = [{  # Список документів, створених даним юзером
             'id': path.document.id,
@@ -674,10 +665,10 @@ def edms_my_docs(request):
             post_mark_deactivate(doc_request)
 
         if not testing:
-            supervisors = get_supervisors(
-                doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+            supervisors = get_supervisors(doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
             for supervisor in supervisors:
-                send_email_supervisor('new', doc_request, supervisor)
+                if supervisor['emp_id'] != request.user.userprofile.id:
+                    send_email_supervisor('new', doc_request, supervisor['mail'])
 
         return HttpResponse(new_doc.pk)
 
@@ -905,13 +896,13 @@ def edms_mark(request):
                 executant_id = Mark_Demand.objects.values_list('document_path__employee_seat_id', flat=True).filter(id=doc_request['mark_demand_id'])[0]
                 post_mark_demand(doc_request, executant_id, int(get_phase_id(doc_request))-1, 11)
 
-                # Перетворюємо фазу документу на "Відмовлено"
+                # Перетворюємо фазу документу на "Взято у роботу"
                 set_stage(doc_request['document'], 'in work')
                 if not testing:
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('Взято у роботу', doc_request, supervisor)
+                        send_email_supervisor('На доопрацювання', doc_request, supervisor)
 
             # Не заперечую
             elif doc_request['mark'] == '6':
@@ -1078,6 +1069,8 @@ def edms_mark(request):
 
             # Підтвердження виконання
             elif doc_request['mark'] == '24':
+                # Перетворюємо фазу документу на "Підтверджено"
+                set_stage(doc_request['document'], 'confirm')
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 

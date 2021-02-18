@@ -108,7 +108,7 @@ class Document(models.Model):
     approved_date = models.DateTimeField(blank=True, null=True)
     company = models.CharField(max_length=3, null=True, blank=True, default='ТДВ')  # ТОВ або ТДВ
     testing = models.BooleanField(default=False)
-    stage = models.CharField(max_length=7, null=True)  # 'in work', 'denied', 'done', None (created)
+    stage = models.CharField(max_length=7, null=True)  # 'in work', 'denied', 'done', 'confirm' None (created)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
 
@@ -213,21 +213,6 @@ class Doc_Approval(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Чинність документу
-# class Doc_Validity(models.Model):
-#     document = models.ForeignKey(Document, related_name='document_validity', on_delete=models.RESTRICT)
-#     is_valid = models.BooleanField(default=True)
-#     validity_start = models.DateTimeField(null=True)
-#     validity_end = models.DateTimeField(null=True)
-
-
-# Погодження документу
-# class Doc_Sign(models.Model):
-#     document = models.ForeignKey(Document, related_name='document_sign')
-#     signed_path = models.ForeignKey(Document_Path, related_name='path_sign', null=True)
-#     is_active = models.BooleanField(default=True)
-
-
 # Адресат документу
 class Doc_Recipient(models.Model):
     document = models.ForeignKey(Document, related_name='recipients', on_delete=models.RESTRICT)
@@ -301,3 +286,10 @@ class User_Doc_Type_View(models.Model):
     send_mails = models.BooleanField(default=False)  # Надсилання листів про створення нових документів/зміну статусу
     is_active = models.BooleanField(default=True)
 
+
+class Doc_Type_Create_Rights(models.Model):
+    document_meta_type = models.ForeignKey(Document_Meta_Type, related_name='create_rights', on_delete=models.CASCADE)
+    department = models.ForeignKey(accounts.Department, related_name='doc_type_create_rights', null=True, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
+    emp_seat = models.ForeignKey(Employee_Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)

@@ -104,7 +104,6 @@ class Tables extends React.Component {
                 <If condition={header.length}>
                   <DxTable
                     rows={rows}
-                    // rows={test_rows}
                     columns={header}
                     colWidth={column_widths}
                     onRowClick={this.onRowClick}

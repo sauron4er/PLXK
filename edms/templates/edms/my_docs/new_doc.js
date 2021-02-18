@@ -22,9 +22,7 @@ class NewDoc extends React.Component {
 
   // обнуляє селект при закритті модального вікна
   onCloseModal = () => {
-    this.setState({
-      new_doc_type_id: 0
-    });
+    this.setState({new_doc_type_id: 0});
   };
 
   render() {

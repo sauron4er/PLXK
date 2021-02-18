@@ -227,8 +227,21 @@ class DxTable extends React.PureComponent {
 
     // stage
     if (this.props.coloredStage && props.column.name === 'stage') {
-      const color =
-        props.value === 'В роботі' ? 'yellow' : props.value === 'Виконано' ? 'lightgreen' : props.value === 'Відмовлено' ? 'red' : '';
+      let color = ''
+      switch (props.value) {
+        case 'В роботі':
+          color = 'yellow';
+          break;
+        case 'Відмовлено':
+          color = 'red';
+          break;
+        case 'Виконано':
+          color = 'lightblue';
+          break;
+        case 'Підтверджено':
+          color = 'lightgreen';
+          break;
+      }
       style = {
         padding: 0,
         paddingLeft: 5,

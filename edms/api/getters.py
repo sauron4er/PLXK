@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils.timezone import datetime
+from django.db.models import Exists, OuterRef
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
@@ -795,10 +796,43 @@ def get_main_field(document):
 @try_except
 def get_supervisors(doc_type):
     meta_doc_type = Document_Type.objects.values_list('meta_doc_type', flat=True).filter(id=doc_type)[0]
-    supervisors = User_Doc_Type_View.objects.values_list('employee__user__email', flat=True)\
+    supervisors = [{
+            'emp_id': item.employee.id,
+            'mail': item.employee.user.email,
+        } for item in User_Doc_Type_View.objects\
         .filter(meta_doc_type_id=meta_doc_type)\
         .filter(send_mails=True)\
-        .filter(is_active=True)
+        .filter(is_active=True)]
     if supervisors:
         return supervisors
     return []
+
+
+@try_except
+def get_allowed_new_doc_types(request):
+    # Документи, які можна створювати всім, не мають записів у таблиці edms_doc_type_create_rights
+    free_doc_types = Document_Type.objects\
+        .filter(is_active=True)\
+        .filter(~Exists(Doc_Type_Create_Rights.objects.filter(document_meta_type=OuterRef('meta_doc_type'))))
+
+    # Права відділу, до якого відноситься UserProfile
+    dep_doc_types = Document_Type.objects\
+        .filter(is_active=True)\
+        .filter(Exists(Doc_Type_Create_Rights.objects
+                       .filter(document_meta_type=OuterRef('meta_doc_type'))
+                       .filter(department=request.user.userprofile.department)))
+
+    if not testing:
+        free_doc_types = free_doc_types.filter(testing=False)
+        dep_doc_types = dep_doc_types.filter(testing=False)
+
+    doc_types = free_doc_types.union(dep_doc_types)
+
+    return [{  # Список документів, які може створити юзер
+        'id': doc_type.id,
+        'description': doc_type.description,
+    } for doc_type in doc_types]  # В режимі тестування показуються типи документів, що тестуються
+
+    # Права відділу, до якого відноситься конкретна посада (може і не треба?)
+    # Права конкретної посади
+    # Права конкретної людино-посади
