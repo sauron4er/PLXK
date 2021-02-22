@@ -7,8 +7,6 @@ class Stage extends React.Component {
   render() {
     const {stage} = this.props;
   
-    console.log(stage);
-  
     return (
       <div className='mt-2'>
         Стадія виконання:
@@ -20,7 +18,10 @@ class Stage extends React.Component {
             <span className='ml-1 p-1 border bg-danger'>Відмовлено</span>
           </When>
           <When condition={stage==='done'}>
-            <span className='ml-1 p-1 border bg-success'>Виконано</span>
+            <span className='ml-1 p-1 border bg-info'>Виконано</span>
+          </When>
+          <When condition={stage==='confirm'}>
+            <span className='ml-1 p-1 border bg-success'>Виконання підтверджено</span>
           </When>
           <Otherwise>
             <span className='ml-1 p-1 border'>Ініційовано</span>

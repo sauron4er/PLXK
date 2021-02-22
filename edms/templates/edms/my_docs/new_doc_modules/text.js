@@ -91,7 +91,8 @@ class Text extends React.Component {
               name='text'
               id={'text-' + module_info.queue}
               value={this.getText(module_info.queue)}
-              rows={module_info.id === 69 ? 6 : rows} // Зміст заявки по 1С8 широкий.
+              // Переробити на окреме поле в таблиці doc_type_modules - big_text, яке буде визначати чи високе текстове поле
+              rows={[69, 77].includes(module_info.id) ? 6 : rows} // Зміст заявок високий.
               cols={cols}
               onChange={this.onTextChange}
               maxLength={maxLength}

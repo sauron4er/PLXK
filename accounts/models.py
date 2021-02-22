@@ -16,7 +16,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.RESTRICT)
     pip = models.CharField(max_length=100,blank=True,null=True)
     avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар', blank=True, null=True)
-    department = models.ForeignKey(Department,blank=True,null=True, on_delete=models.RESTRICT, related_name='+', default=1)
+    department = models.ForeignKey(Department, blank=True, null=True, on_delete=models.RESTRICT, related_name='+', default=1)
     is_ticked_admin = models.BooleanField(default=False)
     is_orders_admin = models.BooleanField(default=False)
     is_it_admin = models.BooleanField(default=False)

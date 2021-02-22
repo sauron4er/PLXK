@@ -127,6 +127,8 @@ def get_table_rows(doc_type, modules):
 def get_stage(stage):
     if stage == 'done':
         return 'Виконано'
+    elif stage == 'confirm':
+        return 'Підтверджено'
     elif stage == 'in work':
         return 'В роботі'
     elif stage == 'denied':
