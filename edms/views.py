@@ -845,7 +845,7 @@ def edms_mark(request):
                         supervisors = get_supervisors(
                             doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                         for supervisor in supervisors:
-                            send_email_supervisor('Виконано', doc_request, supervisor)
+                            send_email_supervisor('Виконано', doc_request, supervisor['mail'])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
@@ -883,7 +883,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('Відмовлено', doc_request, supervisor)
+                        send_email_supervisor('Відмовлено', doc_request, supervisor['mail'])
 
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
@@ -902,7 +902,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('На доопрацювання', doc_request, supervisor)
+                        send_email_supervisor('На доопрацювання', doc_request, supervisor['mail'])
 
             # Не заперечую
             elif doc_request['mark'] == '6':
@@ -1065,7 +1065,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('Взято у роботу', doc_request, supervisor)
+                        send_email_supervisor('Взято у роботу', doc_request, supervisor['mail'])
 
             # Підтвердження виконання
             elif doc_request['mark'] == '24':
