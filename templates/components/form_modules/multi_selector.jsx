@@ -5,7 +5,7 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
 
 class MultiSelector extends React.Component {
   render() {
-    const {list, selectedName, valueField, onChange, fieldName, disabled, addItem, hint} = this.props;
+    const {list, selectedName, valueField, onChange, fieldName, disabled, addItem, hint, withAddButton} = this.props;
 
     return (
       <>
@@ -33,17 +33,19 @@ class MultiSelector extends React.Component {
                 );
               })}
             </select>
-            <button
-              className={
-                selectedName
-                  ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
-                  : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
-              }
-              onClick={addItem}
-              disabled={disabled}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
+            <If condition={withAddButton}>
+              <button
+                className={
+                  selectedName
+                    ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
+                    : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
+                }
+                onClick={addItem}
+                disabled={disabled}
+              >
+                <FontAwesomeIcon icon={faPlus}/>
+              </button>
+            </If>
           </div>
         </div>
         <small>{hint}</small>
@@ -59,6 +61,7 @@ class MultiSelector extends React.Component {
     selectedName: '',
     onChange: () => {},
     addItem: () => {},
+    withAddButton: true,
     disabled: true
   };
 }

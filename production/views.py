@@ -3,7 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from correspondence.forms import NewClientForm, DelClientForm
-from production.forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm
+from production.forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
+    NewProductTypeForm, DelProductForm
 from production.api.getters import *
 
 
@@ -12,21 +13,11 @@ def get_clients(request, product_type):
     return HttpResponse(json.dumps(get_clients_list(product_type)))
 
 
-@try_except
-def get_mockup_types(request):
-    return HttpResponse(json.dumps(get_mockup_types_list()))
-
-
-@try_except
-def get_mockup_product_types(request):
-    return HttpResponse(json.dumps(get_mockup_product_types_list()))
-
-
 @login_required(login_url='login')
 @try_except
 def clients(request):
     clients_list = get_clients_list()
-    product_types = get_product_types()
+    product_types = get_products_list('sell')
     return render(request, 'production/clients.html', {'clients': clients_list, 'product_types': product_types})
 
 
@@ -45,6 +36,40 @@ def del_client(request):
     if form.is_valid():
         form.save()
         return HttpResponseRedirect('clients.html')
+
+
+@try_except
+def get_products(request, direction):
+    return HttpResponse(json.dumps(get_products_list(direction)))
+
+
+@login_required(login_url='login')
+@try_except
+def products(request):
+    products_list = get_products_list()
+    return render(request, 'production/products.html', {'products': products_list})
+
+
+@try_except
+def new_product(request):
+    form = NewProductTypeForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('products.html')
+
+
+@try_except
+def del_product(request):
+    product = get_object_or_404(Product_type, pk=request.POST.get('id'))
+    form = DelProductForm(request.POST, instance=product)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('products.html')
+
+
+@try_except
+def get_mockup_types(request):
+    return HttpResponse(json.dumps(get_mockup_types_list()))
 
 
 @login_required(login_url='login')
@@ -71,6 +96,11 @@ def del_mockup_type(request):
     if form.is_valid():
         form.save()
         return HttpResponseRedirect('mockup_types.html')
+
+
+@try_except
+def get_mockup_product_types(request):
+    return HttpResponse(json.dumps(get_mockup_product_types_list()))
 
 
 @login_required(login_url='login')

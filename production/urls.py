@@ -8,6 +8,10 @@ urlpatterns = [
     url(r'^new_client', views.new_client, name='new_client'),
     url(r'^del_client', views.del_client, name='del_client'),
 
+    url(r'^products', views.products, name='products'),
+    url(r'^new_product', views.new_product, name='new_product'),
+    url(r'^del_product', views.del_product, name='del_product'),
+
     url(r'^mockup_types', views.mockup_types, name='mockup_types'),
     url(r'^new_mockup_type', views.new_mockup_type, name='new_mockup_type'),
     url(r'^del_mockup_type', views.del_mockup_type, name='del_mockup_type'),

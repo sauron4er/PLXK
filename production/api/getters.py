@@ -48,9 +48,13 @@ def get_clients_list(product_type=''):
 
 
 @try_except
-def get_product_types():
+def get_products_list(direction=''):
+    products = Product_type.objects.all().filter(is_active=True).order_by('name')
+    if direction != '':
+        products = products.filter(direction=direction)
+
     return [{
-        'id': product_type.pk,
-        'name': product_type.name
-    } for product_type in
-        Product_type.objects.all().filter(is_active=True)]
+        'id': product.pk,
+        'name': product.name,
+        'direction': 'Продаємо' if product.direction == 'sell' else 'Купуємо',
+    } for product in products]

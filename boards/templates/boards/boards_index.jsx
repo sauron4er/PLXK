@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import Fireworks from './plhk_ads/fireworks';
 import Reloader from './plhk_ads/reloader';
 import OrgStructure from './org_structure/org_structure';
-import ProvidersIndex from './providers';
+import ProvidersIndex from './counterparty';
 
 class Boards extends React.Component {
   state = {
