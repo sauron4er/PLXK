@@ -22,6 +22,23 @@ class Tables extends React.Component {
 
   componentDidMount() {
     this.setState({main_div_height: this.mainDivRef.clientHeight});
+
+    // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
+    const arr = window.location.href.split('/');
+    const last_href_piece = parseInt(arr[arr.length - 2]);
+    const is_link = !isNaN(last_href_piece);
+
+    if (is_link) {
+      this.setState(
+        {
+          doc_type_id: last_href_piece,
+          loading: true
+        },
+        () => {
+          this.getTable();
+        }
+      );
+    }
   }
 
   onChange = (event) => {
@@ -32,7 +49,9 @@ class Tables extends React.Component {
         doc_type_name: event.target.options[selectedIndex].getAttribute('value'),
         loading: event.target.options[selectedIndex].getAttribute('data-key') !== '0'
       },
-      () => {this.getTable();}
+      () => {
+        this.getTable();
+      }
     );
   };
 
@@ -66,29 +85,14 @@ class Tables extends React.Component {
   };
 
   render() {
-    const {
-      main_div_height,
-      doc_types,
-      doc_type_name,
-      column_widths,
-      header,
-      rows,
-      clicked_row_id,
-      loading
-    } = this.state;
-  
+    const {main_div_height, doc_types, doc_type_name, column_widths, header, rows, clicked_row_id, loading} = this.state;
+
     return (
       <>
         <Choose>
           <When condition={!loading}>
             <div className='css_main_div'>
-              <select
-                className='form-control mx-3 mx-lg-0'
-                id='doc_type'
-                name='doc_type'
-                value={doc_type_name}
-                onChange={this.onChange}
-              >
+              <select className='form-control mx-3 mx-lg-0' id='doc_type' name='doc_type' value={doc_type_name} onChange={this.onChange}>
                 <option key={0} data-key={0} value='0'>
                   Оберіть тип документу
                 </option>
@@ -127,10 +131,7 @@ class Tables extends React.Component {
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 50}}}
         >
-          <Document
-            doc_id={clicked_row_id}
-            closed={true}
-          />
+          <Document doc_id={clicked_row_id} closed={true} />
         </Modal>
       </>
     );
@@ -141,4 +142,4 @@ class Tables extends React.Component {
   };
 }
 
-export default Tables
+export default Tables;

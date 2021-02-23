@@ -55,6 +55,9 @@ urlpatterns = [
     url(r'^sub_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
     url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
     url(r'^tables/', edms_tables, name='tables'),
+
 ]

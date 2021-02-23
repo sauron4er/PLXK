@@ -1110,10 +1110,11 @@ def edms_bag_design(request):
 
 
 @login_required(login_url='login')
-def edms_tables(request):
+def edms_tables(request, meta_doc_type=''):
     if request.method == 'GET':
 
-        doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
+        doc_types_query = Document_Meta_Type.objects.filter(table_view=True)
+        # doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
         if not testing:
@@ -1129,10 +1130,9 @@ def edms_tables(request):
 
 
 @login_required(login_url='login')
-def edms_get_table(request, pk):
+def edms_get_table(request, meta_doc_type='', pk=0):
     if request.method == 'GET':
         table = create_table(pk)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
-
