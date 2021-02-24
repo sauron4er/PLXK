@@ -332,7 +332,8 @@ def get_doc_type_modules(doc_type):
         'field': None if type_module.field is None else type_module.field,
         'required': type_module.required,
         'queue': type_module.queue,
-        'additional_info': type_module.additional_info
+        'additional_info': type_module.additional_info,
+        'hide': type_module.hide
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules

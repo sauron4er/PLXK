@@ -13,6 +13,7 @@ import ordersCalendarStore from 'docs/templates/docs/orders/calendar/orders_cale
 import CalendarItem from 'docs/templates/docs/orders/calendar/calendar_item';
 import order from 'docs/templates/docs/orders/order';
 import ConstantCalendarItem from 'docs/templates/docs/orders/calendar/constant_calendar_item';
+import OverdueReport from 'docs/templates/docs/orders/calendar/overdue_report';
 
 class OrdersCalendar extends React.Component {
   state = {
@@ -46,8 +47,6 @@ class OrdersCalendar extends React.Component {
     const {loading} = this.state;
     const {calendar} = ordersCalendarStore;
   
-    console.log(calendar);
-  
     return (
       <Choose>
         <When condition={!loading}>
@@ -56,6 +55,9 @@ class OrdersCalendar extends React.Component {
               <div>{this.props.type === 'calendar' ? 'Схоже, у вашому календарі пусто.' : 'Наказів для постійного виконання немає'}</div>
             </When>
             <Otherwise>
+              <If condition={ordersCalendarStore.is_admin}>
+                <OverdueReport />
+              </If>
               <For each='day' index='day_idx' of={calendar}>
                 <div key={day_idx} className='mb-3 p-1 border shadow rounded'>
                   <div className='css_calendar_header'>{day.date}</div>

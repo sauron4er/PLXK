@@ -178,6 +178,7 @@ class Document_Type_Module(models.Model):
     is_editable = models.BooleanField(default=False)
     table_view = models.BooleanField(default=False)  # True - показує це поле як колонку у зведеній таблиці
     additional_info = models.CharField(max_length=200, null=True)  # Додаткова інфа про модуль, яка показується користувачу
+    hide = models.BooleanField(default=False)  # True ховає модуль з вікна створення нового документа (наприклад модуль stage)
 
 
 # пункти [наказу]

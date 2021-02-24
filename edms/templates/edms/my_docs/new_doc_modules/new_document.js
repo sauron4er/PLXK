@@ -385,72 +385,75 @@ class NewDocument extends React.Component {
 
             <div className='modal-body p-0'>
               <For each='module' index='index' of={type_modules}>
-                <div key={module.id} className='css_new_doc_module mt-1'>
-                  <Choose>
-                    <When condition={module.module === 'text'}>
-                      <Text module_info={module} rows={rows} />
-                    </When>
-                    <When condition={module.module === 'day'}>
-                      <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
-                    </When>
-                    <When condition={module.module === 'recipient'}>
-                      <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'recipient_chief'}>
-                      <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'articles'}>
-                      <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
-                    </When>
-                    <When condition={module.module === 'files'}>
-                      <FilesUpload onChange={this.onChange} files={files} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'acquaint_list'}>
-                      <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'approval_list'}>
-                      <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'sign_list'}>
-                      <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'gate'}>
-                      <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'carry_out_items'}>
-                      <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'mockup_type'}>
-                      <MockupType module_info={module} />
-                    </When>
-                    <When condition={module.module === 'mockup_product_type'}>
-                      <MockupProductType module_info={module} />
-                    </When>
-                    <When condition={module.module === 'client'}>
-                      <Client module_info={module} />
-                    </When>
-                    <When condition={module.module === 'dimensions'}>
-                      <Text module_info={module} rows={rows} type='dimensions' />
-                    </When>
-                    <When condition={module.module === 'packaging_type'}>
-                      <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
-                    </When>
-                    <When condition={module.module === 'contract_link'}>
-                      <ChooseMainContract
-                        onChange={this.onChangeContract}
-                        module_info={module}
-                        company={newDocStore.new_document.company}
-                      />
-                    </When>
-                    <When condition={module.module === 'choose_company'}>
-                      <ChooseCompany module_info={module} />
-                    </When>
-                    <When condition={module.module === 'select'}>
-                      <CustomSelect module_info={module} />
-                    </When>
-                    <Otherwise> </Otherwise>
-                  </Choose>
-                </div>
+                <If condition={!module.hide}>
+                  <div key={module.id} className='css_new_doc_module mt-1'>
+                    <Choose>
+                      <When condition={module.module === 'text'}>
+                        <Text module_info={module} rows={rows}/>
+                      </When>
+                      <When condition={module.module === 'day'}>
+                        <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay}/>
+                      </When>
+                      <When condition={module.module === 'recipient'}>
+                        <Recipient onChange={this.onChange} recipient={recipient} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'recipient_chief'}>
+                        <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'articles'}>
+                        <Articles onChange={this.onChange} articles={articles} modules={type_modules}
+                                  fieldName={module.field_name}/>
+                      </When>
+                      <When condition={module.module === 'files'}>
+                        <FilesUpload onChange={this.onChange} files={files} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'acquaint_list'}>
+                        <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'approval_list'}>
+                        <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'sign_list'}>
+                        <SignList onChange={this.onChange} signList={sign_list} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'gate'}>
+                        <Gate checkedGate={gate} onChange={this.onChange} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'carry_out_items'}>
+                        <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'mockup_type'}>
+                        <MockupType module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'mockup_product_type'}>
+                        <MockupProductType module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'client'}>
+                        <Client module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'dimensions'}>
+                        <Text module_info={module} rows={rows} type='dimensions'/>
+                      </When>
+                      <When condition={module.module === 'packaging_type'}>
+                        <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'contract_link'}>
+                        <ChooseMainContract
+                          onChange={this.onChangeContract}
+                          module_info={module}
+                          company={newDocStore.new_document.company}
+                        />
+                      </When>
+                      <When condition={module.module === 'choose_company'}>
+                        <ChooseCompany module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'select'}>
+                        <CustomSelect module_info={module}/>
+                      </When>
+                      <Otherwise> </Otherwise>
+                    </Choose>
+                  </div>
+                </If>
               </For>
             </div>
 
