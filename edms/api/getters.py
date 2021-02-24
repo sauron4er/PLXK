@@ -554,7 +554,8 @@ def get_doc_modules(doc):
     type_modules = [{
         'module': type_module.module.module,
         'field_name': None if type_module.field_name is None else type_module.field_name,
-        'is_editable': type_module.is_editable
+        'is_editable': type_module.is_editable,
+        'queue': type_module.queue
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)
         .filter(is_active=True)

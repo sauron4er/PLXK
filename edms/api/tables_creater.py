@@ -46,6 +46,8 @@ def get_column_widths(modules):
         elif module['module'] == 'stage':
             column_widths.append({'columnName': 'added_date', 'width': 100})
             column_widths.append({'columnName': 'done_date', 'width': 100})
+        elif module['field'] == 'performer':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 100})
 
     return column_widths
 
@@ -62,7 +64,9 @@ def get_modules_list(meta_doc_type):
     } for module in Document_Type_Module.objects
         .filter(document_type__meta_doc_type_id=meta_doc_type)
         .filter(table_view=True)
-        .filter(is_active=True)]
+        .filter(is_active=True)
+        .order_by('queue')
+    ]
 
     return modules
 
