@@ -332,7 +332,8 @@ def get_doc_type_modules(doc_type):
         'field': None if type_module.field is None else type_module.field,
         'required': type_module.required,
         'queue': type_module.queue,
-        'additional_info': type_module.additional_info
+        'additional_info': type_module.additional_info,
+        'hide': type_module.hide
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
@@ -553,7 +554,8 @@ def get_doc_modules(doc):
     type_modules = [{
         'module': type_module.module.module,
         'field_name': None if type_module.field_name is None else type_module.field_name,
-        'is_editable': type_module.is_editable
+        'is_editable': type_module.is_editable,
+        'queue': type_module.queue
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)
         .filter(is_active=True)

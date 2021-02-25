@@ -845,7 +845,7 @@ def edms_mark(request):
                         supervisors = get_supervisors(
                             doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                         for supervisor in supervisors:
-                            send_email_supervisor('Виконано', doc_request, supervisor)
+                            send_email_supervisor('Виконано', doc_request, supervisor['mail'])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
@@ -883,7 +883,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('Відмовлено', doc_request, supervisor)
+                        send_email_supervisor('Відмовлено', doc_request, supervisor['mail'])
 
                 # TODO Опрацювати позначку "Доопрацьовано" у браузері
 
@@ -902,7 +902,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('На доопрацювання', doc_request, supervisor)
+                        send_email_supervisor('На доопрацювання', doc_request, supervisor['mail'])
 
             # Не заперечую
             elif doc_request['mark'] == '6':
@@ -1065,7 +1065,7 @@ def edms_mark(request):
                     supervisors = get_supervisors(
                         doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
                     for supervisor in supervisors:
-                        send_email_supervisor('Взято у роботу', doc_request, supervisor)
+                        send_email_supervisor('Взято у роботу', doc_request, supervisor['mail'])
 
             # Підтвердження виконання
             elif doc_request['mark'] == '24':
@@ -1089,6 +1089,7 @@ def edms_mark(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edms_get_deps(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_deps()))
@@ -1096,6 +1097,7 @@ def edms_get_deps(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edms_get_seats(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_seats()))
@@ -1103,6 +1105,7 @@ def edms_get_seats(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edms_bag_design(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_seats()))
@@ -1110,10 +1113,12 @@ def edms_bag_design(request):
 
 
 @login_required(login_url='login')
-def edms_tables(request):
+@try_except
+def edms_tables(request, meta_doc_type=''):
     if request.method == 'GET':
 
-        doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
+        doc_types_query = Document_Meta_Type.objects.filter(table_view=True)
+        # doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
         if not testing:
@@ -1129,10 +1134,17 @@ def edms_tables(request):
 
 
 @login_required(login_url='login')
-def edms_get_table(request, pk):
+@try_except
+def edms_get_table(request, meta_doc_type='', pk=0):
     if request.method == 'GET':
         table = create_table(pk)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
 
+
+@login_required(login_url='login')
+@try_except
+def change_text_module(request):
+    set_doc_text_module(request)
+    return HttpResponse(status=200)

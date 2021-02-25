@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
-from edms.models import Employee_Seat, Mark_Demand, Document
+from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from .vacations import vacation_check
 
@@ -93,6 +93,24 @@ def deactivate_doc_mark_demands(doc_request, doc_id):
 
     for md in mark_demands:
         deactivate_mark_demand(doc_request, md['id'])
+
+
+@try_except
+def set_doc_text_module(request):
+    doc_text_module = Doc_Text.objects\
+        .filter(document_id=request.POST['document_id'])\
+        .filter(queue_in_doc=request.POST['text_queue'])\
+        .filter(is_active=True).order_by('-id')
+    if doc_text_module:
+        edit_text = get_object_or_404(Doc_Text, pk=doc_text_module[0].id)
+        edit_text.text = request.POST['text']
+        edit_text.save()
+    else:
+        new_text = Doc_Text(
+            document_id=request.POST['document_id'],
+            text=request.POST['text'],
+            queue_in_doc=request.POST['text_queue'])
+        new_text.save()
 
 
 # Обробка різних видів позначок: ---------------------------------------------------------------------------------------

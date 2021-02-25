@@ -246,10 +246,12 @@ def get_calendar(request, view):
         .filter(Q(article__order__date_canceled__isnull=True) | Q(article__order__date_canceled__gte=today))\
         .order_by('article__deadline', 'article__order__code')
 
-    is_it_admin = UserProfile.objects\
-        .filter(user=request.user)\
-        .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
-        .exists()
+    # is_it_admin = UserProfile.objects\
+    #     .filter(user=request.user)\
+    #     .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
+    #     .exists()
+
+    is_it_admin = UserProfile.objects.values_list('is_orders_admin', flat=True).filter(user=request.user)[0]
 
     if not is_it_admin:
         my_emp_seats = Employee_Seat.objects.values_list('id', flat=True)\
@@ -264,7 +266,7 @@ def get_calendar(request, view):
 
     calendar = [{
         'type': item.article.order.doc_type.name,
-        'date_canceled': item.article.order.date_canceled,
+        # 'date_canceled': item.article.order.date_canceled,
         'order_id': item.article.order.id,
         'order_code': item.article.order.code,
         'order_name': item.article.order.name,

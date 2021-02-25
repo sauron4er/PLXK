@@ -6,7 +6,7 @@ from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
-from edms.views import edms_get_doc_types
+from edms.views import edms_get_doc_types, change_text_module
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_clients
 
@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^my_docs/get_direct_subs/(?P<pk>\d+)/$', edms_get_direct_subs, name='my_docs_get_direct_subs'),
     url(r'^my_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^my_docs/get_doc_type_modules/(?P<pk>\d+)/$', edms_get_doc_type_modules, name='my_docs_get_doc_type_modules'),
+    url(r'^my_docs/change_text_module', change_text_module, name='change_text_module'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
@@ -55,6 +56,9 @@ urlpatterns = [
     url(r'^sub_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
     url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
     url(r'^tables/', edms_tables, name='tables'),
+
 ]

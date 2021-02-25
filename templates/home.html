@@ -4,7 +4,7 @@
 {% block stylesheet %}
 {#<link rel="stylesheet" href="{% static 'css/accounts.css' %}">#}
 <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
-<link rel="stylesheet" href="{% static 'css/homepage_text_line.css' %}" />
+{#<link rel="stylesheet" href="{% static 'css/homepage_text_line.css' %}" />#}
 <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 {% endblock %}
 
@@ -34,6 +34,7 @@
     <a href={% url 'edms:archive' %}><button class="css_homepage_button">Архів</button></a>
     <a href={% url 'edms:sub_docs' %}><button class="css_homepage_button">Документи підлеглих</button></a>
     <a href={% url 'edms:tables' %}><button class="css_homepage_button">Зведені таблиці</button></a>
+    <a href={% url 'edms:tables' meta_doc_type=7 %}><button class="css_homepage_button">Заявки по 1С8</button></a>
 
     <div class="css_homepage_section">Система якості</div>
     <a href={% url 'docs:index' %}><button class="css_homepage_button">Список документів СМЯ</button></a>

@@ -1,7 +1,7 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
 from ..models import Document_Type_Module, Document, File, Document_Path
-from plxk.api.datetime_normalizers import datetime_to_json
+from plxk.api.datetime_normalizers import datetime_to_json, normalize_whole_date
 
 testing = settings.STAS_DEBUG
 
@@ -43,12 +43,17 @@ def get_column_widths(modules):
             column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 150})
         elif module['field'] == 'type':
             column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 150})
+        elif module['module'] == 'stage':
+            column_widths.append({'columnName': 'added_date', 'width': 100})
+            column_widths.append({'columnName': 'done_date', 'width': 100})
+        elif module['field'] == 'performer':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 100})
 
     return column_widths
 
 
 @try_except
-def get_modules_list(doc_type):
+def get_modules_list(meta_doc_type):
     modules = [{
         'id': module.id,
         'module': module.module.module,
@@ -57,9 +62,11 @@ def get_modules_list(doc_type):
         'queue': module.queue,
         'module_id': module.module_id
     } for module in Document_Type_Module.objects
-        .filter(document_type_id=doc_type)
+        .filter(document_type__meta_doc_type_id=meta_doc_type)
         .filter(table_view=True)
-        .filter(is_active=True)]
+        .filter(is_active=True)
+        .order_by('queue')
+    ]
 
     return modules
 
@@ -70,28 +77,25 @@ def get_table_header(modules):
 
     for module in modules:
         if module['module_id'] == 29:  # auto_approved module
-            header.append({
-                'name': 'status', 'title': module['field_name']
-            })
+            header.append({'name': 'status', 'title': module['field_name']})
         # elif module['module_id'] == 16:  # text module
         elif module['module_id'] in [16, 32]:  # text, select
-            header.append({
-                'name': 'text-' + str(module['queue']), 'title': module['field_name']
-            })
+            header.append({'name': 'text-' + str(module['queue']), 'title': module['field_name']})
+        elif module['module_id'] == 33:  # stage
+            header.append({'name': 'added_date', 'title': 'Створено'})
+            header.append({'name': 'done_date', 'title': 'Виконано'})
+            header.append({'name': 'stage', 'title': 'Стадія'})
         else:
-            header.append({
-                'name': module['module'], 'title': module['field_name']
-                # 'name': module['id'], 'title': module['field_name']
-            })
+            header.append({'name': module['module'], 'title': module['field_name']})
 
     return header
 
 
 @try_except
-def get_table_rows(doc_type, modules):
+def get_table_rows(meta_doc_type, modules):
 
     documents = Document.objects.all().select_related()\
-        .filter(document_type_id=doc_type)\
+        .filter(document_type__meta_doc_type_id=meta_doc_type)\
         .filter(is_template=False)\
         .filter(is_draft=False)\
         .filter(closed=False).order_by('-id')
@@ -102,7 +106,7 @@ def get_table_rows(doc_type, modules):
     documents_arranged = [{
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
-        'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
+        # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
         'stage': get_stage(doc.stage),
         'texts': get_texts(modules, doc),
@@ -112,7 +116,10 @@ def get_table_rows(doc_type, modules):
         'packaging_type': get_packaging_type(modules, doc),
         'doc_gate': doc.gate.all()[0].gate_id if doc.gate.all() else None,
         'files': get_files(modules, doc),
-        'choose_company': doc.company + ' ПЛХК'
+        'choose_company': doc.company + ' ПЛХК',
+        'added_date': normalize_whole_date(
+            Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
+        'done_date': get_done_date(doc)
     } for doc in documents]
 
     for document in documents_arranged:
@@ -195,3 +202,12 @@ def get_files(modules, doc):
 
         return files
     return None
+
+
+@try_except
+def get_done_date(doc):
+    if doc.stage in ['done', 'confirm']:
+        return normalize_whole_date(
+            Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=11).order_by('-id')[0]
+        )
+    return ''
