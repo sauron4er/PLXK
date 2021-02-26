@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
-from production.models import Product_type
+from production.models import Product_type, Certification_type
 
 
 class Board(models.Model):
@@ -65,8 +65,9 @@ class Counterparty_product(models.Model):
 
 class Counterparty_certificate(models.Model):
     counterparty = models.ForeignKey(Counterparty, related_name='certificates', on_delete=models.RESTRICT)
-    type = models.CharField(max_length=10, null=True)  # FSC, PEFS, None
+    certification_type = models.ForeignKey(Certification_type, related_name='certificates', on_delete=models.RESTRICT)
     number = models.CharField(max_length=20)
+    declaration = models.CharField(max_length=100, null=True)
     start = models.DateField(null=True)
     end = models.DateField(null=True)
     old_plhk_number = models.CharField(max_length=10, null=True)

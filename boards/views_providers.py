@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404
 import json
 from plxk.api.try_except import try_except
 from .models import Counterparty, Counterparty_product
-from production.api.getters import get_products_list
+from production.api.getters import get_products_list, get_certification_types
 
 
 @login_required(login_url='login')
@@ -90,3 +90,9 @@ def get_provider_products(provider_id):
         'status': 'old'
     } for product in Counterparty_product.objects.filter(counterparty_id=provider_id).filter(is_active=True)]
     return products
+
+
+@try_except
+def get_cert_types(request):
+    cert_types = get_certification_types()
+    return HttpResponse(json.dumps(cert_types))

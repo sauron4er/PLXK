@@ -1,6 +1,6 @@
 from production.models import Mockup_type, Mockup_product_type
 from correspondence.models import Client
-from production.models import Product_type
+from production.models import Product_type, Certification_type
 from plxk.api.try_except import try_except
 
 
@@ -49,7 +49,7 @@ def get_clients_list(product_type=''):
 
 @try_except
 def get_products_list(direction=''):
-    products = Product_type.objects.all().filter(is_active=True).order_by('name')
+    products = Product_type.objects.filter(is_active=True).order_by('name')
     if direction != '':
         products = products.filter(direction=direction)
 
@@ -58,3 +58,13 @@ def get_products_list(direction=''):
         'name': product.name,
         'direction': 'Продаємо' if product.direction == 'sell' else 'Купуємо',
     } for product in products]
+
+
+@try_except
+def get_certification_types():
+    cert_types = Certification_type.objects.filter(is_active=True).order_by('name')
+
+    return [{
+        'id': type.pk,
+        'name': type.name,
+    } for type in cert_types]

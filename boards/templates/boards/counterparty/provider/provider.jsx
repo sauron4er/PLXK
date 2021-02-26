@@ -11,7 +11,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import providerStore from './provider_store';
 import CounterpartyInfo from '../components/info';
-import ProviderCertification from './certification';
+import Certification from './certification/certification';
 import CounterpartyMap from '../components/map';
 import CounterpartyContracts from '../components/contracts';
 import SubmitButton from 'templates/components/form_modules/submit_button';
@@ -107,7 +107,7 @@ class Provider extends React.Component {
                 <CounterpartyContracts/>
               </TabPanel>
               <TabPanel>
-                <ProviderCertification/>
+                <Certification/>
               </TabPanel>
               <TabPanel>
                 <CounterpartyMap/>
