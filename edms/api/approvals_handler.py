@@ -39,17 +39,18 @@ def add_zero_phase_auto_approvals(doc_request, phase_info):
     recipients = get_phase_recipient_list(phase_info['id'])
 
     for recipient in recipients:
-        doc_request.update({'emp_seat': recipient})
-        doc_request.update({'approve_queue': phase_info['phase']})
-        doc_request.update({'approved': None})
-        doc_request.update({'approve_path': None})
-        approval_form = NewApprovalForm(doc_request)
-        if approval_form.is_valid():
-            approval_form.save()
-            # post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
-            # new_mail('new', [{'id': recipient}], doc_request)
-        else:
-            raise ValidationError('edms/views post_approval_list approval_form invalid')
+        if not is_in_approval_list(recipient, doc_request['document']):
+            doc_request.update({'emp_seat': recipient})
+            doc_request.update({'approve_queue': phase_info['phase']})
+            doc_request.update({'approved': None})
+            doc_request.update({'approve_path': None})
+            approval_form = NewApprovalForm(doc_request)
+            if approval_form.is_valid():
+                approval_form.save()
+                # post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+                # new_mail('new', [{'id': recipient}], doc_request)
+            else:
+                raise ValidationError('edms/api/approvals_handler post_approval_list approval_form invalid')
 
 
 @try_except
@@ -103,3 +104,14 @@ def arrange_approve(doc_request, is_approved):
             .filter(document_id=doc_request['document']) \
             .filter(emp_seat_id=main_employee)
         post_approve(doc_request, approve_id[0], is_approved)
+
+
+# Визначає, чи внесений вже користувач у таблицю погоджень
+@try_except
+def is_in_approval_list(emp_seat_id, document):
+    is_in_approval_list = Doc_Approval.objects\
+        .filter(document_id=document)\
+        .filter(emp_seat_id=emp_seat_id)\
+        .filter(is_active=True)\
+        .exists()
+    return is_in_approval_list

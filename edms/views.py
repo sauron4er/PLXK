@@ -1001,6 +1001,7 @@ def edms_mark(request):
 
                 if mark_author == doc_request['doc_author_id']:
                     # Якщо автор оновлення = автор документа, ставимо йому галочку і відправляємо на першу фазу
+                    # (Якщо автор є у списку візуючих)
                     approval_id = Doc_Approval.objects.values_list('id', flat=True) \
                         .filter(document_id=doc_request['document']) \
                         .filter(approve_queue=0) \

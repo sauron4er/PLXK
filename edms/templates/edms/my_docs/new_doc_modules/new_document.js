@@ -254,6 +254,9 @@ class NewDocument extends React.Component {
             doc_modules.text = newDocStore.new_document.text;
           } else if ([29, 33].includes(module.module_id)) {
             // Модулі auto_approved, phases не створюються у браузері
+          } else if (module.module_id === 22) {
+            // Погоджуючі (треба відправити хоча б пустий список)
+            doc_modules.approval_list = this.state.approval_list
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'choose_company') {

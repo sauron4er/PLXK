@@ -383,6 +383,16 @@ def get_additional_doc_info(doc_request):
     return doc_request
 
 
+# Знаходить, яка людино-посада на даний час займає цю посаду або її в.о.
+@try_except
+def get_actual_emp_seat_from_seat(seat_id):
+    emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=seat_id).filter(is_main=True).filter(is_active=True)
+    if emp_seat_id:
+        emp_seat_id = vacation_check(emp_seat_id[0])
+        return emp_seat_id
+
+
 @try_except
 def get_phase_recipient_list(phase_id):
     recipients = [{
@@ -396,11 +406,7 @@ def get_phase_recipient_list(phase_id):
     recipients_emp_seat_list = []
     for recipient in recipients:
         if recipient['seat_id']:
-            emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                .filter(seat_id=recipient['seat_id']).filter(is_main=True).filter(is_active=True)
-            if emp_seat_id:
-                emp_seat_id = vacation_check(emp_seat_id[0])
-                recipients_emp_seat_list.append(emp_seat_id)
+            recipients_emp_seat_list.append(get_actual_emp_seat_from_seat(recipient['seat_id']))
         elif recipient['employee_seat_id']:
             recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
 

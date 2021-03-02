@@ -1,39 +1,29 @@
 from django.core.exceptions import ValidationError
 from plxk.api.try_except import try_except
 from edms.forms import NewApprovalForm, ApprovedApprovalForm
-from edms.models import Doc_Type_Phase, Doc_Approval
+from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
     get_my_seats, get_phase_id_sole_recipients
-from edms.api.approvals_handler import is_approval_module_used, is_approvals_used, post_auto_approve, add_zero_phase_auto_approvals
+from edms.api.approvals_handler import is_approval_module_used, is_approvals_used, post_auto_approve, \
+    add_zero_phase_auto_approvals, is_in_approval_list
 from edms.api.vacations import vacation_check
-
-
-# Список на погодження, який створюється у функції post_approvals і використовується у new_phase при створенні документа
-# Напряму отримати його з бази не виходить, бо дані ще не збережені, транзакція ще не завершилася.
-global_approvals = []
 
 
 @try_except
 def handle_phase_approvals(doc_request, phase_info):
-    if global_approvals:
-        # Ця глобальна змінна існує при створенні нового документа,
-        # так як нові approvals ще не записані у бд
-        manual_approvals_emp_seat = global_approvals.copy()
-        global_approvals.clear()
-    else:
-        manual_approvals_emp_seat = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
-            .filter(document_id=doc_request['document']) \
-            .filter(approve_queue=phase_info['phase']) \
-            .filter(is_active=True)
+    approvals_emp_seat = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
+        .filter(document_id=doc_request['document']) \
+        .filter(approve_queue=phase_info['phase']) \
+        .filter(is_active=True)
 
     # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
-    if not any(approval['approve_queue'] == phase_info['phase'] for approval in manual_approvals_emp_seat):
+    if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals_emp_seat):
         auto_recipients = get_phase_recipient_list(phase_info['id'])
         if not auto_recipients:
             new_phase(doc_request, phase_info['phase'] + 1, [])
     else:
-        for approval in manual_approvals_emp_seat:
+        for approval in approvals_emp_seat:
             # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
             if approval['approve_queue'] == phase_info['phase']:
                 post_mark_demand(doc_request, approval['emp_seat_id'], phase_info['id'], phase_info['mark_id'])
@@ -43,28 +33,43 @@ def handle_phase_approvals(doc_request, phase_info):
 # Функція, яка додає у бд список отримуючих на візування
 def post_approval_list(doc_request, approvals):
     for recipient in approvals:
-        doc_request.update({'emp_seat': recipient['id']})
-        doc_request.update({'approve_queue': recipient['approve_queue']})
-        doc_request.update({'approved': None})
-        doc_request.update({'approve_path': None})
+        # Якщо отримувач уже є в автоматичному списку отримувачів, не додаємо його
+        if not is_in_approval_list(recipient['id'], doc_request['document']):
+            doc_request.update({'emp_seat': recipient['id']})
+            doc_request.update({'approve_queue': recipient['approve_queue']})
+            doc_request.update({'approved': None})
+            doc_request.update({'approve_path': None})
 
-        if recipient['id'] == doc_request['employee_seat']:
-            doc_request.update({'approved': True})
-            doc_request.update({'approve_path': doc_request['document_path']})
-            approval_form = ApprovedApprovalForm(doc_request)
-        else:
-            approval_form = NewApprovalForm(doc_request)
+            if recipient['id'] == doc_request['employee_seat']:
+                doc_request.update({'approved': True})
+                doc_request.update({'approve_path': doc_request['document_path']})
+                approval_form = ApprovedApprovalForm(doc_request)
+            else:
+                approval_form = NewApprovalForm(doc_request)
 
-        if approval_form.is_valid():
-            new_approval = approval_form.save()
-            global_approvals.append({
-                'id': new_approval.id,
-                'emp_seat_id': new_approval.emp_seat_id,
-                'approve_queue': new_approval.approve_queue
-            })
+            if approval_form.is_valid():
+                new_approval = approval_form.save()
 
-        else:
-            raise ValidationError('edms/views post_approval_list approval_form invalid')
+            else:
+                raise ValidationError('edms/views post_approval_list approval_form invalid')
+
+
+# Визначає, чи існує користувач у автоматичному списку погоджуючих
+def is_in_doc_phase_queue(recipient, doc_type):
+    phase_queue_by_emp_seat_exists = Doc_Type_Phase_Queue.objects \
+        .filter(phase__document_type=doc_type) \
+        .filter(employee_seat_id=recipient['id'])\
+        .exists()
+    if phase_queue_by_emp_seat_exists:
+        return True
+
+    recipient_seat = Employee_Seat.objects.values_list('seat', flat=True).filter(id=recipient['id'])[0]
+    phase_queue_by_seat_exists = Doc_Type_Phase_Queue.objects \
+        .filter(phase__document_type=doc_type) \
+        .filter(seat_id=recipient_seat)\
+        .exists()
+
+    return phase_queue_by_seat_exists
 
 
 # Створення mark_demand для отримувачів, що позначені у списку на ознайомлення
@@ -193,7 +198,7 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
     if phases:
         for phase_info in phases:
             # 1. Створюємо таблицю візування для новоствореного документа:
-            if phase_number == 1:
+            if phase_number == 1 and doc_request['mark'] == 1:
                 if is_approvals_used(doc_request['document_type']):
                     add_zero_phase_auto_approvals(doc_request, phase_info)
 

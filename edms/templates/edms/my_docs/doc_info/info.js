@@ -75,13 +75,13 @@ class Info extends React.Component {
                     <Approvals approvals={info.approval_list} />
                   </When>
                   <When condition={module.module === 'mockup_type'}>
-                    <Text text={info.mockup_type.name} fieldName={module.field_name} />
+                    <Text text_info={module} text={info.mockup_type.name} doc_info={info} />
                   </When>
                   <When condition={module.module === 'mockup_product_type'}>
-                    <Text text={info.mockup_product_type.name} fieldName={module.field_name} />
+                    <Text text_info={module} text={info.mockup_product_type.name} doc_info={info} />
                   </When>
                   <When condition={module.module === 'client'}>
-                    <Text text={info.client.name + ' (' + info.client.country + ')'} fieldName={module.field_name} />
+                    <Text text_info={module} text={`${info.client.name} (${info.client.country})`} doc_info={info} />
                   </When>
                   <When condition={module.module === 'contract_link'}>
                     <ContractInfo contract={info.contract_link} fieldName={module.field_name} />
