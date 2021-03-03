@@ -834,7 +834,8 @@ def get_allowed_new_doc_types(request):
         free_doc_types = free_doc_types.filter(testing=False)
         dep_doc_types = dep_doc_types.filter(testing=False)
 
-    doc_types = free_doc_types.union(dep_doc_types)
+    doc_types = free_doc_types.union(dep_doc_types)\
+        # .order_by('description')
 
     return [{  # Список документів, які може створити юзер
         'id': doc_type.id,

@@ -1118,7 +1118,7 @@ def edms_bag_design(request):
 def edms_tables(request, meta_doc_type=''):
     if request.method == 'GET':
 
-        doc_types_query = Document_Meta_Type.objects.filter(table_view=True)
+        doc_types_query = Document_Meta_Type.objects.filter(table_view=True).order_by('description')
         # doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.

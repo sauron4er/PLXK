@@ -145,6 +145,7 @@ class Document extends React.Component {
             updated_files: [],
             comment: ''
           });
+          docInfoStore.clearChangedFiles();
           const author_id = info.author_seat_id;
           removeRow(doc_id, mark_id, author_id); // 23 - Прийнято в роботу
         }
