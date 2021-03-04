@@ -1033,11 +1033,12 @@ def edms_mark(request):
                     # Деактивуємо запит на оновлення документу, повертаємо візуючому на візу
                     mark_demand_id = Mark_Demand.objects.values_list('id', flat=True).filter(document_path_id=doc_request['path_to_answer'])[0]
                     deactivate_mark_demand(doc_request, mark_demand_id)
-                    if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
-                        if doc_request['path_to_answer_author'] in ['813', '935']:  # Генеральні директори Лебедєв і Лишак
-                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
-                        else:
-                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
+                    if not is_already_approved(doc_request['document'], doc_request['path_to_answer_author']):
+                        if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
+                            if doc_request['path_to_answer_author'] in ['813', '935']:  # Генеральні директори Лебедєв і Лишак
+                                post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
+                            else:
+                                post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
                 elif not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document'])\
                         and int(doc_request['path_to_answer_author']) != doc_request['doc_author_id']:
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)

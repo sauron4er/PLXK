@@ -779,6 +779,16 @@ def is_mark_demand_exists(emp_seat_id, document_id):
 
 
 @try_except
+def is_already_approved(document_id, emp_seat_id):
+    is_approved = Doc_Approval.objects.values_list('approved', flat=True)\
+        .filter(document_id=document_id)\
+        .filter(emp_seat_id=emp_seat_id)[0]
+    if is_approved:
+        return is_approved[0]
+    return False
+
+
+@try_except
 def get_main_field(document):
     main_field_data = Document_Type_Module.objects.values('module_id', 'queue')\
         .filter(document_type_id=document.document_type_id)\
