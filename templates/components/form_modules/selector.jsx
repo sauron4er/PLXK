@@ -34,7 +34,7 @@ class Selector extends React.Component {
   static defaultProps = {
     list: [],
     fieldName: '',
-    valueField: 'name', // Назва поля, яке буде відображатись у селекторі (для працівників це name)
+    valueField: 'name',
     selectedName: '',
     onChange: () => {},
     disabled: true,
