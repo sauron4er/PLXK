@@ -994,19 +994,21 @@ def edms_mark(request):
                         # Анулюємо тільки підписані візування
                         if approval['approved'] is not None:
                             if doc_request['employee_seat'] == doc_request['doc_author_id']:
-                                # Якщо автор оновлення = автор документа, йому відразу ставимо позначку "Погоджено"
                                 post_approve(doc_request, approval['id'], True)
                             else:
                                 post_approve(doc_request, approval['id'], None)
 
+                # Автору оновлення ставимо галочку у таблицю
+                arrange_approve(doc_request, True)
+                # approval_instance = Doc_Approval.objects.filter(recipient_id=doc_request['employee_seat'])
+                # approval_id = Doc_Approval.objects.values_list('id', flat=True) \
+                #     .filter(document_id=doc_request['document']) \
+                #     .filter(approve_queue=0) \
+                #     .filter(is_active=True)[0]
+                # post_approve(doc_request, approval_id, True)
+
                 if mark_author == doc_request['doc_author_id']:
-                    # Якщо автор оновлення = автор документа, ставимо йому галочку і відправляємо на першу фазу
-                    # (Якщо автор є у списку візуючих)
-                    approval_id = Doc_Approval.objects.values_list('id', flat=True) \
-                        .filter(document_id=doc_request['document']) \
-                        .filter(approve_queue=0) \
-                        .filter(is_active=True)[0]
-                    post_approve(doc_request, approval_id, True)
+                    # Якщо автор оновлення = автор документа, відправляємо на першу фазу
                     new_phase(doc_request, 1, [])
                 else:
                     # Якщо ні, то створюємо автору документа mark_demand з позначкою "Не заперечую" (6)
