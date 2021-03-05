@@ -1091,6 +1091,8 @@ def edms_mark(request):
                 approval_instance.emp_seat_id = doc_request['delegation_receiver_id']
                 approval_instance.save()
 
+                new_mail('new', [{'id': doc_request['delegation_receiver_id']}], doc_request)
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
