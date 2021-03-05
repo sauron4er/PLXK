@@ -826,6 +826,7 @@ def edms_mark(request):
                 remaining_required_md = Mark_Demand.objects.filter(document_id=doc_request['document'])\
                     .filter(phase_id=doc_request['phase_id'])\
                     .filter(phase__required=True)\
+                    .exclude(mark=8)\
                     .filter(is_active=True)\
                     .count()
 
