@@ -10,9 +10,10 @@ import {notify} from 'templates/components/my_extras';
 class Certification extends React.Component {
   
   componentDidMount() {
-    axiosGetRequest('get_cert_types/')
+    axiosGetRequest(`get_certification/${providerStore.provider.id}/`)
       .then((response) => {
-        providerStore.certification_types = response
+        providerStore.certification_types = response.cert_types;
+        providerStore.certificates = response.certificates
       })
       .catch((error) => notify(error));
   }

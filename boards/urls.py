@@ -20,6 +20,6 @@ urlpatterns = [
 
     url(r'^providers/post_provider/', views_providers.post_provider, name='post_provider'),
     url(r'^providers/get_provider/(?P<pk>\d+)/$', views_providers.get_provider, name='get_provider'),
-    url(r'^providers/get_cert_types/', views_providers.get_cert_types, name='get_cert_types'),
+    url(r'^providers/get_certification/(?P<provider_id>\d+)/$', views_providers.get_certification, name='get_certification'),
     url(r'^providers/', views_providers.providers, name='providers'),
 ]

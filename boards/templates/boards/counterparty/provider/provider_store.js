@@ -26,6 +26,7 @@ const providerStore = store({
     is_active: true
   },
   certification_types: [],
+  certificates: [],
   clearProvider: () => {
     providerStore.provider = {
       id: 0,

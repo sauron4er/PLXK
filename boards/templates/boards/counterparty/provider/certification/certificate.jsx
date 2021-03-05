@@ -9,6 +9,7 @@ import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import {notify} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
+import CertificatePauses from './certificate_pauses';
 
 class Certificate extends React.Component {
   state = {
@@ -103,8 +104,7 @@ class Certificate extends React.Component {
             <DateInput date={certificate.end} fieldName={'Кінець дії'} onChange={this.onEndChange} disabled={!edit_access} />
           </div>
           <hr />
-          <div>Паузи</div>
-          <div>Зробити звичайною html таблицею і під нею два поля дати і кнопка Додати паузу</div>
+          <CertificatePauses/>
         </div>
 
         <If condition={edit_access}>

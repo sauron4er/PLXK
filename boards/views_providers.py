@@ -33,7 +33,7 @@ def get_provider(request, pk):
         'name': provider_instance.name,
         'legal_address': provider_instance.legal_address,
         'actual_address': provider_instance.actual_address,
-        'edrpou': provider_instance.edrpou,
+        'edrpou': provider_instance.edrpou or '',
         'added': convert_to_localtime(provider_instance.added, 'day'),
         'author': provider_instance.author.pip,
         'products': get_provider_products(provider_instance.id),
@@ -93,6 +93,7 @@ def get_provider_products(provider_id):
 
 
 @try_except
-def get_cert_types(request):
+def get_certification(request, provider_id):
     cert_types = get_certification_types()
-    return HttpResponse(json.dumps(cert_types))
+    response = {'certificates': [], 'cert_types': cert_types}
+    return HttpResponse(json.dumps(response))
