@@ -383,6 +383,16 @@ def get_additional_doc_info(doc_request):
     return doc_request
 
 
+# Знаходить, яка людино-посада на даний час займає цю посаду або її в.о.
+@try_except
+def get_actual_emp_seat_from_seat(seat_id):
+    emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=seat_id).filter(is_main=True).filter(is_active=True)
+    if emp_seat_id:
+        emp_seat_id = vacation_check(emp_seat_id[0])
+        return emp_seat_id
+
+
 @try_except
 def get_phase_recipient_list(phase_id):
     recipients = [{
@@ -396,11 +406,7 @@ def get_phase_recipient_list(phase_id):
     recipients_emp_seat_list = []
     for recipient in recipients:
         if recipient['seat_id']:
-            emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-                .filter(seat_id=recipient['seat_id']).filter(is_main=True).filter(is_active=True)
-            if emp_seat_id:
-                emp_seat_id = vacation_check(emp_seat_id[0])
-                recipients_emp_seat_list.append(emp_seat_id)
+            recipients_emp_seat_list.append(get_actual_emp_seat_from_seat(recipient['seat_id']))
         elif recipient['employee_seat_id']:
             recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
 
@@ -773,6 +779,16 @@ def is_mark_demand_exists(emp_seat_id, document_id):
 
 
 @try_except
+def is_already_approved(document_id, emp_seat_id):
+    is_approved = Doc_Approval.objects.values_list('approved', flat=True)\
+        .filter(document_id=document_id)\
+        .filter(emp_seat_id=emp_seat_id)[0]
+    if is_approved:
+        return is_approved[0]
+    return False
+
+
+@try_except
 def get_main_field(document):
     main_field_data = Document_Type_Module.objects.values('module_id', 'queue')\
         .filter(document_type_id=document.document_type_id)\
@@ -828,7 +844,8 @@ def get_allowed_new_doc_types(request):
         free_doc_types = free_doc_types.filter(testing=False)
         dep_doc_types = dep_doc_types.filter(testing=False)
 
-    doc_types = free_doc_types.union(dep_doc_types)
+    doc_types = free_doc_types.union(dep_doc_types)\
+        # .order_by('description')
 
     return [{  # Список документів, які може створити юзер
         'id': doc_type.id,
@@ -838,3 +855,12 @@ def get_allowed_new_doc_types(request):
     # Права відділу, до якого відноситься конкретна посада (може і не треба?)
     # Права конкретної посади
     # Права конкретної людино-посади
+
+
+@try_except
+def get_mark_name(mark, mark_id, meta_doc_type_id):
+    if mark_id == 3 and meta_doc_type_id == 5:
+        return 'Запит на зміни'
+    elif mark_id == 25:
+        return 'Делеговано підлеглому'
+    return mark

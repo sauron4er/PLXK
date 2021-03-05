@@ -74,7 +74,10 @@ class Buttons extends React.Component {
                 Візувати
               </button>
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
-                Запит на зміни
+                {info.meta_type_id === 5 ? 'Запит на зміни' : 'Відмовити'}
+              </button>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(25)} disabled={button_clicked}>
+                Делегувати
               </button>
             </When>
             <When condition={info.expected_mark === 22}>
@@ -121,8 +124,9 @@ class Buttons extends React.Component {
             </button>
           </If>
         </If>
-        {/* Якщо документ використовує approvals, додаємо кнопку "оновити файл" */}
-        <If condition={info.meta_type_id === 5 && !archived && !info.archived}>
+        {/* Якщо це Договір або Тендер, додаємо кнопку "оновити файл" */}
+        {/* В майбутньому переробити на перевірку використання модуля approvals і редагуємого поля Файли */}
+        <If condition={[5, 9].includes(info.meta_type_id) && !archived && !info.archived}>
           <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
             Додати/оновити файл(и)
           </button>

@@ -2,11 +2,11 @@ import json
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
-from ..models import File, Document_Path
+from ..models import File, Document_Path, Doc_Type_Phase_Queue
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
-from edms.api.getters import get_zero_phase_id, get_dep_chief_id, get_chief_id
+from edms.api.getters import get_zero_phase_id, get_dep_chief_id, get_chief_id, get_actual_emp_seat_from_seat
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.phases_handler import post_approval_list
 
@@ -63,6 +63,22 @@ def post_days(doc_request, days):
 def post_approvals(doc_request, approvals, company):
     # TODO Не додавати нікого, якщо це шаблон чи чернетка
     # Додаємо у список погоджуючих автора, керівника відділу та директора
+
+    auto_approval_seats = [{
+        'id': item.seat.id,
+        'approve_queue': item.phase.phase
+    } for item in Doc_Type_Phase_Queue.objects
+        .filter(phase__document_type=doc_request['document_type'])]
+
+    auto_approvals = []
+    for seat in auto_approval_seats:
+        employee_seat_id = get_actual_emp_seat_from_seat(seat['id'])
+        auto_approvals.append({
+            'id': employee_seat_id,
+            'approve_queue': seat['approve_queue']
+        })
+
+    approvals = approvals + auto_approvals
 
     # Видаляємо автора зі списку і додаємо, щоб він там був лише раз:
     approvals[:] = [i for i in approvals if not (int(i['id']) == int(doc_request['employee_seat']))]
@@ -121,7 +137,6 @@ def post_approvals(doc_request, approvals, company):
             'id': chief,
             'approve_queue': 1  # Керівник відділу другий у списку погоджень
         })
-
     post_approval_list(doc_request, approvals)
 
 

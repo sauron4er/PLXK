@@ -486,7 +486,7 @@ def edms_get_doc(request, pk):
             'id': path.id,
             'time': convert_to_localtime(path.timestamp, 'time'),
             'mark_id': path.mark_id,
-            'mark': 'Запит на зміни' if path.mark_id == 3 and doc.document_type.meta_doc_type_id == 5 else path.mark.mark,
+            'mark': get_mark_name(path.mark.mark, path.mark_id, doc.document_type.meta_doc_type_id),
             # 'mark': path.mark.mark,
             'emp_seat_id': path.employee_seat_id,
             'emp': path.employee_seat.employee.pip,
@@ -826,6 +826,7 @@ def edms_mark(request):
                 remaining_required_md = Mark_Demand.objects.filter(document_id=doc_request['document'])\
                     .filter(phase_id=doc_request['phase_id'])\
                     .filter(phase__required=True)\
+                    .exclude(mark=8)\
                     .filter(is_active=True)\
                     .count()
 
@@ -994,18 +995,21 @@ def edms_mark(request):
                         # Анулюємо тільки підписані візування
                         if approval['approved'] is not None:
                             if doc_request['employee_seat'] == doc_request['doc_author_id']:
-                                # Якщо автор оновлення = автор документа, йому відразу ставимо позначку "Погоджено"
                                 post_approve(doc_request, approval['id'], True)
                             else:
                                 post_approve(doc_request, approval['id'], None)
 
+                # Автору оновлення ставимо галочку у таблицю
+                arrange_approve(doc_request, True)
+                # approval_instance = Doc_Approval.objects.filter(recipient_id=doc_request['employee_seat'])
+                # approval_id = Doc_Approval.objects.values_list('id', flat=True) \
+                #     .filter(document_id=doc_request['document']) \
+                #     .filter(approve_queue=0) \
+                #     .filter(is_active=True)[0]
+                # post_approve(doc_request, approval_id, True)
+
                 if mark_author == doc_request['doc_author_id']:
-                    # Якщо автор оновлення = автор документа, ставимо йому галочку і відправляємо на першу фазу
-                    approval_id = Doc_Approval.objects.values_list('id', flat=True) \
-                        .filter(document_id=doc_request['document']) \
-                        .filter(approve_queue=0) \
-                        .filter(is_active=True)[0]
-                    post_approve(doc_request, approval_id, True)
+                    # Якщо автор оновлення = автор документа, відправляємо на першу фазу
                     new_phase(doc_request, 1, [])
                 else:
                     # Якщо ні, то створюємо автору документа mark_demand з позначкою "Не заперечую" (6)
@@ -1030,11 +1034,12 @@ def edms_mark(request):
                     # Деактивуємо запит на оновлення документу, повертаємо візуючому на візу
                     mark_demand_id = Mark_Demand.objects.values_list('id', flat=True).filter(document_path_id=doc_request['path_to_answer'])[0]
                     deactivate_mark_demand(doc_request, mark_demand_id)
-                    if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
-                        if doc_request['path_to_answer_author'] in ['813', '935']:  # Генеральні директори Лебедєв і Лишак
-                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
-                        else:
-                            post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
+                    if not is_already_approved(doc_request['document'], doc_request['path_to_answer_author']):
+                        if not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document']):
+                            if doc_request['path_to_answer_author'] in ['813', '935']:  # Генеральні директори Лебедєв і Лишак
+                                post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 2)
+                            else:
+                                post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 17)
                 elif not is_mark_demand_exists(doc_request['path_to_answer_author'], doc_request['document'])\
                         and int(doc_request['path_to_answer_author']) != doc_request['doc_author_id']:
                     post_mark_demand(doc_request, doc_request['path_to_answer_author'], get_phase_id(doc_request), 8)
@@ -1073,6 +1078,21 @@ def edms_mark(request):
                 set_stage(doc_request['document'], 'confirm')
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
+            elif doc_request['mark'] == '25':
+                mark_demand_instance = get_object_or_404(Mark_Demand, pk=doc_request['mark_demand_id'])
+                mark_demand_instance.recipient_id = doc_request['delegation_receiver_id']
+                mark_demand_instance.save()
+
+                approval_id = Doc_Approval.objects.values_list('id', flat=True) \
+                    .filter(document_id=doc_request['document']) \
+                    .filter(emp_seat_id=doc_request['employee_seat'])\
+                    .filter(is_active=True)[0]
+                approval_instance = get_object_or_404(Doc_Approval, pk=approval_id)
+                approval_instance.emp_seat_id = doc_request['delegation_receiver_id']
+                approval_instance.save()
+
+                new_mail('new', [{'id': doc_request['delegation_receiver_id']}], doc_request)
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
@@ -1117,7 +1137,7 @@ def edms_bag_design(request):
 def edms_tables(request, meta_doc_type=''):
     if request.method == 'GET':
 
-        doc_types_query = Document_Meta_Type.objects.filter(table_view=True)
+        doc_types_query = Document_Meta_Type.objects.filter(table_view=True).order_by('description')
         # doc_types_query = Document_Type.objects.filter(meta_doc_type__table_view=True)
 
         # Якщо параметр testing = False - програма показує лише ті типи документів, які не тестуються.
