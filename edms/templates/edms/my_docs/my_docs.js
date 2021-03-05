@@ -33,6 +33,7 @@ class MyDocs extends React.Component {
         // Передаємо список у state, якщо він є
         if (response.data) {
           this.setState({direct_subs: response.data});
+          
         }
       })
       .catch((error) => {
@@ -114,17 +115,13 @@ class MyDocs extends React.Component {
 
   // Видаляє документ зі списку створених користувачем
   removeDoc = (id) => {
-    this.setState((prevState) => ({
-      my_docs: prevState.my_docs.filter((doc) => doc.id !== id)
-    }));
+    this.setState((prevState) => ({my_docs: prevState.my_docs.filter((doc) => doc.id !== id)}));
     window.my_docs = window.my_docs.filter((doc) => doc.id !== id);
   };
 
   // Видаляє документ зі списку отриманих документів
   removeWorkDoc = (id, author_id) => {
-    this.setState((prevState) => ({
-      work_docs: prevState.work_docs.filter((doc) => doc.id !== id)
-    }));
+    this.setState((prevState) => ({work_docs: prevState.work_docs.filter((doc) => doc.id !== id)}));
     window.work_docs = window.work_docs.filter((doc) => doc.id !== id);
   };
 

@@ -17,6 +17,7 @@ const docInfoStore = store({
     deleted_files: []
   },
   button_clicked: false,
+  delegation_receiver_id: 0,
 
   clearChangedFiles: () => {
     docInfoStore.changed_files = {

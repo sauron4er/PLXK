@@ -23,9 +23,10 @@ import 'static/css/files_uploader.css';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from './doc_info_modules/doc_info_store';
 import NewDocument from '../new_doc_modules/new_document';
-import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
+import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
+import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
 
 class Document extends React.Component {
   state = {
@@ -130,6 +131,7 @@ class Document extends React.Component {
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
     formData.append('phase_id', info.phase_id ? info.phase_id : 0);
+    formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -147,7 +149,7 @@ class Document extends React.Component {
           });
           docInfoStore.clearChangedFiles();
           const author_id = info.author_seat_id;
-          removeRow(doc_id, mark_id, author_id); // 23 - Прийнято в роботу
+          removeRow(doc_id, mark_id, author_id);
         }
       })
       .catch((error) => notify(error));
@@ -172,7 +174,9 @@ class Document extends React.Component {
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
     } else if ([3, 5].includes(mark_id) && this.state.comment === '') {
       this.openModal(mark_id);
-    } else if (mark_id === 17 && this.state.comment !== '') {
+    } else if (mark_id === 17 && this.state.comment !== '') { // Віза з коментарем: признак відмови при натисканні візи
+      this.openModal(mark_id);
+    } else if (mark_id === 25) { // Вікно делегування
       this.openModal(mark_id);
     } else {
       this.postMark(mark_id);
@@ -226,7 +230,7 @@ class Document extends React.Component {
         break;
       case 17:
         this.setState({
-          modal: <ApprovalWithComment onCloseModal={this.onCloseModal} onSubmit={(mark) => this.postApprovalOrDecline(mark)} />,
+          modal: <ApprovalWithComment onCloseModal={this.onCloseModal} onSubmit={(mark) => this.handleSimpleModalSubmit(mark)} />,
           modal_open: true
         });
         break;
@@ -244,7 +248,13 @@ class Document extends React.Component {
         break;
       case 22:
         this.setState({
-          modal: <PostSignedFiles onCloseModal={this.onCloseModal} onSubmit={this.handleAddingSignedFiles} />,
+          modal: <PostSignedFiles onCloseModal={this.onCloseModal} onSubmit={() => this.handleSimpleModalSubmit(22)} />,
+          modal_open: true
+        });
+        break;
+      case 25:
+        this.setState({
+          modal: <ApprovalDelegation directSubs={this.props.directSubs} onCloseModal={this.onCloseModal} onSubmit={() => this.handleSimpleModalSubmit(25)} />,
           modal_open: true
         });
         break;
@@ -286,14 +296,9 @@ class Document extends React.Component {
       this.onCloseModal();
     });
   };
-
-  postApprovalOrDecline = (mark) => {
+  
+  handleSimpleModalSubmit = (mark) => {
     this.postMark(mark);
-    this.onCloseModal();
-  };
-
-  handleAddingSignedFiles = () => {
-    this.postMark(22);
     this.onCloseModal();
   };
 

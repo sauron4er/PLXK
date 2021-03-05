@@ -855,3 +855,12 @@ def get_allowed_new_doc_types(request):
     # Права відділу, до якого відноситься конкретна посада (може і не треба?)
     # Права конкретної посади
     # Права конкретної людино-посади
+
+
+@try_except
+def get_mark_name(mark, mark_id, meta_doc_type_id):
+    if mark_id == 3 and meta_doc_type_id == 5:
+        return 'Запит на зміни'
+    elif mark_id == 25:
+        return 'Делеговано підлеглому'
+    return mark

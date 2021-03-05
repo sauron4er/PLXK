@@ -486,7 +486,7 @@ def edms_get_doc(request, pk):
             'id': path.id,
             'time': convert_to_localtime(path.timestamp, 'time'),
             'mark_id': path.mark_id,
-            'mark': 'Запит на зміни' if path.mark_id == 3 and doc.document_type.meta_doc_type_id == 5 else path.mark.mark,
+            'mark': get_mark_name(path.mark.mark, path.mark_id, doc.document_type.meta_doc_type_id),
             # 'mark': path.mark.mark,
             'emp_seat_id': path.employee_seat_id,
             'emp': path.employee_seat.employee.pip,
@@ -1077,6 +1077,19 @@ def edms_mark(request):
                 set_stage(doc_request['document'], 'confirm')
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
+            elif doc_request['mark'] == '25':
+                mark_demand_instance = get_object_or_404(Mark_Demand, pk=doc_request['mark_demand_id'])
+                mark_demand_instance.recipient_id = doc_request['delegation_receiver_id']
+                mark_demand_instance.save()
+
+                approval_id = Doc_Approval.objects.values_list('id', flat=True) \
+                    .filter(document_id=doc_request['document']) \
+                    .filter(emp_seat_id=doc_request['employee_seat'])\
+                    .filter(is_active=True)[0]
+                approval_instance = get_object_or_404(Doc_Approval, pk=approval_id)
+                approval_instance.emp_seat_id = doc_request['delegation_receiver_id']
+                approval_instance.save()
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)

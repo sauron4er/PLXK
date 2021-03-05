@@ -120,7 +120,7 @@ class Path extends React.Component {
 
   static defaultProps = {
     path: [],
-    onAnswerClick: (mark) => {},
+    onAnswerClick: (path) => {},
     print: false // при true кнопки Відповісти зникнуть (для друку)
   };
 }
