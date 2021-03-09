@@ -30,7 +30,7 @@ def get_column_widths(modules):
         {'columnName': 'status', 'width': 30},
         {'columnName': 'stage', 'width': 100},
         {'columnName': 'importancy', 'width': 90},
-        {'columnName': 'files', 'width': 300},
+        # {'columnName': 'files', 'width': 300},
         {'columnName': 'choose_company', 'width': 85}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
@@ -85,6 +85,9 @@ def get_table_header(modules):
             header.append({'name': 'added_date', 'title': 'Створено'})
             header.append({'name': 'done_date', 'title': 'Виконано'})
             header.append({'name': 'stage', 'title': 'Стадія'})
+        elif module['module_id'] == 1:
+            # Відсортовуємо модуль files
+            a = 1
         else:
             header.append({'name': module['module'], 'title': module['field_name']})
 
@@ -115,7 +118,7 @@ def get_table_rows(meta_doc_type, modules):
         'client': get_client(modules, doc),
         'packaging_type': get_packaging_type(modules, doc),
         'doc_gate': doc.gate.all()[0].gate_id if doc.gate.all() else None,
-        'files': get_files(modules, doc),
+        # 'files': get_files(modules, doc),
         'choose_company': doc.company + ' ПЛХК',
         'added_date': normalize_whole_date(
             Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),

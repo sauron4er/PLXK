@@ -10,8 +10,8 @@
 
 {% block second_nav %}{% endblock %}
 
-{#{% block content %}#}
-{#  {% load render_bundle from webpack_loader %}#}
+{% block content %}
+  {% load render_bundle from webpack_loader %}
 
 {#  Автоматичні функції #}
 {#  {% if user.userprofile.id == 5   %}#}
@@ -29,48 +29,48 @@
 {#  {% endif %}#}
 
 
-{#    <div class="css_homepage_section">Електронний документообіг</div>#}
-{#    <a href={% url 'edms:my_docs' %}><button class="css_homepage_button">Мої документи</button></a>#}
-{#    <a href={% url 'edms:archive' %}><button class="css_homepage_button">Архів</button></a>#}
-{#    <a href={% url 'edms:sub_docs' %}><button class="css_homepage_button">Документи підлеглих</button></a>#}
-{#    <a href={% url 'edms:tables' %}><button class="css_homepage_button">Зведені таблиці</button></a>#}
-{#    <a href={% url 'edms:tables' meta_doc_type=7 %}><button class="css_homepage_button">Заявки по 1С8</button></a>#}
-{##}
-{#    <div class="css_homepage_section">Система якості</div>#}
-{#    <a href={% url 'docs:index' %}><button class="css_homepage_button">Список документів СМЯ</button></a>#}
-{#    <a href={% url 'docs:new_doc' %}><button class="css_homepage_button">Внести новий документ</button></a>#}
-{##}
-{#    <div class="css_homepage_section">Інше</div>#}
-{#    <a href={% url 'docs:orders' %}><button class="css_homepage_button">Накази та розпорядження</button></a>#}
-{#    <a href={% url 'docs:contracts' %}><button class="css_homepage_button">Договори</button></a>#}
-{#    <a href={% url 'correspondence:index' %}><button class="css_homepage_button">Листування з клієнтами</button></a>#}
-{##}
-{#    <div class="mt-5">#}
-{#      {% if birthdays %}#}
-{#          <div class="p-3 css_homepage_bd_image" id="bg" style=" background: url('{% static 'img/birthday_bg/' %}{{bg}}.jpg'); background-size: 100%;">#}
-{#              <div class='css_homepage_happy_birthday'>Вітаємо з днем народження!</div>#}
-{#              <div class='d-flex justify-content-center m-2'>#}
-{#                  {% for birthday in birthdays %}#}
-{#                      <div class='card mr-2 pt-3 css_homepage_birthday_card align-items-center'>#}
-{#                          {% if birthday.photo %}#}
-{#                              <img src="{% get_media_prefix %}{{ birthday.photo }}"#}
-{#                                   style="height: 15vh; width: 15vh"#}
-{#                                   class="rounded"#}
-{#                                   alt="'">#}
-{#                          {% endif %}#}
-{#                          <div class='card-body'>#}
-{#                              <h5 class='card-title'>{{ birthday.name }}</h5>#}
-{#                              <p class='card-text'>{{ birthday.seat }}</p>#}
-{#                          </div>#}
-{#                      </div>#}
-{#                  {% endfor %}#}
-{#              </div>#}
-{#          </div>#}
-{#          <small>Якщо ваш день народження вказано неправильно, зверніться до адміністратора.</small>#}
-{#      {% endif %}#}
-{#    </div>#}
+    <div class="css_homepage_section">Електронний документообіг</div>
+    <a href={% url 'edms:my_docs' %}><button class="css_homepage_button">Мої документи</button></a>
+    <a href={% url 'edms:archive' %}><button class="css_homepage_button">Архів</button></a>
+    <a href={% url 'edms:sub_docs' %}><button class="css_homepage_button">Документи підлеглих</button></a>
+    <a href={% url 'edms:tables' %}><button class="css_homepage_button">Зведені таблиці</button></a>
+    <a href={% url 'edms:tables' meta_doc_type=7 %}><button class="css_homepage_button">Заявки по 1С8</button></a>
 
-{#  Оголошення #}
+    <div class="css_homepage_section">Система якості</div>
+    <a href={% url 'docs:index' %}><button class="css_homepage_button">Список документів СМЯ</button></a>
+    <a href={% url 'docs:new_doc' %}><button class="css_homepage_button">Внести новий документ</button></a>
+
+    <div class="css_homepage_section">Інше</div>
+    <a href={% url 'docs:orders' %}><button class="css_homepage_button">Накази та розпорядження</button></a>
+    <a href={% url 'docs:contracts' %}><button class="css_homepage_button">Договори</button></a>
+    <a href={% url 'correspondence:index' %}><button class="css_homepage_button">Листування з клієнтами</button></a>
+
+    <div class="mt-5">
+      {% if birthdays %}
+          <div class="p-3 css_homepage_bd_image" id="bg" style=" background: url('{% static 'img/birthday_bg/' %}{{bg}}.jpg'); background-size: 100%;">
+              <div class='css_homepage_happy_birthday'>Вітаємо з днем народження!</div>
+              <div class='d-flex justify-content-center m-2'>
+                  {% for birthday in birthdays %}
+                      <div class='card mr-2 pt-3 css_homepage_birthday_card align-items-center'>
+                          {% if birthday.photo %}
+                              <img src="{% get_media_prefix %}{{ birthday.photo }}"
+                                   style="height: 15vh; width: 15vh"
+                                   class="rounded"
+                                   alt="'">
+                          {% endif %}
+                          <div class='card-body'>
+                              <h5 class='card-title'>{{ birthday.name }}</h5>
+                              <p class='card-text'>{{ birthday.seat }}</p>
+                          </div>
+                      </div>
+                  {% endfor %}
+              </div>
+          </div>
+          <small>Якщо ваш день народження вказано неправильно, зверніться до адміністратора.</small>
+      {% endif %}
+    </div>
+
+{#  Оголошення#}
 {#    <div class='ticker-wrap'>#}
 {#        <div class='ticker'>#}
 {#            {% for ad in ads %}#}
@@ -83,10 +83,10 @@
 {#    </div>#}
 
 
-{#{% endblock %}#}
-
-{% block content_fluid %}
-  <div class="d-flex justify-content-center">
-    <img class="rounded" src="{% static 'img/8m.png' %}" style="margin-top: 20px; height: 85vh" alt="">
-  </div>
 {% endblock %}
+
+{#{% block content_fluid %}#}
+{#  <div class="d-flex justify-content-center">#}
+{#    <img class="rounded" src="{% static 'img/8m.png' %}" style="margin-top: 20px; height: 85vh" alt="">#}
+{#  </div>#}
+{#{% endblock %}#}

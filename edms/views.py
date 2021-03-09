@@ -932,7 +932,6 @@ def edms_mark(request):
                         .filter(is_active=True) \
                         .exclude(mark_id=8) \
                         .count()
-                    # .exclude(mark_id=8) - не враховуємо активні запити на ознайомлення
 
                     if remaining_required_md == 0:
                         new_phase(doc_request, this_phase['phase'] + 1, [])

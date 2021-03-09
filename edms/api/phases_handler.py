@@ -14,7 +14,8 @@ from edms.api.vacations import vacation_check
 def handle_phase_approvals(doc_request, phase_info):
     approvals_emp_seat = Doc_Approval.objects.values('id', 'emp_seat_id', 'approve_queue') \
         .filter(document_id=doc_request['document']) \
-        .filter(approve_queue=phase_info['phase']) \
+        .filter(approve_queue=phase_info['phase'])\
+        .exclude(approved=True) \
         .filter(is_active=True)
 
     # Якщо у даній фазі нема жодного отримувача, переходимо на наступну:
