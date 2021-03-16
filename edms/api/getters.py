@@ -472,6 +472,7 @@ def get_all_subs_docs(emp_seat):
             'is_active': path.document.is_active,
             'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
+            .filter(mark_id=1)
             .filter(employee_seat__seat_id__in=subs)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
@@ -488,7 +489,10 @@ def get_all_subs_docs(emp_seat):
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        return docs_from_path + docs_from_nark_demand
+        docs = docs_from_path + docs_from_nark_demand
+        docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        return docs
 
 
 @try_except
@@ -501,6 +505,7 @@ def get_emp_seat_docs(emp_seat, sub_emp):
         'is_active': path.document.is_active,
         'main_field': get_main_field(path.document),
     } for path in Document_Path.objects
+        .filter(mark_id=1)
         .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
         .filter(document__closed=False)]
@@ -517,7 +522,10 @@ def get_emp_seat_docs(emp_seat, sub_emp):
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
-    return docs_from_path + docs_from_nark_demand
+    docs = docs_from_path + docs_from_nark_demand
+    docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+    return docs
 
 
 @try_except
@@ -530,6 +538,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         'is_active': path.document.is_active,
         'main_field': get_main_field(path.document),
     } for path in Document_Path.objects
+        .filter(mark_id=1)
         .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
@@ -548,7 +557,10 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
-    return docs_from_path + docs_from_nark_demand
+    docs = docs_from_path + docs_from_nark_demand
+    docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+    return docs
 
 
 @try_except
@@ -573,6 +585,7 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'is_active': path.document.is_active,
             'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
+            .filter(mark_id=1)
             .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(employee_seat__seat_id__in=subs)
             .filter(document__testing=testing)
@@ -591,7 +604,10 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        return docs_from_path + docs_from_nark_demand
+        docs = docs_from_path + docs_from_nark_demand
+        docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        return docs
 
 
 @try_except
