@@ -13,7 +13,7 @@ const columns = [
 ];
 
 const col_width = [
-  {columnName: 'id', width: 30},
+  {columnName: 'id', width: 50},
   {columnName: 'added', width: 90},
   {columnName: 'edrpou', width: 90},
   {columnName: 'author', width: 180},
@@ -27,7 +27,7 @@ class ProvidersTable extends React.Component {
       <DxTable
         rows={window.providers}
         columns={columns}
-        defaultSorting={[{columnName: 'number', direction: 'desc'}]}
+        defaultSorting={[{columnName: 'id', direction: 'desc'}]}
         colWidth={col_width}
         onRowClick={this.props.onRowClick}
         // height={this.props.mainDivHeight}

@@ -37,3 +37,15 @@ class DelMockupProductTypeForm(forms.ModelForm):
     class Meta:
         model = Mockup_product_type
         fields = ['is_active']
+
+
+class NewScopeForm(forms.ModelForm):
+    class Meta:
+        model = Scope
+        fields = ['name']
+
+
+class DelScopeForm(forms.ModelForm):
+    class Meta:
+        model = Scope
+        fields = ['is_active']

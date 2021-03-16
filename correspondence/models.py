@@ -1,11 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from production.models import Product_type
-
-
-class Scope(models.Model):
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
+from production.models import Product_type, Scope
 
 
 class Client(models.Model):

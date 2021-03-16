@@ -5,7 +5,6 @@ import CorrTable from './table';
 import Request from './request/request';
 import Clients from './clients';
 import Laws from './laws/laws';
-import Scopes from './scopes';
 import corrStore from './store';
 
 class Correspondence extends React.Component {
@@ -63,9 +62,6 @@ class Correspondence extends React.Component {
           <button type='button' className={this.getButtonStyle('laws')} onClick={() => this.changeView('laws')}>
             Законодавство
           </button>
-          <button type='button' className={this.getButtonStyle('scopes')} onClick={() => this.changeView('scopes')}>
-            Сфери застосування
-          </button>
         </div>
 
         <Choose>
@@ -86,9 +82,6 @@ class Correspondence extends React.Component {
           </When>
           <When condition={view === 'laws'}>
             <Laws />
-          </When>
-          <When condition={view === 'scopes'}>
-            <Scopes />
           </When>
         </Choose>
       </>

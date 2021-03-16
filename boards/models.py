@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
-from production.models import Product_type, Certification_type
+from production.models import Product_type, Certification_type, Scope
 
 
 class Board(models.Model):
@@ -51,8 +51,13 @@ class Counterparty(models.Model):
     is_provider = models.BooleanField(default=True)  # True - постачальник, False - покупець
     legal_address = models.CharField(max_length=200, null=True)
     actual_address = models.CharField(max_length=200, null=True)
+    country = models.CharField(max_length=100, null=True)
     edrpou = models.CharField(max_length=8, null=True)
+    bank_details = models.CharField(max_length=200, null=True)  # Реквізити
+    contacts = models.CharField(max_length=200, null=True)
     added = models.DateField(auto_now_add=True)
+    scope = models.ForeignKey(Scope, related_name='counterparties', on_delete=models.RESTRICT, null=True)
+    responsible = models.ForeignKey(UserProfile, related_name='responsible', null=True, on_delete=models.RESTRICT)
     author = models.ForeignKey(UserProfile, related_name='providers_added', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
@@ -67,6 +72,7 @@ class Counterparty_certificate(models.Model):
     counterparty = models.ForeignKey(Counterparty, related_name='certificates', on_delete=models.RESTRICT)
     certification_type = models.ForeignKey(Certification_type, related_name='certificates', on_delete=models.RESTRICT)
     number = models.CharField(max_length=20)
+    production_groups = models.CharField(max_length=100, null=True)
     declaration = models.CharField(max_length=100, null=True)
     start = models.DateField(null=True)
     end = models.DateField(null=True)

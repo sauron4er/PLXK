@@ -1,6 +1,5 @@
-from production.models import Mockup_type, Mockup_product_type
+from ..models import Mockup_type, Mockup_product_type, Product_type, Certification_type, Scope
 from correspondence.models import Client
-from production.models import Product_type, Certification_type
 from plxk.api.try_except import try_except
 
 
@@ -45,6 +44,16 @@ def get_clients_list(product_type=''):
         'country': client.country,
         'product_type': client.product_type.name
     } for client in clients]
+
+
+@try_except
+def get_scopes_list(product_type=''):
+    scopes = Scope.objects.all().filter(is_active=True).order_by('name')
+
+    return [{
+        'id': scope.pk,
+        'name': scope.name
+    } for scope in scopes]
 
 
 @try_except

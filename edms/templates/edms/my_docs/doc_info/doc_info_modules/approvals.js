@@ -27,7 +27,7 @@ class Approvals extends React.Component {
           <thead>
             <tr>
               <th className='text-center'><FontAwesomeIcon icon={faCheckDouble} /></th>
-              <th>ФІО</th>
+              <th>ПІБ, посада</th>
               <th>Коментар</th>
               <th className='text-center'>Дата</th>
             </tr>

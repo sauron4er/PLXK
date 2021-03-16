@@ -1,12 +1,13 @@
 'use strict';
 import * as React from 'react';
-import Provider from './provider/provider';
+import Counterparty from '../components/counterparty';
 import ProvidersTable from './table';
+import counterpartyStore from '../components/counterparty_store';
 
 class ProvidersIndex extends React.Component {
   state = {
-    provider_id: 0,
-    view: 'table' // provider
+    counterparty_id: 0,
+    view: 'table' // counterparty
   };
 
   componentDidMount() {
@@ -19,8 +20,8 @@ class ProvidersIndex extends React.Component {
       for (let i = 0; i < window.providers.length; i++) {
         if (window.providers[i].id === last_href_piece) {
           this.setState({
-            provider_id: window.providers[i].id,
-            view: 'provider'
+            counterparty_id: window.providers[i].id,
+            view: 'counterparty'
           });
           break;
         }
@@ -34,9 +35,10 @@ class ProvidersIndex extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
+    counterpartyStore.type = 'provider';
     this.setState({
-      provider_id: clicked_row.id,
-      view: 'provider'
+      counterparty_id: clicked_row.id,
+      view: 'counterparty'
     });
   };
 
@@ -50,17 +52,19 @@ class ProvidersIndex extends React.Component {
   };
 
   render() {
-    const {view, provider_id} = this.state;
+    const {view, counterparty_id} = this.state;
 
     return (
       <Choose>
         <When condition={view==='table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <div className='mr-auto'>
-              <button onClick={() => this.changeView('provider')} className='btn btn-sm btn-info mr-2'>
-                Додати Постачальника
-              </button>
-            </div>
+            <If condition={window.edit_access}>
+              <div className='mr-auto'>
+                <button onClick={() => this.changeView('counterparty')} className='btn btn-sm btn-info mr-2'>
+                  Додати постачальника
+                </button>
+              </div>
+            </If>
 
             <ProvidersTable onRowClick={this.onRowClick} />
           </div>
@@ -70,7 +74,7 @@ class ProvidersIndex extends React.Component {
             Назад
           </button>
           <br />
-          <Provider id={provider_id} />
+          <Counterparty id={counterparty_id} />
         </Otherwise>
       </Choose>
     );

@@ -3,39 +3,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from correspondence.forms import NewClientForm, DelClientForm
-from production.forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
-    NewProductTypeForm, DelProductForm
+from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
+    NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
 from production.api.getters import *
 
 
 @try_except
 def get_clients(request, product_type):
     return HttpResponse(json.dumps(get_clients_list(product_type)))
-
-
-@login_required(login_url='login')
-@try_except
-def clients(request):
-    clients_list = get_clients_list()
-    product_types = get_products_list('sell')
-    return render(request, 'production/clients.html', {'clients': clients_list, 'product_types': product_types})
-
-
-@try_except
-def new_client(request):
-    form = NewClientForm(request.POST)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect('clients.html')
-
-
-@try_except
-def del_client(request):
-    client = get_object_or_404(Client, pk=request.POST.get('id'))
-    form = DelClientForm(request.POST, instance=client)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect('clients.html')
 
 
 @try_except
@@ -131,3 +106,27 @@ def del_mockup_product_type(request):
     if form.is_valid():
         form.save()
         return HttpResponseRedirect('mockup_product_types.html')
+
+
+@login_required(login_url='login')
+@try_except
+def scopes(request):
+    scopes_list = get_scopes_list()
+    return render(request, 'production/scopes.html', {'scopes': scopes_list})
+
+
+@try_except
+def new_scope(request):
+    form = NewScopeForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('scopes.html')
+
+
+@try_except
+def del_scope(request):
+    scope = get_object_or_404(Scope, pk=request.POST.get('id'))
+    form = DelScopeForm(request.POST, instance=scope)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('scopes.html')

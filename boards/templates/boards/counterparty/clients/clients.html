@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Клієнти{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+{% block content %}
+    <script>
+        window.clients = {{ clients|safe }};
+        window.products_list = {{ products_list|safe }};
+        window.edit_access = {{ edit_access|safe }};
+    </script>
+
+    <div class="container-fluid px-3" id="clients">
+      <div id="bundle">{% render_bundle 'boards' %}</div>
+    </div>
+
+{% endblock %}

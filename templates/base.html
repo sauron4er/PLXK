@@ -26,7 +26,6 @@
                             <a class="dropdown-item" href="{% url 'boards:edit_ads' %}">Редагування оголошень</a>
                         {% endif %}
                         <a class="dropdown-item" href="{% url 'boards:plhk_ads' %}" target="_blank">Оголошення</a>
-                        <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
 {#                        <a class="dropdown-item" href="{% url 'boards:tickets' %}">Заявки 1С8</a>#}
 {#                        <a class="dropdown-item" href="{% url 'boards:org_structure' %}">Організаційна структура</a>#}
 {#                        <a class="dropdown-item" href="{% url 'menu' %}" target="_blank">Меню столової</a>#}
@@ -65,16 +64,17 @@
               <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Контрагенти</a>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
+                <a class="dropdown-item" href="{% url 'boards:clients' %}">Клієнти</a>
               </div>
             </li>
               <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Довідники</a>
                         <div class="dropdown-menu">
-                          {% if user.userprofile.is_it_admin or user.userprofile.clients_add   %}
-                            <a class="dropdown-item" href="{% url 'production:clients' %}">Клієнти</a>
-                          {% endif %}
                           {% if user.userprofile.is_it_admin %}
                             <a class="dropdown-item" href="{% url 'production:products' %}">Продукція</a>
+                          {% endif %}
+                          {% if user.userprofile.is_it_admin %}
+                            <a class="dropdown-item" href="{% url 'production:scopes' %}">Сфери застосування</a>
                           {% endif %}
                           {% if user.userprofile.is_it_admin or user.userprofile.mockup_type_add   %}
                             <a class="dropdown-item" href="{% url 'production:mockup_types' %}">Типи дизайн-макетів</a>

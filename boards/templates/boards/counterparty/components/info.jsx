@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import providerStore from '../provider/provider_store';
+import counterpartyStore from './counterparty_store';
 import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelector from 'templates/components/form_modules/multi_selector';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
@@ -14,19 +14,19 @@ class CounterpartyInfo extends React.Component {
     selected_product_id: 0
   };
   onNameChange = (e) => {
-    providerStore.provider.name = e.target.value;
+    counterpartyStore.counterparty.name = e.target.value;
   };
 
   onEdrpouChange = (e) => {
-    providerStore.provider.edrpou = e.target.value;
+    counterpartyStore.counterparty.edrpou = e.target.value;
   };
 
   onLegalAddressChange = (e) => {
-    providerStore.provider.legal_address = e.target.value;
+    counterpartyStore.counterparty.legal_address = e.target.value;
   };
 
   onActualAddressChange = (e) => {
-    providerStore.provider.actual_address = e.target.value;
+    counterpartyStore.counterparty.actual_address = e.target.value;
   };
 
   selectProduct = (e) => {
@@ -42,20 +42,20 @@ class CounterpartyInfo extends React.Component {
 
   addProduct = (selected_product_id) => {
     if (selected_product_id) {
-      const item = getItemById(selected_product_id, providerStore.provider.products);
+      const item = getItemById(selected_product_id, counterpartyStore.counterparty.products);
       if (item === -1) {
         const selected_product = {
           ...getItemById(selected_product_id, window.products_list),
           status: 'new'
         };
-        let new_products = [...providerStore.provider.products];
+        let new_products = [...counterpartyStore.counterparty.products];
         new_products.push(selected_product);
         new_products = uniqueArray(new_products);
-        providerStore.provider.products = new_products;
+        counterpartyStore.counterparty.products = new_products;
       } else {
         if (item.status === 'delete') {
-          const product_index = getIndex(item.id, providerStore.provider.products);
-          providerStore.provider.products[product_index].status = 'old';
+          const product_index = getIndex(item.id, counterpartyStore.counterparty.products);
+          counterpartyStore.counterparty.products[product_index].status = 'old';
         }
       }
 
@@ -67,23 +67,24 @@ class CounterpartyInfo extends React.Component {
   };
   
   onProductDelete = (i) => {
-    if (providerStore.provider.products[i].status === 'new') {
-      providerStore.provider.products.splice(i, 1);
+    if (counterpartyStore.counterparty.products[i].status === 'new') {
+      counterpartyStore.counterparty.products.splice(i, 1);
     } else {
-      providerStore.provider.products[i].status = 'delete';
+      counterpartyStore.counterparty.products[i].status = 'delete';
     }
   };
 
   render() {
-    const {provider, edit_access} = providerStore;
-    const {selected_product, selected_product_id} = this.state;
-
+    const {counterparty} = counterpartyStore;
+    const {edit_access} = window;
+    const {selected_product} = this.state;
+  
     return (
       <>
-        <TextInput text={provider.name} fieldName={'* Назва'} onChange={this.onNameChange} maxLength={100} disabled={!edit_access} />
+        <TextInput text={counterparty.name} fieldName={'* Назва'} onChange={this.onNameChange} maxLength={100} disabled={!edit_access} />
         <hr/>
         <TextInput
-          text={provider.legal_address}
+          text={counterparty.legal_address}
           fieldName={'Юридична адреса'}
           onChange={this.onLegalAddressChange}
           maxLength={200}
@@ -91,14 +92,14 @@ class CounterpartyInfo extends React.Component {
         />
         <hr/>
         <TextInput
-          text={provider.actual_address}
+          text={counterparty.actual_address}
           fieldName={'Фактична адреса'}
           onChange={this.onActualAddressChange}
           maxLength={200}
           disabled={!edit_access}
         />
         <hr/>
-        <TextInput text={provider.edrpou} fieldName={'ЄДРПОУ'} onChange={this.onEdrpouChange} maxLength={8} disabled={!edit_access} />
+        <TextInput text={counterparty.edrpou} fieldName={'ЄДРПОУ'} onChange={this.onEdrpouChange} maxLength={8} disabled={!edit_access} />
         <hr/>
         <MultiSelector
           list={window.products_list}
@@ -110,7 +111,7 @@ class CounterpartyInfo extends React.Component {
           withAddButton={false}
         />
         <div className='mt-2'>
-          <For each='product' index='index' of={providerStore.provider.products}>
+          <For each='product' index='index' of={counterpartyStore.counterparty.products}>
             <If condition={product.status !== 'delete'}>
               <div className='d-flex mb-1' key={index}>
                 <div>{product.name}</div>

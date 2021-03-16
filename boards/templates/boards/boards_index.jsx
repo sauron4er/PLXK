@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom'
 import Fireworks from './plhk_ads/fireworks';
 import Reloader from './plhk_ads/reloader';
 import OrgStructure from './org_structure/org_structure';
-import ProvidersIndex from './counterparty';
+import ProvidersIndex from './counterparty/providers';
+import ClientsIndex from './counterparty/clients';
 
 class Boards extends React.Component {
   state = {
@@ -24,6 +25,9 @@ class Boards extends React.Component {
         </When>
         <When condition={this.state.main_div === 'providers'}>
           <ProvidersIndex/>
+        </When>
+        <When condition={this.state.main_div === 'clients'}>
+          <ClientsIndex/>
         </When>
       </Choose>
     );
