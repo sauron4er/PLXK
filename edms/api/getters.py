@@ -464,61 +464,103 @@ def get_all_subs_docs(emp_seat):
         for sub in subs_list:
             subs.append(sub['id'])
 
-        return [{
+        docs_from_path = [{
             'id': path.document_id,
             'type': path.document.document_type.description,
-            'type_id': path.document.document_type_id,
             'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-            'author_seat_id': path.employee_seat_id,
             'author': path.employee_seat.employee.pip,
-            'dep': path.employee_seat.seat.department.name,
-            'emp_seat_id': int(emp_seat),
             'is_active': path.document.is_active,
+            'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
             .filter(mark_id=1)
             .filter(employee_seat__seat_id__in=subs)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
+        docs_from_nark_demand = [{
+            'id': md.document_id,
+            'type': md.document.document_type.description,
+            'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
+            'author': md.document_path.employee_seat.employee.pip,
+            'is_active': md.document.is_active,
+            'main_field': get_main_field(md.document),
+        } for md in Mark_Demand.objects
+            .filter(recipient__seat_id__in=subs)
+            .filter(document__testing=testing)
+            .filter(document__closed=False)]
+
+        docs = docs_from_path + docs_from_nark_demand
+        docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        return docs
+
 
 @try_except
 def get_emp_seat_docs(emp_seat, sub_emp):
-    return [{
+    docs_from_path = [{
         'id': path.document_id,
         'type': path.document.document_type.description,
-        'type_id': path.document.document_type_id,
         'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-        'author_seat_id': path.employee_seat_id,
         'author': path.employee_seat.employee.pip,
-        'dep': path.employee_seat.seat.department.name,
         'is_active': path.document.is_active,
         'main_field': get_main_field(path.document),
-        'emp_seat_id': int(emp_seat)
     } for path in Document_Path.objects
         .filter(mark_id=1)
         .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
         .filter(document__closed=False)]
+
+    docs_from_nark_demand = [{
+        'id': md.document_id,
+        'type': md.document.document_type.description,
+        'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
+        'author': md.document_path.employee_seat.employee.pip,
+        'is_active': md.document.is_active,
+        'main_field': get_main_field(md.document),
+    } for md in Mark_Demand.objects
+        .filter(recipient=sub_emp)
+        .filter(document__testing=testing)
+        .filter(document__closed=False)]
+
+    docs = docs_from_path + docs_from_nark_demand
+    docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+    return docs
 
 
 @try_except
 def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
-    return [{
+    docs_from_path = [{
         'id': path.document_id,
         'type': path.document.document_type.description,
-        'type_id': path.document.document_type_id,
         'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-        'author_seat_id': path.employee_seat_id,
         'author': path.employee_seat.employee.pip,
-        'dep': path.employee_seat.seat.department.name,
         'is_active': path.document.is_active,
-        'emp_seat_id': int(emp_seat)
+        'main_field': get_main_field(path.document),
     } for path in Document_Path.objects
-        .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(mark_id=1)
+        .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(employee_seat_id=sub_emp)
         .filter(document__testing=testing)
         .filter(document__closed=False)]
+
+    docs_from_nark_demand = [{
+        'id': md.document_id,
+        'type': md.document.document_type.description,
+        'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
+        'author': md.document_path.employee_seat.employee.pip,
+        'is_active': md.document.is_active,
+        'main_field': get_main_field(md.document),
+    } for md in Mark_Demand.objects
+        .filter(document__document_type__meta_doc_type=doc_meta_type)
+        .filter(recipient=sub_emp)
+        .filter(document__testing=testing)
+        .filter(document__closed=False)]
+
+    docs = docs_from_path + docs_from_nark_demand
+    docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+    return docs
 
 
 @try_except
@@ -535,22 +577,37 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
         for sub in subs_list:
             subs.append(sub['id'])
 
-        return [{
+        docs_from_path = [{
             'id': path.document_id,
             'type': path.document.document_type.description,
-            'type_id': path.document.document_type_id,
             'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
-            'author_seat_id': path.employee_seat_id,
             'author': path.employee_seat.employee.pip,
-            'dep': path.employee_seat.seat.department.name,
-            'emp_seat_id': int(emp_seat),
             'is_active': path.document.is_active,
+            'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
-            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(mark_id=1)
+            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(employee_seat__seat_id__in=subs)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
+
+        docs_from_nark_demand = [{
+            'id': md.document_id,
+            'type': md.document.document_type.description,
+            'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
+            'author': md.document_path.employee_seat.employee.pip,
+            'is_active': md.document.is_active,
+            'main_field': get_main_field(md.document),
+        } for md in Mark_Demand.objects
+            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
+            .filter(recipient__seat_id__in=subs)
+            .filter(document__testing=testing)
+            .filter(document__closed=False)]
+
+        docs = docs_from_path + docs_from_nark_demand
+        docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        return docs
 
 
 @try_except
