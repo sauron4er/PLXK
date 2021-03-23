@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
-    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewClientForm, NewDocContractForm, Employee_Seat
+    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewCounterpartyForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
 from edms.api.getters import get_zero_phase_id, get_dep_chief_id, get_chief_id, get_actual_emp_seat_from_seat
 from edms.api.setters import post_mark_demand, new_mail
@@ -216,13 +216,13 @@ def post_mockup_product_type(doc_request, mockup_product_type):
 
 
 @try_except
-def post_client(doc_request, client):
-    doc_request.update({'client': client})
-    client_form = NewClientForm(doc_request)
-    if client_form.is_valid():
-        client_form.save()
+def post_counterparty(doc_request, counterparty):
+    doc_request.update({'counterparty': counterparty})
+    counterparty_form = NewCounterpartyForm(doc_request)
+    if counterparty_form.is_valid():
+        counterparty_form.save()
     else:
-        raise ValidationError('post_modules/post_client/client_form invalid')
+        raise ValidationError('post_modules/post_counterparty/counterparty_form invalid')
 
 
 @try_except

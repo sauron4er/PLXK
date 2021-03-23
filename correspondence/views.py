@@ -8,10 +8,11 @@ from django.contrib.auth.decorators import login_required
 from plxk.api.try_except import try_except
 
 from production.models import Product_type
-from .models import Scope, Client, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope,Request_acquaint
-from .forms import NewClientForm, DelClientForm, NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
+from .models import Scope, Law, Law_file, Request, Request_law, Request_file, Answer_file, Law_scope,Request_acquaint
+from .forms import NewLawForm, DelLawForm, NewScopeForm, DelScopeForm, NewLawScopeForm
 from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
+from boards.models import Counterparty
 from plxk.api.datetime_normalizers import date_to_json
 
 
@@ -37,15 +38,16 @@ def index(request):
         'id': product.pk,
         'name': product.name
     } for product in
-        Product_type.objects.all().filter(is_active=True)]
+        Product_type.objects.all().filter(is_active=True).filter(direction='sell')]
 
     clients = [{
         'id': client.pk,
         'name': client.name,
-        'country': client.country,
-        'product_type_id': client.product_type.id,
+        'country': client.country or '',
+        'product_name': client.product.name,
+        'product_id': client.product_id,
     } for client in
-        Client.objects.only('id', 'name').filter(is_active=True)]
+        Counterparty.objects.filter(is_active=True)]
 
     laws = [{
         'id': law.pk,
@@ -89,7 +91,7 @@ def index(request):
         'id': request.pk,
         'unique_number': request.unique_number,
         'type': request.type,
-        'product_name': request.client.product_type.name,
+        'product_name': request.client.product.name,
         'scope_name': request.scope.name,
         'client_name': request.client.name,
         'request_date': date_to_json(request.request_date),
@@ -105,34 +107,6 @@ def index(request):
                                                          'laws': json.dumps(laws),
                                                          'correspondence': json.dumps(correspondence),
                                                          'employees': json.dumps(employees)})
-
-
-#  --------------------------------------------------- Clients
-@try_except
-def new_client(request):
-    try:
-        client_form = NewClientForm(request.POST)
-        if client_form.is_valid():
-            client = client_form.save()
-            return HttpResponse(client.pk)
-        else:
-            raise ValidationError('form invalid')
-    except Exception as err:
-        raise err
-
-
-@try_except
-def del_client(request):
-    try:
-        client = get_object_or_404(Client, pk=request.POST['id'])
-        client_form = DelClientForm(request.POST, instance=client)
-        if client_form.is_valid():
-            client = client_form.save()
-            return HttpResponse(client.pk)
-        else:
-            raise ValidationError('form invalid')
-    except Exception as err:
-        raise err
 
 
 #  --------------------------------------------------- Scope
@@ -246,8 +220,8 @@ def get_request(request, pk):
             'client_name': req.client.name,
             'scope_id': req.scope_id,
             'scope_name': req.scope.name,
-            'product_id': req.client.product_type_id,
-            'product_name': req.client.product_type.name,
+            'product_id': req.client.product_id,
+            'product_name': req.client.product.name,
             'answer': req.answer if req.answer else '',
             'request_date': date_to_json(req.request_date),
             'request_term': date_to_json(req.request_term) if req.request_term else '',

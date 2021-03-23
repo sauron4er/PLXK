@@ -55,14 +55,6 @@ const contractsStore = store({
       edms_doc_id: 0
     };
   },
-  
-  get_contracts: (company) => {
-    axiosGetRequest('get_contracts/' + company + '/' + contractsStore.with_additional + '/')
-      .then((response) => {
-        contractsStore.contracts = response
-      })
-      .catch((error) => console.log(error));
-  }
 });
 
 export default contractsStore;

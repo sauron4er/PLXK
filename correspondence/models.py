@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from production.models import Product_type, Scope
+from boards.models import Counterparty
 
 
 class Client(models.Model):
+    # DEPRECATED, база клієнтів тепер у контрагентах. Видалити з часом.
     name = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
     product_type = models.ForeignKey(Product_type, related_name='clients', on_delete=models.RESTRICT)
@@ -34,7 +36,8 @@ class Request(models.Model):
     type = models.SmallIntegerField()  # 1 - запит, 2 - рекламація
     unique_number = models.CharField(max_length=20, null=True, blank=True)
     scope = models.ForeignKey(Scope, related_name='requests', on_delete=models.RESTRICT)
-    client = models.ForeignKey(Client, related_name='requests', on_delete=models.RESTRICT)
+    client = models.ForeignKey(Counterparty, related_name='requests', on_delete=models.RESTRICT)
+    # client = models.ForeignKey(Client, related_name='requests', on_delete=models.RESTRICT)
     request_date = models.DateField()
     request_term = models.DateField(null=True, blank=True, default=None)
     responsible = models.ForeignKey(User, related_name='responsible', on_delete=models.RESTRICT)

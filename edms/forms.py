@@ -237,10 +237,10 @@ class NewMockupProductTypeForm(forms.ModelForm):
         fields = {'document', 'mockup_product_type'}
 
 
-class NewClientForm(forms.ModelForm):
+class NewCounterpartyForm(forms.ModelForm):
     class Meta:
-        model = Doc_Client
-        fields = {'document', 'client'}
+        model = Doc_Counterparty
+        fields = {'document', 'counterparty'}
 
 
 class ApprovedDocForm(forms.ModelForm):

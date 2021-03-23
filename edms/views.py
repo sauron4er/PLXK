@@ -121,7 +121,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_mockup_product_type(doc_request, doc_modules['mockup_product_type']['value'])
 
         if 'client' in doc_modules:
-            post_client(doc_request, doc_modules['client']['value'])
+            post_counterparty(doc_request, doc_modules['client']['value'])
 
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
             post_files(doc_request, doc_files, new_path.pk)

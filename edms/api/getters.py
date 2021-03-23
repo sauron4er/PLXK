@@ -783,10 +783,10 @@ def get_doc_modules(doc):
                 })
         elif module['module'] == 'client':
             client = [{
-                'id': item.client.id,
-                'name': item.client.name,
-                'country': item.client.country,
-            } for item in Doc_Client.objects.all()
+                'id': item.counterparty.id,
+                'name': item.counterparty.name,
+                'country': item.counterparty.country,
+            } for item in Doc_Counterparty.objects.all()
                 .filter(document_id=doc.id)
                 .filter(is_active=True)]
 
@@ -859,7 +859,7 @@ def get_main_field(document):
             .filter(queue_in_doc=main_field_data['queue'])\
             .filter(is_active=True)
     elif main_field_data['module_id'] == 26:  # Клієнт
-        main_field = Doc_Client.objects.values_list('client__name', flat=True) \
+        main_field = Doc_Counterparty.objects.values_list('counterparty__name', flat=True) \
             .filter(document=document) \
             .filter(is_active=True)
 

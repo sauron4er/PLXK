@@ -18,10 +18,9 @@ urlpatterns = [
     url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
     url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
 
-
-
-    url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_counterparty'),
-    url(r'^providers/post_counterparty/', views_counterparties.post_provider, name='post_counterparty'),
+    url(r'^providers/get_providers/(?P<page>\d+)/$', views_counterparties.get_providers, name='get_providers'),
+    url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_provider'),
+    url(r'^providers/post_provider/', views_counterparties.post_provider, name='post_provider'),
     url(r'^providers/deact_counterparty/(?P<pk>\d+)/$', views_counterparties.deact_counterparty, name='deact_counterparty'),
     url(r'^providers/get_certification/(?P<provider_id>\d+)/$', views_counterparties.get_certification, name='get_certification'),
     url(r'^providers/post_certificate/', views_counterparties.post_certificate, name='post_certificate'),
@@ -31,7 +30,9 @@ urlpatterns = [
     url(r'^providers/deact_cert_pause/(?P<pk>\d+)/$', views_counterparties.deact_cert_pause, name='deact_cert_pause'),
     url(r'^providers/', views_counterparties.providers, name='providers'),
 
+    url(r'^clients/get_clients/(?P<page>\d+)/$', views_counterparties.get_clients, name='get_clients'),
     url(r'^clients/get_client/(?P<pk>\d+)/$', views_counterparties.get_client, name='get_client'),
     url(r'^clients/post_client/', views_counterparties.post_client, name='post_client'),
+    url(r'^clients/deact_counterparty/(?P<pk>\d+)/$', views_counterparties.deact_counterparty, name='deact_counterparty'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 ]

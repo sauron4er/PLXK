@@ -1,6 +1,6 @@
 'use strict';
 import * as React from 'react';
-import ContractView from 'docs/templates/docs/contracts/contract_view';
+import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
 
 class ContractInfo extends React.Component {

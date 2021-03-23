@@ -51,6 +51,7 @@ class Counterparty(models.Model):
     is_provider = models.BooleanField(default=True)  # True - постачальник, False - покупець
     legal_address = models.CharField(max_length=200, null=True)
     actual_address = models.CharField(max_length=200, null=True)
+    product = models.ForeignKey(Product_type, related_name='counterparties', on_delete=models.RESTRICT)
     country = models.CharField(max_length=100, null=True)
     edrpou = models.CharField(max_length=8, null=True)
     bank_details = models.CharField(max_length=200, null=True)  # Реквізити
@@ -59,12 +60,6 @@ class Counterparty(models.Model):
     scope = models.ForeignKey(Scope, related_name='counterparties', on_delete=models.RESTRICT, null=True)
     responsible = models.ForeignKey(UserProfile, related_name='responsible', null=True, on_delete=models.RESTRICT)
     author = models.ForeignKey(UserProfile, related_name='providers_added', on_delete=models.RESTRICT)
-    is_active = models.BooleanField(default=True)
-
-
-class Counterparty_product(models.Model):
-    counterparty = models.ForeignKey(Counterparty, related_name='products', on_delete=models.RESTRICT)
-    product_type = models.ForeignKey(Product_type, related_name='providers', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 

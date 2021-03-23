@@ -2,15 +2,9 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from correspondence.forms import NewClientForm, DelClientForm
 from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
     NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
 from production.api.getters import *
-
-
-@try_except
-def get_clients(request, product_type):
-    return HttpResponse(json.dumps(get_clients_list(product_type)))
 
 
 @try_except

@@ -33,20 +33,6 @@ def get_mockup_product_types_list():
 
 
 @try_except
-def get_clients_list(product_type=''):
-    clients = Client.objects.all().filter(is_active=True).order_by('name')
-    if product_type:
-        clients = clients.filter(product_type_id=product_type)
-
-    return [{
-        'id': client.pk,
-        'name': client.name,
-        'country': client.country,
-        'product_type': client.product_type.name
-    } for client in clients]
-
-
-@try_except
 def get_scopes_list(product_type=''):
     scopes = Scope.objects.all().filter(is_active=True).order_by('name')
 

@@ -3,8 +3,8 @@ from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
 from production.models import Mockup_type, Mockup_product_type
 from correspondence.models import Client
+from boards.models import Counterparty
 # from docs.models import Contract # - напряму функцію імпортувати не можна, буде помилка circular import
-# import docs.models as docs
 
 
 # models, related with users
@@ -268,8 +268,15 @@ class Doc_Mockup_Product_Type(models.Model):
 
 # Клієнт
 class Doc_Client(models.Model):
-    document = models.ForeignKey(Document, related_name='client', on_delete=models.RESTRICT)
+    document = models.ForeignKey(Document, related_name='clients', on_delete=models.RESTRICT)
     client = models.ForeignKey(Client, related_name='client_documents', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Контрагент
+class Doc_Counterparty(models.Model):
+    document = models.ForeignKey(Document, related_name='counterparty', on_delete=models.RESTRICT)
+    counterparty = models.ForeignKey(Counterparty, related_name='edms_documents', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 

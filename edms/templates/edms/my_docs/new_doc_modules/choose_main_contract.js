@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
-import ContractView from 'docs/templates/docs/contracts/contract_view';
+import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';

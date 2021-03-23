@@ -10,6 +10,8 @@ const newDocStore = store({
     mockup_product_type_name: '',
     client: 0,
     client_name: '',
+    counterparty: 0,
+    counterparty_name: '',
     packaging_type: {
       queue: -1,
       text: ''
@@ -29,6 +31,8 @@ const newDocStore = store({
       mockup_product_type_name: '',
       client: 0,
       client_name: '',
+      counterparty: 0,
+      counterparty_name: '',
       packaging_type: {
         queue: -1,
         text: ''

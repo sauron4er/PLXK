@@ -1,16 +1,17 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
 import json
-
-from plxk.api.convert_to_local_time import convert_to_localtime
-from plxk.api.try_except import try_except
-from plxk.api.global_getters import get_employees_list, get_departments_list, is_it_lawyer
-from plxk.api.datetime_normalizers import date_to_json
-from .models import Contract, Contract_File
-from docs.api import contracts_api, contracts_mail_sender
 from edms.models import Employee_Seat
+from plxk.api.try_except import try_except
+from .models import Contract, Contract_File
+from plxk.api.datetime_normalizers import date_to_json
+from docs.api import contracts_api, contracts_mail_sender
+from plxk.api.convert_to_local_time import convert_to_localtime
+from plxk.api.pagination import sort_query_set, filter_query_set
+from plxk.api.global_getters import get_employees_list, get_departments_list, is_it_lawyer
 
 
 @login_required(login_url='login')
@@ -26,7 +27,19 @@ def index(request):
 
 @login_required(login_url='login')
 @try_except
-def get_contracts(request, company, with_add):
+def get_simple_contracts_list(request, company):
+    contracts = [{
+        'id': contract.id,
+        'selector_info': '№ ' + (contract.number if contract.number else '---') + ', "' + contract.subject + '"',
+    } for contract in Contract.objects
+        .filter(company=company)
+        .filter(is_active=True)]
+
+    return HttpResponse(json.dumps(contracts))
+
+
+@try_except
+def get_contracts(request, company, with_add, page):
     all_contracts = Contract.objects.filter(company=company).filter(is_active=True)
 
     if with_add == 'false':
@@ -44,7 +57,19 @@ def get_contracts(request, company, with_add):
         accessed_contracts = all_contracts.filter(created_by=request.user) | all_contracts.filter(
             department_id=users_department)
 
-    contracts = [{
+    contracts = accessed_contracts
+    contracts = filter_query_set(contracts, json.loads(request.POST['filtering']))
+    contracts = sort_query_set(contracts, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(contracts, 20)
+    try:
+        orders_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        orders_page = paginator.page(1)
+    except EmptyPage:
+        orders_page = paginator.page(1)
+
+    orders_list = [{
         'id': contract.id,
         'number': contract.number if contract.number else 'б/н',
         'subject': contract.subject,
@@ -60,9 +85,10 @@ def get_contracts(request, company, with_add):
         } for file in Contract_File.objects
             .filter(contract=contract.id)
             .filter(is_active=True)]
-    } for contract in accessed_contracts]
+    } for contract in orders_page.object_list]
 
-    return HttpResponse(json.dumps(contracts))
+    response = {'rows': orders_list, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')

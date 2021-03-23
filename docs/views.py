@@ -11,17 +11,18 @@ from django.db.models import Q
 from datetime import date
 import json
 import csv
-from .models import Document, Order_doc, Order_doc_type, Article_responsible, Responsible_file
+from edms.models import Employee_Seat
 from accounts.models import UserProfile
+from plxk.api.try_except import try_except
+from plxk.api.pagination import sort_query_set, filter_query_set
+from plxk.api.global_getters import get_employees_list, get_emp_seats_list
+from .models import Document, Order_doc, Order_doc_type, Article_responsible
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
 from docs.api.orders_mail_sender import arrange_mail, send_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
-    deactivate_files, get_order_code_for_table, deactivate_order, sort_orders, filter_orders, get_order_info
+    deactivate_files, get_order_code_for_table, deactivate_order, get_order_info
 from docs.api.order_articles_api import post_articles, post_responsible_files
 from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json, normalize_date
-from plxk.api.try_except import try_except
-from plxk.api.global_getters import get_employees_list, get_deps, get_emp_seats_list
-from edms.models import Employee_Seat
 
 
 def user_can_edit(user):
@@ -160,13 +161,13 @@ def orders(request):
 
 @login_required(login_url='login')
 @try_except
-# Pagination
 def get_orders(request, page):
     orders = Order_doc.objects.filter(is_act=True)
-    orders = filter_orders(orders, json.loads(request.POST['filtering']))
-    orders = sort_orders(orders, request.POST['sort_name'], request.POST['sort_direction'])
+    orders = filter_query_set(orders, json.loads(request.POST['filtering']))
+    sort_by = request.POST['sort_name'] if request.POST['sort_name'] != '' else 'date_start'
+    orders = sort_query_set(orders, sort_by, request.POST['sort_direction'])
 
-    paginator = Paginator(orders, 30)
+    paginator = Paginator(orders, 20)
     try:
         orders_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:

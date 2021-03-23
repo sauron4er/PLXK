@@ -1,4 +1,4 @@
-from plxk.api.convert_to_local_time import convert_to_localtime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
@@ -6,9 +6,11 @@ from django.db import transaction
 from datetime import date
 import json
 from plxk.api.try_except import try_except
-from .models import Counterparty, Counterparty_product, Counterparty_certificate, Counterparty_certificate_pause
-from production.api.getters import get_products_list, get_certification_types
 from plxk.api.datetime_normalizers import date_to_json
+from plxk.api.convert_to_local_time import convert_to_localtime
+from plxk.api.pagination import sort_query_set, filter_query_set
+from production.api.getters import get_products_list, get_certification_types
+from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
 
 
 @try_except
@@ -22,7 +24,29 @@ def deact_counterparty(request, pk):
 @login_required(login_url='login')
 @try_except
 def providers(request):
-    providers = [{
+    products = get_products_list('buy')
+    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
+    return render(request, 'boards/counterparty/providers/providers.html', {
+        'products_list': products,
+        'edit_access': json.dumps(edit_access)  # Для перетворення True в true
+    })
+
+
+@try_except
+def get_providers(request, page):
+    providers_list = Counterparty.objects.filter(is_provider=True).filter(is_active=True)
+    providers_list = filter_query_set(providers_list, json.loads(request.POST['filtering']))
+    providers_list = sort_query_set(providers_list, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(providers_list, 22)
+    try:
+        providers_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        providers_page = paginator.page(1)
+    except EmptyPage:
+        providers_page = paginator.page(1)
+
+    providers_list = [{
         'id': provider.pk,
         'name': provider.name,
         'certificates': get_active_certificates_names(provider),
@@ -30,14 +54,10 @@ def providers(request):
         'added': convert_to_localtime(provider.added, 'day'),
         'author': provider.author.pip,
         'status': get_provider_status(provider)
-    } for provider in Counterparty.objects.filter(is_provider=True).filter(is_active=True).order_by('name')]
-    products = get_products_list('buy')
-    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
-    return render(request, 'boards/counterparty/providers/providers.html', {
-        'providers': providers,
-        'products_list': products,
-        'edit_access': json.dumps(edit_access)  # Для перетворення True в true
-    })
+    } for provider in providers_page.object_list]
+
+    response = {'rows': providers_list, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
@@ -54,7 +74,8 @@ def get_provider(request, pk):
         'contacts': provider_instance.edrpou or '',
         'added': convert_to_localtime(provider_instance.added, 'day'),
         'author': provider_instance.author.pip,
-        'products': get_counterparty_products(provider_instance.id) or [],
+        'product_id': provider_instance.product.id,
+        'product_name': provider_instance.product.name,
     }
 
     return HttpResponse(json.dumps(provider))
@@ -77,35 +98,11 @@ def post_provider(request):
     provider.edrpou = data['edrpou']
     provider.bank_details = data['bank_details']
     provider.contacts = data['contacts']
+    provider.product_id = data['product_id']
 
     provider.save()
 
-    post_counterparty_products(provider, data['products'])
-
     return HttpResponse(provider.pk)
-
-
-@try_except
-def post_counterparty_products(counterparty, products):
-    for product in products:
-        if product['status'] == 'new':
-            counterparty_product = Counterparty_product(counterparty=counterparty, product_type_id=product['id'])
-            counterparty_product.save()
-        elif product['status'] == 'delete':
-            counterparty_product = get_object_or_404(Counterparty_product, pk=product['instance_id'])
-            counterparty_product.is_active = False
-            counterparty_product.save()
-
-
-@try_except
-def get_counterparty_products(counterparty_id):
-    products = [{
-        'instance_id': product.id,
-        'id': product.product_type_id,
-        'name': product.product_type.name,
-        'status': 'old'
-    } for product in Counterparty_product.objects.filter(counterparty_id=counterparty_id).filter(is_active=True)]
-    return products
 
 
 @try_except
@@ -263,18 +260,37 @@ def get_active_certificates_names(provider):
 @login_required(login_url='login')
 @try_except
 def clients(request):
-    clients = [{
-        'id': client.pk,
-        'name': client.name,
-        'country': client.country,
-        'edrpou': client.edrpou if client.edrpou else '',
-    } for client in Counterparty.objects.filter(is_provider=False).filter(is_active=True).order_by('name')]
     products = get_products_list('sell')
     edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
     return render(request, 'boards/counterparty/clients/clients.html', {
-        'clients': clients,
         'products_list': products,
         'edit_access': json.dumps(edit_access)})  # Для перетворення True в true})
+
+
+@try_except
+def get_clients(request, page):
+    clients_list = Counterparty.objects.filter(is_provider=False).filter(is_active=True)
+    clients_list = filter_query_set(clients_list, json.loads(request.POST['filtering']))
+    clients_list = sort_query_set(clients_list, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(clients_list, 22)
+    try:
+        clients_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        clients_page = paginator.page(1)
+    except EmptyPage:
+        clients_page = paginator.page(1)
+
+    clients_list = [{
+        'id': client.pk,
+        'name': client.name,
+        'product__name': client.product.name,
+        'country': client.country,
+        'edrpou': client.edrpou if client.edrpou else '',
+    } for client in clients_page.object_list]
+
+    response = {'rows': clients_list, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
@@ -291,7 +307,8 @@ def get_client(request, pk):
         'bank_details': client_instance.edrpou or '',
         'contacts': client_instance.edrpou or '',
         'responsible': client_instance.responsible.pip if client_instance.responsible else '',
-        'products': get_counterparty_products(client_instance.id) or [],
+        'product_id': client_instance.product.id,
+        'product_name': client_instance.product.name,
         'scope': client_instance.scope.name if client_instance.scope else '',
     }
 
@@ -317,9 +334,45 @@ def post_client(request):
     provider.contacts = data['contacts']
     provider.scope_id = data['scope']
     provider.responsible_id = data['responsible']
+    provider.product_id = data['product_id']
 
     provider.save()
 
-    post_counterparty_products(provider, data['products'])
-
     return HttpResponse(provider.pk)
+
+
+@try_except
+def get_clients_for_product_type(request, product_type):
+    clients = Counterparty.objects.all().filter(is_active=True).filter(is_provider=False).order_by('name')
+    if product_type:
+        clients = clients.filter(product_id=product_type)
+
+    clients_list = [{
+        'id': client.pk,
+        'name': client.name,
+        'country': client.country,
+        'product': client.product.name
+    } for client in clients]
+    return HttpResponse(json.dumps(clients_list))
+
+
+@try_except
+def get_counterparties(request):
+    counterparties = Counterparty.objects.all().filter(is_active=True).order_by('name')
+
+    counterparties_list = [{
+        'id': counterparty.pk,
+        'name': counterparty.name
+    } for counterparty in counterparties]
+    return HttpResponse(json.dumps(counterparties_list))
+
+
+@try_except
+def get_counterparties_for_select(request):
+    counterparties = Counterparty.objects.all().filter(is_active=True).order_by('name')
+
+    counterparties_list = [{
+        'value': counterparty.pk,
+        'label': counterparty.name
+    } for counterparty in counterparties]
+    return HttpResponse(json.dumps(counterparties_list))

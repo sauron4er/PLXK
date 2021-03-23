@@ -8,7 +8,8 @@ from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_tab
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module
 from docs.views_contracts import get_contract
-from production.views import get_mockup_types, get_mockup_product_types, get_clients
+from production.views import get_mockup_types, get_mockup_product_types
+from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
 
 app_name = 'edms'
 
@@ -31,7 +32,9 @@ urlpatterns = [
     url(r'^my_docs/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
     url(r'^my_docs/get_mockup_types/', get_mockup_types, name='mockup_types'),
     url(r'^my_docs/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
-    url(r'^my_docs/get_clients/(?P<product_type>\d+)/$', get_clients, name='clients'),
+    url(r'^my_docs/get_clients/(?P<product_type>\d+)/$', get_clients_for_product_type, name='clients'),
+    url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
+    url(r'^my_docs/get_counterparties_for_select/', get_counterparties_for_select, name='get_counterparties_for_select'),
     url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),

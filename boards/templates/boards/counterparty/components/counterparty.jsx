@@ -30,10 +30,6 @@ class Counterparty extends React.Component {
     }
   }
 
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (prevProps.id !== this.props.id && this.props.id !== 0) this.getCounterparty();
-  // }
-
   getCounterparty = () => {
     const url = counterpartyStore.type === 'provider' ? 'get_provider/' : 'get_client/';
     axiosGetRequest(url + this.props.id + '/')
@@ -47,6 +43,9 @@ class Counterparty extends React.Component {
   areAllFieldsFilled = () => {
     if (isBlankOrZero(counterpartyStore.counterparty.name)) {
       notify('Заповніть поле "Назва"');
+      return false;
+    } else if (isBlankOrZero(counterpartyStore.product.id)) {
+      notify('Заповніть поле "Продукція"');
       return false;
     }
     return true;
@@ -78,7 +77,7 @@ class Counterparty extends React.Component {
   render() {
     const {loading} = this.state;
     const {edit_access} = window;
-    const {counterparty} = counterpartyStore;
+    const {counterparty, type} = counterpartyStore;
     return (
       <Choose>
         <When condition={!loading}>
@@ -87,10 +86,10 @@ class Counterparty extends React.Component {
               <TabList>
                 <Tab>Загальна інформація</Tab>
                 <Tab>Договори</Tab>
-                <If condition={counterparty.is_provider}>
+                <If condition={type === 'provider'}>
                   <Tab>Сертифікація</Tab>
                 </If>
-                <Tab>{counterparty.is_provider ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
+                <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
 
               <TabPanel>
@@ -108,7 +107,7 @@ class Counterparty extends React.Component {
               <TabPanel>
                 <CounterpartyContracts />
               </TabPanel>
-              <If condition={counterparty.is_provider}>
+              <If condition={type === 'provider'}>
                 <TabPanel>
                   <Certification />
                 </TabPanel>

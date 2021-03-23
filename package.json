@@ -34,6 +34,7 @@
     "react-paginate": "^6.5.0",
     "react-pdf": "^5.0.0",
     "react-responsive-modal": "^3.6.0",
+    "react-select": "^4.3.0",
     "react-tabs": "^3.1.2",
     "react-to-print": "^1.0.21",
     "react-toastify": "^6.0.9",

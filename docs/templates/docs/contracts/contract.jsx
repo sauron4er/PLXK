@@ -83,6 +83,12 @@ class Contract extends React.Component {
         });
       })
       .catch((error) => notify(error));
+    
+    axiosGetRequest('get_simple_contracts_list/' + contractsStore.view + '/')
+      .then((response) => {
+        contractsStore.contracts = response;
+      })
+      .catch((error) => notify(error));
   };
 
   areAllFieldsFilled = () => {

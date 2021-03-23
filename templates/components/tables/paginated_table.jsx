@@ -24,6 +24,12 @@ class PaginatedTable extends React.Component {
     this.getPage(0);
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.url !== this.props.url) {
+      this.getPage(this.state.page);
+    }
+  }
+
   getPage = (page) => {
     const {url} = this.props;
     const {sort_name, sort_direction, filtering} = this.state;
@@ -46,6 +52,7 @@ class PaginatedTable extends React.Component {
   };
 
   handlePageClick = (page) => {
+    this.setState({page: page.selected})
     this.getPage(page.selected);
   };
 
@@ -106,22 +113,24 @@ class PaginatedTable extends React.Component {
               coloredStatus
             />
             <If condition={pagesCount > 1}>
-              <ReactPaginate
-                previousLabel={'Назад'}
-                nextLabel={'Вперед'}
-                breakLabel={'...'}
-                breakClassName={'break-me'}
-                pageCount={pagesCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={0}
-                onPageChange={this.handlePageClick}
-                containerClassName={'pagination'}
-                // subContainerClassName={'pages pagination'}
-                activeClassName={'active'}
-                pageClassName={'btn btn-sm'}
-                previousClassName={'btn btn-sm'}
-                nextClassName={'btn btn-sm'}
-              />
+              <div className='mt-2'>
+                <ReactPaginate
+                  previousLabel={'Назад'}
+                  nextLabel={'Вперед'}
+                  breakLabel={'...'}
+                  breakClassName={'break-me'}
+                  pageCount={pagesCount}
+                  marginPagesDisplayed={2}
+                  pageRangeDisplayed={5}
+                  onPageChange={this.handlePageClick}
+                  containerClassName={'pagination'}
+                  // subContainerClassName={'pages pagination'}
+                  activeClassName={'active'}
+                  pageClassName={'btn btn-sm'}
+                  previousClassName={'btn btn-sm'}
+                  nextClassName={'btn btn-sm'}
+                />
+              </div>
             </If>
           </When>
           <Otherwise>

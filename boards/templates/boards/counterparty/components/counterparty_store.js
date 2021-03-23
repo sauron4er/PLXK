@@ -7,7 +7,6 @@ const counterpartyStore = store({
   counterparty: {
     id: 0,
     name: '',
-    is_provider: '',
     legal_address: '',
     actual_address: '',
     country: '',
@@ -18,7 +17,8 @@ const counterpartyStore = store({
     scope: '',
     author: '',
     responsible: '',
-    products: [],
+    product_name: '',
+    product_id: '',
     is_active: true
   },
   certificate: {

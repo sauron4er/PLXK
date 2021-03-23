@@ -36,19 +36,19 @@ class OrdersTable extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({main_div_height: this.mainDivRef.clientHeight - 30});
-    ordersStore.clearOrder()
+    this.setState({main_div_height: this.mainDivRef.clientHeight - 105});
+    ordersStore.clearOrder();
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
-  
+
   sendReminders = () => {
     axiosGetRequest('reminders/')
       .then((response) => {
-        this.setState({reminders_sent: true})
+        this.setState({reminders_sent: true});
       })
       .catch((error) => notify(error));
   };
@@ -62,43 +62,34 @@ class OrdersTable extends React.Component {
     const {main_div_height, reminders_sent} = this.state;
     const {is_orders_admin, orders} = ordersStore;
     return (
-      <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
+      <div>
         <If condition={is_orders_admin}>
-          <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-info'>
-            Додати нормативний документ
-          </button>
-          <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-info ml-auto' disabled={reminders_sent}>
-            {reminders_sent ? 'Нагадування розіслано' : 'Розіслати нагадування про виконання наказів'}
-          </button>
+          <div className='d-flex'>
+            <button onClick={() => (ordersStore.view = 'order')} className='btn btn-sm btn-info'>
+              Додати нормативний документ
+            </button>
+            <button onClick={() => this.sendReminders()} className='btn btn-sm btn-outline-info ml-auto' disabled={reminders_sent}>
+              {reminders_sent ? 'Нагадування розіслано' : 'Розіслати нагадування про виконання наказів'}
+            </button>
+          </div>
         </If>
-        {/*<DxTable*/}
-        {/*  rows={orders}*/}
-        {/*  columns={columns}*/}
-        {/*  defaultSorting={[*/}
-        {/*    {columnName: 'date_start', direction: 'desc'},*/}
-        {/*    {columnName: 'code', direction: 'desc'}*/}
-        {/*  ]}*/}
-        {/*  colWidth={col_width}*/}
-        {/*  onRowClick={this.onRowClick}*/}
-        {/*  height={main_div_height}*/}
-        {/*  redRow='is_canceled'*/}
-        {/*  coloredStatus*/}
-        {/*  filter*/}
-        {/*/>*/}
-        <PaginatedTable
-          url={'get_orders'}
-          columns={columns}
-          defaultSorting={[
-            {columnName: 'date_start', direction: 'desc'},
-            {columnName: 'code', direction: 'desc'}
-          ]}
-          colWidth={col_width}
-          onRowClick={this.onRowClick}
-          height={main_div_height}
-          redRow='is_canceled'
-          coloredStatus
-          filter
-        />
+
+        <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
+          <PaginatedTable
+            url={'get_orders'}
+            columns={columns}
+            defaultSorting={[
+              {columnName: 'date_start', direction: 'desc'},
+              {columnName: 'code', direction: 'desc'}
+            ]}
+            colWidth={col_width}
+            onRowClick={this.onRowClick}
+            height={main_div_height}
+            redRow='is_canceled'
+            coloredStatus
+            filter
+          />
+        </div>
       </div>
     );
   }

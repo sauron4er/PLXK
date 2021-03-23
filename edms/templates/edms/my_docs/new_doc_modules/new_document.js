@@ -17,6 +17,7 @@ import CarryOut from './carry_out';
 import MockupType from './mockup_type';
 import MockupProductType from './mockup_product_type';
 import Client from './client';
+import Counterparty from 'edms/templates/edms/my_docs/new_doc_modules/counterparty';
 import PackagingType from './packaging_type';
 import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
 import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
@@ -433,6 +434,9 @@ class NewDocument extends React.Component {
                       </When>
                       <When condition={module.module === 'client'}>
                         <Client module_info={module}/>
+                      </When>
+                      <When condition={module.module === 'counterparty'}>
+                        <Counterparty module_info={module}/>
                       </When>
                       <When condition={module.module === 'dimensions'}>
                         <Text module_info={module} rows={rows} type='dimensions'/>

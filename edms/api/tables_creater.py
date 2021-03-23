@@ -115,7 +115,7 @@ def get_table_rows(meta_doc_type, modules):
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
         'mockup_product_type': get_mockup_product_type(modules, doc),
-        'client': get_client(modules, doc),
+        'client': get_counterparty(modules, doc),
         'packaging_type': get_packaging_type(modules, doc),
         'doc_gate': doc.gate.all()[0].gate_id if doc.gate.all() else None,
         # 'files': get_files(modules, doc),
@@ -161,9 +161,9 @@ def get_mockup_product_type(modules, doc):
 
 
 @try_except
-def get_client(modules, doc):
+def get_counterparty(modules, doc):
     if any(module['module_id'] == 26 for module in modules):
-        return doc.client.all()[0].client.name if doc.client.all() else None
+        return doc.counterparty.all()[0].counterparty.name if doc.counterparty.all() else None
     return None
 
 

@@ -226,24 +226,3 @@ def get_order_code_for_table(order, type_name, code):
         return type_letter + code
     else:
         return ''
-
-
-@try_except
-def sort_orders(orders, column, direction):
-    if column:
-        if direction == 'asc':
-            orders = orders.order_by(column)
-        else:
-            orders = orders.order_by('-' + column)
-    else:
-        orders = orders.order_by('-date_start', '-code')
-
-    return orders
-
-
-@try_except
-def filter_orders(orders, filtering):
-    for filter in filtering:
-        kwargs = {'{}__{}'.format(filter['columnName'], 'icontains'): filter['value']}
-        orders = orders.filter(**kwargs)
-    return orders

@@ -219,7 +219,8 @@ class Request extends React.Component {
   };
 
   getCLientsForProductId = () => {
-    return corrStore.clients.filter((client) => parseInt(corrStore.request.product_id) === client.product_type_id);
+    const clients = corrStore.clients.filter((client) => parseInt(corrStore.request.product_id) === client.product_id);
+    return clients
   };
 
   onSelectorChange = (e, field_id_name, field_name_name) => {
@@ -336,6 +337,7 @@ class Request extends React.Component {
                 maxLength={20}
                 disabled={!edit_mode}
               />
+              <hr />
               <Selector
                 list={corrStore.products}
                 selectedName={corrStore.request.product_name}

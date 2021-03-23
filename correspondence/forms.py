@@ -1,17 +1,5 @@
 from django import forms
-from .models import Client, Law, Request, Request_law, Request_file, Scope, Law_scope, Request_acquaint
-
-
-class NewClientForm(forms.ModelForm):
-    class Meta:
-        model = Client
-        fields = ['name', 'country', 'product_type']
-
-
-class DelClientForm(forms.ModelForm):
-    class Meta:
-        model = Client
-        fields = ['is_active']
+from .models import Law, Request, Request_law, Request_file, Scope, Law_scope, Request_acquaint
 
 
 class NewScopeForm(forms.ModelForm):
