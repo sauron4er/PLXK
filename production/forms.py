@@ -6,7 +6,7 @@ from production.models import *
 class NewProductTypeForm(forms.ModelForm):
     class Meta:
         model = Product_type
-        fields = ['name', 'direction']
+        fields = ['name', 'meta_type', 'direction']
 
 
 class DelProductForm(forms.ModelForm):

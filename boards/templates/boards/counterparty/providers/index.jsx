@@ -52,11 +52,11 @@ class ProvidersIndex extends React.Component {
   };
 
   render() {
-    const {view, counterparty_id} = this.state;
+    const {view, counterparty_id, only_wood} = this.state;
 
     return (
       <Choose>
-        <When condition={view==='table'}>
+        <When condition={view === 'table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
             <If condition={window.edit_access}>
               <div className='mr-auto'>
@@ -65,7 +65,6 @@ class ProvidersIndex extends React.Component {
                 </button>
               </div>
             </If>
-
             <ProvidersTable onRowClick={this.onRowClick} />
           </div>
         </When>

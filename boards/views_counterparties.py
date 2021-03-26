@@ -9,7 +9,8 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from production.api.getters import get_products_list, get_certification_types
+from plxk.api.global_getters import get_userprofiles_list
+from production.api.getters import get_products_list, get_certification_types, get_scopes_list
 from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
 
 
@@ -33,8 +34,12 @@ def providers(request):
 
 
 @try_except
-def get_providers(request, page):
+def get_providers(request, wood_only, page):
     providers_list = Counterparty.objects.filter(is_provider=True).filter(is_active=True)
+
+    if wood_only == 'true':
+        providers_list = providers_list.filter(product__meta_type_id=1)
+
     providers_list = filter_query_set(providers_list, json.loads(request.POST['filtering']))
     providers_list = sort_query_set(providers_list, request.POST['sort_name'], request.POST['sort_direction'])
 
@@ -75,10 +80,10 @@ def get_provider(request, pk):
         'added': convert_to_localtime(provider_instance.added, 'day'),
         'author': provider_instance.author.pip,
         'product_id': provider_instance.product.id,
-        'product_name': provider_instance.product.name,
+        'product': provider_instance.product.name,
     }
 
-    return HttpResponse(json.dumps(provider))
+    return HttpResponse(json.dumps({'counterparty': provider, 'scopes': [], 'employees': []}))
 
 
 @transaction.atomic
@@ -306,13 +311,17 @@ def get_client(request, pk):
         'edrpou': client_instance.edrpou or '',
         'bank_details': client_instance.edrpou or '',
         'contacts': client_instance.edrpou or '',
+        'responsible_id': client_instance.responsible_id,
         'responsible': client_instance.responsible.pip if client_instance.responsible else '',
         'product_id': client_instance.product.id,
-        'product_name': client_instance.product.name,
+        'product': client_instance.product.name,
+        'scope_id': client_instance.scope_id,
         'scope': client_instance.scope.name if client_instance.scope else '',
     }
+    scopes = get_scopes_list()
+    employees = get_userprofiles_list()
 
-    return HttpResponse(json.dumps(client))
+    return HttpResponse(json.dumps({'counterparty': client, 'scopes': scopes, 'employees': employees}))
 
 
 @login_required(login_url='login')
@@ -332,8 +341,8 @@ def post_client(request):
     provider.country = data['country']
     provider.bank_details = data['bank_details']
     provider.contacts = data['contacts']
-    provider.scope_id = data['scope']
-    provider.responsible_id = data['responsible']
+    provider.scope_id = data['scope_id']
+    provider.responsible_id = data['responsible_id']
     provider.product_id = data['product_id']
 
     provider.save()

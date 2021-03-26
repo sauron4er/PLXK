@@ -21,6 +21,18 @@
       />
     </div>
     <div class='d-flex w-100 align-items-center mb-2'>
+      <label for='mockup_type'>Тип продукції:</label>
+      <select
+        id="meta_type"
+        name="meta_type"
+        class="form-control form-control-sm ml-2" >
+        <option  value="" selected="selected">------</option>
+        {% for meta_type in meta_types %}
+         <option value="{{meta_type.id}}">{{meta_type.name|capfirst}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class='d-flex w-100 align-items-center mb-2'>
       <label for='direction'>Напрямок:</label>
       <select
         id="direction"
@@ -44,6 +56,7 @@
       <thead class="thead-inverse">
         <tr>
           <th>Назва</th>
+          <th>Тип</th>
           <th>Напрямок</th>
           <th><th>
         </tr>
@@ -52,6 +65,7 @@
         {% for product in products %}
           <tr>
             <td>{{ product.name }}</td>
+            <td>{{ product.type }}</td>
             <td>{{ product.direction }}</td>
             <td>
               <form method="post" action="del_product">

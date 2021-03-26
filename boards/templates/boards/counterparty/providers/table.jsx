@@ -24,23 +24,36 @@ const col_width = [
 class ProvidersTable extends React.Component {
   state = {
     main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
+    only_wood: false
   };
-  
+
   componentDidMount() {
     this.setState({main_div_height: this.mainDivRef.clientHeight - 100});
   }
-  
-   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+
+  // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
   
+  changeOnlyWood = () => {
+    this.setState({
+      only_wood: !this.state.only_wood
+    })
+  }
+
   render() {
-    const {main_div_height} = this.state;
+    const {main_div_height, only_wood} = this.state;
     return (
       <div ref={this.getMainDivRef}>
+        <div className='form-check'>
+              <input className='form-check-input' type='checkbox' value='' id='only_wood' checked={only_wood} onClick={this.changeOnlyWood} />
+              <label className='form-check-label' htmlFor='only_wood'>
+                Тільки лісосировина
+              </label>
+            </div>
         <PaginatedTable
-          url={'get_providers'}
+          url={`get_providers/${only_wood}`}
           columns={columns}
           defaultSorting={[{columnName: 'id', direction: 'desc'}]}
           colWidth={col_width}
@@ -52,10 +65,10 @@ class ProvidersTable extends React.Component {
       </div>
     );
   }
-  
+
   static defaultProps = {
-    onRowClick: () => {},
-  }
+    onRowClick: () => {}
+  };
 }
 
 export default ProvidersTable;

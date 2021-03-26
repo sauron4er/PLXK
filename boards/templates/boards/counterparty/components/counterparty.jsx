@@ -35,7 +35,9 @@ class Counterparty extends React.Component {
     axiosGetRequest(url + this.props.id + '/')
       .then((response) => {
         this.setState({loading: false});
-        counterpartyStore.counterparty = response;
+        counterpartyStore.counterparty = response.counterparty;
+        counterpartyStore.scopes = response.scopes;
+        counterpartyStore.employees = response.employees;
       })
       .catch((error) => notify(error));
   };
@@ -44,7 +46,7 @@ class Counterparty extends React.Component {
     if (isBlankOrZero(counterpartyStore.counterparty.name)) {
       notify('Заповніть поле "Назва"');
       return false;
-    } else if (isBlankOrZero(counterpartyStore.product.id)) {
+    } else if (isBlankOrZero(counterpartyStore.counterparty.product_id)) {
       notify('Заповніть поле "Продукція"');
       return false;
     }

@@ -15,8 +15,13 @@ class CounterpartyInfo extends React.Component {
     selected_product: '',
     selected_product_id: 0
   };
+  
   onNameChange = (e) => {
     counterpartyStore.counterparty.name = e.target.value;
+  };
+
+  onCountryChange = (e) => {
+    counterpartyStore.counterparty.country = e.target.value;
   };
 
   onEdrpouChange = (e) => {
@@ -34,17 +39,46 @@ class CounterpartyInfo extends React.Component {
   onProductChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     counterpartyStore.counterparty.product_id = e.target.options[selectedIndex].getAttribute('data-key');
-    counterpartyStore.counterparty.product_name = e.target.options[selectedIndex].getAttribute('value');
+    counterpartyStore.counterparty.product = e.target.options[selectedIndex].getAttribute('value');
+  };
+
+  onBankDetailsChange = (e) => {
+    counterpartyStore.counterparty.bank_details = e.target.value;
+  };
+
+  onContactsChange = (e) => {
+    counterpartyStore.counterparty.bank_details = e.target.value;
+  };
+  
+  onScopeChange = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    counterpartyStore.counterparty.scope_id = e.target.options[selectedIndex].getAttribute('data-key');
+    counterpartyStore.counterparty.scope = e.target.options[selectedIndex].getAttribute('value');
+  };
+  
+  onResponsibleChange = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    counterpartyStore.counterparty.responsible_id = e.target.options[selectedIndex].getAttribute('data-key');
+    counterpartyStore.counterparty.responsible = e.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
-    const {counterparty} = counterpartyStore;
+    const {counterparty, type, scopes, employees} = counterpartyStore;
     const {edit_access} = window;
-    const {selected_product} = this.state;
-
+  
     return (
       <>
         <TextInput text={counterparty.name} fieldName={'* Назва'} onChange={this.onNameChange} maxLength={100} disabled={!edit_access} />
+        <If condition={type === 'client'}>
+          <hr />
+          <TextInput
+            text={counterparty.country}
+            fieldName={'Країна'}
+            onChange={this.onCountryChange}
+            maxLength={100}
+            disabled={!edit_access}
+          />
+        </If>
         <hr />
         <TextInput
           text={counterparty.legal_address}
@@ -64,14 +98,48 @@ class CounterpartyInfo extends React.Component {
         <hr />
         <TextInput text={counterparty.edrpou} fieldName={'ЄДРПОУ'} onChange={this.onEdrpouChange} maxLength={8} disabled={!edit_access} />
         <hr />
-
         <Selector
           list={window.products_list}
-          selectedName={counterpartyStore.counterparty.product_name}
+          selectedName={counterpartyStore.counterparty.product}
           fieldName={'Продукція'}
           onChange={this.onProductChange}
           disabled={!edit_access}
         />
+        <hr />
+        <TextInput
+          text={counterparty.bank_details}
+          fieldName={'Реквізити'}
+          onChange={this.onBankDetailsChange}
+          maxLength={200}
+          disabled={!edit_access}
+        />
+        <hr />
+        <TextInput
+          text={counterparty.contacts}
+          fieldName={'Контактні дані'}
+          onChange={this.onContactsChange}
+          maxLength={200}
+          disabled={!edit_access}
+        />
+        <If condition={type === 'client'}>
+          <hr />
+          <Selector
+            list={scopes}
+            selectedName={counterpartyStore.counterparty.scope}
+            fieldName={'Сфера застосування продукції'}
+            onChange={this.onScopeChange}
+            disabled={!edit_access}
+          />
+          <hr />
+          <Selector
+            list={employees}
+            selectedName={counterpartyStore.counterparty.responsible}
+            fieldName={'Відповідальна особа за комунікації з клієнтом'}
+            onChange={this.onResponsibleChange}
+            disabled={!edit_access}
+          />
+          
+        </If>
       </>
     );
   }

@@ -1,5 +1,4 @@
-from ..models import Mockup_type, Mockup_product_type, Product_type, Certification_type, Scope
-from correspondence.models import Client
+from ..models import Mockup_type, Mockup_product_type, Product_type, Product_meta_type, Certification_type, Scope
 from plxk.api.try_except import try_except
 
 
@@ -52,7 +51,18 @@ def get_products_list(direction=''):
         'id': product.pk,
         'name': product.name,
         'direction': 'Продаємо' if product.direction == 'sell' else 'Купуємо',
+        'type': product.meta_type.name if product.meta_type else '',
     } for product in products]
+
+
+@try_except
+def get_meta_types(direction=''):
+    meta_types = Product_meta_type.objects.filter(is_active=True).order_by('name')
+
+    return [{
+        'id': meta_type.pk,
+        'name': meta_type.name,
+    } for meta_type in meta_types]
 
 
 @try_except

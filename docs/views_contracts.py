@@ -11,7 +11,7 @@ from plxk.api.datetime_normalizers import date_to_json
 from docs.api import contracts_api, contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from plxk.api.global_getters import get_employees_list, get_departments_list, is_it_lawyer
+from plxk.api.global_getters import get_users_list, get_departments_list, is_it_lawyer
 
 
 @login_required(login_url='login')
@@ -20,7 +20,7 @@ def index(request):
     full_edit_access = is_it_lawyer(request.user.userprofile.id) or request.user.userprofile.is_it_admin
 
     return render(request, 'docs/contracts/index.html', {'departments': get_departments_list(),
-                                                         'employees': get_employees_list(),
+                                                         'employees': get_users_list(),
                                                          'full_edit_access': 'true' if full_edit_access else 'false'
                                                          })
 

@@ -15,12 +15,16 @@ const counterpartyStore = store({
     contacts: '',
     added_date: '',
     scope: '',
+    scope_id: '',
     author: '',
     responsible: '',
-    product_name: '',
+    responsible_id: '',
+    product: '',
     product_id: '',
     is_active: true
   },
+  scopes: [],
+  employees: [],
   certificate: {
     id: -1, // -1 - Не відображається нічого, 0 - створення сертифікату.
     production_groups: '',

@@ -15,7 +15,7 @@ from edms.models import Employee_Seat
 from accounts.models import UserProfile
 from plxk.api.try_except import try_except
 from plxk.api.pagination import sort_query_set, filter_query_set
-from plxk.api.global_getters import get_employees_list, get_emp_seats_list
+from plxk.api.global_getters import get_users_list, get_emp_seats_list
 from .models import Document, Order_doc, Order_doc_type, Article_responsible
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
 from docs.api.orders_mail_sender import arrange_mail, send_reminders
@@ -131,7 +131,7 @@ def orders(request):
 
     types = list(Order_doc_type.objects.values())
 
-    employees = get_employees_list()
+    employees = get_users_list()
     emp_seats = get_emp_seats_list()
 
     # orders - цей список потрібен для непажинованої таблиці.

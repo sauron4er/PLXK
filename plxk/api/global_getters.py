@@ -1,11 +1,23 @@
 from django.contrib.auth.models import User
-from accounts.models import Department
+from accounts.models import Department, UserProfile
 from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
 
 
 @try_except
-def get_employees_list():
+def get_userprofiles_list():
+    return [{
+        'id': emp.pk,
+        'name': emp.pip
+    } for emp in
+        UserProfile.objects
+            .exclude(id=11)  # Викидуємо зі списка користувача Охорона
+            .filter(is_active=True)
+            .order_by('pip')]
+
+
+@try_except
+def get_users_list():
     return [{
         'id': emp.pk,
         'name': emp.last_name + ' ' + emp.first_name,

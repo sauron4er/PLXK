@@ -5,6 +5,8 @@ class TextInput extends React.Component {
   
   render() {
     const {fieldName, text, onChange, maxLength, type, disabled, className} = this.props;
+    
+    const rows = Math.round(text.length / 100)
   
     return (
       <Choose>
@@ -45,7 +47,7 @@ class TextInput extends React.Component {
               name={fieldName}
               id={fieldName}
               value={text}
-              rows={Math.round(text.length/100)}
+              rows={rows > 0 ? rows : 1}
               onChange={onChange}
               maxLength={maxLength}
               disabled={disabled}

@@ -16,11 +16,14 @@ def get_products(request, direction):
 @try_except
 def products(request):
     products_list = get_products_list()
-    return render(request, 'production/products.html', {'products': products_list})
+    meta_types = get_meta_types()
+    return render(request, 'production/products.html', {'products': products_list, 'meta_types': meta_types})
 
 
 @try_except
 def new_product(request):
+    request_post = request.POST.copy()
+    request_post['meta_type'] = request_post['meta_type'] if request_post['meta_type'] != '' else None
     form = NewProductTypeForm(request.POST)
     if form.is_valid():
         form.save()
