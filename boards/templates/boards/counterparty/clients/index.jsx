@@ -10,25 +10,6 @@ class ClientsIndex extends React.Component {
     view: 'table' // counterparty
   };
 
-  componentDidMount() {
-    // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретного постачальника:
-    const arr = window.location.href.split('/');
-    const last_href_piece = parseInt(arr[arr.length - 1]);
-    const is_link = !isNaN(last_href_piece);
-
-    if (is_link) {
-      for (let i = 0; i < window.clients.length; i++) {
-        if (window.clients[i].id === last_href_piece) {
-          this.setState({
-            counterparty_id: window.clients[i].id,
-            view: 'counterparty'
-          });
-          break;
-        }
-      }
-    }
-  }
-
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
