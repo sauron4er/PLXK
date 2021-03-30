@@ -47,7 +47,7 @@ class CounterpartyInfo extends React.Component {
   };
 
   onContactsChange = (e) => {
-    counterpartyStore.counterparty.bank_details = e.target.value;
+    counterpartyStore.counterparty.contacts = e.target.value;
   };
   
   onScopeChange = (e) => {

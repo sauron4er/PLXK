@@ -34,6 +34,7 @@ class UserProfile(models.Model):
     access_to_all_contracts = models.BooleanField(default=False)  # Доступ до перегляду всіх Договорів
     providers_add = models.BooleanField(default=False)  # Право додавання постачальників
     clients_add = models.BooleanField(default=False)  # Право редагування довідника клієнтів
+    product_type_add = models.BooleanField(default=False)  # Право редагування довідника продукції
     mockup_type_add = models.BooleanField(default=False)  # Право редагування довідника типів дизайн-макетів
     mockup_product_type_add = models.BooleanField(default=False)  # Право редагування довідника продукції, пов’язаної з типами дизайн-макетів
     is_bets = models.BooleanField(default=False)
