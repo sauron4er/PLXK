@@ -349,24 +349,24 @@ def post_client(request):
     data = json.loads(request.POST.copy()['counterparty'])
 
     if data['id'] == 0:
-        provider = Counterparty(is_provider=True, author=request.user.userprofile)
+        client = Counterparty(is_provider=False, author=request.user.userprofile)
     else:
-        provider = get_object_or_404(Counterparty, pk=data['id'])
+        client = get_object_or_404(Counterparty, pk=data['id'])
 
-    provider.name = data['name']
-    provider.legal_address = data['legal_address']
-    provider.actual_address = data['actual_address']
-    provider.edrpou = data['edrpou']
-    provider.country = data['country']
-    provider.bank_details = data['bank_details']
-    provider.contacts = data['contacts']
-    provider.scope_id = data['scope_id']
-    provider.responsible_id = data['responsible_id']
-    provider.product_id = data['product_id']
+    client.name = data['name']
+    client.legal_address = data['legal_address']
+    client.actual_address = data['actual_address']
+    client.edrpou = data['edrpou']
+    client.country = data['country']
+    client.bank_details = data['bank_details']
+    client.contacts = data['contacts']
+    client.scope_id = data['scope_id']
+    client.responsible_id = data['responsible_id']
+    client.product_id = data['product_id']
 
-    provider.save()
+    client.save()
 
-    return HttpResponse(provider.pk)
+    return HttpResponse(client.pk)
 
 
 @try_except
