@@ -417,4 +417,4 @@ def get_counterparties_list_for_select():
 def get_counterparty_name_with_country(counterparty):
     if counterparty.country:
         return counterparty.name + ', ' + counterparty.country
-    return counterparty.pk
+    return counterparty.name
