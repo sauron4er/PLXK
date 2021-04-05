@@ -6,6 +6,9 @@ import Request from './request/request';
 import Clients from './clients';
 import Laws from './laws/laws';
 import corrStore from './store';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import contractsStore from 'docs/templates/docs/contracts/contracts_store';
+import {notify} from 'templates/components/my_extras';
 
 class Correspondence extends React.Component {
   state = {
@@ -13,12 +16,7 @@ class Correspondence extends React.Component {
   };
 
   componentDidMount() {
-    corrStore.correspondence = window.correspondence;
-    corrStore.laws = window.laws;
-    corrStore.clients = window.clients;
-    corrStore.products = window.products;
-    corrStore.employees = window.employees;
-    corrStore.scopes = window.scopes;
+    this.getInfoForCorrespondencePage();
 
     // Визначаємо, чи відкриваємо просто список, чи це конкретне посилання:
     const arr = window.location.pathname.split('/');
@@ -27,6 +25,19 @@ class Correspondence extends React.Component {
     const is_link = !isNaN(last_href_piece);
     if (is_link) this.showRequest(last_href_piece);
   }
+  
+  getInfoForCorrespondencePage = () => {
+    axiosGetRequest('get_info_for_contracts_page')
+      .then((response) => {
+        corrStore.correspondence = response.correspondence;
+        corrStore.laws = response.laws;
+        corrStore.clients = response.clients;
+        corrStore.products = response.products;
+        corrStore.employees = response.employees;
+        corrStore.scopes = response.scopes;
+      })
+      .catch((error) => notify(error));
+  };
 
   changeView = (name) => {
     if (name === 'requests') corrStore.request.type = 1
