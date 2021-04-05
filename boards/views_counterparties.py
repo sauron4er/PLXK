@@ -406,8 +406,15 @@ def get_counterparties_list_for_select():
 
     counterparties_list = [{
         'value': counterparty.pk,
-        'label': counterparty.name,
+        'label': get_counterparty_name_with_country(counterparty),
         'type': 'provider' if counterparty.is_provider else 'client'
     } for counterparty in counterparties]
 
     return counterparties_list
+
+
+@try_except
+def get_counterparty_name_with_country(counterparty):
+    if counterparty.country:
+        return counterparty.name + ', ' + counterparty.country
+    return counterparty.pk
