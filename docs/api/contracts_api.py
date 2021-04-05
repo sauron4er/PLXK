@@ -21,7 +21,13 @@ def post_contract(author, contract):
 
     new_contract.number = contract['number']
     new_contract.company = contract['company']
-    new_contract.counterparty_link_id = contract['counterparty']
+
+    if contract['counterparty_id'] != 0:
+        new_contract.counterparty_link_id = contract['counterparty_id']
+    else:
+        new_contract.counterparty = contract['counterparty_text']
+
+
     new_contract.subject = contract['subject']
     new_contract.nomenclature_group = contract['nomenclature_group']
     new_contract.date_start = contract['date_start'] if contract['date_start'] != '' else None
@@ -69,13 +75,22 @@ def add_contract_from_edms(doc_request, files):
     basic_contract = edms_doc.contract.values_list('contract_id', flat=True)
     basic_contract = basic_contract[0] if len(basic_contract) > 0 else None
 
+    counterparty_id = 0
+    counterparty_text = ''
+
+    if edms_doc.counterparty.exists():
+        counterparty_id = edms_doc.counterparty.get().counterparty_id
+    else:
+        counterparty_text = get_texts_from_edms(edms_doc, fields_queue['counterparty'])
+
     contract = {
         'edms_doc_id': edms_doc.id,
         'company': edms_doc.company,
         'basic_contract': basic_contract,
         'number': get_texts_from_edms(edms_doc, fields_queue['number']),
         'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
-        'counterparty': edms_doc.counterparty.get().counterparty_id,
+        'counterparty_id': counterparty_id,
+        'counterparty_text': counterparty_text,
         'nomenclature_group': get_texts_from_edms(edms_doc, fields_queue['nomenclature_group']),
         'date_start': get_days_from_edms(edms_doc, fields_queue['date_start']),
         'date_end': get_days_from_edms(edms_doc, fields_queue['date_end']),
