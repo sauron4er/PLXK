@@ -14,9 +14,13 @@ class ClientsIndex extends React.Component {
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
-
-  onRowClick = (clicked_row) => {
+  
+  componentDidMount() {
     counterpartyStore.type = 'client';
+  }
+  
+  
+  onRowClick = (clicked_row) => {
     this.setState({
       counterparty_id: clicked_row.id,
       view: 'counterparty'

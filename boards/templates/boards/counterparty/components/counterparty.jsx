@@ -59,7 +59,7 @@ class Counterparty extends React.Component {
       formData.append('counterparty', JSON.stringify(counterpartyStore.counterparty));
       
       const url = counterpartyStore.type === 'provider' ? 'post_provider/' : 'post_client/';
-
+  
       axiosPostRequest(url, formData)
         .then((response) => {
           location.reload();

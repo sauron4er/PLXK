@@ -14,9 +14,12 @@ class ProvidersIndex extends React.Component {
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
+  
+  componentDidMount() {
+    counterpartyStore.type = 'provider';
+  }
 
   onRowClick = (clicked_row) => {
-    counterpartyStore.type = 'provider';
     this.setState({
       counterparty_id: clicked_row.id,
       view: 'counterparty'
