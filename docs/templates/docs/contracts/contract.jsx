@@ -10,6 +10,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import Selector from 'templates/components/form_modules/selector';
+import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 import Files from 'templates/components/form_modules/files';
@@ -41,7 +42,9 @@ class Contract extends React.Component {
       author: 0,
       author_name: '',
       subject: '',
-      counterparty: '',
+      counterparty_old: '',
+      counterparty_name: '',
+      counterparty: 0,
       nomenclature_group: '',
       date_start: '',
       date_end: '',
@@ -49,6 +52,8 @@ class Contract extends React.Component {
       responsible_name: '',
       department: null,
       department_name: '',
+      incoterms: '',
+      purchase_terms: '',
       lawyers_received: false,
       is_additional_contract: false,
       basic_contract: null,
@@ -65,8 +70,17 @@ class Contract extends React.Component {
     if (this.props.id !== 0) {
       this.getContract();
     } else {
-      this.setState({data_received: true});
+      this.setState({
+        contract: {
+          ...this.state.contract,
+          counterparty: this.props.counterparty_id,
+          counterparty_name: this.props.counterparty_name
+        },
+        data_received: true
+      });
     }
+    this.getCounterparties();
+    this.getContractListForAdditionalContractChoose();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -77,18 +91,28 @@ class Contract extends React.Component {
     axiosGetRequest('get_contract/' + this.props.id + '/')
       .then((response) => {
         this.setState({
-          contract: response,
+          contract: response.contract,
           edit_mode: contractsStore.full_edit_access || response.is_author,
           data_received: true
         });
       })
       .catch((error) => notify(error));
-    
-    axiosGetRequest('get_simple_contracts_list/' + contractsStore.view + '/')
+  };
+
+  getContractListForAdditionalContractChoose = () => {
+    axiosGetRequest('get_simple_contracts_list/' + contractsStore.counterparty_filter + '/' + contractsStore.view + '/')
       .then((response) => {
         contractsStore.contracts = response;
       })
       .catch((error) => notify(error));
+  };
+
+  getCounterparties = () => {
+    axiosGetRequest('get_counterparties_for_select/')
+      .then((response) => {
+        this.setState({counterparties: response});
+      })
+      .catch((error) => console.log(error));
   };
 
   areAllFieldsFilled = () => {
@@ -239,7 +263,20 @@ class Contract extends React.Component {
 
   onCounterpartyChange = (e) => {
     const contract = {...this.state.contract};
-    contract.counterparty = e.target.value;
+    contract.counterparty = e.value;
+    contract.counterparty_name = e.label;
+    this.setState({contract});
+  };
+
+  onIncotermsChange = (e) => {
+    const contract = {...this.state.contract};
+    contract.incoterms = e.target.value;
+    this.setState({contract});
+  };
+
+  onPurchaseTermsChange = (e) => {
+    const contract = {...this.state.contract};
+    contract.purchase_terms = e.target.value;
     this.setState({contract});
   };
 
@@ -312,7 +349,7 @@ class Contract extends React.Component {
     contract.company = event.target.value;
     this.setState({contract});
   };
-  
+
   clearContract = () => {
     let contract = {...this.state.contract};
     contract = {
@@ -339,12 +376,23 @@ class Contract extends React.Component {
       edms_doc_id: 0
     };
     this.setState({contract});
-  }
+  };
 
   render() {
-    const {data_received, edit_mode, edms_doc_opened, view, additional_contracts, additional_contract_id, contract} = this.state;
+    const {
+      data_received,
+      edit_mode,
+      edms_doc_opened,
+      view,
+      additional_contracts,
+      additional_contract_id,
+      contract,
+      counterparties
+    } = this.state;
     const {is_main_contract} = this.props;
     const {contracts} = contractsStore;
+
+    console.log(contracts);
 
     if (data_received) {
       return (
@@ -422,14 +470,6 @@ class Contract extends React.Component {
                       onChange={this.onBasicContractChange}
                       disabled={!edit_mode}
                     />
-
-                    <If condition={contract.basic_contract !== 0}>
-                      <div>
-                        <a href={'./' + contract.basic_contract} target='_blank'>
-                          Перейти до основного Договору
-                        </a>
-                      </div>
-                    </If>
                   </If>
                   <hr />
                   <TextInput
@@ -440,13 +480,38 @@ class Contract extends React.Component {
                     disabled={!edit_mode}
                   />
                   <hr />
-                  <TextInput
-                    text={contract.counterparty}
+                  <If condition={contract.counterparty_old !== ''}>
+                    <div>
+                      Контрагент: <span className='font-weight-bold'>{contract.counterparty_old}</span>
+                    </div>
+                    <If condition={edit_mode}>
+                      <small className='text-danger'>
+                        Це поле було заповнене до створення довідника контрагентів, будь ласка, оберіть контрагента зі списку нижче і
+                        збережіть зміни, щоб даний контракт відображався на сторінці контрагента
+                      </small>
+                    </If>
+                  </If>
+                  <SelectorWithFilter
+                    list={counterparties}
                     fieldName={'* Контрагент'}
+                    value={{label: contract.counterparty_name, value: contract.counterparty}}
                     onChange={this.onCounterpartyChange}
-                    maxLength={200}
-                    disabled={!edit_mode}
+                    disabled={this.props.counterparty_id !== 0 || !edit_mode}
                   />
+                  <If condition={this.props.counterparty_id === 0}>
+                    <small>
+                      Якщо потрібного контрагента нема в списку, його можна додати на сторінці{' '}
+                      <a href={`${window.location.origin}/boards/providers/`} target='_blank'>
+                        Постачальники
+                      </a>{' '}
+                      або{' '}
+                      <a href={`${window.location.origin}/boards/clients/`} target='_blank'>
+                        {/*<a href={'http://127.0.0.1:8000/boards/clients/'} target='_blank'>*/}
+                        Клієнти
+                      </a>
+                      . Якщо у вас нема прав на додавання контрагента у базу, зверніться до адміністратора
+                    </small>
+                  </If>
                   <hr />
                   <Files
                     oldFiles={contract.old_files}
@@ -476,6 +541,22 @@ class Contract extends React.Component {
                     date={contract.date_end}
                     fieldName={'Кінець дії Договору'}
                     onChange={this.onDateEndChange}
+                    disabled={!edit_mode}
+                  />
+                  <hr />
+                  <TextInput
+                    text={contract.incoterms}
+                    fieldName={'Умови поставки згідно ІНКОТЕРМС'}
+                    onChange={this.onIncotermsChange}
+                    maxLength={1000}
+                    disabled={!edit_mode}
+                  />
+                  <hr />
+                  <TextInput
+                    text={contract.purchase_terms}
+                    fieldName={'Умови закупівлі'}
+                    onChange={this.onPurchaseTermsChange}
+                    maxLength={1000}
                     disabled={!edit_mode}
                   />
                   <hr />

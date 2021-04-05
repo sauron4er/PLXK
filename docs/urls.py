@@ -2,6 +2,7 @@ from django.conf.urls import url
 from . import views
 from . import views_contracts
 from edms.views import edms_get_doc
+from boards.views_counterparties import get_counterparties_for_select
 
 app_name = 'docs'
 
@@ -26,14 +27,16 @@ urlpatterns = [
     url(r'^orders/responsible_done/(?P<pk>\d+)/$', views.responsible_done, name='responsible_done'),
     url(r'^orders/', views.orders, name='orders'),
 
-    url(r'^contracts/get_contracts/(?P<company>\w+)/(?P<with_add>\w+)/(?P<page>\w+)/$', views_contracts.get_contracts, name='get_contracts'),
+    url(r'^contracts/get_contracts/(?P<counterparty>\w+)/(?P<company>\w+)/(?P<with_add>\w+)/(?P<page>\w+)/$', views_contracts.get_contracts, name='get_contracts'),
     url(r'^contracts/get_contract/(?P<pk>\d+)/$', views_contracts.get_contract, name='get_contract'),
-    url(r'^contracts/get_simple_contracts_list/(?P<company>\w+)/$', views_contracts.get_simple_contracts_list, name='get_simple_contracts_list'),
+    url(r'^contracts/get_simple_contracts_list/(?P<counterparty>\w+)/(?P<company>\w+)/$', views_contracts.get_simple_contracts_list, name='get_simple_contracts_list'),
     url(r'^contracts/get_additional_contracts/(?P<pk>\d+)/$', views_contracts.get_additional_contracts, name='get_additional_contracts'),
     url(r'^contracts/add_contract', views_contracts.add_contract, name='add_contract'),
     url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),
     url(r'^contracts/deactivate_contract/(?P<pk>\d+)/$', views_contracts.deactivate_contract, name='deactivate_contract'),
     url(r'^contracts/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
+    url(r'^contracts/get_counterparties_for_select/', get_counterparties_for_select, name='get_counterparties_for_select'),
+    url(r'^contracts/get_info_for_contracts_page', views_contracts.get_info_for_contracts_page, name='get_info_for_contracts_page'),
     url(r'^contracts/', views_contracts.index, name='contracts'),
 
     # url(r'^order/new/$', views.new_order, name='new_order'),

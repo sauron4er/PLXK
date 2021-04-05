@@ -4,14 +4,27 @@ import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import Contract from 'docs/templates/docs/contracts/contract';
 import ContractsTable from 'docs/templates/docs/contracts/table';
+import counterpartyStore from '../../../../boards/templates/boards/counterparty/components/counterparty_store';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import {notify} from 'templates/components/my_extras';
+import {counter} from '@fortawesome/fontawesome-svg-core';
 
 class Contracts extends React.Component {
   componentDidMount() {
-    contractsStore.employees = window.employees;
-    contractsStore.departments = window.departments;
-    contractsStore.full_edit_access = window.full_edit_access;
+    this.getInfoForContractsPage();
     contractsStore.main_div_height = this.mainDivRef.clientHeight - 30; // розмір головного div, з якого вираховується розмір таблиць
+    contractsStore.counterparty_filter = this.props.counterparty_filter;
   }
+
+  getInfoForContractsPage = () => {
+    axiosGetRequest('get_info_for_contracts_page')
+      .then((response) => {
+        contractsStore.employees = response.employees;
+        contractsStore.departments = response.departments;
+        contractsStore.full_edit_access = response.full_edit_access;
+      })
+      .catch((error) => notify(error));
+  };
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
@@ -43,7 +56,8 @@ class Contracts extends React.Component {
 
   render() {
     const {contract_view, contract, with_additional} = contractsStore;
-  
+    const {counterparty_name, counterparty_filter} = this.props;
+
     return (
       <Choose>
         <When condition={!contract_view}>
@@ -65,14 +79,16 @@ class Contracts extends React.Component {
               </label>
             </div>
 
-            <div className='btn-group' role='group' aria-label='contracts_index'>
-              <button type='button' className={this.getButtonStyle('ТДВ')} onClick={() => this.changeView('ТДВ')}>
-                ТДВ ПЛХК
-              </button>
-              <button type='button' className={this.getButtonStyle('ТОВ')} onClick={() => this.changeView('ТОВ')}>
-                ТОВ ПЛХК
-              </button>
-            </div>
+            <If condition={counterparty_filter === 0}>
+              <div className='btn-group' role='group' aria-label='contracts_index'>
+                <button type='button' className={this.getButtonStyle('ТДВ')} onClick={() => this.changeView('ТДВ')}>
+                  ТДВ ПЛХК
+                </button>
+                <button type='button' className={this.getButtonStyle('ТОВ')} onClick={() => this.changeView('ТОВ')}>
+                  ТОВ ПЛХК
+                </button>
+              </div>
+            </If>
           </div>
           <div className='row mt-2' ref={this.getMainDivRef}>
             <ContractsTable />
@@ -83,11 +99,21 @@ class Contracts extends React.Component {
             Назад
           </button>
           <br />
-          <Contract id={contract.id} close={this.onContractClose} />
+          <Contract
+            id={contract.id}
+            close={this.onContractClose}
+            counterparty_id={counterparty_filter}
+            counterparty_name={counterparty_name}
+          />
         </Otherwise>
       </Choose>
     );
   }
+
+  static defaultProps = {
+    counterparty_filter: 0,
+    counterparty_name: ''
+  };
 }
 
 export default view(Contracts);

@@ -6,6 +6,7 @@ const contractsStore = store({
   view: 'ТДВ', // ТДВ, ТОВ
   with_additional: false,
   contract_view: false, // перегляд чи додавання договору
+  counterparty_filter : -1,
   contract: {
     id: 0,
     number: '',

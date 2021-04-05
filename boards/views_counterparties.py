@@ -46,7 +46,7 @@ def get_providers(request, wood_only, page):
     providers_list = filter_query_set(providers_list, json.loads(request.POST['filtering']))
     providers_list = sort_query_set(providers_list, request.POST['sort_name'], request.POST['sort_direction'])
 
-    paginator = Paginator(providers_list, 22)
+    paginator = Paginator(providers_list, 23)
     try:
         providers_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
@@ -297,7 +297,7 @@ def get_clients(request, page):
     clients_list = filter_query_set(clients_list, json.loads(request.POST['filtering']))
     clients_list = sort_query_set(clients_list, request.POST['sort_name'], request.POST['sort_direction'])
 
-    paginator = Paginator(clients_list, 22)
+    paginator = Paginator(clients_list, 23)
     try:
         clients_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
@@ -397,10 +397,17 @@ def get_counterparties(request):
 
 @try_except
 def get_counterparties_for_select(request):
+    return HttpResponse(json.dumps(get_counterparties_list_for_select()))
+
+
+@try_except
+def get_counterparties_list_for_select():
     counterparties = Counterparty.objects.all().filter(is_active=True).order_by('name')
 
     counterparties_list = [{
         'value': counterparty.pk,
-        'label': counterparty.name
+        'label': counterparty.name,
+        'type': 'provider' if counterparty.is_provider else 'client'
     } for counterparty in counterparties]
-    return HttpResponse(json.dumps(counterparties_list))
+
+    return counterparties_list

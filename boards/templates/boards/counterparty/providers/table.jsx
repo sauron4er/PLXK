@@ -16,7 +16,7 @@ const columns = [
 const col_width = [
   {columnName: 'id', width: 50},
   {columnName: 'added', width: 90},
-  {columnName: 'edrpou', width: 90},
+  {columnName: 'edrpou', width: 80},
   {columnName: 'author', width: 180},
   {columnName: 'status', width: 30}
 ];
@@ -35,23 +35,23 @@ class ProvidersTable extends React.Component {
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
-  
+
   changeOnlyWood = () => {
     this.setState({
       only_wood: !this.state.only_wood
-    })
-  }
+    });
+  };
 
   render() {
     const {main_div_height, only_wood} = this.state;
     return (
       <div ref={this.getMainDivRef}>
         <div className='form-check'>
-              <input className='form-check-input' type='checkbox' value='' id='only_wood' checked={only_wood} onClick={this.changeOnlyWood} />
-              <label className='form-check-label' htmlFor='only_wood'>
-                Тільки лісосировина
-              </label>
-            </div>
+          <input className='form-check-input' type='checkbox' value='' id='only_wood' checked={only_wood} onClick={this.changeOnlyWood} />
+          <label className='form-check-label' htmlFor='only_wood'>
+            Тільки лісосировина
+          </label>
+        </div>
         <PaginatedTable
           url={`get_providers/${only_wood}`}
           columns={columns}

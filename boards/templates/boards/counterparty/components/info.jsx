@@ -101,7 +101,7 @@ class CounterpartyInfo extends React.Component {
         <Selector
           list={window.products_list}
           selectedName={counterpartyStore.counterparty.product}
-          fieldName={'Продукція'}
+          fieldName={'* Продукція'}
           onChange={this.onProductChange}
           disabled={!edit_access}
         />

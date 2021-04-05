@@ -235,8 +235,21 @@ class DxTable extends React.PureComponent {
     <TableHeaderRow.Cell
       {...props}
       style={{
-        padding: '1',
+        paddingTop: '0',
+        paddingRight: '0',
+        paddingBottom: '0',
+        paddingLeft: '1',
         fontSize: '11px'
+      }}
+    />
+  );
+  
+  FilterCellComponent = (props) => (
+    <TableFilterRow.Cell
+      {...props}
+      style={{
+        padding: '0',
+        fontSize: '9px'
       }}
     />
   );
@@ -283,7 +296,7 @@ class DxTable extends React.PureComponent {
           messages={{sortingHint: 'Сортувати'}}
         />
 
-        <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} />
+        <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} cellComponent={this.FilterCellComponent} />
       </Grid>
     );
   }

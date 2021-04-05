@@ -83,6 +83,9 @@ class Info extends React.Component {
                   <When condition={module.module === 'client'}>
                     <Text text_info={module} text={`${info.client.name} (${info.client.country})`} doc_info={info} />
                   </When>
+                  <When condition={module.module === 'counterparty'}>
+                    <Text text_info={module} text={`${info.counterparty.name} (${info.counterparty.country})`} doc_info={info} />
+                  </When>
                   <When condition={module.module === 'contract_link'}>
                     <ContractInfo contract={info.contract_link} fieldName={module.field_name} />
                   </When>

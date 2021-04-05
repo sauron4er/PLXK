@@ -13,7 +13,7 @@ class Client extends React.Component {
   };
 
   componentDidMount() {
-    axiosGetRequest('get_clients/3/') // 3 - ДВП - дизайн-макети наразі формуються тільки для продукції ДВП
+    axiosGetRequest('get_clients/3/')
       .then((response) => {
         this.setState({
           clients: response,

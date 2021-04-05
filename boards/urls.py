@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views, views_org_structure, views_counterparties
+from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, get_simple_contracts_list
 
 app_name = 'boards'
 
@@ -28,6 +29,11 @@ urlpatterns = [
     url(r'^providers/get_certificate/(?P<pk>\d+)/$', views_counterparties.get_certificate, name='get_certificate'),
     url(r'^providers/post_certificate_pause/', views_counterparties.post_certificate_pause, name='post_certificate_pause'),
     url(r'^providers/deact_cert_pause/(?P<pk>\d+)/$', views_counterparties.deact_cert_pause, name='deact_cert_pause'),
+    url(r'^providers/get_info_for_contracts_page', get_info_for_contracts_page, name='get_info_for_contracts_page'),
+    url(r'^providers/get_contracts/(?P<counterparty>-?\d+)/(?P<company>\w+)/(?P<with_add>\w+)/(?P<page>\w+)/$', get_contracts, name='get_contracts'),
+    url(r'^providers/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
+    url(r'^providers/get_simple_contracts_list/(?P<counterparty>\w+)/(?P<company>\w+)/$', get_simple_contracts_list, name='get_simple_contracts_list'),
+    url(r'^providers/get_counterparties_for_select/', views_counterparties.get_counterparties_for_select, name='get_counterparties_for_select'),
     url(r'^providers/', views_counterparties.providers, name='providers'),
 
     url(r'^clients/get_clients/(?P<page>\d+)/$', views_counterparties.get_clients, name='get_clients'),

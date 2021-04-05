@@ -15,7 +15,7 @@ const columns = [
 const col_width = [
   {columnName: 'id', width: 50},
   {columnName: 'product__name', width: 100},
-  {columnName: 'edrpou', width: 90},
+  {columnName: 'edrpou', width: 80},
   {columnName: 'country', width: 100}
 ];
 

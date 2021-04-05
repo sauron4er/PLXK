@@ -52,7 +52,7 @@ class PaginatedTable extends React.Component {
   };
 
   handlePageClick = (page) => {
-    this.setState({page: page.selected})
+    this.setState({page: page.selected});
     this.getPage(page.selected);
   };
 
@@ -71,15 +71,10 @@ class PaginatedTable extends React.Component {
   changeFiltering = (data) => {
     clearTimeout(delayTimeout);
     delayTimeout = setTimeout(() => {
-      this.setState(
-        {
-          filtering: data
-        },
-        () => {
-          this.getPage(0);
-        }
-      );
-    }, 1000);
+      this.setState({filtering: data}, () => {
+        this.getPage(0);
+      });
+    }, 400);
   };
 
   render() {
@@ -96,7 +91,7 @@ class PaginatedTable extends React.Component {
     };
 
     return (
-      <Paper className='mt-2 full_width' style={{height: paper_height ? paper_height : '100%'}}>
+      <Paper className='mt-2' style={{height: paper_height ? paper_height : '100%', width: '99%'}}>
         <Choose>
           <When condition={!loading}>
             <DxTable

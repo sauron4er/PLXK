@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import Department
-# from edms.models import Document as EdmsDocument, Employee_Seat
 import edms.models as edms
 from boards.models import Counterparty
 
@@ -119,7 +118,7 @@ class Contract(models.Model):
     created_by = models.ForeignKey(User, related_name='added_contracts', on_delete=models.RESTRICT)
     updated_by = models.ForeignKey(User, null=True, blank=True, related_name='updated_contracts', on_delete=models.RESTRICT)
     subject = models.CharField(max_length=1000)
-    counterparty = models.CharField(max_length=200)  # Заповнюється якшо не можна взяти контрагента з довідника
+    counterparty = models.CharField(max_length=200, null=True)  # Заповнюється якшо не можна взяти контрагента з довідника
     nomenclature_group = models.CharField(max_length=100, null=True, blank=True)
     date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)

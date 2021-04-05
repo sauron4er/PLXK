@@ -87,7 +87,7 @@ class DeactivateResponsibleForm(forms.ModelForm):
 class NewContractForm(forms.ModelForm):
     class Meta:
         model = Contract
-        fields = ['number', 'subject', 'counterparty', 'nomenclature_group', 'company',
+        fields = ['number', 'subject', 'counterparty_link', 'nomenclature_group', 'company', 'incoterms', 'purchase_terms',
                   'date_start', 'date_end', 'responsible', 'department', 'lawyers_received', 'basic_contract']
         # created_by, edms_doc змушений додавати у форму напряму у views, через цю форму каже, що поле не заповнене
 

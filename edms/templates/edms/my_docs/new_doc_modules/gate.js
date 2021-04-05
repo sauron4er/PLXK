@@ -17,7 +17,7 @@ class Gate extends React.Component {
   static defaultProps = {
     checkedGate: 1,
     module_info: {
-      field_name: 'Прохідна №',
+      field_name: 'РџСЂРѕС…С–РґРЅР° в„–',
       queue: 0,
       required: false,
       additional_info: null

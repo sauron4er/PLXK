@@ -11,24 +11,30 @@ from docs.api.contracts_mail_sender import send_mail
 @try_except
 def add_contract(request):
     contract = json.loads(request.POST.get('contract'))
-    contract.update({'edms_doc': None})
-    contract.update({'created_by': request.user})
-    return post_contract(contract)
+    contract.update({'edms_doc_id': None})
+    return post_contract(request.user.id, contract)
 
 
 @try_except
-def post_contract(contract):
-    new_contract_form = NewContractForm(contract, initial={'number': None, 'nomenclature_group': None, 'date_end': None,
-                                                           'department': None, 'responsible': None,
-                                                           'lawyers_received': False, 'basic_contract': None})
+def post_contract(author, contract):
+    new_contract = Contract(created_by_id=author)
 
-    if new_contract_form.is_valid():
-        new_contract = new_contract_form.save(commit=False)
-        new_contract.created_by = contract['created_by']
-        new_contract.edms_doc = contract['edms_doc']
-        new_contract.save()
-    else:
-        raise ValidationError('docs/api/contract_api: function post_contract: form invalid')
+    new_contract.number = contract['number']
+    new_contract.company = contract['company']
+    new_contract.counterparty_link_id = contract['counterparty']
+    new_contract.subject = contract['subject']
+    new_contract.nomenclature_group = contract['nomenclature_group']
+    new_contract.date_start = contract['date_start'] if contract['date_start'] != '' else None
+    new_contract.date_end = contract['date_end'] if contract['date_end'] != '' else None
+    new_contract.responsible_id = contract['responsible'] if contract['responsible'] != 0 else None
+    new_contract.department_id = contract['department'] if contract['department'] != 0 else None
+    new_contract.lawyers_received = contract['lawyers_received']
+    new_contract.edms_doc_id = contract['edms_doc_id'] if contract['edms_doc_id'] != 0 else None
+    new_contract.incoterms = contract['incoterms'] if contract['incoterms'] != '' else None
+    new_contract.purchase_terms = contract['purchase_terms'] if contract['purchase_terms'] != '' else None
+    new_contract.basic_contract_id = contract['basic_contract']
+
+    new_contract.save()
 
     return new_contract.pk
 
@@ -48,7 +54,7 @@ def get_days_from_edms(edms_doc, queue):
 
 
 @try_except
-def add_contract_from_edms(doc_request, files, doc_author):
+def add_contract_from_edms(doc_request, files):
     edms_doc = get_object_or_404(Document, pk=doc_request['document'])
     contract_fields_queue = list(Document_Type_Module.objects.values('field', 'queue')
                                  .filter(document_type=edms_doc.document_type)
@@ -64,19 +70,23 @@ def add_contract_from_edms(doc_request, files, doc_author):
     basic_contract = basic_contract[0] if len(basic_contract) > 0 else None
 
     contract = {
-        'edms_doc': edms_doc,
+        'edms_doc_id': edms_doc.id,
         'company': edms_doc.company,
         'basic_contract': basic_contract,
         'number': get_texts_from_edms(edms_doc, fields_queue['number']),
         'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
-        'counterparty': get_texts_from_edms(edms_doc, fields_queue['counterparty']),
+        'counterparty': edms_doc.counterparty.get().counterparty_id,
         'nomenclature_group': get_texts_from_edms(edms_doc, fields_queue['nomenclature_group']),
         'date_start': get_days_from_edms(edms_doc, fields_queue['date_start']),
         'date_end': get_days_from_edms(edms_doc, fields_queue['date_end']),
-        'created_by': doc_author,
+        'responsible': None,
+        'department': None,
+        'lawyers_received': False,
+        'incoterms': None,
+        'purchase_terms': None,
     }
 
-    new_contract_id = post_contract(contract)
+    new_contract_id = post_contract(edms_doc.employee_seat.employee.user_id, contract)
     doc_request.update({'contract': new_contract_id})
     post_files(files, doc_request)
     send_mail(doc_request)
@@ -87,24 +97,30 @@ def add_contract_from_edms(doc_request, files, doc_author):
 @try_except
 def edit_contract(request):
     contract = json.loads(request.POST.get('contract'))
-    contract['department'] = None if contract['department'] == 0 else contract['department']
-    contract['responsible'] = None if contract['responsible'] == 0 else contract['responsible']
     contract['basic_contract'] = None if not contract['is_additional_contract'] else contract['basic_contract']
+    contract['counterparty_link'] = contract['counterparty']
 
-    req_instance = get_object_or_404(Contract, pk=contract['id'])
+    contract_instance = get_object_or_404(Contract, pk=contract['id'])
 
-    edit_contract_form = NewContractForm(contract, instance=req_instance, initial={'nomenclature_group': None,
-                                                                                   'date_end': None, 'department': None,
-                                                                                   'responsible': None, 'lawyers_received': False,
-                                                                                   'basic_contract': None})
-    if edit_contract_form.is_valid():
-        edit_contract = edit_contract_form.save(commit=False)
-        edit_contract.updated_by = request.user
-        edit_contract.save()
-    else:
-        raise ValidationError('docs/api/contract_api: function edit_contract: form invalid')
+    contract_instance.number = contract['number']
+    contract_instance.company = contract['company']
+    contract_instance.counterparty_link_id = contract['counterparty']
+    contract_instance.updated_by = request.user
+    contract_instance.subject = contract['subject']
+    contract_instance.nomenclature_group = contract['nomenclature_group']
+    contract_instance.date_start = contract['date_start'] if contract['date_start'] != '' else None
+    contract_instance.date_end = contract['date_end'] if contract['date_end'] != '' else None
+    contract_instance.responsible_id = contract['responsible'] if contract['responsible'] != 0 else None
+    contract_instance.department_id = contract['department'] if contract['department'] != 0 else None
+    contract_instance.lawyers_received = contract['lawyers_received']
+    contract_instance.edms_doc_id = contract['edms_doc_id'] if contract['edms_doc_id'] != 0 else None
+    contract_instance.incoterms = contract['incoterms'] if contract['incoterms'] != '' else None
+    contract_instance.purchase_terms = contract['purchase_terms'] if contract['purchase_terms'] != '' else None
+    contract_instance.basic_contract_id = contract['basic_contract']
 
-    return edit_contract.pk
+    contract_instance.save()
+
+    return contract_instance.pk
 
 
 @try_except

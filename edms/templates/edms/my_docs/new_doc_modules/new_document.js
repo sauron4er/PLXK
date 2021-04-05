@@ -166,6 +166,8 @@ class NewDocument extends React.Component {
           newDocStore.new_document.contract_link = response?.contract_link.id;
           newDocStore.new_document.contract_link_name = response?.contract_link.name;
           newDocStore.new_document.company = response?.company;
+          newDocStore.new_document.counterparty = response?.counterparty.id;
+          newDocStore.new_document.counterparty_name = response?.counterparty.name;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -198,7 +200,7 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)) {
+        } else if (['mockup_type', 'mockup_product_type', 'client', 'counterparty', 'packaging_type'].includes(module.module)) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
@@ -262,6 +264,8 @@ class NewDocument extends React.Component {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
+          } else if (module.module === 'counterparty') {
+            doc_modules['counterparty'] = newDocStore.new_document.counterparty;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -316,6 +320,9 @@ class NewDocument extends React.Component {
     }
     if (this.state.type_modules[this.state.main_field_queue].module === 'client') {
       return newDocStore.new_document.client_name
+    }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'counterparty') {
+      return newDocStore.new_document.counterparty_name
     }
     return 0
   }
