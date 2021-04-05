@@ -40,5 +40,10 @@ urlpatterns = [
     url(r'^clients/get_client/(?P<pk>\d+)/$', views_counterparties.get_client, name='get_client'),
     url(r'^clients/post_client/', views_counterparties.post_client, name='post_client'),
     url(r'^clients/deact_counterparty/(?P<pk>\d+)/$', views_counterparties.deact_counterparty, name='deact_counterparty'),
+    url(r'^clients/get_info_for_contracts_page', get_info_for_contracts_page, name='get_info_for_contracts_page'),
+    url(r'^clients/get_contracts/(?P<counterparty>-?\d+)/(?P<company>\w+)/(?P<with_add>\w+)/(?P<page>\w+)/$', get_contracts, name='get_contracts'),
+    url(r'^clients/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
+    url(r'^clients/get_simple_contracts_list/(?P<counterparty>\w+)/(?P<company>\w+)/$', get_simple_contracts_list, name='get_simple_contracts_list'),
+    url(r'^clients/get_counterparties_for_select/', views_counterparties.get_counterparties_for_select, name='get_counterparties_for_select'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 ]
