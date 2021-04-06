@@ -118,11 +118,11 @@ def get_table_rows(meta_doc_type, modules, rows_count):
         .filter(is_draft=False)\
         .filter(closed=False).order_by('-id')
 
-    if rows_count != 0:
-        documents = documents[:rows_count]
-
     if not testing:
         documents = documents.filter(testing=False)
+
+    if rows_count != 0:
+        documents = documents[:rows_count]
 
     documents_arranged = [{
         'id': doc.id,
