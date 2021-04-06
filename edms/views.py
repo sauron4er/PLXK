@@ -13,7 +13,7 @@ from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
 from .api.setters import *
-from .api.tables_creater import create_table
+from .api.tables_creater import create_table_first, create_table_all
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
 
@@ -1157,9 +1157,18 @@ def edms_tables(request, meta_doc_type=''):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_table(request, meta_doc_type='', pk=0):
+def edms_get_table_first(request, meta_doc_type='', pk=0):
     if request.method == 'GET':
-        table = create_table(pk)
+        table = create_table_first(pk)
+
+        return HttpResponse(json.dumps(table))
+    return HttpResponse(status=405)
+
+
+@try_except
+def edms_get_table_all(request, meta_doc_type='', pk=0):
+    if request.method == 'GET':
+        table = create_table_all(pk)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)

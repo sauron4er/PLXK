@@ -7,19 +7,26 @@ testing = settings.STAS_DEBUG
 
 
 @try_except
-# Функція, яка повертає Boolean чи використовує документ фазу auto_approved
-def create_table(doc_type):
+# Повертає перші 23 рядки з таблиці
+def create_table_first(doc_type):
     modules_list = get_modules_list(doc_type)
 
     column_widths = get_column_widths(modules_list)
 
     table_header = get_table_header(modules_list)
 
-    table_rows = get_table_rows(doc_type, modules_list)
+    table_rows = get_table_rows(doc_type, modules_list, 23)
 
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
-
     return table
+
+
+@try_except
+# Повертає всю таблицю
+def create_table_all(doc_type):
+    modules_list = get_modules_list(doc_type)
+    table_rows = get_table_rows(doc_type, modules_list, 0)
+    return table_rows
 
 
 @try_except
@@ -104,13 +111,15 @@ def get_table_header(modules):
 
 
 @try_except
-def get_table_rows(meta_doc_type, modules):
-
+def get_table_rows(meta_doc_type, modules, rows_count):
     documents = Document.objects.all().select_related()\
         .filter(document_type__meta_doc_type_id=meta_doc_type)\
         .filter(is_template=False)\
         .filter(is_draft=False)\
-        .filter(closed=False).order_by('-id')[:25]
+        .filter(closed=False).order_by('-id')
+
+    if rows_count != 0:
+        documents = documents[:rows_count]
 
     if not testing:
         documents = documents.filter(testing=False)
