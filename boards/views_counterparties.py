@@ -285,7 +285,7 @@ def get_active_certificates_names(provider):
 @try_except
 def clients(request):
     products = get_products_list('sell')
-    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
+    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.clients_add
     return render(request, 'boards/counterparty/clients/clients.html', {
         'products_list': products,
         'edit_access': json.dumps(edit_access)})  # Для перетворення True в true})
