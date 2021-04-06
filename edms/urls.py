@@ -4,7 +4,7 @@ from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats, edms_get_contracts  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
-from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table
+from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module
 from docs.views_contracts import get_contract
@@ -59,8 +59,9 @@ urlpatterns = [
     url(r'^sub_docs/mark/', edms_mark, name='my_docs_mark'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
-    url(r'^tables/(?P<meta_doc_type>\d+)/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
-    url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table, name='get_table'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_table/(?P<pk>\d+)/$', edms_get_table_first, name='get_table_first'),
+    url(r'^tables/get_table/(?P<pk>\d+)/$', edms_get_table_first, name='get_table_first'),
+    url(r'^tables/get_all_rows/(?P<pk>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
     url(r'^tables/', edms_tables, name='tables'),
 

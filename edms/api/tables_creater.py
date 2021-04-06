@@ -7,27 +7,34 @@ testing = settings.STAS_DEBUG
 
 
 @try_except
-# Функція, яка повертає Boolean чи використовує документ фазу auto_approved
-def create_table(doc_type):
+# Повертає перші 23 рядки з таблиці
+def create_table_first(doc_type):
     modules_list = get_modules_list(doc_type)
 
     column_widths = get_column_widths(modules_list)
 
     table_header = get_table_header(modules_list)
 
-    table_rows = get_table_rows(doc_type, modules_list)
+    table_rows = get_table_rows(doc_type, modules_list, 23)
 
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
-
     return table
+
+
+@try_except
+# Повертає всю таблицю
+def create_table_all(doc_type):
+    modules_list = get_modules_list(doc_type)
+    table_rows = get_table_rows(doc_type, modules_list, 0)
+    return table_rows
 
 
 @try_except
 def get_column_widths(modules):
     column_widths = [
         {'columnName': 'id', 'width': 40},
-        {'columnName': 'author', 'width': 200},
-        {'columnName': 'status', 'width': 30},
+        {'columnName': 'author', 'width': 170},
+        {'columnName': 'approved', 'width': 80},
         {'columnName': 'stage', 'width': 100},
         {'columnName': 'importancy', 'width': 90},
         # {'columnName': 'files', 'width': 300},
@@ -48,6 +55,14 @@ def get_column_widths(modules):
             column_widths.append({'columnName': 'done_date', 'width': 100})
         elif module['field'] == 'performer':
             column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 100})
+        elif module['module'] == 'client':
+            column_widths.append({'columnName': 'client', 'width': 150})
+        elif module['module'] == 'dimensions':
+            column_widths.append({'columnName': 'text-' + str(module['queue']), 'width': 55})
+        elif module['field'] == 'mockup_type':
+            column_widths.append({'columnName': 'mockup_type', 'width': 170})
+        elif module['field'] == 'mockup_product_type':
+            column_widths.append({'columnName': 'mockup_product_type', 'width': 160})
 
     return column_widths
 
@@ -77,14 +92,15 @@ def get_table_header(modules):
 
     for module in modules:
         if module['module_id'] == 29:  # auto_approved module
-            header.append({'name': 'status', 'title': module['field_name']})
-        # elif module['module_id'] == 16:  # text module
+            header.append({'name': 'approved', 'title': module['field_name']})
         elif module['module_id'] in [16, 32]:  # text, select
             header.append({'name': 'text-' + str(module['queue']), 'title': module['field_name']})
         elif module['module_id'] == 33:  # stage
             header.append({'name': 'added_date', 'title': 'Створено'})
             header.append({'name': 'done_date', 'title': 'Виконано'})
             header.append({'name': 'stage', 'title': 'Стадія'})
+        elif module['module'] == 'dimensions':
+            header.append(get_dimensions_header(module))
         elif module['module_id'] == 1:
             # Відсортовуємо модуль files
             a = 1
@@ -95,13 +111,15 @@ def get_table_header(modules):
 
 
 @try_except
-def get_table_rows(meta_doc_type, modules):
-
+def get_table_rows(meta_doc_type, modules, rows_count):
     documents = Document.objects.all().select_related()\
         .filter(document_type__meta_doc_type_id=meta_doc_type)\
         .filter(is_template=False)\
         .filter(is_draft=False)\
         .filter(closed=False).order_by('-id')
+
+    if rows_count != 0:
+        documents = documents[:rows_count]
 
     if not testing:
         documents = documents.filter(testing=False)
@@ -110,7 +128,8 @@ def get_table_rows(meta_doc_type, modules):
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
         # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
-        'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
+        'approved': get_approved(doc.approved),
+        # 'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
         'stage': get_stage(doc.stage),
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
@@ -134,6 +153,15 @@ def get_table_rows(meta_doc_type, modules):
 
 
 @try_except
+def get_approved(approved):
+    if approved:
+        return 'Погоджено'
+    elif approved is not None:
+        return 'Відмовлено'
+    return 'В процесі'
+
+
+@try_except
 def get_stage(stage):
     if stage == 'done':
         return 'Виконано'
@@ -144,6 +172,22 @@ def get_stage(stage):
     elif stage == 'denied':
         return 'Відмовлено'
     return 'Ініційовано'
+
+
+@try_except
+def get_dimensions_header(module):
+    title = ''
+
+    if module['field_name'] == 'Довжина, см':
+        title = 'Д'
+    elif module['field_name'] == 'Ширина, см':
+        title = 'Ш'
+    elif module['field_name'] == 'Глибина, см':
+        title = 'Г'
+    elif module['field_name'] == 'Вага, кг':
+        title = 'кг'
+
+    return {'name': 'text-' + str(module['queue']), 'title': title}
 
 
 @try_except
@@ -177,10 +221,10 @@ def get_packaging_type(modules, doc):
 
 @try_except
 def get_texts(modules, doc):
-    if any(module['module_id'] in [16, 32] for module in modules):
+    if any(module['module_id'] in [16, 28, 32] for module in modules):
         texts = []
         for module in modules:
-            if module['module_id'] in [16, 32]:
+            if module['module_id'] in [16, 28, 32]:
                 queue = module['queue']
                 texts.append(
                     {'name': 'text-' + str(queue),

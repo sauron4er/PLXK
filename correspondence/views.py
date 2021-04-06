@@ -28,85 +28,7 @@ def get_request_status(request_date, request_term, answer_date):
 @login_required(login_url='login')
 @try_except
 def index(request):
-    scopes = [{
-        'id': scope.pk,
-        'name': scope.name
-    } for scope in
-        Scope.objects.all().filter(is_active=True)]
-
-    products = [{
-        'id': product.pk,
-        'name': product.name
-    } for product in
-        Product_type.objects.all().filter(is_active=True).filter(direction='sell')]
-
-    clients = [{
-        'id': client.pk,
-        'name': client.name,
-        'country': client.country or '',
-        'product_name': client.product.name,
-        'product_id': client.product_id,
-    } for client in
-        Counterparty.objects.filter(is_active=True)]
-
-    laws = [{
-        'id': law.pk,
-        'name': law.name,
-        'url': law.url,
-        'scopes': [{
-            'id': scope.scope_id,
-            'name': scope.scope.name,
-        } for scope in
-            Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
-        'files': [{
-            'id': file.pk,
-            'name': file.name,
-            'file': file.file.name,
-        } for file in
-            Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
-    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
-
-    employees = [{
-        'id': employee.user.pk,
-        'name': employee.pip,
-        'correspondence_admin': employee.is_correspondence_view
-    } for employee in UserProfile.objects.only('id', 'pip')
-        .filter(is_active=True).order_by('pip')
-    ]
-
-    all_correspondence = Request.objects.filter(is_active=True).order_by('-id')
-
-    if request.user.userprofile.is_correspondence_view or request.user.userprofile.is_it_admin:
-        accessed_correspondence = all_correspondence
-    else:
-        accessed_correspondence = all_correspondence.filter(added_by=request.user) | \
-                                  all_correspondence.filter(responsible=request.user) | \
-                                  all_correspondence.filter(answer_responsible=request.user) | \
-                                  all_correspondence.filter(acquaints__acquaint=request.user).filter(
-                                      acquaints__is_active=True)
-        # Прибираємо дублікати, які чомусь створюються у великій кількості при фільтруванні по acquaints_acquaint
-        accessed_correspondence = [rows.__next__() for (key, rows) in groupby(accessed_correspondence, key=lambda obj: obj.id)]
-
-    correspondence = [{
-        'id': request.pk,
-        'unique_number': request.unique_number,
-        'type': request.type,
-        'product_name': request.client.product.name,
-        'scope_name': request.scope.name,
-        'client_name': request.client.name,
-        'request_date': date_to_json(request.request_date),
-        'request_term': date_to_json(request.request_term),
-        'answer_date': date_to_json(request.answer_date),
-        'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
-        'status': get_request_status(request.request_date, request.request_term, request.answer_date),
-    } for request in accessed_correspondence]
-
-    return render(request, 'correspondence/index.html', {'clients': json.dumps(clients),
-                                                         'scopes': json.dumps(scopes),
-                                                         'products': json.dumps(products),
-                                                         'laws': json.dumps(laws),
-                                                         'correspondence': json.dumps(correspondence),
-                                                         'employees': json.dumps(employees)})
+    return render(request, 'correspondence/index.html')
 
 
 #  --------------------------------------------------- Scope
@@ -333,3 +255,91 @@ def deactivate_request(request, pk):
         return HttpResponse(pk)
     except Exception as err:
         raise err
+
+
+@try_except
+def get_correspondence(request, counterparty):
+    all_correspondence = Request.objects.filter(is_active=True).order_by('-id')
+
+    if request.user.userprofile.is_correspondence_view or request.user.userprofile.is_it_admin:
+        accessed_correspondence = all_correspondence
+    else:
+        accessed_correspondence = all_correspondence.filter(added_by=request.user) | \
+                                  all_correspondence.filter(responsible=request.user) | \
+                                  all_correspondence.filter(answer_responsible=request.user) | \
+                                  all_correspondence.filter(acquaints__acquaint=request.user).filter(
+                                      acquaints__is_active=True)
+        # Прибираємо дублікати, які чомусь створюються у великій кількості при фільтруванні по acquaints_acquaint
+        accessed_correspondence = [rows.__next__() for (key, rows) in
+                                   groupby(accessed_correspondence, key=lambda obj: obj.id)]
+
+    if counterparty != '0':
+        accessed_correspondence = accessed_correspondence.filter(client_id=counterparty)
+
+    correspondence = [{
+        'id': request.pk,
+        'unique_number': request.unique_number,
+        'type': request.type,
+        'product_name': request.client.product.name,
+        'scope_name': request.scope.name,
+        'client_name': request.client.name,
+        'client_id': request.client.id,
+        'request_date': date_to_json(request.request_date),
+        'request_term': date_to_json(request.request_term),
+        'answer_date': date_to_json(request.answer_date),
+        'responsible_name': request.responsible.last_name + ' ' + request.responsible.first_name,
+        'status': get_request_status(request.request_date, request.request_term, request.answer_date),
+    } for request in accessed_correspondence]
+
+    return HttpResponse(json.dumps(correspondence))
+
+
+@try_except
+def get_correspondence_info(request):
+    scopes = [{
+        'id': scope.pk,
+        'name': scope.name
+    } for scope in
+        Scope.objects.all().filter(is_active=True)]
+
+    products = [{
+        'id': product.pk,
+        'name': product.name
+    } for product in
+        Product_type.objects.all().filter(is_active=True).filter(direction='sell')]
+
+    clients = [{
+        'id': client.pk,
+        'name': client.name,
+        'country': client.country or '',
+        'product_name': client.product.name,
+        'product_id': client.product_id,
+    } for client in
+        Counterparty.objects.filter(is_active=True)]
+
+    laws = [{
+        'id': law.pk,
+        'name': law.name,
+        'url': law.url,
+        'scopes': [{
+            'id': scope.scope_id,
+            'name': scope.scope.name,
+        } for scope in
+            Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
+        'files': [{
+            'id': file.pk,
+            'name': file.name,
+            'file': file.file.name,
+        } for file in
+            Law_file.objects.all().filter(law_id=law.id).filter(is_active=True)]
+    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
+
+    employees = [{
+        'id': employee.user.pk,
+        'name': employee.pip,
+        'correspondence_admin': employee.is_correspondence_view
+    } for employee in UserProfile.objects.only('id', 'pip')
+        .filter(is_active=True).order_by('pip')]
+
+    return HttpResponse(json.dumps({'clients': clients, 'scopes': scopes, 'products': products,
+                                    'laws': laws, 'employees': employees}))

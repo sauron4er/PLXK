@@ -26,13 +26,8 @@
                             <a class="dropdown-item" href="{% url 'boards:edit_ads' %}">Редагування оголошень</a>
                         {% endif %}
                         <a class="dropdown-item" href="{% url 'boards:plhk_ads' %}" target="_blank">Оголошення</a>
-{#                        <a class="dropdown-item" href="{% url 'boards:tickets' %}">Заявки 1С8</a>#}
 {#                        <a class="dropdown-item" href="{% url 'boards:org_structure' %}">Організаційна структура</a>#}
-{#                        <a class="dropdown-item" href="{% url 'menu' %}" target="_blank">Меню столової</a>#}
 {#                        <a class="dropdown-item" href="{% url 'phones' 0 %}">Телефонний довідник</a>#}
-{#                        <a class="dropdown-item" href="{% url 'polls:index' %}">Опитування</a>#}
-{#                        <a class="dropdown-item" href="{% url 'tickets:index_f' 0 %}">Заявки ІТ</a>#}
-{#                        <a class="dropdown-item" href="{% url 'gi:news' %}">Новини</a>#}
                     </div>
              </li>
 {#             <li class="nav-item">#}
@@ -56,7 +51,6 @@
                         <a class="dropdown-item" href="{% url 'docs:orders' %}">Накази та розпорядження</a>
                         <a class="dropdown-item" href="{% url 'docs:contracts' %}">Договори</a>
                         <a class="dropdown-item" href="{% url 'docs:index' %}">Система якості</a>
-                        <a class="dropdown-item" href="{% url 'correspondence:index' %}">Листування з клієнтами</a>
                         <a class="dropdown-item" href="{% url 'edms:my_docs' %}">Електронні документи</a>
                     </div>
              </li>
@@ -65,6 +59,7 @@
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
                 <a class="dropdown-item" href="{% url 'boards:clients' %}">Клієнти</a>
+                <a class="dropdown-item" href="{% url 'correspondence:index' %}">Листування з клієнтами</a>
               </div>
             </li>
               <li class="nav-item dropdown">

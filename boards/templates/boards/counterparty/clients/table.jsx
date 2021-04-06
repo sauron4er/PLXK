@@ -5,7 +5,7 @@ import PaginatedTable from 'templates/components/tables/paginated_table';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
 
 const columns = [
-  {name: 'id', title: 'id'},
+  // {name: 'id', title: 'id'},
   {name: 'name', title: 'Назва'},
   {name: 'product__name', title: 'Продукція'},
   {name: 'country', title: 'Країна'},
@@ -13,7 +13,7 @@ const columns = [
 ];
 
 const col_width = [
-  {columnName: 'id', width: 50},
+  // {columnName: 'id', width: 50},
   {columnName: 'product__name', width: 100},
   {columnName: 'edrpou', width: 80},
   {columnName: 'country', width: 100}
