@@ -168,6 +168,7 @@ class NewDocument extends React.Component {
           newDocStore.new_document.company = response?.company;
           newDocStore.new_document.counterparty = response?.counterparty.id;
           newDocStore.new_document.counterparty_name = response?.counterparty.name;
+          newDocStore.new_document.counterparty_input = response?.counterparty.input;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -200,8 +201,13 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (['mockup_type', 'mockup_product_type', 'client', 'counterparty', 'packaging_type'].includes(module.module)) {
+        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'counterparty') {
+          if (isBlankOrZero(newDocStore.new_document.counterparty) && isBlankOrZero(newDocStore.new_document.counterparty_input)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
@@ -266,6 +272,7 @@ class NewDocument extends React.Component {
             doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (module.module === 'counterparty') {
             doc_modules['counterparty'] = newDocStore.new_document.counterparty;
+            doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
