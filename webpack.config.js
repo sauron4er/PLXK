@@ -74,6 +74,8 @@ module.exports = {
       edms: path.resolve(__dirname, 'edms'),
       docs: path.resolve(__dirname, 'docs'),
       plxk: path.resolve(__dirname, 'plxk'),
+      correspondence: path.resolve(__dirname, 'correspondence'),
+      boards: path.resolve(__dirname, 'boards'),
     }
   }
 };

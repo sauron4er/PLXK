@@ -94,7 +94,7 @@ class CounterpartyMap extends React.Component {
             Фізична адреса
           </button>
         </div>
-        <div style={{height: '50vh', width: '100%'}}>
+        <div style={{height: '50vh', width: '100%', marginTop: '10px'}}>
           <If condition={!loading}>
             <Choose>
               <When condition={location_added}>

@@ -224,6 +224,21 @@ class DxTable extends React.PureComponent {
       };
       cell_value = '';
     }
+    
+    // approved
+    if (this.props.coloredApproved && props.column.name === 'approved') {
+      const color = props.value === 'Погоджено' ? 'lightgreen' : props.value === 'Відмовлено' ? 'red' : 'yellow';
+      style = {
+        padding: 0,
+        paddingLeft: 5,
+        margin: 0,
+        fontSize: '12px',
+        height: '30px',
+        estimatedRowHeight: '30px',
+        border: '1px solid #F0F0F0',
+        backgroundColor: color
+      };
+    }
 
     // stage
     if (this.props.coloredStage && props.column.name === 'stage') {

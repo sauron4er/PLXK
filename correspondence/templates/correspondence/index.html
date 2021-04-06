@@ -6,14 +6,7 @@
 
 {% block content %}
     <div class="container-fluid p-2" id="correspondence">
-        <script>
-            window.scopes = {{ scopes|safe }};
-            window.products = {{ products|safe }};
-            window.clients = {{ clients|safe }};
-            window.laws = {{ laws|safe }};
-            window.employees = {{ employees|safe }};
-            window.correspondence = {{ correspondence|safe }};
-        </script>
+        <script> </script>
         {% render_bundle 'correspondence' %}
     </div>
 {% endblock %}

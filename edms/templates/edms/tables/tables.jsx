@@ -115,6 +115,7 @@ class Tables extends React.Component {
                     filter
                     coloredStatus
                     coloredStage
+                    coloredApproved
                   />
                 </If>
               </div>

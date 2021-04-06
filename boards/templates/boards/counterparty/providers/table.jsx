@@ -4,7 +4,7 @@ import DxTable from 'templates/components/tables/dx_table';
 import PaginatedTable from 'templates/components/tables/paginated_table';
 
 const columns = [
-  {name: 'id', title: 'id'},
+  // {name: 'id', title: 'id'},
   {name: 'name', title: 'Назва'},
   {name: 'certificates', title: 'Сертифікати'},
   {name: 'edrpou', title: 'ЄДРПОУ'},
@@ -14,7 +14,7 @@ const columns = [
 ];
 
 const col_width = [
-  {columnName: 'id', width: 50},
+  // {columnName: 'id', width: 50},
   {columnName: 'added', width: 90},
   {columnName: 'edrpou', width: 80},
   {columnName: 'author', width: 180},

@@ -16,6 +16,7 @@ import Certification from '../providers/certification/certification';
 import CounterpartyMap from './map';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {ToastContainer} from 'react-toastify';
+import CounterpartyCorrespondence from './correspondence';
 
 class Counterparty extends React.Component {
   state = {
@@ -80,6 +81,7 @@ class Counterparty extends React.Component {
     const {loading} = this.state;
     const {edit_access} = window;
     const {counterparty, type} = counterpartyStore;
+    
     return (
       <Choose>
         <When condition={!loading}>
@@ -90,6 +92,9 @@ class Counterparty extends React.Component {
                 <Tab>Договори</Tab>
                 <If condition={type === 'provider'}>
                   <Tab>Сертифікація</Tab>
+                </If>
+                <If condition={type === 'client'}>
+                  <Tab>Листування</Tab>
                 </If>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
@@ -112,6 +117,11 @@ class Counterparty extends React.Component {
               <If condition={type === 'provider'}>
                 <TabPanel>
                   <Certification />
+                </TabPanel>
+              </If>
+              <If condition={type === 'client'}>
+                <TabPanel>
+                  <CounterpartyCorrespondence />
                 </TabPanel>
               </If>
               <TabPanel>
