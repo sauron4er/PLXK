@@ -813,7 +813,9 @@ def get_doc_modules(doc):
                     doc_modules.update({
                         'counterparty': {
                             'id': counterparty[0]['id'],
-                            'name': counterparty[0]['name'] + ', ' + counterparty[0]['country']
+                            'name': (counterparty[0]['name'] + ', ' + counterparty[0]['country'])
+                                if counterparty[0]['country']
+                                else counterparty[0]['name']
                     }})
                 else:
                     doc_modules.update({
