@@ -329,7 +329,9 @@ class NewDocument extends React.Component {
       return newDocStore.new_document.client_name
     }
     if (this.state.type_modules[this.state.main_field_queue].module === 'counterparty') {
-      return newDocStore.new_document.counterparty_name
+      if (newDocStore.new_document.counterparty_name !== '') return newDocStore.new_document.counterparty_name
+      else return newDocStore.new_document.counterparty_input
+      
     }
     return 0
   }

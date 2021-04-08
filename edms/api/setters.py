@@ -22,17 +22,26 @@ def set_stage(doc_id, stage):
 def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     request = doc_request.copy()
     emp_seat_id = vacation_check(emp_seat_id)
-    if not doc_request['comment']:
-        request.update({'comment': None})
-    request.update({'recipient': emp_seat_id})
-    request.update({'phase': phase_id})
-    request.update({'mark': mark})
 
-    mark_demand_form = MarkDemandForm(request)
-    if mark_demand_form.is_valid:
-        mark_demand_form.save()
-    else:
-        raise ValidationError('edms/api/setters post_mark_demand mark_demand_form invalid')
+    already_exists = Mark_Demand.objects \
+        .filter(document_id=doc_request['document']) \
+        .filter(recipient_id=emp_seat_id) \
+        .filter(mark_id=mark) \
+        .filter(is_active=True) \
+        .exists()
+
+    if not already_exists:
+        if not doc_request['comment']:
+            request.update({'comment': None})
+        request.update({'recipient': emp_seat_id})
+        request.update({'phase': phase_id})
+        request.update({'mark': mark})
+
+        mark_demand_form = MarkDemandForm(request)
+        if mark_demand_form.is_valid:
+            mark_demand_form.save()
+        else:
+            raise ValidationError('edms/api/setters post_mark_demand mark_demand_form invalid')
 
 
 def delete_doc(doc_request, doc_id):

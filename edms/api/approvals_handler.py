@@ -86,7 +86,7 @@ def is_doc_completely_approved(doc_request):
             .filter(document_id=doc_request['document'])
             .filter(is_active=True))
 
-    return False not in approvals
+    return False not in approvals and None not in approvals
 
 
 def arrange_approve(doc_request, is_approved):
