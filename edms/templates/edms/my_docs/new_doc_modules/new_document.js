@@ -291,7 +291,7 @@ class NewDocument extends React.Component {
           });
         }
 
-        axiosPostRequest('', formData)
+        axiosPostRequest('post_doc', formData)
           .then((response) => {
             // опублікування документу оновлює таблицю документів:
             this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);

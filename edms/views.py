@@ -1081,6 +1081,7 @@ def edms_mark(request):
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
+            # Делегування mark_demand
             elif doc_request['mark'] == '25':
                 mark_demand_instance = get_object_or_404(Mark_Demand, pk=doc_request['mark_demand_id'])
                 mark_demand_instance.recipient_id = doc_request['delegation_receiver_id']
@@ -1095,6 +1096,12 @@ def edms_mark(request):
                 approval_instance.save()
 
                 new_mail('new', [{'id': doc_request['delegation_receiver_id']}], doc_request)
+
+            # Деактивація документа (відміна позначки approved)
+            elif doc_request['mark'] == '26':
+                doc_instance = get_object_or_404(Document, pk=doc_request['document'])
+                doc_instance.approved = False
+                doc_instance.save()
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
@@ -1157,18 +1164,18 @@ def edms_tables(request, meta_doc_type=''):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_table_first(request, meta_doc_type='', pk=0):
+def edms_get_table_first(request, meta_doc_type='', doc_type=0, counterparty=0):
     if request.method == 'GET':
-        table = create_table_first(pk)
+        table = create_table_first(doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
 
 
 @try_except
-def edms_get_table_all(request, meta_doc_type='', pk=0):
+def edms_get_table_all(request, meta_doc_type='', doc_type=0, counterparty=0):
     if request.method == 'GET':
-        table = create_table_all(pk)
+        table = create_table_all(doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)

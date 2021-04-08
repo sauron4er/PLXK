@@ -17,6 +17,7 @@ import CounterpartyMap from './map';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {ToastContainer} from 'react-toastify';
 import CounterpartyCorrespondence from './correspondence';
+import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mockups';
 
 class Counterparty extends React.Component {
   state = {
@@ -95,6 +96,7 @@ class Counterparty extends React.Component {
                 </If>
                 <If condition={type === 'client'}>
                   <Tab>Листування</Tab>
+                  <Tab>Дизайн-макети</Tab>
                 </If>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
@@ -122,6 +124,9 @@ class Counterparty extends React.Component {
               <If condition={type === 'client'}>
                 <TabPanel>
                   <CounterpartyCorrespondence />
+                </TabPanel>
+                <TabPanel>
+                  <CounterpartyMockups />
                 </TabPanel>
               </If>
               <TabPanel>

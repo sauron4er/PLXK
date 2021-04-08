@@ -937,4 +937,6 @@ def get_mark_name(mark, mark_id, meta_doc_type_id):
         return 'Запит на зміни'
     elif mark_id == 25:
         return 'Делеговано підлеглому'
+    elif mark_id == 26:
+        return 'Деактивовано'
     return mark

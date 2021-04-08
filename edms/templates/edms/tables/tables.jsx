@@ -11,7 +11,7 @@ import Document from 'edms/templates/edms/my_docs/doc_info/document';
 class Tables extends React.Component {
   state = {
     main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
-    doc_types: window.doc_types,
+    doc_types: window.doc_types ? window.doc_types : [],
     doc_type_id: 0,
     doc_type_name: '',
     loading: false,
@@ -23,6 +23,18 @@ class Tables extends React.Component {
 
   componentDidMount() {
     this.setState({main_div_height: this.mainDivRef.clientHeight});
+
+    if (this.props.doc_type_id !== 0) {
+      this.setState(
+        {
+          doc_type_id: this.props.doc_type_id,
+          loading: true
+        },
+        () => {
+          this.getTable();
+        }
+      );
+    }
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
     const arr = window.location.href.split('/');
@@ -58,7 +70,7 @@ class Tables extends React.Component {
 
   getTable = () => {
     if (this.state.doc_type_id !== '0') {
-      axiosGetRequest('get_table/' + this.state.doc_type_id + '/')
+      axiosGetRequest('get_table/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
         .then((response) => {
           this.setState(
             {
@@ -84,7 +96,7 @@ class Tables extends React.Component {
   getAllRows = () => {
     if (this.state.rows.length === 23) {
       this.setState({additional_loading: true}, () => {
-        axiosGetRequest('get_all_rows/' + this.state.doc_type_id + '/')
+        axiosGetRequest('get_all_rows/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
           .then((response) => {
             this.setState({
               rows: response,
@@ -122,25 +134,34 @@ class Tables extends React.Component {
       <>
         <Choose>
           <When condition={!loading}>
-            <div className='css_main_div'>
+            <div >
               <div className='d-flex'>
-                <select className='form-control mx-3 mx-lg-0' id='doc_type' name='doc_type' value={doc_type_name} onChange={this.onChange}>
-                  <option key={0} data-key={0} value='0'>
-                    Оберіть тип документу
-                  </option>
-                  {doc_types.map((doc_type) => {
-                    return (
-                      <option key={doc_type.id} data-key={doc_type.id} value={doc_type.name}>
-                        {doc_type.name}
-                      </option>
-                    );
-                  })}
-                </select>
+                <If condition={doc_types.length > 0}>
+                  <select
+                    className='form-control mx-3 mx-lg-0'
+                    id='doc_type'
+                    name='doc_type'
+                    value={doc_type_name}
+                    onChange={this.onChange}
+                  >
+                    <option key={0} data-key={0} value='0'>
+                      Оберіть тип документу
+                    </option>
+                    {doc_types.map((doc_type) => {
+                      return (
+                        <option key={doc_type.id} data-key={doc_type.id} value={doc_type.name}>
+                          {doc_type.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                
                 <span style={{width: '40px', height: '40px', marginLeft: '10px'}}>
                   <If condition={additional_loading}>
                     <LoaderSmall />
                   </If>
                 </span>
+                  </If>
               </div>
               <div ref={this.getMainDivRef}>
                 <If condition={header.length}>
@@ -177,7 +198,9 @@ class Tables extends React.Component {
   }
 
   static defaultProps = {
-    showRequest: () => {}
+    showRequest: () => {},
+    counterparty_id: 0,
+    doc_type_id: 0
   };
 }
 

@@ -314,7 +314,7 @@ class Request extends React.Component {
 
   render() {
     const {edit_mode, user_is_author} = this.state;
-
+  
     return (
       <Choose>
         <When condition={!this.state.loading}>

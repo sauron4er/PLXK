@@ -227,7 +227,22 @@ class DxTable extends React.PureComponent {
     
     // approved
     if (this.props.coloredApproved && props.column.name === 'approved') {
-      const color = props.value === 'Погоджено' ? 'lightgreen' : props.value === 'Відмовлено' ? 'red' : 'yellow';
+      let color = '';
+      // const color = props.value === 'Погоджено' ? 'lightgreen' : props.value === 'Відмовлено' ? 'red' : 'yellow';
+      switch (props.value) {
+        case 'Погоджено':
+          color = 'lightgreen';
+          break;
+        case 'Відмовлено':
+          color = 'red';
+          break;
+        case 'Деактив.':
+          color = 'lightgrey';
+          break;
+        default:
+          color = 'yellow';
+          break;
+      }
       style = {
         padding: 0,
         paddingLeft: 5,

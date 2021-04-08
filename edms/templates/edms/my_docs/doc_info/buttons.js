@@ -15,8 +15,8 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-    
-      return (
+  
+    return (
       <>
         {/*Якщо є очікувана позначка:*/}
         <If condition={info.expected_mark}>
@@ -99,6 +99,18 @@ class Buttons extends React.Component {
         </If>
         {/* Якщо автор я */}
         <If condition={user_is_doc_author}>
+          {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизай-макетів)*/}
+          <If condition={info.approved}>
+            <button
+              type='button'
+              className='btn btn-secondary mr-1 mb-1'
+              onClick={() => this.onClick(26)}
+              disabled={button_clicked}
+            >
+              Деактивувати
+            </button>
+          </If>
+          
           {/*Якщо тип документа редагуємий*/}
           <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
             <button

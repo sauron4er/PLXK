@@ -8,14 +8,14 @@ testing = settings.STAS_DEBUG
 
 @try_except
 # Повертає перші 23 рядки з таблиці
-def create_table_first(doc_type):
+def create_table_first(doc_type, counterparty):
     modules_list = get_modules_list(doc_type)
 
     column_widths = get_column_widths(modules_list)
 
     table_header = get_table_header(modules_list)
 
-    table_rows = get_table_rows(doc_type, modules_list, 23)
+    table_rows = get_table_rows(doc_type, modules_list, 23, counterparty)
 
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
     return table
@@ -23,9 +23,9 @@ def create_table_first(doc_type):
 
 @try_except
 # Повертає всю таблицю
-def create_table_all(doc_type):
+def create_table_all(doc_type, counterparty):
     modules_list = get_modules_list(doc_type)
-    table_rows = get_table_rows(doc_type, modules_list, 0)
+    table_rows = get_table_rows(doc_type, modules_list, 0, counterparty)
     return table_rows
 
 
@@ -111,12 +111,19 @@ def get_table_header(modules):
 
 
 @try_except
-def get_table_rows(meta_doc_type, modules, rows_count):
+def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     documents = Document.objects.all().select_related()\
         .filter(document_type__meta_doc_type_id=meta_doc_type)\
         .filter(is_template=False)\
         .filter(is_draft=False)\
         .filter(closed=False).order_by('-id')
+
+    if not testing:
+        documents = documents.filter(testing=False)
+
+    if counterparty != '0':
+        if any(module['module_id'] in [26, 34] for module in modules):  # Клієнт
+            documents = documents.filter(counterparty__counterparty_id=counterparty)
 
     if rows_count != 0:
         documents = documents[:rows_count]
@@ -128,7 +135,7 @@ def get_table_rows(meta_doc_type, modules, rows_count):
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
         # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
-        'approved': get_approved(doc.approved),
+        'approved': get_approved(doc),
         # 'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
         'stage': get_stage(doc.stage),
         'texts': get_texts(modules, doc),
@@ -153,10 +160,12 @@ def get_table_rows(meta_doc_type, modules, rows_count):
 
 
 @try_except
-def get_approved(approved):
-    if approved:
+def get_approved(doc):
+    if doc.approved:
         return 'Погоджено'
-    elif approved is not None:
+    elif doc.approved is False:
+        if doc.path.filter(mark=26).exists():
+            return 'Деактив.'
         return 'Відмовлено'
     return 'В процесі'
 

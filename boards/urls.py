@@ -1,7 +1,8 @@
 from django.conf.urls import url
 from . import views, views_org_structure, views_counterparties
 from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, get_simple_contracts_list
-from correspondence.views import get_correspondence, get_correspondence_info
+from correspondence.views import get_correspondence, get_correspondence_info, get_request
+from edms.views import edms_get_table_first, edms_get_table_all, edms_get_doc, edms_mark
 
 app_name = 'boards'
 
@@ -48,5 +49,10 @@ urlpatterns = [
     url(r'^clients/get_counterparties_for_select/', views_counterparties.get_counterparties_for_select, name='get_counterparties_for_select'),
     url(r'^clients/get_correspondence/(?P<counterparty>\d+)$', get_correspondence, name='get_correspondence'),
     url(r'^clients/get_correspondence_info', get_correspondence_info, name='get_correspondence_info'),
+    url(r'^clients/get_request/(?P<pk>\d+)/$', get_request, name='get_request'),
+    url(r'^clients/get_table/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
+    url(r'^clients/get_all_rows/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
+    url(r'^clients/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
+    url(r'^clients/mark/', edms_mark, name='my_docs_mark'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 ]
