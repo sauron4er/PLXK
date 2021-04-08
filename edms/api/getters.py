@@ -800,20 +800,29 @@ def get_doc_modules(doc):
 
         elif module['module'] == 'counterparty':
             counterparty = [{
-                'id': item.counterparty.id,
-                'name': item.counterparty.name,
-                'country': item.counterparty.country or '',
+                'id': item.counterparty.id if item.counterparty else 0,
+                'name': item.counterparty.name if item.counterparty else '',
+                'country': item.counterparty.country if item.counterparty else '',
+                'input': item.counterparty_input or ''
             } for item in Doc_Counterparty.objects.all()
                 .filter(document_id=doc.id)
                 .filter(is_active=True)]
 
             if counterparty:
-                doc_modules.update({
-                    'counterparty': {
-                        'id': counterparty[0]['id'],
-                        'name': counterparty[0]['name'],
-                        'country': counterparty[0]['country']
-                }})
+                if counterparty[0]['id'] != 0:
+                    doc_modules.update({
+                        'counterparty': {
+                            'id': counterparty[0]['id'],
+                            'name': (counterparty[0]['name'] + ', ' + counterparty[0]['country'])
+                                if counterparty[0]['country']
+                                else counterparty[0]['name']
+                    }})
+                else:
+                    doc_modules.update({
+                        'counterparty': {
+                            'id': counterparty[0]['id'],
+                            'name': counterparty[0]['input'],
+                    }})
         elif module['module'] == 'contract_link':
             contract_link_id = Doc_Contract.objects.values_list('contract_id', flat=True)\
                 .filter(document_id=doc.id)\
@@ -875,10 +884,23 @@ def get_main_field(document):
             .filter(document=document)\
             .filter(queue_in_doc=main_field_data['queue'])\
             .filter(is_active=True)
-    elif main_field_data['module_id'] in [26, 34]:  # Клієнт, контрагент
+    elif main_field_data['module_id'] == 26:  # Клієнт
         main_field = Doc_Counterparty.objects.values_list('counterparty__name', flat=True) \
             .filter(document=document) \
             .filter(is_active=True)
+    elif main_field_data['module_id'] == 34:  # Контрагент
+        doc_counterparty = [{
+            'name': dc.counterparty.name if dc.counterparty else '',
+            'input': dc.counterparty_input
+        } for dc in Doc_Counterparty.objects\
+            .filter(document=document)\
+            .filter(is_active=True)]
+
+        if doc_counterparty:
+            if doc_counterparty[0]['name'] != '':
+                return doc_counterparty[0]['name']
+            else:
+                return doc_counterparty[0]['input']
 
     if len(main_field) > 0:
         return main_field[0]

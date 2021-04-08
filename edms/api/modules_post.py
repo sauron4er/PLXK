@@ -2,7 +2,7 @@ import json
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
-from ..models import File, Document_Path, Doc_Type_Phase_Queue
+from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewCounterpartyForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -216,13 +216,14 @@ def post_mockup_product_type(doc_request, mockup_product_type):
 
 
 @try_except
-def post_counterparty(doc_request, counterparty):
-    doc_request.update({'counterparty': counterparty})
-    counterparty_form = NewCounterpartyForm(doc_request)
-    if counterparty_form.is_valid():
-        counterparty_form.save()
+def post_counterparty(doc_request, counterparty, counterparty_input=''):
+    doc_counterparty = Doc_Counterparty()
+    doc_counterparty.document_id = doc_request['document']
+    if counterparty != 0:
+        doc_counterparty.counterparty_id = counterparty
     else:
-        raise ValidationError('post_modules/post_counterparty/counterparty_form invalid')
+        doc_counterparty.counterparty_input = counterparty_input
+    doc_counterparty.save()
 
 
 @try_except

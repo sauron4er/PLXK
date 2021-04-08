@@ -12,7 +12,7 @@ from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
 from production.api.getters import get_products_list, get_certification_types, get_scopes_list
 from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
-from .api.counterparty_mail_sender import send_provider_mail
+# from .api.counterparty_mail_sender import send_provider_mail
 
 
 @try_except
@@ -20,8 +20,8 @@ def deact_counterparty(request, pk):
     counterparty = get_object_or_404(Counterparty, pk=pk)
     counterparty.is_active = False
     counterparty.save()
-    if counterparty.is_provider:
-        send_provider_mail('change', counterparty)
+    # if counterparty.is_provider:
+    #     send_provider_mail('change', counterparty)
     return HttpResponse('')
 
 
@@ -110,10 +110,10 @@ def post_provider(request):
 
     provider.save()
 
-    if data['id'] == 0:
-        send_provider_mail('new', provider)
-    else:
-        send_provider_mail('change', provider)
+    # if data['id'] == 0:
+    #     send_provider_mail('new', provider)
+    # else:
+    #     send_provider_mail('change', provider)
 
     return HttpResponse(provider.pk)
 
@@ -158,8 +158,8 @@ def post_certificate(request):
 
     certificate.save()
 
-    provider = get_object_or_404(Counterparty, pk=certificate.counterparty.id)
-    send_provider_mail('change', provider)
+    # provider = get_object_or_404(Counterparty, pk=certificate.counterparty.id)
+    # send_provider_mail('change', provider)
 
     return HttpResponse(certificate.pk)
 
@@ -170,8 +170,8 @@ def deact_certificate(request, pk):
     certificate.is_active = False
     certificate.save()
 
-    provider = get_object_or_404(Counterparty, pk=certificate.counterparty.id)
-    send_provider_mail('change', provider)
+    # provider = get_object_or_404(Counterparty, pk=certificate.counterparty.id)
+    # send_provider_mail('change', provider)
     return HttpResponse('')
 
 
@@ -208,8 +208,8 @@ def post_certificate_pause(request):
     pause.pause_end = data['end']
     pause.save()
 
-    provider = get_object_or_404(Counterparty, pk=pause.certificate.counterparty.id)
-    send_provider_mail('change', provider)
+    # provider = get_object_or_404(Counterparty, pk=pause.certificate.counterparty.id)
+    # send_provider_mail('change', provider)
     return HttpResponse(pause.id)
 
 
@@ -235,8 +235,8 @@ def deact_cert_pause(request, pk):
     pause = get_object_or_404(Counterparty_certificate_pause, pk=pk)
     pause.is_active = False
     pause.save()
-    provider = get_object_or_404(Counterparty, pk=pause.certificate.counterparty.id)
-    send_provider_mail('change', provider)
+    # provider = get_object_or_404(Counterparty, pk=pause.certificate.counterparty.id)
+    # send_provider_mail('change', provider)
     return HttpResponse(pause.id)
 
 
@@ -285,7 +285,7 @@ def get_active_certificates_names(provider):
 @try_except
 def clients(request):
     products = get_products_list('sell')
-    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
+    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.clients_add
     return render(request, 'boards/counterparty/clients/clients.html', {
         'products_list': products,
         'edit_access': json.dumps(edit_access)})  # Для перетворення True в true})

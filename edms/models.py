@@ -276,7 +276,8 @@ class Doc_Client(models.Model):
 # Контрагент
 class Doc_Counterparty(models.Model):
     document = models.ForeignKey(Document, related_name='counterparty', on_delete=models.RESTRICT)
-    counterparty = models.ForeignKey(Counterparty, related_name='edms_documents', on_delete=models.RESTRICT)
+    counterparty = models.ForeignKey(Counterparty, related_name='edms_documents', on_delete=models.RESTRICT, null=True)
+    counterparty_input = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 

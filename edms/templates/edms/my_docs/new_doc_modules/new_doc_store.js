@@ -12,6 +12,7 @@ const newDocStore = store({
     client_name: '',
     counterparty: 0,
     counterparty_name: '',
+    counterparty_input: '',
     packaging_type: {
       queue: -1,
       text: ''
@@ -33,6 +34,7 @@ const newDocStore = store({
       client_name: '',
       counterparty: 0,
       counterparty_name: '',
+      counterparty_input: '',
       packaging_type: {
         queue: -1,
         text: ''

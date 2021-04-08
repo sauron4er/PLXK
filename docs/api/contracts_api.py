@@ -79,7 +79,9 @@ def add_contract_from_edms(doc_request, files):
     counterparty_text = ''
 
     if edms_doc.counterparty.exists():
-        counterparty_id = edms_doc.counterparty.get().counterparty_id
+        counterparty_id = edms_doc.counterparty.get().counterparty_id or 0
+        if counterparty_id == 0:
+            counterparty_text = edms_doc.counterparty.get().counterparty_input
     else:
         counterparty_text = get_texts_from_edms(edms_doc, fields_queue['counterparty'])
 

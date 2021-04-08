@@ -4,6 +4,7 @@ plxk/secrets.json
 files/media/
 files/media/edms_files/
 files/media/correspondence/
+\files
 \.idea
 \*\__pycache__
 *.py[cod]
