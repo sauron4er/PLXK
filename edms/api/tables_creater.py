@@ -128,9 +128,6 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     if rows_count != 0:
         documents = documents[:rows_count]
 
-    if not testing:
-        documents = documents.filter(testing=False)
-
     documents_arranged = [{
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
