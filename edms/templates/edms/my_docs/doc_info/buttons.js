@@ -81,7 +81,7 @@ class Buttons extends React.Component {
               </button>
             </When>
             <When condition={info.expected_mark === 22}>
-              {/* Прикріплення сканів підписаних документів */}
+              {/* Скани підписаних документів */}
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(22)} disabled={button_clicked}>
                 Додати скан-копії підписаних документів
               </button>
