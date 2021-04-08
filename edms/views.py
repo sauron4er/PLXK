@@ -464,6 +464,7 @@ def edms_get_doc(request, pk):
             'id': pk,
             'author': doc.employee_seat.employee.pip,
             'author_seat_id': doc.employee_seat_id,
+            'viewer_is_author': doc.employee_seat.employee.id == request.user.userprofile.id,
             'meta_type_id': doc.document_type.meta_doc_type_id,
             'type_id': doc.document_type.id,
             'type': doc.document_type.description,

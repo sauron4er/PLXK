@@ -97,10 +97,10 @@ class Buttons extends React.Component {
             </When>
           </Choose>
         </If>
-        {/* Якщо автор я */}
-        <If condition={user_is_doc_author}>
-          {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизай-макетів)*/}
-          <If condition={info.approved}>
+        
+        {/*Якщо автор я - нова перевірка по ід користувача, а не людинопосади*/}
+        {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизай-макетів)*/}
+          <If condition={info.viewer_is_author && info.approved}>
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
@@ -110,6 +110,9 @@ class Buttons extends React.Component {
               Деактивувати
             </button>
           </If>
+        
+        {/* Якщо автор я */}
+        <If condition={user_is_doc_author}>
           
           {/*Якщо тип документа редагуємий*/}
           <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
