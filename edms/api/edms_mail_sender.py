@@ -7,16 +7,16 @@ from edms.models import Document
 
 
 # Складаємо лист новому отримувачу документа EDMS
-def send_email_new(doc_request, mail):
+def send_email_new(doc_request, mail, main_field):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Новий електронний документ"
+    message["Subject"] = 'Новий електронний документ – {} "{}"'.format(doc_request['doc_type_name'], main_field)
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Вашої реакції очікує новий документ ({}, автор: {}). {}' \
-        .format(doc_request['doc_type_name'], doc_request['doc_author_name'], link)
+    text = 'Вашої реакції очікує новий документ ({} "{}", автор: {}). {}' \
+        .format(doc_request['doc_type_name'], main_field, doc_request['doc_author_name'], link)
 
     message.attach(MIMEText(text, "plain"))
 
@@ -24,9 +24,9 @@ def send_email_new(doc_request, mail):
 
 
 # Складаємо лист автору документа про нову позначку EDMS:
-def send_email_mark(doc_request, mail):
+def send_email_mark(doc_request, mail, main_field):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Нова реакція на Ваш електронний документ"
+    message["Subject"] = 'Нова реакція на Ваш електронний документ – {} "{}"'.format(doc_request['doc_type_name'], main_field)
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 

@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
+from edms.api.getters import get_main_field
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from .vacations import vacation_check
@@ -168,12 +169,15 @@ def post_mark_deactivate(doc_request):
 # Функція, яка відправляє листи:
 def new_mail(email_type, recipients, doc_request):
     if not testing:
+        document_instance = get_object_or_404(Document, pk=doc_request['document'])
+        main_field = get_main_field(document_instance)
+
         for recipient in recipients:
             mail = Employee_Seat.objects.values_list('employee__user__email', flat=True).filter(id=recipient['id'])[0]
             if mail:
                 if email_type == 'new':
-                    send_email_new(doc_request, mail)
+                    send_email_new(doc_request, mail, main_field)
                 elif email_type == 'mark':
-                    send_email_mark(doc_request, mail)
+                    send_email_mark(doc_request, mail, main_field)
                 elif email_type == 'answer':
                     send_email_answer(doc_request, mail)
