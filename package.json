@@ -25,6 +25,7 @@
     "querystring": "^0.2.0",
     "react": "^17.0.1",
     "react-collapse": "^5.0.1",
+    "react-day-picker": "^7.4.10",
     "react-dom": "^17.0.1",
     "react-drag-list": "^1.1.0",
     "react-file-viewer": "^1.2.1",

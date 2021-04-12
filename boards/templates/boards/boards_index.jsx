@@ -5,6 +5,7 @@ import Reloader from './plhk_ads/reloader';
 import OrgStructure from './org_structure/org_structure';
 import ProvidersIndex from './counterparty/providers';
 import ClientsIndex from './counterparty/clients';
+import {Calendar} from 'templates/components/calendar';
 
 class Boards extends React.Component {
   state = {
@@ -28,6 +29,9 @@ class Boards extends React.Component {
         </When>
         <When condition={this.state.main_div === 'clients'}>
           <ClientsIndex/>
+        </When>
+        <When condition={this.state.main_div === 'calendar'}>
+          <Calendar/>
         </When>
       </Choose>
     );
