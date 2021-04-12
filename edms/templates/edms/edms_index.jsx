@@ -5,6 +5,7 @@ import HR from 'edms/templates/edms/hr/hr'
 import Archive from 'edms/templates/edms/archive/archive'
 import SubDocs from 'edms/templates/edms/sub_docs/sub_docs';
 import Tables from 'edms/templates/edms/tables/tables';
+import Delegated from 'edms/templates/edms/delegated/delegated';
 
 
 class EDMS extends React.Component {
@@ -26,6 +27,9 @@ class EDMS extends React.Component {
         </When>
         <When condition={this.state.main_div === 'archive'}>
           <Archive/>
+        </When>
+        <When condition={this.state.main_div === 'delegated'}>
+          <Delegated/>
         </When>
         <When condition={this.state.main_div === 'tables'}>
           <Tables/>

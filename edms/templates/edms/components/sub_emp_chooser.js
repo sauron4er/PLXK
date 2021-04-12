@@ -22,9 +22,7 @@ class SubEmpChooser extends React.PureComponent {
     })
       .then((response) => {
         if (response.data) {
-          this.setState({
-            sub_emps: response.data
-          });
+          this.setState({sub_emps: response.data});
         }
       })
       .catch(function(error) {

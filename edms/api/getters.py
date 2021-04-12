@@ -78,27 +78,31 @@ def get_sub_seats(seat):
 
 # Знаходить всі підлеглі людино-посади конкретної посади
 @try_except
-def get_sub_emps(seat):
+def get_sub_emps(seat, with_fired=False):
     # Знаходимо підлеглих посади:
+    emp_seats = Employee_Seat.objects.filter(seat__chief_id=seat)\
+        .filter(employee__is_pc_user=True)\
+        .order_by('-is_active', 'employee__pip')
+
+    if not with_fired:
+        emp_seats = emp_seats.filter(is_active=True)
+
     emp_seats = [{
         'id': emp_seat.id,
         'seat': emp_seat.seat.seat,
         'seat_id': emp_seat.seat_id,
         'emp': emp_seat.employee.pip,
-    } for emp_seat in Employee_Seat.objects
-        .filter(seat__chief_id=seat)
-        .filter(employee__is_pc_user=True)
-        .filter(is_active=True)]
+    } for emp_seat in emp_seats]
 
     temp_emp_seats = []
     if emp_seats:  # якщо підлеглі є:
         for emp_seat in emp_seats:
-            temp_emp_seats.append(emp_seat)  # додамо кожного підлеглого у список
+            temp_emp_seats.append(emp_seat)  # додаємо підлеглого у список
             new_seats = get_sub_emps(emp_seat['seat_id'])  # і шукаємо його підлеглих
             if new_seats is not None:  # якщо підлеглі є, додаємо і їх у список
                 for new_seat in new_seats:
                     temp_emp_seats.append(new_seat)
-        return sorted(temp_emp_seats, key=lambda i: i['emp'])
+        return temp_emp_seats
     else:
         return None
 
@@ -608,6 +612,35 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
         docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
 
         return docs
+
+
+@try_except
+def get_delegated_docs(emp, sub=0, doc_meta_type=0):
+    docs = Mark_Demand.objects\
+        .filter(document__testing=testing)\
+        .filter(document__closed=False)
+
+    if sub != '0':
+        docs = docs.filter(recipient=sub)
+    else:
+        seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp)[0]
+        subs = get_sub_emps(seat, True)
+        subs = [sub['id'] for sub in subs]
+        docs = docs.filter(recipient__in=subs)
+
+    if doc_meta_type != '0':
+        docs = docs.filter(document__document_type__meta_doc_type=doc_meta_type)
+
+    docs_list = [{
+        'id': md.document_id,
+        'type': md.document.document_type.description,
+        'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
+        'author': md.document_path.employee_seat.employee.pip,
+        'md_is_active': md.is_active,
+        'main_field': get_main_field(md.document),
+    } for md in docs]
+
+    return docs_list
 
 
 @try_except

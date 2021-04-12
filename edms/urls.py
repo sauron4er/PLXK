@@ -5,7 +5,7 @@ from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_dir
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table_first, edms_get_table_all
-from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps  # Документи підлеглих
+from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types
@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^.+/get_mockup_types/', get_mockup_types, name='mockup_types'),
     url(r'^.+/get_mockup_product_types/', get_mockup_product_types, name='mockup_product_types'),
     url(r'^.+/post_doc', edms_my_docs, name='my_docs'),
+    url(r'^.+/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
+    url(r'^.+/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),
@@ -52,8 +54,6 @@ urlpatterns = [
     url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),
     url(r'^archive/', edms_archive, name='archive'),
 
-    url(r'^sub_docs/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
-    url(r'^sub_docs/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
     url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_meta_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
     url(r'^sub_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
@@ -63,5 +63,8 @@ urlpatterns = [
     url(r'^tables/get_all_rows/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
     url(r'^tables/', edms_tables, name='tables'),
+
+    url(r'^delegated/get/(?P<emp>\d+)/(?P<doc_meta_type>\d+)/(?P<sub>\d+)/$', edms_get_delegated_docs, name='get_sub_docs'),
+    url(r'^delegated/', edms_delegated, name='delegated'),
 
 ]

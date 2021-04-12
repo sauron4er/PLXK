@@ -18,9 +18,7 @@ class DocTypeChooser extends React.PureComponent {
     })
       .then((response) => {
         if (response.data) {
-          this.setState({
-            doc_types: response.data
-          });
+          this.setState({doc_types: response.data});
         }
       })
       .catch(function(error) {

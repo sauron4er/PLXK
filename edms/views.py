@@ -200,7 +200,7 @@ def edms_get_doc_types(request):
 def edms_get_sub_emps(request, pk):
     if request.method == 'GET':
         seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=pk)[0]
-        subs_list = get_sub_emps(seat)
+        subs_list = get_sub_emps(seat, True)
         return HttpResponse(json.dumps(subs_list))
 
 
@@ -1085,6 +1085,7 @@ def edms_mark(request):
             # Делегування mark_demand
             elif doc_request['mark'] == '25':
                 mark_demand_instance = get_object_or_404(Mark_Demand, pk=doc_request['mark_demand_id'])
+                mark_demand_instance.delegated_from_id = mark_demand_instance.recipient_id
                 mark_demand_instance.recipient_id = doc_request['delegation_receiver_id']
                 mark_demand_instance.save()
 
@@ -1187,3 +1188,24 @@ def edms_get_table_all(request, meta_doc_type='', doc_type=0, counterparty=0):
 def change_text_module(request):
     set_doc_text_module(request)
     return HttpResponse(status=200)
+
+
+@login_required(login_url='login')
+@try_except
+def edms_delegated(request):
+    if request.method == 'GET':
+        my_seats = get_my_seats(request.user.userprofile.id)
+
+        subs = get_sub_emps(my_seats[0]['seat_id'], True)
+
+        return render(request, 'edms/delegated/delegated.html', {
+            'my_seats': my_seats, 'subs': subs
+        })
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_delegated_docs(emp, sub, doc_meta_type)))
+    return HttpResponse(status=405)
