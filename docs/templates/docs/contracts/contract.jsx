@@ -392,8 +392,6 @@ class Contract extends React.Component {
     const {is_main_contract} = this.props;
     const {contracts} = contractsStore;
 
-    console.log(contracts);
-
     if (data_received) {
       return (
         <If condition={contract.id !== 0 || is_main_contract}>

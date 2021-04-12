@@ -22,8 +22,8 @@ def post_contract(author, contract):
     new_contract.number = contract['number']
     new_contract.company = contract['company']
 
-    if contract['counterparty_id'] != 0:
-        new_contract.counterparty_link_id = contract['counterparty_id']
+    if contract['counterparty'] != 0:
+        new_contract.counterparty_link_id = contract['counterparty']
     else:
         new_contract.counterparty = contract['counterparty_text']
 
