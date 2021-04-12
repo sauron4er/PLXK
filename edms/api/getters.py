@@ -618,7 +618,8 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
 def get_delegated_docs(emp, sub=0, doc_meta_type=0):
     docs = Mark_Demand.objects\
         .filter(document__testing=testing)\
-        .filter(document__closed=False)
+        .filter(document__closed=False)\
+        .filter(delegated_from_id=emp)
 
     if sub != '0':
         docs = docs.filter(recipient=sub)
