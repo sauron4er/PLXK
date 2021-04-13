@@ -19,17 +19,17 @@
 
         <a class="navbar-brand" href="{% url 'home' %}"> <img alt="" src="{% static 'img/logo.png' %}" height="48px"> </a>
           <ul class="navbar-nav">
-             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Загальні</a>
-                    <div class="dropdown-menu">
-                        {% if user.userprofile.is_it_admin or user.userprofile.is_hr   %}
-                            <a class="dropdown-item" href="{% url 'boards:edit_ads' %}">Редагування оголошень</a>
-                        {% endif %}
-                        <a class="dropdown-item" href="{% url 'boards:plhk_ads' %}" target="_blank">Оголошення</a>
+{#             <li class="nav-item dropdown">#}
+{#                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Загальні</a>#}
+{#                    <div class="dropdown-menu">#}
+{#                        {% if user.userprofile.is_it_admin or user.userprofile.is_hr   %}#}
+{#                            <a class="dropdown-item" href="{% url 'boards:edit_ads' %}">Редагування оголошень</a>#}
+{#                        {% endif %}#}
+{#                        <a class="dropdown-item" href="{% url 'boards:plhk_ads' %}" target="_blank">Оголошення</a>#}
 {#                        <a class="dropdown-item" href="{% url 'boards:org_structure' %}">Організаційна структура</a>#}
-                        <a class="dropdown-item" href="{% url 'phones' %}">Телефонний і поштовий довідник</a>
-                    </div>
-             </li>
+
+{#                    </div>#}
+{#             </li>#}
 {#             <li class="nav-item">#}
 {#                <a class="nav-link" href="{% url 'boards:index' %}">Форум</a>#}
 {#             </li>#}
@@ -65,6 +65,7 @@
               <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Довідники</a>
                         <div class="dropdown-menu">
+                          <a class="dropdown-item" href="{% url 'phones' %}">Телефонний і поштовий довідник</a>
                           {% if user.userprofile.is_it_admin or user.userprofile.product_type_add %}
                             <a class="dropdown-item" href="{% url 'production:products' %}">Продукція</a>
                           {% endif %}
