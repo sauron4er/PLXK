@@ -27,7 +27,6 @@ def post_contract(author, contract):
     else:
         new_contract.counterparty = contract['counterparty_text']
 
-
     new_contract.subject = contract['subject']
     new_contract.nomenclature_group = contract['nomenclature_group']
     new_contract.date_start = contract['date_start'] if contract['date_start'] != '' else None
@@ -91,7 +90,7 @@ def add_contract_from_edms(doc_request, files):
         'basic_contract': basic_contract,
         'number': get_texts_from_edms(edms_doc, fields_queue['number']),
         'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
-        'counterparty_id': counterparty_id,
+        'counterparty': counterparty_id,
         'counterparty_text': counterparty_text,
         'nomenclature_group': get_texts_from_edms(edms_doc, fields_queue['nomenclature_group']),
         'date_start': get_days_from_edms(edms_doc, fields_queue['date_start']),
