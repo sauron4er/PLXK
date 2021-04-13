@@ -6,6 +6,7 @@ import OrgStructure from './org_structure/org_structure';
 import ProvidersIndex from './counterparty/providers';
 import ClientsIndex from './counterparty/clients';
 import {Calendar} from 'templates/components/calendar';
+import Phones from 'boards/templates/boards/phones/phones';
 
 class Boards extends React.Component {
   state = {
@@ -32,6 +33,9 @@ class Boards extends React.Component {
         </When>
         <When condition={this.state.main_div === 'calendar'}>
           <Calendar/>
+        </When>
+        <When condition={this.state.main_div === 'phones'}>
+          <Phones/>
         </When>
       </Choose>
     );

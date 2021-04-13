@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^logout/$', auth_views.LogoutView.as_view(), {'template_name': 'home.html'}, name='logout'),
     url(r'^login/$', auth_views.LoginView.as_view(), {'template_name': 'accounts/login.html'}, name='login'),
-    url(r'^phones/sort/(?P<pk>[0-9]+)$', board_views.phones, name='phones'),
     url(r'^menu/', board_views.menu, name='menu'),
     url(r'^polls/', include('polls.urls', namespace='polls')),
     url(r'^crm/', include('crm.urls', namespace='crm')),
@@ -34,6 +33,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls, name='sam_admin'),
 
     url(r'^edms/', include('edms.urls', namespace='edms')),
+
+    url(r'^phones/change_pam', board_views.change_pam, name='change_pam'),
+    url(r'^phones/', board_views.phones, name='phones'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

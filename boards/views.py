@@ -4,18 +4,21 @@ from django.http import Http404, HttpResponse
 from .models import Board, Phones, Topic, Post, Ad
 from .forms import NewTopicForm, NewAdForm
 from django.db import connections
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
+from plxk.api.try_except import try_except
 from datetime import date, datetime
 from django.utils import timezone
 import pytz
 import json
 import random
-import time
-import schedule
+# import time
+# import schedule
 import threading
 from edms.models import Employee_Seat
+from django.contrib.auth.models import User
 from boards.api.auto_orders import send_orders_reminders
-from boards.api.auto_vacations import auto_arrange_vacations
+
+# from boards.api.auto_vacations import auto_arrange_vacations
 
 auto_functions_started = False
 
@@ -117,23 +120,35 @@ def home(request):
             'bg': random.randint(1, 9)})
 
 
-def phones(request, pk):
-    phones = User.objects.filter(userprofile__n_main__gte = 0)
-    if pk == '0':
-        phones = phones.order_by('userprofile__pip')
-    elif pk == '1':
-        phones = phones.order_by('userprofile__n_main')
-    elif pk == '2':
-        phones = phones.order_by('userprofile__n_second')
-    elif pk == '3':
-        phones = phones.order_by('userprofile__n_mobile')
-    elif pk == '4':
-        phones = phones.order_by('userprofile__n_out')
-    elif pk == '5':
-        phones = phones.order_by('userprofile__mobile1')
-    else:
-        phones = phones.order_by('userprofile__n_main')
-    return render(request, 'boards/phones.html', {'phones': phones})
+@login_required(login_url='login')
+@try_except
+def phones(request):
+    phones_and_mails = User.objects\
+        .filter(is_active=True)\
+        .filter(userprofile__is_active=True)\
+        .order_by('userprofile__pip')
+
+    pam = [{
+        'id': item.id,
+        'pip': item.userprofile.pip or '',
+        'mail': item.email or '',
+        'phone': item.userprofile.n_main or ''
+    } for item in phones_and_mails]
+
+    return render(request, 'boards/phones/phones.html', {'pam': pam})
+
+
+@try_except
+def change_pam(request):
+    employee = json.loads(request.POST['employee'])
+
+    employee_instance = get_object_or_404(User, pk=employee['id'])
+    employee_instance.email = employee['mail']
+    employee_instance.userprofile.n_main = employee['phone']
+    employee_instance.userprofile.save()
+    employee_instance.save()
+
+    return HttpResponse(200)
 
 
 def get_context_data():  # Exec 1st

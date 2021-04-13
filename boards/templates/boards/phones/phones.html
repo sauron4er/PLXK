@@ -1,0 +1,20 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}Телефонний та поштовий довідник{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    {{ user.is_staff|json_script:"params-data" }}
+    <script>
+      const is_staff = JSON.parse(document.getElementById('params-data').textContent);
+    </script>
+    <script>
+        window.pam = {{ pam|safe }};
+    </script>
+
+    <div class="container-fluid px-3" id="phones">
+      <div id="bundle">{% render_bundle 'boards' %}</div>
+    </div>
+{% endblock %}
