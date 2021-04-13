@@ -66,9 +66,9 @@ class Phones extends React.Component {
           <tbody>
             <For each='item' of={pam} index='index'>
               <tr key={index}>
-                <td>{item.pip}</td>
-                <td className='text-center'>{item.phone}</td>
-                <td>
+                <td className='align-middle'>{item.pip}</td>
+                <td className='text-center align-middle'>{item.phone}</td>
+                <td className='align-middle'>
                   <a href={this.getMailto(item.mail)}>{item.mail}</a>
                 </td>
                 <If condition={is_staff}>
