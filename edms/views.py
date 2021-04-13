@@ -854,9 +854,10 @@ def edms_mark(request):
 
             # Відмовлено
             elif doc_request['mark'] == '3':
-                # Деактивуємо лише дану mark demand, якщо це погодження Договорів чи мішків
+                # Деактивуємо лише дану mark demand, якщо це погодження Договорів, мішків чи тендерів
                 # (для того, щоб інші погоджуючі теж могли прокоментувати). В іншому разі деактивуємо всі.
-                if doc_meta_type in [5, 6]:
+                # TODO може переробити з перевірки на мета_тип на перевірку "is_approval_used"
+                if doc_meta_type in [5, 6, 9]:
                     deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
                 else:
                     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
