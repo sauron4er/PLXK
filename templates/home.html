@@ -34,18 +34,23 @@
     <a href={% url 'edms:my_docs' %}><button class="css_homepage_button">Мої документи</button></a>
     <a href={% url 'edms:archive' %}><button class="css_homepage_button">Архів</button></a>
     <a href={% url 'edms:sub_docs' %}><button class="css_homepage_button">Документи підлеглих</button></a>
-    <a href={% url 'edms:tables' %}><button class="css_homepage_button">Зведені таблиці</button></a>
+    <hr/>
+    <div class="css_homepage_section">Зведені таблиці по документам</div>
+    <a href={% url 'edms:tables' %}><button class="css_homepage_button">Усі зведені таблиці</button></a>
     <a href={% url 'edms:tables' meta_doc_type=7 %}><button class="css_homepage_button">Заявки по 1С8</button></a>
-
+    <a href={% url 'edms:tables' meta_doc_type=10 %}><button class="css_homepage_button">Заявки по ПЛХК</button></a>
+    <a href={% url 'edms:tables' meta_doc_type=8 %}><button class="css_homepage_button">Заявки по ІТ</button></a>
+    <hr/>
     <div class="css_homepage_section">Система якості</div>
     <a href={% url 'docs:index' %}><button class="css_homepage_button">Список документів СМЯ</button></a>
     <a href={% url 'docs:new_doc' %}><button class="css_homepage_button">Внести новий документ</button></a>
-
+    <hr/>
     <div class="css_homepage_section">Інше</div>
     <a href={% url 'docs:orders' %}><button class="css_homepage_button">Накази та розпорядження</button></a>
     <a href={% url 'docs:contracts' %}><button class="css_homepage_button">Договори</button></a>
     <a href={% url 'correspondence:index' %}><button class="css_homepage_button">Листування з клієнтами</button></a>
     <a href={% url 'phones' %}><button class="css_homepage_button">Телефонний та поштовий довідник</button></a>
+    <hr/>
 
     <div class="mt-5">
       {% if birthdays %}

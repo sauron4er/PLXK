@@ -70,7 +70,7 @@ class Tables extends React.Component {
 
   getTable = () => {
     if (this.state.doc_type_id !== '0') {
-      axiosGetRequest('get_table/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
+      axiosGetRequest('get_table_first/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
         .then((response) => {
           this.setState(
             {
@@ -96,7 +96,7 @@ class Tables extends React.Component {
   getAllRows = () => {
     if (this.state.rows.length === 23) {
       this.setState({additional_loading: true}, () => {
-        axiosGetRequest('get_all_rows/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
+        axiosGetRequest('get_table_all/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
           .then((response) => {
             this.setState({
               rows: response,

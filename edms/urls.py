@@ -58,10 +58,11 @@ urlpatterns = [
     url(r'^sub_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
-    url(r'^tables/(?P<meta_doc_type>\d+)/get_table/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
-    url(r'^tables/get_table/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
-    url(r'^tables/get_all_rows/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_table_first/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_table_all/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
+    url(r'^tables/get_table_first/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
+    url(r'^tables/get_table_all/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/', edms_tables, name='tables'),
 
     url(r'^delegated/get/(?P<emp>\d+)/(?P<doc_meta_type>\d+)/(?P<sub>\d+)/$', edms_get_delegated_docs, name='get_sub_docs'),

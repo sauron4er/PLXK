@@ -961,7 +961,9 @@ def get_allowed_new_doc_types(request):
     # Документи, які можна створювати всім, не мають записів у таблиці edms_doc_type_create_rights
     free_doc_types = Document_Type.objects\
         .filter(is_active=True)\
-        .filter(~Exists(Doc_Type_Create_Rights.objects.filter(document_meta_type=OuterRef('meta_doc_type'))))
+        .filter(~Exists(Doc_Type_Create_Rights.objects
+                        .filter(is_active=True)
+                        .filter(document_meta_type=OuterRef('meta_doc_type'))))
 
     # Права відділу, до якого відноситься UserProfile
     dep_doc_types = Document_Type.objects\
