@@ -79,6 +79,7 @@ def handle_phase_acquaints(doc_request, recipients):
         if recipient['type'] == 'acquaint':
             zero_phase_id = get_zero_phase_id(doc_request['document_type'])
             recipient_acquaint = vacation_check(recipient['id'])
+
             post_mark_demand(doc_request, recipient_acquaint, zero_phase_id, 8)
             new_mail('new', [{'id': recipient_acquaint}], doc_request)
 
@@ -192,10 +193,6 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
     phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained') \
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
-    # 0. Спочатку відправляємо документ на ознайомлення, для цього використовується фаза 0,
-    # бо ознайомлення фактично не є фазою і не впливає на шлях документа
-    handle_phase_acquaints(doc_request, modules_recipients)
-
     if phases:
         for phase_info in phases:
             # 1. Створюємо таблицю візування для новоствореного документа:
@@ -220,3 +217,7 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     handle_phase_marks(doc_request, phase_info)
                 # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
                 handle_phase_recipients(doc_request, phase_info, modules_recipients)
+
+    # Відправляємо документ на ознайомлення, якщо отримувачі уже не мають цей документ на погодженні тощо
+    # Для цього використовується фаза 0, бо ознайомлення фактично не є фазою і не впливає на шлях документа
+    handle_phase_acquaints(doc_request, modules_recipients)

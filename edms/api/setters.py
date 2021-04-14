@@ -9,6 +9,7 @@ from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, Deactiv
 from .vacations import vacation_check
 
 from django.conf import settings
+
 testing = settings.STAS_DEBUG
 
 
@@ -24,14 +25,17 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     request = doc_request.copy()
     emp_seat_id = vacation_check(emp_seat_id)
 
+    # Якщо на ознайомлення, то не відправляємо, якщо є будь-який інший mark_demand,
+    # в іншому разі не відправляємо, якщо є такий самий mark_demand
     already_exists = Mark_Demand.objects \
         .filter(document_id=doc_request['document']) \
         .filter(recipient_id=emp_seat_id) \
-        .filter(mark_id=mark) \
-        .filter(is_active=True) \
-        .exists()
+        .filter(is_active=True)
 
-    if not already_exists:
+    if mark != 8:
+        already_exists = already_exists.filter(mark_id=mark)
+
+    if not already_exists.exists():
         if not doc_request['comment']:
             request.update({'comment': None})
         request.update({'recipient': emp_seat_id})
@@ -107,9 +111,9 @@ def deactivate_doc_mark_demands(doc_request, doc_id):
 
 @try_except
 def set_doc_text_module(request):
-    doc_text_module = Doc_Text.objects\
-        .filter(document_id=request.POST['document_id'])\
-        .filter(queue_in_doc=request.POST['text_queue'])\
+    doc_text_module = Doc_Text.objects \
+        .filter(document_id=request.POST['document_id']) \
+        .filter(queue_in_doc=request.POST['text_queue']) \
         .filter(is_active=True).order_by('-id')
     if doc_text_module:
         edit_text = get_object_or_404(Doc_Text, pk=doc_text_module[0].id)
@@ -135,7 +139,8 @@ def post_mark_deactivate(doc_request):
     # Деактивуємо всі mаrk_demands крім на ознайомлення:
     mark_demands = [{
         'id': md.id,
-    } for md in Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True).exclude(mark_id=8)]
+    } for md in
+        Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True).exclude(mark_id=8)]
 
     for md in mark_demands:
         deactivate_mark_demand(doc_request, md['id'])
