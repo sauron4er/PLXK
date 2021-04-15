@@ -5,6 +5,7 @@ import {notify} from 'templates/components/my_extras';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersCalendarStore from 'docs/templates/docs/orders/calendar/orders_calendar_store';
+import ordersStore from 'docs/templates/docs/orders/orders_store';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class CalendarItem extends React.Component {
@@ -31,13 +32,12 @@ class CalendarItem extends React.Component {
 
   render() {
     const {day_index, order_index, article_index} = this.props;
-    const {is_admin} = ordersCalendarStore;
     const article = ordersCalendarStore.calendar[day_index].orders[order_index].articles[article_index]
 
     return (
       <div key={article_index} className='css_calendar_article mx-1'>
         <div>{article.text}</div>
-        <If condition={is_admin}>
+        <If condition={ordersStore.view === 'calendar'}>
           <div className='mb-2 font-weight-bold'>{`Виконавець: ${article.responsible_name}`}</div>
         </If>
 
@@ -51,7 +51,6 @@ class CalendarItem extends React.Component {
     day_index: 0,
     order_index: 0,
     article_index: 0,
-    order: {}
   };
 }
 

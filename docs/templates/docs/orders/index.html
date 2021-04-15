@@ -11,6 +11,11 @@
 {% block second_nav %}{% endblock %}
 
 {% block content %}
+    {{ user.userprofile.department.id|json_script:"params-data" }}
+    <script>
+      const my_department_id = JSON.parse(document.getElementById('params-data').textContent);
+    </script>
+
     <div class="container-fluid p-2" id="orders">
         <script>
             {#window.orders = {{ orders|safe }};#}

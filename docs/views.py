@@ -247,14 +247,10 @@ def get_calendar(request, view):
         .filter(Q(article__order__date_canceled__isnull=True) | Q(article__order__date_canceled__gte=today))\
         .order_by('article__deadline', 'article__order__code')
 
-    # is_it_admin = UserProfile.objects\
-    #     .filter(user=request.user)\
-    #     .filter(Q(is_orders_admin=True) | Q(is_it_admin=True))\
-    #     .exists()
-
     is_it_admin = UserProfile.objects.values_list('is_orders_admin', flat=True).filter(user=request.user)[0]
 
-    if not is_it_admin:
+    # if not is_it_admin:
+    if view in ['my_calendar', 'constant_calendar']:
         my_emp_seats = Employee_Seat.objects.values_list('id', flat=True)\
             .filter(employee__user=request.user)\
             .filter(is_active=True)
@@ -299,7 +295,8 @@ def get_calendar(request, view):
 @try_except
 def get_deadline(article):
     if article.term == 'term':
-        return normalize_date(article.deadline)
+        date = normalize_date(article.deadline)
+        return date or 'Без строку'
     elif article.term == 'constant':
         return 'Постійно'
     return 'Без строку'

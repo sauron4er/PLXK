@@ -26,7 +26,6 @@ class OrdersCalendar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, shapshot) {
-    // Typical usage (don't forget to compare props):
     if (this.props.type !== prevProps.type) {
       this.getCalendar();
       this.setState({loading: true});
@@ -46,16 +45,16 @@ class OrdersCalendar extends React.Component {
   render() {
     const {loading} = this.state;
     const {calendar} = ordersCalendarStore;
-  
+
     return (
       <Choose>
         <When condition={!loading}>
           <Choose>
             <When condition={calendar?.length === 0}>
-              <div>{this.props.type === 'calendar' ? 'Схоже, у вашому календарі пусто.' : 'Наказів для постійного виконання немає'}</div>
+              <div>{this.props.type === 'my_calendar' ? 'Схоже, у вашому календарі пусто.' : 'Наказів для постійного виконання немає'}</div>
             </When>
             <Otherwise>
-              <If condition={ordersCalendarStore.is_admin}>
+              <If condition={this.props.type === 'calendar'}>
                 <OverdueReport />
               </If>
               <For each='day' index='day_idx' of={calendar}>
@@ -70,7 +69,7 @@ class OrdersCalendar extends React.Component {
                         >{`${order.type} № ${order.order_code} "${order.order_name}"`}</a>
                         <For each='article' index='article_idx' of={order.articles}>
                           <Choose>
-                            <When condition={article.term==='constant'}>
+                            <When condition={article.term === 'constant'}>
                               <ConstantCalendarItem day_index={day_idx} order_index={order_idx} article_index={article_idx} />
                             </When>
                             <Otherwise>
