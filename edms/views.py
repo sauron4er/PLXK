@@ -825,13 +825,26 @@ def edms_mark(request):
                 if is_approvals_used(doc_request['document_type']):
                     arrange_approve(doc_request, True)
 
+                if doc_request['mark'] == '11':  # Виконано
+                    # Перетворюємо фазу документу на "Виконано"
+                    set_stage(doc_request['document'], 'done')
+
+                    # Деактивуємо MarkDemand інших виконавців (в заявках)
+                    executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
+                        .filter(document=doc_request['document']) \
+                        .filter(mark_id=11) \
+                        .exclude(recipient_id=doc_request['employee_seat']) \
+                        .filter(is_active=True)
+                    for md in executants_mark_demands:
+                        deactivate_mark_demand(doc_request, md)
+
                 # Отримуємо список необхідних (required) позначок на даній фазі, які ще не виконані
                 # Якщо таких немає, переходимо до наступної фази.
-                remaining_required_md = Mark_Demand.objects.filter(document_id=doc_request['document'])\
-                    .filter(phase_id=doc_request['phase_id'])\
-                    .filter(phase__required=True)\
-                    .exclude(mark=8)\
-                    .filter(is_active=True)\
+                remaining_required_md = Mark_Demand.objects.filter(document_id=doc_request['document']) \
+                    .filter(phase_id=doc_request['phase_id']) \
+                    .filter(phase__required=True) \
+                    .exclude(mark=8) \
+                    .filter(is_active=True) \
                     .count()
 
                 if remaining_required_md == 0:
@@ -843,14 +856,11 @@ def edms_mark(request):
                     else:
                         new_phase(doc_request, this_phase['phase'] + 1, [])
 
-                if doc_request['mark'] == '11':  # Виконано
-                    # Перетворюємо фазу документу на "Виконано"
-                    set_stage(doc_request['document'], 'done')
-                    if not testing:
-                        supervisors = get_supervisors(
-                            doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
-                        for supervisor in supervisors:
-                            send_email_supervisor('Виконано', doc_request, supervisor['mail'])
+                if not testing:
+                    supervisors = get_supervisors(
+                        doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                    for supervisor in supervisors:
+                        send_email_supervisor('Виконано', doc_request, supervisor['mail'])
 
             # Відмовлено
             elif doc_request['mark'] == '3':
