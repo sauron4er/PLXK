@@ -75,6 +75,13 @@ def get_mockup_product_types(request):
     return HttpResponse(json.dumps(get_mockup_product_types_list()))
 
 
+@try_except
+def get_product_types(request, direction):
+    products = get_products_list(direction)
+    sub_products = get_sub_products(direction)
+    return HttpResponse(json.dumps({'products': products, 'sub_products': sub_products}))
+
+
 @login_required(login_url='login')
 @try_except
 def mockup_product_types(request):
@@ -127,3 +134,10 @@ def del_scope(request):
     if form.is_valid():
         form.save()
         return HttpResponseRedirect('scopes.html')
+
+
+@login_required(login_url='login')
+@try_except
+def get_scopes(request):
+
+    return HttpResponse(json.dumps(get_scopes_list()))

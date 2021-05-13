@@ -13,6 +13,12 @@ class Product_type(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class Sub_product_type(models.Model):
+    name = models.CharField(max_length=50)
+    type = models.ForeignKey(Product_type, related_name='sub_product_types', on_delete=models.RESTRICT, null=True)
+    is_active = models.BooleanField(default=True)
+
+
 class Mockup_type(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)

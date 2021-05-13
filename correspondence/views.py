@@ -122,6 +122,21 @@ def del_law(request):
         raise err
 
 
+@try_except
+def get_laws(request):
+    laws = [{
+        'id': law.pk,
+        'name': law.name,
+        'scopes': [{
+            'id': scope.scope_id,
+            'name': scope.scope.name,
+        } for scope in
+            Law_scope.objects.all().filter(law_id=law.id).filter(is_active=True)],
+    } for law in Law.objects.all().filter(is_active=True).filter(is_actual=True)]
+
+    return HttpResponse(json.dumps(laws))
+
+
 #  --------------------------------------------------- Requests
 @try_except
 def get_request(request, pk):

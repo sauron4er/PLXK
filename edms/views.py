@@ -135,6 +135,18 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'choose_company' in doc_modules and doc_modules['choose_company'] != 'ТДВ':
             post_company(new_doc, doc_modules['choose_company'])
 
+        if 'sub_product_type' in doc_modules:
+            post_sub_product_type(new_doc, doc_modules['sub_product_type'])
+
+        if 'scope' in doc_modules:
+            post_scope(new_doc, doc_modules['scope'])
+
+        if 'law' in doc_modules:
+            post_law(new_doc, doc_modules['law'])
+
+        if 'client_requirements' in doc_modules:
+            post_client_requirements(new_doc, doc_modules['client_requirements'])
+
         return recipients
     except ValidationError as err:
         raise err
@@ -686,9 +698,12 @@ def edms_get_doc_type_modules(request, pk):
             .filter(document_type=doc_type)\
             .filter(is_main_field=True)\
             .filter(is_active=True)[0]
+        auto_recipients = get_auto_recipients(pk)
+
         response = {
             'doc_type_modules': doc_type_modules,
-            'main_field_queue': main_field_queue
+            'main_field_queue': main_field_queue,
+            'auto_recipients': auto_recipients
         }
         return HttpResponse(json.dumps(response))
 

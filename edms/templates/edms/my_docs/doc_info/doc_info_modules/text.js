@@ -38,9 +38,9 @@ class Text extends React.Component {
   render() {
     const {text_info} = this.props;
     const {text, changed} = this.state;
-
+  
     return (
-      <Choose>
+      <If condition={text}><Choose>
         <When condition={text_info.is_editable}>
           <div className='mt-1'>{text_info.field_name}:</div>
           <div className='d-flex align-items-center mt-1'>
@@ -53,7 +53,7 @@ class Text extends React.Component {
               maxLength={5000}
             />
             <button className={'btn btn-sm btn-outline-dark'} onClick={() => this.postChanges()}>
-              <FontAwesomeIcon icon={changed ? faCheck : faSave} />
+              <FontAwesomeIcon icon={changed ? faCheck : faSave}/>
             </button>
           </div>
         </When>
@@ -61,7 +61,7 @@ class Text extends React.Component {
           <div>{text_info.field_name}:</div>
           <div className='css_note_text'>{text}</div>
         </Otherwise>
-      </Choose>
+      </Choose></If>
     );
   }
 

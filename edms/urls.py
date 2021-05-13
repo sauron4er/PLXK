@@ -8,8 +8,9 @@ from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_tab
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module
 from docs.views_contracts import get_contract
-from production.views import get_mockup_types, get_mockup_product_types
+from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes
 from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
+from correspondence.views import get_laws
 
 app_name = 'edms'
 
@@ -25,6 +26,9 @@ urlpatterns = [
     url(r'^.+/post_doc', edms_my_docs, name='my_docs'),
     url(r'^.+/get_doc_types/', edms_get_doc_types, name='get_doc_types'),
     url(r'^.+/get_sub_emps/(?P<pk>\d+)/$', edms_get_sub_emps, name='get_sub_emps'),
+    url(r'^.+/get_product_types/(?P<direction>\w+)/', get_product_types, name='get_product_types'),
+    url(r'^.+/get_scopes', get_scopes, name='get_scopes'),
+    url(r'^.+/get_laws', get_laws, name='get_laws'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),

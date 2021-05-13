@@ -8,14 +8,14 @@ testing = settings.STAS_DEBUG
 
 @try_except
 # Повертає перші 23 рядки з таблиці
-def create_table_first(doc_type, counterparty):
-    modules_list = get_modules_list(doc_type)
+def create_table_first(meta_doc_type, counterparty):
+    modules_list = get_modules_list(meta_doc_type)
 
     column_widths = get_column_widths(modules_list)
 
     table_header = get_table_header(modules_list)
 
-    table_rows = get_table_rows(doc_type, modules_list, 23, counterparty)
+    table_rows = get_table_rows(meta_doc_type, modules_list, 23, counterparty)
 
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
     return table
@@ -23,9 +23,9 @@ def create_table_first(doc_type, counterparty):
 
 @try_except
 # Повертає всю таблицю
-def create_table_all(doc_type, counterparty):
-    modules_list = get_modules_list(doc_type)
-    table_rows = get_table_rows(doc_type, modules_list, 0, counterparty)
+def create_table_all(meta_doc_type, counterparty):
+    modules_list = get_modules_list(meta_doc_type)
+    table_rows = get_table_rows(meta_doc_type, modules_list, 0, counterparty)
     return table_rows
 
 
@@ -63,6 +63,10 @@ def get_column_widths(modules):
             column_widths.append({'columnName': 'mockup_type', 'width': 170})
         elif module['field'] == 'mockup_product_type':
             column_widths.append({'columnName': 'mockup_product_type', 'width': 160})
+        elif module['field'] == 'product':
+            column_widths.append({'columnName': 'sub_product_type', 'width': 160})
+        elif module['field'] == 'scope':
+            column_widths.append({'columnName': 'scope', 'width': 160})
 
     return column_widths
 
@@ -99,6 +103,8 @@ def get_table_header(modules):
             header.append({'name': 'added_date', 'title': 'Створено'})
             header.append({'name': 'done_date', 'title': 'Виконано'})
             header.append({'name': 'stage', 'title': 'Стадія'})
+        elif module['module_id'] == 36:  # product_type_sell
+            header.append({'name': 'sub_product_type', 'title': 'Тип продукції'})
         elif module['module'] == 'dimensions':
             header.append(get_dimensions_header(module))
         elif module['module_id'] == 1:
@@ -138,6 +144,8 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         'texts': get_texts(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
         'mockup_product_type': get_mockup_product_type(modules, doc),
+        'sub_product_type': get_sub_product_type(modules, doc),
+        'scope': get_scope(modules, doc),
         'client': get_counterparty(modules, doc),
         'packaging_type': get_packaging_type(modules, doc),
         'doc_gate': doc.gate.all()[0].gate_id if doc.gate.all() else None,
@@ -207,6 +215,20 @@ def get_mockup_type(modules, doc):
 def get_mockup_product_type(modules, doc):
     if any(module['module_id'] == 25 for module in modules):
         return doc.mockup_product_type.all()[0].mockup_product_type.name if doc.mockup_product_type.all() else None
+    return None
+
+
+@try_except
+def get_sub_product_type(modules, doc):
+    if any(module['module_id'] == 36 for module in modules):
+        return doc.sub_product_type.all()[0].sub_product_type.name if doc.sub_product_type.all() else None
+    return None
+
+
+@try_except
+def get_scope(modules, doc):
+    if any(module['module_id'] == 37 for module in modules):
+        return doc.scope.all()[0].scope.name if doc.scope.all() else None
     return None
 
 

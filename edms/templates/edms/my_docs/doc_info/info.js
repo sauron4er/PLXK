@@ -11,6 +11,8 @@ import Files from './doc_info_modules/files';
 import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
 import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
 import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
+import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
+import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
 
 class Info extends React.Component {
   render() {
@@ -74,26 +76,37 @@ class Info extends React.Component {
                   <When condition={module.module === 'approval_list'}>
                     <Approvals approvals={info.approval_list} />
                   </When>
-                  <When condition={module.module === 'mockup_type'}>
-                    <Text text_info={module} text={info.mockup_type.name} doc_info={info} />
+                  <When condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law'].includes(module.module)}>
+                    <Text text_info={module} text={info[module.module].name} doc_info={info} />
                   </When>
-                  <When condition={module.module === 'mockup_product_type'}>
-                    <Text text_info={module} text={info.mockup_product_type.name} doc_info={info} />
+                  <When condition={module.module === 'product_type_sell'}>
+                    <Text text_info={{field_name: 'Тип продукції', is_editable: false}} text={info.sub_product.product} doc_info={info} />
+                    <Text
+                      text_info={{field_name: 'Підтип продукції', is_editable: false}}
+                      text={info.sub_product.sub_product}
+                      doc_info={info}
+                    />
                   </When>
                   <When condition={module.module === 'client'}>
                     <Text text_info={module} text={`${info.client.name} (${info.client.country})`} doc_info={info} />
-                  </When>
-                  <When condition={module.module === 'counterparty'}>
-                    <Text text_info={module} text={info.counterparty.name} doc_info={info} />
                   </When>
                   <When condition={module.module === 'contract_link'}>
                     <ContractInfo contract={info.contract_link} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'choose_company'}>
-                    <div>Компанія:<span className='font-italic'> {info.company} "ПЛХК"</span></div>
+                    <div>
+                      Компанія:<span className='font-italic'> {info.company} "ПЛХК"</span>
+                    </div>
                   </When>
                   <When condition={module.module === 'stage'}>
                     <Stage stage={info.stage} />
+                  </When>
+                  <When condition={module.module === 'client_requirements'}>
+                    <ClientRequirementsInfo
+                      fieldName={module.field_name}
+                      crs={info.client_requirements}
+                      sub_product={info.sub_product.id}
+                    />
                   </When>
                 </Choose>
               </div>

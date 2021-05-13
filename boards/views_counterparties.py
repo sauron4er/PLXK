@@ -370,9 +370,10 @@ def post_client(request):
 
 
 @try_except
-def get_clients_for_product_type(request, product_type):
+def get_clients_for_product_type(request, product_type='0'):
     clients = Counterparty.objects.all().filter(is_active=True).filter(is_provider=False).order_by('name')
-    if product_type:
+
+    if product_type != '0':
         clients = clients.filter(product_id=product_type)
 
     clients_list = [{

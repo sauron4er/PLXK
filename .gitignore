@@ -3,8 +3,10 @@ plxk/secrets.json
 *iml
 files/media/
 files/media/edms_files/
+files/media/contract_docs/
 files/media/correspondence/
 \files
+files\media
 \.idea
 \*\__pycache__
 *.py[cod]

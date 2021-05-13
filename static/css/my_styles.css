@@ -102,6 +102,12 @@
   padding: 10px;
 }
 
+.css_edms_client_requirement {
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
+  margin-bottom: 12px;
+  padding: 10px;
+}
+
 .css_calendar_header {
   text-align: center;
   font-weight: bold;

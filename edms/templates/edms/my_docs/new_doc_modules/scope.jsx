@@ -5,19 +5,17 @@ import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
 
-class Client extends React.Component {
+class Scope extends React.Component {
   state = {
-    clients: [],
+    scopes: [],
     loading: true
   };
 
   componentDidMount() {
-    const product_type = this.props.docType === 6 ? 3 : 0; // 6 - Дизайн-макети, в них викор. лише клієнти, які купують ДВП (product_type=3)
-
-    axiosGetRequest(`get_clients/${product_type}/`)
+    axiosGetRequest('get_scopes')
       .then((response) => {
         this.setState({
-          clients: response,
+          scopes: response,
           loading: false
         });
       })
@@ -26,36 +24,35 @@ class Client extends React.Component {
 
   onChange = (event) => {
     const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.new_document.client = event.target.options[selectedIndex].getAttribute('data-key');
-    newDocStore.new_document.client_name = event.target.options[selectedIndex].getAttribute('value');
+    newDocStore.new_document.scope = event.target.options[selectedIndex].getAttribute('data-key');
+    newDocStore.new_document.scope_name = event.target.options[selectedIndex].getAttribute('value');
   };
 
   render() {
     const {module_info} = this.props;
-    const {loading, clients} = this.state;
-
+    const {loading, scopes} = this.state;
+  
     return (
       <Choose>
         <When condition={!loading}>
-          <div className='row align-items-center mr-lg-1'>
-            <label className='col-lg-4' htmlFor='client'>
-              <If condition={module_info.required}>{'* '}</If>
-              {module_info.field_name}:
+          <div className='row align-items-center mt-1 mr-lg-1'>
+            <label className='col-lg-4' htmlFor='scope'>
+              <If condition={module_info.required}>{'* '}</If> {module_info.field_name}:
             </label>
             <select
               className='col-lg-8 form-control mx-3 mx-lg-0'
-              id='client'
-              name='client'
-              value={newDocStore.new_document.client_name}
+              id='scope'
+              name='scope'
+              value={newDocStore.new_document.scope_name}
               onChange={this.onChange}
             >
               <option key={0} data-key={0} value='0'>
                 ------------
               </option>
-              {clients.map((client) => {
+              {scopes.map((scope) => {
                 return (
-                  <option key={client.id} data-key={client.id} value={client.name}>
-                    {client.name} ({client.country})
+                  <option key={scope.id} data-key={scope.id} value={scope.name}>
+                    {scope.name}
                   </option>
                 );
               })}
@@ -71,15 +68,13 @@ class Client extends React.Component {
   }
 
   static defaultProps = {
-    client: [],
-    docType: 0,
     module_info: {
       field_name: '---',
       queue: 0,
       required: false,
       additional_info: null
-    }
+    },
   };
 }
 
-export default view(Client);
+export default view(Scope);

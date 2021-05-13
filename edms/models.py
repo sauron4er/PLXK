@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
-from production.models import Mockup_type, Mockup_product_type
-from correspondence.models import Client
+from production.models import Mockup_type, Mockup_product_type, Sub_product_type, Scope
+from correspondence.models import Client, Law
 from boards.models import Counterparty
 # from docs.models import Contract # - напряму функцію імпортувати не можна, буде помилка circular import
 
@@ -84,6 +84,7 @@ class Doc_Type_Phase(models.Model):
         default=False
     )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
     is_approve_chained = models.BooleanField(default=False)  # True - вимагає погодження у кожного з ланки керівників аж до отримувача
+    doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу (н-д вимоги клієнта, там 4 типи з різними отримувачами)
     testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -94,6 +95,7 @@ class Doc_Type_Phase_Queue(models.Model):
     seat = models.ForeignKey(Seat, related_name='phase_seats', null=True, on_delete=models.RESTRICT)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='phase_emp_seats', null=True, on_delete=models.RESTRICT)
     queue = models.IntegerField(default=0)
+    doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу (н-д вимоги клієнта, там 4 типи з різними отримувачами)
     is_active = models.BooleanField(default=True)
 
 
@@ -143,6 +145,22 @@ class File(models.Model):
     first_path = models.BooleanField(True)  # True - файл доданий при створенні документу. Такі файли показуються в основній інфі про документ.
     version = models.IntegerField(default=1)
     deactivate_path = models.ForeignKey(Document_Path, related_name='deactivate_files', null=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Доступ користувачів до перегляду усіх документів певного типу
+class User_Doc_Type_View(models.Model):
+    employee = models.ForeignKey(accounts.UserProfile, related_name='view_doc_types_permissions', on_delete=models.RESTRICT)
+    meta_doc_type = models.ForeignKey(Document_Meta_Type, related_name='users_with_view_permission', on_delete=models.RESTRICT)
+    send_mails = models.BooleanField(default=False)  # Надсилання листів про створення нових документів/зміну статусу
+    is_active = models.BooleanField(default=True)
+
+
+class Doc_Type_Create_Rights(models.Model):
+    document_meta_type = models.ForeignKey(Document_Meta_Type, related_name='create_rights', on_delete=models.CASCADE)
+    department = models.ForeignKey(accounts.Department, related_name='doc_type_create_rights', null=True, on_delete=models.CASCADE)
+    seat = models.ForeignKey(Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
+    emp_seat = models.ForeignKey(Employee_Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
 
@@ -288,17 +306,71 @@ class Doc_Contract(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Доступ користувачів до перегляду усіх документів певного типу
-class User_Doc_Type_View(models.Model):
-    employee = models.ForeignKey(accounts.UserProfile, related_name='view_doc_types_permissions', on_delete=models.RESTRICT)
-    meta_doc_type = models.ForeignKey(Document_Meta_Type, related_name='users_with_view_permission', on_delete=models.RESTRICT)
-    send_mails = models.BooleanField(default=False)  # Надсилання листів про створення нових документів/зміну статусу
+# Підпродукція (в ній же можна знайти інфу і про продукцію)
+class Doc_Sub_Product(models.Model):
+    document = models.ForeignKey(Document, related_name='sub_product_type', on_delete=models.RESTRICT)
+    sub_product_type = models.ForeignKey(Sub_product_type, related_name='documents', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 
-class Doc_Type_Create_Rights(models.Model):
-    document_meta_type = models.ForeignKey(Document_Meta_Type, related_name='create_rights', on_delete=models.CASCADE)
-    department = models.ForeignKey(accounts.Department, related_name='doc_type_create_rights', null=True, on_delete=models.CASCADE)
-    seat = models.ForeignKey(Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
-    emp_seat = models.ForeignKey(Employee_Seat, null=True, related_name='doc_type_create_rights', on_delete=models.CASCADE)
+# Сфера застосування продукції
+class Doc_Scope(models.Model):
+    document = models.ForeignKey(Document, related_name='scope', on_delete=models.RESTRICT)
+    scope = models.ForeignKey(Scope, related_name='documents', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Законодавство
+class Doc_Law(models.Model):
+    document = models.ForeignKey(Document, related_name='law', on_delete=models.RESTRICT)
+    law = models.ForeignKey(Law, related_name='documents', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Вимоги клієнта
+class Client_Requirements(models.Model):
+    document = models.ForeignKey(Document, related_name='client_requirements', on_delete=models.RESTRICT)
+    type = models.CharField(max_length=10)
+    bag_name = models.CharField(max_length=100, null=True, blank=True)
+    weight_kg = models.CharField(max_length=10, null=True, blank=True)
+    mf_water = models.CharField(max_length=10, null=True, blank=True)
+    mf_ash = models.CharField(max_length=10, null=True, blank=True)
+    mf_evaporable = models.CharField(max_length=10, null=True, blank=True)
+    mf_not_evaporable_carbon = models.CharField(max_length=10, null=True, blank=True)
+    main_faction = models.CharField(max_length=10, null=True, blank=True)
+    granulation_lt5 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_lt10 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_lt20 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_lt25 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_lt40 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_mt20 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_mt60 = models.CharField(max_length=10, null=True, blank=True)
+    granulation_mt80 = models.CharField(max_length=10, null=True, blank=True)
+    appearance = models.CharField(max_length=10, null=True, blank=True)
+    color = models.CharField(max_length=10, null=True, blank=True)
+    density = models.CharField(max_length=10, null=True, blank=True)
+    mf_basic = models.CharField(max_length=10, null=True, blank=True)
+    mf_ethanol = models.CharField(max_length=10, null=True, blank=True)
+    mf_acids = models.CharField(max_length=10, null=True, blank=True)
+    mf_not_evaporable_residue = models.CharField(max_length=10, null=True, blank=True)
+    smell = models.CharField(max_length=10, null=True, blank=True)
+    color_APHA = models.CharField(max_length=10, null=True, blank=True)
+    dry_residue = models.CharField(max_length=10, null=True, blank=True)
+    mf_ethanol_ppm = models.CharField(max_length=10, null=True, blank=True)
+    methanol_ppm = models.CharField(max_length=10, null=True, blank=True)
+    isopropanol_ppm = models.CharField(max_length=10, null=True, blank=True)
+    benzol_ppm = models.CharField(max_length=10, null=True, blank=True)
+    toluene_ppm = models.CharField(max_length=10, null=True, blank=True)
+    ethylmethyl_ketone_ppm = models.CharField(max_length=10, null=True, blank=True)
+    other_identified_impurities_ppm = models.CharField(max_length=10, null=True, blank=True)
+    unidentified_impurities_ppm = models.CharField(max_length=10, null=True, blank=True)
+    brand_of_resin = models.CharField(max_length=10, null=True, blank=True)
+    mf_dry_residue = models.CharField(max_length=10, null=True, blank=True)
+    mf_free_formaldehyde = models.CharField(max_length=10, null=True, blank=True)
+    conditional_viscosity = models.CharField(max_length=10, null=True, blank=True)
+    hydrogen_ions = models.CharField(max_length=10, null=True, blank=True)
+    gelatinization_time = models.CharField(max_length=10, null=True, blank=True)
+    miscibility_with_water = models.CharField(max_length=10, null=True, blank=True)
+    warranty_period = models.CharField(max_length=10, null=True, blank=True)
+    TU = models.CharField(max_length=10, null=True, blank=True)
     is_active = models.BooleanField(default=True)

@@ -27,6 +27,11 @@ import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
 import CustomSelect from 'edms/templates/edms/my_docs/new_doc_modules/custom_select';
+import ProductType from 'edms/templates/edms/my_docs/new_doc_modules/product_type';
+import Scope from 'edms/templates/edms/my_docs/new_doc_modules/scope';
+import Law from 'edms/templates/edms/my_docs/new_doc_modules/law';
+import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements';
+import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 
 class NewDocument extends React.Component {
   state = {
@@ -51,7 +56,8 @@ class NewDocument extends React.Component {
     days: [],
     gate: 1,
     carry_out_items: [],
-    main_field_queue: 0
+    main_field_queue: 0,
+    auto_recipients: []
   };
 
   onChange = (event) => {
@@ -120,7 +126,8 @@ class NewDocument extends React.Component {
       .then((response) => {
         this.setState({
           type_modules: response.doc_type_modules,
-          main_field_queue: response.main_field_queue
+          main_field_queue: response.main_field_queue,
+          auto_recipients: response.auto_recipients
         });
       })
       .catch((error) => notify(error));
@@ -129,6 +136,7 @@ class NewDocument extends React.Component {
     if (this.props.doc.id !== 0) {
       axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
+          console.log(response);
           this.setState({
             name: response.name || '',
             preamble: response.preamble || '',
@@ -157,18 +165,28 @@ class NewDocument extends React.Component {
             render_ready: true
           });
           newDocStore.new_document.text = response?.text_list || [];
-          newDocStore.new_document.client = response?.client.id;
-          newDocStore.new_document.client_name = response?.client.name;
-          newDocStore.new_document.mockup_type = response?.mockup_type.id;
-          newDocStore.new_document.mockup_type_name = response?.mockup_type.name;
-          newDocStore.new_document.mockup_product_type = response?.mockup_product_type.id;
-          newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type.name;
-          newDocStore.new_document.contract_link = response?.contract_link.id;
-          newDocStore.new_document.contract_link_name = response?.contract_link.name;
+          newDocStore.new_document.client = response?.client?.id;
+          newDocStore.new_document.client_name = response?.client?.name;
+          newDocStore.new_document.mockup_type = response?.mockup_type?.id || 0;
+          newDocStore.new_document.mockup_type_name = response?.mockup_type?.name || '';
+          newDocStore.new_document.mockup_product_type = response?.mockup_product_type?.id;
+          newDocStore.new_document.mockup_product_type_name = response?.mockup_product_type?.name;
+          newDocStore.new_document.contract_link = response?.contract_link?.id;
+          newDocStore.new_document.contract_link_name = response?.contract_link?.name;
           newDocStore.new_document.company = response?.company;
-          newDocStore.new_document.counterparty = response?.counterparty.id;
-          newDocStore.new_document.counterparty_name = response?.counterparty.name;
-          newDocStore.new_document.counterparty_input = response?.counterparty.input;
+          newDocStore.new_document.counterparty = response?.counterparty?.id;
+          newDocStore.new_document.counterparty_name = response?.counterparty?.name;
+          newDocStore.new_document.counterparty_input = response?.counterparty?.input;
+          newDocStore.new_document.product_type = response?.sub_product?.product_id;
+          newDocStore.new_document.product_type_name = response?.sub_product?.product;
+          newDocStore.new_document.sub_product_type = response?.sub_product?.id;
+          newDocStore.new_document.sub_product_type_name = response?.sub_product?.sub_product;
+          newDocStore.new_document.counterparty_input = response?.counterparty?.input;
+          newDocStore.new_document.scope = response?.scope?.id;
+          newDocStore.new_document.scope_name = response?.scope?.name;
+          newDocStore.new_document.law = response?.law?.id;
+          newDocStore.new_document.law_name = response?.law?.name;
+          newDocStore.new_document.client_requirements = response?.client_requirements;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -201,14 +219,27 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type'].includes(module.module)) {
+        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law'].includes(module.module)) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'product_type_sell') {
+          if (isBlankOrZero(newDocStore.new_document.product_type)) {
+            notify('Поле "Тип продукції" необхідно заповнити');
+            return false;
+          } else if (isBlankOrZero(newDocStore.new_document.sub_product_type)) {
+            notify('Поле "Підтип продукції" необхідно заповнити');
             return false;
           }
         } else if (module.module === 'counterparty') {
           if (isBlankOrZero(newDocStore.new_document.counterparty) && isBlankOrZero(newDocStore.new_document.counterparty_input)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'client_requirements') {
+          if (!newDocStore.areRequirementsFilled()) {
+            notify('Необхідно заповнити всі обов’язкові поля Вимог клієнта');
             return false;
           }
         } else if ([16, 32].includes(module.module_id)) {
@@ -265,7 +296,7 @@ class NewDocument extends React.Component {
             // Модулі auto_approved, phases не створюються у браузері
           } else if (module.module_id === 22) {
             // Погоджуючі (треба відправити хоча б пустий список)
-            doc_modules.approval_list = this.state.approval_list
+            doc_modules.approval_list = this.state.approval_list;
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'choose_company') {
@@ -273,6 +304,11 @@ class NewDocument extends React.Component {
           } else if (module.module === 'counterparty') {
             doc_modules['counterparty'] = newDocStore.new_document.counterparty;
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
+          } else if (module.module === 'product_type_sell') {
+            doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
+          } else if (['scope', 'law', 'client_requirements'].includes(module.module)) {
+            doc_modules[module.module] = newDocStore.new_document[module.module];
+          } else if (module.module === 'client_requirements') {
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -280,6 +316,7 @@ class NewDocument extends React.Component {
 
         let formData = new FormData();
         // інфа нового документу:
+        formData.append('doc_version', newDocStore.new_document.doc_version);
         formData.append('doc_modules', JSON.stringify(doc_modules));
         formData.append('document_type', doc.type_id);
         formData.append('old_id', doc.id);
@@ -318,23 +355,22 @@ class NewDocument extends React.Component {
       notify(e);
     }
   };
-  
+
   getMainField = () => {
     for (const x in newDocStore.new_document.text) {
       if (newDocStore.new_document.text[x].queue === this.state.main_field_queue) {
-        return newDocStore.new_document.text[x].text
+        return newDocStore.new_document.text[x].text;
       }
     }
     if (this.state.type_modules[this.state.main_field_queue].module === 'client') {
-      return newDocStore.new_document.client_name
+      return newDocStore.new_document.client_name;
     }
     if (this.state.type_modules[this.state.main_field_queue].module === 'counterparty') {
-      if (newDocStore.new_document.counterparty_name !== '') return newDocStore.new_document.counterparty_name
-      else return newDocStore.new_document.counterparty_input
-      
+      if (newDocStore.new_document.counterparty_name !== '') return newDocStore.new_document.counterparty_name;
+      else return newDocStore.new_document.counterparty_input;
     }
-    return 0
-  }
+    return 0;
+  };
 
   delDoc = () => {
     if (this.props.doc.id !== 0) {
@@ -374,7 +410,8 @@ class NewDocument extends React.Component {
       files,
       days,
       gate,
-      carry_out_items
+      carry_out_items,
+      auto_recipients
     } = this.state;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -409,56 +446,55 @@ class NewDocument extends React.Component {
                   <div key={module.id} className='css_new_doc_module mt-1'>
                     <Choose>
                       <When condition={module.module === 'text'}>
-                        <Text module_info={module} rows={rows}/>
+                        <Text module_info={module} rows={rows} />
                       </When>
                       <When condition={module.module === 'day'}>
-                        <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay}/>
+                        <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
                       </When>
                       <When condition={module.module === 'recipient'}>
-                        <Recipient onChange={this.onChange} recipient={recipient} module_info={module}/>
+                        <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
                       </When>
                       <When condition={module.module === 'recipient_chief'}>
-                        <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module}/>
+                        <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
                       </When>
                       <When condition={module.module === 'articles'}>
-                        <Articles onChange={this.onChange} articles={articles} modules={type_modules}
-                                  fieldName={module.field_name}/>
+                        <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
                       </When>
                       <When condition={module.module === 'files'}>
-                        <FilesUpload onChange={this.onChange} files={files} module_info={module}/>
+                        <FilesUpload onChange={this.onChange} files={files} module_info={module} />
                       </When>
                       <When condition={module.module === 'acquaint_list'}>
-                        <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module}/>
+                        <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
                       </When>
                       <When condition={module.module === 'approval_list'}>
-                        <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module}/>
+                        <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
                       </When>
                       <When condition={module.module === 'sign_list'}>
-                        <SignList onChange={this.onChange} signList={sign_list} module_info={module}/>
+                        <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
                       </When>
                       <When condition={module.module === 'gate'}>
-                        <Gate checkedGate={gate} onChange={this.onChange} module_info={module}/>
+                        <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
                       </When>
                       <When condition={module.module === 'carry_out_items'}>
-                        <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module}/>
+                        <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
                       </When>
                       <When condition={module.module === 'mockup_type'}>
-                        <MockupType module_info={module}/>
+                        <MockupType module_info={module} />
                       </When>
                       <When condition={module.module === 'mockup_product_type'}>
-                        <MockupProductType module_info={module}/>
+                        <MockupProductType module_info={module} />
                       </When>
                       <When condition={module.module === 'client'}>
-                        <Client module_info={module}/>
+                        <Client module_info={module} docType={doc.type_id} />
                       </When>
                       <When condition={module.module === 'counterparty'}>
-                        <Counterparty module_info={module}/>
+                        <Counterparty module_info={module} />
                       </When>
                       <When condition={module.module === 'dimensions'}>
-                        <Text module_info={module} rows={rows} type='dimensions'/>
+                        <Text module_info={module} rows={rows} type='dimensions' />
                       </When>
                       <When condition={module.module === 'packaging_type'}>
-                        <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module}/>
+                        <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                       </When>
                       <When condition={module.module === 'contract_link'}>
                         <ChooseMainContract
@@ -468,16 +504,31 @@ class NewDocument extends React.Component {
                         />
                       </When>
                       <When condition={module.module === 'choose_company'}>
-                        <ChooseCompany module_info={module}/>
+                        <ChooseCompany module_info={module} />
                       </When>
                       <When condition={module.module === 'select'}>
-                        <CustomSelect module_info={module}/>
+                        <CustomSelect module_info={module} />
+                      </When>
+                      <When condition={module.module === 'product_type_sell'}>
+                        <ProductType module_info={module} direction='sell' />
+                      </When>
+                      <When condition={module.module === 'scope'}>
+                        <Scope module_info={module} />
+                      </When>
+                      <When condition={module.module === 'law'}>
+                        <Law module_info={module} scope={newDocStore.new_document.scope} />
+                      </When>
+                      <When condition={module.module === 'client_requirements'}>
+                        <ClientRequirements module_info={module} />
                       </When>
                       <Otherwise> </Otherwise>
                     </Choose>
                   </div>
                 </If>
               </For>
+              <If condition={auto_recipients}>
+                <AutoRecipientsInfo autoRecipients={auto_recipients} />
+              </If>
             </div>
 
             <div className='modal-footer'>

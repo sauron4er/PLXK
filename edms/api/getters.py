@@ -1,6 +1,9 @@
 from django.conf import settings
+import json
+from django.core import serializers
 from django.utils.timezone import datetime
 from django.db.models import Exists, OuterRef
+from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
@@ -337,10 +340,42 @@ def get_doc_type_modules(doc_type):
         'required': type_module.required,
         'queue': type_module.queue,
         'additional_info': type_module.additional_info,
-        'hide': type_module.hide
+        'hide': type_module.hide,
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
+
+
+@try_except
+def get_auto_recipients(doc_type_id):
+    doc_type_phases = Doc_Type_Phase.objects\
+        .filter(document_type=doc_type_id)\
+        .filter(mark_id__in=[2, 6, 8, 11, 17, 23])\
+        .filter(is_active=True)
+
+    if not doc_type_phases:
+        return []
+
+    recipients = []
+
+    if not testing:
+        doc_type_phases = doc_type_phases.filter(testing=False)
+
+    for dtp in doc_type_phases:
+        phase_recipients = {
+            'mark': dtp.mark.mark,
+            'recipients': [],
+            'sole': dtp.sole
+        }
+
+        phase_recipients_with_doc_version = get_phase_recipients_and_doc_version(dtp)
+
+        if phase_recipients_with_doc_version:
+            for pr in phase_recipients_with_doc_version:
+                phase_recipients['recipients'].append(pr)
+            recipients.append(phase_recipients)
+
+    return recipients
 
 
 # Функція, яка дописує у doc_request інформацію про автора документа, автора позначки,
@@ -398,14 +433,21 @@ def get_actual_emp_seat_from_seat(seat_id):
 
 
 @try_except
-def get_phase_recipient_list(phase_id):
+def get_phase_recipient_list(phase_id, doc_version=0):
+    recipients = Doc_Type_Phase_Queue.objects\
+        .filter(phase_id=phase_id)\
+        .filter(is_active=True)\
+        .order_by('queue')
+
+    if doc_version != 0:
+        recipients = recipients.filter(doc_type_version=doc_version) \
+                     | recipients.filter(doc_type_version='') \
+                     | recipients.filter(doc_type_version__isnull=True)
+
     recipients = [{
         'seat_id': item.seat_id,
         'employee_seat_id': item.employee_seat_id
-    } for item in Doc_Type_Phase_Queue.objects
-        .filter(phase_id=phase_id)
-        .filter(is_active=True)
-        .order_by('queue')]
+    } for item in recipients]
 
     recipients_emp_seat_list = []
     for recipient in recipients:
@@ -415,6 +457,43 @@ def get_phase_recipient_list(phase_id):
             recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
 
     return recipients_emp_seat_list
+
+
+@try_except
+def get_phase_recipients_and_doc_version(phase):
+    if phase.mark.mark == 'Не заперечую':
+        return [{
+            'emp_seat': 'Безпосередній начальник автора',
+            'doc_version': 0
+        }]
+
+    phase_recipients = Doc_Type_Phase_Queue.objects\
+        .filter(phase_id=phase.id)\
+        .filter(is_active=True)\
+        .order_by('queue')
+
+    phase_recipients = [{
+        'seat_id': item.seat_id,
+        'employee_seat_id': item.employee_seat_id,
+        'doc_version': int(item.doc_type_version) if item.doc_type_version else 0
+    } for item in phase_recipients]
+
+    recipients = []
+    for recipient in phase_recipients:
+        emp_seat_id = recipient['employee_seat_id']
+        if recipient['seat_id']:
+            emp_seat_id = get_actual_emp_seat_from_seat(recipient['seat_id'])
+
+        employee_seat = Employee_Seat.objects.filter(id=emp_seat_id)[0]
+        employee_seat_info = employee_seat.employee.pip + ', ' + employee_seat.seat.seat
+
+        recipients.append({
+            'emp_seat': employee_seat_info,
+            'doc_version': recipient['doc_version']
+
+        })
+
+    return recipients
 
 
 # Повертає ід фази 0 (створення) типу документу
@@ -815,6 +894,52 @@ def get_doc_modules(doc):
                         'id': mockup_product_type[0]['id'],
                         'name': mockup_product_type[0]['name']}
                 })
+        elif module['module'] == 'product_type_sell':
+            sub_product = [{
+                'id': item.sub_product_type_id,
+                'sub_product': item.sub_product_type.name,
+                'product': item.sub_product_type.type.name,
+                'product_id': item.sub_product_type.type_id,
+            } for item in Doc_Sub_Product.objects
+                .filter(document_id=doc.id)
+                .filter(is_active=True)]
+
+            if sub_product:
+                doc_modules.update({
+                    'sub_product': {
+                        'id': sub_product[0]['id'],
+                        'sub_product': sub_product[0]['sub_product'],
+                        'product': sub_product[0]['product'],
+                        'product_id': sub_product[0]['product_id']}
+                })
+        elif module['module'] == 'scope':
+            scope = [{
+                'id': item.scope.id,
+                'name': item.scope.name,
+            } for item in Doc_Scope.objects
+                .filter(document_id=doc.id)
+                .filter(is_active=True)]
+
+            if scope:
+                doc_modules.update({
+                    'scope': {
+                        'id': scope[0]['id'],
+                        'name': scope[0]['name']}
+                })
+        elif module['module'] == 'law':
+            law = [{
+                'id': item.law.id,
+                'name': item.law.name,
+            } for item in Doc_Law.objects
+                .filter(document_id=doc.id)
+                .filter(is_active=True)]
+
+            if law:
+                doc_modules.update({
+                    'law': {
+                        'id': law[0]['id'],
+                        'name': law[0]['name']}
+                })
         elif module['module'] == 'client':
             client = [{
                 'id': item.counterparty.id,
@@ -882,6 +1007,12 @@ def get_doc_modules(doc):
 
         elif module['module'] == 'stage':
             doc_modules.update({'stage': doc.stage})
+
+        elif module['module'] == 'client_requirements':
+            cr = Client_Requirements.objects.filter(document=doc).filter(is_active=True)
+            data = serializers.serialize("json", cr)
+            data = json.loads(data)
+            doc_modules.update({'client_requirements': data[0]['fields']})
 
     return doc_modules
 

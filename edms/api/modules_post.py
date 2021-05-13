@@ -2,9 +2,10 @@ import json
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
-from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty
+from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, \
+    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
-    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewCounterpartyForm, NewDocContractForm, Employee_Seat
+    FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
 from edms.api.getters import get_zero_phase_id, get_dep_chief_id, get_chief_id, get_actual_emp_seat_from_seat
 from edms.api.setters import post_mark_demand, new_mail
@@ -241,3 +242,31 @@ def post_contract(doc_request, contract_id):
 def post_company(new_doc, company):
     new_doc.company = company
     new_doc.save()
+
+
+@try_except
+def post_sub_product_type(new_doc, sub_product_type):
+    doc_sub_product = Doc_Sub_Product(document=new_doc, sub_product_type_id=sub_product_type)
+    doc_sub_product.save()
+
+
+@try_except
+def post_scope(new_doc, scope):
+    doc_scope = Doc_Scope(document=new_doc, scope_id=scope)
+    doc_scope.save()
+
+
+@try_except
+def post_law(new_doc, law):
+    doc_law = Doc_Law(document=new_doc, law_id=law)
+    doc_law.save()
+
+
+@try_except
+def post_client_requirements(new_doc, client_requirements):
+    cr = Client_Requirements(document=new_doc)
+    client_requirements.pop('document', None)
+    # client_requirements['document'] = new_doc
+    for key in client_requirements:
+        setattr(cr, key, client_requirements[key])
+    cr.save()

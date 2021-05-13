@@ -1,13 +1,11 @@
 'use strict';
 import * as React from 'react';
-import ReactDOM from 'react-dom';
 import CorrTable from './table';
 import Request from './request/request';
-import Clients from './clients';
+// import Clients from './clients';
 import Laws from './laws/laws';
 import corrStore from './store';
 import {axiosGetRequest} from 'templates/components/axios_requests';
-import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view} from '@risingstack/react-easy-state';
@@ -106,9 +104,9 @@ class Correspondence extends React.Component {
             <When condition={view === 'request'}>
               <Request close={this.changeView} />
             </When>
-            <When condition={view === 'clients'}>
-              <Clients />
-            </When>
+            {/*<When condition={view === 'clients'}>*/}
+            {/*  <Clients />*/}
+            {/*</When>*/}
             <When condition={view === 'laws'}>
               <Laws />
             </When>
