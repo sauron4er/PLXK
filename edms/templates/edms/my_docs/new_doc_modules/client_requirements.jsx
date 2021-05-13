@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
-import 'static/css/fancy_radio.css';
 import ClientRequirementsItem from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_item';
 
 class ClientRequirements extends React.Component {
