@@ -1,8 +1,10 @@
 from django.conf.urls import url
 from . import views, views_org_structure, views_counterparties
-from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, get_simple_contracts_list
+from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, \
+    get_simple_contracts_list, add_contract
 from correspondence.views import get_correspondence, get_correspondence_info, get_request
 from edms.views import edms_get_table_first, edms_get_table_all, edms_get_doc, edms_mark
+
 
 app_name = 'boards'
 
@@ -16,6 +18,8 @@ urlpatterns = [
     url(r'^edit_ads/', views.edit_ads, name='edit_ads'),
     url(r'^new_ad/', views.new_ad, name='new_ad'),
     url(r'^del_ad/(?P<pk>\d+)/$', views.del_ad, name='del_ad'),
+
+    url(r'^.+/add_contract', add_contract, name='add_contract'),
 
     url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', views_org_structure.get_seat_info, name='get_seat_info'),
     url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
