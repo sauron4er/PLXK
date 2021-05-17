@@ -7,6 +7,7 @@ import ProvidersIndex from './counterparty/providers';
 import ClientsIndex from './counterparty/clients';
 import {Calendar} from 'templates/components/calendar';
 import Phones from 'boards/templates/boards/phones/phones';
+import NonCompliance from 'boards/templates/boards/non_compliance/non_compliance';
 
 class Boards extends React.Component {
   state = {
@@ -36,6 +37,9 @@ class Boards extends React.Component {
         </When>
         <When condition={this.state.main_div === 'phones'}>
           <Phones/>
+        </When>
+        <When condition={this.state.main_div === 'non_compliance'}>
+          <NonCompliance/>
         </When>
       </Choose>
     );
