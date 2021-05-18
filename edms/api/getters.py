@@ -527,6 +527,7 @@ def get_phase_id_sole_recipients(phase_id, emp_seat):
                 if chief_seat_id:  # False якщо у посади нема внесеного шефа
                     chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                         .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
+                    chief_emp_seat_id = vacation_check(chief_emp_seat_id)
 
             return [chief_emp_seat_id]
     else:
