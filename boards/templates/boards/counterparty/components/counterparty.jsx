@@ -19,7 +19,7 @@ import {ToastContainer} from 'react-toastify';
 import CounterpartyCorrespondence from './correspondence';
 import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mockups';
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
-import NonComplianceTable from 'boards/templates/boards/non_compliance/table';
+import NonComplianceTable from 'boards/templates/boards/non_compliances/table';
 
 class Counterparty extends React.Component {
   state = {
