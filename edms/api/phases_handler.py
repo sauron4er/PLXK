@@ -195,6 +195,12 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
 
     if phases:
         for phase_info in phases:
+            # Переходимо на наступну фазу, якщо позначка для цієї фази вже проставлена
+            # (написано для опрацювання позначки "Виконано" поставленої суперменеджером замість менеджера)
+            if doc_request['mark'] == '11' and phase_info['mark_id'] == int(doc_request['mark']):
+                new_phase(doc_request, phase_number+1, modules_recipients=None)
+                continue
+
             # 1. Створюємо таблицю візування для новоствореного документа:
             if phase_number == 1 and doc_request['mark'] == 1:
                 if is_approvals_used(doc_request['document_type']):

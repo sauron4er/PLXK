@@ -86,14 +86,6 @@ def deactivate_mark_demand(doc_request, md_id):
 
     deactivate_mark_demand_form = DeactivateMarkDemandForm(doc_request, instance=md)
     if deactivate_mark_demand_form.is_valid:
-        # md.is_active = False
-        # md.save()
-        # File.objects.create(
-        #     document_path=doc_path,
-        #     file=file,
-        #     name=file.name,
-        #     first_path=first_path
-        # )
         deactivate_mark_demand_form.save()
     else:
         raise ValidationError('edms/views deactivate_mark_demand deactivate_mark_demand_form invalid')

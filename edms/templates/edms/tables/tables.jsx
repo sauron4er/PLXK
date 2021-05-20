@@ -191,7 +191,7 @@ class Tables extends React.Component {
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 50}}}
         >
-          <Document doc_id={clicked_row_id} closed={true} />
+          <Document doc_id={clicked_row_id} closed={true} opened_in_modal />
         </Modal>
       </>
     );

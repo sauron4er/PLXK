@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^.+/get_product_types/(?P<direction>\w+)/', get_product_types, name='get_product_types'),
     url(r'^.+/get_scopes', get_scopes, name='get_scopes'),
     url(r'^.+/get_laws', get_laws, name='get_laws'),
+    url(r'^.+/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),
@@ -44,7 +45,6 @@ urlpatterns = [
     url(r'^my_docs/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
     url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
     url(r'^my_docs/get_counterparties_for_select/', get_counterparties_for_select, name='get_counterparties_for_select'),
-    url(r'^my_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),
@@ -54,12 +54,10 @@ urlpatterns = [
     url(r'^my_docs/change_text_module', change_text_module, name='change_text_module'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
-    url(r'^archive/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),
     url(r'^archive/', edms_archive, name='archive'),
 
     url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_meta_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),
-    url(r'^sub_docs/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^sub_docs/', edms_sub_docs, name='sub_docs'),
 
     url(r'^tables/(?P<meta_doc_type>\d+)/get_table_first/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
@@ -67,6 +65,7 @@ urlpatterns = [
     url(r'^tables/(?P<meta_doc_type>\d+)/$', edms_tables, name='tables'),
     url(r'^tables/get_table_first/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
     url(r'^tables/get_table_all/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
+    url(r'^tables/(?P<doc_meta_type_id>\d+)/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^tables/', edms_tables, name='tables'),
 
     url(r'^delegated/get/(?P<emp>\d+)/(?P<doc_meta_type>\d+)/(?P<sub>\d+)/$', edms_get_delegated_docs, name='get_sub_docs'),
