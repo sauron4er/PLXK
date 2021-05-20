@@ -5,7 +5,7 @@ class DateInput extends React.Component {
   render() {
     const {date, fieldName, onChange, disabled, className} = this.props;
     return (
-      <div className={'form-inline mt-1 ' + className}>
+      <div className={'form-inline ' + className}>
         <If condition={fieldName}><label className='text-nowrap mr-auto mr-md-1' htmlFor={fieldName}>
           {fieldName}:
         </label></If>

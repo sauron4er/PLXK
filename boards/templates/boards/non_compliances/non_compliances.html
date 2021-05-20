@@ -5,6 +5,12 @@
 
 {% block second_nav %}{% endblock %}
 {% block content %}
+    {{ user.userprofile.department.name|json_script:"params-data" }}
+    <script>
+      window.products = {{ products|safe }};
+      window.dep_chief = {{ dep_chief|safe }};
+      const department = JSON.parse(document.getElementById('params-data').textContent);
+    </script>
     <div class="container-fluid px-3" id="non_compliances">
       <div id="bundle">{% render_bundle 'boards' %}</div>
     </div>

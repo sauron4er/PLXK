@@ -40,12 +40,11 @@ class NonCompliances extends React.Component {
       <Choose>
         <When condition={view === 'table'}>
           <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-            <div className='mr-auto'>
+            <div className='ml-3'>
               <button onClick={() => this.changeView('non_compliance')} className='btn btn-sm btn-info mr-2'>
                 Додати акт невідповідності
               </button>
             </div>
-
             {/*<NonComplianceTable onRowClick={this.onRowClick} />*/}
           </div>
         </When>
@@ -53,8 +52,8 @@ class NonCompliances extends React.Component {
           <button className='btn btn-sm btn-info my-2' onClick={() => location.reload()}>
             Назад
           </button>
-          <br />
-          <NonCompliance id={counterparty_id} />
+          <br/>
+          <NonCompliance id={counterparty_id}/>
         </Otherwise>
       </Choose>
     );

@@ -5,6 +5,9 @@ from django.http import HttpResponse
 from django.db import transaction
 from datetime import date
 import json
+
+from edms.api.vacations import vacation_check
+from edms.models import Seat, Employee_Seat
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
@@ -18,7 +21,37 @@ from .models import Counterparty, Counterparty_certificate, Counterparty_certifi
 @login_required(login_url='login')
 @try_except
 def non_compliances(request):
-    return render(request, 'boards/non_compliances/non_compliances.html')
+    department_chief_seat = Seat.objects.values_list('id', flat=True)\
+        .filter(department=request.user.userprofile.department)\
+        .filter(is_dep_chief=True)
+    if not department_chief_seat:
+        # TODO повертати помилку "у підрозділа нема призначеної керівної посади"
+        return render(request, 'boards/non_compliances/non_compliances.html')
+
+    dep_chief = Employee_Seat.objects.values_list('id', flat=True)\
+        .filter(seat_id=department_chief_seat[0])\
+        .filter(is_main=True)\
+        .filter(is_active=True)
+
+    if not dep_chief:
+        # TODO повертати помилку "у підрозділа нема призначеного керівника"
+        return render(request, 'boards/non_compliances/non_compliances.html')
+
+    dep_chief_acting = vacation_check(dep_chief[0])
+
+    dep_chief_acting = get_object_or_404(Employee_Seat, pk=dep_chief_acting)
+
+    dep_chief_acting = {
+        'id': dep_chief_acting.id,
+        'name': dep_chief_acting.employee.pip + (' (в.о.)' if dep_chief != dep_chief_acting else '')
+    }
+
+    products = get_products_list()
+
+    return render(request, 'boards/non_compliances/non_compliances.html', {
+        'products': products,
+        'dep_chief': dep_chief_acting
+    })
 
 
 @try_except
