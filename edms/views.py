@@ -409,7 +409,8 @@ def edms_get_user(request, pk):
 
 
 @login_required(login_url='login')
-def edms_get_emp_seats(request):
+def edms_get_emp_seats(request, doc_meta_type_id=0):
+    # doc_meta_type_id додано для випадку, якщо запрос робиться зі сторінки тіпа .../edms/tables/7/
     if request.method == 'GET':
         emp_seats = [{
             'id': empSeat.pk,
@@ -582,6 +583,14 @@ def edms_get_doc(request, pk):
                 doc_info.update({'acquaints': acquaints})
 
         doc_info.update(get_doc_modules(doc))
+
+        is_super_manager = User_Doc_Type_View.objects.values_list('super_manager', flat=True)\
+            .filter(employee=request.user.userprofile)\
+            .filter(meta_doc_type=doc.document_type.meta_doc_type)\
+            .filter(is_active=True)
+
+        doc_info.update({'user_is_super_manager': True in list(is_super_manager)})
+
     else:
         doc_info = {'access_granted': False}
 
@@ -833,8 +842,12 @@ def edms_mark(request):
 
             # Погоджую, Ознайомлений, Доопрацьовано, Виконано, Підписано, Віза
             if int(doc_request['mark']) in [2, 9, 11, 14, 17]:
-                # Деактивуємо MarkDemand цієї позначки
-                deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+                # Деактивуємо MarkDemand цієї позначки, якщо це не позначка від супер-менеджера
+                if doc_request['user_is_super_manager'] != 'true':
+                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+                else:
+                    # Якщо це позначка від супер-менеджера, деактивуємо всі Mark_demand
+                    deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
                 # Якщо в документі використовується doc_approval, треба буде поставити позначку у таблицю візування:
                 if is_approvals_used(doc_request['document_type']):
@@ -1086,14 +1099,15 @@ def edms_mark(request):
                 # Перетворюємо фазу документу на "Взято у роботу"
                 set_stage(doc_request['document'], 'in work')
 
-                # Деактивуємо MarkDemand інших виконавців
-                executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
-                    .filter(document=doc_request['document'])\
-                    .filter(mark_id=11)\
-                    .exclude(recipient_id=doc_request['employee_seat'])\
-                    .filter(is_active=True)
-                for md in executants_mark_demands:
-                    deactivate_mark_demand(doc_request, md)
+                # Деактивуємо MarkDemand інших виконавців, якщо цю позначку поставив не супер-менеджер:
+                if doc_request['user_is_super_manager'] != 'true':
+                    executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
+                        .filter(document=doc_request['document'])\
+                        .filter(mark_id=11)\
+                        .exclude(recipient_id=doc_request['employee_seat'])\
+                        .filter(is_active=True)
+                    for md in executants_mark_demands:
+                        deactivate_mark_demand(doc_request, md)
 
                 if not testing:
                     supervisors = get_supervisors(

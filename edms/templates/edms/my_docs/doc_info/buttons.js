@@ -15,7 +15,7 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-  
+
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -48,10 +48,10 @@ class Buttons extends React.Component {
                 Ознайомлений
               </button>
             </When>
-            <When condition={info.expected_mark === 11}> {/* Виконано */}
+            <When condition={info.expected_mark === 11}>
+              {/* Виконано */}
               <If condition={info.stage !== 'in work'}>
-                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)}
-                        disabled={button_clicked}>
+                <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>
                   Взяти в роботу
                 </button>
               </If>
@@ -97,23 +97,40 @@ class Buttons extends React.Component {
             </When>
           </Choose>
         </If>
-        
+
+        <If condition={info.user_is_super_manager}>
+          {/*<If condition={info?.stage === null}>*/}
+          {/*  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>*/}
+          {/*    Взяти в роботу*/}
+          {/*  </button>*/}
+          {/*</If>*/}
+          {/*<If condition={true}>*/}
+          <If condition={!['done', 'confirm', 'denied'].includes(info?.stage)}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>
+              Виконано
+            </button>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
+              Відмовити
+            </button>
+            <If condition={info?.stage != 'in work'}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)}
+                      disabled={button_clicked}>
+                Взяти в роботу
+              </button>
+            </If>
+          </If>
+        </If>
+
         {/*Якщо автор я - нова перевірка по ід користувача, а не людинопосади*/}
         {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизай-макетів)*/}
-          <If condition={info.viewer_is_author && info.approved}>
-            <button
-              type='button'
-              className='btn btn-secondary mr-1 mb-1'
-              onClick={() => this.onClick(26)}
-              disabled={button_clicked}
-            >
-              Деактивувати
-            </button>
-          </If>
-        
+        <If condition={info.viewer_is_author && info.approved}>
+          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(26)} disabled={button_clicked}>
+            Деактивувати
+          </button>
+        </If>
+
         {/* Якщо автор я */}
         <If condition={user_is_doc_author}>
-          
           {/*Якщо тип документа редагуємий*/}
           <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
             <button

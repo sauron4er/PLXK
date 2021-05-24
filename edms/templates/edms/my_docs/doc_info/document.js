@@ -97,7 +97,7 @@ class Document extends React.Component {
   // відправляємо позначку до бд
   postMark = (mark_id) => {
     const {info, new_files, comment, resolutions, acquaints} = this.state;
-    const {doc_id, removeRow} = this.props;
+    const {doc_id, removeRow, opened_in_modal} = this.props;
 
     let formData = new FormData();
     new_files.map((file) => {
@@ -127,17 +127,21 @@ class Document extends React.Component {
     formData.append('comment', comment);
     formData.append('resolutions', JSON.stringify(resolutions));
     formData.append('acquaints', JSON.stringify(acquaints));
-    formData.append('mark_demand_id', info.mark_demand_id);
+    formData.append('mark_demand_id', info.mark_demand_id ? info.mark_demand_id : '');
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
     formData.append('phase_id', info.phase_id ? info.phase_id : 0);
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
+    formData.append('user_is_super_manager', info.user_is_super_manager);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
+        if (opened_in_modal) location.reload();
+  
         if (response === 'not deletable') {
           notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
+          
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response,
@@ -452,7 +456,8 @@ class Document extends React.Component {
     doc_id: 0,
     directSubs: [],
     removeRow: () => {},
-    archived: false
+    archived: false,
+    opened_in_modal: false,
   };
 }
 
