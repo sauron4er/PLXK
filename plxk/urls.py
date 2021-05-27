@@ -7,9 +7,16 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from accounts import views as accounts_views
 from boards import views as board_views
+from production.views import get_products
+from boards.views_counterparties import get_counterparties
+from edms.views import edms_get_emp_seats
 
 
 urlpatterns = [
+    url(r'^.+/.+/get_products', get_products, name='get_products'),
+    url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
+    url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
+
     url(r'^$', board_views.home, name='index'),
    # url(r'^about/$', views.about, name='about'),
     url(r'^home/$', board_views.home, name='home'),

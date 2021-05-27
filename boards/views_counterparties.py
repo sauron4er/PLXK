@@ -391,7 +391,8 @@ def get_counterparties(request):
 
     counterparties_list = [{
         'id': counterparty.pk,
-        'name': counterparty.name
+        'name': get_counterparty_name_with_country(counterparty),
+        'type': 'provider' if counterparty.is_provider else 'client'
     } for counterparty in counterparties]
     return HttpResponse(json.dumps(counterparties_list))
 

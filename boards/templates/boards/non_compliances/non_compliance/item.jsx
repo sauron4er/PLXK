@@ -1,0 +1,20 @@
+'use strict';
+import * as React from 'react';
+
+class NCItem extends React.Component {
+  render() {
+
+    return (
+      <div className={`col-lg-${this.props.cols} border border-light  ${this.props.className}`}>
+        {this.props.children}
+      </div>
+    );
+  }
+  
+  static defaultProps = {
+    cols: '12',
+    className: ''
+  }
+}
+
+export default NCItem;

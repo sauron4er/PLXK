@@ -63,7 +63,8 @@ class Contract extends React.Component {
       edms_doc_id: 0,
       is_author: false
     },
-    main_contract_info_changed: false
+    main_contract_info_changed: false,
+    counterparties: []
   };
 
   componentDidMount() {
@@ -108,7 +109,7 @@ class Contract extends React.Component {
   };
 
   getCounterparties = () => {
-    axiosGetRequest('get_counterparties_for_select/')
+    axiosGetRequest('get_counterparties/')
       .then((response) => {
         this.setState({counterparties: response});
       })
@@ -263,8 +264,8 @@ class Contract extends React.Component {
 
   onCounterpartyChange = (e) => {
     const contract = {...this.state.contract};
-    contract.counterparty = e.value;
-    contract.counterparty_name = e.label;
+    contract.counterparty = e.id;
+    contract.counterparty_name = e.name;
     this.setState({contract});
   };
 
@@ -492,7 +493,7 @@ class Contract extends React.Component {
                   <SelectorWithFilter
                     list={counterparties}
                     fieldName={'* Контрагент'}
-                    value={{label: contract.counterparty_name, value: contract.counterparty}}
+                    value={{name: contract.counterparty_name, id: contract.counterparty}}
                     onChange={this.onCounterpartyChange}
                     disabled={this.props.counterparty_id !== 0 || !edit_mode}
                   />

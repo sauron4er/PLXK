@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^contracts/edit_contract', views_contracts.edit_contract, name='edit_contract'),
     url(r'^contracts/deactivate_contract/(?P<pk>\d+)/$', views_contracts.deactivate_contract, name='deactivate_contract'),
     url(r'^contracts/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
-    url(r'^contracts/get_counterparties_for_select/', get_counterparties_for_select, name='get_counterparties_for_select'),
+    url(r'^contracts/get_counterparties/', get_counterparties_for_select, name='get_counterparties_for_select'),
     url(r'^contracts/get_info_for_contracts_page', views_contracts.get_info_for_contracts_page, name='get_info_for_contracts_page'),
     url(r'^contracts/', views_contracts.index, name='contracts'),
 

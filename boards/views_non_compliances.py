@@ -49,7 +49,6 @@ def non_compliances(request):
     products = get_products_list()
 
     return render(request, 'boards/non_compliances/non_compliances.html', {
-        'products': products,
         'dep_chief': dep_chief_acting
     })
 

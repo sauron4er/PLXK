@@ -30,10 +30,11 @@ def get_users_list():
 
 
 @try_except
-def get_emp_seats_list():
+def get_emp_seats_list(request=''):
     return [{
         'id': emp_seat.pk,
         'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
+        'name': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
         'emp_id': emp_seat.employee.id,
         'seat_id': emp_seat.seat.id,
         'is_dep_chief': emp_seat.seat.is_dep_chief,

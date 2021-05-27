@@ -7,8 +7,24 @@ const nonComplianceStore = store({
     phase: 1, // , 2, 3, done
     registration_number: '',
     date_added: '',
-    product_name: '',
+    name: '',
     party_number: '',
+    order_number: '',
+    quantity: '',
+    packing_type: '',
+    decision_date: '',
+    product: 0,
+    product_name: '',
+    counterparty: 0,
+    identified_by: 0,
+    identified_by_name: '',
+    old_files: [],
+    new_files: []
+  },
+  employees: [],
+  
+  onFormChange: (e, field) => {
+    nonComplianceStore.non_compliance[field] = e.target.value;
   },
   
   clearNonCompliance: () => {
@@ -22,15 +38,15 @@ const nonComplianceStore = store({
     let div_style = {};
     switch (phase) {
       case 1:
-        div_style.height = '35vh';
+        // div_style.height = '35vh';
         div_style.borderBottom = '2px solid grey';
         break;
       case 2:
-        div_style.height = '25vh';
+        // div_style.height = '25vh';
         div_style.borderBottom = '2px solid grey';
         break;
       case 3:
-        div_style.height = '25vh';
+        // div_style.height = '25vh';
         break;
     }
     

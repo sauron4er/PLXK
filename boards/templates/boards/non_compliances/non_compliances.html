@@ -7,7 +7,6 @@
 {% block content %}
     {{ user.userprofile.department.name|json_script:"params-data" }}
     <script>
-      window.products = {{ products|safe }};
       window.dep_chief = {{ dep_chief|safe }};
       const department = JSON.parse(document.getElementById('params-data').textContent);
     </script>

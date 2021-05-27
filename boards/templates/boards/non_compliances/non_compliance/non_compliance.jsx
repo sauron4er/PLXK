@@ -6,7 +6,18 @@ import NCFirstPhase from 'boards/templates/boards/non_compliances/non_compliance
 import NCSecondPhase from 'boards/templates/boards/non_compliances/non_compliance/second_phase';
 import NCThirdPhase from 'boards/templates/boards/non_compliances/non_compliance/third_phase';
 import NCComments from 'boards/templates/boards/non_compliances/non_compliance/comments';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import {notify} from 'templates/components/my_extras';
 class NonCompliance extends React.Component {
+  
+  componentDidMount() {
+    axiosGetRequest('get_employees')
+      .then((response) => {
+        nonComplianceStore.employees = response;
+      })
+      .catch((error) => notify(error));
+  }
+  
   render() {
     return (
       <>
