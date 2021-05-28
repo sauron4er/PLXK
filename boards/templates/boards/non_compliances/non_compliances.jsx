@@ -4,13 +4,14 @@ import ClientsTable from 'boards/templates/boards/counterparty/clients/table';
 import Counterparty from 'boards/templates/boards/counterparty/components/counterparty';
 import NonComplianceTable from 'boards/templates/boards/non_compliances/table';
 import NonCompliance from 'boards/templates/boards/non_compliances/non_compliance/non_compliance';
+import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance/non_compliance_store';
 
 class NonCompliances extends React.Component {
   state = {
     non_compliance_id: 0,
     view: 'table' // non_compliance
   };
-
+  
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;

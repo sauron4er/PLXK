@@ -62,5 +62,7 @@ urlpatterns = [
 
     url(r'^non_compliances/get_non_compliances/(?P<page>\d+)/$', views_non_compliances.get_non_compliances, name='get_non_compliances'),
     url(r'^non_compliances/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
+    url(r'^non_compliances/post_non_compliance', views_non_compliances.post_non_compliance, name='post_non_compliance'),
+    url(r'^non_compliances/dc_approval', views_non_compliances.dc_approval, name='dc_approval'),
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 ]

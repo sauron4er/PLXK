@@ -5,10 +5,14 @@
 
 {% block second_nav %}{% endblock %}
 {% block content %}
-    {{ user.userprofile.department.name|json_script:"params-data" }}
+    {{ user.userprofile.department.name|json_script:"department" }}
+    {{ user.userprofile.id|json_script:"user" }}
+    {{ user.userprofile.pip|json_script:"user_name" }}
     <script>
       window.dep_chief = {{ dep_chief|safe }};
-      const department = JSON.parse(document.getElementById('params-data').textContent);
+      const department = JSON.parse(document.getElementById('department').textContent);
+      const user = JSON.parse(document.getElementById('user').textContent);
+      const user_name = JSON.parse(document.getElementById('user_name').textContent);
     </script>
     <div class="container-fluid px-3" id="non_compliances">
       <div id="bundle">{% render_bundle 'boards' %}</div>

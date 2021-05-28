@@ -15,6 +15,7 @@ from edms.views import edms_get_emp_seats
 urlpatterns = [
     url(r'^.+/.+/get_products', get_products, name='get_products'),
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
+    url(r'^.+/.+/get_providers', get_counterparties, {'cp_type': 'providers'}, name='get_providers'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
 
     url(r'^$', board_views.home, name='index'),
