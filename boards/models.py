@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from accounts.models import UserProfile
+from accounts.models import UserProfile, Department
 from production.models import Product_type, Certification_type, Scope
 
 
@@ -79,4 +79,41 @@ class Counterparty_certificate_pause(models.Model):
     certificate = models.ForeignKey(Counterparty_certificate, related_name='pauses', on_delete=models.RESTRICT)
     pause_start = models.DateField(null=True)
     pause_end = models.DateField(null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Non_compliance(models.Model):
+    author = models.ForeignKey(UserProfile, related_name='non_compliances_added', on_delete=models.RESTRICT)
+    phase = models.PositiveSmallIntegerField()  # 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
+    department = models.ForeignKey(Department, related_name='non_compliances', on_delete=models.RESTRICT)
+    dep_chief = models.ForeignKey(UserProfile, related_name='dep_non_compliances', on_delete=models.RESTRICT)
+    dep_chief_approved = models.BooleanField()
+    date_added = models.DateField(auto_now_add=True)
+    name = models.CharField(max_length=100)
+    product = models.ForeignKey(Product_type, related_name='non_compliances', on_delete=models.RESTRICT)
+    party_number = models.CharField(max_length=10)
+    order_number = models.CharField(max_length=10)
+    manufacture_date = models.DateField()
+    total_quantity = models.CharField(max_length=5)
+    nc_quantity = models.CharField(max_length=5)
+    packing_type = models.CharField(max_length=15)
+    provider = models.ForeignKey(Counterparty, related_name='non_compliances', on_delete=models.RESTRICT)
+    reason = models.CharField(max_length=1000)
+    status = models.CharField(max_length=100)
+    classification = models.CharField(max_length=100)
+    defect = models.CharField(max_length=100)
+    analysis_results = models.CharField(max_length=100)
+    sector = models.CharField(max_length=100)
+
+    final_decision = models.CharField(max_length=100, null=True)
+    decision_date = models.DateField(null=True)
+    result_of_nc = models.CharField(max_length=100, null=True)
+    corrective_action = models.CharField(max_length=100, null=True)
+    corrective_action_number = models.CharField(max_length=10, null=True)
+    other = models.CharField(max_length=100, null=True)
+    retreatment_date = models.DateField(null=True)
+    spent_time = models.CharField(max_length=100, null=True)
+    people_involved = models.CharField(max_length=3, null=True)
+    quantity_updated = models.CharField(max_length=10, null=True)
+    status_updated = models.CharField(max_length=50, null=True)
     is_active = models.BooleanField(default=True)

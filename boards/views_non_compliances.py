@@ -15,6 +15,7 @@ from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
 from production.api.getters import get_products_list, get_certification_types, get_scopes_list
 from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
+from .models import Non_compliance
 # from .api.counterparty_mail_sender import send_provider_mail
 
 
@@ -110,11 +111,14 @@ def post_non_compliance(request):
     data = json.loads(request.POST.copy()['non_compliance'])
 
     if data['id'] == 0:
-        pass
+        nc = Non_compliance(author=request.user.userprofile)
         # provider = Counterparty(is_provider=True, author=request.user.userprofile)
     else:
         pass
         # provider = get_object_or_404(Counterparty, pk=data['id'])
+
+    # next_phase
+    # if data['phase'] == 2:
 
     # provider.name = data['name']
     # provider.legal_address = data['legal_address']
@@ -138,7 +142,7 @@ def post_non_compliance(request):
 @try_except
 def dc_approval(request):
     approved = json.loads(request.POST['approved'])
-    pass
+    return HttpResponse('ok')
 
 
 @try_except

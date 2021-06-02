@@ -41,9 +41,7 @@ class NCSecondPhase extends React.Component {
             />
           </NCItem>
         </NCRow>
-        <NCRow>
-          <NCItem className='text-danger'>УВАГА якщо це повторна поставка товару постачальником, надати 1 накладну на повернення</NCItem>
-        </NCRow>
+        
       </div>
     );
   }

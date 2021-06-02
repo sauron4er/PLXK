@@ -10,35 +10,45 @@ const nonComplianceStore = store({
     id: 0,
     author: 0,
     author_name: 'Автор',
-    phase: 2, // 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, done
-    dep_chief: 0,
+    phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
+    dep_chief: 2,
     dep_chief_name: 'Шеф',
-    dep_chief_approval: false,
-    registration_number: '1',
+    dep_chief_approval: '',
     date_added: getToday(),
+    manufacture_date: getToday(),
     name: '3',
     party_number: '4',
     order_number: '5',
-    quantity: '6',
+    total_quantity: '6',
+    nc_quantity: '4',
     packing_type: '7',
     product: 5,
     product_name: '',
     provider: 2,
     provider_name: '',
-    reason_big: '8',
+    reason: '8',
+    status: 'Карантин',
     old_files: [],
     new_files: [],
-    codification: '9',
+    classification: '9',
     defect: '10',
-    reason: '11',
+    analysis_results: '11',
     sector: '12',
-
-    decision_date: ''
+    final_decision: '',
+    decision_date: '',
+    result_of_nc: '',
+    corrective_action : '',
+    corrective_action_number: '',
+    other: '',
+    retreatment_date: '',
+    spent_time : '',
+    people_involved: '',
+    quantity_updated: '',
+    status_updated: ''
   },
   // non_compliance: {
   //   id: 0,
-  //   phase: 0, // 1 - chief, 2 - visas, 3 - director, 4 - execution, done
-  //   registration_number: '',
+  //   phase: 0, // 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
   //   date_added: '',
   //   name: '',
   //   party_number: '',
@@ -53,7 +63,7 @@ const nonComplianceStore = store({
   //   reason_big: '',
   //   old_files: [],
   //   new_files: [],
-  //   codification: '',
+  //   classification: '',
   //   defect: '',
   //   reason: '',
   //   sector: '',
@@ -66,8 +76,7 @@ const nonComplianceStore = store({
 
   clearNonCompliance: () => {
     nonComplianceStore.non_compliance = {
-      id: 0,
-      phase: 1 // , 2, 3, done
+    
     };
   },
 
