@@ -1,8 +1,10 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from './new_doc_store';
-import ClientRequirementsItem from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_item';
+import newDocStore from '../new_doc_store';
+import ClientRequirementsItem from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/client_requirements_item';
+import AdditionalRequirements
+  from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/additional_requirements';
 
 class ClientRequirements extends React.Component {
   onChange = (e) => {
@@ -11,7 +13,7 @@ class ClientRequirements extends React.Component {
 
   render() {
     const {module_info} = this.props;
-    const {sub_product_type_name, client_requirements} = newDocStore.new_document;
+    const {sub_product_type_name} = newDocStore.new_document;
 
     return (
       <div className='col'>
@@ -19,7 +21,7 @@ class ClientRequirements extends React.Component {
           <If condition={module_info.required}>{'* '}</If>
           {module_info.field_name}:
         </div>
-        <div className='row mt-1'>
+        <div className='mt-1'>
           <Choose>
             <When condition={sub_product_type_name === 'Деревне вугілля'}>
               <div className='row'>
@@ -54,6 +56,7 @@ class ClientRequirements extends React.Component {
                   label='Масова частка нелеткого вуглецю в перерахунку на суху речовину, %'
                 />
                 <ClientRequirementsItem name='granulation_lt20' label='Грануляційний склад, фракція, < 20мм' />
+                <ClientRequirementsItem name='binding' label='Зв’язуюче' />
               </div>
             </When>
             <When condition={sub_product_type_name === 'ЕТА'}>
@@ -61,7 +64,7 @@ class ClientRequirements extends React.Component {
                 <small className='col-12 mb-1 font-weight-bold'>Основні вимоги</small>
                 <ClientRequirementsItem name='appearance' label='Зовнішній вигляд' />
                 <ClientRequirementsItem name='color' label='Колір, одиниці Хазена, не більше' />
-                <ClientRequirementsItem name='density' label={["Густина, при 200°С, г/см", <sup>3</sup>]} />
+                <ClientRequirementsItem name='density' label={['Густина, при 200°С, г/см', <sup>3</sup>]} />
                 <ClientRequirementsItem name='mf_basic' label='Масова частка основної речовини, %,  не менше' />
                 <ClientRequirementsItem name='mf_ethanol' label='Масова частка етилового спирту, %,  не більше' />
                 <ClientRequirementsItem name='mf_acids' label='Масова частка кислот в перерахунку на оцтову кислоту, %, не більше' />
@@ -79,9 +82,12 @@ class ClientRequirements extends React.Component {
                 <ClientRequirementsItem name='benzol_ppm' label='Бензол, ppm, не більше' notRequired />
                 <ClientRequirementsItem name='toluene_ppm' label='Толуол, ppm, не більше' notRequired />
                 <ClientRequirementsItem name='ethylmethyl_ketone_ppm' label='Етилметилкетон, ppm, не більше' notRequired />
-                <ClientRequirementsItem name='other_identified_impurities_ppm' label='Інші ідентифіковані домішки, ppm, не більше' notRequired />
+                <ClientRequirementsItem
+                  name='other_identified_impurities_ppm'
+                  label='Інші ідентифіковані домішки, ppm, не більше'
+                  notRequired
+                />
                 <ClientRequirementsItem name='unidentified_impurities_ppm' label='Не ідентифіковані домішки, ppm, не більше' notRequired />
-                
               </div>
             </When>
             <When condition={['КФС', 'МКФС'].includes(sub_product_type_name)}>
@@ -102,6 +108,9 @@ class ClientRequirements extends React.Component {
               <div className='font-italic'>Оберіть підтип продукції</div>
             </Otherwise>
           </Choose>
+          <If condition={sub_product_type_name}>
+            <AdditionalRequirements />
+          </If>
         </div>
       </div>
     );

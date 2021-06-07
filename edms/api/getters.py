@@ -1013,7 +1013,15 @@ def get_doc_modules(doc):
             cr = Client_Requirements.objects.filter(document=doc).filter(is_active=True)
             data = serializers.serialize("json", cr)
             data = json.loads(data)
+
+            ar = [{
+                'id': ar.id,
+                'name': ar.name,
+                'requirement': ar.requirement
+            } for ar in Client_Requirement_Additional.objects.filter(client_requirements_id=data[0]['pk'])]
+
             doc_modules.update({'client_requirements': data[0]['fields']})
+            doc_modules.update({'additional_requirements': ar})
 
     return doc_modules
 

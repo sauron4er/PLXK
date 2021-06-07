@@ -19,10 +19,14 @@ def is_auto_approved_phase_used(doc_type):
 # Функція, яка повертає Boolean чи використовує документ систему візування
 # (з допомогою модулю approvals або автоматичну)
 def is_approvals_used(doc_type):
-    return Doc_Type_Phase.objects.values('id')\
-        .filter(document_type_id=doc_type) \
-        .filter(mark_id=17) \
-        .exists()
+    return Document_Type_Module.objects.values('id')\
+        .filter(document_type_id=doc_type).filter(module_id=22).exists()
+
+    # Старий варіант
+    # return Doc_Type_Phase.objects.values('id')\
+    #     .filter(document_type_id=doc_type) \
+    #     .filter(mark_id=17) \
+    #     .exists()
 
 
 # Функція, яка повертає Boolean чи використовує документ модуль approvals

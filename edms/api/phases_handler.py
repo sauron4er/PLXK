@@ -221,8 +221,8 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                 else:
                     # 4. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
                     handle_phase_marks(doc_request, phase_info)
-                # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
-                handle_phase_recipients(doc_request, phase_info, modules_recipients)
+                    # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
+                    handle_phase_recipients(doc_request, phase_info, modules_recipients)
 
     # Відправляємо документ на ознайомлення, якщо отримувачі уже не мають цей документ на погодженні тощо
     # Для цього використовується фаза 0, бо ознайомлення фактично не є фазою і не впливає на шлях документа

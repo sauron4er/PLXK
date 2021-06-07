@@ -293,7 +293,7 @@ def get_correspondence(request, counterparty):
 
     correspondence = [{
         'id': request.pk,
-        'unique_number': request.unique_number,
+        # 'unique_number': request.unique_number,
         'type': request.type,
         'product_name': request.client.product.name,
         'scope_name': request.scope.name,

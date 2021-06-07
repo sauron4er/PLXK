@@ -105,6 +105,7 @@ class Info extends React.Component {
                     <ClientRequirementsInfo
                       fieldName={module.field_name}
                       crs={info.client_requirements}
+                      ars={info.additional_requirements}
                       sub_product={info.sub_product.id}
                     />
                   </When>

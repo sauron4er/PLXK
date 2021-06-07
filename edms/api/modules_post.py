@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, \
-    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements
+    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -265,8 +265,22 @@ def post_law(new_doc, law):
 @try_except
 def post_client_requirements(new_doc, client_requirements):
     cr = Client_Requirements(document=new_doc)
+    additional_requirements = client_requirements['additional_requirements']
     client_requirements.pop('document', None)
-    # client_requirements['document'] = new_doc
+    client_requirements.pop('additional_requirements', None)
+
     for key in client_requirements:
         setattr(cr, key, client_requirements[key])
     cr.save()
+
+    post_additional_requirement(cr, additional_requirements)
+
+
+@try_except
+def post_additional_requirement(cr, ars):
+    for ar in ars:
+        if ar['name'] != '':
+            new_add_req = Client_Requirement_Additional(client_requirements=cr)
+            new_add_req.name = ar['name']
+            new_add_req.requirement = ar['requirement']
+            new_add_req.save()

@@ -71,7 +71,9 @@ const newDocStore = store({
       gelatinization_time: '',
       miscibility_with_water: '',
       warranty_period: '',
-      TU: ''
+      TU: '',
+      binding: '',
+      additional_requirements: []
     }
   },
   clean_fields: () => {
@@ -144,7 +146,9 @@ const newDocStore = store({
         gelatinization_time: '',
         miscibility_with_water: '',
         warranty_period: '',
-        TU: ''
+        TU: '',
+        binding: '',
+        additional_requirements: []
       }
     };
   },
@@ -191,7 +195,9 @@ const newDocStore = store({
       gelatinization_time: '',
       miscibility_with_water: '',
       warranty_period: '',
-      TU: ''
+      TU: '',
+      binding: '',
+      additional_requirements: []
     };
   },
   areRequirementsFilled: () => {
@@ -254,6 +260,9 @@ const newDocStore = store({
     }
     return false;
   },
+  addBlankAdditionalRequirement: () => {
+    newDocStore.new_document.client_requirements.additional_requirements.push({id: 0, name: '', requirement: ''})
+  }
 });
 
 export default newDocStore;
