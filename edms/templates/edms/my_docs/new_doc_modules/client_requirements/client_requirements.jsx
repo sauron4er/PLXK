@@ -56,7 +56,10 @@ class ClientRequirements extends React.Component {
                   label='Масова частка нелеткого вуглецю в перерахунку на суху речовину, %'
                 />
                 <ClientRequirementsItem name='granulation_lt20' label='Грануляційний склад, фракція, < 20мм' />
-                <ClientRequirementsItem name='binding' label='Зв’язуюче' />
+              </div>
+              <div className='row'>
+                <small className='col-12 mb-1 font-weight-bold'>Додаткові вимоги</small>
+                <ClientRequirementsItem name='binding' label='Зв’язуюче' notRequired />
               </div>
             </When>
             <When condition={sub_product_type_name === 'ЕТА'}>
