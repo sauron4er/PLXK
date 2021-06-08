@@ -6,7 +6,7 @@ import DxTable from 'templates/components/tables/dx_table';
 
 const columns = [
   {name: 'id', title: 'id'},
-  {name: 'unique_number', title: '№'},
+  // {name: 'unique_number', title: '№'},
   {name: 'product_name', title: 'Продукт'},
   {name: 'client_name', title: 'Клієнт'},
   {name: 'responsible_name', title: 'Відповідальний'},
@@ -17,7 +17,7 @@ const columns = [
 
 const col_width = [
   {columnName: 'id', width: 30},
-  {columnName: 'unique_number', width: 100},
+  // {columnName: 'unique_number', width: 100},
   {columnName: 'product_name', width: 50},
   {columnName: 'responsible_name', width: 200},
   {columnName: 'request_date', width: 100},

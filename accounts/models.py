@@ -36,6 +36,7 @@ class UserProfile(models.Model):
     clients_add = models.BooleanField(default=False)  # Право редагування довідника клієнтів
     product_type_add = models.BooleanField(default=False)  # Право редагування довідника продукції
     mockup_type_add = models.BooleanField(default=False)  # Право редагування довідника типів дизайн-макетів
+    scope_add = models.BooleanField(default=False)  # Право редагування довідника сфер застосування
     mockup_product_type_add = models.BooleanField(default=False)  # Право редагування довідника продукції, пов’язаної з типами дизайн-макетів
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True, null=True)

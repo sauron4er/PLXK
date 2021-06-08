@@ -374,4 +374,13 @@ class Client_Requirements(models.Model):
     miscibility_with_water = models.CharField(max_length=10, null=True, blank=True)
     warranty_period = models.CharField(max_length=10, null=True, blank=True)
     TU = models.CharField(max_length=10, null=True, blank=True)
+    binding = models.CharField(max_length=20, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+
+# Вимоги клієнта
+class Client_Requirement_Additional(models.Model):
+    client_requirements = models.ForeignKey(Client_Requirements, related_name='additional_requirements', on_delete=models.RESTRICT)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    requirement = models.CharField(max_length=50, null=True, blank=True)
     is_active = models.BooleanField(default=True)

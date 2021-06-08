@@ -30,7 +30,7 @@ import CustomSelect from 'edms/templates/edms/my_docs/new_doc_modules/custom_sel
 import ProductType from 'edms/templates/edms/my_docs/new_doc_modules/product_type';
 import Scope from 'edms/templates/edms/my_docs/new_doc_modules/scope';
 import Law from 'edms/templates/edms/my_docs/new_doc_modules/law';
-import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements';
+import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/client_requirements';
 import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 
 class NewDocument extends React.Component {
@@ -308,7 +308,6 @@ class NewDocument extends React.Component {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
           } else if (['scope', 'law', 'client_requirements'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
-          } else if (module.module === 'client_requirements') {
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }

@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from './new_doc_store';
+import newDocStore from '../new_doc_store';
 
 class ClientRequirementsItem extends React.Component {
   onChange = (e) => {

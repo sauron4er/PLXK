@@ -330,14 +330,14 @@ class Request extends React.Component {
             </If>
 
             <div className='modal-body'>
-              <TextInput
-                text={corrStore.request.unique_number}
-                fieldName={'Номер'}
-                onChange={(e) => this.onInputChange(e, 'unique_number')}
-                maxLength={20}
-                disabled={!edit_mode}
-              />
-              <hr />
+              {/*<TextInput*/}
+              {/*  text={corrStore.request.unique_number}*/}
+              {/*  fieldName={'Номер'}*/}
+              {/*  onChange={(e) => this.onInputChange(e, 'unique_number')}*/}
+              {/*  maxLength={20}*/}
+              {/*  disabled={!edit_mode}*/}
+              {/*/>*/}
+              {/*<hr />*/}
               <Selector
                 list={corrStore.products}
                 selectedName={corrStore.request.product_name}

@@ -50,7 +50,8 @@ class ClientRequirementsInfo extends React.Component {
       gelatinization_time: 'Час желатинізації при 100°С, сек.',
       miscibility_with_water: 'Змішуваність з водою, при 20 ± 1°С',
       warranty_period: 'Гарантійний термін зберігання, днів при 20°С',
-      TU: 'ТУ'
+      TU: 'ТУ',
+      binding: 'Зв’язуюче'
     };
 
     return (
@@ -64,14 +65,24 @@ class ClientRequirementsInfo extends React.Component {
   };
 
   render() {
-    const {fieldName, crs} = this.props;
+    const {fieldName, crs, ars} = this.props;
 
     return (
       <>
         <div>{fieldName}:</div>
         <div className='bg-white p-2 border rounded'>
           <table className='table table-hover'>
-            <tbody>{Object.keys(crs).map((key, index) => this.getRequirementLine(key, index))}</tbody>
+            <tbody>
+              {Object.keys(crs).map((key, index) => this.getRequirementLine(key, index))}
+              <If condition={ars.length > 0}>
+                <For each='ar' of={ars} index='index'>
+                  <tr key={index}>
+                    <td>{ar.name}</td>
+                    <td className='font-weight-bold'>{ar.requirement}</td>
+                  </tr>
+                </For>
+              </If>
+            </tbody>
           </table>
         </div>
       </>
@@ -81,6 +92,7 @@ class ClientRequirementsInfo extends React.Component {
   static defaultProps = {
     field_name: '---',
     crs: [],
+    ars: [],
     sub_product: 0
   };
 }
