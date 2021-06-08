@@ -44,7 +44,7 @@ class Request(models.Model):
     answer_responsible = models.ForeignKey(User, related_name='answer_responsible', on_delete=models.RESTRICT)
     answer = models.CharField(max_length=5000, blank=True, null=True, default=None)
     answer_date = models.DateField(null=True, blank=True, default=None)
-    author_comment = models.CharField(max_length=1000, null=True, blank=True)
+    author_comment = models.CharField(max_length=5000, null=True, blank=True)
     added_by = models.ForeignKey(User, related_name='requests_added', on_delete=models.RESTRICT)
     last_updated_by = models.ForeignKey(User, related_name='requests_updated', blank=True, null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

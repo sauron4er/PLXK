@@ -169,7 +169,7 @@ class Request extends React.Component {
   addRequest = (id) => {
     corrStore.request.status = this.checkRequestStatus();
     corrStore.request.id = id;
-    corrStore.correspondence.push(corrStore.request);
+    corrStore.correspondence.unshift(corrStore.request);
     this.closeRequestView();
   };
 
@@ -207,7 +207,8 @@ class Request extends React.Component {
       responsible_name: '',
       answer_responsible_id: 0,
       answer_responsible_name: '',
-      laws: []
+      laws: [],
+      acquaints: []
     };
     corrStore.selected_law_id = 0;
     corrStore.selected_law_name = '';
@@ -215,7 +216,7 @@ class Request extends React.Component {
 
   closeRequestView = () => {
     this.clearRequest();
-    this.props.close(corrStore.corr_type === 1 ? 'requests' : 'reclamations');
+    this.props.close(corrStore.corr_type === 1 ? 'requests' : corrStore.corr_type === 2 ? 'reclamations' : 'samples');
   };
 
   getCLientsForProductId = () => {
@@ -341,7 +342,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.products}
                 selectedName={corrStore.request.product_name}
-                fieldName={'Продукція'}
+                fieldName={'* Продукція'}
                 onChange={(e) => this.onSelectorChange(e, 'product_id', 'product_name')}
                 disabled={!edit_mode}
               />
@@ -349,7 +350,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.scopes}
                 selectedName={corrStore.request.scope_name}
-                fieldName={'Сфера застосування'}
+                fieldName={'* Сфера застосування'}
                 onChange={(e) => this.onSelectorChange(e, 'scope_id', 'scope_name')}
                 disabled={!edit_mode}
               />
@@ -357,7 +358,7 @@ class Request extends React.Component {
               <Selector
                 list={this.getCLientsForProductId()}
                 selectedName={corrStore.request.client_name}
-                fieldName={'Клієнт'}
+                fieldName={'* Клієнт'}
                 onChange={(e) => this.onSelectorChange(e, 'client_id', 'client_name')}
                 disabled={!edit_mode}
               />
@@ -365,7 +366,7 @@ class Request extends React.Component {
               <Files
                 oldFiles={corrStore.request.old_request_files}
                 newFiles={corrStore.request.new_request_files}
-                fieldName={'Файли запиту (.eml)'}
+                fieldName={'* Файли запиту (.eml)'}
                 onChange={(e) => this.onInputChange(e, 'new_request_files')}
                 onDelete={(id) => this.onFilesDelete(id, 'old_request_files')}
                 disabled={!edit_mode}
@@ -404,7 +405,7 @@ class Request extends React.Component {
                 <div className='mr-auto'>
                   <DateInput
                     date={corrStore.request.request_date}
-                    fieldName={'Дата отримання'}
+                    fieldName={'* Дата отримання'}
                     onChange={(e) => this.onInputChange(e, 'request_date')}
                     disabled={!edit_mode}
                   />
@@ -428,7 +429,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.employees.filter((employee) => employee.correspondence_admin)}
                 selectedName={corrStore.request.responsible_name}
-                fieldName={'Відповідальний'}
+                fieldName={'* Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible_id', 'responsible_name')}
                 disabled={!edit_mode}
               />
@@ -436,7 +437,7 @@ class Request extends React.Component {
               <Selector
                 list={corrStore.employees.filter((employee) => employee.correspondence_admin)}
                 selectedName={corrStore.request.answer_responsible_name}
-                fieldName={corrStore.request.type === 3 ? 'Відповідальний за надання взірців' : 'Відповідальний за надання відповіді'}
+                fieldName={corrStore.request.type === 3 ? '* Відповідальний за надання взірців' : '* Відповідальний за надання відповіді'}
                 onChange={(e) => this.onSelectorChange(e, 'answer_responsible_id', 'answer_responsible_name')}
                 disabled={!edit_mode}
               />
