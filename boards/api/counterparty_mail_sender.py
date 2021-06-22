@@ -13,7 +13,7 @@ def create_new_mail_body(provider, address):
     message["From"] = 'it@lxk.com.ua'
     message["To"] = address
 
-    text = 'На сайті ПЛХК опубліковано додано нового постачальника - {}. ' \
+    text = 'На сайт ПЛХК додано нового постачальника - {}. ' \
            'Переглянути можна на сторінці http://10.10.10.22/boards/providers'\
         .format(provider.name)
 
@@ -28,7 +28,7 @@ def create_change_mail_body(provider, address):
     message["From"] = 'it@lxk.com.ua'
     message["To"] = address
 
-    text = 'На сайті ПЛХК опубліковано змінено інформацію про постачальника - {}. ' \
+    text = 'На сайті ПЛХК змінено інформацію про постачальника - {}. ' \
            'Переглянути зміни можна на сторінці http://10.10.10.22/boards/providers' \
         .format(provider.name)
 

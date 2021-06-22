@@ -87,7 +87,7 @@ class Non_compliance(models.Model):
     phase = models.PositiveSmallIntegerField()  # 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
     department = models.ForeignKey(Department, related_name='non_compliances', on_delete=models.RESTRICT)
     dep_chief = models.ForeignKey(UserProfile, related_name='dep_non_compliances', on_delete=models.RESTRICT)
-    dep_chief_approved = models.BooleanField()
+    dep_chief_approved = models.BooleanField(null=True)
     date_added = models.DateField(auto_now_add=True)
     name = models.CharField(max_length=100)
     product = models.ForeignKey(Product_type, related_name='non_compliances', on_delete=models.RESTRICT)
@@ -107,6 +107,7 @@ class Non_compliance(models.Model):
 
     final_decision = models.CharField(max_length=100, null=True)
     decision_date = models.DateField(null=True)
+    responsible = models.ForeignKey(UserProfile, related_name='non_compliances_responsible', on_delete=models.RESTRICT, null=True)
     result_of_nc = models.CharField(max_length=100, null=True)
     corrective_action = models.CharField(max_length=100, null=True)
     corrective_action_number = models.CharField(max_length=10, null=True)
@@ -116,4 +117,35 @@ class Non_compliance(models.Model):
     people_involved = models.CharField(max_length=3, null=True)
     quantity_updated = models.CharField(max_length=10, null=True)
     status_updated = models.CharField(max_length=50, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Non_compliance_file(models.Model):
+    file = models.FileField(upload_to='boards/non_compliances/%Y/%m')
+    name = models.CharField(max_length=100)
+    non_compliance = models.ForeignKey(Non_compliance, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Non_compliance_comment(models.Model):
+    non_compliance = models.ForeignKey(Non_compliance, related_name='comments', on_delete=models.RESTRICT)
+    author = models.ForeignKey(UserProfile, related_name='non_compliance_comments', on_delete=models.RESTRICT)
+    comment = models.CharField(max_length=1000, null=True)
+    original_comment = models.ForeignKey('self', related_name='answers', null=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Non_compliance_comment_file(models.Model):
+    file = models.FileField(upload_to='boards/non_compliances/%Y/%m')
+    name = models.CharField(max_length=100)
+    comment = models.ForeignKey(Non_compliance_comment, related_name='comment_files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Non_compliance_decision(models.Model):
+    non_compliance = models.ForeignKey(Non_compliance, related_name='decisions', on_delete=models.RESTRICT)
+    user = models.ForeignKey(UserProfile, related_name='non_compliance_decisions', on_delete=models.RESTRICT)
+    decision = models.CharField(max_length=50, null=True)
+    decision_time = models.DateTimeField(null=True)
+    phase = models.CharField(max_length=1, default='1')
     is_active = models.BooleanField(default=True)

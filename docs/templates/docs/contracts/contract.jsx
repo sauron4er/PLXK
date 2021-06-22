@@ -410,6 +410,21 @@ class Contract extends React.Component {
                       </Otherwise>
                     </Choose>
                     <small>Поля, позначені зірочкою, є обов’язковими</small>
+                    <If condition={this.props.id === 0}>
+                      <div>
+                        <small className='text-danger'>
+                          Зверніть увагу! На даній сторінці вносяться уже затверджені і підписані з контрагентами Договори.
+                        </small>
+                      </div>
+                      <div>
+                        <small className='text-danger'>
+                          Якщо ви хочете відправити Договір на погодження, скористайтесь сторінкою{' '}
+                          <a href={`${window.location.origin}/edms/my_docs/`} target='_blank'>
+                            Електронні документи
+                          </a>.
+                        </small>
+                      </div>
+                    </If>
                   </div>
                   <If condition={is_main_contract && contract.basic_contract === 0}>
                     <button className='btn btn-sm btn-outline-primary' onClick={() => this.changeView('additional')}>

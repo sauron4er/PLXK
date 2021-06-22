@@ -7,7 +7,7 @@ class Selector extends React.Component {
   
     return (
       <label className={classes + ' full_width'} htmlFor={fieldName}>
-        {fieldName}:
+        <If condition={fieldName}>{fieldName}:</If>
         <select
           className='form-control full_width'
           id={fieldName}

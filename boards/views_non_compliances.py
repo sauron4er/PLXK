@@ -3,105 +3,124 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
-from datetime import date
+from datetime import datetime
+from django.utils.timezone import get_current_timezone
 import json
-
-from edms.api.vacations import vacation_check
-from edms.models import Seat, Employee_Seat
+from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
+from plxk.api.global_getters import get_dep_chief, get_director_userprofile_id
 from plxk.api.pagination import sort_query_set, filter_query_set
-from plxk.api.global_getters import get_userprofiles_list
-from production.api.getters import get_products_list, get_certification_types, get_scopes_list
-from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
-from .models import Non_compliance
-# from .api.counterparty_mail_sender import send_provider_mail
+from .models import Non_compliance, Non_compliance_file, \
+    Non_compliance_comment, Non_compliance_comment_file, Non_compliance_decision
+from .api.non_compliance_mail_sender import create_and_send_mail
 
 
 @login_required(login_url='login')
 @try_except
 def non_compliances(request):
-    department_chief_seat = Seat.objects.values_list('id', flat=True)\
-        .filter(department=request.user.userprofile.department)\
-        .filter(is_dep_chief=True)
-    if not department_chief_seat:
-        # TODO повертати помилку "у підрозділа нема призначеної керівної посади"
-        return render(request, 'boards/non_compliances/non_compliances.html')
-
-    dep_chief = Employee_Seat.objects.values_list('id', flat=True)\
-        .filter(seat_id=department_chief_seat[0])\
-        .filter(is_main=True)\
-        .filter(is_active=True)
-
-    if not dep_chief:
-        # TODO повертати помилку "у підрозділа нема призначеного керівника"
-        return render(request, 'boards/non_compliances/non_compliances.html')
-
-    dep_chief_acting = vacation_check(dep_chief[0])
-
-    dep_chief_acting = get_object_or_404(Employee_Seat, pk=dep_chief_acting)
-
-    dep_chief_acting = {
-        'id': dep_chief_acting.employee.id,
-        'name': dep_chief_acting.employee.pip + (' (в.о.)' if dep_chief != dep_chief_acting else '')
-    }
-
-    products = get_products_list()
-
-    return render(request, 'boards/non_compliances/non_compliances.html', {
-        'dep_chief': dep_chief_acting
-    })
+    return render(request, 'boards/non_compliances/non_compliances.html')
 
 
 @try_except
 def get_non_compliances(request, page):
-    # ncs_list = Counterparty.objects.filter(is_provider=True).filter(is_active=True)
+    ncs = Non_compliance.objects.filter(is_active=True)
 
-    # ncs_list = filter_query_set(ncs_list, json.loads(request.POST['filtering']))
-    # ncs_list = sort_query_set(ncs_list, request.POST['sort_name'], request.POST['sort_direction'])
-    #
-    # paginator = Paginator(ncs_list, 23)
-    # try:
-    #     ncs_page = paginator.page(int(page) + 1)
-    # except PageNotAnInteger:
-    #     ncs_page = paginator.page(1)
-    # except EmptyPage:
-    #     ncs_page = paginator.page(1)
-    #
-    # ncs_list = [{
-    #     'id': nc.pk,
-    #     'product': nc.product,
-    #     'client': nc.client,
-    #     'author': nc.author.pip,
-    #     'responsible': nc.responsible.pip,
-    #     'status': get_provider_status(nc)
-    # } for nc in ncs_page.object_list]
-    #
-    # response = {'rows': ncs_list, 'pagesCount': paginator.num_pages}
-    # return HttpResponse(json.dumps(response))
-    return HttpResponse(json.dumps([]))
+    ncs = filter_query_set(ncs, json.loads(request.POST['filtering']))
+    ncs = sort_query_set(ncs, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(ncs, 23)
+    try:
+        ncs_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        ncs_page = paginator.page(1)
+    except EmptyPage:
+        ncs_page = paginator.page(1)
+
+    ncs = [{
+        'id': nc.pk,
+        'provider': nc.provider.name,
+        'product': nc.product.name,
+        'order_number': nc.order_number,
+        'author': nc.author.pip,
+        'responsible': nc.responsible.pip if nc.responsible else '',
+        'status': 'TODO'
+    } for nc in ncs_page.object_list]
+
+    response = {'rows': ncs, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @try_except
 def get_non_compliance(request, pk):
-    provider_instance = get_object_or_404(Counterparty, pk=pk)
-    provider = {
-        'id': provider_instance.id,
-        'name': provider_instance.name,
-        'legal_address': provider_instance.legal_address or '',
-        'actual_address': provider_instance.actual_address or '',
-        'edrpou': provider_instance.edrpou or '',
-        'bank_details': provider_instance.bank_details or '',
-        'contacts': provider_instance.contacts or '',
-        'added': convert_to_localtime(provider_instance.added, 'day'),
-        'author': provider_instance.author.pip,
-        'product_id': provider_instance.product.id,
-        'product': provider_instance.product.name,
+    nc_instance = get_object_or_404(Non_compliance, pk=pk)
+
+    nc = {
+        'id': nc_instance.id,
+        'phase': nc_instance.phase,
+        'author_name': nc_instance.author.pip,
+        'date_added': date_to_json(nc_instance.date_added),
+        'department_name': nc_instance.department.name,
+        'dep_chief': nc_instance.dep_chief_id,
+        'dep_chief_name': nc_instance.dep_chief.pip,
+        'dep_chief_approved': nc_instance.dep_chief_approved,
+        'name': nc_instance.name,
+        'product': nc_instance.product.id,
+        'product_name': nc_instance.product.name,
+        'party_number': nc_instance.party_number,
+        'order_number': nc_instance.order_number,
+        'manufacture_date': date_to_json(nc_instance.manufacture_date),
+        'total_quantity': nc_instance.total_quantity,
+        'nc_quantity': nc_instance.nc_quantity,
+        'packing_type': nc_instance.packing_type,
+        'provider': nc_instance.provider.id,
+        'provider_name': nc_instance.provider.name,
+        'reason': nc_instance.reason,
+        'status': nc_instance.status,
+        'classification': nc_instance.classification,
+        'defect': nc_instance.defect,
+        'analysis_results': nc_instance.analysis_results,
+        'sector': nc_instance.sector,
+        'old_files': [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+        } for file in Non_compliance_file.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
+
+        'decisions': [{
+            'id': decision.id,
+            'user_id': decision.user_id,
+            'user': decision.user.pip,
+            'decision': decision.decision or '',
+            'decision_time': convert_to_localtime(decision.decision_time, 'time') if decision.decision_time else '',
+        } for decision in Non_compliance_decision.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
+
+        'final_decision': nc_instance.final_decision or '',
+        'decision_date': date_to_json(nc_instance.decision_date) if nc_instance.decision_date else '',
+        'responsible': nc_instance.responsible.id if nc_instance.responsible else 0,
+        'responsible_name': nc_instance.responsible.pip if nc_instance.responsible else '',
+        'result_of_nc': nc_instance.result_of_nc or '',
+        'corrective_action': nc_instance.corrective_action or '',
+        'corrective_action_number': nc_instance.corrective_action_number or '',
+        'other': nc_instance.other or '',
+        'retreatment_date': date_to_json(nc_instance.retreatment_date) if nc_instance.retreatment_date else '',
+        'spent_time': nc_instance.spent_time or '',
+        'people_involved': nc_instance.people_involved or '',
+        'quantity_updated': nc_instance.quantity_updated or '',
+        'status_updated': nc_instance.status_updated,
+
+        'comments': get_comments(pk)
     }
 
-    return HttpResponse(json.dumps({'counterparty': provider, 'scopes': [], 'employees': []}))
+    user_role = 'viewer'
+    if nc_instance.author.user == request.user:
+        user_role = 'author'
+    elif get_dep_chief(request.user.userprofile) == request.user.userprofile:
+        user_role = 'dep_chief'
+
+    return HttpResponse(json.dumps({'non_compliance': nc, 'user_role': user_role}))
 
 
 @transaction.atomic
@@ -112,27 +131,44 @@ def post_non_compliance(request):
 
     if data['id'] == 0:
         nc = Non_compliance(author=request.user.userprofile)
-        # provider = Counterparty(is_provider=True, author=request.user.userprofile)
     else:
-        pass
-        # provider = get_object_or_404(Counterparty, pk=data['id'])
+        nc = get_object_or_404(Non_compliance, pk=data['id'])
 
-    # next_phase
-    # if data['phase'] == 2:
+    if data['phase'] < 2:
+        # Вносимо початкові дані або зміни, внесені автором/керівником автора перед поданням на візування
+        nc.department = request.user.userprofile.department
+        nc.dep_chief_id = data['dep_chief'] if data['dep_chief'] != 0 else get_dep_chief(request.user.userprofile, 'id')
+        nc.dep_chief_approved = None if data['dep_chief_approved'] == '' else data['dep_chief_approved']
+        nc.name = data['name']
+        nc.product_id = data['product']
+        nc.party_number = data['party_number']
+        nc.order_number = data['order_number']
+        nc.manufacture_date = data['manufacture_date']
+        nc.total_quantity = data['total_quantity']
+        nc.nc_quantity = data['nc_quantity']
+        nc.packing_type = data['packing_type']
+        nc.provider_id = data['provider']
+        nc.reason = data['reason']
+        nc.status = data['status']
+        nc.classification = data['classification']
+        nc.defect = data['defect']
+        nc.analysis_results = data['analysis_results']
+        nc.sector = data['sector']
 
-    # provider.name = data['name']
-    # provider.legal_address = data['legal_address']
-    # provider.actual_address = data['actual_address']
-    # provider.edrpou = data['edrpou']
-    # provider.bank_details = data['bank_details']
-    # provider.contacts = data['contacts']
-    # provider.product_id = data['product_id']
-    # provider.save()
+        if data['dep_chief_approved'] == '' or data['dep_chief_approved'] is None:
+            nc.phase = 1
+        elif data['dep_chief_approved'] is True:
+            nc.phase = 2
+        else:
+            nc.phase = 666  # Відмінено
 
-    # if data['id'] == 0:
-    #     send_provider_mail('new', provider)
-    # else:
-    #     send_provider_mail('change', provider)
+        nc.save()
+
+        post_files(nc.id, request.FILES, data['old_files'])
+
+        if data['phase'] == 0:
+            create_and_send_mail('dep_chief', nc.dep_chief_id, nc.id)
+
 
     return HttpResponse('provider.pk')
 
@@ -140,16 +176,112 @@ def post_non_compliance(request):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def dc_approval(request):
-    approved = json.loads(request.POST['approved'])
+def dep_chief_approval(request):
+    nc = get_object_or_404(Non_compliance, pk=request.POST['nc_id'])
+    nc.dep_chief_approved = json.loads(request.POST['approved'])
+    if nc.dep_chief_approved is False:
+        nc.phase = 666
+    else:
+        nc.phase = 2
+        nc.save()
+
+        director_id = get_director_userprofile_id()
+        new_decision = Non_compliance_decision(non_compliance=nc, user_id=director_id, phase=2)
+        new_decision.save()
+
+        decisions = json.loads(request.POST['decisions'])
+        for decision in decisions:
+            user_id = Employee_Seat.objects.values_list('employee_id', flat=True).filter(id=decision['id'])[0]
+            if user_id != director_id:
+                new_decision = Non_compliance_decision(non_compliance=nc, user_id=user_id, phase=1)
+                new_decision.save()
+                # TODO send mail
+
     return HttpResponse('ok')
 
 
 @try_except
-def get_provider_status(provider):
-    certificates = get_certificates(provider.pk)
-    if certificates:
-        for certificate in certificates:
-            if certificate['certification_type'] in ['FSC', 'BSCI'] and certificate['status'] == 'ok':
-                return 'ok'
-    return 'in progress'
+def post_files(nc_id, new_files, old_files):
+    nc = get_object_or_404(Non_compliance, pk=nc_id)
+
+    for file in new_files.getlist('new_files'):
+        Non_compliance_file.objects.create(
+            non_compliance=nc,
+            file=file,
+            name=file.name
+        )
+
+
+@transaction.atomic
+@login_required(login_url='login')
+@try_except
+def post_new_comment(request):
+    nc_comment = Non_compliance_comment(author=request.user.userprofile)
+    nc_comment.non_compliance_id = request.POST['non_compliance_id']
+    nc_comment.comment = request.POST['comment']
+
+    if request.POST['original_comment_id'] != '':
+        nc_comment.original_comment_id = request.POST['original_comment_id']
+
+    nc_comment.save()
+
+    post_comment_files(nc_comment, request.FILES)
+
+    return HttpResponse(json.dumps(get_comments(request.POST['non_compliance_id'])))
+
+
+@try_except
+def post_comment_files(nc_comment_instance, files):
+    for file in files.getlist('new_comment_files'):
+        Non_compliance_comment_file.objects.create(
+            comment=nc_comment_instance,
+            file=file,
+            name=file.name
+        )
+
+
+@try_except
+def post_decision(request):
+    decision = json.loads(request.POST['decision'])
+    # TODO Заблокувати зміни на сайті після підтвердження внесення рекомендації у базу
+
+    decision_instance = get_object_or_404(Non_compliance_decision, pk=decision['id'])
+    decision_instance.decision = decision['decision']
+    decision_instance.decision_time = datetime.now(tz=get_current_timezone())
+
+    decision_instance.save()
+
+    if decision_instance.phase == '1':
+        phase_one_is_done = not Non_compliance_decision.objects\
+            .filter(non_compliance__id=request.POST['nc_id'])\
+            .filter(phase=1)\
+            .filter(decision__isnull=True)\
+            .filter(is_active=True)\
+            .exists()
+
+        if phase_one_is_done:
+            pass  # TODO Send mail to director (get id from phase 2)
+    else:  # phase = 2 - Директор
+        a=1
+
+    return HttpResponse(json.dumps(convert_to_localtime(decision_instance.decision_time, 'time')))
+
+
+@try_except
+def get_comments(nc_id):
+    comments = [{
+        'id': comment.id,
+        'author': comment.author.pip,
+        'text': comment.comment,
+        'original_comment_id': comment.original_comment.id if comment.original_comment else 0,
+        'original_comment_text': comment.original_comment.comment if comment.original_comment else '',
+        'original_comment_author': comment.original_comment.author.pip if comment.original_comment else '',
+        'files': [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+        } for file in Non_compliance_comment_file.objects.filter(comment_id=comment.id).filter(is_active=True)]
+    } for comment in Non_compliance_comment.objects
+        .filter(non_compliance=nc_id)
+        .filter(is_active=True).order_by('-id')]
+    return comments

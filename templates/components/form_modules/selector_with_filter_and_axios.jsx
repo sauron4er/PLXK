@@ -6,11 +6,12 @@ import {notify} from 'templates/components/my_extras';
 import {LoaderSmall} from 'templates/components/loaders';
 
 class SelectorWithFilterAndAxios extends React.Component {
+  // Якщо загорнуте в компонент-обгорту, викидує помилку Can't perform a React state update on an unmounted component
   state = {
     list: [],
     loading: true
   };
-  
+
   componentDidMount() {
     axiosGetRequest(`get_${this.props.listNameForUrl}'`)
       .then((response) => {
@@ -36,13 +37,13 @@ class SelectorWithFilterAndAxios extends React.Component {
               onChange={onChange}
               isDisabled={disabled}
               value={value}
-              getOptionLabel ={(option)=>option.name}
-              getOptionValue ={(option)=>option.id}
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
             />
           </label>
         </When>
         <Otherwise>
-          <LoaderSmall/>
+          <LoaderSmall />
         </Otherwise>
       </Choose>
     );
@@ -56,7 +57,7 @@ class SelectorWithFilterAndAxios extends React.Component {
     onChange: () => {},
     disabled: true,
     classes: {},
-    value: {label: 0, value: ''}
+    value: {id: 0, name: ''}
   };
 }
 

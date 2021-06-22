@@ -1,7 +1,9 @@
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from accounts.models import Department, UserProfile
-from edms.models import Employee_Seat
+from edms.models import Employee_Seat, Seat
 from plxk.api.try_except import try_except
+from edms.api.vacations import vacation_check
 
 
 @try_except
@@ -82,3 +84,41 @@ def get_deps():
         'text': dep.text,
     } for dep in Department.objects.filter(is_active=True).order_by('name')]
     return deps
+
+
+@try_except
+def get_dep_chief(userprofile, return_type='userprofile'):
+    department_chief_seat = Seat.objects.values_list('id', flat=True) \
+        .filter(department=userprofile.department) \
+        .filter(is_dep_chief=True)
+    if not department_chief_seat:
+        # return 'у підрозділа нема призначеної керівної посади'
+        return 0
+
+    dep_chief = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=department_chief_seat[0]) \
+        .filter(is_main=True) \
+        .filter(is_active=True)
+
+    if not dep_chief:
+        # return 'у підрозділа нема призначеного керівника'
+        return 0
+
+    dep_chief_acting = vacation_check(dep_chief[0])
+
+    dep_chief_acting = get_object_or_404(Employee_Seat, pk=dep_chief_acting)
+
+    if return_type == 'userprofile':
+        return dep_chief_acting.employee.user.userprofile
+    elif return_type == 'id':
+        return dep_chief_acting.employee.user.userprofile.id
+    else:
+        return dep_chief_acting.employee.user
+
+
+@try_except
+def get_director_userprofile_id():
+    director = Employee_Seat.objects.values_list('id', flat=True).filter(seat=16).filter(is_active=True)[0]
+    active_director = vacation_check(director)
+    director_userprofile = Employee_Seat.objects.values_list('employee__id', flat=True).filter(id=active_director)[0]
+    return director_userprofile

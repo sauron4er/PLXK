@@ -63,6 +63,8 @@ urlpatterns = [
     url(r'^non_compliances/get_non_compliances/(?P<page>\d+)/$', views_non_compliances.get_non_compliances, name='get_non_compliances'),
     url(r'^non_compliances/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
     url(r'^non_compliances/post_non_compliance', views_non_compliances.post_non_compliance, name='post_non_compliance'),
-    url(r'^non_compliances/dc_approval', views_non_compliances.dc_approval, name='dc_approval'),
+    url(r'^non_compliances/dep_chief_approval', views_non_compliances.dep_chief_approval, name='dep_chief_approval'),
+    url(r'^non_compliances/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
+    url(r'^non_compliances/post_decision', views_non_compliances.post_decision, name='post_decision'),
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 ]

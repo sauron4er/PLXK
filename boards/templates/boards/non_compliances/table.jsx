@@ -4,8 +4,9 @@ import PaginatedTable from 'templates/components/tables/paginated_table';
 
 const columns = [
   {name: 'id', title: 'id'},
-  {name: 'product', title: 'Продукт'},
-  {name: 'client', title: 'Клієнт'},
+  {name: 'provider', title: 'Постачальник'},
+  {name: 'product', title: 'Продукція'},
+  {name: 'order_number', title: '№ замовлення'},
   {name: 'author', title: 'Ініціатор'},
   {name: 'responsible', title: 'Виконавець'},
   {name: 'status', title: ''}
@@ -13,7 +14,8 @@ const columns = [
 
 const col_width = [
   {columnName: 'id', width: 30},
-  {columnName: 'product', width: 100},
+  {columnName: 'product', width: 110},
+  {columnName: 'order_number', width: 110},
   {columnName: 'author', width: 200},
   {columnName: 'responsible', width: 200},
   {columnName: 'status', width: 30}
@@ -25,7 +27,7 @@ class NonComplianceTable extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({main_div_height: this.mainDivRef.clientHeight - 100});
+    this.setState({main_div_height: this.mainDivRef.clientHeight - 50});
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -36,7 +38,7 @@ class NonComplianceTable extends React.Component {
   render() {
     const {main_div_height} = this.state;
     return (
-      <div ref={this.getMainDivRef}>
+      <div className='ml-3' ref={this.getMainDivRef}>
         <PaginatedTable
           url={'get_non_compliances'}
           columns={columns}

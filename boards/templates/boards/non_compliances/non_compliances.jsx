@@ -1,27 +1,39 @@
 'use strict';
 import * as React from 'react';
-import ClientsTable from 'boards/templates/boards/counterparty/clients/table';
-import Counterparty from 'boards/templates/boards/counterparty/components/counterparty';
 import NonComplianceTable from 'boards/templates/boards/non_compliances/table';
 import NonCompliance from 'boards/templates/boards/non_compliances/non_compliance/non_compliance';
-import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance/non_compliance_store';
+import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance_store';
 
 class NonCompliances extends React.Component {
   state = {
-    non_compliance_id: 0,
     view: 'table' // non_compliance
   };
-  
+
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;
   };
 
+  componentDidMount() {
+    nonComplianceStore.counterparty_id = this.props.counterparty_id;
+    nonComplianceStore.counterparty_name = this.props.counterparty_name;
+
+    // Визначаємо, чи відкриваємо просто список, чи це конкретне посилання:
+    const arr = window.location.pathname.split('/');
+    let filtered = arr.filter((el) => el !== '');
+    const last_href_piece = parseInt(filtered[filtered.length - 1]);
+    const is_link = !isNaN(last_href_piece);
+    if (is_link) this.showNonCompliance(last_href_piece);
+  }
+
+  showNonCompliance = (id) => {
+    nonComplianceStore.non_compliance.id = id;
+    this.setState({view: 'non_compliance'});
+  };
+
   onRowClick = (clicked_row) => {
-    this.setState({
-      non_compliance_id: clicked_row.id,
-      view: 'non_compliance'
-    });
+    nonComplianceStore.non_compliance.id = clicked_row.id;
+    this.setState({view: 'non_compliance'});
   };
 
   changeView = (name) => {
@@ -34,9 +46,9 @@ class NonCompliances extends React.Component {
   };
 
   render() {
-    const {view, non_compliance_id} = this.state;
+    const {view} = this.state;
     const {counterparty_id} = this.props;
-
+  
     return (
       <Choose>
         <When condition={view === 'table'}>
@@ -46,23 +58,22 @@ class NonCompliances extends React.Component {
                 Додати акт невідповідності
               </button>
             </div>
-            {/*<NonComplianceTable onRowClick={this.onRowClick} />*/}
+            <NonComplianceTable onRowClick={this.onRowClick} />
           </div>
         </When>
         <Otherwise>
           <button className='btn btn-sm btn-info my-2' onClick={() => location.reload()}>
             Назад
           </button>
-          <br/>
-          <NonCompliance id={counterparty_id}/>
+          <NonCompliance id={counterparty_id} />
         </Otherwise>
       </Choose>
     );
   }
-  
+
   static defaultProps = {
     counterparty_id: 0
-  }
+  };
 }
 
 export default NonCompliances;

@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import nonComplianceStore from './non_compliance_store';
+import nonComplianceStore from '../non_compliance_store';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 import NCRow from 'boards/templates/boards/non_compliances/non_compliance/row';
@@ -14,23 +14,16 @@ import {isBlankOrZero, notify} from 'templates/components/my_extras';
 import Modal from 'react-responsive-modal';
 import Selector from 'templates/components/form_modules/selector';
 import NumberInput from 'templates/components/form_modules/number_input';
+import MultiSelectorWithAxios from 'templates/components/form_modules/multi_selector_with_axios';
 
 class NCFirstPhase extends React.Component {
   state = {
     editable: false,
-    approvals_choose_modal_open: false,
-    leave_comment_modal_open: false
+    decisions_choose_modal_open: false
   };
 
   componentDidMount() {
-    if (nonComplianceStore.non_compliance.phase === 0) {
-      nonComplianceStore.non_compliance.author = user;
-      nonComplianceStore.non_compliance.author_name = user_name;
-      nonComplianceStore.non_compliance.dep_chief = window.dep_chief.id;
-      nonComplianceStore.non_compliance.dep_chief_name = window.dep_chief.name;
-    }
-
-    if (nonComplianceStore.non_compliance.phase < 2 && nonComplianceStore.non_compliance.author === user) {
+    if (nonComplianceStore.non_compliance.phase < 2 && ['author', 'dep_chief'].includes(nonComplianceStore.user_role)) {
       this.setState({editable: true});
     }
   }
@@ -98,53 +91,64 @@ class NCFirstPhase extends React.Component {
     if (this.areFirstPhaseFieldsFilled()) {
       let formData = new FormData();
       formData.append('non_compliance', JSON.stringify(nonComplianceStore.non_compliance));
+      if (nonComplianceStore.non_compliance.new_files?.length > 0) {
+        nonComplianceStore.non_compliance.new_files.map((file) => {
+          formData.append('new_files', file);
+        });
+      }
 
       axiosPostRequest('post_non_compliance', formData)
         .then((response) => {
-          // location.reload();
+          location.reload();
         })
         .catch((error) => notify(error));
     }
   };
 
-  depChiefApproval = (approved) => {
-    let formData = new FormData();
-    formData.append('non_compliance_id', nonComplianceStore.non_compliance.id);
-    formData.append('approved', approved);
+  openDecisionsModal = () => {
+    this.setState({decisions_choose_modal_open: true});
   };
 
-  postDepChiefApproval = () => {
-    axiosPostRequest('dc_approval', formData)
+  postDepChiefApproval = (approved) => {
+    const {id, decisions} = nonComplianceStore.non_compliance;
+
+    let formData = new FormData();
+    formData.append('nc_id', id);
+    formData.append('approved', approved);
+    formData.append('decisions', decisions ? JSON.stringify(decisions) : JSON.stringify([]));
+
+    axiosPostRequest('dep_chief_approval', formData)
       .then((response) => {
-        nonComplianceStore.non_compliance.dep_chief_approval = approved;
-        if (approved) {
-          this.setState({approvals_choose_modal_open: true});
-        }
+        // nonComplianceStore.non_compliance.dep_chief_approved = approved;
+        // this.setState({decisions_choose_modal_open: false});
+        location.reload();
       })
       .catch((error) => notify(error));
   };
 
-  onCloseModal = (type) => {
-    switch (type) {
-      case 'approvals':
-        this.setState({approvals_choose_modal_open: false});
-        break;
-      case 'comment':
-        this.setState({leave_comment_modal_open: false});
-    }
+  onCloseModal = () => {
+    this.setState({decisions_choose_modal_open: false});
   };
 
   getNcPercentage = () => {
-    const percentage =
-      (parseInt(nonComplianceStore.non_compliance.nc_quantity) /
-        parseInt(nonComplianceStore.non_compliance.total_quantity)) * 100;
-  
-    return +percentage.toFixed(1)
+    const {total_quantity, nc_quantity} = nonComplianceStore.non_compliance;
+    let percentage = '';
+
+    if (nc_quantity && total_quantity) {
+      percentage =
+        (parseInt(nonComplianceStore.non_compliance.nc_quantity) / parseInt(nonComplianceStore.non_compliance.total_quantity)) * 100;
+      percentage = +percentage.toFixed(1);
+    }
+    return percentage;
+  };
+
+  onAcquaintsChange = (list) => {
+    nonComplianceStore.non_compliance.decisions = list;
   };
 
   render() {
-    const {non_compliance, onFormChange} = nonComplianceStore;
-    const {editable, approvals_choose_modal_open, leave_comment_modal_open} = this.state;
+    const {non_compliance, onFormChange, user_role} = nonComplianceStore;
+    const {editable, decisions_choose_modal_open} = this.state;
 
     return (
       <div style={{borderBottom: '2px solid grey'}}>
@@ -170,7 +174,7 @@ class NCFirstPhase extends React.Component {
               </NCItem>
               <NCItem cols='5'>
                 Пірозділ-ініціатор:
-                <div className='font-weight-bold'>{department}</div>
+                <div className='font-weight-bold'>{non_compliance.department_name}</div>
               </NCItem>
             </NCRow>
             <NCRow>
@@ -204,18 +208,18 @@ class NCFirstPhase extends React.Component {
           </div>
           <NCItem cols='3'>
             Віза начальника підрозділу:
-            <div className='font-weight-bold'>{window.dep_chief.name}</div>
+            <div className='font-weight-bold'>{non_compliance.dep_chief_name}</div>
             <Choose>
-              <When condition={non_compliance.dep_chief_approval === true}>
+              <When condition={non_compliance.dep_chief_approved === true}>
                 <div className='border border-success rounded p-1 mt-1 text-center text-success font-weight-bold'>Погоджено</div>
               </When>
-              <When condition={non_compliance.dep_chief_approval === false}>
+              <When condition={non_compliance.dep_chief_approved === false}>
                 <div className='border border-danger rounded p-1 mt-1 text-center text-danger font-weight-bold'>Відмовлено</div>
               </When>
               <Otherwise>
-                <If condition={user === non_compliance.dep_chief}>
-                  <SubmitButton className='btn-info' text='Погодити' onClick={(e) => this.depChiefApproval(true)} />
-                  <SubmitButton className='btn-danger ml-1' text='Відмовити' onClick={(e) => this.depChiefApproval(false)} />
+                <If condition={non_compliance.phase === 1 && user_role === 'dep_chief'}>
+                  <SubmitButton className='btn-info' text='Погодити' onClick={this.openDecisionsModal} />
+                  <SubmitButton className='btn-danger ml-1' text='Відмовити' onClick={(e) => this.postDepChiefApproval(false)} />
                 </If>
               </Otherwise>
             </Choose>
@@ -303,9 +307,9 @@ class NCFirstPhase extends React.Component {
             <Files
               oldFiles={non_compliance.old_files}
               newFiles={non_compliance.new_files}
-              fieldName='Завантажити фото чи документи'
+              fieldName='Фото чи документи'
               onChange={this.onFilesChange}
-              onDelete={() => {}}
+              onDelete={() => {}} // TODO зробити onDelete
               disabled={!editable}
             />
           </NCItem>
@@ -357,12 +361,14 @@ class NCFirstPhase extends React.Component {
               </small>
             </div>
           </NCItem>
-          <NCItem cols={3}>
-            <div>Автор:</div>
-            <div className='font-weight-bold'>{non_compliance.author_name}</div>
-          </NCItem>
+          <If condition={non_compliance.phase > 0}>
+            <NCItem cols={3}>
+              <div>Автор:</div>
+              <div className='font-italic'>{non_compliance.author_name}</div>
+            </NCItem>
+          </If>
         </NCRow>
-        <If condition={non_compliance.phase < 2 && non_compliance.author === user}>
+        <If condition={non_compliance.phase < 2 && user_role === 'author'}>
           <NCRow>
             <NCItem>
               <SubmitButton className='btn-info' text='Зберегти' onClick={this.postNonCompliance} />
@@ -370,22 +376,17 @@ class NCFirstPhase extends React.Component {
           </NCRow>
         </If>
         <Modal
-          open={approvals_choose_modal_open}
-          onClose={(e) => this.onCloseModal('approvals')}
+          open={decisions_choose_modal_open}
+          onClose={this.onCloseModal}
           showCloseIcon={false}
           closeOnOverlayClick={false}
           styles={{modal: {marginTop: 50}}}
         >
           Оберіть список працівників, які повинні вирішити подальшу роботу з невідповідністю.
-        </Modal>
-        <Modal
-          open={leave_comment_modal_open}
-          onClose={(e) => this.onCloseModal('comment')}
-          showCloseIcon={false}
-          closeOnOverlayClick={false}
-          styles={{modal: {marginTop: 50}}}
-        >
-          Чи не хочете ви залишити коментар?
+          <MultiSelectorWithAxios listNameForUrl='employees' onChange={this.onAcquaintsChange} disabled={!editable} />
+          <If condition={non_compliance.decisions.length > 0}>
+            <SubmitButton className='btn-info' text='Зберегти' onClick={(e) => this.postDepChiefApproval(true)} />
+          </If>
         </Modal>
       </div>
     );
