@@ -9,7 +9,7 @@ const nonComplianceStore = store({
   user_role: 'author',
   non_compliance: {
     id: 0,
-    phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done, 666 - denied
+    phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - execution, 4 - done, 666 - denied
     author_name: '',
     department_name: department_name,
     dep_chief: 0,
@@ -36,22 +36,30 @@ const nonComplianceStore = store({
     analysis_results: '',
     sector: '',
     final_decision: '',
-    decision_date: '',
+    final_decision_time: '',
+
+    decisions: [],
+    edited_decision: '',
+    edited_decision_index: 0,
+
+    responsible: 0,
+    responsible_name: '',
+
     result_of_nc: '',
     corrective_action: '',
     corrective_action_number: '',
     other: '',
+    
     retreatment_date: '',
     spent_time: '',
     people_involved: '',
     quantity_updated: '',
     status_updated: '',
-    
-    decisions: [],
+    return_date: '',
 
     new_comment: '',
     new_comment_files: [],
-    comments: [],
+    comments: []
   },
   counterparty_id: 0,
   counterparty_name: '',
@@ -63,9 +71,9 @@ const nonComplianceStore = store({
   clearNonCompliance: () => {
     nonComplianceStore.non_compliance = {
       id: 0,
+      phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - execution, 4 - done, 666 - denied
       author_name: '',
       department_name: department_name,
-      phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done, 666 - denied
       dep_chief: 0,
       dep_chief_name: '',
       dep_chief_approved: '',
@@ -90,7 +98,15 @@ const nonComplianceStore = store({
       analysis_results: '',
       sector: '',
       final_decision: '',
-      decision_date: '',
+      final_decision_time: '',
+
+      decisions: [],
+      edited_decision: '',
+      edited_decision_index: 0,
+
+      responsible: 0,
+      responsible_name: '',
+
       result_of_nc: '',
       corrective_action: '',
       corrective_action_number: '',
@@ -100,8 +116,7 @@ const nonComplianceStore = store({
       people_involved: '',
       quantity_updated: '',
       status_updated: '',
-    
-      decisions: [],
+      return_date: '',
 
       new_comment: '',
       new_comment_files: [],

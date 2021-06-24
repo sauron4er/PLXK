@@ -45,7 +45,7 @@ def get_non_compliances(request, page):
         'order_number': nc.order_number,
         'author': nc.author.pip,
         'responsible': nc.responsible.pip if nc.responsible else '',
-        'status': 'TODO'
+        'status': 'ok' if nc.phase == 4 else '' if nc.phase == 666 else 'in progress'
     } for nc in ncs_page.object_list]
 
     response = {'rows': ncs, 'pagesCount': paginator.num_pages}
@@ -65,7 +65,7 @@ def get_non_compliance(request, pk):
         'department_name': nc_instance.department.name,
         'dep_chief': nc_instance.dep_chief_id,
         'dep_chief_name': nc_instance.dep_chief.pip,
-        'dep_chief_approved': nc_instance.dep_chief_approved,
+        'dep_chief_approved': nc_instance.dep_chief_approved or '',
         'name': nc_instance.name,
         'product': nc_instance.product.id,
         'product_name': nc_instance.product.name,
@@ -91,14 +91,15 @@ def get_non_compliance(request, pk):
 
         'decisions': [{
             'id': decision.id,
-            'user_id': decision.user_id,
-            'user': decision.user.pip,
-            'decision': decision.decision or '',
+            'user': decision.user_id,
+            'user_name': decision.user.pip,
+            'decision': decision.decision or '---------',
             'decision_time': convert_to_localtime(decision.decision_time, 'time') if decision.decision_time else '',
+            'phase': decision.phase
         } for decision in Non_compliance_decision.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
 
         'final_decision': nc_instance.final_decision or '',
-        'decision_date': date_to_json(nc_instance.decision_date) if nc_instance.decision_date else '',
+        'final_decision_time': convert_to_localtime(nc_instance.final_decision_time, 'time') if nc_instance.final_decision_time else '',
         'responsible': nc_instance.responsible.id if nc_instance.responsible else 0,
         'responsible_name': nc_instance.responsible.pip if nc_instance.responsible else '',
         'result_of_nc': nc_instance.result_of_nc or '',
@@ -109,16 +110,21 @@ def get_non_compliance(request, pk):
         'spent_time': nc_instance.spent_time or '',
         'people_involved': nc_instance.people_involved or '',
         'quantity_updated': nc_instance.quantity_updated or '',
-        'status_updated': nc_instance.status_updated,
+        'status_updated': nc_instance.status_updated or '',
+        'return_date': nc_instance.return_date or '',
 
         'comments': get_comments(pk)
     }
 
     user_role = 'viewer'
-    if nc_instance.author.user == request.user:
+    if nc_instance.responsible and nc_instance.responsible_id == request.user.userprofile.id:
+        user_role = 'responsible'
+    elif nc_instance.author.user == request.user:
         user_role = 'author'
-    elif get_dep_chief(request.user.userprofile) == request.user.userprofile:
+    elif get_dep_chief(nc_instance.author) == request.user.userprofile:
         user_role = 'dep_chief'
+    elif get_director_userprofile_id() == request.user.userprofile.id:
+        user_role = 'director'
 
     return HttpResponse(json.dumps({'non_compliance': nc, 'user_role': user_role}))
 
@@ -168,7 +174,9 @@ def post_non_compliance(request):
 
         if data['phase'] == 0:
             create_and_send_mail('dep_chief', nc.dep_chief_id, nc.id)
-
+        # elif data['phase'] == 1:
+        # Сюди при потребі можна буде дописати відправку листа автору про те, що в полях його акту відбулися зміни.
+        #     create_and_send_mail('author', nc.author_id, nc.id)
 
     return HttpResponse('provider.pk')
 
@@ -195,7 +203,9 @@ def dep_chief_approval(request):
             if user_id != director_id:
                 new_decision = Non_compliance_decision(non_compliance=nc, user_id=user_id, phase=1)
                 new_decision.save()
-                # TODO send mail
+                create_and_send_mail('decisioner', user_id, nc.id)
+
+        create_and_send_mail('author', nc.author_id, nc.id)
 
     return HttpResponse('ok')
 
@@ -227,6 +237,11 @@ def post_new_comment(request):
 
     post_comment_files(nc_comment, request.FILES)
 
+    if nc_comment.original_comment:
+        create_and_send_mail('answer', nc_comment.original_comment.author_id, nc_comment.non_compliance_id)
+
+    create_and_send_mail('author', nc_comment.non_compliance.author_id, nc_comment.non_compliance_id)
+
     return HttpResponse(json.dumps(get_comments(request.POST['non_compliance_id'])))
 
 
@@ -243,15 +258,12 @@ def post_comment_files(nc_comment_instance, files):
 @try_except
 def post_decision(request):
     decision = json.loads(request.POST['decision'])
-    # TODO Заблокувати зміни на сайті після підтвердження внесення рекомендації у базу
-
     decision_instance = get_object_or_404(Non_compliance_decision, pk=decision['id'])
     decision_instance.decision = decision['decision']
     decision_instance.decision_time = datetime.now(tz=get_current_timezone())
-
     decision_instance.save()
 
-    if decision_instance.phase == '1':
+    if decision_instance.phase == 1:
         phase_one_is_done = not Non_compliance_decision.objects\
             .filter(non_compliance__id=request.POST['nc_id'])\
             .filter(phase=1)\
@@ -260,9 +272,23 @@ def post_decision(request):
             .exists()
 
         if phase_one_is_done:
-            pass  # TODO Send mail to director (get id from phase 2)
-    else:  # phase = 2 - Директор
-        a=1
+            director_decided = Non_compliance_decision.objects.values_list('decision', flat=True)\
+                .filter(non_compliance__id=request.POST['nc_id'])\
+                .filter(phase=2)\
+                .filter(is_active=True)
+            if not director_decided:
+                create_and_send_mail('decisioner', get_director_userprofile_id(), decision_instance.non_compliance_id)
+
+    else:  # phase = 2 - рішення директора
+        nc_instance = get_object_or_404(Non_compliance, pk=request.POST['nc_id'])
+        nc_instance.final_decision = decision['decision']
+        nc_instance.final_decision_time = datetime.now(tz=get_current_timezone())
+        user_id = Employee_Seat.objects.values_list('employee_id', flat=True).filter(id=request.POST['responsible'])[0]
+        nc_instance.responsible_id = user_id
+        nc_instance.phase = 3
+        nc_instance.save()
+
+    create_and_send_mail('author', decision_instance.non_compliance.author_id, decision_instance.non_compliance_id)
 
     return HttpResponse(json.dumps(convert_to_localtime(decision_instance.decision_time, 'time')))
 
@@ -285,3 +311,26 @@ def get_comments(nc_id):
         .filter(non_compliance=nc_id)
         .filter(is_active=True).order_by('-id')]
     return comments
+
+
+@transaction.atomic
+@login_required(login_url='login')
+@try_except
+def done(request):
+    data = json.loads(request.POST.copy()['non_compliance'])
+    nc = get_object_or_404(Non_compliance, pk=data['id'])
+
+    if data['final_decision'] == 'Переробка':
+        nc.retreatment_date = data['retreatment_date']
+        nc.spent_time = data['spent_time']
+        nc.people_involved = data['people_involved']
+        nc.quantity_updated = data['quantity_updated']
+        nc.status_updated = data['status_updated']
+    if data['final_decision'] == 'Повернення постачальнику':
+        nc.return_date = data['return_date']
+
+    nc.phase = 4
+    nc.save()
+
+    create_and_send_mail('author', nc.author_id, nc.id)
+    return HttpResponse('ok')

@@ -23,7 +23,7 @@ class NCFirstPhase extends React.Component {
   };
 
   componentDidMount() {
-    if (nonComplianceStore.non_compliance.phase < 2 && ['author', 'dep_chief'].includes(nonComplianceStore.user_role)) {
+    if (nonComplianceStore.non_compliance.phase < 2 && ['author', 'dep_chief', 'director'].includes(nonComplianceStore.user_role)) {
       this.setState({editable: true});
     }
   }
@@ -151,7 +151,7 @@ class NCFirstPhase extends React.Component {
     const {editable, decisions_choose_modal_open} = this.state;
 
     return (
-      <div style={{borderBottom: '2px solid grey'}}>
+      <div>
         <NCRow>
           <div className='col-lg-9 align-content-start p-0'>
             <NCRow>
@@ -182,6 +182,7 @@ class NCFirstPhase extends React.Component {
                 <SelectorWithFilterAndAxios
                   listNameForUrl='products'
                   fieldName='Вид продукції'
+                  selectId='product_select'
                   value={{name: non_compliance.product_name, id: non_compliance.product}}
                   onChange={this.onProductChange}
                   disabled={!editable}
@@ -206,7 +207,7 @@ class NCFirstPhase extends React.Component {
               </NCItem>
             </NCRow>
           </div>
-          <NCItem cols='3'>
+          <NCItem cols='3' style={non_compliance.dep_chief_approved === '' ? {background: 'Cornsilk'} : null}>
             Віза начальника підрозділу:
             <div className='font-weight-bold'>{non_compliance.dep_chief_name}</div>
             <Choose>
@@ -272,6 +273,7 @@ class NCFirstPhase extends React.Component {
             <SelectorWithFilterAndAxios
               listNameForUrl='providers'
               fieldName='Постачальник'
+              selectId='provider_select'
               value={{name: non_compliance.provider_name, id: non_compliance.provider}}
               onChange={this.onProviderChange}
               disabled={!editable}
@@ -298,6 +300,7 @@ class NCFirstPhase extends React.Component {
               ]}
               fieldName='Статус'
               valueField='name'
+              selectId='status_select'
               selectedName={non_compliance.status}
               onChange={(e) => onFormChange(e, 'status')}
               disabled={!editable}
@@ -368,7 +371,7 @@ class NCFirstPhase extends React.Component {
             </NCItem>
           </If>
         </NCRow>
-        <If condition={non_compliance.phase < 2 && user_role === 'author'}>
+        <If condition={non_compliance.phase < 2 && ['author', 'dep_chief'].includes(user_role)}>
           <NCRow>
             <NCItem>
               <SubmitButton className='btn-info' text='Зберегти' onClick={this.postNonCompliance} />

@@ -53,13 +53,30 @@ def create_author_body(nc_id, address):
     return message.as_string()
 
 
+def create_answer_body(nc_id, address):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Відповідь на коментар щодо акту невідповідності"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = address
+
+    text = 'Ви отримали відповідь на коментар щодо акту невідповідності.' \
+           'Переглянути можна на сторінці http://10.10.10.22/boards/non_compliances/{}' \
+        .format(nc_id)
+
+    message.attach(MIMEText(text, "plain"))
+
+    return message.as_string()
+
+
 def create_and_send_mail(type, recipient_userprofile_id, nc_id):
     if testing:
-        address = 1
+        address = UserProfile.objects.values_list('user__email', flat=True).filter(id=recipient_userprofile_id)[0]
         if type == 'dep_chief':
             body = create_dep_chief_body(nc_id, address)
-        if type == 'decisioner':
+        elif type == 'decisioner':
             body = create_dep_chief_body(nc_id, address)
+        elif type == 'answer':
+            body = create_answer_body(nc_id, address)
         else:
             body = create_author_body(nc_id, address)
-        send_email(address, body)
+        # send_email(address, body)

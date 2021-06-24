@@ -106,17 +106,19 @@ class Non_compliance(models.Model):
     sector = models.CharField(max_length=100)
 
     final_decision = models.CharField(max_length=100, null=True)
-    decision_date = models.DateField(null=True)
+    final_decision_time = models.DateTimeField(null=True)
     responsible = models.ForeignKey(UserProfile, related_name='non_compliances_responsible', on_delete=models.RESTRICT, null=True)
+
     result_of_nc = models.CharField(max_length=100, null=True)
     corrective_action = models.CharField(max_length=100, null=True)
     corrective_action_number = models.CharField(max_length=10, null=True)
     other = models.CharField(max_length=100, null=True)
     retreatment_date = models.DateField(null=True)
-    spent_time = models.CharField(max_length=100, null=True)
+    spent_time = models.CharField(max_length=5, null=True)
     people_involved = models.CharField(max_length=3, null=True)
     quantity_updated = models.CharField(max_length=10, null=True)
     status_updated = models.CharField(max_length=50, null=True)
+    return_date = models.DateField(null=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -147,5 +149,5 @@ class Non_compliance_decision(models.Model):
     user = models.ForeignKey(UserProfile, related_name='non_compliance_decisions', on_delete=models.RESTRICT)
     decision = models.CharField(max_length=50, null=True)
     decision_time = models.DateTimeField(null=True)
-    phase = models.CharField(max_length=1, default='1')
+    phase = models.SmallIntegerField(default=1)
     is_active = models.BooleanField(default=True)

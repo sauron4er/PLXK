@@ -24,14 +24,14 @@ class SelectorWithFilterAndAxios extends React.Component {
   }
 
   render() {
-    const {onChange, fieldName, disabled, classes, value} = this.props;
+    const {onChange, fieldName, disabled, classes, value, selectId} = this.props;
     const {loading, list} = this.state;
-
+  
     return (
       <Choose>
         <When condition={!loading}>
-          <label className={classes + ' full_width'} htmlFor={fieldName}>
-            {fieldName}:
+          <label className={classes + ' full_width'} htmlFor={selectId}>
+            <If condition={fieldName}>{fieldName}:</If>
             <Select
               options={list}
               onChange={onChange}
@@ -57,7 +57,8 @@ class SelectorWithFilterAndAxios extends React.Component {
     onChange: () => {},
     disabled: true,
     classes: {},
-    value: {id: 0, name: ''}
+    value: {id: 0, name: ''},
+    selectId: 'select'
   };
 }
 

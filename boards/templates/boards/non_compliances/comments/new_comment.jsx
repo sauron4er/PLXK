@@ -34,7 +34,9 @@ class NCNewComment extends React.Component {
 
     axiosPostRequest('post_new_comment', formData)
       .then((response) => {
-        nonComplianceStore.non_compliance.comments = response
+        nonComplianceStore.non_compliance.comments = response;
+        nonComplianceStore.non_compliance.new_comment = '';
+        nonComplianceStore.non_compliance.new_comment_files = [];
         this.props.onPostComment();
       })
       .catch((error) => notify(error));

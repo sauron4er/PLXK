@@ -10,6 +10,7 @@ import {ToastContainer} from 'react-toastify';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
+import NCPrint from 'boards/templates/boards/non_compliances/non_compliance/print';
 
 class NonCompliance extends React.Component {
   state = {
@@ -34,6 +35,8 @@ class NonCompliance extends React.Component {
   };
 
   render() {
+    const {phase} = nonComplianceStore.non_compliance;
+    
     return (
       <Choose>
         <When condition={!this.state.loading}>
@@ -49,12 +52,15 @@ class NonCompliance extends React.Component {
                     <h4 className='font-weight-bold text-center'>АКТ НЕВІДПОВІДНОСТІ</h4>
                     <h6 className='text-center'>NON-CONFORMITY REGISTRATION ACT</h6>
                   </div>
-                  <div className='col-md-3'> </div>
+                  <div className='col-md-3'><If condition={phase===4}>
+                    <button className='btn btn-sm btn-outline-dark'>Зберегти в PDF</button>
+                    <NCPrint/>
+                  </If></div>
                 </div>
                 <div className='h-100 overflow-auto'>
                   <NCFirstPhase />
-                  <NCSecondPhase />
-                  <NCThirdPhase />
+                  <If condition={phase > 1}><NCSecondPhase/></If>
+                  <If condition={phase > 2}><NCThirdPhase /></If>
                 </div>
               </div>
             </div>
