@@ -11,11 +11,10 @@ import {isBlankOrZero, notify} from 'templates/components/my_extras';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 
 class NCThirdPhase extends React.Component {
+  
   areThirdPhaseFieldsFilled = () => {
     let fields = {
-      // result_of_nc: 'Невідповідність призводить до',
-      // corrective_action: 'Корегуюча \\ запобіжна дія',
-      // other: 'Інше'
+      corrective_action: 'Корегуюча \\ запобіжна дія',
     };
     
     switch (nonComplianceStore.non_compliance.final_decision) {
@@ -53,7 +52,7 @@ class NCThirdPhase extends React.Component {
         .catch((error) => notify(error));
     }
   };
-
+  
   render() {
     const {non_compliance, onFormChange, user_role} = nonComplianceStore;
     const inputs_disabled = user_role !== 'responsible' || non_compliance.phase !== 3;
@@ -69,16 +68,7 @@ class NCThirdPhase extends React.Component {
           </NCItem>
         </NCRow>
         <NCRow>
-          <NCItem cols='4'>
-            <TextInput
-              fieldName='Невідповідність призводить до'
-              text={non_compliance.result_of_nc}
-              maxLength={100}
-              disabled={inputs_disabled}
-              onChange={(e) => onFormChange(e, 'result_of_nc')}
-            />
-          </NCItem>
-          <NCItem cols='4'>
+          <NCItem cols='9'>
             <TextInput
               fieldName='Корегуюча \ запобіжна дія'
               text={non_compliance.corrective_action}
@@ -87,13 +77,13 @@ class NCThirdPhase extends React.Component {
               onChange={(e) => onFormChange(e, 'corrective_action')}
             />
           </NCItem>
-          <NCItem cols='4'>
+          <NCItem cols='3'>
             <TextInput
-              fieldName='Інше'
-              text={non_compliance.other}
-              maxLength={100}
+              fieldName='N° реєстрації корегуючої \ запобіжної дії'
+              text={non_compliance.corrective_action_number}
+              maxLength={10}
               disabled={inputs_disabled}
-              onChange={(e) => onFormChange(e, 'other')}
+              onChange={(e) => onFormChange(e, 'corrective_action_number')}
             />
           </NCItem>
         </NCRow>
@@ -192,7 +182,7 @@ class NCThirdPhase extends React.Component {
           </When>
         </Choose>
         <NCRow>
-          <NCItem className='text-danger'>УВАГА якщо це повторна поставка товару постачальником, надати 1 накладну на повернення</NCItem>
+          <NCItem className='text-danger'>УВАГА! Якщо це повторна поставка товару постачальником, надати 1 накладну на повернення</NCItem>
         </NCRow>
       </>
     );

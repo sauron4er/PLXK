@@ -117,8 +117,24 @@ def get_dep_chief(userprofile, return_type='userprofile'):
 
 
 @try_except
-def get_director_userprofile_id():
+def get_director_userprofile(return_type=''):
     director = Employee_Seat.objects.values_list('id', flat=True).filter(seat=16).filter(is_active=True)[0]
     active_director = vacation_check(director)
-    director_userprofile = Employee_Seat.objects.values_list('employee__id', flat=True).filter(id=active_director)[0]
-    return director_userprofile
+    if return_type == 'id':
+        id = Employee_Seat.objects.values_list('employee__id', flat=True).filter(id=active_director)[0]
+        return id
+    else:
+        name = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=active_director)[0]
+        seat = Employee_Seat.objects.values_list('seat__seat', flat=True).filter(id=active_director)[0]
+        name_seat = name + ', ' + seat
+        return name_seat
+
+
+@try_except
+def get_quality_director(return_type=''):
+    qd = Employee_Seat.objects.values_list('id', flat=True).filter(seat=42).filter(is_active=True)[0]
+    active_qd = vacation_check(qd)
+    if return_type == 'name':
+        name = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=active_qd)[0]
+        return name
+    return ''

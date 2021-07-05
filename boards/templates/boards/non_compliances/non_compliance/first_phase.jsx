@@ -130,18 +130,6 @@ class NCFirstPhase extends React.Component {
     this.setState({decisions_choose_modal_open: false});
   };
 
-  getNcPercentage = () => {
-    const {total_quantity, nc_quantity} = nonComplianceStore.non_compliance;
-    let percentage = '';
-
-    if (nc_quantity && total_quantity) {
-      percentage =
-        (parseInt(nonComplianceStore.non_compliance.nc_quantity) / parseInt(nonComplianceStore.non_compliance.total_quantity)) * 100;
-      percentage = +percentage.toFixed(1);
-    }
-    return percentage;
-  };
-
   onAcquaintsChange = (list) => {
     nonComplianceStore.non_compliance.decisions = list;
   };
@@ -257,7 +245,7 @@ class NCFirstPhase extends React.Component {
             <div className='text-center'>
               <small>% невідп.</small>
             </div>
-            <h4 className='text-center'>{this.getNcPercentage()}</h4>
+            <h4 className='text-center'>{nonComplianceStore.getNcPercentage()}</h4>
             <div></div>
           </NCItem>
           <NCItem cols='2'>
@@ -285,7 +273,7 @@ class NCFirstPhase extends React.Component {
             <TextInput
               fieldName='Причина невідповідності'
               text={non_compliance.reason}
-              maxLength={1000}
+              maxLength={300}
               disabled={!editable}
               onChange={(e) => onFormChange(e, 'reason')}
             />

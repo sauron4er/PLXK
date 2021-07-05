@@ -10,11 +10,14 @@ import {ToastContainer} from 'react-toastify';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
-import NCPrint from 'boards/templates/boards/non_compliances/non_compliance/print';
+import NCPrint from "boards/templates/boards/non_compliances/print/print";
+import NCPDF from 'boards/templates/boards/non_compliances/non_compliance/pdf';
+import Modal from 'react-responsive-modal';
 
 class NonCompliance extends React.Component {
   state = {
-    loading: false
+    loading: false,
+    pdf_modal_open: false
   };
 
   componentDidMount() {
@@ -34,9 +37,18 @@ class NonCompliance extends React.Component {
       .catch((error) => notify(error));
   };
 
+  openModal = () => {
+    this.setState({pdf_modal_open: true});
+  };
+
+  onCloseModal = () => {
+    this.setState({pdf_modal_open: false});
+  };
+
   render() {
     const {phase} = nonComplianceStore.non_compliance;
-    
+    const {pdf_modal_open} = this.state;
+  
     return (
       <Choose>
         <When condition={!this.state.loading}>
@@ -52,15 +64,20 @@ class NonCompliance extends React.Component {
                     <h4 className='font-weight-bold text-center'>АКТ НЕВІДПОВІДНОСТІ</h4>
                     <h6 className='text-center'>NON-CONFORMITY REGISTRATION ACT</h6>
                   </div>
-                  <div className='col-md-3'><If condition={phase===4}>
-                    <button className='btn btn-sm btn-outline-dark'>Зберегти в PDF</button>
-                    <NCPrint/>
-                  </If></div>
+                  <div className='col-md-3'>
+                    <If condition={phase === 4}>
+                      <NCPrint />
+                    </If>
+                  </div>
                 </div>
                 <div className='h-100 overflow-auto'>
                   <NCFirstPhase />
-                  <If condition={phase > 1}><NCSecondPhase/></If>
-                  <If condition={phase > 2}><NCThirdPhase /></If>
+                  <If condition={phase > 1}>
+                    <NCSecondPhase />
+                  </If>
+                  <If condition={phase > 2}>
+                    <NCThirdPhase />
+                  </If>
                 </div>
               </div>
             </div>
@@ -68,6 +85,18 @@ class NonCompliance extends React.Component {
               <NCComments />
             </div>
           </div>
+
+          <Modal
+            open={pdf_modal_open}
+            onClose={this.onCloseModal}
+            showCloseIcon={false}
+            closeOnOverlayClick={true}
+            styles={{modal: {marginTop: 50, width: '100%', height: '95%'}}}
+          >
+            <NCPDF />
+            <NCPrint/>
+          </Modal>
+          
           {/*Вспливаюче повідомлення*/}
           <ToastContainer />
         </When>

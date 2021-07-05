@@ -10,7 +10,7 @@ from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
-from plxk.api.global_getters import get_dep_chief, get_director_userprofile_id
+from plxk.api.global_getters import get_dep_chief, get_director_userprofile, get_quality_director
 from plxk.api.pagination import sort_query_set, filter_query_set
 from .models import Non_compliance, Non_compliance_file, \
     Non_compliance_comment, Non_compliance_comment_file, Non_compliance_decision
@@ -98,20 +98,20 @@ def get_non_compliance(request, pk):
             'phase': decision.phase
         } for decision in Non_compliance_decision.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
 
+        'final_decisioner': get_director_userprofile(),
         'final_decision': nc_instance.final_decision or '',
-        'final_decision_time': convert_to_localtime(nc_instance.final_decision_time, 'time') if nc_instance.final_decision_time else '',
+        'final_decision_time': convert_to_localtime(nc_instance.final_decision_time, 'day') if nc_instance.final_decision_time else '',
         'responsible': nc_instance.responsible.id if nc_instance.responsible else 0,
         'responsible_name': nc_instance.responsible.pip if nc_instance.responsible else '',
-        'result_of_nc': nc_instance.result_of_nc or '',
         'corrective_action': nc_instance.corrective_action or '',
         'corrective_action_number': nc_instance.corrective_action_number or '',
-        'other': nc_instance.other or '',
         'retreatment_date': date_to_json(nc_instance.retreatment_date) if nc_instance.retreatment_date else '',
         'spent_time': nc_instance.spent_time or '',
         'people_involved': nc_instance.people_involved or '',
         'quantity_updated': nc_instance.quantity_updated or '',
         'status_updated': nc_instance.status_updated or '',
-        'return_date': nc_instance.return_date or '',
+        'return_date': date_to_json(nc_instance.return_date) or '',
+        'quality_director_name': get_quality_director('name'),
 
         'comments': get_comments(pk)
     }
@@ -123,7 +123,7 @@ def get_non_compliance(request, pk):
         user_role = 'author'
     elif get_dep_chief(nc_instance.author) == request.user.userprofile:
         user_role = 'dep_chief'
-    elif get_director_userprofile_id() == request.user.userprofile.id:
+    elif get_director_userprofile('id') == request.user.userprofile.id:
         user_role = 'director'
 
     return HttpResponse(json.dumps({'non_compliance': nc, 'user_role': user_role}))
@@ -193,7 +193,7 @@ def dep_chief_approval(request):
         nc.phase = 2
         nc.save()
 
-        director_id = get_director_userprofile_id()
+        director_id = get_director_userprofile('id')
         new_decision = Non_compliance_decision(non_compliance=nc, user_id=director_id, phase=2)
         new_decision.save()
 
@@ -277,7 +277,7 @@ def post_decision(request):
                 .filter(phase=2)\
                 .filter(is_active=True)
             if not director_decided:
-                create_and_send_mail('decisioner', get_director_userprofile_id(), decision_instance.non_compliance_id)
+                create_and_send_mail('decisioner', get_director_userprofile('id'), decision_instance.non_compliance_id)
 
     else:  # phase = 2 - рішення директора
         nc_instance = get_object_or_404(Non_compliance, pk=request.POST['nc_id'])
@@ -319,6 +319,10 @@ def get_comments(nc_id):
 def done(request):
     data = json.loads(request.POST.copy()['non_compliance'])
     nc = get_object_or_404(Non_compliance, pk=data['id'])
+
+    nc.corrective_action = data['corrective_action']
+    if data['corrective_action_number'] != '':
+        nc.corrective_action_number = data['corrective_action_number']
 
     if data['final_decision'] == 'Переробка':
         nc.retreatment_date = data['retreatment_date']

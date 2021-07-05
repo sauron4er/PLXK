@@ -153,3 +153,9 @@
 .css_org_structure_chief:hover {
   background-color: #e6e9ec;
 }
+
+@media print {
+  .PrintSection{
+    padding: 10px !important;
+  }
+}
