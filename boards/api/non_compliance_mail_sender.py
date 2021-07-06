@@ -69,7 +69,7 @@ def create_answer_body(nc_id, address):
 
 
 def create_and_send_mail(type, recipient_userprofile_id, nc_id):
-    if testing:
+    if not testing:
         address = UserProfile.objects.values_list('user__email', flat=True).filter(id=recipient_userprofile_id)[0]
         if type == 'dep_chief':
             body = create_dep_chief_body(nc_id, address)
@@ -79,4 +79,4 @@ def create_and_send_mail(type, recipient_userprofile_id, nc_id):
             body = create_answer_body(nc_id, address)
         else:
             body = create_author_body(nc_id, address)
-        # send_email(address, body)
+        send_email(address, body)

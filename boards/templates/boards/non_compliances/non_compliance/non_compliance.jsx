@@ -11,7 +11,6 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import NCPrint from "boards/templates/boards/non_compliances/print/print";
-import NCPDF from 'boards/templates/boards/non_compliances/non_compliance/pdf';
 import Modal from 'react-responsive-modal';
 
 class NonCompliance extends React.Component {
@@ -93,7 +92,6 @@ class NonCompliance extends React.Component {
             closeOnOverlayClick={true}
             styles={{modal: {marginTop: 50, width: '100%', height: '95%'}}}
           >
-            <NCPDF />
             <NCPrint/>
           </Modal>
           
