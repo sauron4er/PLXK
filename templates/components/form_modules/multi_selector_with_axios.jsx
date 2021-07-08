@@ -5,9 +5,7 @@ import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {getIndex, getItemById, notify, uniqueArray} from 'templates/components/my_extras';
 import {LoaderSmall} from 'templates/components/loaders';
-import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance_store';
 import Select from 'react-select';
-import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class MultiSelectorWithAxios extends React.Component {
   state = {

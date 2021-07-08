@@ -266,7 +266,7 @@ class DxTable extends React.PureComponent {
     const {height, columns, changeSorting, changeFiltering, colWidth, filters} = this.props;
 
     const table_height = height ? height : 750;
-
+  
     return (
       <Grid
         rows={rows}
@@ -281,7 +281,7 @@ class DxTable extends React.PureComponent {
         <SelectionState />
         
         <IntegratedSelection />
-
+        
         <VirtualTable
           cellComponent={this.CellComponent}
           rowComponent={this.TableRow}
@@ -289,13 +289,13 @@ class DxTable extends React.PureComponent {
           messages={{noData: 'Немає даних'}}
           height={table_height}
         />
-
+        
         <TableHeaderRow
           cellComponent={this.HeaderCellComponent}
           showSortingControls
           messages={{sortingHint: 'Сортувати'}}
         />
-
+        
         <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} cellComponent={this.FilterCellComponent} />
       </Grid>
     );

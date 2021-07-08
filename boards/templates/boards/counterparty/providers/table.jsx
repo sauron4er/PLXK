@@ -1,6 +1,5 @@
 'use strict';
 import * as React from 'react';
-import DxTable from 'templates/components/tables/dx_table';
 import PaginatedTable from 'templates/components/tables/paginated_table';
 
 const columns = [
@@ -47,7 +46,7 @@ class ProvidersTable extends React.Component {
     return (
       <div ref={this.getMainDivRef}>
         <div className='form-check'>
-          <input className='form-check-input' type='checkbox' value='' id='only_wood' checked={only_wood} onClick={this.changeOnlyWood} />
+          <input className='form-check-input' type='checkbox' value='' id='only_wood' checked={only_wood} onChange={this.changeOnlyWood} />
           <label className='form-check-label' htmlFor='only_wood'>
             Тільки лісосировина
           </label>

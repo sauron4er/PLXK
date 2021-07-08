@@ -259,7 +259,7 @@ class NCFirstPhase extends React.Component {
           </NCItem>
           <NCItem cols='3'>
             <SelectorWithFilterAndAxios
-              listNameForUrl='providers'
+              listNameForUrl='providers_list'
               fieldName='Постачальник'
               selectId='provider_select'
               value={{name: non_compliance.provider_name, id: non_compliance.provider}}

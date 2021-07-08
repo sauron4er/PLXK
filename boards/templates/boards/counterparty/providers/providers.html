@@ -5,7 +5,11 @@
 
 {% block second_nav %}{% endblock %}
 {% block content %}
+{#    {{ user.userprofile.id|json_script:"user_id" }}#}
+    {{ user.userprofile.department.name|json_script:"department_name" }}
     <script>
+        {#const user_id = JSON.parse(document.getElementById('user_id').textContent);#}
+        const department_name = JSON.parse(document.getElementById('department_name').textContent);
         window.products_list = {{ products_list|safe }};
         window.edit_access = {{ edit_access|safe }};
     </script>

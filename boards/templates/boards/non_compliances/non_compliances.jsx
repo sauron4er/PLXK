@@ -72,7 +72,8 @@ class NonCompliances extends React.Component {
   }
 
   static defaultProps = {
-    counterparty_id: 0
+    counterparty_id: 0,
+    counterparty_name: ''
   };
 }
 

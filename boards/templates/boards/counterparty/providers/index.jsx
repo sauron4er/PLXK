@@ -37,7 +37,7 @@ class ProvidersIndex extends React.Component {
 
   render() {
     const {view, counterparty_id, only_wood} = this.state;
-
+  
     return (
       <Choose>
         <When condition={view === 'table'}>
