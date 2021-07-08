@@ -14,7 +14,7 @@ class Counterparty extends React.Component {
   };
 
   componentDidMount() {
-    axiosGetRequest('get_counterparties_for_select/')
+    axiosGetRequest('get_counterparties/')
       .then((response) => {
         this.setState(
           {
@@ -30,8 +30,8 @@ class Counterparty extends React.Component {
   }
 
   onSelectChange = (e) => {
-    newDocStore.new_document.counterparty = e.value;
-    newDocStore.new_document.counterparty_name = e.label;
+    newDocStore.new_document.counterparty = e.id;
+    newDocStore.new_document.counterparty_name = e.name;
   };
 
   filterCounterparties = (type) => {
@@ -67,7 +67,7 @@ class Counterparty extends React.Component {
           <If condition={module_info.required}>{'* '}</If>
           {module_info.field_name}:
         </label>
-        <br/>
+        <br />
         <If condition={!from_base_area}>
           <textarea
             className='form-control full_width'
@@ -117,7 +117,13 @@ class Counterparty extends React.Component {
             Клієнт
           </label>
 
-          <Select options={filtered_counterparties} onChange={this.onSelectChange} />
+          <Select
+            options={filtered_counterparties}
+            onChange={this.onSelectChange}
+            value={{name: newDocStore.new_document.counterparty_name, id: newDocStore.new_document.counterparty}}
+            getOptionLabel={(option) => option.name}
+            getOptionValue={(option) => option.id}
+          />
 
           <small>
             Якщо потрібного контрагента нема в списку, його можна додати на сторінці{' '}

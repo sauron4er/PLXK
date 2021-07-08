@@ -10,7 +10,7 @@ class TextInput extends React.Component {
   
     return (
       <Choose>
-        <When condition={type==='dimensions'}>
+        <When condition={type==='dimensions' || type==='number'}>
           <label className={className + ' full_width'} htmlFor={fieldName}>
             <If condition={fieldName !== '-'}>{fieldName}:</If>
             <input

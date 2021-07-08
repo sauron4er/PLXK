@@ -1,0 +1,17 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}Акти невідповідності{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+{% block content %}
+    {{ user.userprofile.id|json_script:"user_id" }}
+    {{ user.userprofile.department.name|json_script:"department_name" }}
+    <script>
+      const user_id = JSON.parse(document.getElementById('user_id').textContent);
+      const department_name = JSON.parse(document.getElementById('department_name').textContent);
+    </script>
+    <div class="container-fluid px-3" id="non_compliances">
+      <div id="bundle">{% render_bundle 'boards' %}</div>
+    </div>
+{% endblock %}

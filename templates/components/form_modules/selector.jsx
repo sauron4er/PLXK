@@ -3,14 +3,14 @@ import * as React from 'react';
 
 class Selector extends React.Component {
   render() {
-    const {list, selectedName, valueField, onChange, fieldName, disabled, classes} = this.props;
+    const {list, selectedName, valueField, onChange, fieldName, disabled, classes, selectId} = this.props;
   
     return (
-      <label className={classes + ' full_width'} htmlFor={fieldName}>
-        {fieldName}:
+      <label className={classes + ' full_width'} htmlFor={selectId}>
+        <If condition={fieldName}>{fieldName}:</If>
         <select
           className='form-control full_width'
-          id={fieldName}
+          id={selectId}
           name={fieldName}
           value={selectedName}
           onChange={onChange}
@@ -38,7 +38,8 @@ class Selector extends React.Component {
     selectedName: '',
     onChange: () => {},
     disabled: true,
-    classes: {}
+    classes: {},
+    selectId: 'select'
   };
 }
 

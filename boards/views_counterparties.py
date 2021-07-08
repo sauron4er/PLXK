@@ -386,12 +386,16 @@ def get_clients_for_product_type(request, product_type='0'):
 
 
 @try_except
-def get_counterparties(request):
+def get_counterparties(request, cp_type=''):
     counterparties = Counterparty.objects.all().filter(is_active=True).order_by('name')
+
+    if cp_type != '':
+        counterparties = counterparties.filter(is_provider=(cp_type == 'providers'))
 
     counterparties_list = [{
         'id': counterparty.pk,
-        'name': counterparty.name
+        'name': get_counterparty_name_with_country(counterparty),
+        'type': 'provider' if counterparty.is_provider else 'client'
     } for counterparty in counterparties]
     return HttpResponse(json.dumps(counterparties_list))
 

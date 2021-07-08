@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views, views_org_structure, views_counterparties
+from . import views, views_org_structure, views_counterparties, views_non_compliances
 from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, \
     get_simple_contracts_list, add_contract
 from correspondence.views import get_correspondence, get_correspondence_info, get_request
@@ -59,4 +59,13 @@ urlpatterns = [
     url(r'^clients/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
     url(r'^clients/mark/', edms_mark, name='my_docs_mark'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
+
+    url(r'^non_compliances/get_non_compliances/(?P<page>\d+)/$', views_non_compliances.get_non_compliances, name='get_non_compliances'),
+    url(r'^non_compliances/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
+    url(r'^non_compliances/post_non_compliance', views_non_compliances.post_non_compliance, name='post_non_compliance'),
+    url(r'^non_compliances/dep_chief_approval', views_non_compliances.dep_chief_approval, name='dep_chief_approval'),
+    url(r'^non_compliances/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
+    url(r'^non_compliances/post_decision', views_non_compliances.post_decision, name='post_decision'),
+    url(r'^non_compliances/done', views_non_compliances.done, name='done'),
+    url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 ]

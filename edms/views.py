@@ -419,6 +419,7 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
             'id': empSeat.pk,
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
             'emp': empSeat.employee.pip,
+            'name': empSeat.employee.pip + ', ' + (empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)'),
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee')
                 .filter(employee__is_pc_user=True)

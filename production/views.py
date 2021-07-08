@@ -8,7 +8,7 @@ from production.api.getters import *
 
 
 @try_except
-def get_products(request, direction):
+def get_products(request, direction=''):
     return HttpResponse(json.dumps(get_products_list(direction)))
 
 

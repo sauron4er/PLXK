@@ -94,7 +94,7 @@ export const getIndexByProperty = (list, key, value) => {
 
 export const getItemById = (id, list) => {
   for (let i = 0; i < list.length; i++) {
-    if (list[i].id === parseInt(id)) {
+    if (parseInt(list[i].id) === parseInt(id)) {
       return list[i];
     }
   }

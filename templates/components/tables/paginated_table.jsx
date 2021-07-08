@@ -89,7 +89,7 @@ class PaginatedTable extends React.Component {
       currentPage: page,
       totalPages: pagesCount
     };
-
+  
     return (
       <Paper className='mt-2' style={{height: paper_height ? paper_height : '100%', width: '99%'}}>
         <Choose>
