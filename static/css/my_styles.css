@@ -154,6 +154,12 @@
   background-color: #e6e9ec;
 }
 
+@media print {
+  .PrintSection{
+    padding: 10px !important;
+  }
+}
+
 .css_additional_modal {
   max-width: 500px;
   width: 100%;
