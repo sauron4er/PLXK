@@ -328,6 +328,13 @@ class Doc_Law(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Посилання на інший документ
+class Doc_Doc_Link(models.Model):
+    document = models.ForeignKey(Document, related_name='doc_links', on_delete=models.RESTRICT)
+    document_link = models.ForeignKey('self', related_name='links_for', null=True, blank=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
 # Вимоги клієнта
 class Client_Requirements(models.Model):
     document = models.ForeignKey(Document, related_name='client_requirements', on_delete=models.RESTRICT)

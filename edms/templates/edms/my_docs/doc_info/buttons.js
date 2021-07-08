@@ -15,7 +15,7 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-
+  
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -99,12 +99,6 @@ class Buttons extends React.Component {
         </If>
 
         <If condition={info.user_is_super_manager}>
-          {/*<If condition={info?.stage === null}>*/}
-          {/*  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>*/}
-          {/*    Взяти в роботу*/}
-          {/*  </button>*/}
-          {/*</If>*/}
-          {/*<If condition={true}>*/}
           <If condition={!['done', 'confirm', 'denied'].includes(info?.stage)}>
             <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>
               Виконано
@@ -119,6 +113,13 @@ class Buttons extends React.Component {
               </button>
             </If>
           </If>
+        </If>
+        
+        {/*Якщо це погоджений тендер, додаємо кнопку "Створити договір"*/}
+        <If condition={info.meta_type_id === 9 && info.approved}>
+          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => (docInfoStore.view = 'new_contract')} disabled={button_clicked}>
+            Створити Договір
+          </button>
         </If>
 
         {/*Якщо автор я - нова перевірка по ід користувача, а не людинопосади*/}

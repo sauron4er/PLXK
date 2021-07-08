@@ -2,6 +2,8 @@ import {store} from '@risingstack/react-easy-state';
 
 const newDocStore = store({
   mockup_type_loading: true,
+  additional_modal_opened: false,
+  additional_modal_content: '',
   new_document: {
     doc_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
     text: [],
@@ -262,7 +264,7 @@ const newDocStore = store({
   },
   addBlankAdditionalRequirement: () => {
     newDocStore.new_document.client_requirements.additional_requirements.push({id: 0, name: '', requirement: ''})
-  }
+  },
 });
 
 export default newDocStore;

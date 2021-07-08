@@ -27,7 +27,6 @@ import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
 import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
-import { Loader } from "templates/components/loaders";
 
 class Document extends React.Component {
   state = {
@@ -138,10 +137,11 @@ class Document extends React.Component {
     axiosPostRequest('mark/', formData)
       .then((response) => {
         if (opened_in_modal) location.reload();
-
+  
         if (response === 'not deletable') {
           notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else {
+          
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response,
@@ -178,11 +178,9 @@ class Document extends React.Component {
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
     } else if ([3, 5].includes(mark_id) && this.state.comment === '') {
       this.openModal(mark_id);
-    } else if (mark_id === 17 && this.state.comment !== '') {
-      // Віза з коментарем: признак відмови при натисканні візи
+    } else if (mark_id === 17 && this.state.comment !== '') { // Віза з коментарем: признак відмови при натисканні візи
       this.openModal(mark_id);
-    } else if (mark_id === 25) {
-      // Вікно делегування
+    } else if (mark_id === 25) { // Вікно делегування
       this.openModal(mark_id);
     } else {
       this.postMark(mark_id);
@@ -201,8 +199,7 @@ class Document extends React.Component {
 
   openModal = (mark_id) => {
     switch (mark_id) {
-      case 3:
-      case 5:
+      case 3: case 5:
         this.setState({
           modal: <RefusalComment onSubmit={(comment) => this.handleComment(comment, mark_id)} onCloseModal={this.onCloseModal} />,
           modal_open: true
@@ -261,13 +258,7 @@ class Document extends React.Component {
         break;
       case 25:
         this.setState({
-          modal: (
-            <ApprovalDelegation
-              directSubs={this.props.directSubs}
-              onCloseModal={this.onCloseModal}
-              onSubmit={() => this.handleSimpleModalSubmit(25)}
-            />
-          ),
+          modal: <ApprovalDelegation directSubs={this.props.directSubs} onCloseModal={this.onCloseModal} onSubmit={() => this.handleSimpleModalSubmit(25)} />,
           modal_open: true
         });
         break;
@@ -309,7 +300,7 @@ class Document extends React.Component {
       this.onCloseModal();
     });
   };
-
+  
   handleSimpleModalSubmit = (mark) => {
     this.postMark(mark);
     this.onCloseModal();
@@ -339,148 +330,141 @@ class Document extends React.Component {
   render() {
     const {doc_id, archived, directSubs} = this.props;
     const {ready_for_render} = this.state;
-    const {info, deletable, comment, new_files, modal_open, modal} = this.state;
-
-    if (doc_id !== 0) {
-    } else if (doc_id === 0) {
-      //  // повідомлення при додаванні позначки
-      return <div className='font-italic'>{docInfoStore.answer}</div>;
-    } else {
-      // якщо не вибрано жоден документ
-      return <div> </div>;
-    }
-
-    return (
-      <Choose>
-        <When condition={ready_for_render}>
+  
+    if (ready_for_render === true) {
+      if (doc_id !== 0) {
+        const {info, deletable, comment, new_files, modal_open, modal} = this.state;
+  
+        return (
           <Choose>
-            <When condition={doc_id === 0}>
-              <div className='font-italic'>{docInfoStore.answer}</div>
-            </When>
-            <When condition={doc_id !== 0}>
-              <Choose>
-                <When condition={info.access_granted}>
-                  <div className='css_main'>
-                    <div className='d-flex justify-content-between mr-2'>
-                      <div>
-                        <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc_id}</small>
-                        <div>Обраний документ:</div>
-                      </div>
-                      <div>
-                        <DocumentPrint info={info} />
-                      </div>
-                    </div>
-
-                    {/*Початкова інфа про документ:*/}
-                    <div className='css_border bg-light p-2 mt-2 mr-1'>
-                      <Info info={info} />
-                    </div>
-
-                    {/*<If condition={archived === false}>*/}
-                    <div className='mt-3'>Відреагувати:</div>
-                    <div className='css_border bg-light p-2 mt-1 mr-1'>
-                      <Buttons
-                        info={info}
-                        archived={archived}
-                        isChief={directSubs.length > 0}
-                        deletable={deletable}
-                        onClick={this.onButtonClick}
-                      />
-                      <div>
-                        <label htmlFor='comment'>Текст коментарю:</label>
-                        <textarea name='comment' className='form-control' rows='3' id='comment' onChange={this.onChange} value={comment} />
-                      </div>
-                      <hr />
-                      <Files
-                        ref='new_files'
-                        className='btn btn-sm btn-outline-secondary'
-                        // className='files-dropzone-list'
-                        onChange={this.onNewFiles}
-                        onError={this.onFilesError}
-                        multiple
-                        maxFiles={10}
-                        maxFileSize={10000000}
-                        minFileSize={0}
-                        clickable
-                      >
-                        Обрати файл(и)
-                      </Files>
-                      <If condition={new_files.length > 0}>
-                        <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
-                      </If>
-                    </div>
-                    {/*</If>*/}
-
-                    {/*У кого документ на черзі*/}
-                    <If condition={info.flow}>
-                      <Flow flow={info.flow} />
-                    </If>
-
-                    {/*У кого документ на ознайомленні*/}
-                    <If condition={info.acquaints}>
-                      <Acquaints acquaints={info.acquaints} />
-                    </If>
-
-                    {/*Історія документа*/}
-                    <Path path={info.path} onAnswerClick={this.onAnswerClick} />
-
-                    {/*Модальне вікно*/}
-                    <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
-                      <ToastContainer />
-                      {modal}
-                    </Modal>
-
-                    <If condition={docInfoStore.view === 'new_document'}>
-                      <NewDocument
-                        doc={{
-                          id: docInfoStore.info.id,
-                          type: docInfoStore.info.type,
-                          type_id: docInfoStore.info.type_id
-                        }}
-                        addDoc={this.addDoc}
-                        status={'change'}
-                        onCloseModal={() => (docInfoStore.view = 'info')}
-                      />
-                    </If>
-
-                    <If condition={docInfoStore.view === 'new_contract'}>
-                      <NewDocument
-                        doc={{
-                          id: 0,
-                          type: 'Договір',
-                          type_id: 0,
-                          meta_type_id: 5, // Таблиця візування договору
-                          document_link: info.id,
-                          main_field: info.main_field
-                        }}
-                        addDoc={this.addDoc}
-                        status={'doc'}
-                        onCloseModal={() => (docInfoStore.view = 'info')}
-                      />
-                    </If>
-
-                    {/*Вспливаюче повідомлення*/}
-                    <ToastContainer />
-                  </div>
-                </When>
-                <Otherwise>
-                  <div>Документ № {doc_id}</div>
+            <When condition={info.access_granted}>
+              <div className='css_main'>
+                <div className='d-flex justify-content-between mr-2'>
                   <div>
-                    У вас немає доступу до цього документа. Зверніться до його автора, щоб він відправив вам цей документ на ознайомлення
+                    <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc_id}</small>
+                    <div>Обраний документ:</div>
                   </div>
-                </Otherwise>
-              </Choose>
+                  <div>
+                    <DocumentPrint info={info} />
+                  </div>
+                </div>
+
+                {/*Початкова інфа про документ:*/}
+                <div className='css_border bg-light p-2 mt-2 mr-1'>
+                  <Info info={info} />
+                </div>
+
+                {/*<If condition={archived === false}>*/}
+                <div className='mt-3'>Відреагувати:</div>
+                <div className='css_border bg-light p-2 mt-1 mr-1'>
+                  <Buttons
+                    info={info}
+                    archived={archived}
+                    isChief={directSubs.length > 0}
+                    deletable={deletable}
+                    onClick={this.onButtonClick}
+                  />
+                  <div>
+                    <label htmlFor='comment'>Текст коментарю:</label>
+                    <textarea name='comment' className='form-control' rows='3' id='comment' onChange={this.onChange} value={comment} />
+                  </div>
+                  <hr />
+                  <Files
+                    ref='new_files'
+                    className='btn btn-sm btn-outline-secondary'
+                    // className='files-dropzone-list'
+                    onChange={this.onNewFiles}
+                    onError={this.onFilesError}
+                    multiple
+                    maxFiles={10}
+                    maxFileSize={10000000}
+                    minFileSize={0}
+                    clickable
+                  >
+                    Обрати файл(и)
+                  </Files>
+                  <If condition={new_files.length > 0}>
+                    <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
+                  </If>
+                </div>
+                {/*</If>*/}
+
+                {/*У кого документ на черзі*/}
+                <If condition={info.flow}>
+                  <Flow flow={info.flow} />
+                </If>
+
+                {/*У кого документ на ознайомленні*/}
+                <If condition={info.acquaints}>
+                  <Acquaints acquaints={info.acquaints} />
+                </If>
+
+                {/*Історія документа*/}
+                <Path path={info.path} onAnswerClick={this.onAnswerClick} />
+
+                {/*Модальне вікно*/}
+                <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
+                  <ToastContainer />
+                  {modal}
+                </Modal>
+
+                <If condition={docInfoStore.view === 'new_document'}>
+                  <NewDocument
+                    doc={{
+                      id: docInfoStore.info.id,
+                      type: docInfoStore.info.type,
+                      type_id: docInfoStore.info.type_id
+                    }}
+                    addDoc={this.addDoc}
+                    status={'change'}
+                    onCloseModal={() => (docInfoStore.view = 'info')}
+                  />
+                </If>
+                
+                <If condition={docInfoStore.view === 'new_contract'}>
+                  <NewDocument
+                    doc={{
+                      id: 0,
+                      type: 'Договір',
+                      type_id: 0,
+                      meta_type_id: 5, // Таблиця візування договору
+                      document_link: info.id,
+                      main_field: info.main_field
+                    }}
+                    addDoc={this.addDoc}
+                    status={'doc'}
+                    onCloseModal={() => (docInfoStore.view = 'info')}
+                  />
+                </If>
+
+                {/*Вспливаюче повідомлення*/}
+                <ToastContainer />
+              </div>
             </When>
             <Otherwise>
-              <div> </div>
+              <div>Документ № {doc_id}</div>
+              <div>
+                У вас немає доступу до цього документа. Зверніться до його автора, щоб він відправив вам цей документ на ознайомлення
+              </div>
             </Otherwise>
           </Choose>
-        </When>
-        <Otherwise>
-          <Loader/>
-        </Otherwise>
-      </Choose>
-    );
+        );
+      } else if (doc_id === 0) {
+        //  // повідомлення при додаванні позначки
+        return <div className='font-italic'>{docInfoStore.answer}</div>;
+      } else {
+        // якщо не вибрано жоден документ
+        return <div> </div>;
+      }
+    } else {
+      return (
+        <div className='css_loader'>
+          <div className='loader' id='loader-1'>
+            {' '}
+          </div>
+        </div>
+      );
+    }
   }
 
   static defaultProps = {
@@ -489,7 +473,7 @@ class Document extends React.Component {
     directSubs: [],
     removeRow: () => {},
     archived: false,
-    opened_in_modal: false
+    opened_in_modal: false,
   };
 }
 

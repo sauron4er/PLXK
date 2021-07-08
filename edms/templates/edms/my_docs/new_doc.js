@@ -30,7 +30,8 @@ class NewDoc extends React.Component {
     const doc = {
       id: 0,
       type: new_doc_type,
-      type_id: new_doc_type_id
+      type_id: new_doc_type_id,
+      meta_type_id: 0
     };
     return (
       <>

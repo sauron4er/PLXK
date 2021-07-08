@@ -147,6 +147,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'client_requirements' in doc_modules:
             post_client_requirements(new_doc, doc_modules['client_requirements'])
 
+        if 'document_link' in doc_modules:
+            post_document_link(doc_request, doc_modules['document_link'])
+
         return recipients
     except ValidationError as err:
         raise err
@@ -484,7 +487,8 @@ def edms_get_doc(request, pk):
             'date': convert_to_localtime(doc.path.values_list('timestamp', flat=True).filter(mark_id__in=[1, 16, 19])[0], 'day'),
             'is_changeable': doc.document_type.is_changeable,
             'approved': doc.approved,
-            'archived': not doc.is_active
+            'archived': not doc.is_active,
+            'main_field': get_main_field(doc)
         }
 
         if request.POST.get('employee_seat'):
@@ -699,20 +703,24 @@ def edms_my_docs(request):
 
 
 @login_required(login_url='login')
-def edms_get_doc_type_modules(request, pk):
+def edms_get_doc_type_modules(request, meta_type_id, type_id):
     if request.method == 'GET':
-        doc_type = get_object_or_404(Document_Type, pk=pk)
+        if meta_type_id != '0':
+            doc_type = get_object_or_404(Document_Type, meta_doc_type_id=meta_type_id, is_active=True)
+        else:
+            doc_type = get_object_or_404(Document_Type, pk=type_id)
         doc_type_modules = get_doc_type_modules(doc_type)
         main_field_queue = Document_Type_Module.objects.values_list('queue', flat=True)\
             .filter(document_type=doc_type)\
             .filter(is_main_field=True)\
             .filter(is_active=True)[0]
-        auto_recipients = get_auto_recipients(pk)
+        auto_recipients = get_auto_recipients(type_id)
 
         response = {
             'doc_type_modules': doc_type_modules,
             'main_field_queue': main_field_queue,
-            'auto_recipients': auto_recipients
+            'auto_recipients': auto_recipients,
+            'doc_type_id': doc_type.pk
         }
         return HttpResponse(json.dumps(response))
 

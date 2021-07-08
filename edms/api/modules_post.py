@@ -239,6 +239,18 @@ def post_contract(doc_request, contract_id):
 
 
 @try_except
+def post_document_link(doc_request, document_id):
+    if document_id != 0:
+        a=1
+        # doc_request.update({'contract_id': contract_id})
+        # contract_form = NewDocContractForm(doc_request)
+        # if contract_form.is_valid():
+        #     contract_form.save()
+        # else:
+        #     raise ValidationError('post_modules/post_client/client_form invalid')
+
+
+@try_except
 def post_company(new_doc, company):
     new_doc.company = company
     new_doc.save()
