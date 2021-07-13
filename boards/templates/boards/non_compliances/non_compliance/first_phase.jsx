@@ -143,7 +143,7 @@ class NCFirstPhase extends React.Component {
         <NCRow>
           <div className='col-lg-9 align-content-start p-0'>
             <NCRow>
-              <NCItem cols='3' className='d-flex'>
+              <NCItem cols='4' className='d-flex'>
                 <DateInput
                   fieldName='Дата'
                   date={non_compliance.date_added}
@@ -160,7 +160,7 @@ class NCFirstPhase extends React.Component {
                   onChange={(e) => onFormChange(e, 'name')}
                 />
               </NCItem>
-              <NCItem cols='5'>
+              <NCItem cols='4'>
                 Пірозділ-ініціатор:
                 <div className='font-weight-bold'>{non_compliance.department_name}</div>
               </NCItem>

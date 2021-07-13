@@ -60,7 +60,7 @@ const nonComplianceStore = store({
       new_comment_files: [],
       comments: []
   },
-  counterparty_id: 0,
+  counterparty_id: -1,
   counterparty_name: '',
 
   onFormChange: (e, field) => {

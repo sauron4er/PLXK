@@ -1,6 +1,8 @@
 'use strict';
 import * as React from 'react';
 import PaginatedTable from 'templates/components/tables/paginated_table';
+import {view, store} from '@risingstack/react-easy-state';
+import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance_store';
 
 const columns = [
   {name: 'id', title: 'id'},
@@ -39,15 +41,17 @@ class NonComplianceTable extends React.Component {
     const {main_div_height} = this.state;
     return (
       <div className='ml-3' ref={this.getMainDivRef}>
-        <PaginatedTable
-          url={'get_non_compliances'}
-          columns={columns}
-          defaultSorting={[{columnName: 'id', direction: 'desc'}]}
-          colWidth={col_width}
-          onRowClick={this.props.onRowClick}
-          height={main_div_height}
-          filter
-        />
+        <If condition={nonComplianceStore.counterparty_id !== -1}>
+          <PaginatedTable
+            url={`get_non_compliances/${nonComplianceStore.counterparty_id}`}
+            columns={columns}
+            defaultSorting={[{columnName: 'id', direction: 'desc'}]}
+            colWidth={col_width}
+            onRowClick={this.props.onRowClick}
+            height={main_div_height}
+            filter
+          />
+        </If>
       </div>
     );
   }
@@ -57,4 +61,4 @@ class NonComplianceTable extends React.Component {
   };
 }
 
-export default NonComplianceTable;
+export default view(NonComplianceTable);

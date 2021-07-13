@@ -2,6 +2,7 @@
 import * as React from 'react';
 import NonComplianceTable from 'boards/templates/boards/non_compliances/table';
 import NonCompliance from 'boards/templates/boards/non_compliances/non_compliance/non_compliance';
+import {view, store} from '@risingstack/react-easy-state';
 import nonComplianceStore from 'boards/templates/boards/non_compliances/non_compliance_store';
 
 class NonCompliances extends React.Component {
@@ -77,4 +78,4 @@ class NonCompliances extends React.Component {
   };
 }
 
-export default NonCompliances;
+export default view(NonCompliances);

@@ -33,6 +33,7 @@ import Law from 'edms/templates/edms/my_docs/new_doc_modules/law';
 import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/client_requirements';
 import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 import DocumentLink from 'edms/templates/edms/my_docs/new_doc_modules/document_link';
+import Registration from "edms/templates/edms/my_docs/new_doc_modules/registration";
 
 class NewDocument extends React.Component {
   state = {
@@ -283,8 +284,6 @@ class NewDocument extends React.Component {
       const {type_modules, old_files, doc_type_id} = this.state;
       const {doc, status} = this.props;
 
-      console.log(newDocStore.new_document);
-
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
@@ -316,6 +315,8 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'document_link') {
             doc_modules[module.module] = this.props.doc.document_link;
+          } else if (module.module === 'registration') {
+            doc_modules[module.module] = newDocStore.new_document.registration_number
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -535,6 +536,9 @@ class NewDocument extends React.Component {
                             documentLink={doc.document_link}
                             mainField={doc.main_field}
                           />
+                        </When>
+                        <When condition={module.module === 'registration'}>
+                          <Registration moduleInfo={module}/>
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

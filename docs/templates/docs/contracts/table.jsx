@@ -34,7 +34,7 @@ class ContractsTable extends React.Component {
   componentDidMount() {
     this.setState({main_div_height: this.mainDivRef.clientHeight - 50});
   }
-
+  
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
   getMainDivRef = (input) => {
     this.mainDivRef = input;

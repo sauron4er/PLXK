@@ -24,8 +24,12 @@ def non_compliances(request):
 
 
 @try_except
-def get_non_compliances(request, page):
+def get_non_compliances(request, counterparty, page):
     ncs = Non_compliance.objects.filter(is_active=True)
+
+    if counterparty != '0':
+        # При отриманні списку на сторінці контрагента фільтруємо по контрагенту
+        ncs = ncs.filter(provider_id=counterparty)
 
     ncs = filter_query_set(ncs, json.loads(request.POST['filtering']))
     ncs = sort_query_set(ncs, request.POST['sort_name'], request.POST['sort_direction'])

@@ -1023,6 +1023,20 @@ def get_doc_modules(doc):
             doc_modules.update({'client_requirements': data[0]['fields']})
             doc_modules.update({'additional_requirements': ar})
 
+        elif module['module'] == 'document_link':
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(is_active=True)
+            if dl:
+                dl_id = dl[0]
+                dl = get_object_or_404(Document, pk=dl_id)
+                dl_main_field = get_main_field(dl)
+                doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl_main_field}})
+
+        elif module['module'] == 'registration':
+            registration_number = Doc_Registration.objects.values_list('registration_number', flat=True)\
+                .filter(document_id=doc.id)\
+                .filter(is_active=True)
+            doc_modules.update({'registration_number': registration_number[0]})
+
     return doc_modules
 
 

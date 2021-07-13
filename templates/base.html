@@ -155,22 +155,21 @@
 {#  {% endblock %}#}
 
 {% block content_fluid %}
+   <div class="container">
+      {% block second_nav %}
+          <ol class="breadcrumb my-4">
+              {% block breadcrumb  %}
 
- <div class="container">
-    {% block second_nav %}
-        <ol class="breadcrumb my-4">
-            {% block breadcrumb  %}
+              {% endblock %}
+          </ol>
+      {% endblock %}
 
-            {% endblock %}
-        </ol>
-    {% endblock %}
+      {% block content %}
 
-    {% block content %}
-
-    {% endblock %}
- </div>
-
+      {% endblock %}
+   </div>
 {% endblock  %}
+
 {% endblock %}
     <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>

@@ -148,7 +148,10 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_client_requirements(new_doc, doc_modules['client_requirements'])
 
         if 'document_link' in doc_modules:
-            post_document_link(doc_request, doc_modules['document_link'])
+            post_document_link(new_doc, doc_modules['document_link'])
+            
+        if 'registration' in doc_modules:
+            post_registration(new_doc, doc_modules['registration'])
 
         return recipients
     except ValidationError as err:
@@ -1153,6 +1156,19 @@ def edms_mark(request):
                 doc_instance = get_object_or_404(Document, pk=doc_request['document'])
                 doc_instance.approved = False
                 doc_instance.save()
+
+            # Реєстрація документа
+            elif doc_request['mark'] == '27':
+                doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
+                doc_registration_instance.registration_number = doc_request['registration_number']
+                doc_registration_instance.save()
+                mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
+                    .filter(document=doc_request['document']) \
+                    .filter(mark_id=27) \
+                    .filter(is_active=True)
+                for md in mark_demands:
+                    deactivate_mark_demand(doc_request, md)
+                new_phase(doc_request, this_phase['phase'] + 1, [])
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)

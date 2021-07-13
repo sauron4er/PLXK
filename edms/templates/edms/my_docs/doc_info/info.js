@@ -12,7 +12,8 @@ import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/
 import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
 import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
-import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
+import DocumentLink from "edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link";
+
 
 class Info extends React.Component {
   render() {
@@ -108,6 +109,12 @@ class Info extends React.Component {
                       ars={info.additional_requirements}
                       sub_product={info.sub_product.id}
                     />
+                  </When>
+                  <When condition={module.module === 'document_link'}>
+                    <DocumentLink documentLink={info.document_link} fieldName='Тендер' />
+                  </When>
+                  <When condition={module.module === 'registration'}>
+                    <Text text_info={module} text={info.registration_number} doc_info={info} />
                   </When>
                 </Choose>
               </div>

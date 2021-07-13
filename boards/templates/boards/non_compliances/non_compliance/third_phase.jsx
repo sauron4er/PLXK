@@ -45,7 +45,7 @@ class NCThirdPhase extends React.Component {
       let formData = new FormData();
       formData.append('non_compliance', JSON.stringify(nonComplianceStore.non_compliance));
 
-      axiosPostRequest('done', formData)
+      axiosPostRequest('non_compliance_done', formData)
         .then((response) => {
           location.reload();
         })

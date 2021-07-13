@@ -88,7 +88,7 @@ def add_contract_from_edms(doc_request, files):
         'edms_doc_id': edms_doc.id,
         'company': edms_doc.company,
         'basic_contract': basic_contract,
-        'number': get_texts_from_edms(edms_doc, fields_queue['number']),
+        'number': get_contract_number(edms_doc, fields_queue),
         'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
         'counterparty': counterparty_id,
         'counterparty_text': counterparty_text,
@@ -108,6 +108,18 @@ def add_contract_from_edms(doc_request, files):
     send_mail(doc_request)
 
     return new_contract_id
+
+
+@try_except
+def get_contract_number(edms_doc, fields_queue):
+    if edms_doc.document_type_id >= 14:
+        number = edms_doc.doc_registration.values_list('registration_number', flat=True) \
+            .filter(document=edms_doc) \
+            .filter(is_active=True)[0]
+    else:
+        number = get_texts_from_edms(edms_doc, fields_queue['number'])
+
+    return number
 
 
 @try_except

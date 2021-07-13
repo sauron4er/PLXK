@@ -211,9 +211,10 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                 post_auto_approve(doc_request)
                 new_phase(doc_request, phase_number+1)
 
-            elif phase_info['mark_id'] in [22, 24]:
-                # додавання засканованих підписаних документів, Підтвердження виконання заявки
+            elif phase_info['mark_id'] in [22, 24, 27]:
+                # додавання засканованих підписаних документів, Підтвердження виконання заявки, реєстрація
                 handle_phase_marks(doc_request, phase_info)
+
             else:
                 # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
                 if is_approvals_used(doc_request['document_type']):

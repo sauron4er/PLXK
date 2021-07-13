@@ -28,6 +28,8 @@ import {notify} from 'templates/components/my_extras';
 import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
 import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
 import { Loader } from "templates/components/loaders";
+import Registration from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration";
+import RegistrationModal from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration";
 
 class Document extends React.Component {
   state = {
@@ -134,6 +136,7 @@ class Document extends React.Component {
     formData.append('phase_id', info.phase_id ? info.phase_id : 0);
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
+    formData.append('registration_number', docInfoStore.info.registration_number);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -181,7 +184,7 @@ class Document extends React.Component {
     } else if (mark_id === 17 && this.state.comment !== '') {
       // Віза з коментарем: признак відмови при натисканні візи
       this.openModal(mark_id);
-    } else if (mark_id === 25) {
+    } else if ([25, 27].includes(mark_id)) {
       // Вікно делегування
       this.openModal(mark_id);
     } else {
@@ -271,6 +274,17 @@ class Document extends React.Component {
           modal_open: true
         });
         break;
+      case 27:
+        this.setState({
+          modal: (
+            <RegistrationModal
+              onCloseModal={this.onCloseModal}
+              onSubmit={() => this.handleSimpleModalSubmit(27)}
+            />
+          ),
+          modal_open: true
+        });
+        break;
     }
   };
 
@@ -349,7 +363,7 @@ class Document extends React.Component {
       // якщо не вибрано жоден документ
       return <div> </div>;
     }
-
+  
     return (
       <Choose>
         <When condition={ready_for_render}>

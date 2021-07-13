@@ -2,8 +2,8 @@ import json
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
-from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, \
-    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional
+from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
+    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -69,7 +69,9 @@ def post_approvals(doc_request, approvals, company):
         'id': item.seat.id,
         'approve_queue': item.phase.phase
     } for item in Doc_Type_Phase_Queue.objects
-        .filter(phase__document_type=doc_request['document_type'])]
+        .filter(phase__document_type=doc_request['document_type'])
+        .exclude(phase__mark_id=27)
+    ]
 
     auto_approvals = []
     for seat in auto_approval_seats:
@@ -239,15 +241,17 @@ def post_contract(doc_request, contract_id):
 
 
 @try_except
-def post_document_link(doc_request, document_id):
+def post_document_link(new_doc, document_id):
     if document_id != 0:
-        a=1
-        # doc_request.update({'contract_id': contract_id})
-        # contract_form = NewDocContractForm(doc_request)
-        # if contract_form.is_valid():
-        #     contract_form.save()
-        # else:
-        #     raise ValidationError('post_modules/post_client/client_form invalid')
+        new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id)
+        new_doc_link.save()
+
+
+@try_except
+def post_registration(new_doc, registration_number):
+    if registration_number != '':
+        new_doc_registration = Doc_Registration(document=new_doc, registration_number=registration_number)
+        new_doc_registration.save()
 
 
 @try_except

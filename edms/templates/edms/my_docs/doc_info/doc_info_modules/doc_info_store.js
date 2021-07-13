@@ -18,6 +18,7 @@ const docInfoStore = store({
   },
   button_clicked: false,
   delegation_receiver_id: 0,
+  registration_number: '',
 
   clearChangedFiles: () => {
     docInfoStore.changed_files = {

@@ -19,6 +19,7 @@ import {ToastContainer} from 'react-toastify';
 import CounterpartyCorrespondence from './correspondence';
 import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mockups';
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
+import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
 
 class Counterparty extends React.Component {
   state = {
@@ -94,6 +95,7 @@ class Counterparty extends React.Component {
                 <Tab>Договори</Tab>
                 <If condition={type === 'provider'}>
                   <Tab>Сертифікація</Tab>
+                  <Tab>Акти невідповідності</Tab>
                 </If>
                 <If condition={type === 'client'}>
                   <Tab>Листування</Tab>
@@ -121,6 +123,9 @@ class Counterparty extends React.Component {
               <If condition={type === 'provider'}>
                 <TabPanel>
                   <Certification />
+                </TabPanel>
+                <TabPanel>
+                  <CounterpartyNonCompliances />
                 </TabPanel>
               </If>
               <If condition={type === 'client'}>

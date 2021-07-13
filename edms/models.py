@@ -331,7 +331,14 @@ class Doc_Law(models.Model):
 # Посилання на інший документ
 class Doc_Doc_Link(models.Model):
     document = models.ForeignKey(Document, related_name='doc_links', on_delete=models.RESTRICT)
-    document_link = models.ForeignKey('self', related_name='links_for', null=True, blank=True, on_delete=models.RESTRICT)
+    document_link = models.ForeignKey(Document, related_name='links_for', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Реєстраційний номер
+class Doc_Registration(models.Model):
+    document = models.ForeignKey(Document, related_name='doc_registration', on_delete=models.RESTRICT)
+    registration_number = models.CharField(max_length=30, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
 

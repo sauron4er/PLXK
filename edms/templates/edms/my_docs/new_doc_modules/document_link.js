@@ -14,7 +14,6 @@ class DocumentLink extends React.Component {
     const {documentLink} = this.props;
     newDocStore.additional_modal_opened = true
     newDocStore.additional_modal_content = <DocumentSimpleView doc_id={documentLink} />
-    // newDocStore.additional_modal_content = <div>asdasdasd</div>
   };
 
   render() {
@@ -32,7 +31,6 @@ class DocumentLink extends React.Component {
         <If condition={documentLink !== 0}>
           <div>
             № {documentLink} "{mainField}"{' '}
-            {/*<button className='btn btn-sm btn-outline-info' onClick={() => this.setState({document_modal_open: true})}>*/}
             <button className='btn btn-sm btn-outline-info' onClick={this.openAdditionalModal}>
               Переглянути
             </button>

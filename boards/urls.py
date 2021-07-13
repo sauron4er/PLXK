@@ -20,6 +20,13 @@ urlpatterns = [
     url(r'^del_ad/(?P<pk>\d+)/$', views.del_ad, name='del_ad'),
 
     url(r'^.+/add_contract', add_contract, name='add_contract'),
+    url(r'^.+/get_non_compliances/(?P<counterparty>\w+)/(?P<page>\d+)/$', views_non_compliances.get_non_compliances, name='get_non_compliances'),
+    url(r'^.+/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
+    url(r'^.+/post_non_compliance', views_non_compliances.post_non_compliance, name='post_non_compliance'),
+    url(r'^.+/dep_chief_approval', views_non_compliances.dep_chief_approval, name='dep_chief_approval'),
+    url(r'^.+/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
+    url(r'^.+/post_decision', views_non_compliances.post_decision, name='post_decision'),
+    url(r'^.+/non_compliance_done', views_non_compliances.done, name='done'),
 
     url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', views_org_structure.get_seat_info, name='get_seat_info'),
     url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
@@ -60,12 +67,5 @@ urlpatterns = [
     url(r'^clients/mark/', edms_mark, name='my_docs_mark'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 
-    url(r'^non_compliances/get_non_compliances/(?P<page>\d+)/$', views_non_compliances.get_non_compliances, name='get_non_compliances'),
-    url(r'^non_compliances/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
-    url(r'^non_compliances/post_non_compliance', views_non_compliances.post_non_compliance, name='post_non_compliance'),
-    url(r'^non_compliances/dep_chief_approval', views_non_compliances.dep_chief_approval, name='dep_chief_approval'),
-    url(r'^non_compliances/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
-    url(r'^non_compliances/post_decision', views_non_compliances.post_decision, name='post_decision'),
-    url(r'^non_compliances/done', views_non_compliances.done, name='done'),
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 ]
