@@ -1,0 +1,1 @@
+import 'ordering/templates/ordering/ordering_index'

@@ -12,6 +12,7 @@ module.exports = {
     docs: './static/index/docs.js',
     edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',
+    ordering: './static/index/ordering.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
@@ -76,6 +77,7 @@ module.exports = {
       plxk: path.resolve(__dirname, 'plxk'),
       correspondence: path.resolve(__dirname, 'correspondence'),
       boards: path.resolve(__dirname, 'boards'),
+      ordering: path.resolve(__dirname, 'ordering'),
     }
   }
 };

@@ -1,0 +1,11 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}Замовлення канцтоварів{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+{% block content %}
+    <div class="container-fluid px-3" id="stationery">
+      <div id="bundle">{% render_bundle 'ordering' %}</div>
+    </div>
+{% endblock %}
