@@ -1035,7 +1035,8 @@ def get_doc_modules(doc):
             registration_number = Doc_Registration.objects.values_list('registration_number', flat=True)\
                 .filter(document_id=doc.id)\
                 .filter(is_active=True)
-            doc_modules.update({'registration_number': registration_number[0]})
+
+            doc_modules.update({'registration_number': registration_number[0] if registration_number else ''})
 
     return doc_modules
 
