@@ -7,8 +7,10 @@
 
 {% block content %}
     {{ user.is_staff|json_script:"params-data" }}
+    {{ user.userprofile.department.name|json_script:"department_name" }}
     <script>
       const is_staff = JSON.parse(document.getElementById('params-data').textContent);
+      const department_name = JSON.parse(document.getElementById('department_name').textContent);
     </script>
     <script>
         window.pam = {{ pam|safe }};
