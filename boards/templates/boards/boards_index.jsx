@@ -8,6 +8,7 @@ import ClientsIndex from './counterparty/clients';
 import {Calendar} from 'templates/components/calendar';
 import Phones from 'boards/templates/boards/phones/phones';
 import NonCompliances from 'boards/templates/boards/non_compliances/non_compliances';
+import 'react-responsive-modal/styles.css';
 
 class Boards extends React.Component {
   state = {

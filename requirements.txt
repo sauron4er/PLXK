@@ -1,4 +1,4 @@
-django==3.1.4
+django==3.1.13  # django 3.2 не підтримує mysql < 5.7, у нас зараз 5.5.56
 pillow==8.0.1
 django-bootstrap4==2.3.1
 django-debug-toolbar==3.2

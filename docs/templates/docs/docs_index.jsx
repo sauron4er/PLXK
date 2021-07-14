@@ -2,6 +2,7 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import Orders from './orders/index'
 import Contracts from './contracts/index'
+import 'react-responsive-modal/styles.css'
 
 class Docs extends React.Component {
   state = {

@@ -2,6 +2,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import 'static/css/my_styles.css';
+import 'react-responsive-modal/styles.css';
 import NewDoc from './new_doc';
 import Docs from './docs';
 import Drafts from './drafts';

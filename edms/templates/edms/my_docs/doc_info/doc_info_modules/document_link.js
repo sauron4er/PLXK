@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
-import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
+
 import DocumentSimpleView from "edms/templates/edms/my_docs/doc_info/document_simple_view";
 
 class DocumentLink extends React.Component {
@@ -31,7 +31,6 @@ class DocumentLink extends React.Component {
             onClose={() => this.setState({modal_open: false})}
             showCloseIcon={true}
             closeOnOverlayClick={true}
-            styles={{modal: {marginTop: 50}}}
           >
             <DocumentSimpleView doc_id={documentLink.id} />
           </Modal>
