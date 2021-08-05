@@ -87,10 +87,12 @@ class NewDocument extends React.Component {
     }
   };
 
-  onChangeContract = (event) => {
-    const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.new_document.contract_link = parseInt(event.target.options[selectedIndex].getAttribute('data-key'));
-    newDocStore.new_document.contract_link_name = event.target.options[selectedIndex].getAttribute('value');
+  onChangeContract = (contract) => {
+    newDocStore.new_document.contract_link = contract.id;
+    newDocStore.new_document.contract_link_name = contract.name;
+    // const selectedIndex = contract.target.options.selectedIndex;
+    // newDocStore.new_document.contract_link = parseInt(contract.target.options[selectedIndex].getAttribute('data-key'));
+    // newDocStore.new_document.contract_link_name = contract.target.options[selectedIndex].getAttribute('value');
   };
 
   onChangeCustomSelect = (event) => {

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/snow.css' %}">
+    <link rel="stylesheet" href="{% static 'css/my_styles.css' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
   {% block stylesheet %}  {% endblock %}
  {% block script %}  {% endblock %}
@@ -77,8 +78,11 @@
                         {% if user.userprofile.is_it_admin or user.userprofile.mockup_type_add   %}
                           <a class="dropdown-item" href="{% url 'production:mockup_types' %}">Типи дизайн-макетів</a>
                         {% endif %}
-                      {% if user.userprofile.is_it_admin or user.userprofile.mockup_product_type_add   %}
+                        {% if user.userprofile.is_it_admin or user.userprofile.mockup_product_type_add   %}
                           <a class="dropdown-item" href="{% url 'production:mockup_product_types' %}">Типи продукції для дизайн-макетів</a>
+                        {% endif %}
+                        {% if user.userprofile.is_it_admin or user.userprofile.stationery_type_add   %}
+                          <a class="dropdown-item" href="{% url 'ordering:stationery_catalogue' %}">Канцелярські товари</a>
                         {% endif %}
                       </div>
              </li>
@@ -95,9 +99,9 @@
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             {% if user.userprofile.avatar %}
-              <img src="{{ user.userprofile.avatar.url }}" style="height: 44px" class="rounded-circle">
-             {% endif %}
+{#             {% if user.userprofile.avatar %}#}
+{#              <img src="{{ user.userprofile.avatar.url }}" style="height: 44px" class="rounded-circle">#}
+{#             {% endif %}#}
 
                 {{ user.first_name}} {{ user.last_name }}
             </a>

@@ -6,6 +6,7 @@ import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
+import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
 
 class ChooseMainContract extends React.Component {
   state = {
@@ -72,29 +73,37 @@ class ChooseMainContract extends React.Component {
         </label>
         <small className='text-danger'>{module_info?.additional_info}</small>
         <If condition={!is_main_contract}>
-          <div>{module_info.field_name}:</div>
           <Choose>
             <When condition={!loading && contracts?.length > 0}>
-              <label className='full_width' htmlFor='contract_select'>
-                <select
-                  id='contract_select'
-                  name='contract'
-                  className='form-control full_width'
-                  value={contract_link_name}
-                  onChange={onChange}
-                >
-                  <option key={0} data-key={0} value='0'>
-                    ------------
-                  </option>
-                  {contracts.map((contract) => {
-                    return (
-                      <option key={contract.id} data-key={contract.id} value={contract.name}>
-                        {contract.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </label>
+              <SelectorWithFilter
+                list={contracts}
+                fieldName={module_info.field_name}
+                valueField='name'
+                selectedName=''
+                disabled={false}
+                value={{name: contract_link_name, id: contract_link}}
+                onChange={onChange}
+              />
+              {/*<label className='full_width' htmlFor='contract_select'>*/}
+              {/*  <select*/}
+              {/*    id='contract_select'*/}
+              {/*    name='contract'*/}
+              {/*    className='form-control full_width'*/}
+              {/*    value={contract_link_name}*/}
+              {/*    onChange={onChange}*/}
+              {/*  >*/}
+              {/*    <option key={0} data-key={0} value='0'>*/}
+              {/*      ------------*/}
+              {/*    </option>*/}
+              {/*    {contracts.map((contract) => {*/}
+              {/*      return (*/}
+              {/*        <option key={contract.id} data-key={contract.id} value={contract.name}>*/}
+              {/*          {contract.name}*/}
+              {/*        </option>*/}
+              {/*      );*/}
+              {/*    })}*/}
+              {/*  </select>*/}
+              {/*</label>*/}
 
               <If condition={contract_link !== 0}>
                 <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>

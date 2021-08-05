@@ -1159,7 +1159,8 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
+                # doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
+                doc_registration_instance = Doc_Registration(document_id=doc_request['document'])
                 doc_registration_instance.registration_number = doc_request['registration_number']
                 doc_registration_instance.save()
                 mark_demands = Mark_Demand.objects.values_list('id', flat=True) \

@@ -27,9 +27,9 @@ import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
 import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
-import { Loader } from "templates/components/loaders";
-import Registration from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration";
-import RegistrationModal from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration";
+import {Loader} from 'templates/components/loaders';
+import Registration from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
+import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
 
 class Document extends React.Component {
   state = {
@@ -276,12 +276,7 @@ class Document extends React.Component {
         break;
       case 27:
         this.setState({
-          modal: (
-            <RegistrationModal
-              onCloseModal={this.onCloseModal}
-              onSubmit={() => this.handleSimpleModalSubmit(27)}
-            />
-          ),
+          modal: <RegistrationModal onCloseModal={this.onCloseModal} onSubmit={() => this.handleSimpleModalSubmit(27)} />,
           modal_open: true
         });
         break;
@@ -363,7 +358,7 @@ class Document extends React.Component {
       // якщо не вибрано жоден документ
       return <div> </div>;
     }
-  
+
     return (
       <Choose>
         <When condition={ready_for_render}>
@@ -439,7 +434,13 @@ class Document extends React.Component {
                     <Path path={info.path} onAnswerClick={this.onAnswerClick} />
 
                     {/*Модальне вікно*/}
-                    <Modal open={modal_open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false}>
+                    <Modal
+                      open={modal_open}
+                      onClose={this.onCloseModal}
+                      showCloseIcon={false}
+                      closeOnOverlayClick={false}
+                      styles={{modal: {marginTop: 100}}}
+                    >
                       <ToastContainer />
                       {modal}
                     </Modal>
@@ -491,7 +492,7 @@ class Document extends React.Component {
           </Choose>
         </When>
         <Otherwise>
-          <Loader/>
+          <Loader />
         </Otherwise>
       </Choose>
     );

@@ -5,6 +5,12 @@
 
 {% block second_nav %}{% endblock %}
 {% block content %}
+    {{ user.userprofile.department.name|json_script:"department" }}
+    <script>
+      const department = JSON.parse(document.getElementById('department').textContent);
+      window.stationery_types = {{ stationery_types|safe }};
+      window.is_admin = {{ is_admin|safe }};
+    </script>
     <div class="container-fluid px-3" id="stationery">
       <div id="bundle">{% render_bundle 'ordering' %}</div>
     </div>

@@ -7,7 +7,7 @@ class SelectorWithFilter extends React.Component {
     const {list, onChange, fieldName, disabled, classes, value} = this.props;
 
     return (
-      <label className={classes + ' full_width'} htmlFor={fieldName}>
+      <label className={classes + ' full_width'}>
         {fieldName}:
         <Select
           options={list}

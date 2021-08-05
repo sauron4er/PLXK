@@ -128,8 +128,8 @@ class Buttons extends React.Component {
         </If>
 
         {/*Якщо автор я - нова перевірка по ід користувача, а не людинопосади*/}
-        {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизай-макетів)*/}
-        <If condition={info.viewer_is_author && info.approved}>
+        {/*Якщо документ погоджено, його можна деактивувати (забрати позначку "Погоджено" - першопочатково для дизайн-макетів)*/}
+        <If condition={info.meta_type_id === 6 && info.viewer_is_author && info.approved}>
           <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(26)} disabled={button_clicked}>
             Деактивувати
           </button>

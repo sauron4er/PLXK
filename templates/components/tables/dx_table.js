@@ -13,6 +13,11 @@
  */
 
 /*
+ * Якщо відправити в таблицю проп summary,
+ * то таблиця виділяє сірим той рядок, у якому є ячейка department === 'Всього'
+ */
+
+/*
  * Якщо у списку колонок є autoActuality, таблиця автоматично буде визначати актуальність документа,
  * вираховуючи її з колонок date_start та date_end. Ця колонка буде зеленою, якщо документ актуальний,
  * червоною, якщо вже не актуальний, жовтою, якщо актуальність ще не настала
@@ -138,13 +143,19 @@ class DxTable extends React.PureComponent {
     let style = {
       cursor: 'pointer',
       height: '30px',
-      estimatedRowHeight: '30px'
+      estimatedRowHeight: '30px',
     };
 
     if (row.id === clicked_row_index) {
       return {
         ...style,
         backgroundColor: '#e6e6e6'
+      };
+    }
+    else if (this.props.summary && row.department === 'Всього') {
+      return {
+        ...style,
+        backgroundColor: '#f0f0f0'
       };
     }
     if (this.props.redRow) {

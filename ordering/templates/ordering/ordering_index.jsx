@@ -1,4 +1,5 @@
 import * as React from 'react'
+import ReactDOM from 'react-dom'
 import 'react-responsive-modal/styles.css';
 import Stationery from "ordering/templates/ordering/stationery/stationery";
 
@@ -11,7 +12,7 @@ class Ordering extends React.Component {
     return (
       <Choose>
         <When condition={this.state.main_div === 'stationery'}>
-          <Stationery/> {/* Феєрверки для plhk_ads */}
+          <Stationery/>
         </When>
       </Choose>
     );
