@@ -99,27 +99,30 @@ def post_approvals(doc_request, approvals, company):
 
     acting_director = vacation_check(director)
 
+    tov_director = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=247) \
+        .filter(is_active=True) \
+        .filter(is_main=True)[0]
+
+    acting_tov_director = vacation_check(tov_director)
+
     if company == 'ТДВ':
         approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+        approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
 
         approvals.extend([{
             'id': acting_director,
             'approve_queue': 2  # Директор останній у списку погоджень
+        }, {
+            'id': acting_tov_director,
+            'approve_queue': 1  # Директор ТОВ договори ТДВ візує перед директором ТДВ
         }])
     else:
         zero_phase_id = get_zero_phase_id(doc_request['document_type'])
         post_mark_demand(doc_request, acting_director, zero_phase_id, 8)
         new_mail('new', [{'id': acting_director}], doc_request)
 
-        tov_director = Employee_Seat.objects.values_list('id', flat=True) \
-            .filter(seat_id=247) \
-            .filter(is_active=True) \
-            .filter(is_main=True)[0]
-
-        acting_tov_director = vacation_check(tov_director)
-
         approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
-
         approvals.extend([{
             'id': acting_tov_director,
             'approve_queue': 2  # Директор останній у списку погоджень
