@@ -49,7 +49,7 @@ def post_approval_list(doc_request, approvals):
                 approval_form = NewApprovalForm(doc_request)
 
             if approval_form.is_valid():
-                new_approval = approval_form.save()
+                approval_form.save()
 
             else:
                 raise ValidationError('edms/views post_approval_list approval_form invalid')

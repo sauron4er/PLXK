@@ -115,7 +115,7 @@ def post_approvals(doc_request, approvals, company):
             'approve_queue': 2  # Директор останній у списку погоджень
         }, {
             'id': acting_tov_director,
-            'approve_queue': 1  # Директор ТОВ договори ТДВ візує перед директором ТДВ
+            'approve_queue': 2  # Директор ТОВ теж отримує на погодження
         }])
     else:
         zero_phase_id = get_zero_phase_id(doc_request['document_type'])
