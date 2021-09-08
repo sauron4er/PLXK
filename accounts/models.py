@@ -6,6 +6,7 @@ class Department(models.Model):
     name = models.CharField(max_length=200)
     text = models.CharField(max_length=4000, blank=True, null=True)
     manager = models.ForeignKey(User, related_name='department_manager', blank=True, null=True, on_delete=models.RESTRICT)
+    is_tdv = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

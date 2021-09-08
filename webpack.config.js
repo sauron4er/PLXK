@@ -13,6 +13,7 @@ module.exports = {
     edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',
     ordering: './static/index/ordering.js',
+    hr: './static/index/hr.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
@@ -78,6 +79,7 @@ module.exports = {
       correspondence: path.resolve(__dirname, 'correspondence'),
       boards: path.resolve(__dirname, 'boards'),
       ordering: path.resolve(__dirname, 'ordering'),
+      hr: path.resolve(__dirname, 'hr'),
     }
   }
 };

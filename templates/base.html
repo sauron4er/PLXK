@@ -54,6 +54,13 @@
                         <a class="dropdown-item" href="{% url 'docs:contracts' %}">Договори</a>
                         <a class="dropdown-item" href="{% url 'docs:index' %}">Система якості</a>
                         <a class="dropdown-item" href="{% url 'edms:my_docs' %}">Електронні документи</a>
+                        <a class="dropdown-submenu">
+                          <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">Кадрова документація</a>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'hr:instructions' %}">Положення, посадові та робочі інструкції</a>
+                            <a class="dropdown-item" href="#">Організаційна структура ТДВ ПЛХК</a>
+                          </div>
+                        </a>
                     </div>
              </li>
             <li class="nav-item dropdown">

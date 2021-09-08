@@ -1,0 +1,16 @@
+{% extends 'edms/main.html' %}
+{% load static %}
+{% block title %}Положення, посадові та робочі інструкції{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+{% block content %}
+{#    {{ user.userprofile.department.name|json_script:"department" }}#}
+    <script>
+      {#const department = JSON.parse(document.getElementById('department').textContent);#}
+      window.is_admin = {{ is_admin|safe }};
+    </script>
+    <div class="container-fluid px-3" id="instructions">
+      <div id="bundle">{% render_bundle 'hr' %}</div>
+    </div>
+{% endblock %}

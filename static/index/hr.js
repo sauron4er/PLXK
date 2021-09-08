@@ -1,0 +1,1 @@
+import 'hr/templates/hr/hr'

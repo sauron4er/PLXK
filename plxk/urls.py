@@ -7,7 +7,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from accounts import views as accounts_views
 from boards import views as board_views
-from ordering import views as ordering_views
 from production.views import get_products
 from boards.views_counterparties import get_counterparties
 from edms.views import edms_get_emp_seats
@@ -18,6 +17,8 @@ urlpatterns = [
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
+    url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments'),
+    url(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
 
     url(r'^$', board_views.home, name='index'),
    # url(r'^about/$', views.about, name='about'),
@@ -30,6 +31,7 @@ urlpatterns = [
     url(r'^crm/', include('crm.urls', namespace='crm')),
     url(r'^boards/', include('boards.urls', namespace='boards')),
     url(r'^ordering/', include('ordering.urls', namespace='ordering')),
+    url(r'^hr/', include('hr.urls', namespace='hr')),
     url(r'^reload/', board_views.reload, name='reload'),  # Якщо запит на 'boards/reload' - повертається пустий response
 
     url(r'^docs/', include('docs.urls', namespace='docs')),
