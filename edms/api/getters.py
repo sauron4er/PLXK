@@ -839,6 +839,16 @@ def get_doc_modules(doc):
                 doc_modules.update({
                     'days': days,
                 })
+        elif module['module'] == 'datetime':
+            # Шукаємо список тільки для першого модуля, щоб не брати ту ж інфу ще раз
+            if 'datetimes' not in doc_modules.keys():
+                datetimes = [{
+                    'queue': item.queue_in_doc,
+                    'datetime': item.datetime.strftime('%d-%m-%Y %H:%M')
+                } for item in Doc_Datetime.objects.filter(document_id=doc.id).filter(is_active=True)]
+                doc_modules.update({
+                    'datetimes': datetimes,
+                })
         elif module['module'] == 'gate':
             gate = [{
                 'gate': item.gate,

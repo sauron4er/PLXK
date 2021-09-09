@@ -248,10 +248,18 @@ class Doc_Text(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Дата, яка використовується у документі. Н-д, день дії звільнюючої
+# Дата, яка використовується у документі.
 class Doc_Day(models.Model):
     document = models.ForeignKey(Document, related_name='days', on_delete=models.RESTRICT)
     day = models.DateField(default=timezone.now)
+    queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Дата і час. Н-д, день дії і час виходу звільнюючої
+class Doc_Datetime(models.Model):
+    document = models.ForeignKey(Document, related_name='datetimes', on_delete=models.RESTRICT)
+    datetime = models.DateTimeField(default=timezone.now)
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 

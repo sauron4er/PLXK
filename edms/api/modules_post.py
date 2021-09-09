@@ -1,9 +1,10 @@
 import json
+from datetime import datetime
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
-    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link
+    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, Doc_Datetime
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -58,6 +59,18 @@ def post_days(doc_request, days):
         doc_request.update({'day': day['day']})
         day_form = NewDayForm(doc_request)
         day_form.save()
+
+
+@try_except
+def post_datetimes(doc_request, days):
+    for day in days:
+        # date_string = day['day'] + ' ' + day['time']
+        date_string = day['day'] + 'T' + day['time'] + ':00+0000'
+        date = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
+
+        new_doc_datetime = Doc_Datetime(
+            document_id=doc_request['document'], datetime=date, queue_in_doc=day['queue'])
+        new_doc_datetime.save()
 
 
 @try_except

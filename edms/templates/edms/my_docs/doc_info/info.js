@@ -10,7 +10,7 @@ import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
 import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
 import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
-import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
+import { getTextByQueue, getDayByQueue, getDatetimeByQueue } from "templates/components/my_extras";
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
 import DocumentLink from "edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link";
 
@@ -64,6 +64,9 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'day'}>
                     <Day day={getDayByQueue(info.days, index)} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'datetime'}>
+                    <Day day={getDatetimeByQueue(info.datetimes, index)} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'gate'}>
                     <Gate gate={info.gate} fieldName={module.field_name} />

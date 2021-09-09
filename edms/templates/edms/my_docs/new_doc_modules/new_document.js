@@ -22,7 +22,15 @@ import PackagingType from './packaging_type';
 import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
 import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
-import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
+import {
+  getTextByQueue,
+  getDayByQueue,
+  getIndexByProperty,
+  isBlankOrZero,
+  getToday,
+  notify,
+  getDatetimeByQueue
+} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
@@ -33,7 +41,8 @@ import Law from 'edms/templates/edms/my_docs/new_doc_modules/law';
 import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/client_requirements';
 import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 import DocumentLink from 'edms/templates/edms/my_docs/new_doc_modules/document_link';
-import Registration from "edms/templates/edms/my_docs/new_doc_modules/registration";
+import Registration from 'edms/templates/edms/my_docs/new_doc_modules/registration';
+import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
 
 class NewDocument extends React.Component {
   state = {
@@ -125,6 +134,33 @@ class NewDocument extends React.Component {
     this.setState({days});
   };
 
+  onChangeDatetime = (event, type, queue) => {
+    let {datetimes} = newDocStore.new_document;
+
+    const queue_in_array = getIndexByProperty(datetimes, 'queue', parseInt(queue));
+    if (queue_in_array === -1) {
+      if (type === 'day') {
+        datetimes.push({
+          queue: parseInt(queue),
+          day: event.target.value
+        });
+      } else {
+        datetimes.push({
+          queue: parseInt(queue),
+          time: event.target.value
+        });
+      }
+    } else {
+      if (type === 'day') {
+        datetimes[queue_in_array].day = event.target.value;
+      } else {
+        datetimes[queue_in_array].time = event.target.value;
+      }
+    }
+    newDocStore.new_document.datetimes = datetimes
+    console.log(newDocStore.new_document.datetimes);
+  };
+
   componentDidMount() {
     // Отримуємо з бд список модулів, які використовує даний тип документа:
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.meta_type_id + '/' + this.props.doc.type_id + '/')
@@ -169,6 +205,7 @@ class NewDocument extends React.Component {
             mockup_product_type: response.mockup_product_type || [],
             render_ready: true
           });
+          newDocStore.new_document.datetimes = response?.datetimes || [];
           newDocStore.new_document.text = response?.text_list || [];
           newDocStore.new_document.client = response?.client?.id;
           newDocStore.new_document.client_name = response?.client?.name;
@@ -270,6 +307,21 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
+        } else if (module.module === 'datetime') {
+          const datetimes = newDocStore.new_document.datetimes;
+
+          let datetime_exists = false;
+          for (const i in datetimes) {
+            if (datetimes[i].queue === module.queue) {
+              if (datetimes[i].day !== '' && datetimes[i].time !== '') {
+                datetime_exists = true;
+              }
+            }
+          }
+          if (!datetime_exists) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -306,6 +358,8 @@ class NewDocument extends React.Component {
             doc_modules.approval_list = this.state.approval_list;
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
+          } else if (module.module === 'datetime') {
+            doc_modules['datetimes'] = newDocStore.new_document.datetimes;
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (module.module === 'counterparty') {
@@ -318,7 +372,7 @@ class NewDocument extends React.Component {
           } else if (module.module === 'document_link') {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
-            doc_modules[module.module] = newDocStore.new_document.registration_number
+            doc_modules[module.module] = newDocStore.new_document.registration_number;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -462,6 +516,13 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'day'}>
                           <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
                         </When>
+                        <When condition={module.module === 'datetime'}>
+                          <Datetime
+                            module_info={module}
+                            datetime={getDatetimeByQueue(newDocStore.new_document.datetimes, index)}
+                            onChange={this.onChangeDatetime}
+                          />
+                        </When>
                         <When condition={module.module === 'recipient'}>
                           <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
                         </When>
@@ -533,14 +594,10 @@ class NewDocument extends React.Component {
                           <ClientRequirements module_info={module} />
                         </When>
                         <When condition={module.module === 'document_link'}>
-                          <DocumentLink
-                            moduleInfo={module}
-                            documentLink={doc.document_link}
-                            mainField={doc.main_field}
-                          />
+                          <DocumentLink moduleInfo={module} documentLink={doc.document_link} mainField={doc.main_field} />
                         </When>
                         <When condition={module.module === 'registration'}>
-                          <Registration moduleInfo={module}/>
+                          <Registration moduleInfo={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>
@@ -578,11 +635,10 @@ class NewDocument extends React.Component {
         </Modal>
         <Modal
           open={newDocStore.additional_modal_opened}
-          onClose={() => newDocStore.additional_modal_opened = false}
+          onClose={() => (newDocStore.additional_modal_opened = false)}
           classNames={{
             modal: 'css_additional_modal'
           }}
-          
         >
           {newDocStore.additional_modal_content}
         </Modal>

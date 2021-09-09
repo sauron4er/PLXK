@@ -65,6 +65,12 @@ export const getDayByQueue = (days, queue) => {
   }
 };
 
+export const getDatetimeByQueue = (datetimes, queue) => {
+  for (const i of datetimes) {
+    if (i && i.queue === queue) return i.datetime;
+  }
+};
+
 export const getIndexByProperty = (list, key, value) => {
   for (let i = 0; i < list.length; i++) {
     if (list[i][key] === value) {

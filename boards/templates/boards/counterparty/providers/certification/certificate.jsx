@@ -192,7 +192,7 @@ class Certificate extends React.Component {
                 text={certificate.production_groups}
                 fieldName={'Групи продукції'}
                 onChange={this.onProductionGroupsChange}
-                maxLength={10}
+                maxLength={100}
                 disabled={!edit_access}
               />
               <hr />

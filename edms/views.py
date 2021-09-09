@@ -108,6 +108,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
 
+        if 'datetimes' in doc_modules:
+            post_datetimes(doc_request, doc_modules['datetimes'])
+
         if 'gate' in doc_modules:
             post_gate(doc_request, doc_modules['gate'])
 
@@ -590,6 +593,7 @@ def edms_get_doc(request, pk):
             if acquaints:
                 doc_info.update({'acquaints': acquaints})
 
+        # Модулі
         doc_info.update(get_doc_modules(doc))
 
         is_super_manager = User_Doc_Type_View.objects.values_list('super_manager', flat=True)\
@@ -1232,18 +1236,18 @@ def edms_tables(request, meta_doc_type=''):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_table_first(request, meta_doc_type='', doc_type=0, counterparty=0):
+def edms_get_table_first(request, meta_doc_type=0, counterparty=0, doc_type=''):
     if request.method == 'GET':
-        table = create_table_first(doc_type, counterparty)
+        table = create_table_first(meta_doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
 
 
 @try_except
-def edms_get_table_all(request, meta_doc_type='', doc_type=0, counterparty=0):
+def edms_get_table_all(request, meta_doc_type=0, counterparty=0, doc_type=''):
     if request.method == 'GET':
-        table = create_table_all(doc_type, counterparty)
+        table = create_table_all(meta_doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
