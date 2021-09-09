@@ -58,11 +58,13 @@ class ContractView extends React.Component {
               <span className='font-italic'>Контрагент: </span>
               {contract.counterparty_name === '' ? contract.counterparty_old : contract.counterparty_name}
             </div>
-            <hr />
-            <div>
-              <span className='font-italic'>Номенклатурна група: </span>
-              {contract.nomenclature_group}
-            </div>
+            <If condition={contract.nomenclature_group}>
+              <hr />
+              <div>
+                <span className='font-italic'>Номенклатурна група: </span>
+                {contract.nomenclature_group}
+              </div>
+            </If>
             <hr />
             <div>
               <span className='font-italic'>Початок дії: </span>
@@ -73,19 +75,20 @@ class ContractView extends React.Component {
               <span className='font-italic'>Кінець дії: </span>
               {contract.date_end}
             </div>
-            <hr />
-            <div>
-              <span className='font-italic'>Місцезнаходження договору: </span>
-              {contract.department_name}
-            </div>
+            <If condition={contract.department_name}>
+              <hr />
+              <div>
+                <span className='font-italic'>Місцезнаходження договору: </span>
+                {contract.department_name}
+              </div>
+            </If>
             <hr />
             <div>
               <span className='font-italic'>Відповідальна особа: </span>
               {contract.responsible_name}
             </div>
-            <hr />
-
             <If condition={read_access}>
+              <hr />
               <Files oldFiles={contract.old_files} fieldName={'Підписані файли'} disabled={true} />
             </If>
           </div>
