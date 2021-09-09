@@ -68,13 +68,6 @@ def get_providers(request, wood_only, page):
     return HttpResponse(json.dumps(response))
 
 
-@try_except
-def get_providers_new(request, page):
-    a=1
-    b=2
-    return HttpResponse([])
-
-
 @login_required(login_url='login')
 @try_except
 def get_provider(request, pk):
