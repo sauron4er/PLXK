@@ -1,4 +1,5 @@
-﻿from plxk.api.try_except import try_except
+﻿from django.db.models import Q
+from plxk.api.try_except import try_except
 
 
 @try_except
@@ -17,6 +18,12 @@ def sort_query_set(query_set, column, direction):
 @try_except
 def filter_query_set(query_set, filtering):
     for filter in filtering:
-        kwargs = {'{}__{}'.format(filter['columnName'], 'icontains'): filter['value']}
+        if filter['columnName'] == 'certificates':
+            # Фільтрація по related полю Сертифікат у таблиці постачальників
+            # TODO Переробити на декларативну фільтрацію по related полях.
+            # (Звідки таблиця знає, шо поле related? Може знає сам query_set)
+            kwargs = {'{}__{}'.format('certificates__certification_type__name', 'icontains'): filter['value']}
+        else:
+            kwargs = {'{}__{}'.format(filter['columnName'], 'icontains'): filter['value']}
         query_set = query_set.filter(**kwargs)
     return query_set
