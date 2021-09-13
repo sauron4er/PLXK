@@ -1,11 +1,11 @@
 import datetime
 
 
-def datetime_to_json(data, type='date'):
+def datetime_to_json(data, return_type='only_date'):
     if isinstance(data, datetime.datetime):
-        if type == 'only_date':
+        if return_type == 'only_date':
             return data.date().__str__()
-        elif type == 'date_time':
+        elif return_type == 'date_time':
             return data.strftime("%Y-%m-%d %H:%M")
 
 

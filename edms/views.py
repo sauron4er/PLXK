@@ -1,21 +1,23 @@
-from django.shortcuts import render, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.db import transaction
 
 from plxk.api.global_getters import get_deps
-from docs.api.contracts_api import add_contract_from_edms
 from accounts.models import UserProfile, Department
+from docs.api.contracts_api import add_contract_from_edms
 
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
+from .api.tables.tables_creater import create_table_first, create_table_all
 from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
 from .api.setters import *
-from .api.tables_creater import create_table_first, create_table_all
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
+from .api.tables.free_time_table import get_free_times_table
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -1275,7 +1277,15 @@ def edms_delegated(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_delegated_docs(emp, sub, doc_meta_type)))
     return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+@try_except
+def edms_get_free_times(request, page):
+    response = get_free_times_table(request, page)
+    return HttpResponse(json.dumps(response))

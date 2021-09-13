@@ -7,7 +7,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from accounts import views as accounts_views
 from boards import views as board_views
-from ordering import views as ordering_views
 from production.views import get_products
 from boards.views_counterparties import get_counterparties
 from edms.views import edms_get_emp_seats

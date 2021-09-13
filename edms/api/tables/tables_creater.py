@@ -1,6 +1,6 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
-from ..models import Document_Type_Module, Document, File, Document_Path
+from edms.models import Document_Type_Module, Document, File, Document_Path
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 
 testing = settings.STAS_DEBUG
