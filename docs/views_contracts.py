@@ -130,9 +130,9 @@ def get_contract(request, pk):
     is_author = request.user == contract.created_by
 
     read_access = is_author \
-                  or is_it_lawyer(request.user.userprofile.id) \
                   or request.user.userprofile.is_it_admin \
-                  or request.user.userprofile.access_to_all_contracts
+                  or request.user.userprofile.access_to_all_contracts \
+                  or is_it_lawyer(request.user.userprofile.id)
 
     contract = {
         'id': contract.id,

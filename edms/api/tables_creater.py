@@ -1,7 +1,7 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
 from ..models import Document_Type_Module, Document, File, Document_Path
-from plxk.api.datetime_normalizers import datetime_to_json, normalize_whole_date
+from plxk.api.datetime_normalizers import date_to_json, normalize_whole_date
 
 testing = settings.STAS_DEBUG
 
@@ -33,12 +33,13 @@ def create_table_all(meta_doc_type, counterparty):
 def get_column_widths(modules):
     column_widths = [
         {'columnName': 'id', 'width': 40},
-        {'columnName': 'author', 'width': 170},
+        {'columnName': 'author', 'width': 200},
         {'columnName': 'approved', 'width': 80},
         {'columnName': 'stage', 'width': 100},
         {'columnName': 'importancy', 'width': 90},
         # {'columnName': 'files', 'width': 300},
-        {'columnName': 'choose_company', 'width': 85}]
+        {'columnName': 'choose_company', 'width': 85},
+        {'columnName': 'day', 'width': 160}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
         column_widths.append({'columnName': 'packaging_type', 'width': 35})
@@ -137,6 +138,7 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     documents_arranged = [{
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
+        'day': get_day(modules, doc),
         # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'approved': get_approved(doc),
         # 'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
@@ -244,6 +246,15 @@ def get_packaging_type(modules, doc):
     if any(module['module_id'] == 27 for module in modules):
         field_queue = next(module['queue'] for module in modules if module["module_id"] == 27)
         return doc.texts.filter(queue_in_doc=field_queue)[0].text if doc.texts.filter(queue_in_doc=field_queue) else None
+    return None
+
+
+@try_except
+def get_day(modules, doc):
+    if any(module['module_id'] == 12 for module in modules):
+        day = doc.days.all()[0].day
+        day_json = date_to_json(day)
+        return date_to_json(doc.days.all()[0].day) if doc.days.all() else None
     return None
 
 
