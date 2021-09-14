@@ -85,6 +85,7 @@ const newDocStore = store({
       doc_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
       registration_number: '',
       text: [],
+      datetimes: [],
       mockup_type: 0,
       mockup_type_name: '',
       mockup_product_type: 0,

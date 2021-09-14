@@ -337,7 +337,7 @@ class NewDocument extends React.Component {
     try {
       const {type_modules, old_files, doc_type_id} = this.state;
       const {doc, status} = this.props;
-
+  
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
