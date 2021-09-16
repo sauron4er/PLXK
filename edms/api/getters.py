@@ -341,6 +341,7 @@ def get_doc_type_modules(doc_type):
         'queue': type_module.queue,
         'additional_info': type_module.additional_info,
         'hide': type_module.hide,
+        'doc_type_version': type_module.doc_type_version.version_id if type_module.doc_type_version else 0
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
@@ -368,10 +369,10 @@ def get_auto_recipients(doc_type_id):
             'sole': dtp.sole
         }
 
-        phase_recipients_with_doc_version = get_phase_recipients_and_doc_version(dtp)
+        phase_recipients_with_doc_type_version = get_phase_recipients_and_doc_type_version(dtp)
 
-        if phase_recipients_with_doc_version:
-            for pr in phase_recipients_with_doc_version:
+        if phase_recipients_with_doc_type_version:
+            for pr in phase_recipients_with_doc_type_version:
                 phase_recipients['recipients'].append(pr)
             recipients.append(phase_recipients)
 
@@ -433,14 +434,14 @@ def get_actual_emp_seat_from_seat(seat_id):
 
 
 @try_except
-def get_phase_recipient_list(phase_id, doc_version=0):
+def get_phase_recipient_list(phase_id, doc_type_version=0):
     recipients = Doc_Type_Phase_Queue.objects\
         .filter(phase_id=phase_id)\
         .filter(is_active=True)\
         .order_by('queue')
 
-    if doc_version != 0:
-        recipients = recipients.filter(doc_type_version=doc_version) \
+    if doc_type_version != 0:
+        recipients = recipients.filter(doc_type_version=doc_type_version) \
                      | recipients.filter(doc_type_version='') \
                      | recipients.filter(doc_type_version__isnull=True)
 
@@ -460,11 +461,11 @@ def get_phase_recipient_list(phase_id, doc_version=0):
 
 
 @try_except
-def get_phase_recipients_and_doc_version(phase):
+def get_phase_recipients_and_doc_type_version(phase):
     if phase.mark.mark == 'Не заперечую':
         return [{
             'emp_seat': 'Безпосередній начальник автора',
-            'doc_version': 0
+            'doc_type_version': 0
         }]
 
     phase_recipients = Doc_Type_Phase_Queue.objects\
@@ -475,7 +476,7 @@ def get_phase_recipients_and_doc_version(phase):
     phase_recipients = [{
         'seat_id': item.seat_id,
         'employee_seat_id': item.employee_seat_id,
-        'doc_version': int(item.doc_type_version) if item.doc_type_version else 0
+        'doc_type_version': int(item.doc_type_version) if item.doc_type_version else 0
     } for item in phase_recipients]
 
     recipients = []
@@ -489,7 +490,7 @@ def get_phase_recipients_and_doc_version(phase):
 
         recipients.append({
             'emp_seat': employee_seat_info,
-            'doc_version': recipient['doc_version']
+            'doc_type_version': recipient['doc_type_version']
 
         })
 

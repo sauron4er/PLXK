@@ -1289,3 +1289,32 @@ def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
 def edms_get_free_times(request, page):
     response = get_free_times_table(request, page)
     return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def get_doc_type_versions(request, doc_type_id):
+    doc_type_versions = Document_Type_Version.objects\
+        .filter(document_type_id=doc_type_id)\
+        .filter(is_active=True)
+
+    doc_type_versions_list = [{
+        'id': doc_type_version.pk,
+        'name': doc_type_version.description,
+    } for doc_type_version in doc_type_versions]
+
+    return HttpResponse(json.dumps(doc_type_versions_list))
+
+
+@login_required(login_url='login')
+@try_except
+def get_all_employees(request):
+    employees = UserProfile.objects \
+        .filter(is_active=True)
+
+    employees_list = [{
+        'id': employee.pk,
+        'name': employee.pip + ' (' + employee.tab_number + ')',
+    } for employee in employees]
+
+    return HttpResponse(json.dumps(employees_list))

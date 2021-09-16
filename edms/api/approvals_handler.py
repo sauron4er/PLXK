@@ -41,7 +41,7 @@ def is_approval_module_used(doc_type):
 @try_except
 # Опрацьовує автоматичний список візуючих при створенні документа
 def add_zero_phase_auto_approvals(doc_request, phase_info):
-    recipients = get_phase_recipient_list(phase_info['id'], doc_request['doc_version'])
+    recipients = get_phase_recipient_list(phase_info['id'], doc_request['doc_type_version'])
 
     for recipient in recipients:
         if not is_in_approval_list(recipient, doc_request['document']):

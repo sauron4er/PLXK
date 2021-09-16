@@ -43,6 +43,8 @@ import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto
 import DocumentLink from 'edms/templates/edms/my_docs/new_doc_modules/document_link';
 import Registration from 'edms/templates/edms/my_docs/new_doc_modules/registration';
 import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
+import DocTypeVersion from "edms/templates/edms/my_docs/new_doc_modules/doc_type_version";
+import EmployeesAll from "edms/templates/edms/my_docs/new_doc_modules/employees_all";
 
 class NewDocument extends React.Component {
   state = {
@@ -68,8 +70,7 @@ class NewDocument extends React.Component {
     gate: 1,
     carry_out_items: [],
     main_field_queue: 0,
-    auto_recipients: [],
-    doc_type_id: 0
+    auto_recipients: []
   };
 
   onChange = (event) => {
@@ -157,24 +158,30 @@ class NewDocument extends React.Component {
         datetimes[queue_in_array].time = event.target.value;
       }
     }
-    newDocStore.new_document.datetimes = datetimes
-    console.log(newDocStore.new_document.datetimes);
+    newDocStore.new_document.datetimes = datetimes;
   };
 
   componentDidMount() {
     // Отримуємо з бд список модулів, які використовує даний тип документа:
+    this.getDocTypeModules();
+    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
+    this.getDocInfo();
+  }
+
+  getDocTypeModules = () => {
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.meta_type_id + '/' + this.props.doc.type_id + '/')
       .then((response) => {
         this.setState({
           type_modules: response.doc_type_modules,
           main_field_queue: response.main_field_queue,
-          auto_recipients: response.auto_recipients,
-          doc_type_id: response.doc_type_id
+          auto_recipients: response.auto_recipients
         });
+        newDocStore.new_document.doc_type_id = response.doc_type_id
       })
       .catch((error) => notify(error));
+  };
 
-    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
+  getDocInfo = () => {
     if (this.props.doc.id !== 0) {
       axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
@@ -203,6 +210,8 @@ class NewDocument extends React.Component {
             client: response.client || [],
             mockup_type: response.mockup_type || [],
             mockup_product_type: response.mockup_product_type || [],
+            employee: response.employee.id || 0,
+            employee_name: response.employee.name || '',
             render_ready: true
           });
           newDocStore.new_document.datetimes = response?.datetimes || [];
@@ -234,7 +243,7 @@ class NewDocument extends React.Component {
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
-  }
+  };
 
   isDimensionsFieldFilled = (module) => {
     for (const i in newDocStore.new_document.dimensions) {
@@ -335,9 +344,9 @@ class NewDocument extends React.Component {
 
   newDocument = (type) => {
     try {
-      const {type_modules, old_files, doc_type_id} = this.state;
+      const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
-  
+
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
@@ -380,9 +389,9 @@ class NewDocument extends React.Component {
 
         let formData = new FormData();
         // інфа нового документу:
-        formData.append('doc_version', newDocStore.new_document.doc_version);
+        formData.append('doc_type_version', newDocStore.new_document.doc_type_version);
         formData.append('doc_modules', JSON.stringify(doc_modules));
-        formData.append('document_type', doc_type_id);
+        formData.append('document_type', newDocStore.new_document.doc_type_id);
         formData.append('old_id', doc.id);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
         formData.append('path_to_answer', '0');
@@ -478,6 +487,8 @@ class NewDocument extends React.Component {
       auto_recipients
     } = this.state;
 
+    const {doc_type_version} = newDocStore.new_document;
+
     // Визначаємо, наскільки великим буде текстове поле:
     let rows = 1;
     switch (doc.type_id) {
@@ -493,7 +504,7 @@ class NewDocument extends React.Component {
 
     return (
       <>
-        <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
+        <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 70}}}>
           <div ref={(divElement) => (this.divElement = divElement)}>
             <If condition={type_modules.length > 0 && render_ready}>
               <div className='modal-header d-flex justify-content-between'>
@@ -507,7 +518,7 @@ class NewDocument extends React.Component {
 
               <div className='modal-body p-0'>
                 <For each='module' index='index' of={type_modules}>
-                  <If condition={!module.hide}>
+                  <If condition={!module.hide && (module.doc_type_version === 0 || module.doc_type_version === doc_type_version)}>
                     <div key={module.id} className='css_new_doc_module mt-1'>
                       <Choose>
                         <When condition={module.module === 'text'}>
@@ -598,6 +609,15 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'registration'}>
                           <Registration moduleInfo={module} />
+                        </When>
+                        <When condition={module.module === 'doc_type_version'}>
+                          <DocTypeVersion module_info={module} />
+                        </When>
+                        <When condition={module.module === 'employees_all'}>
+                          <EmployeesAll module_info={module} />
+                        </When>
+                        <When condition={module.module === 'datetime_there_and_back'}>
+                          <div>День та час виходу та заходу назад</div>
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

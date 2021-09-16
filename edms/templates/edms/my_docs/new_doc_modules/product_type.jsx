@@ -33,20 +33,20 @@ class ProductType extends React.Component {
       case '1':
       case 2:
       case '2':
-        newDocStore.new_document.doc_version = 1;
+        newDocStore.new_document.doc_type_version = 1;
         break;
       case 3:
       case '3':
-        newDocStore.new_document.doc_version = 2;
+        newDocStore.new_document.doc_type_version = 2;
         break;
       case 4:
       case '4':
       case 5:
       case '5':
-        newDocStore.new_document.doc_version = 3;
+        newDocStore.new_document.doc_type_version = 3;
         break;
       default:
-        newDocStore.new_document.doc_version = 0;
+        newDocStore.new_document.doc_type_version = 0;
         break;
     }
   };

@@ -6,7 +6,7 @@ import newDocStore from './new_doc_store';
 class AutoRecipientsInfo extends React.Component {
   render() {
     const {autoRecipients} = this.props;
-    const {doc_version} = newDocStore.new_document;
+    const {doc_type_version} = newDocStore.new_document;
 
     return (
       <If condition={autoRecipients.length > 0}>
@@ -23,7 +23,7 @@ class AutoRecipientsInfo extends React.Component {
                   <div className='md-col-4 mr-2 font-italic'>{phase.mark}</div>
                   <div className='md-col-8 mr-2'>
                     <For each='recipient' of={phase.recipients} index='r_index'>
-                      <If condition={recipient.doc_version === 0 || recipient.doc_version === doc_version}>
+                      <If condition={recipient.doc_type_version === 0 || recipient.doc_type_version === doc_type_version}>
                         <div key={r_index}>{recipient.emp_seat}</div>
                         <If condition={phase.sole && r_index+1 < phase.recipients.length}>
                           <div className='font-italic'><span className='font-weight-bold'>або</span> (залежить від посади автора)</div>
