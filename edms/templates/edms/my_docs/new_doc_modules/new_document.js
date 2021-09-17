@@ -42,9 +42,10 @@ import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/clie
 import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 import DocumentLink from 'edms/templates/edms/my_docs/new_doc_modules/document_link';
 import Registration from 'edms/templates/edms/my_docs/new_doc_modules/registration';
+import DocTypeVersion from 'edms/templates/edms/my_docs/new_doc_modules/doc_type_version';
+import EmployeesAll from 'edms/templates/edms/my_docs/new_doc_modules/employees_all';
 import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
-import DocTypeVersion from "edms/templates/edms/my_docs/new_doc_modules/doc_type_version";
-import EmployeesAll from "edms/templates/edms/my_docs/new_doc_modules/employees_all";
+import FoyerDatetimes from 'edms/templates/edms/my_docs/new_doc_modules/foyer_datetimes';
 
 class NewDocument extends React.Component {
   state = {
@@ -72,6 +73,13 @@ class NewDocument extends React.Component {
     main_field_queue: 0,
     auto_recipients: []
   };
+
+  componentDidMount() {
+    // Отримуємо з бд список модулів, які використовує даний тип документа:
+    this.getDocTypeModules();
+    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
+    this.getDocInfo();
+  }
 
   onChange = (event) => {
     if (event.target.name === 'recipient_chief') {
@@ -161,13 +169,6 @@ class NewDocument extends React.Component {
     newDocStore.new_document.datetimes = datetimes;
   };
 
-  componentDidMount() {
-    // Отримуємо з бд список модулів, які використовує даний тип документа:
-    this.getDocTypeModules();
-    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
-    this.getDocInfo();
-  }
-
   getDocTypeModules = () => {
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.meta_type_id + '/' + this.props.doc.type_id + '/')
       .then((response) => {
@@ -176,7 +177,7 @@ class NewDocument extends React.Component {
           main_field_queue: response.main_field_queue,
           auto_recipients: response.auto_recipients
         });
-        newDocStore.new_document.doc_type_id = response.doc_type_id
+        newDocStore.new_document.doc_type_id = response.doc_type_id;
       })
       .catch((error) => notify(error));
   };
@@ -212,6 +213,7 @@ class NewDocument extends React.Component {
             mockup_product_type: response.mockup_product_type || [],
             employee: response.employee.id || 0,
             employee_name: response.employee.name || '',
+            foyer_datetimes: response.foyer_datetimes || [],
             render_ready: true
           });
           newDocStore.new_document.datetimes = response?.datetimes || [];
@@ -263,16 +265,37 @@ class NewDocument extends React.Component {
     return false;
   };
 
+  isFoyerDatetimesFilled = (field_name) => {
+    let foyer_datetimes = {...newDocStore.new_document.foyer_datetimes}
+    if (foyer_datetimes.date === '') {
+      notify('Поле "' + field_name + '" необхідно заповнити');
+      return false;
+    }
+    for (const i in foyer_datetimes.times) {
+      const time = {...foyer_datetimes.times[i]}
+      if (time.out !== '' && time.in !== '' && time.in < time.out) {
+        notify('Час повернення не може бути меншим за час виходу.');
+        return false;
+      }
+    }
+    return true;
+  };
+
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
-      if (module.required) {
+      if (module.required && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
+        console.log(module.module);
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law'].includes(module.module)) {
+        } else if (
+          ['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law', 'doc_type_version', 'employee'].includes(
+            module.module
+          )
+        ) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
@@ -331,6 +354,8 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
+        } else if (module.module === 'foyer_datetimes') {
+          if (!this.isFoyerDatetimesFilled(module.field_name)) return false
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -369,6 +394,8 @@ class NewDocument extends React.Component {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'datetime') {
             doc_modules['datetimes'] = newDocStore.new_document.datetimes;
+          } else if (['doc_type_version', 'employee', 'foyer_datetimes'].includes(module.module)) {
+            doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (module.module === 'counterparty') {
@@ -613,11 +640,11 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'doc_type_version'}>
                           <DocTypeVersion module_info={module} />
                         </When>
-                        <When condition={module.module === 'employees_all'}>
+                        <When condition={module.module === 'employee'}>
                           <EmployeesAll module_info={module} />
                         </When>
-                        <When condition={module.module === 'datetime_there_and_back'}>
-                          <div>День та час виходу та заходу назад</div>
+                        <When condition={module.module === 'foyer_datetimes'}>
+                          <FoyerDatetimes module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

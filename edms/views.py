@@ -664,6 +664,7 @@ def edms_my_docs(request):
         doc_request = request.POST.copy()
 
         doc_files = request.FILES.getlist('file')
+        module_recipients = post_modules(doc_request, doc_files, 0, 0)
 
         # Записуємо документ і отримуємо його ід, тип
         new_doc = post_document(request)

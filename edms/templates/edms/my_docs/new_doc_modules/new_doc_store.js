@@ -37,6 +37,7 @@ const newDocStore = store({
     select: [],
     employee: 0,
     employee_name: '',
+    foyer_datetimes: {date: '', times: [{out: '', in: ''}]},
     client_requirements: {
       bag_name: '',
       weight_kg: '',
@@ -118,6 +119,7 @@ const newDocStore = store({
       select: [],
       employee: 0,
       employee_name: '',
+      foyer_datetimes: {date: '', times: [{out: '', in: ''}]},
       client_requirements: {
         bag_name: '',
         weight_kg: '',

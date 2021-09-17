@@ -27,8 +27,6 @@ class EmployeesAll extends React.Component {
     const {module_info} = this.props;
     const {employees} = this.state;
   
-    console.log(newDocStore.new_document.employee_name);
-  
     return (
       <div>
         <label className='mr-1'>
