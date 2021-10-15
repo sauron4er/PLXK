@@ -123,10 +123,10 @@ def get_non_compliance(request, pk):
     user_role = 'viewer'
     if nc_instance.responsible and nc_instance.responsible_id == request.user.userprofile.id:
         user_role = 'responsible'
-    elif nc_instance.author.user == request.user:
-        user_role = 'author'
     elif get_dep_chief(nc_instance.author) == request.user.userprofile:
         user_role = 'dep_chief'
+    elif nc_instance.author.user == request.user:
+        user_role = 'author'
     elif get_director_userprofile('id') == request.user.userprofile.id:
         user_role = 'director'
 
