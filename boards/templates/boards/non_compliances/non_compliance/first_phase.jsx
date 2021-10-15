@@ -371,7 +371,7 @@ class NCFirstPhase extends React.Component {
           onClose={this.onCloseModal}
           showCloseIcon={false}
           closeOnOverlayClick={false}
-          styles={{modal: {marginTop: 50}}}
+          styles={{modal: {marginTop: 100, height: '45%'}}}
         >
           Оберіть список працівників, які повинні вирішити подальшу роботу з невідповідністю.
           <MultiSelectorWithAxios listNameForUrl='employees' onChange={this.onAcquaintsChange} disabled={!editable} />
