@@ -9,7 +9,7 @@ from accounts import views as accounts_views
 from boards import views as board_views
 from production.views import get_products
 from boards.views_counterparties import get_counterparties
-from edms.views import edms_get_emp_seats
+from edms.views import edms_get_emp_seats, edms_get_doc
 
 
 urlpatterns = [
@@ -17,6 +17,9 @@ urlpatterns = [
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
+    url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
+    url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
+    url(r'^.+/.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
 
     url(r'^$', board_views.home, name='index'),
    # url(r'^about/$', views.about, name='about'),
@@ -42,9 +45,14 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls, name='sam_admin'),
 
     url(r'^edms/', include('edms.urls', namespace='edms')),
+    url(r'^accounts/', include('accounts.urls', namespace='accounts')),
 
     url(r'^phones/change_pam', board_views.change_pam, name='change_pam'),
     url(r'^phones/', board_views.phones, name='phones'),
+
+    url(r'^foyer/get_foyer_data/(?P<page>\d+)/$', board_views.get_foyer_data, name='get_foyer_data'),
+    url(r'^foyer/create_report', board_views.create_foyer_report, name='create_foyer_report'),
+    url(r'^foyer/', board_views.foyer, name='foyer'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

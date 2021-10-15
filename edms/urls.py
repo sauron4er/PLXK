@@ -6,7 +6,8 @@ from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
-from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_doc_type_versions, get_all_employees
+from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_doc_type_versions, get_all_employees, \
+    del_foyer_range, save_foyer_range
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes
 from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
@@ -15,7 +16,6 @@ from correspondence.views import get_laws
 app_name = 'edms'
 
 urlpatterns = [
-    url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
     url(r'^.+/get_deps/', edms_get_deps, name='get_deps'),
     url(r'^.+/get_seats/', edms_get_seats, name='get_seats'),
     url(r'^.+/mark/', edms_mark, name='my_docs_mark'),
@@ -53,6 +53,8 @@ urlpatterns = [
     url(r'^my_docs/del_doc/(?P<pk>\d+)/$', edms_del_doc, name='del_doc'),
     url(r'^my_docs/get_direct_subs/(?P<pk>\d+)/$', edms_get_direct_subs, name='my_docs_get_direct_subs'),
     url(r'^my_docs/change_text_module', change_text_module, name='change_text_module'),
+    url(r'^my_docs/del_foyer_range/(?P<pk>\d+)$', del_foyer_range, name='del_foyer_range'),
+    url(r'^my_docs/save_foyer_range', save_foyer_range, name='save_foyer_range'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),

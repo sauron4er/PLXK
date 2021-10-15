@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
-    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, Doc_Datetime
+    Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
+    Doc_Foyer_Range, Doc_Employee
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -62,15 +63,14 @@ def post_days(doc_request, days):
 
 
 @try_except
-def post_datetimes(doc_request, days):
-    for day in days:
-        # date_string = day['day'] + ' ' + day['time']
-        date_string = day['day'] + 'T' + day['time'] + ':00+0000'
-        date = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
-
-        new_doc_datetime = Doc_Datetime(
-            document_id=doc_request['document'], datetime=date, queue_in_doc=day['queue'])
-        new_doc_datetime.save()
+def post_foyer_ranges(doc_request, datetimes):
+    for fdt in datetimes:
+        new_fdt = Doc_Foyer_Range(document_id=doc_request['document'])
+        # new_fdt.out_datetime = datetime.strptime(fdt['out'], "%Y-%m-%dT%H:%M:%S.%fz")
+        # new_fdt.in_datetime = datetime.strptime(fdt['in'], "%Y-%m-%dT%H:%M:%S.%fz")
+        new_fdt.out_datetime = datetime.fromtimestamp(fdt['out'])
+        new_fdt.in_datetime = datetime.fromtimestamp(fdt['in'])
+        new_fdt.save()
 
 
 @try_except
@@ -268,6 +268,12 @@ def post_registration(new_doc, registration_number):
     if registration_number != '':
         new_doc_registration = Doc_Registration(document=new_doc, registration_number=registration_number)
         new_doc_registration.save()
+
+
+@try_except
+def post_employee(new_doc, employee):
+    new_employee = Doc_Employee(document=new_doc, queue_in_doc=employee['queue'], employee_id=employee['value'])
+    new_employee.save()
 
 
 @try_except

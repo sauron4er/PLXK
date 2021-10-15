@@ -13,7 +13,7 @@ class Department(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.RESTRICT)
+    user = models.OneToOneField(User, on_delete=models.RESTRICT, null=True)
     pip = models.CharField(max_length=100,blank=True,null=True)
     avatar = models.ImageField(upload_to='images/users', verbose_name='Аватар', blank=True, null=True)
     department = models.ForeignKey(Department, blank=True, null=True, on_delete=models.RESTRICT, related_name='+', default=1)

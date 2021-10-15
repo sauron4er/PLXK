@@ -10,6 +10,7 @@ from plxk.api.datetime_normalizers import date_to_json
 from .vacations import vacation_check
 from ..models import *
 from docs.models import Contract
+from edms.api.modules_getter import get_foyer_ranges
 
 testing = settings.STAS_DEBUG
 
@@ -341,7 +342,7 @@ def get_doc_type_modules(doc_type):
         'queue': type_module.queue,
         'additional_info': type_module.additional_info,
         'hide': type_module.hide,
-        'doc_type_version': type_module.doc_type_version.version_id if type_module.doc_type_version else 0
+        'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
@@ -351,7 +352,7 @@ def get_doc_type_modules(doc_type):
 def get_auto_recipients(doc_type_id):
     doc_type_phases = Doc_Type_Phase.objects\
         .filter(document_type=doc_type_id)\
-        .filter(mark_id__in=[2, 6, 8, 11, 17, 23])\
+        .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24])\
         .filter(is_active=True)
 
     if not doc_type_phases:
@@ -366,7 +367,8 @@ def get_auto_recipients(doc_type_id):
         phase_recipients = {
             'mark': dtp.mark.mark,
             'recipients': [],
-            'sole': dtp.sole
+            'sole': dtp.sole,
+            'doc_type_version': dtp.doc_type_version_id if dtp.doc_type_version else 0
         }
 
         phase_recipients_with_doc_type_version = get_phase_recipients_and_doc_type_version(dtp)
@@ -389,7 +391,9 @@ def get_additional_doc_info(doc_request):
             'employee_seat_id',
             'employee_seat__employee__pip',
             'document_type',
-            'document_type__description') \
+            'document_type__description',
+            'document_type__meta_doc_type_id'
+            ) \
         .filter(id=doc_request['document'])[0]
 
     # doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
@@ -399,6 +403,7 @@ def get_additional_doc_info(doc_request):
         'doc_author_name': document_info['employee_seat__employee__pip'],
         'document_type': document_info['document_type'],
         'doc_type_name': document_info['document_type__description'],
+        'doc_meta_type_id': document_info['document_type__meta_doc_type_id'],
     })
 
     # doc_author_name = Document.objects.values_list('employee_seat__employee__pip', flat=True).filter(id=doc_request['document'])[0]
@@ -465,7 +470,7 @@ def get_phase_recipients_and_doc_type_version(phase):
     if phase.mark.mark == 'Не заперечую':
         return [{
             'emp_seat': 'Безпосередній начальник автора',
-            'doc_type_version': 0
+            'doc_type_version': int(phase.doc_type_version_id) if phase.doc_type_version else 0,
         }]
 
     phase_recipients = Doc_Type_Phase_Queue.objects\
@@ -476,7 +481,8 @@ def get_phase_recipients_and_doc_type_version(phase):
     phase_recipients = [{
         'seat_id': item.seat_id,
         'employee_seat_id': item.employee_seat_id,
-        'doc_type_version': int(item.doc_type_version) if item.doc_type_version else 0
+        'doc_type_version': int(item.doc_type_version) if item.doc_type_version
+                        else int(item.phase.doc_type_version_id) if item.phase.doc_type_version else 0,
     } for item in phase_recipients]
 
     recipients = []
@@ -490,8 +496,7 @@ def get_phase_recipients_and_doc_type_version(phase):
 
         recipients.append({
             'emp_seat': employee_seat_info,
-            'doc_type_version': recipient['doc_type_version']
-
+            'doc_type_version': recipient['doc_type_version'],
         })
 
     return recipients
@@ -733,7 +738,8 @@ def get_doc_modules(doc):
         'module': type_module.module.module,
         'field_name': None if type_module.field_name is None else type_module.field_name,
         'is_editable': type_module.is_editable,
-        'queue': type_module.queue
+        'queue': type_module.queue,
+        'doc_type_version': type_module.doc_type_version_id
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)
         .filter(is_active=True)
@@ -840,16 +846,9 @@ def get_doc_modules(doc):
                 doc_modules.update({
                     'days': days,
                 })
-        elif module['module'] == 'datetime':
-            # Шукаємо список тільки для першого модуля, щоб не брати ту ж інфу ще раз
-            if 'datetimes' not in doc_modules.keys():
-                datetimes = [{
-                    'queue': item.queue_in_doc,
-                    'datetime': item.datetime.strftime('%d-%m-%Y %H:%M')
-                } for item in Doc_Datetime.objects.filter(document_id=doc.id).filter(is_active=True)]
-                doc_modules.update({
-                    'datetimes': datetimes,
-                })
+        elif module['module'] == 'foyer_ranges':
+            if 'foyer_ranges' not in doc_modules.keys():
+                doc_modules.update({'foyer_ranges': get_foyer_ranges(doc.id),})
         elif module['module'] == 'gate':
             gate = [{
                 'gate': item.gate,
@@ -1034,6 +1033,25 @@ def get_doc_modules(doc):
             doc_modules.update({'client_requirements': data[0]['fields']})
             doc_modules.update({'additional_requirements': ar})
 
+        elif module['module'] == 'doc_type_version':
+            dtv = {
+                'id': doc.doc_type_version_id,
+                'name': doc.doc_type_version.description if doc.doc_type_version else ''
+            }
+
+            doc_modules.update({'doc_type_version': dtv})
+
+        elif module['module'] == 'employee':
+            employee = [{
+                'id': employee.employee_id,
+                'name': employee.employee.pip + ', ' + employee.employee.tab_number,
+            } for employee in Doc_Employee.objects
+                .filter(document_id=doc.id)
+                .filter(queue_in_doc=module['queue'])
+                .filter(is_active=True)]
+
+            doc_modules.update({'employee': employee[0]})
+
         elif module['module'] == 'document_link':
             dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(is_active=True)
             if dl:
@@ -1101,6 +1119,8 @@ def get_main_field(document):
                 return doc_counterparty[0]['name']
             else:
                 return doc_counterparty[0]['input']
+    elif main_field_data['module_id'] == 42:  # Версія документу
+        main_field = [document.doc_type_version.description or '']
 
     if len(main_field) > 0:
         return main_field[0]
@@ -1164,3 +1184,88 @@ def get_mark_name(mark, mark_id, meta_doc_type_id):
     elif mark_id == 26:
         return 'Деактивовано'
     return mark
+
+
+@try_except
+def get_doc_path(meta_doc_type_id, doc_id):
+    return [{
+        'id': path.id,
+        'time': convert_to_localtime(path.timestamp, 'time'),
+        'mark_id': path.mark_id,
+        'mark': get_mark_name(path.mark.mark, path.mark_id, meta_doc_type_id),
+        # 'mark': path.mark.mark,
+        'emp_seat_id': path.employee_seat_id,
+        'emp': path.employee_seat.employee.pip,
+        'seat': path.employee_seat.seat.seat if path.employee_seat.is_main else '(в.о.) ' + path.employee_seat.seat.seat,
+        'comment': path.comment,
+        'original_path': path.path_to_answer_id,
+    } for path in Document_Path.objects.filter(document_id=doc_id).order_by('-timestamp')]
+
+
+@try_except
+def get_path_steps(path):
+    for step in path:
+        # Шукаємо резолюції та "на ознайомлення" і додаємо їх до запису в path
+        if step['mark_id'] == 10:
+            resolutions = [{
+                'id': md.id,
+                'emp_seat_id': md.recipient.id,
+                'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
+                'comment': md.comment,
+            } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
+            step['resolutions'] = resolutions
+        if step['mark_id'] == 15:
+            acquaints = [{
+                'id': md.id,
+                'emp_seat_id': md.recipient.id,
+                'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
+            } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
+            step['acquaints'] = acquaints
+
+        # Шукаємо додані файли і додаємо їх до відповідного запису в path
+        files = [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+            'path_id': file.document_path.id,
+            'mark_id': file.document_path.mark.id,
+            'version': file.version,
+        } for file in File.objects.filter(document_path_id=step['id'])]
+        step['files'] = files
+
+        # Шукаємо видалені файли і додаємо їх до відповідного запису в path
+        deactivated_files = [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+            'path_id': file.document_path.id,
+            'mark_id': file.document_path.mark.id,
+            'version': file.version,
+        } for file in File.objects.filter(deactivate_path_id=step['id'])]
+        step['deactivated_files'] = deactivated_files
+
+    return path
+
+
+@try_except
+def get_doc_flow(doc_id):
+    # В кого на черзі документ:
+    flow_all = [{
+        'id': demand.id,
+        'emp_seat_id': demand.recipient.id,
+        'emp': demand.recipient.employee.pip,
+        'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
+        'expected_mark': demand.mark_id,
+    } for demand in Mark_Demand.objects.filter(document_id=doc_id).filter(is_active=True)]
+
+    # Розділяємо чергу на два потоки: "На ознайомлення" та "На черзі у"
+    flow = []
+    acquaints = []
+
+    for step in flow_all:
+        if step['expected_mark'] == 8:
+            acquaints.append(step)
+        else:
+            flow.append(step)
+
+    return {'flow': flow, 'acquaints': acquaints}

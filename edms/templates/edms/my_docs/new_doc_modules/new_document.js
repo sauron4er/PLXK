@@ -45,7 +45,7 @@ import Registration from 'edms/templates/edms/my_docs/new_doc_modules/registrati
 import DocTypeVersion from 'edms/templates/edms/my_docs/new_doc_modules/doc_type_version';
 import EmployeesAll from 'edms/templates/edms/my_docs/new_doc_modules/employees_all';
 import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
-import FoyerDatetimes from 'edms/templates/edms/my_docs/new_doc_modules/foyer_datetimes';
+import FoyerRanges from 'edms/templates/edms/my_docs/new_doc_modules/foyer_ranges';
 
 class NewDocument extends React.Component {
   state = {
@@ -213,10 +213,11 @@ class NewDocument extends React.Component {
             mockup_product_type: response.mockup_product_type || [],
             employee: response.employee.id || 0,
             employee_name: response.employee.name || '',
-            foyer_datetimes: response.foyer_datetimes || [],
+            foyer_ranges: response.foyer_ranges || [],
             render_ready: true
           });
           newDocStore.new_document.datetimes = response?.datetimes || [];
+          newDocStore.new_document.foyer_ranges = response?.datetimes || [];
           newDocStore.new_document.text = response?.text_list || [];
           newDocStore.new_document.client = response?.client?.id;
           newDocStore.new_document.client_name = response?.client?.name;
@@ -265,17 +266,25 @@ class NewDocument extends React.Component {
     return false;
   };
 
-  isFoyerDatetimesFilled = (field_name) => {
-    let foyer_datetimes = {...newDocStore.new_document.foyer_datetimes}
-    if (foyer_datetimes.date === '') {
-      notify('Поле "' + field_name + '" необхідно заповнити');
-      return false;
-    }
-    for (const i in foyer_datetimes.times) {
-      const time = {...foyer_datetimes.times[i]}
-      if (time.out !== '' && time.in !== '' && time.in < time.out) {
-        notify('Час повернення не може бути меншим за час виходу.');
+  isFoyerDatetimesFilled = () => {
+    let foyer_ranges = {...newDocStore.new_document.foyer_ranges};
+
+    for (const i in foyer_ranges) {
+      const time = {...foyer_ranges[i]};
+      if (time.out === 'invalid' || time.in === 'invalid') {
+        notify('Будь ласка, правильно заповніть всі поля входу/виходу');
         return false;
+      }
+      if (time.out !== '' && time.in !== '') {
+        if ([1, 2].includes(newDocStore.new_document.doc_type_version) && time.in <= time.out) {
+          // 1,2 - звільнююча
+          notify('Час повернення не може бути меншим за час виходу.');
+          return false;
+        } else if ([3, 4].includes(newDocStore.new_document.doc_type_version) && time.in >= time.out) {
+          // 3,4 - тимчасова, забув
+          notify('Час виходу не може бути меншим за час входу.');
+          return false;
+        }
       }
     }
     return true;
@@ -285,7 +294,6 @@ class NewDocument extends React.Component {
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
       if (module.required && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
-        console.log(module.module);
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
@@ -354,8 +362,8 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
-        } else if (module.module === 'foyer_datetimes') {
-          if (!this.isFoyerDatetimesFilled(module.field_name)) return false
+        } else if (module.module === 'foyer_ranges') {
+          if (!this.isFoyerDatetimesFilled()) return false;
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -377,7 +385,11 @@ class NewDocument extends React.Component {
         let doc_modules = {};
 
         type_modules.map((module) => {
-          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(module.module)) {
+          if (
+            ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link', 'employee'].includes(
+              module.module
+            )
+          ) {
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
@@ -394,8 +406,6 @@ class NewDocument extends React.Component {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'datetime') {
             doc_modules['datetimes'] = newDocStore.new_document.datetimes;
-          } else if (['doc_type_version', 'employee', 'foyer_datetimes'].includes(module.module)) {
-            doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (module.module === 'counterparty') {
@@ -403,9 +413,12 @@ class NewDocument extends React.Component {
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
-          } else if (['scope', 'law', 'client_requirements'].includes(module.module)) {
+          } else if (['scope', 'law', 'client_requirements', 'doc_type_version'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
-          } else if (module.module === 'document_link') {
+          } else if (module.module === 'foyer_ranges') {
+            doc_modules[module.module] = this.getFoyerRanges()
+          }
+          else if (module.module === 'document_link') {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
             doc_modules[module.module] = newDocStore.new_document.registration_number;
@@ -413,7 +426,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.state[module.module];
           }
         });
-
+  
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_type_version', newDocStore.new_document.doc_type_version);
@@ -455,6 +468,19 @@ class NewDocument extends React.Component {
       notify(e);
     }
   };
+  
+  getFoyerRanges = () => {
+    const {foyer_ranges} = newDocStore.new_document;
+    let new_ranges = []
+    console.log(foyer_ranges);
+    for (const i in foyer_ranges) {
+      const r_out = foyer_ranges[i].out instanceof Date ? foyer_ranges[i].out.getTime() / 1000 : foyer_ranges[i].out
+      const r_in = foyer_ranges[i].in instanceof Date ? foyer_ranges[i].in.getTime() / 1000 : foyer_ranges[i].in
+      new_ranges.push({out: r_out, in: r_in})
+    }
+    console.log(new_ranges);
+    return new_ranges
+  };
 
   getMainField = () => {
     for (const x in newDocStore.new_document.text) {
@@ -469,6 +495,9 @@ class NewDocument extends React.Component {
       if (newDocStore.new_document.counterparty_name !== '') return newDocStore.new_document.counterparty_name;
       else return newDocStore.new_document.counterparty_input;
     }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'doc_type_version') {
+      return newDocStore.new_document.doc_type_version_name;
+    }
     return 0;
   };
 
@@ -476,11 +505,6 @@ class NewDocument extends React.Component {
     if (this.props.doc.id !== 0) {
       // Якщо це не створення нового документу:
       this.props.removeDoc(this.props.doc.id);
-      // axiosPostRequest('del_doc/' + this.props.doc.id + '/')
-      //   .then((response) => {
-      //     this.props.removeDoc(this.props.doc.id);
-      //   })
-      //   .catch((error) => notify(error));
     }
 
     this.props.onCloseModal();
@@ -643,8 +667,8 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'employee'}>
                           <EmployeesAll module_info={module} />
                         </When>
-                        <When condition={module.module === 'foyer_datetimes'}>
-                          <FoyerDatetimes module_info={module} />
+                        <When condition={module.module === 'foyer_ranges'}>
+                          <FoyerRanges module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

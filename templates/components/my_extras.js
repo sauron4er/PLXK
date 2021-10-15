@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {getEmpSeats} from 'edms/api/get_emp_seats';
 import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Спливаючі повідомлення
 export const notify = (message) =>
