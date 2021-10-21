@@ -354,7 +354,9 @@ def get_correspondence_info(request):
         'name': employee.pip,
         'correspondence_admin': employee.is_correspondence_view
     } for employee in UserProfile.objects.only('id', 'pip')
-        .filter(is_active=True).order_by('pip')]
+        .filter(is_active=True)
+        .exclude(user__isnull=True)
+        .order_by('pip')]
 
     return HttpResponse(json.dumps({'clients': clients, 'scopes': scopes, 'products': products,
                                     'laws': laws, 'employees': employees}))
