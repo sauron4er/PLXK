@@ -49,7 +49,8 @@ def employees(request):
             'pip': up.pip,
             'tab_number': up.tab_number,
             'department': up.department_id or 0,
-            'department_name': up.department.name if up.department else ''
+            'department_name': up.department.name if up.department else '',
+            'is_pc_user': 'true' if up.is_pc_user else 'false'
         } for up in UserProfile.objects.filter(is_active=True).order_by('pip')]
     return render(request, 'accounts/employees/employees.html', {'employees': employees})
 

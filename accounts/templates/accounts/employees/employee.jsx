@@ -12,6 +12,7 @@ class Employee extends React.Component {
     tab_number: '',
     department: 0,
     department_name: '',
+    is_pc_user: 'true'
   };
 
   componentDidMount() {
@@ -21,7 +22,8 @@ class Employee extends React.Component {
       pip: employee.pip,
       tab_number: employee.tab_number,
       department: employee.department,
-      department_name: employee.department_name
+      department_name: employee.department_name,
+      is_pc_user: employee.is_pc_user
     });
   }
 
@@ -70,11 +72,11 @@ class Employee extends React.Component {
   };
 
   render() {
-    const {id, pip, tab_number, department, department_name} = this.state;
+    const {id, pip, tab_number, department, department_name, is_pc_user} = this.state;
     return (
       <>
         <h4 className='mt-4'>{pip}</h4>
-        <If condition={id !== 0}>
+        <If condition={id !== 0 && is_pc_user === 'false'}>
           <button className='btn btn-sm btn-outline-danger' onClick={this.deactEmployee}>
             Видалити
           </button>
@@ -106,7 +108,8 @@ class Employee extends React.Component {
       pip: '',
       tab_number: '',
       department: 0,
-      department_name: ''
+      department_name: '',
+      is_pc_user: 'true'
     }
   };
 }
