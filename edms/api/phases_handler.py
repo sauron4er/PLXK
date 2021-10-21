@@ -190,41 +190,54 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
     if modules_recipients is None:
         modules_recipients = []
-    phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained') \
+    phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained', 'doc_type_version_id') \
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
     if phases:
         for phase_info in phases:
-            # Переходимо на наступну фазу, якщо позначка для цієї фази вже проставлена
-            # (написано для опрацювання позначки "Виконано" поставленої суперменеджером замість менеджера)
-            if doc_request['mark'] == '11' and phase_info['mark_id'] == int(doc_request['mark']):
-                new_phase(doc_request, phase_number+1, modules_recipients=None)
-                continue
+            if phase_info['doc_type_version_id'] is None or str(phase_info['doc_type_version_id']) == doc_request['doc_type_version']:
+                # Переходимо на наступну фазу, якщо позначка для цієї фази вже проставлена
+                # (написано для опрацювання позначки "Виконано" поставленої суперменеджером замість менеджера)
+                if doc_request['mark'] == '11' and phase_info['mark_id'] == int(doc_request['mark']):
+                    new_phase(doc_request, phase_number+1, modules_recipients=None)
+                    continue
 
-            # 1. Створюємо таблицю візування для новоствореного документа:
-            if phase_number == 1 and doc_request['mark'] == 1:
-                if is_approvals_used(doc_request['document_type']):
-                    add_zero_phase_auto_approvals(doc_request, phase_info)
+                # 1. Створюємо таблицю візування для новоствореного документа:
+                if phase_number == 1 and doc_request['mark'] == 1:
+                    if is_approvals_used(doc_request['document_type']):
+                        add_zero_phase_auto_approvals(doc_request, phase_info)
 
-            if phase_info['mark_id'] == 20:
-                # автоматичне заповнення полей approved, approved_date
-                post_auto_approve(doc_request)
-                new_phase(doc_request, phase_number+1)
+                if phase_info['mark_id'] == 20:
+                    # автоматичне заповнення полей approved, approved_date
+                    post_auto_approve(doc_request)
+                    new_phase(doc_request, phase_number+1)
 
-            elif phase_info['mark_id'] in [22, 24, 27]:
-                # додавання засканованих підписаних документів, Підтвердження виконання заявки, реєстрація
-                handle_phase_marks(doc_request, phase_info)
-
-            else:
-                # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
-                if is_approvals_used(doc_request['document_type']):
-                    handle_phase_approvals(doc_request, phase_info)
-                else:
-                    # 4. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
+                elif phase_info['mark_id'] in [22, 27]:
+                    # додавання засканованих підписаних документів, Підтвердження виконання заявки, реєстрація
                     handle_phase_marks(doc_request, phase_info)
-                    # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
-                    handle_phase_recipients(doc_request, phase_info, modules_recipients)
 
+                # Підтвердження
+                elif phase_info['mark_id'] == 24:
+                    recipients = get_phase_recipient_list(phase_info['id'])
+                    if recipients:
+                        # Якщо є визначений отримувач
+                        for recipient in recipients:
+                            recipient = vacation_check(recipient)
+                            post_mark_demand(doc_request, recipient, phase_info['id'], 24)
+                            new_mail('new', [{'id': recipient}], doc_request)
+                    else:
+                        # Якщо визначеного отримувача нема, надсилаємо автору
+                        handle_phase_marks(doc_request, phase_info)
+
+                else:
+                    # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
+                    if is_approvals_used(doc_request['document_type']):
+                        handle_phase_approvals(doc_request, phase_info)
+                    else:
+                        # 4. Для автоматичного вибору отримувача визначаємо, яка позначка використовується у даній фазі:
+                        handle_phase_marks(doc_request, phase_info)
+                        # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
+                        handle_phase_recipients(doc_request, phase_info, modules_recipients)
     # Відправляємо документ на ознайомлення, якщо отримувачі уже не мають цей документ на погодженні тощо
     # Для цього використовується фаза 0, бо ознайомлення фактично не є фазою і не впливає на шлях документа
     handle_phase_acquaints(doc_request, modules_recipients)

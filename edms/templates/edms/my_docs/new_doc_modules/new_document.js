@@ -22,7 +22,15 @@ import PackagingType from './packaging_type';
 import ChooseMainContract from 'edms/templates/edms/my_docs/new_doc_modules/choose_main_contract';
 import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
-import {getTextByQueue, getDayByQueue, getIndexByProperty, isBlankOrZero, getToday, notify} from 'templates/components/my_extras';
+import {
+  getTextByQueue,
+  getDayByQueue,
+  getIndexByProperty,
+  isBlankOrZero,
+  getToday,
+  notify,
+  getDatetimeByQueue
+} from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import 'static/css/my_styles.css';
@@ -33,7 +41,11 @@ import Law from 'edms/templates/edms/my_docs/new_doc_modules/law';
 import ClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements/client_requirements';
 import AutoRecipientsInfo from 'edms/templates/edms/my_docs/new_doc_modules/auto_recipients_info';
 import DocumentLink from 'edms/templates/edms/my_docs/new_doc_modules/document_link';
-import Registration from "edms/templates/edms/my_docs/new_doc_modules/registration";
+import Registration from 'edms/templates/edms/my_docs/new_doc_modules/registration';
+import DocTypeVersion from 'edms/templates/edms/my_docs/new_doc_modules/doc_type_version';
+import EmployeesAll from 'edms/templates/edms/my_docs/new_doc_modules/employees_all';
+import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
+import FoyerRanges from 'edms/templates/edms/my_docs/new_doc_modules/foyer_ranges';
 
 class NewDocument extends React.Component {
   state = {
@@ -59,9 +71,15 @@ class NewDocument extends React.Component {
     gate: 1,
     carry_out_items: [],
     main_field_queue: 0,
-    auto_recipients: [],
-    doc_type_id: 0
+    auto_recipients: []
   };
+
+  componentDidMount() {
+    // Отримуємо з бд список модулів, які використовує даний тип документа:
+    this.getDocTypeModules();
+    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
+    this.getDocInfo();
+  }
 
   onChange = (event) => {
     if (event.target.name === 'recipient_chief') {
@@ -125,20 +143,46 @@ class NewDocument extends React.Component {
     this.setState({days});
   };
 
-  componentDidMount() {
-    // Отримуємо з бд список модулів, які використовує даний тип документа:
+  onChangeDatetime = (event, type, queue) => {
+    let {datetimes} = newDocStore.new_document;
+
+    const queue_in_array = getIndexByProperty(datetimes, 'queue', parseInt(queue));
+    if (queue_in_array === -1) {
+      if (type === 'day') {
+        datetimes.push({
+          queue: parseInt(queue),
+          day: event.target.value
+        });
+      } else {
+        datetimes.push({
+          queue: parseInt(queue),
+          time: event.target.value
+        });
+      }
+    } else {
+      if (type === 'day') {
+        datetimes[queue_in_array].day = event.target.value;
+      } else {
+        datetimes[queue_in_array].time = event.target.value;
+      }
+    }
+    newDocStore.new_document.datetimes = datetimes;
+  };
+
+  getDocTypeModules = () => {
     axiosGetRequest('get_doc_type_modules/' + this.props.doc.meta_type_id + '/' + this.props.doc.type_id + '/')
       .then((response) => {
         this.setState({
           type_modules: response.doc_type_modules,
           main_field_queue: response.main_field_queue,
-          auto_recipients: response.auto_recipients,
-          doc_type_id: response.doc_type_id
+          auto_recipients: response.auto_recipients
         });
+        newDocStore.new_document.doc_type_id = response.doc_type_id;
       })
       .catch((error) => notify(error));
+  };
 
-    // Якщо це чернетка чи шаблон, отримуємо з бд дані:
+  getDocInfo = () => {
     if (this.props.doc.id !== 0) {
       axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
@@ -167,8 +211,13 @@ class NewDocument extends React.Component {
             client: response.client || [],
             mockup_type: response.mockup_type || [],
             mockup_product_type: response.mockup_product_type || [],
+            employee: response.employee.id || 0,
+            employee_name: response.employee.name || '',
+            foyer_ranges: response.foyer_ranges || [],
             render_ready: true
           });
+          newDocStore.new_document.datetimes = response?.datetimes || [];
+          newDocStore.new_document.foyer_ranges = response?.datetimes || [];
           newDocStore.new_document.text = response?.text_list || [];
           newDocStore.new_document.client = response?.client?.id;
           newDocStore.new_document.client_name = response?.client?.name;
@@ -197,7 +246,7 @@ class NewDocument extends React.Component {
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
-  }
+  };
 
   isDimensionsFieldFilled = (module) => {
     for (const i in newDocStore.new_document.dimensions) {
@@ -217,16 +266,44 @@ class NewDocument extends React.Component {
     return false;
   };
 
+  isFoyerDatetimesFilled = () => {
+    let foyer_ranges = {...newDocStore.new_document.foyer_ranges};
+
+    for (const i in foyer_ranges) {
+      const time = {...foyer_ranges[i]};
+      if (time.out === 'invalid' || time.in === 'invalid') {
+        notify('Будь ласка, правильно заповніть всі поля входу/виходу');
+        return false;
+      }
+      if (time.out !== '' && time.in !== '') {
+        if ([1, 2].includes(newDocStore.new_document.doc_type_version) && time.in <= time.out) {
+          // 1,2 - звільнююча
+          notify('Час повернення не може бути меншим за час виходу.');
+          return false;
+        } else if ([3, 4].includes(newDocStore.new_document.doc_type_version) && time.in >= time.out) {
+          // 3,4 - тимчасова, забув
+          notify('Час виходу не може бути меншим за час входу.');
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
-      if (module.required) {
+      if (module.required && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
-        } else if (['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law'].includes(module.module)) {
+        } else if (
+          ['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law', 'doc_type_version', 'employee'].includes(
+            module.module
+          )
+        ) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
@@ -270,6 +347,23 @@ class NewDocument extends React.Component {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
+        } else if (module.module === 'datetime') {
+          const datetimes = newDocStore.new_document.datetimes;
+
+          let datetime_exists = false;
+          for (const i in datetimes) {
+            if (datetimes[i].queue === module.queue) {
+              if (datetimes[i].day !== '' && datetimes[i].time !== '') {
+                datetime_exists = true;
+              }
+            }
+          }
+          if (!datetime_exists) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'foyer_ranges') {
+          if (!this.isFoyerDatetimesFilled()) return false;
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -283,7 +377,7 @@ class NewDocument extends React.Component {
 
   newDocument = (type) => {
     try {
-      const {type_modules, old_files, doc_type_id} = this.state;
+      const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
 
       if (type === 'template' || this.requiredFieldsFilled()) {
@@ -291,7 +385,11 @@ class NewDocument extends React.Component {
         let doc_modules = {};
 
         type_modules.map((module) => {
-          if (['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link'].includes(module.module)) {
+          if (
+            ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link', 'employee'].includes(
+              module.module
+            )
+          ) {
             doc_modules[module.module] = {
               queue: module.queue,
               value: newDocStore.new_document[module.module]
@@ -306,6 +404,8 @@ class NewDocument extends React.Component {
             doc_modules.approval_list = this.state.approval_list;
           } else if (module.module === 'day') {
             doc_modules['days'] = this.state.days;
+          } else if (module.module === 'datetime') {
+            doc_modules['datetimes'] = newDocStore.new_document.datetimes;
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
           } else if (module.module === 'counterparty') {
@@ -313,22 +413,25 @@ class NewDocument extends React.Component {
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
-          } else if (['scope', 'law', 'client_requirements'].includes(module.module)) {
+          } else if (['scope', 'law', 'client_requirements', 'doc_type_version'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
-          } else if (module.module === 'document_link') {
+          } else if (module.module === 'foyer_ranges') {
+            doc_modules[module.module] = this.getFoyerRanges()
+          }
+          else if (module.module === 'document_link') {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
-            doc_modules[module.module] = newDocStore.new_document.registration_number
+            doc_modules[module.module] = newDocStore.new_document.registration_number;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
         });
-
+  
         let formData = new FormData();
         // інфа нового документу:
-        formData.append('doc_version', newDocStore.new_document.doc_version);
+        formData.append('doc_type_version', newDocStore.new_document.doc_type_version);
         formData.append('doc_modules', JSON.stringify(doc_modules));
-        formData.append('document_type', doc_type_id);
+        formData.append('document_type', newDocStore.new_document.doc_type_id);
         formData.append('old_id', doc.id);
         formData.append('employee_seat', localStorage.getItem('my_seat'));
         formData.append('path_to_answer', '0');
@@ -365,6 +468,19 @@ class NewDocument extends React.Component {
       notify(e);
     }
   };
+  
+  getFoyerRanges = () => {
+    const {foyer_ranges} = newDocStore.new_document;
+    let new_ranges = []
+    console.log(foyer_ranges);
+    for (const i in foyer_ranges) {
+      const r_out = foyer_ranges[i].out instanceof Date ? foyer_ranges[i].out.getTime() / 1000 : foyer_ranges[i].out
+      const r_in = foyer_ranges[i].in instanceof Date ? foyer_ranges[i].in.getTime() / 1000 : foyer_ranges[i].in
+      new_ranges.push({out: r_out, in: r_in})
+    }
+    console.log(new_ranges);
+    return new_ranges
+  };
 
   getMainField = () => {
     for (const x in newDocStore.new_document.text) {
@@ -379,6 +495,9 @@ class NewDocument extends React.Component {
       if (newDocStore.new_document.counterparty_name !== '') return newDocStore.new_document.counterparty_name;
       else return newDocStore.new_document.counterparty_input;
     }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'doc_type_version') {
+      return newDocStore.new_document.doc_type_version_name;
+    }
     return 0;
   };
 
@@ -386,11 +505,6 @@ class NewDocument extends React.Component {
     if (this.props.doc.id !== 0) {
       // Якщо це не створення нового документу:
       this.props.removeDoc(this.props.doc.id);
-      // axiosPostRequest('del_doc/' + this.props.doc.id + '/')
-      //   .then((response) => {
-      //     this.props.removeDoc(this.props.doc.id);
-      //   })
-      //   .catch((error) => notify(error));
     }
 
     this.props.onCloseModal();
@@ -424,6 +538,8 @@ class NewDocument extends React.Component {
       auto_recipients
     } = this.state;
 
+    const {doc_type_version} = newDocStore.new_document;
+
     // Визначаємо, наскільки великим буде текстове поле:
     let rows = 1;
     switch (doc.type_id) {
@@ -439,7 +555,7 @@ class NewDocument extends React.Component {
 
     return (
       <>
-        <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 50}}}>
+        <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 70}}}>
           <div ref={(divElement) => (this.divElement = divElement)}>
             <If condition={type_modules.length > 0 && render_ready}>
               <div className='modal-header d-flex justify-content-between'>
@@ -453,7 +569,7 @@ class NewDocument extends React.Component {
 
               <div className='modal-body p-0'>
                 <For each='module' index='index' of={type_modules}>
-                  <If condition={!module.hide}>
+                  <If condition={!module.hide && (module.doc_type_version === 0 || module.doc_type_version === doc_type_version)}>
                     <div key={module.id} className='css_new_doc_module mt-1'>
                       <Choose>
                         <When condition={module.module === 'text'}>
@@ -461,6 +577,13 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'day'}>
                           <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
+                        </When>
+                        <When condition={module.module === 'datetime'}>
+                          <Datetime
+                            module_info={module}
+                            datetime={getDatetimeByQueue(newDocStore.new_document.datetimes, index)}
+                            onChange={this.onChangeDatetime}
+                          />
                         </When>
                         <When condition={module.module === 'recipient'}>
                           <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
@@ -533,14 +656,19 @@ class NewDocument extends React.Component {
                           <ClientRequirements module_info={module} />
                         </When>
                         <When condition={module.module === 'document_link'}>
-                          <DocumentLink
-                            moduleInfo={module}
-                            documentLink={doc.document_link}
-                            mainField={doc.main_field}
-                          />
+                          <DocumentLink moduleInfo={module} documentLink={doc.document_link} mainField={doc.main_field} />
                         </When>
                         <When condition={module.module === 'registration'}>
-                          <Registration moduleInfo={module}/>
+                          <Registration moduleInfo={module} />
+                        </When>
+                        <When condition={module.module === 'doc_type_version'}>
+                          <DocTypeVersion module_info={module} />
+                        </When>
+                        <When condition={module.module === 'employee'}>
+                          <EmployeesAll module_info={module} />
+                        </When>
+                        <When condition={module.module === 'foyer_ranges'}>
+                          <FoyerRanges module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>
@@ -578,11 +706,10 @@ class NewDocument extends React.Component {
         </Modal>
         <Modal
           open={newDocStore.additional_modal_opened}
-          onClose={() => newDocStore.additional_modal_opened = false}
+          onClose={() => (newDocStore.additional_modal_opened = false)}
           classNames={{
             modal: 'css_additional_modal'
           }}
-          
         >
           {newDocStore.additional_modal_content}
         </Modal>

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
 from edms.api.getters import get_main_field
-from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text
+from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from .vacations import vacation_check
 
@@ -49,6 +49,7 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
             raise ValidationError('edms/api/setters post_mark_demand mark_demand_form invalid')
 
 
+@try_except
 def delete_doc(doc_request, doc_id):
     try:
         doc = get_object_or_404(Document, pk=doc_id)
@@ -64,6 +65,7 @@ def delete_doc(doc_request, doc_id):
         raise err
 
 
+@try_except
 def deactivate_doc(doc_request, doc_id):
     try:
         doc = get_object_or_404(Document, pk=doc_id)
@@ -92,6 +94,7 @@ def deactivate_mark_demand(doc_request, md_id):
 
 
 # Деактивація всіх MarkDemand документа:
+@try_except
 def deactivate_doc_mark_demands(doc_request, doc_id):
     mark_demands = [{
         'id': md.id,
@@ -120,11 +123,13 @@ def set_doc_text_module(request):
 
 
 # Обробка різних видів позначок: ---------------------------------------------------------------------------------------
+@try_except
 def post_mark_delete(doc_request):
     delete_doc(doc_request, int(doc_request['document']))
     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
 
+@try_except
 def post_mark_deactivate(doc_request):
     deactivate_doc(doc_request, int(doc_request['document']))
 
@@ -138,32 +143,29 @@ def post_mark_deactivate(doc_request):
         deactivate_mark_demand(doc_request, md['id'])
 
 
-# Функція, яка додає у бд нові пункти документу
-# def post_articles(doc_request, articles):
-#     try:
-#         for article in articles:
-#             doc_request.update({
-#                 'text': article['text'],
-#                 'deadline': article['deadline'],
-#             })
-#             article_form = NewArticleForm(doc_request)
-#             if article_form.is_valid():
-#                 new_article_id = article_form.save().pk
-#                 for dep in article['deps']:
-#                     doc_request.update({'article': new_article_id})
-#                     doc_request.update({'department': dep['id']})
-#                     article_dep_form = NewArticleDepForm(doc_request)
-#                     if article_dep_form.is_valid():
-#                         article_dep_form.save()
-#                     else:
-#                         raise ValidationError('edms/view func post_articles: article_dep_form invalid')
-#             else:
-#                 raise ValidationError('edms/view func post_articles: article_form invalid')
-#     except ValueError as err:
-#         raise err
+@try_except
+def save_foyer_ranges(doc_id):
+    foyer_ranges = Doc_Foyer_Range.objects\
+        .filter(document_id=doc_id)\
+        .filter(is_active=True)
+    employee = Doc_Employee.objects.values_list('employee_id', flat=True)\
+        .filter(document_id=doc_id)\
+        .filter(is_active=True)[0]
+    doc_version = Document.objects.values_list('doc_type_version__version_id', flat=True).filter(id=doc_id)[0]
+
+    for range in foyer_ranges:
+        new_foyer = Foyer(
+            edms_doc_id=doc_id,
+            employee_id=employee,
+            out_datetime=range.out_datetime,
+            in_datetime=range.in_datetime,
+            absence_based=doc_version == 1  # 1 - Звільнююча, 2 - тимчасова/забув
+        )
+        new_foyer.save()
 
 
 # Функція, яка відправляє листи:
+@try_except
 def new_mail(email_type, recipients, doc_request):
     if not testing:
         document_instance = get_object_or_404(Document, pk=doc_request['document'])

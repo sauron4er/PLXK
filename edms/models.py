@@ -64,6 +64,13 @@ class Document_Type(models.Model):
         return self.description
 
 
+class Document_Type_Version(models.Model):
+    document_type = models.ForeignKey(Document_Type, related_name='versions', on_delete=models.RESTRICT)
+    version_id = models.PositiveSmallIntegerField()
+    description = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+
 class Mark(models.Model):
     mark = models.CharField(max_length=20)
     # is_phase - Чи може ця позначка бути фазою?
@@ -84,7 +91,7 @@ class Doc_Type_Phase(models.Model):
         default=False
     )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
     is_approve_chained = models.BooleanField(default=False)  # True - вимагає погодження у кожного з ланки керівників аж до отримувача
-    doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу (н-д вимоги клієнта, там 4 типи з різними отримувачами)
+    doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='doc_type_phases', on_delete=models.RESTRICT)
     testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -95,7 +102,7 @@ class Doc_Type_Phase_Queue(models.Model):
     seat = models.ForeignKey(Seat, related_name='phase_seats', null=True, on_delete=models.RESTRICT)
     employee_seat = models.ForeignKey(Employee_Seat, related_name='phase_emp_seats', null=True, on_delete=models.RESTRICT)
     queue = models.IntegerField(default=0)
-    doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу (н-д вимоги клієнта, там 4 типи з різними отримувачами)
+    doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу
     is_active = models.BooleanField(default=True)
 
 
@@ -112,10 +119,11 @@ class Document(models.Model):
     testing = models.BooleanField(default=False)
     stage = models.CharField(max_length=7, null=True)  # 'in work', 'denied', 'done', 'confirm' None (created)
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
+    # doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу
+    doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='documents', on_delete=models.RESTRICT)  # Підтип документу
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
 
 
-# Document path models
 class Document_Path(models.Model):
     document = models.ForeignKey(Document, related_name='path', on_delete=models.RESTRICT)
     path_to_answer = models.ForeignKey('self', related_name='answers', null=True, blank=True, on_delete=models.RESTRICT)
@@ -198,6 +206,9 @@ class Document_Type_Module(models.Model):
     table_view = models.BooleanField(default=False)  # True - показує це поле як колонку у зведеній таблиці
     additional_info = models.CharField(max_length=200, null=True)  # Додаткова інфа про модуль, яка показується користувачу
     hide = models.BooleanField(default=False)  # True ховає модуль з вікна створення нового документа (наприклад модуль stage)
+    doc_type_version = models.ForeignKey(Document_Type_Version,
+                                         related_name='type_modules',
+                                         on_delete=models.RESTRICT, null=True) # Якщо версія не вказана, модуль відноситься до всіх
 
 
 # пункти [наказу]
@@ -220,6 +231,14 @@ class Document_Type_Module(models.Model):
 class Doc_Acquaint(models.Model):
     document = models.ForeignKey(Document, related_name='acquaint_list', on_delete=models.RESTRICT)
     acquaint_emp_seat = models.ForeignKey(Employee_Seat, related_name='emp_seat_acquaints', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Список отримувачів на ознайомлення.
+class Doc_Employee(models.Model):  # Співробітник заводу
+    document = models.ForeignKey(Document, related_name='employees', on_delete=models.RESTRICT)
+    employee = models.ForeignKey(accounts.UserProfile, related_name='documents', on_delete=models.RESTRICT)
+    queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
 
@@ -248,11 +267,20 @@ class Doc_Text(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Дата, яка використовується у документі. Н-д, день дії звільнюючої
+# Дата, яка використовується у документі.
 class Doc_Day(models.Model):
     document = models.ForeignKey(Document, related_name='days', on_delete=models.RESTRICT)
     day = models.DateField(default=timezone.now)
     queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Дата і час прохідна
+class Doc_Foyer_Range(models.Model):
+    document = models.ForeignKey(Document, related_name='foyer_ranges', on_delete=models.RESTRICT)
+    out_datetime = models.DateTimeField(null=True)
+    in_datetime = models.DateTimeField(null=True)
+    queue_in_doc = models.IntegerField(null=True)
     is_active = models.BooleanField(default=True)
 
 
@@ -397,4 +425,15 @@ class Client_Requirement_Additional(models.Model):
     client_requirements = models.ForeignKey(Client_Requirements, related_name='additional_requirements', on_delete=models.RESTRICT)
     name = models.CharField(max_length=200, null=True, blank=True)
     requirement = models.CharField(max_length=50, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Foyer
+class Foyer(models.Model):
+    employee = models.ForeignKey(accounts.UserProfile, related_name='foyer', on_delete=models.RESTRICT)
+    out_datetime = models.DateTimeField(null=True)
+    in_datetime = models.DateTimeField(null=True)
+    absence_based = models.BooleanField()  # True: Звільнююча, рахується час відсутності, False: навпаки
+    edms_doc = models.ForeignKey(Document, related_name='foyer', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

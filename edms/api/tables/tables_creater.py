@@ -1,21 +1,21 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
-from ..models import Document_Type_Module, Document, File, Document_Path
-from plxk.api.datetime_normalizers import date_to_json, normalize_whole_date
+from edms.models import Document_Type_Module, Document, File, Document_Path
+from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 
 testing = settings.STAS_DEBUG
 
 
 @try_except
 # Повертає перші 23 рядки з таблиці
-def create_table_first(meta_doc_type, counterparty):
-    modules_list = get_modules_list(meta_doc_type)
+def create_table_first(doc_type, counterparty):
+    modules_list = get_modules_list(doc_type)
 
     column_widths = get_column_widths(modules_list)
 
     table_header = get_table_header(modules_list)
 
-    table_rows = get_table_rows(meta_doc_type, modules_list, 23, counterparty)
+    table_rows = get_table_rows(doc_type, modules_list, 23, counterparty)
 
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
     return table
@@ -39,7 +39,8 @@ def get_column_widths(modules):
         {'columnName': 'importancy', 'width': 90},
         # {'columnName': 'files', 'width': 300},
         {'columnName': 'choose_company', 'width': 85},
-        {'columnName': 'day', 'width': 160}]
+        {'columnName': 'day', 'width': 160},
+        {'columnName': 'datetime', 'width': 160}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
         column_widths.append({'columnName': 'packaging_type', 'width': 35})
@@ -82,6 +83,7 @@ def get_modules_list(meta_doc_type):
         'queue': module.queue,
         'module_id': module.module_id
     } for module in Document_Type_Module.objects
+        # .filter(document_type_id=)
         .filter(document_type__meta_doc_type_id=meta_doc_type)
         .filter(table_view=True)
         .filter(is_active=True)
@@ -139,6 +141,7 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
         'day': get_day(modules, doc),
+        'datetime': get_datetime(modules, doc),
         # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'approved': get_approved(doc),
         # 'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
@@ -252,9 +255,14 @@ def get_packaging_type(modules, doc):
 @try_except
 def get_day(modules, doc):
     if any(module['module_id'] == 12 for module in modules):
-        day = doc.days.all()[0].day
-        day_json = date_to_json(day)
         return date_to_json(doc.days.all()[0].day) if doc.days.all() else None
+    return None
+
+
+@try_except
+def get_datetime(modules, doc):
+    if any(module['module_id'] == 41 for module in modules):
+        return datetime_to_json(doc.datetimes.all()[0].datetime, 'date_time') if doc.datetimes.all() else None
     return None
 
 

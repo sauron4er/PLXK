@@ -38,30 +38,32 @@ class Text extends React.Component {
   render() {
     const {text_info} = this.props;
     const {text, changed} = this.state;
-  
+
     return (
-      <If condition={text}><Choose>
-        <When condition={text_info.is_editable}>
-          <div className='mt-1'>{text_info.field_name}:</div>
-          <div className='d-flex align-items-center mt-1'>
-            <input
-              className='form-control mr-1'
-              name='text'
-              id={'text-' + text_info.queue}
-              value={text}
-              onChange={this.onChange}
-              maxLength={5000}
-            />
-            <button className={'btn btn-sm btn-outline-dark'} onClick={() => this.postChanges()}>
-              <FontAwesomeIcon icon={changed ? faCheck : faSave}/>
-            </button>
-          </div>
-        </When>
-        <Otherwise>
-          <div>{text_info.field_name}:</div>
-          <div className='css_note_text'>{text}</div>
-        </Otherwise>
-      </Choose></If>
+      <If condition={text}>
+        <Choose>
+          <When condition={text_info.is_editable}>
+            <div className='mt-1'>{text_info.field_name}:</div>
+            <div className='d-flex align-items-center mt-1'>
+              <input
+                className='form-control mr-1'
+                name='text'
+                id={'text-' + text_info.queue}
+                value={text}
+                onChange={this.onChange}
+                maxLength={5000}
+              />
+              <button className={'btn btn-sm btn-outline-dark'} onClick={() => this.postChanges()}>
+                <FontAwesomeIcon icon={changed ? faCheck : faSave} />
+              </button>
+            </div>
+          </When>
+          <Otherwise>
+            <div>{text_info.field_name}:</div>
+            <div className='css_note_text'>{text}</div>
+          </Otherwise>
+        </Choose>
+      </If>
     );
   }
 

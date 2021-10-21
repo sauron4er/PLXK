@@ -6,6 +6,10 @@ import datetime
 def convert_to_localtime(utctime, frmt):
     if frmt == 'day':
         fmt = '%d.%m.%Y'
+    elif frmt == 'datetime':
+        fmt = '%Y-%m-%d %H:%M'
+    elif frmt == 'datetime_picker':
+        fmt = '%Y-%m-%dT%H:%M:%S'
     else:
         fmt = '%d.%m.%Y %H:%M'
 

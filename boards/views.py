@@ -1,24 +1,27 @@
-from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import Http404, HttpResponse
-from .models import Board, Phones, Topic, Post, Ad
-from .forms import NewTopicForm, NewAdForm
-from django.db import connections
 from django.contrib.auth.decorators import login_required
-from plxk.api.try_except import try_except
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
+from django.http import Http404, HttpResponse
+import xml.etree.cElementTree as ET
+from django.core.files import File
 from django.utils import timezone
-import pytz
-import json
+from django.db import connections
+import threading
+# import schedule
 import random
 # import time
-# import schedule
-import threading
-from edms.models import Employee_Seat
-from django.contrib.auth.models import User
-from boards.api.auto_orders import send_orders_reminders
-
+import pytz
+import json
+from plxk.api.pagination import sort_query_set, filter_query_set
 # from boards.api.auto_vacations import auto_arrange_vacations
+from boards.api.auto_orders import send_orders_reminders
+from edms.models import Employee_Seat, Foyer
+from django.contrib.auth.models import User
+from plxk.api.try_except import try_except
+from .models import Board, Topic, Post, Ad
+from .forms import NewTopicForm
+
 
 auto_functions_started = False
 
@@ -110,14 +113,14 @@ def home(request):
             'birthdays': get_bds(),
             'ads': get_ads(),
             'bg': random.randint(1, 10)})
-    if request.method == 'POST':
-        t1 = threading.Thread(target=start_auto_functions(), args=(), kwargs={}, daemon=True)
-        t1.start()
-        return render(request, 'home.html', {
-            'auto_functions_started': auto_functions_started,
-            'birthdays': get_bds(),
-            'ads': get_ads(),
-            'bg': random.randint(1, 9)})
+    # if request.method == 'POST':
+    #     t1 = threading.Thread(target=start_auto_functions(), args=(), kwargs={}, daemon=True)
+    #     t1.start()
+    #     return render(request, 'home.html', {
+    #         'auto_functions_started': auto_functions_started,
+    #         'birthdays': get_bds(),
+    #         'ads': get_ads(),
+    #         'bg': random.randint(1, 9)})
 
 
 @login_required(login_url='login')
@@ -126,6 +129,7 @@ def phones(request):
     phones_and_mails = User.objects\
         .filter(is_active=True)\
         .filter(userprofile__is_active=True)\
+        .filter(userprofile__is_pc_user=True)\
         .order_by('userprofile__pip')
 
     pam = [{
@@ -242,3 +246,82 @@ def new_topics(request, pk):
     else:
         form = NewTopicForm()
     return render(request, 'boards/new_topic.html', {'board': board, 'form': form})
+
+
+@login_required(login_url='login')
+@try_except
+def foyer(request):
+    return render(request, 'boards/foyer/foyer.html')
+
+
+@login_required(login_url='login')
+@try_except
+def get_foyer_data(request, page):
+    foyer = Foyer.objects.filter(is_active=True)
+
+    foyer = filter_query_set(foyer, json.loads(request.POST['filtering']))
+    foyer = sort_query_set(foyer, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(foyer, 23)
+    try:
+        foyer_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        foyer_page = paginator.page(1)
+    except EmptyPage:
+        foyer_page = paginator.page(1)
+
+    foyer = [{
+        'id': item.pk,
+        'employee__pip': item.employee.pip,
+        'employee__tab_number': item.employee.tab_number,
+        'edms_doc__doc_type_version__description': item.edms_doc.doc_type_version.description,
+        'out_datetime': convert_to_localtime(item.out_datetime, 'time'),
+        'in_datetime': convert_to_localtime(item.in_datetime, 'time'),
+        'edms_doc__id': item.edms_doc_id,
+    } for item in foyer_page.object_list]
+
+    response = {'rows': foyer, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def create_foyer_report(request):
+    today = date.today()
+    if today.day > 15:
+        first_day = today.replace(day=1)
+        last_day = today.replace(day=16)
+        filename = 'foyer_report_' + str(today.month) + '-' + str(today.year) + '_1.xml'
+    else:
+        last_day = (today.replace(day=1) - timedelta(days=1))  # останній день попереднього місяця
+        first_day = last_day.replace(day=16)  # 16 число попереднього місяця
+        filename = 'foyer_report_' + str(last_day.month) + '-' + str(last_day.year) + '_2.xml'
+
+    foyer_query_set = Foyer.objects\
+        .filter(out_datetime__range=[first_day, last_day])\
+        .filter(is_active=True)
+
+    foyer = [{
+        'id': item.id,
+        'tab_number': item.employee.tab_number,
+        'doc_type': item.edms_doc.doc_type_version.description,
+        'in': convert_to_localtime(item.in_datetime, 'time'),
+        'out': convert_to_localtime(item.out_datetime, 'time'),
+        'absence_based': item.absence_based
+    } for item in foyer_query_set]
+
+    root = ET.Element('foyer')
+
+    for item in foyer:
+        doc = ET.SubElement(root, "item")
+        ET.SubElement(doc, "id").text = str(item['id'])
+        ET.SubElement(doc, "tab_number").text = item['tab_number']
+        ET.SubElement(doc, "doc_type").text = item['doc_type']
+        ET.SubElement(doc, "in").text = item['in']
+        ET.SubElement(doc, "out").text = item['out']
+        ET.SubElement(doc, "absence_based").text = str(item['absence_based'])
+
+    tree = ET.ElementTree(root)
+    tree.write('files/media/foyer/' + filename)
+
+    return HttpResponse('media/foyer/' + filename)
