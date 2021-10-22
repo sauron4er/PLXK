@@ -8,6 +8,7 @@ import 'static/css/my_styles.css';
 import Modal from 'react-responsive-modal';
 import Document from 'edms/templates/edms/my_docs/doc_info/document';
 import FreeTimeTable from 'edms/templates/edms/tables/free_time_table';
+import ITTicketsTable from 'edms/templates/edms/tables/it_tickets_table';
 
 class Tables extends React.Component {
   state = {
@@ -58,7 +59,7 @@ class Tables extends React.Component {
       {
         doc_type_id: event.target.options[selectedIndex].getAttribute('data-key'),
         doc_type_name: event.target.options[selectedIndex].getAttribute('value'),
-        loading: !['0', '1'].includes(event.target.options[selectedIndex].getAttribute('data-key'))
+        loading: !['0', '1', '12'].includes(event.target.options[selectedIndex].getAttribute('data-key'))
       },
       () => {
         this.getTable();
@@ -67,7 +68,7 @@ class Tables extends React.Component {
   };
 
   getTable = () => {
-    if (!['0', '1'].includes(this.state.doc_type_id)) {
+    if (!['0', '1', '12'].includes(this.state.doc_type_id)) {
       axiosGetRequest('get_table_first/' + this.state.doc_type_id + '/' + this.props.counterparty_id + '/')
         .then((response) => {
           this.setState(
@@ -140,8 +141,16 @@ class Tables extends React.Component {
               </If>
             </div>
             <Choose>
-              <When condition={doc_type_id !== '1'}>
-                {/* Для всіх документів крім звільнюючих*/}
+              <When condition={doc_type_id === '1'}>
+                {/* Для звільнюючих*/}
+                <FreeTimeTable />
+              </When>
+              <When condition={doc_type_id === '12'}>
+                {/* Для заявок ІТ*/}
+                <ITTicketsTable />
+              </When>
+              <Otherwise>
+                {/* Для всіх інших документів*/}
                 <If condition={header.length}>
                   <DxTable
                     rows={rows}
@@ -154,10 +163,6 @@ class Tables extends React.Component {
                     coloredApproved
                   />
                 </If>
-              </When>
-              <Otherwise>
-                {/* Для звільнюючих*/}
-                <FreeTimeTable />
               </Otherwise>
             </Choose>
           </When>

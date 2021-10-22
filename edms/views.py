@@ -17,6 +17,7 @@ from .api.setters import *
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
 from .api.tables.free_time_table import get_free_times_table
+from .api.tables.it_tickets_table import get_it_tickets_table
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -1232,6 +1233,13 @@ def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
 @try_except
 def edms_get_free_times(request, page):
     response = get_free_times_table(request, page)
+    return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def get_it_tickets(request, doc_type_version, page):
+    response = get_it_tickets_table(request, doc_type_version, page)
     return HttpResponse(json.dumps(response))
 
 

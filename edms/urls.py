@@ -6,7 +6,7 @@ from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
-from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_doc_type_versions, get_all_employees, \
+from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_it_tickets, get_doc_type_versions, get_all_employees, \
     del_foyer_range, save_foyer_range
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes
@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^tables/get_table_all/(?P<meta_doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/(?P<doc_meta_type_id>\d+)/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^tables/get_free_times/(?P<page>\d+)/$', edms_get_free_times, name='get_free_times'),
+    url(r'^tables/get_it_tickets/(?P<doc_type_version>\d+)/(?P<page>\d+)/$', get_it_tickets, name='get_it_tickets'),
     url(r'^tables/', edms_tables, name='tables'),
 
     url(r'^delegated/get/(?P<emp>\d+)/(?P<doc_meta_type>\d+)/(?P<sub>\d+)/$', edms_get_delegated_docs, name='get_sub_docs'),

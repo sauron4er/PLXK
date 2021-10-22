@@ -99,7 +99,7 @@ export const getToday = () => {
   return (
     today_date.getDate() +
     '.' +
-    (today_date.getMonth() < 10 ? '0' + (today_date.getMonth() + 1) : today_date.getMonth() + 1) +
+    (today_date.getMonth() < 9 ? '0' + (today_date.getMonth() + 1) : today_date.getMonth() + 1) +
     '.' +
     today_date.getFullYear()
   );
