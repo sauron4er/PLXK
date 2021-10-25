@@ -133,7 +133,7 @@ class ITTicketsTable extends React.Component {
               columns={columns}
               defaultSorting={[{columnName: 'id', direction: 'desc'}]}
               colWidth={col_width}
-              onRowClick={this.props.onRowClick}
+              onRowClick={this.onRowClick}
               height={main_div_height}
               filter
               coloredStage
@@ -157,16 +157,3 @@ class ITTicketsTable extends React.Component {
 }
 
 export default ITTicketsTable;
-
-const columns = [
-  {name: 'id', title: 'id'},
-  {name: 'author', title: 'Автор'},
-  {name: 'datetime', title: 'Дата і час'},
-  {name: 'purpose', title: 'Мета, П.І.Б. співробітника (якщо не автор'}
-];
-
-const col_width = [
-  {columnName: 'id', width: 50},
-  {columnName: 'author', width: 350},
-  {columnName: 'datetime', width: 200}
-];

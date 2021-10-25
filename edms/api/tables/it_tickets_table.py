@@ -169,16 +169,31 @@ def table_sort(query_set, column, direction):
 @try_except
 def table_filter(query_set, filtering):
     for filter in filtering:
-        filter_field = filter['columnName']
         if filter['columnName'] == 'author':
-            filter_field = 'employee_seat__employee__pip'
+            query_set = query_set.filter(employee_seat__employee__pip__icontains=filter['value'])
         elif filter['columnName'] == 'name':
-            field_queue = 1
-            query_set = query_set.filter(texts__queue_in_doc=1)
-            filter_field = 'texts__text'
-        elif filter['columnName'] == 'datetime':
-            filter_field = 'datetimes__datetime'
-
-        kwargs = {'{}__{}'.format(filter_field, 'icontains'): filter['value']}
-        query_set = query_set.filter(**kwargs)
+            query_set = query_set.filter(texts__queue_in_doc=1, texts__text__icontains=filter['value'])
+        elif filter['columnName'] == 'company':
+            if filter['value'] in ['ТДВ', 'тдв']:
+                query_set = query_set.filter(company='ТДВ')
+            elif filter['value'] in ['ТОВ', 'тов']:
+                query_set = query_set.filter(company='ТОВ')
+        elif filter['columnName'] == 'accounting':
+            query_set = query_set.filter(texts__queue_in_doc=4, texts__text__icontains=filter['value'])
+        elif filter['columnName'] == 'task_type':
+            query_set = query_set.filter(texts__queue_in_doc__in=[5, 6], texts__text__icontains=filter['value'])
+        elif filter['columnName'] == 'importancy':
+            query_set = query_set.filter(texts__queue_in_doc=7, texts__text__icontains=filter['value'])
+        elif filter['columnName'] == 'stage':
+            value = filter['value'].lower()
+            if value in 'ініційовано':
+                query_set = query_set.filter(stage__isnull=True)
+            elif value in 'в роботі':
+                query_set = query_set.filter(stage='in work')
+            elif value in 'виконано':
+                query_set = query_set.filter(stage='done')
+            elif value in 'підтверджено':
+                query_set = query_set.filter(stage='confirm')
+            elif value in 'відмовлено':
+                query_set = query_set.filter(stage='denied')
     return query_set

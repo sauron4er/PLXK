@@ -35,7 +35,7 @@ class FreeTimeTable extends React.Component {
             columns={columns}
             defaultSorting={[{columnName: 'id', direction: 'desc'}]}
             colWidth={col_width}
-            onRowClick={this.props.onRowClick}
+            onRowClick={this.onRowClick}
             height={main_div_height}
             filter
           />
