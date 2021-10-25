@@ -5,6 +5,7 @@ import json
 
 from edms.models import Document
 from plxk.api.try_except import try_except
+from plxk.api.convert_to_local_time import convert_to_localtime
 
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
@@ -34,19 +35,25 @@ def get_free_times_table(request, page):
     free_time_docs = [{
         'id': free_time.pk,
         'author': free_time.employee_seat.employee.pip,
-        'datetime': get_datetime(free_time),
+        'employee': get_employee(free_time),
+        'out': get_datetime(free_time, 'out'),
+        'in': get_datetime(free_time, 'in'),
         'purpose': get_purpose(free_time),
+        'doc_type': free_time.doc_type_version.description if free_time.doc_type_version else '',
     } for free_time in free_time_docs_page.object_list]
 
     return {'rows': free_time_docs, 'pagesCount': paginator.num_pages}
 
 
 @try_except
-def get_datetime(free_time_doc):
+def get_datetime(free_time_doc, type):
     if free_time_doc.document_type_id == 15:
-        dtm = free_time_doc.datetimes.all()
-        if dtm:
-            return dtm[0].datetime.strftime("%d.%m.%Y, %H:%M")
+        range = free_time_doc.foyer_ranges.all()
+        if range:
+            if type == 'out':
+                return convert_to_localtime(range[0].out_datetime, 'datetime')
+            else:
+                return convert_to_localtime(range[0].in_datetime, 'datetime')
     else:  # free_time_doc.document_type_id == 1
         day = free_time_doc.days.all()
         if day:
@@ -59,6 +66,14 @@ def get_purpose(free_time_doc):
     text = free_time_doc.texts.all()
     if text:
         return text[0].text
+    return ''
+
+
+@try_except
+def get_employee(free_time_doc):
+    employee = free_time_doc.employees.all()
+    if employee:
+        return employee[0].employee.pip + ' (' + employee[0].employee.tab_number + ')'
     return ''
 
 
@@ -88,14 +103,13 @@ def table_sort(query_set, column, direction):
 @try_except
 def table_filter(query_set, filtering):
     for filter in filtering:
-        filter_field = filter['columnName']
         if filter['columnName'] == 'author':
-            filter_field = 'employee_seat__employee__pip'
+            query_set = query_set.filter(employee_seat__employee__pip__icontains=filter['value'])
+        elif filter['columnName'] == 'employee':
+            query_set = query_set.filter(employees__employee__pip__icontains=filter['value']) | \
+                        query_set.filter(employees__employee__tab_number__icontains=filter['value'])
         elif filter['columnName'] == 'purpose':
-            filter_field = 'texts__text'
-        elif filter['columnName'] == 'datetime':
-            filter_field = 'datetimes__datetime'
-
-        kwargs = {'{}__{}'.format(filter_field, 'icontains'): filter['value']}
-        query_set = query_set.filter(**kwargs)
+            query_set = query_set.filter(texts__text__icontains=filter['value'])
+        elif filter['columnName'] == 'doc_type':
+            query_set = query_set.filter(doc_type_version__description__icontains=filter['value'])
     return query_set
