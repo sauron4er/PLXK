@@ -42,7 +42,6 @@ class ITTicketsTable extends React.Component {
             {name: 'id', title: 'id'},
             {name: 'author', title: 'Автор'},
             {name: 'name', title: 'Назва заявки'},
-            {name: 'text', title: 'Зміст'},
             {name: 'importancy', title: 'Важливість'},
             {name: 'added_date', title: 'Створено'},
             {name: 'done_date', title: 'Виконано'},
@@ -50,7 +49,11 @@ class ITTicketsTable extends React.Component {
           ],
           col_width: [
             {columnName: 'id', width: 50},
-            {columnName: 'author', width: 350},
+            {columnName: 'author', width: 200},
+            {columnName: 'stage', width: 100},
+            {columnName: 'importancy', width: 105},
+            {columnName: 'added_date', width: 105},
+            {columnName: 'done_date', width: 105},
         ]})
         break;
       case '6':
@@ -59,7 +62,6 @@ class ITTicketsTable extends React.Component {
             {name: 'id', title: 'id'},
             {name: 'author', title: 'Автор'},
             {name: 'name', title: 'Назва заявки'},
-            {name: 'text', title: 'Зміст'},
             {name: 'company', title: 'Бізнес-напрямок'},
             {name: 'accounting', title: 'Вид обліку'},
             {name: 'task_type', title: 'Тип задачі'},
@@ -70,7 +72,14 @@ class ITTicketsTable extends React.Component {
           ],
           col_width: [
             {columnName: 'id', width: 50},
-            {columnName: 'author', width: 350},
+            {columnName: 'author', width: 200},
+            {columnName: 'stage', width: 100},
+            {columnName: 'importancy', width: 105},
+            {columnName: 'added_date', width: 105},
+            {columnName: 'done_date', width: 105},
+            {columnName: 'task_type', width: 150},
+            {columnName: 'company', width: 150},
+            {columnName: 'accounting', width: 150},
         ]})
         break;
       case '7':
@@ -79,7 +88,6 @@ class ITTicketsTable extends React.Component {
             {name: 'id', title: 'id'},
             {name: 'author', title: 'Автор'},
             {name: 'name', title: 'Назва заявки'},
-            {name: 'text', title: 'Зміст'},
             {name: 'task_type', title: 'Тип задачі'},
             {name: 'importancy', title: 'Важливість'},
             {name: 'added_date', title: 'Створено'},
@@ -88,7 +96,12 @@ class ITTicketsTable extends React.Component {
           ],
           col_width: [
             {columnName: 'id', width: 50},
-            {columnName: 'author', width: 350},
+            {columnName: 'author', width: 200},
+            {columnName: 'stage', width: 100},
+            {columnName: 'importancy', width: 105},
+            {columnName: 'added_date', width: 105},
+            {columnName: 'done_date', width: 105},
+            {columnName: 'task_type', width: 150},
         ]})
         break;
     }
@@ -123,6 +136,7 @@ class ITTicketsTable extends React.Component {
               onRowClick={this.props.onRowClick}
               height={main_div_height}
               filter
+              coloredStage
             />
           </If>
         </div>

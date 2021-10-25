@@ -106,6 +106,7 @@ class PaginatedTable extends React.Component {
               changeSorting={this.changeSorting}
               changeFiltering={this.changeFiltering}
               coloredStatus
+              coloredStage
             />
             <If condition={pagesCount > 1}>
               <div className='mt-2'>
