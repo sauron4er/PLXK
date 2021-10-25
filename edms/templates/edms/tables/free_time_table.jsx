@@ -61,12 +61,17 @@ export default FreeTimeTable;
 const columns = [
   {name: 'id', title: 'id'},
   {name: 'author', title: 'Автор'},
-  {name: 'datetime', title: 'Дата і час'},
-  {name: 'purpose', title: 'Мета, П.І.Б. співробітника (якщо не автор'}
+  {name: 'employee', title: 'Співробітник'},
+  {name: 'out', title: 'Дата і час виходу'},
+  {name: 'in', title: 'Дата і час входу'},
+  {name: 'doc_type', title: 'Тип документу'},
+  {name: 'purpose', title: 'Мета'}
 ];
 
 const col_width = [
   {columnName: 'id', width: 50},
-  {columnName: 'author', width: 350},
-  {columnName: 'datetime', width: 200}
+  {columnName: 'author', width: 200},
+  {columnName: 'employee', width: 300},
+  {columnName: 'out', width: 180},
+  {columnName: 'in', width: 180}
 ];

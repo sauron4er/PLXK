@@ -4,8 +4,8 @@ from ordering import views
 app_name = 'ordering'
 
 urlpatterns = [
-    url(r'^stationery_catalogue/new_stationery_type', views.new_stationery_type, name='new_stationery_type'),
-    url(r'^stationery_catalogue/del_stationery_type', views.del_stationery_type, name='del_stationery_type'),
+    url(r'^new_stationery_type', views.new_stationery_type, name='new_stationery_type'),
+    url(r'^del_stationery_type', views.del_stationery_type, name='del_stationery_type'),
     url(r'^stationery_catalogue', views.stationery_catalogue, name='stationery_catalogue'),
 
     # url(r'^stationery_order/new_stationery_order', views.new_stationery_order, name='new_stationery_order'),

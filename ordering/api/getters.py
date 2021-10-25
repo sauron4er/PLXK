@@ -31,7 +31,7 @@ def get_stationery_orders(request, month, year, department_ordered=True):
 def get_stationery_types_list(only_active=True, name_with_measurement=False):
     stationery_types = Stationery_type.objects.order_by('name')
 
-    if not only_active:
+    if only_active:
         stationery_types = stationery_types.filter(is_active=True)
 
     stationery_types = [{
