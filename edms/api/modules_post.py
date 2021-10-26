@@ -125,7 +125,7 @@ def post_approvals(doc_request, approvals, company):
 
         approvals.extend([{
             'id': acting_director,
-            'approve_queue': 2  # Директор останній у списку погоджень
+            'approve_queue': 3  # Директор останній у списку погоджень
         }, {
             'id': acting_tov_director,
             'approve_queue': 2  # Директор ТОВ теж отримує на погодження
