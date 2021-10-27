@@ -43,11 +43,12 @@ class Tables extends React.Component {
     if (is_link) {
       this.setState(
         {
-          doc_type_id: last_href_piece,
-          loading: true
+          doc_type_id: last_href_piece.toString(),
+          loading: last_href_piece !== 12,
+          doc_type_name: last_href_piece === 12 ? 'Заявка ІТ/1С8/ПЛХК' : ''
         },
         () => {
-          this.getTable();
+          if (last_href_piece !== 12) this.getTable();
         }
       );
     }
