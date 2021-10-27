@@ -10,9 +10,9 @@ class EmployeePAM extends React.Component {
       pip: '',
       phone: '',
       mail: '',
-      phone_is_valid: false,
-      mail_is_valid: false
-    }
+    },
+    phone_is_valid: true,
+    mail_is_valid: true
   };
 
   componentDidMount() {
@@ -29,7 +29,6 @@ class EmployeePAM extends React.Component {
     let employee = {...this.state.employee};
     employee.phone = e.target.value;
     this.setState({employee});
-
     if (e.target.validity.patternMismatch) {
       e.target.setCustomValidity('Номер телефону має складатися з 4 цифр');
       this.setState({phone_is_valid: false});
