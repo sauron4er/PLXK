@@ -1,11 +1,12 @@
-from django.contrib.auth import login as auth_login
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Department
-from edms.models import Seat
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
 import json
 from .forms import SignUpForm
+from plxk.api.try_except import try_except
+from django.contrib.auth.models import User
+from .models import Department, UserProfile
 
 
 def signup(request):
@@ -31,29 +32,56 @@ def department(request,pk):
     return render(request, 'accounts/department.html', {'depatment': department, 'employee': employee})
 
 
-def get_departments(request, company='TDV'):
-    departments = Department.objects.only('id', 'name')\
-        .filter(is_active=True)\
-        .order_by('name')
-
-    if company == 'TDV':
-        departments = departments.filter(is_tdv=True)
-    if company == 'TOV':
-        departments = departments.exclude(is_tdv=True)
-
+@try_except
+def get_departments(request):
     departments = [{
-        'id': department.pk,
-        'name': department.name,
-    } for department in departments]
-
+        'id': dep.id,
+        'name': dep.name
+    } for dep in Department.objects.filter(is_active=True)]
     return HttpResponse(json.dumps(departments))
 
 
-def get_dep_chief_seat(request, dep_id):
-    dep_chief = Seat.objects\
-        .filter(department_id=dep_id)\
-        .filter(is_dep_chief=True)\
-        .filter(is_active=True)
-    if dep_chief:
-        return HttpResponse(dep_chief[0])
-    return HttpResponse('У системі не зазначено начальника відділу')
+@login_required(login_url='login')
+@try_except
+def employees(request):
+    employees = [{
+            'id': up.id,
+            'pip': up.pip,
+            'tab_number': up.tab_number,
+            'department': up.department_id or 0,
+            'department_name': up.department.name if up.department else '',
+            'is_pc_user': 'true' if up.is_pc_user else 'false'
+        } for up in UserProfile.objects.filter(is_active=True).order_by('pip')]
+    return render(request, 'accounts/employees/employees.html', {'employees': employees})
+
+
+@login_required(login_url='login')
+@try_except
+def save_employee(request):
+    from django.db import IntegrityError
+    if request.POST['id'] == '0':
+        try:
+            new_employee = UserProfile(pip=request.POST['pip'],
+                                       department_id=request.POST['department'],
+                                       tab_number=request.POST['tab_number'],
+                                       is_pc_user=False)
+            new_employee.save()
+        except IntegrityError as e:
+            if 'Duplicate entry' in e.args[1]:  # or e.args[0] from Django 1.10
+                return HttpResponse('Такий табельний номер вже зареєстровано')
+    else:
+        employee = get_object_or_404(UserProfile, pk=request.POST['id'])
+        employee.pip = request.POST['pip']
+        employee.department_id = request.POST['department']
+        employee.tab_number = request.POST['tab_number']
+        employee.save()
+    return HttpResponse('ok')
+
+
+@login_required(login_url='login')
+@try_except
+def deact_employee(request, pk):
+    employee = get_object_or_404(UserProfile, pk=pk)
+    employee.is_active = False
+    employee.save()
+    return HttpResponse('ok')

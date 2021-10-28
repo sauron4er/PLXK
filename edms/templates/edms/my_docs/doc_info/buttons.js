@@ -15,7 +15,7 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_author = info.author_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-  
+
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -87,13 +87,22 @@ class Buttons extends React.Component {
               </button>
             </When>
             <When condition={info.expected_mark === 24}>
-              {/* Підтвердження виконання */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(24)} disabled={button_clicked}>
-                Підтвердити виконання
-              </button>
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(5)} disabled={button_clicked}>
-                На доопрацювання
-              </button>
+              {/* Підтвердження */}
+              <Choose>
+                <When condition={this.props.info.meta_type_id === 1}>
+                  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(24)} disabled={button_clicked}>
+                    Підтвердити
+                  </button>
+                </When>
+                <Otherwise>
+                  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(24)} disabled={button_clicked}>
+                    Підтвердити виконання
+                  </button>
+                  <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(5)} disabled={button_clicked}>
+                    На доопрацювання
+                  </button>
+                </Otherwise>
+              </Choose>
             </When>
             <When condition={info.expected_mark === 27}>
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(27)} disabled={button_clicked}>
@@ -112,17 +121,21 @@ class Buttons extends React.Component {
               Відмовити
             </button>
             <If condition={info?.stage != 'in work'}>
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)}
-                      disabled={button_clicked}>
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>
                 Взяти в роботу
               </button>
             </If>
           </If>
         </If>
-        
+
         {/*Якщо це погоджений тендер, додаємо кнопку "Створити договір"*/}
         <If condition={info.meta_type_id === 9 && info.approved}>
-          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => (docInfoStore.view = 'new_contract')} disabled={button_clicked}>
+          <button
+            type='button'
+            className='btn btn-secondary mr-1 mb-1'
+            onClick={() => (docInfoStore.view = 'new_contract')}
+            disabled={button_clicked}
+          >
             Створити Договір
           </button>
         </If>

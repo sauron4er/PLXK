@@ -1,6 +1,6 @@
-.active {
+.page_active {
     background-color: #4CAF50;
     color: white;
 }
 
-.page:hover:not(.active) {background-color: #ddd;}
+.page:hover:not(.page_active) {background-color: #ddd;}

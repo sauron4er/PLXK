@@ -3,35 +3,54 @@
 {% load static %}
 
 {% block stylesheet %}
-  <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+  <link rel="stylesheet" href="{% static 'css/waves.css' %}">
 {% endblock %}
 
 {% block body %}
-  <div class="container">
-    <h1 class="text-center logo my-4">
-      <a href="{% url 'home' %}">ПЛХК</a>
-    </h1>
-    <div class="row justify-content-center">
-      <div class="col-lg-4 col-md-6 col-sm-8">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="card-title">Вхід</h3>
-            <form method="post" novalidate>
-              {% csrf_token %}
-              {% include 'includes/form.html' %}
-              <button type="submit" class="btn btn-primary btn-block">Вхід</button>
-            </form>
+  <div class="header">
+    <div class="inner-header">
+      <div class="container">
+{#        <h1 class="">1</h1>#}
+{#        <img class="my-5" alt="logo" src="{% static 'img/logo.png' %}" height="100px">#}
+        <img class="my-5" alt="logo" src="{% static 'img/logo-white.png' %}" height="200px">
+        <div class="row justify-content-center">
+          <div class="col-lg-4 col-md-6 col-sm-8">
+            <div class="card">
+              <div class="card-body">
+                <h3>Вхід</h3>
+                <form method="post" novalidate>
+                  {% csrf_token %}
+                  {% include 'includes/form.html' %}
+                  <button type="submit" class="btn btn-primary btn-block">Вхід</button>
+                </form>
+              </div>
+              {#          <div class="card-footer text-muted text-center">#}
+              {#            Ще не зареєстровані <a href="{% url 'signup' %}">Реєстрація</a>#}
+              {#          </div>#}
+            </div>
+            {#        <div class="text-center py-2">#}
+            {#          <small>#}
+            {#            <a href="#" class="text-muted">Забули пароль?</a>#}
+            {#          </small>#}
+            {#        </div>#}
           </div>
-{#          <div class="card-footer text-muted text-center">#}
-{#            Ще не зареєстровані <a href="{% url 'signup' %}">Реєстрація</a>#}
-{#          </div>#}
         </div>
-{#        <div class="text-center py-2">#}
-{#          <small>#}
-{#            <a href="#" class="text-muted">Забули пароль?</a>#}
-{#          </small>#}
-{#        </div>#}
       </div>
     </div>
+    <div>
+      <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+      </svg>
+    </div>
   </div>
+
 {% endblock %}

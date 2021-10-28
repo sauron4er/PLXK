@@ -64,9 +64,7 @@ class NonCompliance extends React.Component {
                     <h6 className='text-center'>NON-CONFORMITY REGISTRATION ACT</h6>
                   </div>
                   <div className='col-md-3'>
-                    <If condition={phase === 4}>
                       <NCPrint />
-                    </If>
                   </div>
                 </div>
                 <div className='h-100 overflow-auto'>

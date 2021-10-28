@@ -106,6 +106,7 @@ class PaginatedTable extends React.Component {
               changeSorting={this.changeSorting}
               changeFiltering={this.changeFiltering}
               coloredStatus
+              coloredStage
             />
             <If condition={pagesCount > 1}>
               <div className='mt-2'>
@@ -120,7 +121,7 @@ class PaginatedTable extends React.Component {
                   onPageChange={this.handlePageClick}
                   containerClassName={'pagination'}
                   // subContainerClassName={'pages pagination'}
-                  activeClassName={'active'}
+                  activeClassName={'page_active'}
                   pageClassName={'btn btn-sm'}
                   previousClassName={'btn btn-sm'}
                   nextClassName={'btn btn-sm'}

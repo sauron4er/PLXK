@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Співробітники{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script>
+        window.employees = {{ employees|safe }};
+    </script>
+
+    <div id="employees">{% render_bundle 'accounts' %}</div>
+{% endblock %}

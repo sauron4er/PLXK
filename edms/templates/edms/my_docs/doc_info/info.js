@@ -6,16 +6,22 @@ import Text from './doc_info_modules/text';
 import Day from './doc_info_modules/day';
 import Gate from './doc_info_modules/gate';
 import CarryOut from './doc_info_modules/carry_out';
-import Resolutions from './doc_info_modules/resolutions';
 import Files from './doc_info_modules/files';
 import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
 import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
-import {getTextByQueue, getDayByQueue} from 'templates/components/my_extras';
+import {getTextByQueue, getDayByQueue, getDatetimeByQueue} from 'templates/components/my_extras';
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
-import DocumentLink from "edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link";
-
+import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link';
+import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
 
 class Info extends React.Component {
+  
+  isFoyerRangesEditable = () => {
+    const {expected_mark, viewer_is_author, stage} = this.props.info;
+    
+    return !!(stage !== 'confirm' && (expected_mark === 24 || viewer_is_author));
+  };
+
   render() {
     const {info} = this.props;
 
@@ -23,7 +29,7 @@ class Info extends React.Component {
       return (
         <div>
           {/*Початкова інфа про документ:*/}
-          <div className='d-flex justify-content-between'>
+          <div>
             <span className='font-weight-bold'>{info.type}</span>
           </div>
           <div>
@@ -65,6 +71,12 @@ class Info extends React.Component {
                   <When condition={module.module === 'day'}>
                     <Day day={getDayByQueue(info.days, index)} fieldName={module.field_name} />
                   </When>
+                  <When condition={module.module === 'datetime'}>
+                    <Day day={getDatetimeByQueue(info.datetimes, index)} fieldName={module.field_name} />
+                  </When>
+                  <When condition={module.module === 'foyer_datetime'}>
+                    <FoyerDatetimes datetimes={info.foyer_ranges} fieldName={module.field_name} />
+                  </When>
                   <When condition={module.module === 'gate'}>
                     <Gate gate={info.gate} fieldName={module.field_name} />
                   </When>
@@ -77,7 +89,11 @@ class Info extends React.Component {
                   <When condition={module.module === 'approval_list'}>
                     <Approvals approvals={info.approval_list} />
                   </When>
-                  <When condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law'].includes(module.module)}>
+                  <When
+                    condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law', 'doc_type_version'].includes(
+                      module.module
+                    )}
+                  >
                     <Text text_info={module} text={info[module.module].name} doc_info={info} />
                   </When>
                   <When condition={module.module === 'product_type_sell'}>
@@ -115,6 +131,17 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'registration'}>
                     <Text text_info={module} text={info.registration_number} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'employee'}>
+                    <Text text_info={module} text={info.employee.name} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'foyer_ranges'}>
+                    <FoyerRanges
+                      ranges={info.foyer_ranges}
+                      doc_id={info.id}
+                      queue={module.queue}
+                      doc_type_version={info.doc_type_version.id}
+                      editable={this.isFoyerRangesEditable()} />
                   </When>
                 </Choose>
               </div>

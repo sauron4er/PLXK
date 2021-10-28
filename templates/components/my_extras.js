@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {getEmpSeats} from 'edms/api/get_emp_seats';
 import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Спливаючі повідомлення
 export const notify = (message) =>
@@ -65,6 +66,12 @@ export const getDayByQueue = (days, queue) => {
   }
 };
 
+export const getDatetimeByQueue = (datetimes, queue) => {
+  for (const i of datetimes) {
+    if (i && i.queue === queue) return i.datetime;
+  }
+};
+
 export const getIndexByProperty = (list, key, value) => {
   for (let i = 0; i < list.length; i++) {
     if (list[i][key] === value) {
@@ -92,7 +99,7 @@ export const getToday = () => {
   return (
     today_date.getDate() +
     '.' +
-    (today_date.getMonth() < 10 ? '0' + (today_date.getMonth() + 1) : today_date.getMonth() + 1) +
+    (today_date.getMonth() < 9 ? '0' + (today_date.getMonth() + 1) : today_date.getMonth() + 1) +
     '.' +
     today_date.getFullYear()
   );

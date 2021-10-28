@@ -5,9 +5,13 @@ const newDocStore = store({
   additional_modal_opened: false,
   additional_modal_content: '',
   new_document: {
-    doc_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
+    doc_type_id: 0,
+    doc_type_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
+    doc_type_version_name: '',
     registration_number: '',
     text: [],
+    datetimes: [],
+    foyer_ranges: [{out: '', in: ''}],
     mockup_type: 0,
     mockup_type_name: '',
     mockup_product_type: 0,
@@ -32,6 +36,8 @@ const newDocStore = store({
     contract_link_name: '',
     company: 'ТДВ',
     select: [],
+    employee: 0,
+    employee_name: '',
     client_requirements: {
       bag_name: '',
       weight_kg: '',
@@ -81,9 +87,13 @@ const newDocStore = store({
   },
   clean_fields: () => {
     newDocStore.new_document = {
-      doc_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
+      doc_type_id: 0,
+      doc_type_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
+      doc_type_version_name: '',
       registration_number: '',
       text: [],
+      datetimes: [],
+      foyer_ranges: [{out: '', in: ''}],
       mockup_type: 0,
       mockup_type_name: '',
       mockup_product_type: 0,
@@ -108,6 +118,8 @@ const newDocStore = store({
       contract_link_name: '',
       company: 'ТДВ',
       select: [],
+      employee: 0,
+      employee_name: '',
       client_requirements: {
         bag_name: '',
         weight_kg: '',

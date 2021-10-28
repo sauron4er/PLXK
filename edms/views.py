@@ -1,21 +1,23 @@
-from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.db import transaction
 
 from plxk.api.global_getters import get_deps
-from docs.api.contracts_api import add_contract_from_edms
 from accounts.models import UserProfile, Department
+from docs.api.contracts_api import add_contract_from_edms
 
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
+from .api.tables.tables_creater import create_table_first, create_table_all
 from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import *
 from .api.setters import *
-from .api.tables_creater import create_table_first, create_table_all
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
+from .api.tables.free_time_table import get_free_times_table
+from .api.tables.it_tickets_table import get_it_tickets_table
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -41,23 +43,24 @@ def post_path(doc_request):
 
 # Функція, яка додає у бд новий документ та повертає його id
 def post_document(request):
-    try:
-        doc_request = request.POST.copy()
-        doc_request.update({'employee': request.user.userprofile.id})
-        doc_request.update({'testing': testing})
-        if doc_request['status'] == 'draft':
-            doc_request.update({'is_draft': True})
-        elif doc_request['status'] == 'template':
-            doc_request.update({'is_template': True})
+    doc_request = request.POST.copy()
 
-        doc_form = DocumentForm(doc_request)
-        if doc_form.is_valid():
-            new_doc = doc_form.save()
-            return new_doc
-        else:
-            raise ValidationError('edms/views: function post_document: document_form invalid')
-    except Exception as err:
-        raise err
+    new_doc = Document(document_type_id=doc_request['document_type'],
+                       employee_seat_id=doc_request['employee_seat'],
+                       testing=testing)
+
+    if doc_request['status'] == 'draft':
+        new_doc.is_draft = True
+    elif doc_request['status'] == 'template':
+        new_doc.is_template = True
+    if doc_request['doc_type_version'] != '0':
+        new_doc.doc_type_version_id = doc_request['doc_type_version']
+
+    new_doc.save()
+    return new_doc
+    #
+    #     doc_request.update({'employee': request.user.userprofile.id})
+    #
 
 
 # Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
@@ -108,6 +111,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
 
+        if 'foyer_ranges' in doc_modules:
+            post_foyer_ranges(doc_request, doc_modules['foyer_ranges'])
+
         if 'gate' in doc_modules:
             post_gate(doc_request, doc_modules['gate'])
 
@@ -152,6 +158,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             
         if 'registration' in doc_modules:
             post_registration(new_doc, doc_modules['registration'])
+
+        if 'employee' in doc_modules:
+            post_employee(new_doc, doc_modules['employee'])
 
         return recipients
     except ValidationError as err:
@@ -492,7 +501,9 @@ def edms_get_doc(request, pk):
             'is_changeable': doc.document_type.is_changeable,
             'approved': doc.approved,
             'archived': not doc.is_active,
-            'main_field': get_main_field(doc)
+            'main_field': get_main_field(doc),
+            'doc_type_version': doc.doc_type_version_id,
+            'stage': doc.stage,
         }
 
         if request.POST.get('employee_seat'):
@@ -507,89 +518,20 @@ def edms_get_doc(request, pk):
                 })
 
         # Path потрібен для складання модулю approval_list, тому отримуємо його навіть якщо документ чернетка.
-        path = [{
-            'id': path.id,
-            'time': convert_to_localtime(path.timestamp, 'time'),
-            'mark_id': path.mark_id,
-            'mark': get_mark_name(path.mark.mark, path.mark_id, doc.document_type.meta_doc_type_id),
-            # 'mark': path.mark.mark,
-            'emp_seat_id': path.employee_seat_id,
-            'emp': path.employee_seat.employee.pip,
-            'seat': path.employee_seat.seat.seat if path.employee_seat.is_main else '(в.о.) ' + path.employee_seat.seat.seat,
-            'comment': path.comment,
-            'original_path': path.path_to_answer_id,
-        } for path in Document_Path.objects.filter(document_id=doc.pk).order_by('-timestamp')]
+        path = get_doc_path(doc.document_type.meta_doc_type_id, doc.pk)
 
         # Шукаємо path i flow документа, якщо це не чернетка чи шаблон:
         if not doc.is_draft and not doc.is_template:
-            # Перебираємо шлях документа:
-            for step in path:
-                # Шукаємо резолюції та "на ознайомлення" і додаємо їх до запису в path
-                if step['mark_id'] == 10:
-                    resolutions = [{
-                        'id': md.id,
-                        'emp_seat_id': md.recipient.id,
-                        'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
-                        'comment': md.comment,
-                    } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
-                    step['resolutions'] = resolutions
-                if step['mark_id'] == 15:
-                    acquaints = [{
-                        'id': md.id,
-                        'emp_seat_id': md.recipient.id,
-                        'emp_seat': md.recipient.employee.pip + ', ' + md.recipient.seat.seat,
-                    } for md in Mark_Demand.objects.filter(document_path_id=step['id'])]
-                    step['acquaints'] = acquaints
+            doc_info.update({'path': get_path_steps(path)})
 
-                # Шукаємо додані файли і додаємо їх до відповідного запису в path
-                files = [{
-                    'id': file.id,
-                    'file': file.file.name,
-                    'name': file.name,
-                    'path_id': file.document_path.id,
-                    'mark_id': file.document_path.mark.id,
-                    'version': file.version,
-                } for file in File.objects.filter(document_path_id=step['id'])]
-                step['files'] = files
+            flow_and_acquaints = get_doc_flow(doc.pk)
+            if flow_and_acquaints['flow']:
+                doc_info.update({'flow': flow_and_acquaints['flow']})
 
-                # Шукаємо видалені файли і додаємо їх до відповідного запису в path
-                deactivated_files = [{
-                    'id': file.id,
-                    'file': file.file.name,
-                    'name': file.name,
-                    'path_id': file.document_path.id,
-                    'mark_id': file.document_path.mark.id,
-                    'version': file.version,
-                } for file in File.objects.filter(deactivate_path_id=step['id'])]
-                step['deactivated_files'] = deactivated_files
+            if flow_and_acquaints['acquaints']:
+                doc_info.update({'acquaints': flow_and_acquaints['acquaints']})
 
-            doc_info.update({'path': path})
-
-            # В кого на черзі документ:
-            flow_all = [{
-                'id': demand.id,
-                'emp_seat_id': demand.recipient.id,
-                'emp': demand.recipient.employee.pip,
-                'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
-                'expected_mark': demand.mark_id,
-            } for demand in Mark_Demand.objects.filter(document_id=doc.pk).filter(is_active=True)]
-
-            # Розділяємо чергу на два потоки: "На ознайомлення" та "На черзі у"
-            flow = []
-            acquaints = []
-
-            for step in flow_all:
-                if step['expected_mark'] == 8:
-                    acquaints.append(step)
-                else:
-                    flow.append(step)
-
-            if flow:
-                doc_info.update({'flow': flow})
-
-            if acquaints:
-                doc_info.update({'acquaints': acquaints})
-
+        # Модулі
         doc_info.update(get_doc_modules(doc))
 
         is_super_manager = User_Doc_Type_View.objects.values_list('super_manager', flat=True)\
@@ -714,10 +656,14 @@ def edms_get_doc_type_modules(request, meta_type_id, type_id):
         else:
             doc_type = get_object_or_404(Document_Type, pk=type_id)
         doc_type_modules = get_doc_type_modules(doc_type)
+
+        # Поле, яке показується у списку документів
         main_field_queue = Document_Type_Module.objects.values_list('queue', flat=True)\
             .filter(document_type=doc_type)\
             .filter(is_main_field=True)\
             .filter(is_active=True)[0]
+
+        # Список отримувачів, який показано внизу документа
         auto_recipients = get_auto_recipients(type_id)
 
         response = {
@@ -1134,6 +1080,11 @@ def edms_mark(request):
                 # Деактивуємо MarkDemand цієї позначки
                 deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
 
+                if doc_request['doc_meta_type_id'] == 1:
+                    save_foyer_ranges(doc_request['document'])
+                    # Заносимо дані цього документа в нову таблицю
+                    # Відповідно до його stage робимо поля нередагуємими
+
             # Делегування mark_demand
             elif doc_request['mark'] == '25':
                 mark_demand_instance = get_object_or_404(Mark_Demand, pk=doc_request['mark_demand_id'])
@@ -1232,18 +1183,18 @@ def edms_tables(request, meta_doc_type=''):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_table_first(request, meta_doc_type='', doc_type=0, counterparty=0):
+def edms_get_table_first(request, meta_doc_type=0, counterparty=0, doc_type=''):
     if request.method == 'GET':
-        table = create_table_first(doc_type, counterparty)
+        table = create_table_first(meta_doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
 
 
 @try_except
-def edms_get_table_all(request, meta_doc_type='', doc_type=0, counterparty=0):
+def edms_get_table_all(request, meta_doc_type=0, counterparty=0, doc_type=''):
     if request.method == 'GET':
-        table = create_table_all(doc_type, counterparty)
+        table = create_table_all(meta_doc_type, counterparty)
 
         return HttpResponse(json.dumps(table))
     return HttpResponse(status=405)
@@ -1271,7 +1222,79 @@ def edms_delegated(request):
 
 
 @login_required(login_url='login')
+@try_except
 def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_delegated_docs(emp, sub, doc_meta_type)))
     return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+@try_except
+def edms_get_free_times(request, page):
+    response = get_free_times_table(request, page)
+    return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def get_it_tickets(request, doc_type_version, page):
+    response = get_it_tickets_table(request, doc_type_version, page)
+    return HttpResponse(json.dumps(response))
+
+
+@login_required(login_url='login')
+@try_except
+def get_doc_type_versions(request, doc_type_id):
+    doc_type_versions = Document_Type_Version.objects\
+        .filter(document_type_id=doc_type_id)\
+        .filter(is_active=True)
+
+    doc_type_versions_list = [{
+        'id': doc_type_version.pk,
+        'name': doc_type_version.description,
+    } for doc_type_version in doc_type_versions]
+
+    return HttpResponse(json.dumps(doc_type_versions_list))
+
+
+@login_required(login_url='login')
+@try_except
+def get_all_employees(request):
+    employees = UserProfile.objects \
+        .filter(is_active=True).order_by('pip')
+
+    employees_list = [{
+        'id': employee.pk,
+        'name': employee.pip + ' (' + employee.tab_number + ')',
+    } for employee in employees]
+
+    return HttpResponse(json.dumps(employees_list))
+
+
+@login_required(login_url='login')
+@try_except
+def del_foyer_range(request, pk):
+    range = get_object_or_404(Doc_Foyer_Range, pk=pk)
+    range.is_active = False
+    range.save()
+
+    return HttpResponse(200)
+
+
+@login_required(login_url='login')
+@try_except
+def save_foyer_range(request):
+    sent_range = json.loads(request.POST['range'])
+    if 'id' in sent_range:
+        new_range = get_object_or_404(Doc_Foyer_Range, pk=sent_range['id'])
+        new_range.out_datetime = datetime.strptime(sent_range['out'], "%Y-%m-%dT%H:%M:%S.%fz"),
+        new_range.in_datetime = datetime.strptime(sent_range['in'], "%Y-%m-%dT%H:%M:%S.%fz"),
+    else:
+        new_range = Doc_Foyer_Range(document_id=request.POST['doc_id'],
+                                    out_datetime=sent_range['out'],
+                                    in_datetime=sent_range['in'],
+                                    queue_in_doc=request.POST['queue']
+                                    )
+    new_range.save()
+    return HttpResponse(new_range.pk)

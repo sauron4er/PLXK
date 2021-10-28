@@ -10,8 +10,9 @@ class EmployeePAM extends React.Component {
       pip: '',
       phone: '',
       mail: '',
-      form_is_valid: false
-    }
+    },
+    phone_is_valid: true,
+    mail_is_valid: true
   };
 
   componentDidMount() {
@@ -20,9 +21,7 @@ class EmployeePAM extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.employee.id !== prevProps.employee.id) {
-      this.setState({
-        employee: {...this.props.employee}
-      });
+      this.setState({employee: {...this.props.employee}});
     }
   }
 
@@ -30,13 +29,12 @@ class EmployeePAM extends React.Component {
     let employee = {...this.state.employee};
     employee.phone = e.target.value;
     this.setState({employee});
-
     if (e.target.validity.patternMismatch) {
       e.target.setCustomValidity('Номер телефону має складатися з 4 цифр');
-      this.setState({form_is_valid: false});
+      this.setState({phone_is_valid: false});
     } else {
       e.target.setCustomValidity('');
-      this.setState({form_is_valid: true});
+      this.setState({phone_is_valid: true});
     }
   };
 
@@ -47,10 +45,10 @@ class EmployeePAM extends React.Component {
 
     if (e.target.validity.typeMismatch) {
       e.target.setCustomValidity('Неправильно введена електронна пошта');
-      this.setState({form_is_valid: false});
+      this.setState({mail_is_valid: false});
     } else {
       e.target.setCustomValidity('');
-      this.setState({form_is_valid: true});
+      this.setState({mail_is_valid: true});
     }
   };
 
@@ -65,7 +63,7 @@ class EmployeePAM extends React.Component {
   };
 
   render() {
-    const {employee, form_is_valid} = this.state;
+    const {employee, phone_is_valid, mail_is_valid} = this.state;
     return (
       <>
         <h4 className='mt-4'>{employee.pip}</h4>
@@ -87,7 +85,11 @@ class EmployeePAM extends React.Component {
           e-mail:
         </label>
         <input className='form-control' name='mail' id={'mail'} type='email' value={employee.mail} onChange={this.onMailChange} />
-        <button className='btn btn-outline-primary mt-3 float-right' onClick={this.saveChanges} disabled={!form_is_valid}>
+        <button
+          className='btn btn-outline-primary mt-3 float-right'
+          onClick={this.saveChanges}
+          disabled={!phone_is_valid || !mail_is_valid}
+        >
           Зберегти зміни
         </button>
       </>
