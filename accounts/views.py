@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
 import json
+from edms.models import Seat
 from .forms import SignUpForm
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User
@@ -23,22 +24,45 @@ def signup(request):
 
 def departments(request):
     departments = Department.objects.all()
-    return render(request, 'accounts/departments.html', {'depatments': departments})
+    return render(request, 'accounts/departments.html', {'departments': departments})
 
 
-def department(request,pk):
+def department(request, pk):
     department = get_object_or_404(Department, pk=pk)
     employee = User.objects.filter(userprofile__department_id=pk).order_by('userprofile__pip')
     return render(request, 'accounts/department.html', {'depatment': department, 'employee': employee})
 
 
+@login_required(login_url='login')
 @try_except
-def get_departments(request):
+def get_departments(request, company='TDV'):
+    departments = Department.objects.only('id', 'name')\
+        .filter(is_active=True)\
+        .order_by('name')
+
+    if company == 'TDV':
+        departments = departments.filter(is_tdv=True)
+    if company == 'TOV':
+        departments = departments.exclude(is_tdv=True)
+
     departments = [{
-        'id': dep.id,
-        'name': dep.name
-    } for dep in Department.objects.filter(is_active=True)]
+        'id': department.pk,
+        'name': department.name,
+    } for department in departments]
+
     return HttpResponse(json.dumps(departments))
+
+
+@login_required(login_url='login')
+@try_except
+def get_dep_chief_seat(request, dep_id):
+    dep_chief = Seat.objects\
+        .filter(department_id=dep_id)\
+        .filter(is_dep_chief=True)\
+        .filter(is_active=True)
+    if dep_chief:
+        return HttpResponse(dep_chief[0])
+    return HttpResponse('У системі не зазначено начальника відділу')
 
 
 @login_required(login_url='login')

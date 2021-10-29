@@ -14,6 +14,7 @@ module.exports = {
     correspondence: './static/index/correspondence.js',
     ordering: './static/index/ordering.js',
     accounts: './static/index/accounts.js',
+    hr: './static/index/hr.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
@@ -80,6 +81,7 @@ module.exports = {
       boards: path.resolve(__dirname, 'boards'),
       ordering: path.resolve(__dirname, 'ordering'),
       accounts: path.resolve(__dirname, 'accounts'),
+      hr: path.resolve(__dirname, 'hr'),
     }
   }
 };

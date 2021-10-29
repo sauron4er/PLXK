@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
     url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
+    url(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
     url(r'^.+/.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
 
@@ -32,6 +33,7 @@ urlpatterns = [
     url(r'^crm/', include('crm.urls', namespace='crm')),
     url(r'^boards/', include('boards.urls', namespace='boards')),
     url(r'^ordering/', include('ordering.urls', namespace='ordering')),
+    url(r'^hr/', include('hr.urls', namespace='hr')),
     url(r'^reload/', board_views.reload, name='reload'),  # Якщо запит на 'boards/reload' - повертається пустий response
 
     url(r'^docs/', include('docs.urls', namespace='docs')),

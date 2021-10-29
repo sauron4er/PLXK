@@ -10,8 +10,8 @@
 
 {% block content %}
     <ul>
-    {% for depatment in depatments %}
-    <li>  <a href="{% url 'department' depatment.id %}">{{ depatment.name }}</a>  </li>
+    {% for department in departments %}
+    <li>  <a href="{% url 'department' department.id %}">{{ department.name }}</a>  </li>
     {% endfor %}
 
     </ul>
