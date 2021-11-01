@@ -122,7 +122,7 @@ class Document extends React.Component {
         formData.append('change__updated_files', file);
       });
     }
-
+  
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
@@ -137,6 +137,7 @@ class Document extends React.Component {
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
+    formData.append('doc_type_version', docInfoStore.info.doc_type_version.id);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {

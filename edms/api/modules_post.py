@@ -68,8 +68,10 @@ def post_foyer_ranges(doc_request, datetimes):
         new_fdt = Doc_Foyer_Range(document_id=doc_request['document'])
         # new_fdt.out_datetime = datetime.strptime(fdt['out'], "%Y-%m-%dT%H:%M:%S.%fz")
         # new_fdt.in_datetime = datetime.strptime(fdt['in'], "%Y-%m-%dT%H:%M:%S.%fz")
-        new_fdt.out_datetime = datetime.fromtimestamp(fdt['out'])
-        new_fdt.in_datetime = datetime.fromtimestamp(fdt['in'])
+        if fdt['out'] != '':
+            new_fdt.out_datetime = datetime.fromtimestamp(fdt['out'])
+        if fdt['in'] != '':
+            new_fdt.in_datetime = datetime.fromtimestamp(fdt['in'])
         new_fdt.save()
 
 
