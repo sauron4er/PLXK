@@ -4,9 +4,10 @@ import {Loader} from 'templates/components/loaders';
 import TextInput from 'templates/components/form_modules/text_input';
 import Files from 'templates/components/form_modules/files';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
-import {axiosGetRequest} from 'templates/components/axios_requests';
+import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import DateInput from 'templates/components/form_modules/date_input';
-import SubmitButton from "templates/components/form_modules/submit_button";
+import SubmitButton from 'templates/components/form_modules/submit_button';
+import {notify} from 'templates/components/my_extras';
 
 class Regulation extends React.Component {
   state = {
@@ -53,9 +54,37 @@ class Regulation extends React.Component {
     });
     this.getDepChiefSeat(e.id);
   };
-  
+
   postRegulation = () => {
-  
+    const {name, number, version, staff_units, old_files, new_files, department, date_start, revision_date} = this.state;
+
+    let formData = new FormData();
+    formData.append('name', name);
+    formData.append('number', number);
+    formData.append('version', version);
+    formData.append('staff_units', staff_units);
+    formData.append('department', department);
+    formData.append('date_start', date_start);
+    formData.append('revision_date', revision_date);
+
+    if (new_files?.length > 0) {
+      new_files.map((file) => {
+        formData.append('new_files', file);
+      });
+    }
+
+    if (old_files?.length > 0) {
+      old_files.map((file) => {
+        formData.append('old_files', file);
+      });
+    }
+
+    axiosPostRequest(`post_regulation/${this.props.id}`, formData)
+      .then((response) => {
+        console.log(response);
+        // location.reload();
+      })
+      .catch((error) => notify(error));
   };
 
   render() {
@@ -78,7 +107,7 @@ class Regulation extends React.Component {
       <Choose>
         <When condition={!loading}>
           <h4>Нове положення про відділ</h4>
-          <hr/>
+          <hr />
           <SelectorWithFilterAndAxios
             listNameForUrl='departments'
             fieldName='Відділ/служба'
@@ -92,7 +121,7 @@ class Regulation extends React.Component {
               Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat}</span>
             </div>
           </If>
-          <hr/>
+          <hr />
           <div className='row'>
             <div className='col-lg-6'>
               <TextInput
@@ -122,7 +151,7 @@ class Regulation extends React.Component {
               />
             </div>
           </div>
-          <hr/>
+          <hr />
           <div className='row'>
             <div className='col-lg-6'>
               <TextInput
@@ -150,7 +179,7 @@ class Regulation extends React.Component {
               />
             </div>
           </div>
-          <hr/>
+          <hr />
           <Files
             oldFiles={old_files}
             newFiles={new_files}
@@ -158,7 +187,7 @@ class Regulation extends React.Component {
             onChange={(e) => this.onChange(e, 'new_files')}
             disabled={disabled}
           />
-          <hr/>
+          <hr />
           <SubmitButton className='btn btn-outline-info' onClick={() => this.postRegulation()} text={'Зберегти'} />
         </When>
         <Otherwise>

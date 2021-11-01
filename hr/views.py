@@ -26,3 +26,15 @@ def get_regulations(request, page):
 def get_instructions(request, page):
     instructions_list = [{'id': 1, 'department': 'IT', 'seat': 'Системний адмін', 'file': ''}]
     return HttpResponse(json.dumps({'rows': instructions_list, 'pagesCount': 1}))
+
+
+@login_required(login_url='login')
+@try_except
+def post_regulation(request, pk):
+    a=1
+
+
+@login_required(login_url='login')
+@try_except
+def post_instruction(request, pk):
+    a=1
