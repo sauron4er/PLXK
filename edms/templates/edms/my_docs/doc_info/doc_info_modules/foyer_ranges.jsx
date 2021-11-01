@@ -37,13 +37,12 @@ class FoyerRanges extends React.Component {
       return false;
     }
     if (range.out !== '' && range.in !== '') {
-      if ([1, 2].includes(this.props.doc_type_version)) {
+      if ([1, 2].includes(this.props.doc_type_version && range.out >= range.in)) {
         // 1,2 - звільнююча
         notify('Час повернення не може бути меншим за час виходу.');
       return false;
       } else if ([3, 4].includes(this.props.doc_type_version) && range.in >= range.out) {
         // 3,4 - тимчасова, забув
-        console.log(1);
         notify('Час виходу не може бути меншим за час входу.');
       return false;
       }

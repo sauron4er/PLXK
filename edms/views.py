@@ -1288,12 +1288,16 @@ def save_foyer_range(request):
     sent_range = json.loads(request.POST['range'])
     if 'id' in sent_range:
         new_range = get_object_or_404(Doc_Foyer_Range, pk=sent_range['id'])
-        new_range.out_datetime = datetime.strptime(sent_range['out'], "%Y-%m-%dT%H:%M:%S.%fz"),
-        new_range.in_datetime = datetime.strptime(sent_range['in'], "%Y-%m-%dT%H:%M:%S.%fz"),
+        # new_range.out_datetime = datetime.strptime(sent_range['out'], "%Y-%m-%dT%H:%M:%S.%fz") if sent_range['out'] != '' else '',
+        # print(new_range.out_datetime)
+        # new_range.in_datetime = datetime.strptime(sent_range['in'], "%Y-%m-%dT%H:%M:%S.%fz") if sent_range['in'] != '' else '',
+
+        new_range.out_datetime = sent_range['out'] if sent_range['out'] != '' else None
+        new_range.in_datetime = sent_range['in'] if sent_range['in'] != '' else None
     else:
         new_range = Doc_Foyer_Range(document_id=request.POST['doc_id'],
-                                    out_datetime=sent_range['out'],
-                                    in_datetime=sent_range['in'],
+                                    out_datetime=sent_range['out'] if sent_range['out'] != '' else None,
+                                    in_datetime=sent_range['in'] if sent_range['in'] != '' else None,
                                     queue_in_doc=request.POST['queue']
                                     )
     new_range.save()
