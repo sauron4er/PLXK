@@ -165,19 +165,19 @@ class FoyerRanges extends React.Component {
                 <When condition={[1, 2].includes(doc_type_version)}>
                   {/*1, 2 - Звільнююча*/}
                   <div>
-                    Вихід: <span className='css_note_text mr-2'>{ranges[index].out_text}</span>
+                    Вихід: <span className='css_note_text ml-1 mr-2'>{ranges[index].out_text}</span>
                   </div>
                   <div>
-                    Вхід: <span className='css_note_text'>{ranges[index].in_text}</span>
+                    Вхід: <span className='css_note_text ml-1 mr-2'>{ranges[index].in_text}</span>
                   </div>
                 </When>
                 <Otherwise>
                   {/*3, 4 - Забув, тимчасова*/}
                   <div>
-                    Вхід: <span className='css_note_text mr-2'>{ranges[index].in_text}</span>
+                    Вхід: <span className='css_note_text ml-1 mr-2'>{ranges[index].in_text}</span>
                   </div>
                   <div>
-                    Вихід: <span className='css_note_text'>{ranges[index].out_text}</span>
+                    Вихід: <span className='css_note_text ml-1 mr-2'>{ranges[index].out_text}</span>
                   </div>
                 </Otherwise>
               </Choose>

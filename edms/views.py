@@ -1231,14 +1231,14 @@ def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_free_times(request, page):
+def edms_get_free_times(request, page, meta_doc_type=0):
     response = get_free_times_table(request, page)
     return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @try_except
-def get_it_tickets(request, doc_type_version, page):
+def get_it_tickets(request, doc_type_version, page, meta_doc_type=0):
     response = get_it_tickets_table(request, doc_type_version, page)
     return HttpResponse(json.dumps(response))
 
