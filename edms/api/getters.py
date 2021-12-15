@@ -634,7 +634,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
-    docs_from_nark_demand = [{
+    docs_from_mark_demand = [{
         'id': md.document_id,
         'type': md.document.document_type.description,
         'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
@@ -645,9 +645,10 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(recipient=sub_emp)
         .filter(document__testing=testing)
-        .filter(document__closed=False)]
+        .filter(document__closed=False)
+        .exclude(document__employee_seat_id=sub_emp)]
 
-    docs = docs_from_path + docs_from_nark_demand
+    docs = docs_from_path + docs_from_mark_demand
     docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
 
     return docs
@@ -676,12 +677,12 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
             .filter(mark_id=1)
-            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(employee_seat__seat_id__in=subs)
+            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        docs_from_nark_demand = [{
+        docs_from_mark_demand = [{
             'id': md.document_id,
             'type': md.document.document_type.description,
             'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
@@ -690,12 +691,21 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'main_field': get_main_field(md.document),
         } for md in Mark_Demand.objects
             .filter(document__document_type__meta_doc_type_id=doc_meta_type)
+            .exclude(document__employee_seat__seat_id__in=subs)
             .filter(recipient__seat_id__in=subs)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        docs = docs_from_path + docs_from_nark_demand
+        docs = docs_from_path + docs_from_mark_demand
         docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        # existing_ids = []
+        # docs_filtered = []
+        #
+        # for i in range(len(docs_from_mark_demand)):
+        #     if docs_from_mark_demand[i]['id'] not in existing_ids:
+        #         docs_from_mark_demand_filtered.append(docs_from_mark_demand[i])
+        #         existing_ids.append(docs_from_mark_demand[i]['id'])
 
         return docs
 
