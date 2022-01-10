@@ -60,8 +60,13 @@ class Text extends React.Component {
   };
 
   render() {
-    const {module_info, rows, cols, maxLength, type} = this.props;
-
+    const {module_info, cols, maxLength, type} = this.props;
+    
+    const text = this.getText(module_info.queue);
+    const text_length = Math.floor(text.length/65);
+    const rows = text_length > 1 ? text_length : 1
+    
+  
     return (
       <Choose>
         <When condition={type === 'dimensions'}>
@@ -92,7 +97,7 @@ class Text extends React.Component {
               id={'text-' + module_info.queue}
               value={this.getText(module_info.queue)}
               // Переробити на окреме поле в таблиці doc_type_modules - big_text, яке буде визначати чи високе текстове поле
-              rows={[69, 77].includes(module_info.id) ? 6 : rows} // Зміст заявок високий.
+              rows={rows} // Зміст заявок високий.
               cols={cols}
               onChange={this.onTextChange}
               maxLength={maxLength}
@@ -111,7 +116,6 @@ class Text extends React.Component {
       required: false,
       additional_info: null
     },
-    rows: 1,
     cols: 50,
     maxLength: 5000,
     type: 'default',

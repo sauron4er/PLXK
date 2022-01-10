@@ -170,7 +170,8 @@ class NewDocument extends React.Component {
   };
 
   getDocTypeModules = () => {
-    axiosGetRequest('get_doc_type_modules/' + this.props.doc.meta_type_id + '/' + this.props.doc.type_id + '/')
+    const meta_type_id = this.props.status === 'template' ? 0 : this.props.doc.meta_type_id
+    axiosGetRequest('get_doc_type_modules/' + meta_type_id + '/' + this.props.doc.type_id + '/')
       .then((response) => {
         this.setState({
           type_modules: response.doc_type_modules,
@@ -187,10 +188,7 @@ class NewDocument extends React.Component {
       axiosGetRequest('get_doc/' + this.props.doc.id + '/')
         .then((response) => {
           this.setState({
-            name: response.name || '',
-            preamble: response.preamble || '',
             text: response.text_list || [],
-            articles: response.articles || [],
             recipient: response.recipient || {
               name: '------',
               seat: '------',
@@ -211,8 +209,8 @@ class NewDocument extends React.Component {
             client: response.client || [],
             mockup_type: response.mockup_type || [],
             mockup_product_type: response.mockup_product_type || [],
-            employee: response.employee.id || 0,
-            employee_name: response.employee.name || '',
+            employee: response.author_seat_id || 0,
+            employee_name: response.author || '',
             foyer_ranges: response.foyer_ranges || [],
             render_ready: true
           });
@@ -243,6 +241,8 @@ class NewDocument extends React.Component {
           newDocStore.new_document.client_requirements = response?.client_requirements;
           newDocStore.new_document.document_link = response?.document_link;
           newDocStore.new_document.document_link_name = response?.document_link_name;
+          newDocStore.new_document.doc_type_version = response?.doc_type_version?.id;
+          newDocStore.new_document.doc_type_version_name = response?.doc_type_version?.name;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -472,13 +472,11 @@ class NewDocument extends React.Component {
   getFoyerRanges = () => {
     const {foyer_ranges} = newDocStore.new_document;
     let new_ranges = []
-    console.log(foyer_ranges);
     for (const i in foyer_ranges) {
       const r_out = foyer_ranges[i].out instanceof Date ? foyer_ranges[i].out.getTime() / 1000 : foyer_ranges[i].out
       const r_in = foyer_ranges[i].in instanceof Date ? foyer_ranges[i].in.getTime() / 1000 : foyer_ranges[i].in
       new_ranges.push({out: r_out, in: r_in})
     }
-    console.log(new_ranges);
     return new_ranges
   };
 

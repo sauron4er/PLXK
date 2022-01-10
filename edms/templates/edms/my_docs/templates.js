@@ -40,9 +40,7 @@ class Templates extends React.Component {
 
   // обнуляє селект при закритті модального вікна
   onCloseModal = () => {
-    this.setState({
-      selected_template: {type_id: 0}
-    });
+    this.setState({selected_template: {type_id: 0}});
   };
 
   render() {
