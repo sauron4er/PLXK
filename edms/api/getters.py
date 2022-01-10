@@ -1120,8 +1120,8 @@ def get_main_field(document):
         doc_counterparty = [{
             'name': dc.counterparty.name if dc.counterparty else '',
             'input': dc.counterparty_input
-        } for dc in Doc_Counterparty.objects\
-            .filter(document=document)\
+        } for dc in Doc_Counterparty.objects
+            .filter(document=document)
             .filter(is_active=True)]
 
         if doc_counterparty:
@@ -1130,7 +1130,7 @@ def get_main_field(document):
             else:
                 return doc_counterparty[0]['input']
     elif main_field_data['module_id'] == 42:  # Версія документу
-        main_field = [document.doc_type_version.description or '']
+        main_field = [document.doc_type_version.description if document.doc_type_version else '']
 
     if len(main_field) > 0:
         return main_field[0]

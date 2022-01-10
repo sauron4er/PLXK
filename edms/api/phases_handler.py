@@ -175,7 +175,6 @@ def handle_phase_marks(doc_request, phase_info):
             recipient = vacation_check(recipient)
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             new_mail('new', [{'id': recipient}], doc_request)
-
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
         if 'doc_type_version' in doc_request:

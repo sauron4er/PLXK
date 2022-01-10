@@ -96,12 +96,10 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         # Додаємо список отримувачів на підпис
         if 'sign_list' in doc_modules:
-        #     post_sign_list(doc_request, doc_modules['sign_list'])
             for sign in doc_modules['sign_list']:
-                if doc_request['document_type'] == 2:
-                    sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
-                    if sign_seat not in [16, 21]:
-                        recipients.append({'id': sign['id'], 'type': 'sign'})
+                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
+                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
+                    recipients.append({'id': sign['id'], 'type': 'sign'})
 
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
