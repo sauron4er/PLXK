@@ -259,18 +259,23 @@ def get_chief_emp_seat(emp_seat_id):
 
 # Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
 @try_except
-def get_my_seats(emp_id):
+def get_my_seats(emp_id, only_active=True):
+    my_seats = Employee_Seat.objects.filter(employee_id=emp_id)
+    if only_active:
+        my_seats = my_seats.filter(is_active=True)
+
     my_seats = [{  # Список посад юзера
         'id': empSeat.id,
         'seat_id': empSeat.seat_id,
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
-    } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
+    } for empSeat in my_seats]
 
     for emp_seat in my_seats:
         chief = get_chief_emp_seat(emp_seat['id'])
         if chief:
             emp_seat.update({
-                'chief': chief['name'] + ', ' + chief['seat']
+                'chief': chief['name'] + ', ' + chief['seat'],
+                'chief_emp_id': chief['emp_id']
             })
     return my_seats
 

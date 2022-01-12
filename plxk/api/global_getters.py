@@ -4,6 +4,7 @@ from accounts.models import Department, UserProfile
 from edms.models import Employee_Seat, Seat
 from plxk.api.try_except import try_except
 from edms.api.vacations import vacation_check
+from edms.api.getters import get_my_seats, get_sub_emps
 
 
 @try_except
@@ -138,3 +139,13 @@ def get_quality_director(return_type=''):
         name = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=active_qd)[0]
         return name
     return ''
+
+
+@try_except
+def is_this_my_sub(user, sub):
+    sub_seats = get_my_seats(sub.userprofile.id, False)
+
+    for sub in sub_seats:
+        if sub['chief_emp_id'] == user.userprofile.id:
+            return True
+    return False

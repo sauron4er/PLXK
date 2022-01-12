@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^.+/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^.+/get_all_employees', get_all_employees, name='get_all_employees'),
     url(r'^.+/get_doc_type_versions/(?P<doc_type_id>\d+)', get_doc_type_versions, name='get_doc_type_versions'),
+    url(r'^.+/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),
@@ -44,7 +45,7 @@ urlpatterns = [
     url(r'^hr/start_vacations_arrange/', edms_start_vacations_arrange, name='start_vacations_arrange'),
     url(r'^hr/', edms_hr, name='hr'),
 
-    url(r'^my_docs/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
+
     url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
     url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
