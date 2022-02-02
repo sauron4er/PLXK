@@ -1120,6 +1120,16 @@ def edms_mark(request):
                     deactivate_mark_demand(doc_request, md)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
+                # На погодження
+            elif doc_request['mark'] == '28':
+                approvals = json.loads(doc_request['approvals'])
+                # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.
+
+                for approval in approvals:
+                    approval = vacation_check(approval['emp_seat_id'])
+                    post_mark_demand(doc_request, approval, get_phase_id(doc_request), 2)
+                    new_mail('new', [{'id': approval}], doc_request)
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 

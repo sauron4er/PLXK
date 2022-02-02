@@ -205,9 +205,8 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     continue
 
                 # 1. Створюємо таблицю візування для новоствореного документа:
-                if phase_number == 1 and doc_request['mark'] == 1:
-                    if is_approvals_used(doc_request['document_type']):
-                        add_zero_phase_auto_approvals(doc_request, phase_info)
+                if phase_number == 1 and doc_request['mark'] == 1 and is_approvals_used(doc_request['document_type']):
+                    add_zero_phase_auto_approvals(doc_request, phase_info)
 
                 if phase_info['mark_id'] == 20:
                     # автоматичне заповнення полей approved, approved_date
@@ -230,6 +229,10 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     else:
                         # Якщо визначеного отримувача нема, надсилаємо автору
                         handle_phase_marks(doc_request, phase_info)
+
+                # Список на погодження може бути пустий. Якщо так, переходимо на наступну фазу
+                elif phase_info['mark_id'] == 2 and not modules_recipients:
+                    new_phase(doc_request, phase_number+1, modules_recipients=modules_recipients)
 
                 else:
                     # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):

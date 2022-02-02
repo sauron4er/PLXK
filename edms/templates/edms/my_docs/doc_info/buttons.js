@@ -189,6 +189,9 @@ class Buttons extends React.Component {
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(15)} disabled={button_clicked}>
           На ознайомлення
         </button>
+        <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(28)} disabled={button_clicked}>
+          На погодження
+        </button>
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(12)} disabled={button_clicked}>
           Додати файл
         </button>
