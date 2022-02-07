@@ -232,7 +232,7 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
 
                 # Список на погодження може бути пустий. Якщо так, переходимо на наступну фазу
                 elif phase_info['mark_id'] == 2 and not modules_recipients:
-                    new_phase(doc_request, phase_number+1, modules_recipients=modules_recipients)
+                    handle_phase_approvals(doc_request, phase_info)
 
                 else:
                     # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):
