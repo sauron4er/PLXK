@@ -22,7 +22,14 @@ def handle_phase_approvals(doc_request, phase_info):
     if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals_emp_seat):
         # auto_recipients = get_phase_recipient_list(phase_info['id'])
         # if not auto_recipients:
-        new_phase(doc_request, phase_info['phase'] + 1, [])
+        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
+        if recipients:
+            for recipient in recipients:
+                recipient = vacation_check(recipient)
+                post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+                new_mail('new', [{'id': recipient}], doc_request)
+        else:
+            new_phase(doc_request, phase_info['phase'] + 1, [])
     else:
         for approval in approvals_emp_seat:
             # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
