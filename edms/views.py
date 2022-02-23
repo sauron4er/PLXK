@@ -602,6 +602,9 @@ def edms_my_docs(request):
         # Записуємо документ і отримуємо його ід, тип
         new_doc = post_document(request)
         doc_request.update({'document': new_doc.pk})
+
+        defines_doc_version = new_doc.document_type.module_types.values_list('defines_doc_version', flat=True).filter(is_active=True).filter(module_id=31)
+
         doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
         doc_request.update({'document_type': doc_type})
 
@@ -653,6 +656,7 @@ def edms_get_doc_type_modules(request, meta_type_id, type_id):
             doc_type = get_object_or_404(Document_Type, meta_doc_type_id=meta_type_id, is_active=True)
         else:
             doc_type = get_object_or_404(Document_Type, pk=type_id)
+
         doc_type_modules = get_doc_type_modules(doc_type)
 
         # Поле, яке показується у списку документів

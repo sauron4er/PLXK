@@ -347,7 +347,8 @@ def get_doc_type_modules(doc_type):
         'queue': type_module.queue,
         'additional_info': type_module.additional_info,
         'hide': type_module.hide,
-        'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0
+        'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0,
+        'defines_doc_version': type_module.defines_doc_version
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
@@ -521,8 +522,8 @@ def get_zero_phase_id(document_type):
 # Sole - це коли зі списку отримувачів потрібно надіслати документ тільки одному:
 # найближчому керівнику (н-д у випадку звільнюючої).
 @try_except
-def get_phase_id_sole_recipients(phase_id, emp_seat):
-    recipients = get_phase_recipient_list(phase_id)
+def get_phase_id_sole_recipients(phase_id, emp_seat, doc_type_version=0):
+    recipients = get_phase_recipient_list(phase_id, doc_type_version)
 
     sole = Doc_Type_Phase.objects.values_list('sole', flat=True).filter(id=phase_id)[0]
     if sole:

@@ -191,6 +191,7 @@ class Document_Type_Module(models.Model):
     module = models.ForeignKey(Module, related_name='type_modules', on_delete=models.RESTRICT)
     queue = models.IntegerField()
     field = models.CharField(max_length=200, null=True, blank=True)
+    defines_doc_version = models.BooleanField(default=False)  # True - цей модуль визначає версію документа, н-д вибір підприємства у Тендерах
 
     # Назва поля (наразі для текстових та дат), якщо це поле використовується декілька раз у документі,
     # а потім використовується поза системою edms

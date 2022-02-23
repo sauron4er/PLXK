@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from plxk.api.try_except import try_except
 from edms.forms import NewApprovalForm, ApprovedApprovalForm
-from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat
+from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
     get_my_seats, get_phase_id_sole_recipients
@@ -22,7 +22,8 @@ def handle_phase_approvals(doc_request, phase_info):
     if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals_emp_seat):
         # auto_recipients = get_phase_recipient_list(phase_info['id'])
         # if not auto_recipients:
-        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'])
+        doc_type_version = Document.objects.values_list('doc_type_version', flat=True).filter(id=doc_request['document'])[0]
+        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'], doc_type_version)
         if recipients:
             for recipient in recipients:
                 recipient = vacation_check(recipient)

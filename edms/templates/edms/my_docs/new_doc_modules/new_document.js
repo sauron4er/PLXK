@@ -293,7 +293,9 @@ class NewDocument extends React.Component {
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
-      if (module.required && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
+      if (module.required
+        && module.module !== 'choose_company'
+        && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
@@ -379,11 +381,10 @@ class NewDocument extends React.Component {
     try {
       const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
-
+  
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
-
         type_modules.map((module) => {
           if (
             ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link', 'employee'].includes(

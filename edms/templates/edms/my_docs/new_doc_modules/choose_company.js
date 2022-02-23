@@ -4,9 +4,24 @@ import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 
 class ChooseCompany extends React.Component {
-
+  
+  componentDidMount() {
+    if (this.props.module_info.defines_doc_version) {
+      newDocStore.new_document.doc_type_version = 1;
+    }
+  }
+  
   onChange = (event) => {
     newDocStore.new_document.company = event.target.value
+    if (this.props.module_info.defines_doc_version) {
+      switch (event.target.value) {
+        case 'ТДВ':
+          newDocStore.new_document.doc_type_version = 1;
+          break;
+        case 'ТОВ':
+          newDocStore.new_document.doc_type_version = 2;
+      }
+    }
   };
 
   render() {
