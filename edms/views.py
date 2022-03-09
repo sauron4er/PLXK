@@ -53,7 +53,7 @@ def post_document(request):
         new_doc.is_draft = True
     elif doc_request['status'] == 'template':
         new_doc.is_template = True
-    if doc_request['doc_type_version'] != '0':
+    if doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
         new_doc.doc_type_version_id = doc_request['doc_type_version']
 
     new_doc.save()
@@ -500,7 +500,8 @@ def edms_get_doc(request, pk):
             'approved': doc.approved,
             'archived': not doc.is_active,
             'main_field': get_main_field(doc),
-            'doc_type_version': doc.doc_type_version_id,
+            'doc_type_version': doc.doc_type_version.id if doc.doc_type_version else 0,
+            'doc_type_version_name': doc.doc_type_version.description if doc.doc_type_version else '',
             'stage': doc.stage,
         }
 
