@@ -8,7 +8,6 @@ import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from './counterparty_store';
 const data = require('plxk/secrets.json');
 
-Geocode.setApiKey(data.secrets.google_api_key);
 
 const Marker = ({text}) => (
   <>
@@ -31,12 +30,14 @@ class CounterpartyMap extends React.Component {
   };
 
   componentDidMount() {
+    Geocode.setApiKey(this.props.google_api_key);
     this.getMap('legal');
   }
 
   getMap = (type) => {
     const map = type === 'legal' ? counterpartyStore.counterparty.legal_address : counterpartyStore.counterparty.actual_address;
     if (map !== '') {
+      
       Geocode.fromAddress(map).then(
         (response) => {
           const {lat, lng} = response.results[0].geometry.location;
@@ -62,6 +63,7 @@ class CounterpartyMap extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    Geocode.setApiKey(this.props.google_api_key);
     if (prevState.map !== this.state.map) {
       this.setState({loading: true},
         () => this.getMap(this.state.map)
@@ -83,7 +85,7 @@ class CounterpartyMap extends React.Component {
 
   render() {
     const {loading, location, location_added} = this.state;
-
+  
     return (
       <>
         <div className='btn-group' role='group' aria-label='maps'>
@@ -110,6 +112,10 @@ class CounterpartyMap extends React.Component {
         </div>
       </>
     );
+  }
+  
+  static defaultProps = {
+    google_api_key: ''
   }
 }
 
