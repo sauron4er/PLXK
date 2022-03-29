@@ -207,6 +207,8 @@ def get_archive_by_doc_meta_type(user_id, doc_type_id):
             compare_list.append(entity)
             work_archive.append(work_archive_with_duplicates[i])
 
+    #TODO як позбавитись дублікатів, якщо користувач працював з документом під різними посадами?
+
     return {'my_archive': my_archive, 'work_archive': work_archive}
 
 

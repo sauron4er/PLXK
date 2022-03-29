@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'qsstats',
     'widget_tweaks',
     'webpack_loader',
+    'django_sendfile',
 
     'accounts',
     'boards',
@@ -192,11 +193,12 @@ WEBPACK_LOADER = {
 }
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media')
-
 MEDIA_URL = '/media/'
 
-LOGOUT_REDIRECT_URL = 'home'
+SENDFILE_ROOT = 'files'
+SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
+LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
 
 SESSION_COOKIE_SAMESITE = 'lax'

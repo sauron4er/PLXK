@@ -6,7 +6,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMapMarkerAlt} from '@fortawesome/free-solid-svg-icons';
 import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from './counterparty_store';
-const data = require('plxk/secrets.json');
 
 
 const Marker = ({text}) => (
@@ -100,7 +99,7 @@ class CounterpartyMap extends React.Component {
           <If condition={!loading}>
             <Choose>
               <When condition={location_added}>
-                <GoogleMapReact bootstrapURLKeys={{key: data.secrets.google_api_key}} defaultCenter={location} defaultZoom={15}>
+                <GoogleMapReact bootstrapURLKeys={{key: this.props.google_api_key}} defaultCenter={location} defaultZoom={15}>
                   <Marker lat={location.lat} lng={location.lng} text={counterpartyStore.counterparty.name} />
                 </GoogleMapReact>
               </When>

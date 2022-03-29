@@ -7,14 +7,18 @@ from boards.views_counterparties import get_counterparties_for_select
 app_name = 'docs'
 
 urlpatterns = [
+    url(r'^smya/new_doc/$', views.new_doc, name='new_doc'),
+    url(r'^smya/$', views.index, name='index'),
+    url(r'^get_docs_excel/$', views.get_docs_excel, name='get_docs_excel'),
+    url(r'^f(?P<fk>\d+)/get_docs_excel/$', views.get_docs_excel, name='get_docs_excel'),
+
     url(r'^.+/get_order/(?P<pk>\d+)/$', views.get_order, name='get_order'),
+
     url(r'^$', views.index, name='index'),
     url(r'^f(?P<fk>\d+)/$', views.docs, name='docs'),
-    url(r'^new/$', views.new_doc, name='new_doc'),
+
+    url(r'^(?P<fk>\w+)/(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
     url(r'^(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
-    url(r'^export_table_csv//docs/(?P<type>\w+)/$', views.export_table_csv, name='export_table_csv'),
-    url(r'^export_table_csv//(?P<type>\w+)/$', views.export_table_csv, name='export_table_csv'),
-    url(r'^export_table_csv/$', views.export_table_csv, name='export_table_csv'),
 
     # url(r'^order/f(?P<fk>\d+)/$', views.orders, name='orders'),
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),

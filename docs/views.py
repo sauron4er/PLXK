@@ -1,3 +1,5 @@
+from pyexcelerate import Workbook, Style
+from django_sendfile import sendfile
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -10,44 +12,35 @@ from django.http import Http404
 from django.db.models import Q
 from datetime import date
 import json
-import csv
 from edms.models import Employee_Seat
 from accounts.models import UserProfile
 from plxk.api.try_except import try_except
 from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_users_list, get_emp_seats_list
+from plxk.api.datetime_normalizers import normalize_day, normalize_month, normalize_date
 from .models import Document, Order_doc, Order_doc_type, Article_responsible
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
 from docs.api.orders_mail_sender import arrange_mail, send_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, get_order_info
 from docs.api.order_articles_api import post_articles, post_responsible_files
-from plxk.api.datetime_normalizers import normalize_day, normalize_month, date_to_json, normalize_date
-
-
-def user_can_edit(user):
-    return user.is_authenticated and user.has_perm("docs.change_document")
+from docs.api.docs_api import get_docs_list, user_can_edit
 
 
 @login_required(login_url='login')
 @try_except
 def index(request):
-    docs = Document.objects.all().order_by('name')
-    edit = user_can_edit(request.user)
-    return render(request, 'docs/index.html', {'docs': docs, 'edit': edit})
+    docs_list = get_docs_list('0')
+    edit_perm = user_can_edit(request.user)
+    return render(request, 'docs/index.html', {'docs_list': json.dumps(docs_list), 'edit_perm': 'true' if edit_perm else 'false'})
 
 
 @login_required(login_url='login')
 @try_except
 def docs(request, fk):
-    if fk == '0':
-        docs = Document.objects.all().filter(actuality=True).order_by('name')
-    elif fk == '666':
-        docs = Document.objects.all().filter(actuality=False).order_by('name')
-    else:
-        docs = Document.objects.all().filter(doc_group=fk).filter(actuality=True).order_by('name')
-    edit = user_can_edit(request.user)
-    return render(request, 'docs/index.html', {'docs': docs, 'edit': edit, 'fk': fk})
+    docs_list = get_docs_list(fk)
+    edit_perm = user_can_edit(request.user)
+    return render(request, 'docs/index.html', {'docs_list': json.dumps(docs_list), 'edit_perm': 'true' if edit_perm else 'false', 'fk': fk})
 
 
 @login_required(login_url='login')
@@ -77,12 +70,12 @@ def new_doc(request):
             return redirect('docs:index')
     else:
         form = NewDocForm()
-    return render(request, 'docs/new_doc.html', {'form': form, 'title': title})
+    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
 
 
 @login_required(login_url='login')
 @try_except
-def edit_doc(request, pk):
+def edit_doc(request, pk, fk=''):
     doc = get_object_or_404(Document, pk=pk)
     title = 'Редагування'
 
@@ -99,22 +92,36 @@ def edit_doc(request, pk):
         return redirect('docs:index')
     else:
         form = NewDocForm(instance=doc)
-    return render(request, 'docs/new_doc.html', {'form': form, 'title': title})
+    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
 
 
 @login_required(login_url='login')
 @try_except
-def export_table_csv(request, type):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="users.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['Група', 'Тип', 'Код', 'Назва', 'Автор', 'Відповідальний', 'Діє з'])
+def get_docs_excel(request, fk='0'):
 
-    if type == 'docs':
-        docs = Document.objects.all().values_list('doc_group__name', 'doc_type__name', 'code', 'name', 'author', 'responsible', 'date_start').order_by('-date_start')
-        for doc in docs:
-            writer.writerow(doc)
-        return response
+    docs_list = get_docs_list(fk, 'Excel')
+    header = [['id', 'Тип', 'Група', 'Код', 'Назва',
+               'Актуальність', 'Автор', 'Відповідальний',
+               'Діє з']]
+
+    wb = Workbook()
+    ws = wb.new_sheet("summary", data=header + docs_list)
+    ws.range("A1", "I1").style.font.bold = True
+    ws.set_col_style(1, Style(size=5))
+    ws.set_col_style(2, Style(size=20))
+    ws.set_col_style(3, Style(size=20))
+    ws.set_col_style(4, Style(size=20))
+    ws.set_col_style(5, Style(size=130))
+    ws.set_col_style(6, Style(size=15))
+    ws.set_col_style(7, Style(size=40))
+    ws.set_col_style(8, Style(size=40))
+    ws.set_col_style(9, Style(size=10))
+
+    wb.save('files/media/docs/docs.xlsx')
+
+    return sendfile(request, 'media/docs/docs.xlsx',
+                    mimetype="vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
 
 
 # ------------------------------------------------------------------------------------------------------------ Orders

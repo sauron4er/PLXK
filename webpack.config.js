@@ -80,6 +80,5 @@ module.exports = {
       boards: path.resolve(__dirname, 'boards'),
       ordering: path.resolve(__dirname, 'ordering'),
       accounts: path.resolve(__dirname, 'accounts'),
-    }
-  }
-};
+    },
+}}
