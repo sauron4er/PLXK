@@ -60,7 +60,8 @@ class UserProfile(models.Model):
     tab_number = models.CharField(max_length=15, unique=True, null=True)
 
     def __str__(self):
-        return self.user.last_name
+        # return self.user.last_name
+        return self.pip
 
     class Meta:
         verbose_name = 'Профіль'

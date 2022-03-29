@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
-    Doc_Foyer_Range, Doc_Employee
+    Doc_Foyer_Range, Doc_Employee, Document_Type_Version
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -68,8 +68,10 @@ def post_foyer_ranges(doc_request, datetimes):
         new_fdt = Doc_Foyer_Range(document_id=doc_request['document'])
         # new_fdt.out_datetime = datetime.strptime(fdt['out'], "%Y-%m-%dT%H:%M:%S.%fz")
         # new_fdt.in_datetime = datetime.strptime(fdt['in'], "%Y-%m-%dT%H:%M:%S.%fz")
-        new_fdt.out_datetime = datetime.fromtimestamp(fdt['out'])
-        new_fdt.in_datetime = datetime.fromtimestamp(fdt['in'])
+        if fdt['out'] != '':
+            new_fdt.out_datetime = datetime.fromtimestamp(fdt['out'])
+        if fdt['in'] != '':
+            new_fdt.in_datetime = datetime.fromtimestamp(fdt['in'])
         new_fdt.save()
 
 
@@ -78,13 +80,23 @@ def post_approvals(doc_request, approvals, company):
     # TODO Не додавати нікого, якщо це шаблон чи чернетка
     # Додаємо у список погоджуючих автора, керівника відділу та директора
 
+    auto_approval_seats = Doc_Type_Phase_Queue.objects \
+        .filter(phase__document_type=doc_request['document_type']) \
+        .exclude(phase__mark_id=27)
+
+    if doc_request['doc_type_version'] != '0':
+        # doc_type_version = Document_Type_Version.objects.values_list('id', flat=True)\
+        #     .filter(document_type_id=doc_request['document_type'])\
+        #     .filter(version_id=doc_request['doc_type_version'])\
+        #     .filter(is_active=True)
+        # doc_type_version = doc_type_version[0]
+        auto_approval_seats = auto_approval_seats.filter(doc_type_version=doc_request['doc_type_version'])
+
     auto_approval_seats = [{
         'id': item.seat.id,
-        'approve_queue': item.phase.phase
-    } for item in Doc_Type_Phase_Queue.objects
-        .filter(phase__document_type=doc_request['document_type'])
-        .exclude(phase__mark_id=27)
-    ]
+        'approve_queue': item.phase.phase,
+        'doc_type_version': item.doc_type_version
+    } for item in auto_approval_seats]
 
     auto_approvals = []
     for seat in auto_approval_seats:
@@ -119,27 +131,42 @@ def post_approvals(doc_request, approvals, company):
 
     acting_tov_director = vacation_check(tov_director)
 
-    if company == 'ТДВ':
-        approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
-        approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+    if doc_request['document_type'] == 17:  # Тендери
+        if doc_request['doc_type_version'] == '1':  # ТДВ
+            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+            approvals.extend([{
+                'id': acting_director,
+                'approve_queue': 3  # Директор останній у списку погоджень
+            }])
+        else:  # ТОВ
+            approvals[:] = [i for i in approvals if
+                            not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+            approvals.extend([{
+                'id': acting_tov_director,
+                'approve_queue': 2  # Директор ТОВ теж отримує на погодження
+            }])
+    else:  # Договори
+        if company == 'ТДВ':
+            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+            approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
 
-        approvals.extend([{
-            'id': acting_director,
-            'approve_queue': 3  # Директор останній у списку погоджень
-        }, {
-            'id': acting_tov_director,
-            'approve_queue': 2  # Директор ТОВ теж отримує на погодження
-        }])
-    else:
-        zero_phase_id = get_zero_phase_id(doc_request['document_type'])
-        post_mark_demand(doc_request, acting_director, zero_phase_id, 8)
-        new_mail('new', [{'id': acting_director}], doc_request)
+            approvals.extend([{
+                'id': acting_director,
+                'approve_queue': 3  # Директор останній у списку погоджень
+            }, {
+                'id': acting_tov_director,
+                'approve_queue': 2  # Директор ТОВ теж отримує на погодження
+            }])
+        else:
+            zero_phase_id = get_zero_phase_id(doc_request['document_type'])
+            post_mark_demand(doc_request, acting_director, zero_phase_id, 8)
+            new_mail('new', [{'id': acting_director}], doc_request)
 
-        approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
-        approvals.extend([{
-            'id': acting_tov_director,
-            'approve_queue': 2  # Директор останній у списку погоджень
-        }])
+            approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+            approvals.extend([{
+                'id': acting_tov_director,
+                'approve_queue': 2  # Директор останній у списку погоджень
+            }])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
     chief = get_dep_chief_id(doc_request['employee_seat'])

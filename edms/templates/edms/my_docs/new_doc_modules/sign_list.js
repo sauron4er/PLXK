@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from '../../../../api/get_emp_seats';
+import {getEmpSeats} from "edms/api/get_emp_seats";
 import 'static/css/my_styles.css';
 
 class SignList extends React.Component {
@@ -92,7 +92,6 @@ class SignList extends React.Component {
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <br />
           <div className='w-75 d-flex align-items-start mt-1'>
             <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_sign'>
               {module_info.field_name}:
@@ -132,7 +131,6 @@ class SignList extends React.Component {
               </For>
             </ul>
           </If>
-          <br />
         </When>
         <Otherwise>
           <div className='mt-3 loader-small' id='loader-1'>

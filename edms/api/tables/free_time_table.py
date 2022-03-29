@@ -51,9 +51,9 @@ def get_datetime(free_time_doc, type):
         range = free_time_doc.foyer_ranges.all()
         if range:
             if type == 'out':
-                return convert_to_localtime(range[0].out_datetime, 'datetime')
+                return convert_to_localtime(range[0].out_datetime, 'datetime') if range[0].out_datetime else ''
             else:
-                return convert_to_localtime(range[0].in_datetime, 'datetime')
+                return convert_to_localtime(range[0].in_datetime, 'datetime') if range[0].in_datetime else ''
     else:  # free_time_doc.document_type_id == 1
         day = free_time_doc.days.all()
         if day:

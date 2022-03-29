@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^providers/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
     url(r'^providers/get_simple_contracts_list/(?P<counterparty>\w+)/(?P<company>\w+)/$', get_simple_contracts_list, name='get_simple_contracts_list'),
     url(r'^providers/get_counterparties_for_select/', views_counterparties.get_counterparties_for_select, name='get_counterparties_for_select'),
+    url(r'^providers/get_google_api', views_counterparties.get_google_api, name='get_google_api'),
     url(r'^providers/', views_counterparties.providers, name='providers'),
 
     url(r'^clients/get_clients/(?P<page>\d+)/$', views_counterparties.get_clients, name='get_clients'),
@@ -65,6 +66,7 @@ urlpatterns = [
     url(r'^clients/get_table_all/(?P<doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^clients/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),
     url(r'^clients/mark/', edms_mark, name='my_docs_mark'),
+    url(r'^clients/get_google_api', views_counterparties.get_google_api, name='get_google_api'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),

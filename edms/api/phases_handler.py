@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from plxk.api.try_except import try_except
 from edms.forms import NewApprovalForm, ApprovedApprovalForm
-from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat
+from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
     get_my_seats, get_phase_id_sole_recipients
@@ -22,7 +22,15 @@ def handle_phase_approvals(doc_request, phase_info):
     if not any(approval['approve_queue'] == phase_info['phase'] for approval in approvals_emp_seat):
         # auto_recipients = get_phase_recipient_list(phase_info['id'])
         # if not auto_recipients:
-        new_phase(doc_request, phase_info['phase'] + 1, [])
+        doc_type_version = Document.objects.values_list('doc_type_version', flat=True).filter(id=doc_request['document'])[0]
+        recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'], doc_type_version)
+        if recipients:
+            for recipient in recipients:
+                recipient = vacation_check(recipient)
+                post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
+                new_mail('new', [{'id': recipient}], doc_request)
+        else:
+            new_phase(doc_request, phase_info['phase'] + 1, [])
     else:
         for approval in approvals_emp_seat:
             # Відправляємо на погодження тільки тим отримувачам, черга яких відповідає даній фазі
@@ -175,10 +183,12 @@ def handle_phase_marks(doc_request, phase_info):
             recipient = vacation_check(recipient)
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
             new_mail('new', [{'id': recipient}], doc_request)
-
     else:
         # Визначаємо усіх отримувачів для кожної позначки:
-        recipients = get_phase_recipient_list(phase_info['id'], doc_request['doc_type_version'])
+        if 'doc_type_version' in doc_request:
+            recipients = get_phase_recipient_list(phase_info['id'], doc_request['doc_type_version'])
+        else:
+            recipients = get_phase_recipient_list(phase_info['id'])
         for recipient in recipients:
             recipient = vacation_check(recipient)
             new_mail('new', [{'id': recipient}], doc_request)
@@ -203,9 +213,8 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     continue
 
                 # 1. Створюємо таблицю візування для новоствореного документа:
-                if phase_number == 1 and doc_request['mark'] == 1:
-                    if is_approvals_used(doc_request['document_type']):
-                        add_zero_phase_auto_approvals(doc_request, phase_info)
+                if phase_number == 1 and doc_request['mark'] == 1 and is_approvals_used(doc_request['document_type']):
+                    add_zero_phase_auto_approvals(doc_request, phase_info)
 
                 if phase_info['mark_id'] == 20:
                     # автоматичне заповнення полей approved, approved_date
@@ -228,6 +237,10 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     else:
                         # Якщо визначеного отримувача нема, надсилаємо автору
                         handle_phase_marks(doc_request, phase_info)
+
+                # Список на погодження може бути пустий. Якщо так, переходимо на наступну фазу
+                elif phase_info['mark_id'] == 2 and not modules_recipients:
+                    handle_phase_approvals(doc_request, phase_info)
 
                 else:
                     # 3. Опрацьовуємо документ, якщо є список візуючих (автоматичний чи обраний):

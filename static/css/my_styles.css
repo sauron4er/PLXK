@@ -165,3 +165,10 @@
   width: 100%;
   margin-top: 50px;
 }
+
+.css_my_navbar {
+  padding-top: 2px;
+  padding-bottom: 1px;
+  background-color: #3eacba;
+  /*background: linear-gradient(60deg, #3eacba 0%, #3e6eba 100%);*/
+}

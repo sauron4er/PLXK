@@ -29,9 +29,10 @@ urlpatterns = [
     url(r'^.+/get_product_types/(?P<direction>\w+)/', get_product_types, name='get_product_types'),
     url(r'^.+/get_scopes', get_scopes, name='get_scopes'),
     url(r'^.+/get_laws', get_laws, name='get_laws'),
-    url(r'^.+/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
+    url(r'^.+/get_emp_seats', edms_get_emp_seats, name='my_docs_get_emp_seats'),
     url(r'^.+/get_all_employees', get_all_employees, name='get_all_employees'),
     url(r'^.+/get_doc_type_versions/(?P<doc_type_id>\d+)', get_doc_type_versions, name='get_doc_type_versions'),
+    url(r'^.+/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
 
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),
@@ -44,7 +45,7 @@ urlpatterns = [
     url(r'^hr/start_vacations_arrange/', edms_start_vacations_arrange, name='start_vacations_arrange'),
     url(r'^hr/', edms_hr, name='hr'),
 
-    url(r'^my_docs/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
+
     url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
     url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
@@ -69,7 +70,9 @@ urlpatterns = [
     url(r'^tables/get_table_first/(?P<meta_doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_first, name='get_table_first'),
     url(r'^tables/get_table_all/(?P<meta_doc_type>\d+)/(?P<counterparty>\d+)/$', edms_get_table_all, name='get_table_all'),
     url(r'^tables/(?P<doc_meta_type_id>\d+)/get_emp_seats/', edms_get_emp_seats, name='my_docs_get_emp_seats'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_free_times/(?P<page>\d+)/$', edms_get_free_times, name='get_free_times'),
     url(r'^tables/get_free_times/(?P<page>\d+)/$', edms_get_free_times, name='get_free_times'),
+    url(r'^tables/(?P<meta_doc_type>\d+)/get_it_tickets/(?P<doc_type_version>\d+)/(?P<page>\d+)/$', get_it_tickets, name='get_it_tickets'),
     url(r'^tables/get_it_tickets/(?P<doc_type_version>\d+)/(?P<page>\d+)/$', get_it_tickets, name='get_it_tickets'),
     url(r'^tables/', edms_tables, name='tables'),
 

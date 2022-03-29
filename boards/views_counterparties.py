@@ -423,3 +423,10 @@ def get_counterparty_name_with_country(counterparty):
     if counterparty.country:
         return counterparty.name + ', ' + counterparty.country
     return counterparty.name
+
+
+@login_required(login_url='login')
+@try_except
+def get_google_api(request):
+    from my_config import google_api_key
+    return HttpResponse(google_api_key)

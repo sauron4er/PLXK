@@ -29,11 +29,11 @@ class DocTypeVersion extends React.Component {
 
     return (
       <div>
-        <label className='mr-1'>
+        <label className='mr-1 full_width'>
           <If condition={module_info.required}>{'* '}</If>
           {module_info.field_name}:
-        </label>
-        <br />
+          <br/>
+        
 
         <Select
           options={doc_type_versions}
@@ -42,6 +42,7 @@ class DocTypeVersion extends React.Component {
           getOptionLabel={(option) => option.name}
           getOptionValue={(option) => option.id}
         />
+        </label>
         
         <small className='text-danger'>{module_info?.additional_info}</small>
       </div>

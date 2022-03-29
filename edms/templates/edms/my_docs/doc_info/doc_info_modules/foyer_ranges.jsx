@@ -37,13 +37,12 @@ class FoyerRanges extends React.Component {
       return false;
     }
     if (range.out !== '' && range.in !== '') {
-      if ([1, 2].includes(this.props.doc_type_version)) {
+      if ([1, 2].includes(this.props.doc_type_version && range.out >= range.in)) {
         // 1,2 - звільнююча
         notify('Час повернення не може бути меншим за час виходу.');
       return false;
       } else if ([3, 4].includes(this.props.doc_type_version) && range.in >= range.out) {
         // 3,4 - тимчасова, забув
-        console.log(1);
         notify('Час виходу не може бути меншим за час входу.');
       return false;
       }
@@ -166,19 +165,19 @@ class FoyerRanges extends React.Component {
                 <When condition={[1, 2].includes(doc_type_version)}>
                   {/*1, 2 - Звільнююча*/}
                   <div>
-                    Вихід: <span className='css_note_text mr-2'>{ranges[index].out_text}</span>
+                    Вихід: <span className='css_note_text ml-1 mr-2'>{ranges[index].out_text}</span>
                   </div>
                   <div>
-                    Вхід: <span className='css_note_text'>{ranges[index].in_text}</span>
+                    Вхід: <span className='css_note_text ml-1 mr-2'>{ranges[index].in_text}</span>
                   </div>
                 </When>
                 <Otherwise>
                   {/*3, 4 - Забув, тимчасова*/}
                   <div>
-                    Вхід: <span className='css_note_text mr-2'>{ranges[index].in_text}</span>
+                    Вхід: <span className='css_note_text ml-1 mr-2'>{ranges[index].in_text}</span>
                   </div>
                   <div>
-                    Вихід: <span className='css_note_text'>{ranges[index].out_text}</span>
+                    Вихід: <span className='css_note_text ml-1 mr-2'>{ranges[index].out_text}</span>
                   </div>
                 </Otherwise>
               </Choose>

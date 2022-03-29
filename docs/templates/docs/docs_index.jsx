@@ -1,26 +1,30 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import Orders from './orders/index'
-import Contracts from './contracts/index'
-import 'react-responsive-modal/styles.css'
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+import Orders from './orders/index';
+import Contracts from './contracts/index';
+import 'react-responsive-modal/styles.css';
+import Smya from 'docs/templates/docs/smya/smya';
 
 class Docs extends React.Component {
   state = {
-    main_div: document.getElementById("bundle").parentNode.id,
-  }
-  
+    main_div: document.getElementById('docs').parentNode.id
+  };
+
   render() {
     return (
       <Choose>
         <When condition={this.state.main_div === 'orders'}>
-          <Orders/>
+          <Orders />
         </When>
         <When condition={this.state.main_div === 'contracts'}>
-          <Contracts/>
+          <Contracts />
+        </When>
+        <When condition={this.state.main_div === 'smya'}>
+          <Smya />
         </When>
       </Choose>
     );
   }
 }
 
-ReactDOM.render(<Docs />, document.getElementById('bundle'));
+ReactDOM.render(<Docs />, document.getElementById('docs'));

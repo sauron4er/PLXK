@@ -23,16 +23,26 @@ import CounterpartyNonCompliances from "boards/templates/boards/counterparty/com
 
 class Counterparty extends React.Component {
   state = {
-    loading: true
+    loading: true,
+    google_api_key: ''
   };
 
   componentDidMount() {
     if (this.props.id !== 0) {
       this.getCounterparty();
+      this.getGoogleApi();
     } else {
       this.setState({loading: false});
     }
   }
+  
+  getGoogleApi = () => {
+    axiosGetRequest('get_google_api')
+      .then((response) => {
+        this.setState({google_api_key: response})
+      })
+      .catch((error) => notify(error));
+  };
 
   getCounterparty = () => {
     const url = counterpartyStore.type === 'provider' ? 'get_provider/' : 'get_client/';
@@ -81,7 +91,7 @@ class Counterparty extends React.Component {
   };
 
   render() {
-    const {loading} = this.state;
+    const {loading, google_api_key} = this.state;
     const {edit_access} = window;
     const {counterparty, type} = counterpartyStore;
 
@@ -140,7 +150,7 @@ class Counterparty extends React.Component {
                 </TabPanel>
               </If>
               <TabPanel>
-                <CounterpartyMap />
+                <CounterpartyMap google_api_key={google_api_key} />
               </TabPanel>
             </Tabs>
 

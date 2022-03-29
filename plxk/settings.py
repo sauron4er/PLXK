@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from my_config import db_name, db_user, db_pass, secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$6j3t72_h9(&5cyli92srv8sz^injngq$!nf=3+de=7_b33y&b'
+SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'qsstats',
     'widget_tweaks',
     'webpack_loader',
+    'django_sendfile',
 
     'accounts',
     'boards',
@@ -99,9 +101,9 @@ if STAS_DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'plxk',
-            'USER': 'root',
-            'PASSWORD': 'Cvjhjlbyf11',
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_pass,
             'HOST': 'localhost',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
@@ -112,9 +114,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'plxk',
-            'USER': 'root',
-            'PASSWORD': 'Cvjhjlbyf11',
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_pass,
             'HOST': '10.10.10.22',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
@@ -192,11 +194,12 @@ WEBPACK_LOADER = {
 }
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'files', 'media')
-
 MEDIA_URL = '/media/'
 
-LOGOUT_REDIRECT_URL = 'home'
+SENDFILE_ROOT = 'files'
+SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
+LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
 
 SESSION_COOKIE_SAMESITE = 'lax'

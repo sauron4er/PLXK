@@ -4,6 +4,7 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
+import SelectorWithFilter from "templates/components/form_modules/selector_with_filter";
 
 class Client extends React.Component {
   state = {
@@ -25,9 +26,11 @@ class Client extends React.Component {
   }
 
   onChange = (event) => {
-    const selectedIndex = event.target.options.selectedIndex;
-    newDocStore.new_document.client = event.target.options[selectedIndex].getAttribute('data-key');
-    newDocStore.new_document.client_name = event.target.options[selectedIndex].getAttribute('value');
+    // const selectedIndex = event.target.options.selectedIndex;
+    newDocStore.new_document.client = event.id;
+    // newDocStore.new_document.client = event.target.options[selectedIndex].getAttribute('data-key');
+    // newDocStore.new_document.client_name = event.target.options[selectedIndex].getAttribute('value');
+    newDocStore.new_document.client_name = event.name;
   };
 
   render() {
@@ -37,29 +40,38 @@ class Client extends React.Component {
     return (
       <Choose>
         <When condition={!loading}>
-          <div className='row align-items-center mr-lg-1'>
-            <label className='col-lg-4' htmlFor='client'>
-              <If condition={module_info.required}>{'* '}</If>
-              {module_info.field_name}:
-            </label>
-            <select
-              className='col-lg-8 form-control mx-3 mx-lg-0'
-              id='client'
-              name='client'
-              value={newDocStore.new_document.client_name}
+          <div>
+          {/*<div className='row align-items-center mr-lg-1'>*/}
+            {/*<label className='col-lg-4' htmlFor='client'>*/}
+            {/*  <If condition={module_info.required}>{'* '}</If>*/}
+            {/*  {module_info.field_name}:*/}
+            {/*</label>*/}
+            <SelectorWithFilter
+              list={clients}
+              fieldName={module_info.field_name}
+              value={{name: newDocStore.new_document.client_name, id: newDocStore.new_document.client}}
               onChange={this.onChange}
-            >
-              <option key={0} data-key={0} value='0'>
-                ------------
-              </option>
-              {clients.map((client) => {
-                return (
-                  <option key={client.id} data-key={client.id} value={client.name}>
-                    {client.name} ({client.country})
-                  </option>
-                );
-              })}
-            </select>
+              disabled={false}
+            />
+            
+            {/*<select*/}
+            {/*  className='col-lg-8 form-control mx-3 mx-lg-0'*/}
+            {/*  id='client'*/}
+            {/*  name='client'*/}
+            {/*  value={newDocStore.new_document.client_name}*/}
+            {/*  onChange={this.onChange}*/}
+            {/*>*/}
+            {/*  <option key={0} data-key={0} value='0'>*/}
+            {/*    ------------*/}
+            {/*  </option>*/}
+            {/*  {clients.map((client) => {*/}
+            {/*    return (*/}
+            {/*      <option key={client.id} data-key={client.id} value={client.name}>*/}
+            {/*        {client.name} ({client.country})*/}
+            {/*      </option>*/}
+            {/*    );*/}
+            {/*  })}*/}
+            {/*</select>*/}
           </div>
           <small className='text-danger'>{module_info?.additional_info}</small>
         </When>

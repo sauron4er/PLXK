@@ -53,7 +53,7 @@ def post_document(request):
         new_doc.is_draft = True
     elif doc_request['status'] == 'template':
         new_doc.is_template = True
-    if doc_request['doc_type_version'] != '0':
+    if doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
         new_doc.doc_type_version_id = doc_request['doc_type_version']
 
     new_doc.save()
@@ -96,12 +96,10 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         # Додаємо список отримувачів на підпис
         if 'sign_list' in doc_modules:
-        #     post_sign_list(doc_request, doc_modules['sign_list'])
             for sign in doc_modules['sign_list']:
-                if doc_request['document_type'] == 2:
-                    sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
-                    if sign_seat not in [16, 21]:
-                        recipients.append({'id': sign['id'], 'type': 'sign'})
+                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
+                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
+                    recipients.append({'id': sign['id'], 'type': 'sign'})
 
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
@@ -502,7 +500,8 @@ def edms_get_doc(request, pk):
             'approved': doc.approved,
             'archived': not doc.is_active,
             'main_field': get_main_field(doc),
-            'doc_type_version': doc.doc_type_version_id,
+            'doc_type_version': doc.doc_type_version.id if doc.doc_type_version else 0,
+            'doc_type_version_name': doc.doc_type_version.description if doc.doc_type_version else '',
             'stage': doc.stage,
         }
 
@@ -604,6 +603,9 @@ def edms_my_docs(request):
         # Записуємо документ і отримуємо його ід, тип
         new_doc = post_document(request)
         doc_request.update({'document': new_doc.pk})
+
+        defines_doc_version = new_doc.document_type.module_types.values_list('defines_doc_version', flat=True).filter(is_active=True).filter(module_id=31)
+
         doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
         doc_request.update({'document_type': doc_type})
 
@@ -655,6 +657,7 @@ def edms_get_doc_type_modules(request, meta_type_id, type_id):
             doc_type = get_object_or_404(Document_Type, meta_doc_type_id=meta_type_id, is_active=True)
         else:
             doc_type = get_object_or_404(Document_Type, pk=type_id)
+
         doc_type_modules = get_doc_type_modules(doc_type)
 
         # Поле, яке показується у списку документів
@@ -1122,6 +1125,16 @@ def edms_mark(request):
                     deactivate_mark_demand(doc_request, md)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
+                # На погодження
+            elif doc_request['mark'] == '28':
+                approvals = json.loads(doc_request['approvals'])
+                # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.
+
+                for approval in approvals:
+                    approval = vacation_check(approval['emp_seat_id'])
+                    post_mark_demand(doc_request, approval, get_phase_id(doc_request), 2)
+                    new_mail('new', [{'id': approval}], doc_request)
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
@@ -1231,14 +1244,14 @@ def edms_get_delegated_docs(request, emp, doc_meta_type, sub):
 
 @login_required(login_url='login')
 @try_except
-def edms_get_free_times(request, page):
+def edms_get_free_times(request, page, meta_doc_type=0):
     response = get_free_times_table(request, page)
     return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @try_except
-def get_it_tickets(request, doc_type_version, page):
+def get_it_tickets(request, doc_type_version, page, meta_doc_type=0):
     response = get_it_tickets_table(request, doc_type_version, page)
     return HttpResponse(json.dumps(response))
 
@@ -1288,12 +1301,16 @@ def save_foyer_range(request):
     sent_range = json.loads(request.POST['range'])
     if 'id' in sent_range:
         new_range = get_object_or_404(Doc_Foyer_Range, pk=sent_range['id'])
-        new_range.out_datetime = datetime.strptime(sent_range['out'], "%Y-%m-%dT%H:%M:%S.%fz"),
-        new_range.in_datetime = datetime.strptime(sent_range['in'], "%Y-%m-%dT%H:%M:%S.%fz"),
+        # new_range.out_datetime = datetime.strptime(sent_range['out'], "%Y-%m-%dT%H:%M:%S.%fz") if sent_range['out'] != '' else '',
+        # print(new_range.out_datetime)
+        # new_range.in_datetime = datetime.strptime(sent_range['in'], "%Y-%m-%dT%H:%M:%S.%fz") if sent_range['in'] != '' else '',
+
+        new_range.out_datetime = sent_range['out'] if sent_range['out'] != '' else None
+        new_range.in_datetime = sent_range['in'] if sent_range['in'] != '' else None
     else:
         new_range = Doc_Foyer_Range(document_id=request.POST['doc_id'],
-                                    out_datetime=sent_range['out'],
-                                    in_datetime=sent_range['in'],
+                                    out_datetime=sent_range['out'] if sent_range['out'] != '' else None,
+                                    in_datetime=sent_range['in'] if sent_range['in'] != '' else None,
                                     queue_in_doc=request.POST['queue']
                                     )
     new_range.save()

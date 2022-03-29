@@ -11,7 +11,7 @@ from plxk.api.datetime_normalizers import date_to_json
 from docs.api import contracts_api, contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from plxk.api.global_getters import get_users_list, get_departments_list, is_it_lawyer
+from plxk.api.global_getters import get_users_list, get_departments_list, is_it_lawyer, is_this_my_sub
 
 
 @login_required(login_url='login')
@@ -132,7 +132,8 @@ def get_contract(request, pk):
     read_access = is_author \
                   or request.user.userprofile.is_it_admin \
                   or request.user.userprofile.access_to_all_contracts \
-                  or is_it_lawyer(request.user.userprofile.id)
+                  or is_it_lawyer(request.user.userprofile.id) \
+                  or is_this_my_sub(request.user, contract.created_by)
 
     contract = {
         'id': contract.id,

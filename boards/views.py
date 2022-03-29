@@ -275,8 +275,8 @@ def get_foyer_data(request, page):
         'employee__pip': item.employee.pip,
         'employee__tab_number': item.employee.tab_number,
         'edms_doc__doc_type_version__description': item.edms_doc.doc_type_version.description,
-        'out_datetime': convert_to_localtime(item.out_datetime, 'time'),
-        'in_datetime': convert_to_localtime(item.in_datetime, 'time'),
+        'out_datetime': convert_to_localtime(item.out_datetime, 'time') if item.out_datetime else '',
+        'in_datetime': convert_to_localtime(item.in_datetime, 'time') if item.in_datetime else '',
         'edms_doc__id': item.edms_doc_id,
     } for item in foyer_page.object_list]
 
@@ -287,14 +287,16 @@ def get_foyer_data(request, page):
 @login_required(login_url='login')
 @try_except
 def create_foyer_report(request):
-    today = date.today()
+    today = datetime.today()
     if today.day > 15:
-        first_day = today.replace(day=1)
-        last_day = today.replace(day=16)
+        first_day = today.replace(day=1, hour=0, minute=0, second=0)
+        last_day = today.replace(day=16, hour=23, minute=59, second=59)
         filename = 'foyer_report_' + str(today.month) + '-' + str(today.year) + '_1.xml'
     else:
         last_day = (today.replace(day=1) - timedelta(days=1))  # останній день попереднього місяця
-        first_day = last_day.replace(day=16)  # 16 число попереднього місяця
+        last_day = last_day.replace(hour=23, minute=59, second=59)
+        first_day = last_day.replace(day=16, hour=0, minute=0, second=0)  # 16 число попереднього місяця
+
         filename = 'foyer_report_' + str(last_day.month) + '-' + str(last_day.year) + '_2.xml'
 
     foyer_query_set = Foyer.objects\
@@ -305,8 +307,8 @@ def create_foyer_report(request):
         'id': item.id,
         'tab_number': item.employee.tab_number,
         'doc_type': item.edms_doc.doc_type_version.description,
-        'in': convert_to_localtime(item.in_datetime, 'time'),
-        'out': convert_to_localtime(item.out_datetime, 'time'),
+        'in': convert_to_localtime(item.in_datetime, 'time') if item.in_datetime else '',
+        'out': convert_to_localtime(item.out_datetime, 'time') if item.out_datetime else '',
         'absence_based': item.absence_based
     } for item in foyer_query_set]
 

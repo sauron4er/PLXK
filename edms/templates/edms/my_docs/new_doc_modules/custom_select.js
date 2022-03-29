@@ -17,7 +17,7 @@ class CustomSelect extends React.Component {
         return [];
     }
   };
-  
+
   onChange = (event) => {
     let text_box_id = event.target.id.substring(7); // видаляємо 'select-' з ід інпуту
     const queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(text_box_id));
@@ -30,38 +30,40 @@ class CustomSelect extends React.Component {
       newDocStore.new_document.text[queue].text = event.target.value;
     }
   };
-  
+
   getSelectText = (queue) => {
     let text = '';
-    const select_queue = getIndexByProperty(
-      newDocStore.new_document.text,
-      'queue',
-      parseInt(queue)
-    );
+    const select_queue = getIndexByProperty(newDocStore.new_document.text, 'queue', parseInt(queue));
     if (select_queue !== -1) text = newDocStore.new_document.text[select_queue].text;
     return text;
   };
 
   render() {
     const {module_info} = this.props;
-  
+
     return (
       <>
-        <div className='row align-items-center mr-lg-1'>
-          <label className='col-lg-5' htmlFor={'select-' + module_info.queue}>
-            <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
-          </label>
-          <select className='col-lg-7 form-control mx-3 mx-lg-0' id={'select-' + module_info.queue} name='select' value={this.getSelectText(module_info.queue)} onChange={this.onChange}>
-            <option key={0} data-key={0} value='0'>
-              ------------
+        <label className='mr-1 full_width' htmlFor={'select-' + module_info.queue}>
+          <If condition={module_info.required}>{'* '}</If>
+          {module_info.field_name}:{' '}
+        
+        <select
+          className='form-control'
+          id={'select-' + module_info.queue}
+          name='select'
+          value={this.getSelectText(module_info.queue)}
+          onChange={this.onChange}
+        >
+          <option key={0} data-key={0} value='0'>
+            ------------
+          </option>
+          <For each='option' index='index' of={this.getSelectOptions(module_info.field)}>
+            <option key={index} data-key={index} value={option}>
+              {option}
             </option>
-            <For each='option' index='index' of={this.getSelectOptions(module_info.field)}>
-              <option key={index} data-key={index} value={option}>
-                {option}
-              </option>
-            </For>
-          </select>
-        </div>
+          </For>
+        </select>
+          </label>
         <small className='text-danger'>{module_info?.additional_info}</small>
       </>
     );

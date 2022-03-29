@@ -30,12 +30,15 @@ import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_mo
 import {Loader} from 'templates/components/loaders';
 import Registration from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
 import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
+import NewApprovals from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_approvals";
 
 class Document extends React.Component {
   state = {
     info: [],
     comment: '',
     resolutions: [],
+    acquaints: [],
+    approvals: [],
     new_files: [],
     updated_files: [],
     deleted_files: [],
@@ -99,7 +102,7 @@ class Document extends React.Component {
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
-    const {info, new_files, comment, resolutions, acquaints} = this.state;
+    const {info, new_files, comment, resolutions, acquaints, approvals} = this.state;
     const {doc_id, removeRow, opened_in_modal} = this.props;
 
     let formData = new FormData();
@@ -122,7 +125,7 @@ class Document extends React.Component {
         formData.append('change__updated_files', file);
       });
     }
-
+  
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
@@ -130,6 +133,7 @@ class Document extends React.Component {
     formData.append('comment', comment);
     formData.append('resolutions', JSON.stringify(resolutions));
     formData.append('acquaints', JSON.stringify(acquaints));
+    formData.append('approvals', JSON.stringify(approvals));
     formData.append('mark_demand_id', info.mark_demand_id ? info.mark_demand_id : '');
     formData.append('path_to_answer', docInfoStore.comment_to_answer.id);
     formData.append('path_to_answer_author', docInfoStore.comment_to_answer.author_id);
@@ -137,6 +141,7 @@ class Document extends React.Component {
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
+    formData.append('doc_type_version', docInfoStore.info.doc_type_version?.id);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -175,7 +180,7 @@ class Document extends React.Component {
       docInfoStore.button_clicked = false;
 
       // Кнопка "Резолюція" відкриває окремий модуль
-    } else if ([10, 15, 18, 21, 22].includes(mark_id)) {
+    } else if ([10, 15, 18, 21, 22, 28].includes(mark_id)) {
       this.openModal(mark_id);
 
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
@@ -280,6 +285,19 @@ class Document extends React.Component {
           modal_open: true
         });
         break;
+      case 28:
+        this.setState({
+          modal: (
+            <NewApprovals
+              onCloseModal={this.onCloseModal}
+              onSubmit={this.handleApprovals}
+              doc_id={this.props.doc_id}
+              new_path_id={this.state.new_path_id}
+            />
+          ),
+          modal_open: true
+        });
+        break;
     }
   };
 
@@ -298,6 +316,17 @@ class Document extends React.Component {
     if (acquaints.length > 0) {
       this.setState({acquaints: acquaints}, () => {
         this.postMark(15);
+        this.onCloseModal();
+      });
+    } else {
+      notify('Додайте отримувачів');
+    }
+  };
+  
+  handleApprovals = (approvals) => {
+    if (approvals.length > 0) {
+      this.setState({approvals: approvals}, () => {
+        this.postMark(28);
         this.onCloseModal();
       });
     } else {

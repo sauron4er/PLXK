@@ -207,6 +207,8 @@ def get_archive_by_doc_meta_type(user_id, doc_type_id):
             compare_list.append(entity)
             work_archive.append(work_archive_with_duplicates[i])
 
+    #TODO як позбавитись дублікатів, якщо користувач працював з документом під різними посадами?
+
     return {'my_archive': my_archive, 'work_archive': work_archive}
 
 
@@ -259,18 +261,23 @@ def get_chief_emp_seat(emp_seat_id):
 
 # Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
 @try_except
-def get_my_seats(emp_id):
+def get_my_seats(emp_id, only_active=True):
+    my_seats = Employee_Seat.objects.filter(employee_id=emp_id)
+    if only_active:
+        my_seats = my_seats.filter(is_active=True)
+
     my_seats = [{  # Список посад юзера
         'id': empSeat.id,
         'seat_id': empSeat.seat_id,
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
-    } for empSeat in Employee_Seat.objects.filter(employee_id=emp_id).filter(is_active=True)]
+    } for empSeat in my_seats]
 
     for emp_seat in my_seats:
         chief = get_chief_emp_seat(emp_seat['id'])
         if chief:
             emp_seat.update({
-                'chief': chief['name'] + ', ' + chief['seat']
+                'chief': chief['name'] + ', ' + chief['seat'],
+                'chief_emp_id': chief['emp_id']
             })
     return my_seats
 
@@ -342,7 +349,8 @@ def get_doc_type_modules(doc_type):
         'queue': type_module.queue,
         'additional_info': type_module.additional_info,
         'hide': type_module.hide,
-        'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0
+        'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0,
+        'defines_doc_version': type_module.defines_doc_version
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
@@ -516,8 +524,8 @@ def get_zero_phase_id(document_type):
 # Sole - це коли зі списку отримувачів потрібно надіслати документ тільки одному:
 # найближчому керівнику (н-д у випадку звільнюючої).
 @try_except
-def get_phase_id_sole_recipients(phase_id, emp_seat):
-    recipients = get_phase_recipient_list(phase_id)
+def get_phase_id_sole_recipients(phase_id, emp_seat, doc_type_version=0):
+    recipients = get_phase_recipient_list(phase_id, doc_type_version)
 
     sole = Doc_Type_Phase.objects.values_list('sole', flat=True).filter(id=phase_id)[0]
     if sole:
@@ -634,7 +642,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         .filter(document__testing=testing)
         .filter(document__closed=False)]
 
-    docs_from_nark_demand = [{
+    docs_from_mark_demand = [{
         'id': md.document_id,
         'type': md.document.document_type.description,
         'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
@@ -645,9 +653,10 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(recipient=sub_emp)
         .filter(document__testing=testing)
-        .filter(document__closed=False)]
+        .filter(document__closed=False)
+        .exclude(document__employee_seat_id=sub_emp)]
 
-    docs = docs_from_path + docs_from_nark_demand
+    docs = docs_from_path + docs_from_mark_demand
     docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
 
     return docs
@@ -676,12 +685,12 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'main_field': get_main_field(path.document),
         } for path in Document_Path.objects
             .filter(mark_id=1)
-            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(employee_seat__seat_id__in=subs)
+            .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        docs_from_nark_demand = [{
+        docs_from_mark_demand = [{
             'id': md.document_id,
             'type': md.document.document_type.description,
             'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
@@ -690,12 +699,21 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'main_field': get_main_field(md.document),
         } for md in Mark_Demand.objects
             .filter(document__document_type__meta_doc_type_id=doc_meta_type)
+            .exclude(document__employee_seat__seat_id__in=subs)
             .filter(recipient__seat_id__in=subs)
             .filter(document__testing=testing)
             .filter(document__closed=False)]
 
-        docs = docs_from_path + docs_from_nark_demand
+        docs = docs_from_path + docs_from_mark_demand
         docs = [dict(t) for t in {tuple(d.items()) for d in docs}]  # Видаляємо дублікати
+
+        # existing_ids = []
+        # docs_filtered = []
+        #
+        # for i in range(len(docs_from_mark_demand)):
+        #     if docs_from_mark_demand[i]['id'] not in existing_ids:
+        #         docs_from_mark_demand_filtered.append(docs_from_mark_demand[i])
+        #         existing_ids.append(docs_from_mark_demand[i]['id'])
 
         return docs
 
@@ -1110,8 +1128,8 @@ def get_main_field(document):
         doc_counterparty = [{
             'name': dc.counterparty.name if dc.counterparty else '',
             'input': dc.counterparty_input
-        } for dc in Doc_Counterparty.objects\
-            .filter(document=document)\
+        } for dc in Doc_Counterparty.objects
+            .filter(document=document)
             .filter(is_active=True)]
 
         if doc_counterparty:
@@ -1120,7 +1138,7 @@ def get_main_field(document):
             else:
                 return doc_counterparty[0]['input']
     elif main_field_data['module_id'] == 42:  # Версія документу
-        main_field = [document.doc_type_version.description or '']
+        main_field = [document.doc_type_version.description if document.doc_type_version else '']
 
     if len(main_field) > 0:
         return main_field[0]
