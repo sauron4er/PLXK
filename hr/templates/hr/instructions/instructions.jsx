@@ -62,12 +62,12 @@ class Instructions extends React.Component {
       <div className='pt-1'>
         <div className='d-flex flex-lg-row'>
           <div className='col-6'>
+            <div className='text-center'>Положення про відділ</div>
             <If condition={window.is_admin}>
               <button className='btn btn-outline-primary mr-1' onClick={(e) => this.openModal("new_regulation")}>
                 Додати положення про відділ
               </button>
             </If>
-            <div className='text-center'>Положення про відділ</div>
             <PaginatedTable
               url={'get_regulations'}
               columns={regulations_columns}
@@ -79,12 +79,13 @@ class Instructions extends React.Component {
             />
           </div>
           <div className='col-6'>
+            <div className='text-center'>Інструкції</div>
             <If condition={window.is_admin}>
+              {/* TODO переробити на is_hr */}
               <button className='btn btn-outline-primary' onClick={(e) => this.openModal("new_instruction")}>
                 Додати посадову або робочу інструкцію
               </button>
             </If>
-            <div className='text-center'>Інструкції</div>
             <PaginatedTable
               url={'get_instructions'}
               columns={instructions_columns}

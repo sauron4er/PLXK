@@ -1,8 +1,10 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 import json
 from plxk.api.try_except import try_except
+from .api.api import get_instructions_list, get_regulations_list, \
+    post_regulation, post_instruction, change_instruction, change_regulation
 
 
 @login_required(login_url='login')
@@ -17,24 +19,32 @@ def instructions(request):
 @login_required(login_url='login')
 @try_except
 def get_regulations(request, page):
-    regulations = [{'id': 1, 'department': 'IT', 'file': ''}]
+    regulations = get_regulations_list()
     return HttpResponse(json.dumps({'rows': regulations, 'pagesCount': 1}))
 
 
 @login_required(login_url='login')
 @try_except
 def get_instructions(request, page):
-    instructions_list = [{'id': 1, 'department': 'IT', 'seat': 'Системний адмін', 'file': ''}]
-    return HttpResponse(json.dumps({'rows': instructions_list, 'pagesCount': 1}))
+    instructions = get_instructions_list()
+    return HttpResponse(json.dumps({'rows': instructions, 'pagesCount': 1}))
 
 
 @login_required(login_url='login')
 @try_except
-def post_regulation(request, pk):
-    a=1
+def add_or_change_regulation(request, pk):
+    if pk == '0':
+        regulation_id = change_regulation(request, pk)
+    else:
+        regulation_id = post_regulation(request)
+    return HttpResponse(regulation_id)
 
 
 @login_required(login_url='login')
 @try_except
-def post_instruction(request, pk):
-    a=1
+def add_or_change_instruction(request, pk):
+    if pk == '0':
+        instruction_id = change_instruction(request, pk)
+    else:
+        instruction_id = post_instruction(request)
+    return HttpResponse(instruction_id)
