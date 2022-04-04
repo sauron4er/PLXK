@@ -46,7 +46,7 @@ class Smya extends React.Component {
     return (
       <>
         <div className='d-flex flex-row-reverse'>
-          <button className='css_button' onClick={this.getExcelClicked} disabled={excel_loading}>
+          <button className='btn btn-sm btn-outline-info' onClick={this.getExcelClicked} disabled={excel_loading}>
             Завантажити в Excel
           </button>
         </div>
