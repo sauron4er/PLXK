@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseForbidden, QueryDict
+from django.http import HttpResponse, HttpResponseForbidden, QueryDict, Http404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.db import transaction
@@ -1113,9 +1113,14 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
+                try:
+                    doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
+                except Http404:
+                    doc_registration_instance = Doc_Registration(document_id=doc_request['document'])
+
                 doc_registration_instance.registration_number = doc_request['registration_number']
                 doc_registration_instance.save()
+
                 mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
                     .filter(document=doc_request['document']) \
                     .filter(mark_id=27) \
