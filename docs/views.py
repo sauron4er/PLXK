@@ -92,6 +92,7 @@ def edit_doc(request, pk, fk=''):
         return redirect('docs:index')
     else:
         form = NewDocForm(instance=doc)
+    # return redirect(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
     return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
 
 
