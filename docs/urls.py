@@ -17,8 +17,8 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^f(?P<fk>\d+)/$', views.docs, name='docs'),
 
-    url(r'^(?P<fk>\w+)/(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
-    url(r'^(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
+    url(r'^edit_doc/(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
+    url(r'^f(?P<fk>\d+)/edit_doc/(?P<pk>\d+)/$', views.edit_doc, name='edit_doc'),
 
     # url(r'^order/f(?P<fk>\d+)/$', views.orders, name='orders'),
     url(r'^orders/get_orders/(?P<page>\d+)/$', views.get_orders, name='get_orders'),
