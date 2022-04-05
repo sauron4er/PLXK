@@ -188,7 +188,7 @@ class Regulation extends React.Component {
             disabled={disabled}
           />
           <hr />
-          <SubmitButton className='btn btn-outline-info' onClick={() => this.postRegulation()} text={'Зберегти'} />
+          <SubmitButton className='btn btn-outline-info' onClick={() => this.postRegulation()} text={'Зберегти'} disabled={false} />
         </When>
         <Otherwise>
           <Loader />
