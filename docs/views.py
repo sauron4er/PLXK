@@ -76,6 +76,8 @@ def new_doc(request):
 @login_required(login_url='login')
 @try_except
 def edit_doc(request, pk, fk=''):
+    edit_perm = user_can_edit(request.user)
+
     doc = get_object_or_404(Document, pk=pk)
     title = 'Редагування'
 
@@ -92,7 +94,7 @@ def edit_doc(request, pk, fk=''):
         return redirect('docs:index')
     else:
         form = NewDocForm(instance=doc)
-    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
+    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title, 'edit_perm': edit_perm})
 
 
 @login_required(login_url='login')

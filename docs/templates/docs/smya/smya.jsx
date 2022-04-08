@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table';
-import { axiosGetFileRequest } from "templates/components/axios_requests";
+import { axiosGetFileRequest, axiosGetRequest } from "templates/components/axios_requests";
 
 
 class Smya extends React.Component {
@@ -24,7 +24,11 @@ class Smya extends React.Component {
   };
 
   onRowClick = (item) => {
-    this.setState({doc_id: item.id});
+    let to_edit = document.createElement('a');
+    to_edit.hidden = true;
+    to_edit.href = `edit_doc/${item.id}`;
+    document.body.appendChild(to_edit);
+    to_edit.click()
   };
   
   getExcelClicked = () => {
