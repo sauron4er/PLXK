@@ -51,7 +51,6 @@ class Smya extends React.Component {
           </button>
         </div>
         <div className='mt-3' ref={this.getMainDivRef} style={{ height: "85vh" }}>
-      
           <DxTable
             rows={window.docs_list}
             columns={columns}

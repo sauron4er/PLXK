@@ -9,7 +9,7 @@ from accounts import views as accounts_views
 from boards import views as board_views
 from production.views import get_products
 from boards.views_counterparties import get_counterparties
-from edms.views import edms_get_emp_seats, edms_get_doc
+from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
 
 
 urlpatterns = [
@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
+    url(r'^.+/.+/get_dep_seats/(?P<dep_id>\d+)', get_dep_seats, name='get_dep_seats'),
+    url(r'^.+/.+/get_seats_for_select', get_seats_for_select, name='get_seats_for_select'),
     url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     url(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ

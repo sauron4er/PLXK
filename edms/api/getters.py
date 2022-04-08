@@ -284,11 +284,29 @@ def get_my_seats(emp_id, only_active=True):
 
 # Функція, яка повертає з бд елементарний список посад
 @try_except
-def get_seats():
+def get_seats(what_for=''):
+    if what_for == 'select':
+        seats = [{
+            'id': seat.pk,
+            'name': seat.seat,
+        } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
+    else:
+        seats = [{
+            'id': seat.pk,
+            'seat': seat.seat,
+        } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
+    return seats
+
+
+@try_except
+def get_dep_seats_list(dep_id):
     seats = [{
         'id': seat.pk,
-        'seat': seat.seat,
-    } for seat in Seat.objects.filter(is_active=True).order_by('seat')]
+        'name': seat.seat,
+    } for seat in Seat.objects
+        .filter(department_id=dep_id)
+        .filter(is_active=True)
+        .order_by('seat')]
     return seats
 
 

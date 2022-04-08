@@ -61,7 +61,10 @@ def get_dep_chief_seat(request, dep_id):
         .filter(is_dep_chief=True)\
         .filter(is_active=True)
     if dep_chief:
-        return HttpResponse(dep_chief[0])
+        id = dep_chief[0].pk
+        name = dep_chief[0].seat
+        return HttpResponse(json.dumps({'id': id, 'name': name}))
+        # return HttpResponse(dep_chief[0])
     return HttpResponse('У системі не зазначено начальника відділу')
 
 

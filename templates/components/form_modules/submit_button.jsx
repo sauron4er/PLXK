@@ -13,11 +13,11 @@ class SubmitButton extends React.Component {
   };
   
   render() {
-    const {text, className} = this.props;
+    const {text, className, disabled} = this.props;
     const {clicked} = this.state;
 
     return (
-      <button className={'btn my-2 ' + className} onClick={() => this.onClick()} disabled={clicked}>
+      <button className={'btn my-2 ' + className} onClick={() => this.onClick()} disabled={disabled || clicked}>
         {text}
       </button>
     );
@@ -26,7 +26,8 @@ class SubmitButton extends React.Component {
   static defaultProps = {
     className: '',
     text: '???',
-    onClick: () => {}
+    onClick: () => {},
+    disabled: false
   };
 }
 

@@ -26,12 +26,12 @@ class SelectorWithFilterAndAxios extends React.Component {
   render() {
     const {onChange, fieldName, disabled, classes, value, selectId} = this.props;
     const {loading, list} = this.state;
-  
+
     return (
       <Choose>
         <When condition={!loading}>
           <label className={classes + ' full_width'} htmlFor={selectId}>
-            <If condition={fieldName}>{fieldName}:</If></label>
+            <If condition={fieldName}>{fieldName}:</If>
             <Select
               options={list}
               onChange={onChange}
@@ -40,7 +40,7 @@ class SelectorWithFilterAndAxios extends React.Component {
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.id}
             />
-          
+          </label>
         </When>
         <Otherwise>
           <LoaderSmall />

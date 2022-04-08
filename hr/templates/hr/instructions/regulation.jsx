@@ -23,7 +23,7 @@ class Regulation extends React.Component {
     department_name: '',
     dep_chief_seat: '',
     date_start: '',
-    revision_date: ''
+    date_revision: ''
   };
 
   componentDidMount() {
@@ -32,6 +32,16 @@ class Regulation extends React.Component {
         loading: false,
         disabled: false
       });
+    }
+    else {
+      axiosGetRequest(`get_regulation/${this.props.id}`)
+      .then((response) => {
+        this.setState({
+          regulation: response,
+          loading: false
+        });
+      })
+      .catch((error) => notify(error));
     }
   }
 
@@ -56,7 +66,7 @@ class Regulation extends React.Component {
   };
 
   postRegulation = () => {
-    const {name, number, version, staff_units, old_files, new_files, department, date_start, revision_date} = this.state;
+    const {name, number, version, staff_units, old_files, new_files, department, date_start, date_revision} = this.state;
 
     let formData = new FormData();
     formData.append('name', name);
@@ -65,7 +75,7 @@ class Regulation extends React.Component {
     formData.append('staff_units', staff_units);
     formData.append('department', department);
     formData.append('date_start', date_start);
-    formData.append('revision_date', revision_date);
+    formData.append('date_revision', date_revision);
 
     if (new_files?.length > 0) {
       new_files.map((file) => {
@@ -81,8 +91,7 @@ class Regulation extends React.Component {
 
     axiosPostRequest(`post_regulation/${this.props.id}`, formData)
       .then((response) => {
-        console.log(response);
-        // location.reload();
+        location.reload();
       })
       .catch((error) => notify(error));
   };
@@ -101,7 +110,7 @@ class Regulation extends React.Component {
       department_name,
       dep_chief_seat,
       date_start,
-      revision_date
+      date_revision
     } = this.state;
     return (
       <Choose>
@@ -123,7 +132,7 @@ class Regulation extends React.Component {
           </If>
           <hr />
           <div className='row'>
-            <div className='col-lg-6'>
+            <div className='col-lg-8'>
               <TextInput
                 fieldName='Назва документу'
                 text={name}
@@ -132,6 +141,18 @@ class Regulation extends React.Component {
                 onChange={(e) => this.onChange(e, 'name')}
               />
             </div>
+            <div className='col-lg-4'>
+              <TextInput
+                fieldName='Кількість штатних одиниць'
+                text={staff_units}
+                maxLength={3}
+                disabled={disabled}
+                onChange={(e) => this.onChange(e, 'staff_units')}
+              />
+            </div>
+          </div>
+          <hr />
+          <div className='row'>
             <div className='col-lg-3'>
               <TextInput
                 fieldName='Номер документу'
@@ -150,18 +171,6 @@ class Regulation extends React.Component {
                 onChange={(e) => this.onChange(e, 'version')}
               />
             </div>
-          </div>
-          <hr />
-          <div className='row'>
-            <div className='col-lg-6'>
-              <TextInput
-                fieldName='Кількість штатних одиниць'
-                text={staff_units}
-                maxLength={3}
-                disabled={disabled}
-                onChange={(e) => this.onChange(e, 'staff_units')}
-              />
-            </div>
             <div className='col-lg-3 col-6'>
               <DateInput
                 date={date_start}
@@ -172,9 +181,9 @@ class Regulation extends React.Component {
             </div>
             <div className='col-lg-3 col-6'>
               <DateInput
-                date={revision_date}
+                date={date_revision}
                 fieldName={'Дата наступної ревізії'}
-                onChange={(e) => this.onChange(e, 'revision_date')}
+                onChange={(e) => this.onChange(e, 'date_revision')}
                 disabled={disabled}
               />
             </div>
@@ -188,7 +197,12 @@ class Regulation extends React.Component {
             disabled={disabled}
           />
           <hr />
-          <SubmitButton className='btn btn-outline-info' onClick={() => this.postRegulation()} text={'Зберегти'} disabled={false} />
+          <SubmitButton
+            className='btn btn-outline-info'
+            onClick={() => this.postRegulation()}
+            text={'Зберегти'}
+            disabled={!department || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)}
+          />
         </When>
         <Otherwise>
           <Loader />

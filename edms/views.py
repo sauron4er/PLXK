@@ -1171,6 +1171,22 @@ def edms_get_seats(request):
 
 @login_required(login_url='login')
 @try_except
+def get_seats_for_select(request):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_seats('select')))
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+@try_except
+def get_dep_seats(request, dep_id):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_dep_seats_list(dep_id)))
+    return HttpResponse(status=405)
+
+
+@login_required(login_url='login')
+@try_except
 def edms_bag_design(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_seats()))

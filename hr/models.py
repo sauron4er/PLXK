@@ -34,7 +34,7 @@ class Regulation_file(models.Model):
 
 
 class Instruction_file(models.Model):
-    file = models.FileField(upload_to='hr/regulations/%Y/%m')
+    file = models.FileField(upload_to='hr/instructions/%Y/%m')
     name = models.CharField(max_length=100)
     instruction = models.ForeignKey(Seat_Instruction, related_name='files', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

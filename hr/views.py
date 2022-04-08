@@ -4,39 +4,45 @@ from django.shortcuts import render
 import json
 from plxk.api.try_except import try_except
 from .api.api import get_instructions_list, get_regulations_list, \
-    post_regulation, post_instruction, change_instruction, change_regulation
+    post_regulation, post_regulation_file, post_instruction, change_instruction, change_regulation
 
 
 @login_required(login_url='login')
 @try_except
 def instructions(request):
-    is_admin = 'true'
-    # if request.user.userprofile.is_it_admin or request.user.userprofile.stationery_orders_view:
-    #     is_admin = 'true'
-    return render(request, 'hr/instructions/instructions.html', {'is_admin': is_admin})
+    if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr:
+        is_hr_admin = 'true'
+    else:
+        is_hr_admin = 'false'
+    return render(request, 'hr/instructions/instructions.html', {'is_hr_admin': is_hr_admin})
 
 
 @login_required(login_url='login')
 @try_except
-def get_regulations(request, page):
-    regulations = get_regulations_list()
-    return HttpResponse(json.dumps({'rows': regulations, 'pagesCount': 1}))
+def get_regulations(request):
+    regulations_list = get_regulations_list()
+    return HttpResponse(json.dumps(regulations_list))
 
 
 @login_required(login_url='login')
 @try_except
-def get_instructions(request, page):
-    instructions = get_instructions_list()
-    return HttpResponse(json.dumps({'rows': instructions, 'pagesCount': 1}))
+def get_instructions(request):
+    instructions_list = get_instructions_list()
+    return HttpResponse(json.dumps(instructions_list))
 
 
 @login_required(login_url='login')
 @try_except
 def add_or_change_regulation(request, pk):
+    doc_request = request.POST.copy()
+
     if pk == '0':
-        regulation_id = change_regulation(request, pk)
-    else:
         regulation_id = post_regulation(request)
+        doc_request.update({'id': regulation_id})
+    else:
+        regulation_id = change_regulation(request, pk)
+
+    post_regulation_file(request.FILES, doc_request)
     return HttpResponse(regulation_id)
 
 
@@ -48,3 +54,15 @@ def add_or_change_instruction(request, pk):
     else:
         instruction_id = post_instruction(request)
     return HttpResponse(instruction_id)
+
+
+@login_required(login_url='login')
+@try_except
+def get_regulation(request, pk):
+    a=1
+
+
+@login_required(login_url='login')
+@try_except
+def get_instruction(request, pk):
+    a=1
