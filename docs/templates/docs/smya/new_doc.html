@@ -11,6 +11,8 @@
   <form enctype="multipart/form-data" method="post" novalidate>
     {% csrf_token %}
     {% include 'includes/form.html' %}
-    <button type="submit" class="btn btn-info" value="post">Зберегти</button>
+    {% if edit_perm %}
+      <button type="submit" class="btn btn-info mb-5" value="post">Зберегти</button>
+    {% endif %}
   </form>
 {% endblock %}
