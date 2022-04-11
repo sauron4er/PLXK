@@ -12,31 +12,13 @@ def get_regulations_list():
         'department': regulation.department.name,
         'files': [{
             'id': file.id,
-            'file': file.file.name,
-            'name': file.name
+            'file': u'' + file.file.name,
+            'name': u'' + file.name
         } for file in Regulation_file.objects
             .filter(regulation=regulation.id)
             .filter(is_active=True)]
     } for regulation in regulations_list]
     return regulations_list
-
-
-@try_except
-def get_instructions_list():
-    instructions_list = Seat_Instruction.objects.filter(is_active=True)
-    instructions_list = [{
-        'id': instruction.id,
-        'department': instruction.department.name,
-        'seat': instruction.seat.seat,
-        'files': [{
-            'id': file.id,
-            'file': file.file.name,
-            'name': file.name
-        } for file in Instruction_file.objects
-            .filter(instruction=instruction.id)
-            .filter(is_active=True)]
-    } for instruction in instructions_list]
-    return instructions_list
 
 
 @try_except
@@ -56,8 +38,14 @@ def post_regulation(request):
 
 
 @try_except
-def change_regulation(request, pk):
+def get_regulation(request):
     a=1
+
+
+@try_except
+def change_regulation(request, pk):
+    regulation = Department_Regulation.objects.filter(pk=pk)
+    reg = regulation
 
 
 @try_except
@@ -72,7 +60,7 @@ def post_regulation_file(files, request_post):
             # regulation=regulation,
             regulation_id=request_post['id'],
             file=file,
-            name=file.name
+            name=u'' + file.name
         )
 
     for file in old_files:
@@ -86,17 +74,3 @@ def deactivate_regulation_file(post_request, file):
     file = get_object_or_404(Regulation_file, pk=file['id'])
     file.is_active = False
     file.save()
-
-
-@try_except
-def post_instruction(request):
-    a=1
-
-
-@try_except
-def change_instruction(request, pk):
-    a=1
-
-@try_except
-def post_instruction_file(request):
-    a=1

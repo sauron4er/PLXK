@@ -21,7 +21,8 @@ class Regulation extends React.Component {
     new_files: [],
     department: 0,
     department_name: '',
-    dep_chief_seat: '',
+    dep_chief_seat: 0,
+    dep_chief_seat_name: '',
     date_start: '',
     date_revision: ''
   };
@@ -52,7 +53,10 @@ class Regulation extends React.Component {
   getDepChiefSeat = (dep_id) => {
     axiosGetRequest('get_dep_chief_seat/' + dep_id + '/')
       .then((response) => {
-        this.setState({dep_chief_seat: response});
+        this.setState({
+          dep_chief_seat: response.id,
+          dep_chief_seat_name: response.name,
+        });
       })
       .catch((error) => console.log(error));
   };
@@ -109,6 +113,7 @@ class Regulation extends React.Component {
       department,
       department_name,
       dep_chief_seat,
+      dep_chief_seat_name,
       date_start,
       date_revision
     } = this.state;
@@ -127,7 +132,7 @@ class Regulation extends React.Component {
           />
           <If condition={dep_chief_seat}>
             <div>
-              Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat}</span>
+              Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
             </div>
           </If>
           <hr />
