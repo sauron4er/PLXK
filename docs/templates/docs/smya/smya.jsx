@@ -75,7 +75,7 @@ const columns = [
   {name: 'code', title: 'Код'},
   {name: 'name', title: 'Назва'},
   {name: 'files', title: 'Файл'},
-  {name: 'act', title: 'Актуальність'},
+  // {name: 'act', title: 'Актуальність'},
   {name: 'author', title: 'Автор'},
   {name: 'responsible', title: 'Відповідальний'},
   {name: 'date_start', title: 'Діє з'}
@@ -85,12 +85,12 @@ const col_width = [
   {columnName: 'id', width: 40},
   {columnName: 'date_start', width: 80},
   {columnName: 'files', width: 230},
-  {columnName: 'act', width: 100},
+  // {columnName: 'act', width: 100},
   {columnName: 'group_name', width: 150},
   {columnName: 'type_name', width: 150},
-  {columnName: 'code', width: 200},
-  {columnName: 'author', width: 300},
-  {columnName: 'responsible', width: 300}
+  {columnName: 'code', width: 150},
+  {columnName: 'author', width: 250},
+  {columnName: 'responsible', width: 250}
 ];
 
 export default Smya;
