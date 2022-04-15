@@ -15,8 +15,11 @@ def date_to_json(data):
 
 
 def normalize_date(data):
-    if isinstance(data, datetime.date):
+    if data is not None \
+            and data != '' \
+            and isinstance(data, datetime.date):
         return data.strftime("%d.%m.%Y")
+    return ''
 
 
 def normalize_month(date):

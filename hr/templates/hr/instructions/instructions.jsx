@@ -1,14 +1,12 @@
 'use strict';
 import * as React from 'react';
-import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
+import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import Modal from 'react-responsive-modal';
-import PaginatedTable from 'templates/components/tables/paginated_table';
 import Instruction from 'hr/templates/hr/instructions/instruction';
 import Regulation from 'hr/templates/hr/instructions/regulation';
 import DxTable from 'templates/components/tables/dx_table';
 import {Loader} from 'templates/components/loaders';
-import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 
 class Instructions extends React.Component {
   state = {
@@ -98,12 +96,14 @@ class Instructions extends React.Component {
           <div className='col-6'>
             <Choose>
               <When condition={!regulations_loading}>
-                <div className='text-center'>Положення про відділ</div>
-                <If condition={window.is_hr_admin}>
-                  <button className='btn btn-outline-primary mr-1' onClick={(e) => this.openModal('new_regulation')}>
-                    Додати положення про відділ
-                  </button>
-                </If>
+                <div className='d-flex'>
+                  <h5 className='align-self-center'>Положення про відділ</h5>
+                  <If condition={window.is_hr_admin}>
+                    <button className='btn btn-outline-primary ml-auto' onClick={(e) => this.openModal('new_regulation')}>
+                      Додати положення про відділ
+                    </button>
+                  </If>
+                </div>
                 <DxTable
                   rows={regulations}
                   columns={regulations_columns}
@@ -122,12 +122,14 @@ class Instructions extends React.Component {
           <div className='col-6'>
             <Choose>
               <When condition={!instructions_loading}>
-                <div className='text-center'>Інструкції</div>
-                <If condition={window.is_hr_admin}>
-                  <button className='btn btn-outline-primary' onClick={(e) => this.openModal('new_instruction')}>
-                    Додати посадову або робочу інструкцію
-                  </button>
-                </If>
+                <div className='d-flex'>
+                  <h5 className='align-self-center'>Посадові, робочі інструкції</h5>
+                  <If condition={window.is_hr_admin}>
+                    <button className='btn btn-outline-primary ml-auto' onClick={(e) => this.openModal('new_instruction')}>
+                      Додати посадову або робочу інструкцію
+                    </button>
+                  </If>
+                </div>
                 <DxTable
                   rows={instructions}
                   columns={instructions_columns}
@@ -176,7 +178,7 @@ const regulations_columns = [
   {name: 'files', title: 'Файл'}
 ];
 
-const regulations_col_width = [{columnName: 'department', width: 200}];
+const regulations_col_width = [{columnName: 'files', width: 250}];
 
 const instructions_columns = [
   // {name: 'id', title: 'id'},
@@ -185,4 +187,4 @@ const instructions_columns = [
   {name: 'files', title: 'Файл'}
 ];
 
-const instructions_col_width = [{columnName: 'department', width: 200}, {columnName: 'seat', width: 200}];
+const instructions_col_width = [{columnName: 'files', width: 250}];

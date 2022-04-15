@@ -12,7 +12,7 @@ import {notify} from 'templates/components/my_extras';
 class Regulation extends React.Component {
   state = {
     loading: true,
-    disabled: true,
+    disabled: !window.is_hr_admin,
     name: '',
     number: '',
     version: '',
@@ -28,22 +28,14 @@ class Regulation extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.id === 0) {
-      this.setState({
-        loading: false,
-        disabled: false
-      });
-    }
-    else {
+    if (this.props.id !== 0) {
       axiosGetRequest(`get_regulation/${this.props.id}`)
-      .then((response) => {
-        this.setState({
-          regulation: response,
-          loading: false
-        });
-      })
-      .catch((error) => notify(error));
+        .then((response) => {
+          this.setState({...response});
+        })
+        .catch((error) => notify(error));
     }
+    this.setState({loading: false});
   }
 
   onChange = (e, field) => {
@@ -55,7 +47,7 @@ class Regulation extends React.Component {
       .then((response) => {
         this.setState({
           dep_chief_seat: response.id,
-          dep_chief_seat_name: response.name,
+          dep_chief_seat_name: response.name
         });
       })
       .catch((error) => console.log(error));
@@ -80,16 +72,11 @@ class Regulation extends React.Component {
     formData.append('department', department);
     formData.append('date_start', date_start);
     formData.append('date_revision', date_revision);
+    formData.append('old_files', JSON.stringify(old_files));
 
     if (new_files?.length > 0) {
       new_files.map((file) => {
         formData.append('new_files', file);
-      });
-    }
-
-    if (old_files?.length > 0) {
-      old_files.map((file) => {
-        formData.append('old_files', file);
       });
     }
 
@@ -98,6 +85,25 @@ class Regulation extends React.Component {
         location.reload();
       })
       .catch((error) => notify(error));
+  };
+
+  deactivateRegulation = () => {
+    axiosGetRequest(`deact_regulation/${this.props.id}`)
+      .then((response) => {
+        location.reload();
+      })
+      .catch((error) => notify(error));
+  };
+
+  deleteFile = (id) => {
+    const {old_files} = this.state;
+    for (const i in old_files) {
+      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
+        old_files[i].status = 'delete';
+        break;
+      }
+    }
+    this.setState({old_files});
   };
 
   render() {
@@ -112,7 +118,6 @@ class Regulation extends React.Component {
       new_files,
       department,
       department_name,
-      dep_chief_seat,
       dep_chief_seat_name,
       date_start,
       date_revision
@@ -120,21 +125,21 @@ class Regulation extends React.Component {
     return (
       <Choose>
         <When condition={!loading}>
-          <h4>Нове положення про відділ</h4>
+          <h4>Положення про відділ</h4>
           <hr />
           <SelectorWithFilterAndAxios
-            listNameForUrl='departments'
+            listNameForUrl='deps_for_regulations'
             fieldName='Відділ/служба'
             selectId='department_select'
             value={{name: department_name, id: department}}
             onChange={this.onDepartmentChange}
             disabled={disabled}
           />
-          <If condition={dep_chief_seat}>
-            <div>
-              Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
-            </div>
-          </If>
+
+          <div>
+            Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
+          </div>
+
           <hr />
           <div className='row'>
             <div className='col-lg-8'>
@@ -199,15 +204,23 @@ class Regulation extends React.Component {
             newFiles={new_files}
             fieldName='Завантажити файл документу'
             onChange={(e) => this.onChange(e, 'new_files')}
+            onDelete={this.deleteFile}
             disabled={disabled}
           />
           <hr />
-          <SubmitButton
-            className='btn btn-outline-info'
-            onClick={() => this.postRegulation()}
-            text={'Зберегти'}
-            disabled={!department || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)}
-          />
+          <If condition={!disabled}>
+            <div className='d-flex'>
+              <SubmitButton
+                className='btn btn-outline-info'
+                onClick={() => this.postRegulation()}
+                text={'Зберегти'}
+                disabled={
+                  !department || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)
+                }
+              />
+              <SubmitButton className='btn btn-outline-danger ml-auto' onClick={() => this.deactivateRegulation()} text={'Видалити'} />
+            </div>
+          </If>
         </When>
         <Otherwise>
           <Loader />

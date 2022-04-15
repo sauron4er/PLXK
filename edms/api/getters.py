@@ -303,6 +303,7 @@ def get_dep_seats_list(dep_id):
     seats = [{
         'id': seat.pk,
         'name': seat.seat,
+        'chief_seat_name': seat.chief.seat if seat.chief else 'Посаду начальника не внесено в базу'
     } for seat in Seat.objects
         .filter(department_id=dep_id)
         .filter(is_active=True)
@@ -329,6 +330,19 @@ def get_dep_chief_id(emp_seat_id):
             return dep_chief_emp_seat_id[0]
     return None
 
+
+# Повертає ід і назву посади начальника відділу
+@try_except
+def get_dep_chief(dep_id):
+    dep_chief = Seat.objects \
+        .filter(department_id=dep_id) \
+        .filter(is_dep_chief=True) \
+        .filter(is_active=True)
+    if dep_chief:
+        id = dep_chief[0].pk
+        name = dep_chief[0].seat
+        return {'id': id, 'name': name}
+    return None
 
 # Функція, яка повертає посаду безпосереднього керівника людинопосади
 @try_except

@@ -3,11 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
 import json
-from edms.models import Seat
 from .forms import SignUpForm
+from .models import Department, UserProfile
+from edms.models import Seat
+from edms.api.getters import get_dep_chief
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User
-from .models import Department, UserProfile
 
 
 def signup(request):
@@ -56,16 +57,10 @@ def get_departments(request, company='TDV'):
 @login_required(login_url='login')
 @try_except
 def get_dep_chief_seat(request, dep_id):
-    dep_chief = Seat.objects\
-        .filter(department_id=dep_id)\
-        .filter(is_dep_chief=True)\
-        .filter(is_active=True)
+    dep_chief = get_dep_chief(dep_id)
     if dep_chief:
-        id = dep_chief[0].pk
-        name = dep_chief[0].seat
-        return HttpResponse(json.dumps({'id': id, 'name': name}))
-        # return HttpResponse(dep_chief[0])
-    return HttpResponse('У системі не зазначено начальника відділу')
+        return HttpResponse(json.dumps(dep_chief))
+    return HttpResponse(json.dumps({'id': -1, 'name': 'У системі не зазначено начальника відділу'}))
 
 
 @login_required(login_url='login')

@@ -13,7 +13,7 @@ import SelectorWithFilter from 'templates/components/form_modules/selector_with_
 class Instruction extends React.Component {
   state = {
     loading: true,
-    disabled: true,
+    disabled: !window.is_hr_admin,
     name: '',
     number: '',
     version: '',
@@ -24,32 +24,24 @@ class Instruction extends React.Component {
     department_name: '',
     dep_chief_seat: 0,
     dep_chief_seat_name: '',
-    dep_seats: [],
-    all_seats: [],
+    seats: [],
     seat: 0,
     seat_name: '',
-    chief_seat: 0,
     chief_seat_name: '',
     date_start: '',
     date_revision: ''
   };
 
   componentDidMount() {
-    if (this.props.id === 0) {
-      this.setState({
-        loading: false,
-        disabled: false
-      });
-    } else {
+    if (this.props.id !== 0) {
       axiosGetRequest(`get_instruction/${this.props.id}`)
         .then((response) => {
-          this.setState({
-            instruction: response,
-            loading: false
-          });
+          this.setState({...response});
+          this.getDepSeats(response.department);
         })
         .catch((error) => notify(error));
     }
+    this.setState({loading: false});
   }
 
   onChange = (e, field) => {
@@ -61,74 +53,53 @@ class Instruction extends React.Component {
       .then((response) => {
         this.setState({
           dep_chief_seat: response.id,
-          dep_chief_seat_name: response.name,
+          dep_chief_seat_name: response.name
         });
       })
       .catch((error) => console.log(error));
   };
 
   onDepartmentChange = (e) => {
-    axiosGetRequest(`get_dep_seats/${e.id}`)
-      .then((response) => {
-        this.setState({dep_seats: response});
-      })
-      .catch((error) => notify(error));
-
+    this.getDepSeats(e.id);
     this.setState({
       department: e.id,
       department_name: e.name
     });
     this.getDepChiefSeat(e.id);
   };
-
-  onSeatChange = (e) => {
-    const {dep_chief_seat, dep_seats} = this.state;
-    if (e.id === dep_chief_seat) {
-      axiosGetRequest(`get_seats_for_select`)
+  
+  getDepSeats = (dep_id) => {
+    axiosGetRequest(`get_dep_seats_for_instruction/${dep_id}`)
       .then((response) => {
-        this.setState({all_seats: response});
+        this.setState({seats: response});
       })
       .catch((error) => notify(error));
-    } else {
-      this.setState({all_seats: dep_seats})
-    }
-    
-    this.setState({
-      seat: e.id,
-      seat_name: e.name
-    });
   };
 
-  onChiefSeatChange = (e) => {
+  onSeatChange = (e) => {
     this.setState({
-      chief_seat: e.id,
-      chief_seat_name: e.name
+      seat: e.id,
+      seat_name: e.name,
+      chief_seat_name: e.chief_seat_name
     });
   };
 
   postInstruction = () => {
-    const {name, number, version, staff_units, old_files, new_files, department, seat, chief_seat, date_start, date_revision} = this.state;
+    const {name, number, version, staff_units, old_files, new_files, seat, date_start, date_revision} = this.state;
 
     let formData = new FormData();
     formData.append('name', name);
     formData.append('number', number);
     formData.append('version', version);
     formData.append('staff_units', staff_units);
-    formData.append('department', department);
     formData.append('seat', seat);
-    formData.append('chief_seat', chief_seat);
     formData.append('date_start', date_start);
     formData.append('date_revision', date_revision);
+    formData.append('old_files', JSON.stringify(old_files));
 
     if (new_files?.length > 0) {
       new_files.map((file) => {
         formData.append('new_files', file);
-      });
-    }
-
-    if (old_files?.length > 0) {
-      old_files.map((file) => {
-        formData.append('old_files', file);
       });
     }
 
@@ -137,6 +108,25 @@ class Instruction extends React.Component {
         location.reload();
       })
       .catch((error) => notify(error));
+  };
+
+  deactivateInstruction = () => {
+    axiosGetRequest(`deact_instruction/${this.props.id}`)
+      .then((response) => {
+        location.reload();
+      })
+      .catch((error) => notify(error));
+  };
+
+  deleteFile = (id) => {
+    const {old_files} = this.state;
+    for (const i in old_files) {
+      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
+        old_files[i].status = 'delete';
+        break;
+      }
+    }
+    this.setState({old_files});
   };
 
   render() {
@@ -151,13 +141,10 @@ class Instruction extends React.Component {
       new_files,
       department,
       department_name,
-      dep_seats,
-      all_seats,
+      seats,
       seat,
       seat_name,
-      chief_seat,
       chief_seat_name,
-      dep_chief_seat,
       dep_chief_seat_name,
       date_start,
       date_revision
@@ -165,52 +152,57 @@ class Instruction extends React.Component {
     return (
       <Choose>
         <When condition={!loading}>
-          <h4>Нова посадова інструкція</h4>
-          <hr />
-          <SelectorWithFilterAndAxios
-            listNameForUrl='departments'
-            fieldName='Відділ/служба'
-            selectId='department_select'
-            value={{name: department_name, id: department}}
-            onChange={this.onDepartmentChange}
-            disabled={disabled}
-          />
-          <If condition={dep_chief_seat}>
-            <div>
-              Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
-            </div>
-          </If>
+          <h4>Посадова інструкція</h4>
           <hr />
           <div className='row'>
             <div className='col-lg-6'>
+              <SelectorWithFilterAndAxios
+                listNameForUrl='departments'
+                fieldName='Відділ/служба'
+                selectId='department_select'
+                value={{name: department_name, id: department}}
+                onChange={this.onDepartmentChange}
+                disabled={disabled}
+              />
+              <div>
+                Керівник: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
+              </div>
+            </div>
+            <div className='col-lg-6'>
               <SelectorWithFilter
-                list={dep_seats}
+                list={seats}
                 fieldName='Посада'
                 selectId='seat_select'
                 value={{name: seat_name, id: seat}}
                 onChange={this.onSeatChange}
-                disabled={!department}
+                disabled={disabled || !department}
               />
-            </div>
-            <div className='col-lg-6'>
-              <SelectorWithFilter
-                list={all_seats}
-                fieldName='Безпосередній керівник'
-                selectId='chief_seat_select'
-                value={{name: chief_seat_name, id: chief_seat}}
-                onChange={this.onChiefSeatChange}
-                disabled={!seat}
-              />
+              <div>
+                Начальник: <span className='font-weight-bold'>{chief_seat_name}</span>
+              </div>
             </div>
           </div>
           <hr />
-          <TextInput
-            fieldName='Назва документу'
-            text={name}
-            maxLength={100}
-            disabled={disabled}
-            onChange={(e) => this.onChange(e, 'name')}
-          />
+          <div className='row'>
+            <div className='col-lg-8'>
+              <TextInput
+                fieldName='Назва документу'
+                text={name}
+                maxLength={100}
+                disabled={disabled}
+                onChange={(e) => this.onChange(e, 'name')}
+              />
+            </div>
+            <div className='col-lg-4'>
+              <TextInput
+                fieldName='Кількість штатних одиниць'
+                text={staff_units}
+                maxLength={3}
+                disabled={disabled}
+                onChange={(e) => this.onChange(e, 'staff_units')}
+              />
+            </div>
+          </div>
           <hr />
           <div className='row'>
             <div className='col-lg-3'>
@@ -254,15 +246,21 @@ class Instruction extends React.Component {
             newFiles={new_files}
             fieldName='Завантажити файл документу'
             onChange={(e) => this.onChange(e, 'new_files')}
+            onDelete={this.deleteFile}
             disabled={disabled}
           />
           <hr />
-          <SubmitButton
-            className='btn btn-outline-info'
-            onClick={() => this.postRegulation()}
-            text={'Зберегти'}
-            disabled={!department || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)}
-          />
+          <If condition={!disabled}>
+            <div className='d-flex'>
+              <SubmitButton
+                className='btn btn-outline-info'
+                onClick={() => this.postInstruction()}
+                text={'Зберегти'}
+                disabled={!seat || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)}
+              />
+              <SubmitButton className='btn btn-outline-danger ml-auto' onClick={() => this.deactivateInstruction()} text={'Видалити'} />
+            </div>
+          </If>
         </When>
         <Otherwise>
           <Loader />
