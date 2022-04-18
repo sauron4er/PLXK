@@ -47,6 +47,7 @@ def docs(request, fk):
 @try_except
 def new_doc(request):
     title = 'Новий документ'
+    edit_perm = user_can_edit(request.user)
     if request.user:
         user = request.user
     else:
@@ -70,7 +71,7 @@ def new_doc(request):
             return redirect('docs:index')
     else:
         form = NewDocForm()
-    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title})
+    return render(request, 'docs/smya/new_doc.html', {'form': form, 'title': title, 'edit_perm': 'true' if edit_perm else 'false'})
 
 
 @login_required(login_url='login')
