@@ -7,12 +7,13 @@ from .api.regulations_api import get_regulations_list, post_regulation, post_reg
     change_regulation, get_regulation_api, deact_regulation_api, get_dep_list_for_regulations
 from .api.instructions_api import get_instructions_list, post_instruction, post_instruction_file, \
     change_instruction, get_instruction_api, deact_instruction_api, get_dep_seat_list_for_instruction
+from .api.org_structure_api import get_org_structure
 
 
 @login_required(login_url='login')
 @try_except
 def get_deps_for_regulations(request):
-    return HttpResponse(json.dumps(get_dep_list_for_regulations()))\
+    return HttpResponse(json.dumps(get_dep_list_for_regulations()))
 
 
 @login_required(login_url='login')
@@ -24,10 +25,7 @@ def get_dep_seats_for_instruction(request, dep_id):
 @login_required(login_url='login')
 @try_except
 def instructions(request):
-    if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr:
-        is_hr_admin = 'true'
-    else:
-        is_hr_admin = 'false'
+    is_hr_admin = 'true' if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr else 'false'
     return render(request, 'hr/instructions/index.html', {'is_hr_admin': is_hr_admin})
 
 
@@ -99,3 +97,12 @@ def get_instruction(request, pk):
 def deact_instruction(request, pk):
     deact_instruction_api(pk)
     return HttpResponse(200)
+
+
+@login_required(login_url='login')
+@try_except
+def org_structure(request):
+    is_hr_admin = 'true' if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr else 'false'
+    departments = get_org_structure()
+    return render(request, 'hr/org_structure/index.html', {'is_hr_admin': is_hr_admin,
+                                                           'departments': json.dumps(departments)})

@@ -19,7 +19,7 @@ def send_email(mail, body):
             server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
             server.ehlo()
             server.starttls()
-            server.login('edms.lxk', 'J2NYEHb50nymRF1L')
+            server.login('edms.lxk', '[svpfdjlgjinf]')
             server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)

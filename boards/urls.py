@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views, views_org_structure, views_counterparties, views_non_compliances
+from . import views, views_counterparties, views_non_compliances
 from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, \
     get_simple_contracts_list, add_contract
 from correspondence.views import get_correspondence, get_correspondence_info, get_request
@@ -27,10 +27,6 @@ urlpatterns = [
     url(r'^.+/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
     url(r'^.+/post_decision', views_non_compliances.post_decision, name='post_decision'),
     url(r'^.+/non_compliance_done', views_non_compliances.done, name='done'),
-
-    url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', views_org_structure.get_seat_info, name='get_seat_info'),
-    url(r'^org_structure/post_instruction/', views_org_structure.post_instruction, name='post_instruction'),
-    url(r'^org_structure/', views_org_structure.org_structure, name='org_structure'),
 
     url(r'^providers/get_providers/(?P<wood_only>\w+)/(?P<page>\d+)/$', views_counterparties.get_providers, name='get_providers'),
     url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_provider'),

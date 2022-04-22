@@ -34,6 +34,7 @@ class OrgStructure extends React.Component {
   };
 
   render() {
+    console.log(1);
     const {elements} = this.state;
     const {modal_opened} = orgStructureStore;
     return (

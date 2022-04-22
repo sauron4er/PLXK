@@ -1,34 +1,31 @@
-'use strict';
-import * as React from 'react';
+import React from 'react';
+import useSetState from 'templates/hooks/useSetState';
 
-class SubmitButton extends React.Component {
-  state = {
+function SubmitButton(props) {
+  const [state, setState] = useSetState({
     clicked: false
+  });
+  
+  function onClick() {
+    setState({clicked: true});
+    props.onClick();
+    setTimeout(() => setState({clicked: false}), props.timeout)
   }
   
-  onClick = () => {
-    this.setState({clicked: true});
-    this.props.onClick();
-    setTimeout(() => this.setState({clicked: false}), 10000)
-  };
-  
-  render() {
-    const {text, className, disabled} = this.props;
-    const {clicked} = this.state;
-
-    return (
-      <button className={'btn my-2 ' + className} onClick={() => this.onClick()} disabled={disabled || clicked}>
-        {text}
+  return (
+      <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={props.disabled || state.clicked}>
+        {props.text}
       </button>
     );
-  }
+  
+}
 
-  static defaultProps = {
+SubmitButton.defaultProps = {
     className: '',
     text: '???',
     onClick: () => {},
-    disabled: false
+    disabled: false,
+    timeout: 10000
   };
-}
 
 export default SubmitButton;

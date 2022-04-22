@@ -1,0 +1,64 @@
+﻿.css_accordion_container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.css_accordion {
+  background: #fffffe;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-top: 10px solid #3eacba;
+  margin-top: 10px;
+  padding-bottom: 10px;
+}
+
+.css_accordion_title {
+  /*  display: flex;*/
+/*  flex-direction: row;*/
+/*  justify-content: space-between;*/
+  cursor: pointer;
+}
+
+.css_accordion_title p {
+  padding: 5px 20px;
+  margin: 10px;
+  color: #25646d;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.css_accordion_title hr {
+  width: 20%;
+  margin: 0 30px 20px;
+  border: 1px solid #25646d;
+}
+
+.css_accordion_content {
+  padding: 10px;
+  margin: 10px;
+  display: grid;
+  grid-gap: 10px;
+}
+
+.css_accordion_content_item {
+  padding: 10px 0 10px 10px;
+  display: grid;
+  grid-template-columns: 10fr 1fr;
+  font-size: 13px;
+  grid-gap: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.css_accordion_content_item:hover {
+  border-radius: 15px;
+  border: 1px solid #3eacba;
+}
+
+.css_accordion_content_item_arrow {
+  align-self: center;
+  font-size: 15px;
+  color: #25646d;
+  font-weight: bold;
+  animation: icon 1.5s infinite forwards;
+}

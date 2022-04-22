@@ -4,7 +4,7 @@ import * as React from 'react';
 class TextInput extends React.Component {
   
   render() {
-    const {fieldName, text, onChange, maxLength, type, disabled, className} = this.props;
+    const {fieldName, text, onChange, maxLength, type, disabled, className, placeholder} = this.props;
     
     const rows = Math.round(text.length / 100)
   
@@ -36,6 +36,7 @@ class TextInput extends React.Component {
               onChange={onChange}
               maxLength={maxLength}
               disabled={disabled}
+              placeholder={placeholder}
             />
           </label>
         </When>
@@ -51,6 +52,7 @@ class TextInput extends React.Component {
               onChange={onChange}
               maxLength={maxLength}
               disabled={disabled}
+              placeholder={placeholder}
             />
           </label>
         </Otherwise>
@@ -65,7 +67,8 @@ class TextInput extends React.Component {
     maxLength: 5000,
     type: 'default',
     disabled: true,
-    className: {}
+    className: {},
+    placeholder: null
   };
 }
 
