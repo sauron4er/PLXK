@@ -35,6 +35,10 @@ class CounterpartyInfo extends React.Component {
   onActualAddressChange = (e) => {
     counterpartyStore.counterparty.actual_address = e.target.value;
   };
+  
+  onCommentaryChange = (e) => {
+    counterpartyStore.counterparty.commentary = e.target.value;
+  };
 
   onProductChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
@@ -138,8 +142,15 @@ class CounterpartyInfo extends React.Component {
             onChange={this.onResponsibleChange}
             disabled={!edit_access}
           />
-          
         </If>
+        <hr />
+          <TextInput
+            text={counterparty.commentary}
+            fieldName={'Коментар'}
+            onChange={this.onCommentaryChange}
+            maxLength={3000}
+            disabled={!edit_access}
+          />
       </>
     );
   }
