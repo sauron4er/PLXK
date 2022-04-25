@@ -36,33 +36,43 @@ def get_org_structure(tdv=True):
     return departments
 
 
-# @try_except
-# def unpack_dep_chief(dep_id):
-#     chief = Seat.objects.values('id', 'seat')\
-#         .filter(department_id=dep_id)\
-#         .filter(is_dep_chief=True)\
-#         .filter(is_active=True)\
-#         .first()
-#
-#     if chief:
-#         return chief
-#     else:
-#         return {
-#             'id': 0,
-#             'seat': 'Посаду начальника відділу не визначено'
-#         }
+@try_except
+def get_chief(dep_id):
+    chief = Seat.objects.values('id', 'seat')\
+        .filter(department_id=dep_id)\
+        .filter(is_dep_chief=True)\
+        .filter(is_active=True)\
+        .first()
+
+    if chief:
+        return {
+            'id': chief['id'],
+            'name': chief['seat'],
+            'is_chief': True
+        }
+    else:
+        return {
+            'id': 0,
+            'name': 'Посаду начальника відділу не визначено',
+            'is_chief': True
+        }
 
 
 @try_except
 def get_seats(dep_id):
+    chief = get_chief(dep_id)
+
     seats_query = Seat.objects\
         .filter(department_id=dep_id) \
+        .filter(is_dep_chief=False) \
         .filter(is_active=True) \
         .order_by('seat')
     seats = [{
         'id': seat.id,
         'name': seat.seat,
-        'first': 'true' if seat.is_dep_chief else 'false'
+        'is_chief': False
     } for seat in seats_query]
+
+    seats = [chief] + seats
 
     return seats

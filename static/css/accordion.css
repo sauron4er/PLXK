@@ -39,26 +39,3 @@
   display: grid;
   grid-gap: 10px;
 }
-
-.css_accordion_content_item {
-  padding: 10px 0 10px 10px;
-  display: grid;
-  grid-template-columns: 10fr 1fr;
-  font-size: 13px;
-  grid-gap: 10px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
-.css_accordion_content_item:hover {
-  border-radius: 15px;
-  border: 1px solid #3eacba;
-}
-
-.css_accordion_content_item_arrow {
-  align-self: center;
-  font-size: 15px;
-  color: #25646d;
-  font-weight: bold;
-  animation: icon 1.5s infinite forwards;
-}

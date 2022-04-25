@@ -5,6 +5,7 @@ import Accordion from 'templates/components/accordion';
 import TextInput from 'templates/components/form_modules/text_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Modal from 'react-responsive-modal';
+import Department from "hr/templates/hr/org_structure/department";
 
 function OrgStructure() {
   const [state, setState] = useSetState({
@@ -26,8 +27,6 @@ function OrgStructure() {
     departments = departments.filter((item) => {
       return item.name.toLowerCase().indexOf(filter_lc) !== -1;
     });
-  
-    console.log(departments);
   
     setState({
       filter: e.target.value,
@@ -96,21 +95,21 @@ function OrgStructure() {
         <div className='col-lg-4'>
           <For each='dep' of={state.deps_first_part} index='dep_idx'>
             <Accordion key={dep_idx} title={dep.name} content={dep.seats}>
-              111
+              <Department dep={dep} />
             </Accordion>
           </For>
         </div>
         <div className='col-lg-4'>
           <For each='dep' of={state.deps_second_part} index='dep_idx'>
             <Accordion key={dep_idx} title={dep.name} content={dep.seats}>
-              111
+              <Department dep={dep} />
             </Accordion>
           </For>
         </div>
         <div className='col-lg-4'>
           <For each='dep' of={state.deps_third_part} index='dep_idx'>
             <Accordion key={dep_idx} title={dep.name} content={dep.seats}>
-              111
+              <Department dep={dep} />
             </Accordion>
           </For>
         </div>
