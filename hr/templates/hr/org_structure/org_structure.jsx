@@ -6,6 +6,7 @@ import TextInput from 'templates/components/form_modules/text_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Modal from 'react-responsive-modal';
 import Department from "hr/templates/hr/org_structure/department";
+import NewDepartment from "hr/templates/hr/org_structure/new_department";
 
 function OrgStructure() {
   const [state, setState] = useSetState({
@@ -17,6 +18,14 @@ function OrgStructure() {
     modal_type: 'new_dep',
     modal_opened: false
   });
+  
+  //TODO Додавання відділу
+  //TODO Деактивація відділу
+  //TODO Додавання посади
+  //TODO Деакт. посади (якщо нема працівників)
+  //TODO Перегляд положення про відділ
+  //TODO Перегляд інструкції посади
+  //TODO Перегляд працівників на посаді
 
   // console.log(window.departments);
 
@@ -85,12 +94,6 @@ function OrgStructure() {
         </div>
       </div>
 
-      {/*<div className='css_accordion_container'>*/}
-      {/*  <For each='dep' of={state.departments} index='dep_idx'>*/}
-      {/*    <Accordion key={dep_idx} title={dep.name} content={dep.seats} />*/}
-      {/*  </For>*/}
-      {/*</div>*/}
-
       <div className='d-flex mb-3'>
         <div className='col-lg-4'>
           <For each='dep' of={state.deps_first_part} index='dep_idx'>
@@ -120,9 +123,9 @@ function OrgStructure() {
         onClose={closeModal}
         showCloseIcon={true}
         closeOnOverlayClick={true}
-        styles={{modal: {marginTop: 100}}}
+        styles={{modal: {marginTop: 100, width: '500px'}}}
       >
-        123
+        <NewDepartment />
       </Modal>
     </>
   );
