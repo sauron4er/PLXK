@@ -82,6 +82,7 @@ def get_provider(request, pk):
         'contacts': provider_instance.contacts or '',
         'added': convert_to_localtime(provider_instance.added, 'day'),
         'author': provider_instance.author.pip,
+        'commentary': provider_instance.commentary or '',
         'product_id': provider_instance.product.id,
         'product': provider_instance.product.name,
     }
@@ -107,6 +108,9 @@ def post_provider(request):
     provider.bank_details = data['bank_details']
     provider.contacts = data['contacts']
     provider.product_id = data['product_id']
+
+    if data['commentary'] != '':
+        provider.commentary = data['commentary']
 
     provider.save()
 
@@ -336,6 +340,7 @@ def get_client(request, pk):
         'product': client_instance.product.name,
         'scope_id': client_instance.scope_id,
         'scope': client_instance.scope.name if client_instance.scope else '',
+        'commentary': client_instance.commentary or '',
     }
     scopes = get_scopes_list()
     employees = get_userprofiles_list()
@@ -363,6 +368,8 @@ def post_client(request):
     client.scope_id = data['scope_id']
     client.responsible_id = data['responsible_id']
     client.product_id = data['product_id']
+    if data['commentary'] != '':
+        client.commentary = data['commentary']
 
     client.save()
 

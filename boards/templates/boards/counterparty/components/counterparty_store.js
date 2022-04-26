@@ -21,6 +21,7 @@ const counterpartyStore = store({
     responsible_id: '',
     product: '',
     product_id: '',
+    commentary: '',
     is_active: true
   },
   scopes: [],

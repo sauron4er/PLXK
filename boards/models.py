@@ -60,6 +60,7 @@ class Counterparty(models.Model):
     scope = models.ForeignKey(Scope, related_name='counterparties', on_delete=models.RESTRICT, null=True)
     responsible = models.ForeignKey(UserProfile, related_name='responsible', null=True, on_delete=models.RESTRICT)
     author = models.ForeignKey(UserProfile, related_name='providers_added', on_delete=models.RESTRICT)
+    commentary = models.CharField(max_length=3000, null=True)
     is_active = models.BooleanField(default=True)
 
 
