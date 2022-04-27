@@ -178,7 +178,10 @@ def handle_phase_marks(doc_request, phase_info):
 
     # Якщо користувач не обирає самостійно візуючих, але такі є обрані автоматично:
     elif not is_approval_module_used(doc_request['document_type']) and phase_info['mark_id'] == 17:
-        recipients = get_phase_recipient_list(phase_info['id'])
+        if 'doc_type_version' in doc_request:
+            recipients = get_phase_recipient_list(phase_info['id'], doc_request['doc_type_version'])
+        else:
+            recipients = get_phase_recipient_list(phase_info['id'])
         for recipient in recipients:
             recipient = vacation_check(recipient)
             post_mark_demand(doc_request, recipient, phase_info['id'], phase_info['mark_id'])
