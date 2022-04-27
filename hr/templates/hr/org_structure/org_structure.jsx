@@ -86,9 +86,9 @@ function OrgStructure() {
   return (
     <>
       <div className='mt-1 d-flex'>
-        <div>
+        <If condition={window.is_hr_admin}>
           <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={() => openModal('new_dep')} timeout={0} />
-        </div>
+        </If>
         <div className='ml-auto'>
           <TextInput text={state.filter} disabled={false} placeholder='Фільтр' maxLength={100} onChange={onFilterChange} className='mt-2' />
         </div>

@@ -13,8 +13,8 @@ function NewDepartment(props) {
 
   function onNameChange() {}
 
-  function onCompanyChange() {
-    event.target.value === 'ТДВ' ? setState({company: 'TDV'}) : setState({company: 'TOV'});
+  function onCompanyChange(e) {
+    e.target.value === 'ТДВ' ? setState({company: 'TDV'}) : setState({company: 'TOV'});
   }
 
   function onCommentaryChange() {}
@@ -29,7 +29,7 @@ function NewDepartment(props) {
       <div className='modal-body'>
         <TextInput text={state.name} disabled={false} placeholder='Назва' maxLength={200} onChange={onNameChange} />
         <hr />
-        <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} />
+        <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} />
         <hr />
         <TextInput text={state.commentary} disabled={false} placeholder='Коментар' maxLength={4000} onChange={onCommentaryChange} />
       </div>
