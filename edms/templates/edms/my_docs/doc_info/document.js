@@ -30,7 +30,7 @@ import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_mo
 import {Loader} from 'templates/components/loaders';
 import Registration from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
 import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
-import NewApprovals from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_approvals";
+import NewApprovals from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_approvals';
 
 class Document extends React.Component {
   state = {
@@ -125,7 +125,7 @@ class Document extends React.Component {
         formData.append('change__updated_files', file);
       });
     }
-  
+
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
@@ -322,7 +322,7 @@ class Document extends React.Component {
       notify('Додайте отримувачів');
     }
   };
-  
+
   handleApprovals = (approvals) => {
     if (approvals.length > 0) {
       this.setState({approvals: approvals}, () => {
@@ -414,40 +414,47 @@ class Document extends React.Component {
                       <Info info={info} />
                     </div>
 
-                    {/*<If condition={archived === false}>*/}
-                    <div className='mt-3'>Відреагувати:</div>
-                    <div className='css_border bg-light p-2 mt-1 mr-1'>
-                      <Buttons
-                        info={info}
-                        archived={archived}
-                        isChief={directSubs.length > 0}
-                        deletable={deletable}
-                        onClick={this.onButtonClick}
-                      />
-                      <div>
-                        <label htmlFor='comment'>Текст коментарю:</label>
-                        <textarea name='comment' className='form-control' rows='3' id='comment' onChange={this.onChange} value={comment} />
+                    <If condition={!info.closed}>
+                      <div className='mt-3'>Відреагувати:</div>
+                      <div className='css_border bg-light p-2 mt-1 mr-1'>
+                        <Buttons
+                          info={info}
+                          archived={archived}
+                          isChief={directSubs.length > 0}
+                          deletable={deletable}
+                          onClick={this.onButtonClick}
+                        />
+                        <div>
+                          <label htmlFor='comment'>Текст коментарю:</label>
+                          <textarea
+                            name='comment'
+                            className='form-control'
+                            rows='3'
+                            id='comment'
+                            onChange={this.onChange}
+                            value={comment}
+                          />
+                        </div>
+                        <hr />
+                        <Files
+                          ref='new_files'
+                          className='btn btn-sm btn-outline-secondary'
+                          // className='files-dropzone-list'
+                          onChange={this.onNewFiles}
+                          onError={this.onFilesError}
+                          multiple
+                          maxFiles={10}
+                          maxFileSize={10000000}
+                          minFileSize={0}
+                          clickable
+                        >
+                          Обрати файл(и)
+                        </Files>
+                        <If condition={new_files.length > 0}>
+                          <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
+                        </If>
                       </div>
-                      <hr />
-                      <Files
-                        ref='new_files'
-                        className='btn btn-sm btn-outline-secondary'
-                        // className='files-dropzone-list'
-                        onChange={this.onNewFiles}
-                        onError={this.onFilesError}
-                        multiple
-                        maxFiles={10}
-                        maxFileSize={10000000}
-                        minFileSize={0}
-                        clickable
-                      >
-                        Обрати файл(и)
-                      </Files>
-                      <If condition={new_files.length > 0}>
-                        <NewFilesList files={new_files} fileRemove={this.filesRemoveOne} />
-                      </If>
-                    </div>
-                    {/*</If>*/}
+                    </If>
 
                     {/*У кого документ на черзі*/}
                     <If condition={info.flow}>

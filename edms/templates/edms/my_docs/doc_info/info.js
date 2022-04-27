@@ -15,10 +15,9 @@ import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/
 import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
 
 class Info extends React.Component {
-  
   isFoyerRangesEditable = () => {
     const {expected_mark, viewer_is_author, stage} = this.props.info;
-    
+
     return !!(stage !== 'confirm' && (expected_mark === 24 || viewer_is_author));
   };
 
@@ -32,6 +31,9 @@ class Info extends React.Component {
           <div>
             <span className='font-weight-bold'>{info.type}</span>
           </div>
+          <If condition={info.closed}>
+            <div className='font-weight-bold text-danger'>Документ позначений автором як неактуальний</div>
+          </If>
           <div>
             <span>
               №: {info.id}. Дата: {info.date}
@@ -141,7 +143,8 @@ class Info extends React.Component {
                       doc_id={info.id}
                       queue={module.queue}
                       doc_type_version={info.doc_type_version.id}
-                      editable={this.isFoyerRangesEditable()} />
+                      editable={this.isFoyerRangesEditable()}
+                    />
                   </When>
                 </Choose>
               </div>
