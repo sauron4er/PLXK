@@ -4,7 +4,7 @@ import smtplib
 def send_email(mail, body):
     if mail != '':
         sender = "it@lxk.com.ua"
-        host = "imap.polyprom.com"
+        host = "smtp.lxk.com.ua"
         try:
             server = smtplib.SMTP(host, timeout=2000)
             server.login('lxk_it', 'J2NYEHb50nymRF1L')
