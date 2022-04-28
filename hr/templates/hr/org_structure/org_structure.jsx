@@ -5,8 +5,10 @@ import Accordion from 'templates/components/accordion';
 import TextInput from 'templates/components/form_modules/text_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Modal from 'react-responsive-modal';
-import Department from "hr/templates/hr/org_structure/department";
-import NewDepartment from "hr/templates/hr/org_structure/new_department";
+import Department from 'hr/templates/hr/org_structure/department';
+import NewDepartment from 'hr/templates/hr/org_structure/new_department';
+import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
+import CompanyChoose from 'templates/components/form_modules/choose_company';
 
 function OrgStructure() {
   const [state, setState] = useSetState({
@@ -16,9 +18,10 @@ function OrgStructure() {
     deps_third_part: [],
     filter: '',
     modal_type: 'new_dep',
-    modal_opened: false
+    modal_opened: false,
+    company: 'all'
   });
-  
+
   //TODO Додавання відділу
   //TODO Деактивація відділу
   //TODO Додавання посади
@@ -36,15 +39,15 @@ function OrgStructure() {
     departments = departments.filter((item) => {
       return item.name.toLowerCase().indexOf(filter_lc) !== -1;
     });
-  
+
     setState({
       filter: e.target.value,
       departments: [...departments]
     });
   }
-  
+
   useEffect(() => {
-    getListPortions()
+    getListPortions();
   }, [state.departments]);
 
   function openModal(type) {
@@ -60,37 +63,52 @@ function OrgStructure() {
       modal_opened: false
     });
   }
-  
+
   function getListPortions() {
     let m, n, first, second, third;
-    
+
     m = Math.ceil(state.departments.length / 3);
-    n = Math.ceil(2 * state.departments.length / 3);
-    
+    n = Math.ceil((2 * state.departments.length) / 3);
+
     first = state.departments.slice(0, m);
     second = state.departments.slice(m, n);
     third = state.departments.slice(n, state.departments.length);
-    
+
     setState({
       deps_first_part: first,
       deps_second_part: second,
       deps_third_part: third
-    })
+    });
   }
-  
+
   useEffect(() => {
-    getListPortions()
+    getListPortions();
   }, []);
-  
+
+  function onCompanyChange(company) {
+    setState({company});
+  }
 
   return (
     <>
       <div className='mt-1 d-flex'>
-        <If condition={window.is_hr_admin}>
+        <If condition={window.edit_enabled}>
           <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={() => openModal('new_dep')} timeout={0} />
         </If>
-        <div className='ml-auto'>
-          <TextInput text={state.filter} disabled={false} placeholder='Фільтр' maxLength={100} onChange={onFilterChange} className='mt-2' />
+        <div className='ml-auto d-flex'>
+          <div>
+            <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} both={true} />
+          </div>
+          <div>
+            <TextInput
+              text={state.filter}
+              disabled={false}
+              placeholder='Фільтр'
+              maxLength={100}
+              onChange={onFilterChange}
+              className='mt-2'
+            />
+          </div>
         </div>
       </div>
 

@@ -89,7 +89,7 @@ class Instructions extends React.Component {
 
   render() {
     const {modal_open, modal_type, clicked_doc_id, regulations, regulations_loading, instructions, instructions_loading} = this.state;
-
+  
     return (
       <>
         <div className='d-flex flex-lg-row pt-1'>
@@ -98,7 +98,7 @@ class Instructions extends React.Component {
               <When condition={!regulations_loading}>
                 <div className='d-flex'>
                   <h5 className='align-self-center'>Положення про відділ</h5>
-                  <If condition={window.is_hr_admin}>
+                  <If condition={window.edit_enabled}>
                     <button className='btn btn-outline-primary ml-auto' onClick={(e) => this.openModal('new_regulation')}>
                       Додати положення про відділ
                     </button>
@@ -124,7 +124,7 @@ class Instructions extends React.Component {
               <When condition={!instructions_loading}>
                 <div className='d-flex'>
                   <h5 className='align-self-center'>Посадові, робочі інструкції</h5>
-                  <If condition={window.is_hr_admin}>
+                  <If condition={window.edit_enabled}>
                     <button className='btn btn-outline-primary ml-auto' onClick={(e) => this.openModal('new_instruction')}>
                       Додати посадову або робочу інструкцію
                     </button>

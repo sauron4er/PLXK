@@ -12,7 +12,7 @@ import {notify} from 'templates/components/my_extras';
 class Regulation extends React.Component {
   state = {
     loading: true,
-    disabled: !window.is_hr_admin,
+    disabled: !window.edit_enabled,
     name: '',
     number: '',
     version: '',

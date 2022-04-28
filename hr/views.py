@@ -7,7 +7,7 @@ from .api.regulations_api import get_regulations_list, post_regulation, post_reg
     change_regulation, get_regulation_api, deact_regulation_api, get_dep_list_for_regulations
 from .api.instructions_api import get_instructions_list, post_instruction, post_instruction_file, \
     change_instruction, get_instruction_api, deact_instruction_api, get_dep_seat_list_for_instruction
-from .api.org_structure_api import get_org_structure
+from .api.org_structure_api import get_org_structure, add_department
 
 
 @login_required(login_url='login')
@@ -25,8 +25,11 @@ def get_dep_seats_for_instruction(request, dep_id):
 @login_required(login_url='login')
 @try_except
 def instructions(request):
-    is_hr_admin = 'true' if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr else 'false'
-    return render(request, 'hr/instructions/index.html', {'is_hr_admin': is_hr_admin})
+    edit_enabled = 'true' if request.user.userprofile.is_it_admin \
+                             or request.user.userprofile.is_hr \
+                             or request.user.userprofile.dep_regulations_add \
+                             else 'false'
+    return render(request, 'hr/instructions/index.html', {'edit_enabled': edit_enabled})
 
 
 @login_required(login_url='login')
@@ -102,7 +105,17 @@ def deact_instruction(request, pk):
 @login_required(login_url='login')
 @try_except
 def org_structure(request):
-    is_hr_admin = 'true' if request.user.userprofile.is_it_admin or request.user.userprofile.is_hr else 'false'
+    edit_enabled = 'true' if request.user.userprofile.is_it_admin \
+                             or request.user.userprofile.is_hr \
+                             or request.user.userprofile.dep_regulations_add \
+                             else 'false'
     departments = get_org_structure()
-    return render(request, 'hr/org_structure/index.html', {'is_hr_admin': is_hr_admin,
+    return render(request, 'hr/org_structure/index.html', {'edit_enabled': edit_enabled,
                                                            'departments': json.dumps(departments)})
+
+
+@login_required(login_url='login')
+@try_except
+def post_department(request):
+    new_dep_id = add_department(request)
+    return HttpResponse(200)

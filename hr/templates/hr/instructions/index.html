@@ -8,7 +8,7 @@
 {#    {{ user.userprofile.department.name|json_script:"department" }}#}
     <script>
       {#const department = JSON.parse(document.getElementById('department').textContent);#}
-      window.is_hr_admin = {{ is_hr_admin|safe }};
+      window.edit_enabled = {{ edit_enabled|safe }};
     </script>
     <div class="container-fluid px-3" id="instructions">
       <div id="bundle">{% render_bundle 'hr' %}</div>

@@ -7,21 +7,22 @@ from accounts.models import Department
 
 @try_except
 def get_org_structure(tdv=True):
-    direction = Department.objects.values('id', 'name')\
-        .filter(id=45)\
-        .first()
-
-    direction.update({
-        # 'chief': unpack_dep_chief(direction['id']),
-        'seats': get_seats(direction['id'])
-    })
+    # direction = Department.objects.values('id', 'name')\
+    #     .filter(id=45)\
+    #     .first()
+    #
+    # direction.update({
+    #     # 'chief': unpack_dep_chief(direction['id']),
+    #     'seats': get_seats(direction['id'])
+    # })
 
     departments = [{
         'id': dep.id,
-        'name': dep.name
+        'name': dep.name,
+        'company': 'ТДВ' if dep.is_tdv else 'ТОВ'
     } for dep in Department.objects
-        .exclude(id=45)
-        .filter(is_tdv=tdv)
+        # .exclude(id=45)
+        # .filter(is_tdv=tdv)
         .filter(is_active=True)
         .order_by('name')]
 
@@ -31,7 +32,7 @@ def get_org_structure(tdv=True):
             'seats': get_seats(dep['id'])
         })
 
-    departments.insert(0, direction)
+    # departments.insert(0, direction)
 
     return departments
 
@@ -76,3 +77,11 @@ def get_seats(dep_id):
     seats = [chief] + seats
 
     return seats
+
+
+@try_except
+def add_department(request):
+    new_dep = Department(name=request.POST['name'])
+    new_dep.is_tdv = request.POST['company'] == 'ТДВ'
+    new_dep.save()
+    return new_dep.id

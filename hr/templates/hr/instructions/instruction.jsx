@@ -13,7 +13,7 @@ import SelectorWithFilter from 'templates/components/form_modules/selector_with_
 class Instruction extends React.Component {
   state = {
     loading: true,
-    disabled: !window.is_hr_admin,
+    disabled: !window.edit_enabled,
     name: '',
     number: '',
     version: '',
