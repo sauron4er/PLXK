@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import useSetState from 'templates/hooks/useSetState';
 import TextInput from 'templates/components/form_modules/text_input';
-import CompanyChoose from 'templates/components/form_modules/choose_company';
+import CompanyChoose from "templates/components/form_modules/company_choose";
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
@@ -39,7 +39,7 @@ function NewDepartment(props) {
         <h3>Новий відділ</h3>
       </div>
       <div className='modal-body'>
-        <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} />
+        <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} id='new_dep' />
         <hr />
         <TextInput fieldName='Назва' text={state.name} disabled={false} maxLength={200} onChange={onNameChange} />
       </div>

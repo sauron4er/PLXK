@@ -7,8 +7,7 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 import Modal from 'react-responsive-modal';
 import Department from 'hr/templates/hr/org_structure/department';
 import NewDepartment from 'hr/templates/hr/org_structure/new_department';
-import ChooseCompany from 'edms/templates/edms/my_docs/new_doc_modules/choose_company';
-import CompanyChoose from 'templates/components/form_modules/choose_company';
+import CompanyChoose from "templates/components/form_modules/company_choose";
 
 function OrgStructure() {
   const [state, setState] = useSetState({
@@ -19,7 +18,7 @@ function OrgStructure() {
     filter: '',
     modal_type: 'new_dep',
     modal_opened: false,
-    company: 'all'
+    company: 'ТДВ'
   });
 
   //TODO Додавання відділу
@@ -31,24 +30,39 @@ function OrgStructure() {
   //TODO Перегляд працівників на посаді
 
   // console.log(window.departments);
-
-  function onFilterChange(e) {
-    const filter_lc = e.target.value.toLowerCase();
-
-    let departments = [...window.departments];
-    departments = departments.filter((item) => {
-      return item.name.toLowerCase().indexOf(filter_lc) !== -1;
-    });
-
-    setState({
-      filter: e.target.value,
-      departments: [...departments]
-    });
-  }
-
+  
   useEffect(() => {
     getListPortions();
   }, [state.departments]);
+  
+  useEffect(() => {
+    getListPortions();
+  }, []);
+  
+  useEffect(() => {
+    filterList(state.filter);
+  }, [state.company]);
+  
+  useEffect(() => {
+    filterList(state.filter);
+  }, [state.filter]);
+  
+
+  function filterList(filter_string) {
+    const departments = [...window.departments];
+    
+    const departments_filtered_by_company = departments.filter(item => {
+      return item.company === state.company
+    })
+    
+    const departments_filtered = departments_filtered_by_company.filter((item) => {
+      return item.name.toLowerCase().indexOf(filter_string) !== -1;
+    });
+
+    setState({
+      departments: [...departments_filtered]
+    });
+  }
 
   function openModal(type) {
     setState({
@@ -81,12 +95,12 @@ function OrgStructure() {
     });
   }
 
-  useEffect(() => {
-    getListPortions();
-  }, []);
-
   function onCompanyChange(company) {
     setState({company});
+  }
+  
+  function onFilterChange(e) {
+    setState({filter: e.target.value.toLowerCase()});
   }
 
   return (
@@ -95,9 +109,9 @@ function OrgStructure() {
         <If condition={window.edit_enabled}>
           <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={() => openModal('new_dep')} timeout={0} />
         </If>
-        <div className='ml-auto d-flex'>
+        <div className='ml-auto d-flex mt-2'>
           <div>
-            <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} both={true} />
+            <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} both={true} id='org_str' />
           </div>
           <div>
             <TextInput
@@ -105,8 +119,7 @@ function OrgStructure() {
               disabled={false}
               placeholder='Фільтр'
               maxLength={100}
-              onChange={onFilterChange}
-              className='mt-2'
+              onChange={e => onFilterChange(e)}
             />
           </div>
         </div>
