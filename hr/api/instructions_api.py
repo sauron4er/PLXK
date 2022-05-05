@@ -47,7 +47,7 @@ def get_instruction_api(pk):
     instr = {'name': instruction.name}
     instr.update({'number': instruction.number})
     instr.update({'version': instruction.version})
-    instr.update({'staff_units': instruction.staff_units})
+    instr.update({'staff_units': instruction.staff_units or ''})
     instr.update({'seat': instruction.seat_id})
     instr.update({'seat_name': instruction.seat.seat})
     instr.update({'chief_seat_name': instruction.seat.chief.seat})
@@ -96,8 +96,9 @@ def post_instruction(request):
                                    number=request.POST['number'],
                                    version=request.POST['version'],
                                    seat_id=request.POST['seat'],
-                                   staff_units=request.POST['staff_units'],
                                    date_start=request.POST['date_start'])
+    if request.POST['staff_units'] != '':
+        instruction.staff_units = request.POST['staff_units']
     if request.POST['date_revision'] != '':
         instruction.date_revision = request.POST['date_revision']
     instruction.save()
@@ -111,9 +112,11 @@ def change_instruction(request, pk):
     instruction.name = request.POST['name']
     instruction.number = request.POST['number']
     instruction.version = request.POST['version']
-    instruction.staff_units = request.POST['staff_units']
     instruction.seat_id = request.POST['seat']
     instruction.date_start = request.POST['date_start']
+
+    if request.POST['staff_units'] != '':
+        instruction.staff_units = request.POST['staff_units']
     if request.POST['date_revision'] != '':
         instruction.date_revision = request.POST['date_revision']
     else:

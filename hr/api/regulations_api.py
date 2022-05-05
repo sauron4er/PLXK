@@ -37,9 +37,10 @@ def post_regulation(request):
     regulation = Department_Regulation(name=request.POST['name'],
                                        number=request.POST['number'],
                                        version=request.POST['version'],
-                                       staff_units=request.POST['staff_units'],
                                        department_id=request.POST['department'],
                                        date_start=request.POST['date_start'])
+    if request.POST['staff_units'] != '':
+        regulation.staff_units = request.POST['staff_units']
     if request.POST['date_revision'] != '':
         regulation.date_revision = request.POST['date_revision']
     regulation.save()
@@ -53,7 +54,7 @@ def get_regulation_api(pk):
     reg = {'name': regulation.name}
     reg.update({'number': regulation.number})
     reg.update({'version': regulation.version})
-    reg.update({'staff_units': regulation.staff_units})
+    reg.update({'staff_units': regulation.staff_units or ''})
     reg.update({'department': regulation.department_id})
     reg.update({'department_name': regulation.department.name})
 
@@ -77,9 +78,11 @@ def change_regulation(request, pk):
     regulation.name = request.POST['name']
     regulation.number = request.POST['number']
     regulation.version = request.POST['version']
-    regulation.staff_units = request.POST['staff_units']
     regulation.department_id = request.POST['department']
     regulation.date_start = request.POST['date_start']
+
+    if request.POST['staff_units'] != '':
+        regulation.staff_units = request.POST['staff_units']
     if request.POST['date_revision'] != '':
         regulation.date_revision = request.POST['date_revision']
     else:
