@@ -19,3 +19,10 @@
   font-weight: bold;
   animation: icon 1.5s infinite forwards;
 }
+
+.css_department_regulation {
+  border-radius: 15px;
+  border: 1px solid #3eacba;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}

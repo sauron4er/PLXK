@@ -16,12 +16,10 @@ function OrgStructure() {
     deps_second_part: [],
     deps_third_part: [],
     filter: '',
-    modal_type: 'new_dep',
     modal_opened: false,
     company: 'ТДВ'
   });
 
-  //TODO Додавання відділу
   //TODO Деактивація відділу
   //TODO Додавання посади
   //TODO Деакт. посади (якщо нема працівників)
@@ -29,7 +27,6 @@ function OrgStructure() {
   //TODO Перегляд інструкції посади
   //TODO Перегляд працівників на посаді
 
-  // console.log(window.departments);
   
   useEffect(() => {
     getListPortions();
@@ -64,18 +61,12 @@ function OrgStructure() {
     });
   }
 
-  function openModal(type) {
-    setState({
-      modal_type: type,
-      modal_opened: true
-    });
+  function openModal() {
+    setState({modal_opened: true});
   }
 
-  function closeModal(type) {
-    setState({
-      modal_type: '',
-      modal_opened: false
-    });
+  function closeModal() {
+    setState({modal_opened: false});
   }
 
   function getListPortions() {
@@ -106,9 +97,9 @@ function OrgStructure() {
   return (
     <>
       <div className='mt-1 d-flex'>
-        <If condition={window.edit_enabled}>
-          <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={() => openModal('new_dep')} timeout={0} />
-        </If>
+        {/*<If condition={window.edit_enabled}>*/}
+        {/*  <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={openModal} timeout={0} />*/}
+        {/*</If>*/}
         <div className='ml-auto d-flex mt-2'>
           <div>
             <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} both={true} id='org_str' />

@@ -64,7 +64,7 @@ def get_regulation_api(pk):
     reg.update({'date_start': date_to_json(regulation.date_start)})
     reg.update({'date_revision': date_to_json(regulation.date_revision) or ''})
 
-    old_files = files_query_to_list(Regulation_file.objects.filter(regulation=regulation).filter(is_active=True))
+    old_files = get_regulation_files(regulation.id)
     reg.update({'old_files': old_files})
 
     return reg
@@ -118,3 +118,18 @@ def deactivate_regulation_file(post_request, file):
     file = get_object_or_404(Regulation_file, pk=file['id'])
     file.is_active = False
     file.save()
+
+
+@try_except
+def get_dep_regulation_files(dep_id):
+    regulation = Department_Regulation.objects.filter(department_id=dep_id).filter(is_active=True).first()
+    if regulation:
+        regulation_files = get_regulation_files(regulation.id)
+        return regulation_files
+    return []
+
+
+@try_except
+def get_regulation_files(regulation_id):
+    files = files_query_to_list(Regulation_file.objects.filter(regulation_id=regulation_id).filter(is_active=True))
+    return files

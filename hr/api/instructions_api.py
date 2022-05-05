@@ -61,10 +61,26 @@ def get_instruction_api(pk):
     instr.update({'date_start': date_to_json(instruction.date_start)})
     instr.update({'date_revision': date_to_json(instruction.date_revision) or ''})
 
-    old_files = files_query_to_list(Instruction_file.objects.filter(instruction=instruction).filter(is_active=True))
+    # old_files = files_query_to_list(Instruction_file.objects.filter(instruction=instruction).filter(is_active=True))
+    old_files = get_instruction_files(instruction.id)
     instr.update({'old_files': old_files})
 
     return instr
+
+
+@try_except
+def get_seat_instruction_files(seat_id):
+    instruction = Seat_Instruction.objects.filter(seat_id=seat_id).filter(is_active=True).first()
+    if instruction:
+        instruction_files = get_instruction_files(instruction.id)
+        return instruction_files
+    return []
+
+
+@try_except
+def get_instruction_files(instruction_id):
+    files = files_query_to_list(Instruction_file.objects.filter(instruction_id=instruction_id).filter(is_active=True))
+    return files
 
 
 @try_except

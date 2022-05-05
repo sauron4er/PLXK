@@ -1,18 +1,18 @@
 django==3.1.13  # django 3.2 не підтримує mysql < 5.7, у нас зараз 5.5.56
-pillow==8.0.1
-django-bootstrap4==2.3.1
-django-debug-toolbar==3.2
+pillow==9.1.0  # була 8.0.1, але версії до 8,3,1 включно не підтримують пайтон 10
+django-bootstrap4==21.1  # версії 21.2 і вище не підтримують django 3.1
+django-debug-toolbar==3.2.4  # версія 3.3 не підтримує джанго < 3.2
 # django-firebird==1.11 - не праює з django > 1.11
-django-google-charts==0.1.1
-django-qsstats-magic==1.1.0
+# django-google-charts==0.1.1
+# django-qsstats-magic==1.1.0
 django-webpack-loader==0.7.0
-django-widget-tweaks==1.4.8
-fdb==2.0.1
-mysqlclient==2.0.1  # Станом на 03.12.2020 не підтримує python > 3.8
-numpy==1.19.4
+django-widget-tweaks==1.4.12  # 1.4.8
+# fdb==2.0.1
+mysqlclient==2.1.0  # Станом на 03.12.2020 версії до 2.1.0 не підтримують python > 3.8
+numpy==1.22.3  # стоїть 1.22.3, була версія 1.19.4, але не підтримує пайтон 3.10
 olefile==0.46
-pyparsing==2.4.7
-python-dateutil==2.8.1
-schedule==0.6.0
+pyparsing==3.0.8  # 2.4.7
+python-dateutil==2.8.2  # 2.8.1
+schedule==1.1.0  # 0.6.0
 pyexcelerate==0.10.0
 django-sendfile2 == 0.6.1

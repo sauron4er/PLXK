@@ -6,7 +6,7 @@ class Files extends React.Component {
     const {fieldName, files, is_editable} = this.props;
 
     return (
-      <Fragment>
+      <>
         <div>{fieldName}:</div>
         <For each='file' index='id' of={files}>
           <If condition={file.first_path}>
@@ -20,7 +20,7 @@ class Files extends React.Component {
             </div>
           </If>
         </For>
-      </Fragment>
+      </>
     );
   }
 

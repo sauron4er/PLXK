@@ -42,8 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bootstrap4',
-    'googlecharts',
-    'qsstats',
+    # 'googlecharts',
+    # 'qsstats',
     'widget_tweaks',
     'webpack_loader',
     'django_sendfile',

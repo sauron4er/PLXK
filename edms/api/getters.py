@@ -478,6 +478,20 @@ def get_actual_emp_seat_from_seat(seat_id):
         return emp_seat_id
 
 
+# Знаходить список працівників, які займають визначену посаду
+@try_except
+def get_employees_by_seat(seat_id):
+    emp_seats = Employee_Seat.objects\
+        .filter(seat_id=seat_id)\
+        .filter(is_active=True)
+    if emp_seats:
+        emp_seats = [{
+            'id': emp_seat.id,
+            'name': emp_seat.employee.pip + (' (в.о)' if not emp_seat.is_main else '')
+        } for emp_seat in emp_seats]
+        return list(emp_seats)
+    return []
+
 @try_except
 def get_phase_recipient_list(phase_id, doc_type_version=0):
     recipients = Doc_Type_Phase_Queue.objects\

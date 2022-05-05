@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from edms.models import Seat, Employee_Seat
 from accounts.models import Department
+from hr.api.regulations_api import get_dep_regulation_files
 
 
 @try_except
@@ -19,7 +20,8 @@ def get_org_structure(tdv=True):
     departments = [{
         'id': dep.id,
         'name': dep.name,
-        'company': 'ТДВ' if dep.is_tdv else 'ТОВ'
+        'company': 'ТДВ' if dep.is_tdv else 'ТОВ',
+        'regulation_files': get_dep_regulation_files(dep.id)
     } for dep in Department.objects
         # .exclude(id=45)
         # .filter(is_tdv=tdv)
