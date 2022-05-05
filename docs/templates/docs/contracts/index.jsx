@@ -8,12 +8,23 @@ import counterpartyStore from '../../../../boards/templates/boards/counterparty/
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {counter} from '@fortawesome/fontawesome-svg-core';
+import ordersStore from "docs/templates/docs/orders/orders_store";
 
 class Contracts extends React.Component {
   componentDidMount() {
     this.getInfoForContractsPage();
     contractsStore.main_div_height = this.mainDivRef.clientHeight - 30; // розмір головного div, з якого вираховується розмір таблиць
     contractsStore.counterparty_filter = this.props.counterparty_filter;
+    
+    // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
+    const arr = window.location.href.split('/');
+    const last_href_piece = parseInt(arr[arr.length - 1]);
+    const is_link = !isNaN(last_href_piece);
+
+    if (is_link) {
+      contractsStore.contract = {id: last_href_piece};
+      contractsStore.contract_view = true;
+    }
   }
 
   getInfoForContractsPage = () => {

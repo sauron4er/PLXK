@@ -11,8 +11,8 @@ import DepRegulation from 'hr/templates/hr/org_structure/dep_regulation';
 function Department(props) {
   const [state, setState] = useSetState({
     modal_opened: false,
-    opened_seat_id: 0,
-    opened_seat: '',
+    opened_seat: 0,
+    opened_seat_name: '',
     instruction_files: [],
     employees: [],
     loading: true
@@ -20,9 +20,12 @@ function Department(props) {
 
   function openModal(seat) {
     setState({
-      opened_seat_id: seat.id,
-      opened_seat: seat.name,
-      modal_opened: true
+      opened_seat: seat.id,
+      opened_seat_name: seat.name,
+      modal_opened: true,
+      instruction_files: [],
+      employees: [],
+      loading: true
     });
     getSeat(seat);
   }
@@ -39,7 +42,7 @@ function Department(props) {
       .catch((error) => notify(error));
   }
 
-  function closeModal(type) {
+  function closeModal() {
     setState({modal_opened: false});
   }
 
@@ -54,7 +57,12 @@ function Department(props) {
         closeOnOverlayClick={true}
         styles={{modal: {marginTop: 100, width: '700px'}}}
       >
-        <Seat seat_name={state.opened_seat} loading={state.loading} files={state.instruction_files} employees={state.employees} />
+        <Seat
+          seat_name={state.opened_seat_name}
+          loading={state.loading}
+          files={state.instruction_files}
+          employees={state.employees}
+        />
       </Modal>
     </>
   );

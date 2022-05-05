@@ -409,6 +409,7 @@ class Contract extends React.Component {
                         <h5>{this.props.id !== 0 ? 'Договір № ' + contract.number : 'Новий Договір'}</h5>
                       </Otherwise>
                     </Choose>
+                    <div>{`На сайт додав/додала: ${this.state.contract.author_name}`}</div>
                     <small>Поля, позначені зірочкою, є обов’язковими</small>
                     <If condition={this.props.id === 0}>
                       <div>

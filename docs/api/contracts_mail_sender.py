@@ -8,7 +8,7 @@ testing = settings.STAS_DEBUG
 
 def create_mail_body(post_request):
     message = MIMEMultipart("alternative")
-    message["Subject"] = "На сайт plhk.com.ua додано новий Договір"
+    message["Subject"] = "На сайт ПЛХК додано новий Договір"
     message["From"] = 'it@lxk.com.ua'
     message["To"] = "law@lxk.com.ua"
 
