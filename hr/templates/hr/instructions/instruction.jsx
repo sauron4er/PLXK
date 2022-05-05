@@ -209,7 +209,7 @@ class Instruction extends React.Component {
               <TextInput
                 fieldName='Номер документу'
                 text={number}
-                maxLength={3}
+                maxLength={12}
                 disabled={disabled}
                 onChange={(e) => this.onChange(e, 'number')}
               />

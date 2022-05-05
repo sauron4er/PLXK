@@ -6,7 +6,7 @@ from accounts.models import Department
 
 class Department_Regulation(models.Model):
     name = models.CharField(max_length=100)
-    number = models.CharField(max_length=3)
+    number = models.CharField(max_length=12)
     version = models.CharField(max_length=3)
     staff_units = models.CharField(max_length=3)
     department = models.ForeignKey(Department, related_name='regulations', on_delete=models.RESTRICT)
@@ -17,7 +17,7 @@ class Department_Regulation(models.Model):
 
 class Seat_Instruction(models.Model):
     name = models.CharField(max_length=100)
-    number = models.CharField(max_length=3)
+    number = models.CharField(max_length=12)
     version = models.CharField(max_length=3)
     seat = models.ForeignKey(Seat, related_name='instructions', on_delete=models.RESTRICT)
     staff_units = models.CharField(max_length=3)
