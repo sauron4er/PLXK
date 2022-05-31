@@ -160,8 +160,8 @@ class Document extends React.Component {
             comment: ''
           });
           docInfoStore.clearChangedFiles();
-          const author_id = info.author_seat_id;
-          removeRow(doc_id, mark_id, author_id);
+          const responsible_id = info.responsible_seat_id;
+          removeRow(doc_id, mark_id, responsible_id);
         }
       })
       .catch((error) => notify(error));

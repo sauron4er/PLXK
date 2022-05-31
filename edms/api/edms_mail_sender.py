@@ -1,7 +1,7 @@
 from plxk.api.mail_sender import send_email
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from .getters import get_main_field
+from edms.api.getters import get_main_field
 from django.shortcuts import get_object_or_404
 from edms.models import Document
 
@@ -79,6 +79,23 @@ def send_email_supervisor(stage, doc_request, mail):
     else:
         text = 'Новий статус заявки по 1С8 № {} "{}" (автор: {}) – "{}". {}' \
             .format(doc_request['document'], main_field, doc_request['doc_author_name'], stage, link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email(mail, message.as_string())
+
+
+# Лист працівнику, який отримав посаду у спадок або в/о під час відпустки:
+def send_email_successor(doc_request, mail):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Ви отримали відповідь на коментар"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
+        .format(doc_request['document'])
+    text = 'Ви отримали відповідь на коментар до документу № {} ({}). {}' \
+        .format(doc_request['document'], doc_request['doc_type_name'], link)
 
     message.attach(MIMEText(text, "plain"))
 

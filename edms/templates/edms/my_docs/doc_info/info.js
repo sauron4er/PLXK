@@ -40,8 +40,8 @@ class Info extends React.Component {
             </span>
           </div>
           <div>
-            Автор:
-            <span className='font-italic'> {info.author}</span>
+            Відповідальний:
+            <span className='font-italic'> {info.responsible}</span>
           </div>
 
           {/* Модульна система */}

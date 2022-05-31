@@ -262,8 +262,8 @@ class Order extends React.Component {
           <div className='row'>Наказу під таким номером не існує.</div>
         </When>
         <When condition={!loading}>
-          <div className='d-flex'>
-            <button className='btn btn-sm btn-info my-2' onClick={() => this.closeOrderView()}>
+          <div>
+            <button className='btn btn-info css_sticky_back_button' onClick={() => this.closeOrderView()}>
               Назад
             </button>
           </div>

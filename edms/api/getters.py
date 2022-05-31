@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
-from .vacations import vacation_check
+from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges

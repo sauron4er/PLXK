@@ -4,20 +4,29 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 
 from plxk.api.global_getters import get_deps
+from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
 from docs.api.contracts_api import add_contract_from_edms
+from docs.models import Article_responsible, Contract
 
-from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, DocumentForm, NewPathForm, NewAnswerForm
+from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Meta_Type
+from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all
 from .api.modules_post import *
 from .api.approvals_handler import *
-from .api.getters import *
-from .api.setters import *
+from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_access_granted, get_main_field, \
+    get_doc_path, get_path_steps, get_doc_flow, get_doc_modules, get_my_seats, get_allowed_new_doc_types, \
+    get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, get_archive_by_doc_meta_type, \
+    get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, get_phase_info, \
+    get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, get_delegated_docs
+from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
 from .api.tables.free_time_table import get_free_times_table
 from .api.tables.it_tickets_table import get_it_tickets_table
+from .api.move_to_new_employee import move_docs, move_orders, move_approvals
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -357,6 +366,7 @@ def edms_hr_seat(request, pk):       # changes in seat row
 
 
 @login_required(login_url='login')
+@transaction.atomic
 def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
     post = get_object_or_404(Employee_Seat, pk=pk)
     if request.method == 'POST':
@@ -365,10 +375,16 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
 
         # Обробка звільнення з посади:
         if form.data['is_active'] == 'false':
-            active_docs = Mark_Demand.objects.filter(recipient_id=pk).filter(is_active=True).first()
             # Якщо у mark_demand є хоча б один документ і не визначено "спадкоємця", повертаємо помилку
+            active_docs = Mark_Demand.objects.filter(recipient_id=pk).filter(is_active=True).first()
             if active_docs is not None and form.data['successor_id'] == '':
                 return HttpResponseForbidden('active flow')
+
+            # Якщо у mark_demand є хоча б один документ і не визначено "спадкоємця", повертаємо помилку
+            active_orders = Article_responsible.objects.filter(employee_seat_id=pk).filter(done=False).filter(is_active=True).first()
+            if active_orders is not None and form.data['successor_id'] == '':
+                return HttpResponseForbidden('active orders')
+
             # В іншому разі зберігаємо форму і додаємо "спадкоємцю" (якщо такий є) посаду:
             else:
                 if form.data['successor_id'] != '':
@@ -386,6 +402,16 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
                         form.data['successor'] = new_successor.pk
                         if form.is_valid():
                             form.save()
+                            move_docs(pk, new_successor.pk)
+                            move_approvals(pk, new_successor.pk)
+                            move_orders(pk, new_successor.pk)
+
+                            #TODO Перевірити що буде, якщо відмовити в візуванні по документу, який перейшов наступнику
+
+                            #TODO Відправляти листа про отримання наказів і документів від попередника
+                            # -- Перегляньте накази на стоірнці Накази в розділі "Мій календар",
+                            # -- Перегляньте документи на сторінці "Документи"
+
                             return HttpResponse('')
                 else:
                     if form.is_valid():
@@ -489,8 +515,8 @@ def edms_get_doc(request, pk):
         doc_info = {
             'access_granted': True,
             'id': pk,
-            'author': doc.employee_seat.employee.pip,
-            'author_seat_id': doc.employee_seat_id,
+            'responsible': doc.employee_seat.employee.pip,
+            'responsible_seat_id': doc.employee_seat_id,
             'viewer_is_author': doc.employee_seat.employee.id == request.user.userprofile.id,
             'viewer_is_admin': request.user.userprofile.is_it_admin,
             'meta_type_id': doc.document_type.meta_doc_type_id,
@@ -558,22 +584,37 @@ def edms_my_docs(request):
 
         new_docs = get_allowed_new_doc_types(request)
 
-        my_docs = [{  # Список документів, створених даним юзером
-            'id': path.document.id,
-            'type': path.document.document_type.description,
-            'type_id': path.document.document_type.id,
-            'date': convert_to_localtime(path.timestamp, 'day'),
-            'emp_seat_id': path.employee_seat.id,
-            'author': request.user.userprofile.pip,
-            'author_seat_id': path.employee_seat.id,
-            'main_field': get_main_field(path.document),
-            'status': 'draft' if path.document.is_draft else ('template' if path.document.is_template else 'doc'),
-        } for path in Document_Path.objects
-            .filter(mark__in=[1, 16, 19])
+        # my_docs = [{  # Список документів, за якими користувач є відповідальний (створив його або отримав у спадок)
+        #     'id': path.document.id,
+        #     'type': path.document.document_type.description,
+        #     'type_id': path.document.document_type.id,
+        #     'date': convert_to_localtime(path.timestamp, 'day'),
+        #     'emp_seat_id': path.employee_seat.id,
+        #     'author': request.user.userprofile.pip,
+        #     'author_seat_id': path.employee_seat.id,
+        #     'main_field': get_main_field(path.document),
+        #     'status': 'draft' if path.document.is_draft else ('template' if path.document.is_template else 'doc'),
+        # } for path in Document_Path.objects
+        #     .filter(mark__in=[1, 16, 19])
+        #     .filter(employee_seat__employee_id=request.user.userprofile.id)
+        #     .filter(document__testing=testing)
+        #     .filter(document__is_active=True)
+        #     .filter(document__closed=False).order_by('-id')]
+
+        my_docs = [{  # Список документів, за якими користувач є відповідальний (створив його або отримав у спадок)
+            'id': doc.id,
+            'type': doc.document_type.description,
+            'type_id': doc.document_type.id,
+            'date': convert_to_localtime(doc.date, 'day'),
+            'responsible': request.user.userprofile.pip,
+            'responsible_seat_id': doc.employee_seat.id,
+            'main_field': get_main_field(doc),
+            'status': 'draft' if doc.is_draft else ('template' if doc.is_template else 'doc'),
+        } for doc in Document.objects
             .filter(employee_seat__employee_id=request.user.userprofile.id)
-            .filter(document__testing=testing)
-            .filter(document__is_active=True)
-            .filter(document__closed=False).order_by('-id')]
+            .filter(testing=testing)
+            .filter(is_active=True)
+            .filter(closed=False).order_by('-id')]
 
         work_docs = [{  # Список документів, що очікують на реакцію користувача
             'id': demand.document.id,
@@ -583,8 +624,8 @@ def edms_my_docs(request):
             'date': convert_to_localtime(demand.document.date, 'day'),
             'emp_seat_id': demand.recipient.id,
             'expected_mark': demand.mark.id,
-            'author': demand.document.employee_seat.employee.pip,
-            'author_seat_id': demand.document.employee_seat_id,
+            'responsible': demand.document.employee_seat.employee.pip,
+            'responsible_seat_id': demand.document.employee_seat_id,
             'main_field': get_main_field(demand.document),
             'mark_demand_id': demand.id,
             'phase_id': demand.phase_id,

@@ -157,8 +157,8 @@ class User extends React.Component {
         );
       })
       .catch((error) => {
-        if (error.response.data === 'active flow') {
-          this.notify('У даного співробітника є документи у роботі. Призначте, будь ласка, на посаду в.о. або нового працівника');
+        if (['active flow', 'active orders'].includes(error.response.data)) {
+          this.notifyError(error.response.data)
           this.setState({
             new_emp_form: (
               <div>
@@ -198,6 +198,17 @@ class User extends React.Component {
         }
       });
   };
+  
+  notifyError = (error) => {
+    switch (error) {
+      case 'active flow':
+        this.notify('У даного співробітника є документи у роботі. Призначте, будь ласка, на посаду в.о. або нового працівника');
+        break;
+      case 'active orders':
+        this.notify('У даного співробітника є накази у роботі. Призначте, будь ласка, на посаду в.о. або нового працівника');
+        break;
+    }
+  }
 
   handleDelete = (e) => {
     // робить співробітника неактивним

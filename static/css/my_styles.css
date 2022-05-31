@@ -170,5 +170,10 @@
   padding-top: 2px;
   padding-bottom: 1px;
   background-color: #3eacba;
-  /*background: linear-gradient(60deg, #3eacba 0%, #3e6eba 100%);*/
+}
+
+.css_sticky_back_button {
+  position: fixed;
+  top: 100px;
+  left: 30px;
 }

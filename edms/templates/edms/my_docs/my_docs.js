@@ -46,7 +46,7 @@ class MyDocs extends React.Component {
   updateLists = (seat_id) => {
     this.state.my_docs = [];
     window.my_docs.map((doc) => {
-      if (doc.author_seat_id === seat_id) {
+      if (doc.responsible_seat_id === seat_id) {
         // сортування по посаді
         this.setState((prevState) => ({my_docs: [...prevState.my_docs, doc]}));
       }

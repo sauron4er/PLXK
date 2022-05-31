@@ -5,7 +5,6 @@ from django.http import HttpResponse
 import json
 from .forms import SignUpForm
 from .models import Department, UserProfile
-from edms.models import Seat
 from edms.api.getters import get_dep_chief
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User

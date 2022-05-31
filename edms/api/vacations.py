@@ -2,9 +2,10 @@ from django.utils.timezone import datetime, timedelta
 from django.shortcuts import get_object_or_404
 
 from accounts import models as accounts
-from ..models import Vacation, Employee_Seat, Mark_Demand, Doc_Approval
+from ..models import Vacation, Employee_Seat
 from ..forms import VacationForm, DeactivateVacationForm, UserVacationForm, StartVacationForm,\
-    ActingEmpSeatForm, DeactivateEmpSeatForm, MarkDemandChangeRecipientForm
+    ActingEmpSeatForm, DeactivateEmpSeatForm
+from edms.api.move_to_new_employee import move_docs, move_approvals
 
 
 def arrange_vacations():
@@ -122,27 +123,6 @@ def deactivate_acting_emp_seats(employee_id, acting_id):
 
             move_docs(acting_emp_seat, emp_seat)
             move_approvals(acting_emp_seat, emp_seat)
-
-
-def move_docs(move_from, move_to):
-    mark_demands = Mark_Demand.objects.values_list('id', flat=True).filter(recipient_id=move_from).filter(is_active=True)
-    for mark_demand in mark_demands:
-        mark_demand_instance = get_object_or_404(Mark_Demand, pk=mark_demand)
-        form_data = {'recipient': move_to}
-        form = MarkDemandChangeRecipientForm(form_data, instance=mark_demand_instance)
-        if form.is_valid:
-            form.save()
-
-
-def move_approvals(move_from, move_to):
-    approvals = Doc_Approval.objects.values_list('id', flat=True)\
-        .filter(emp_seat_id=move_from)\
-        .filter(is_active=True)\
-        .exclude(approved=True)
-    for approval in approvals:
-        approval_instance = get_object_or_404(Doc_Approval, pk=approval)
-        approval_instance.emp_seat_id = move_to
-        approval_instance.save()
 
 
 # Функція, яка отримує ід людинопосади, перевіряє чи вона у відпустці і повертає її id або id в.о.
