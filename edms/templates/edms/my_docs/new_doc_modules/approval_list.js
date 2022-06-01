@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from '../../../../api/get_emp_seats';
+import {getEmpSeats} from "edms/api/get_emp_seats";
 import 'static/css/my_styles.css';
 
 class ApprovalList extends React.Component {

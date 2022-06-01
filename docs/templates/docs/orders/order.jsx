@@ -18,6 +18,7 @@ import Files from 'templates/components/form_modules/files';
 import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
 import SubmitButton from 'templates/components/form_modules/submit_button';
+import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
 
 class Order extends React.Component {
   state = {
@@ -26,9 +27,10 @@ class Order extends React.Component {
   };
 
   componentDidMount() {
-    if (ordersStore.order.id !== 0) { // Якщо 0 - то це створення нового наказу
+    if (ordersStore.order.id !== 0) {
+      // Якщо 0 - то це створення нового наказу
       this.getOrder();
-      this.setState({ loading: true });
+      this.setState({loading: true});
     }
   }
 
@@ -125,7 +127,7 @@ class Order extends React.Component {
         mail_mode,
         mail_list
       } = ordersStore.order;
-  
+
       let formData = new FormData();
       formData.append('doc_type', type);
       formData.append('type_name', type_name);
@@ -197,7 +199,7 @@ class Order extends React.Component {
 
   editOrder = (response) => {
     ordersStore.order.done = response.done;
-    response.done ? ordersStore.order.status = 'ok' : ordersStore.order.status = 'in progress';
+    response.done ? (ordersStore.order.status = 'ok') : (ordersStore.order.status = 'in progress');
     const index = getIndex(ordersStore.order.id, ordersStore.orders);
     ordersStore.orders[index] = ordersStore.order;
     this.closeOrderView();
@@ -212,10 +214,12 @@ class Order extends React.Component {
     ordersStore.view = 'table';
   };
 
-  onSelectorChange = (e, field_id_name, field_name_name) => {
-    const selectedIndex = e.target.options.selectedIndex;
-    ordersStore.order[field_id_name] = e.target.options[selectedIndex].getAttribute('data-key');
-    ordersStore.order[field_name_name] = e.target.options[selectedIndex].getAttribute('value');
+  onSelectorChange = (e, id, name) => {
+    // const selectedIndex = e.target.options.selectedIndex;
+    // ordersStore.order[field_id_name] = e.target.options[selectedIndex].getAttribute('data-key');
+    // ordersStore.order[field_name_name] = e.target.options[selectedIndex].getAttribute('value');
+    ordersStore.order[id] = e.id;
+    ordersStore.order[name] = e.name;
   };
 
   onInputChange = (e, field_name) => {
@@ -278,14 +282,18 @@ class Order extends React.Component {
                   <FontAwesomeIcon icon={faCircle} />
                 </h1>
               )}
-              <Selector
+
+              <SelectorWithFilter
                 classes='mr-2 flex-fill'
+                fieldName='Тип документа'
                 list={types}
-                selectedName={order.type_name}
-                fieldName={'Тип документа'}
                 onChange={(e) => this.onSelectorChange(e, 'type', 'type_name')}
-                disabled={!is_orders_admin}
+                value={{name: order.type_name, id: order.type}}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option.id}
+                disabled={false}
               />
+
               <div>
                 <TextInput
                   text={order.code}
@@ -306,15 +314,9 @@ class Order extends React.Component {
               disabled={!is_orders_admin}
             />
 
-            <Articles
-              disabled={!is_orders_admin}
-              articles={order.articles}
-              changeArticles={this.onArticlesChange}
-              emp_seats={emp_seats}
-            />
+            <Articles disabled={!is_orders_admin} articles={order.articles} changeArticles={this.onArticlesChange} emp_seats={emp_seats} />
             <hr />
 
-            <hr />
             <Files
               oldFiles={order.files_old}
               newFiles={order.files}
@@ -325,32 +327,38 @@ class Order extends React.Component {
             />
 
             <hr />
-            <Selector
+            <SelectorWithFilter
+              fieldName='Автор'
               list={employees}
-              selectedName={order.author_name}
-              fieldName={'Автор'}
               onChange={(e) => this.onSelectorChange(e, 'author', 'author_name')}
-              disabled={!is_orders_admin}
+              value={{name: order.author_name, id: order.author}}
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
+              disabled={false}
             />
 
             <If condition={order.responsible_name !== ''}>
               <hr />
-              <Selector
+              <SelectorWithFilter
+                fieldName='Відповідальний'
                 list={employees}
-                selectedName={order.responsible_name}
-                fieldName={'Відповідальний'}
                 onChange={(e) => this.onSelectorChange(e, 'responsible', 'responsible_name')}
-                disabled={!is_orders_admin}
+                value={{name: order.responsible_name, id: order.responsible}}
+                getOptionLabel={(option) => option.name}
+                getOptionValue={(option) => option.id}
+                disabled={false}
               />
             </If>
 
             <hr />
-            <Selector
+            <SelectorWithFilter
+              fieldName='Контроль'
               list={employees}
-              selectedName={order.supervisory_name}
-              fieldName={'Контроль'}
               onChange={(e) => this.onSelectorChange(e, 'supervisory', 'supervisory_name')}
-              disabled={!is_orders_admin}
+              value={{name: order.supervisory_name, id: order.supervisory}}
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
+              disabled={false}
             />
 
             <hr />
@@ -391,7 +399,7 @@ class Order extends React.Component {
 
             <hr />
             <div className='d-flex'>
-              <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={order.cancels_other_doc} disabled={true}/>
+              <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={order.cancels_other_doc} disabled={true} />
               {/*TODO Щоб розблокувати цю опцію при пажинованій сторінці, треба вивести її в окремий компонент, який буде отримувати */}
               {/*TODO  з серверу список наказів для обрання. Бо при пажинації того списку фактично у нас нема.*/}
               <label htmlFor='cancels' className='ml-1'>

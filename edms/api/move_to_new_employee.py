@@ -35,7 +35,7 @@ def move_approvals(move_from, move_to):
     approvals = Doc_Approval.objects.values_list('id', flat=True)\
         .filter(emp_seat_id=move_from)\
         .filter(is_active=True)\
-        .filter(approved__is_null=True)
+        .filter(approved__isnull=True)
         # .exclude(approved=True)\
     for approval in approvals:
         approval_instance = get_object_or_404(Doc_Approval, pk=approval)
@@ -45,6 +45,13 @@ def move_approvals(move_from, move_to):
 
 @try_except
 def move_orders(employee_seat_from, employee_seat_to):
+    # TODO Увага, накази закріплюються не за employee_seat, а за User, Employee,
+    #  тому ця функція їх переносить лиш в одну сторону при звільненні.
+    #  Якщо запустити її при виході у відпустку,
+    #  то при поверненні вона перекине назад на оригінального користувача усі накази, в т.ч. і ті, що належать в.о.
+    #  Коротше треба переробити, щоб наказ закріплювався не за юзером а за employee_seat,
+    #  щоб використовувати цю функцію при виході у відпустку
+
     # Переносимо відповідальність за пункти в наказах
     orders_responsible = Article_responsible.objects\
         .filter(employee_seat_id=employee_seat_from)\

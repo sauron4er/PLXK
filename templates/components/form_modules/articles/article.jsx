@@ -7,6 +7,8 @@ import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelector from 'templates/components/form_modules/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
 import Responsible from 'templates/components/form_modules/articles/responsible';
+import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import MultiSelectorWithFilter from 'templates/components/form_modules/multi_selector_with_filter';
 
 class Article extends React.Component {
   state = {
@@ -23,11 +25,16 @@ class Article extends React.Component {
   };
 
   selectResponsible = (e) => {
-    const selectedIndex = e.target.options.selectedIndex;
+    // const selectedIndex = e.target.options.selectedIndex;
+    // this.setState({
+    //   selected_responsible_id: e.target.options[selectedIndex].getAttribute('data-key'),
+    //   selected_responsible: e.target.options[selectedIndex].getAttribute('value')
+    // });
     this.setState({
-      selected_responsible_id: e.target.options[selectedIndex].getAttribute('data-key'),
-      selected_responsible: e.target.options[selectedIndex].getAttribute('value')
+      selected_responsible_id: e.id,
+      selected_responsible: e.name
     });
+    this.addResponsible(e.id)
   };
 
   addResponsible = (selected_responsible_id) => {
@@ -121,15 +128,24 @@ class Article extends React.Component {
             </button>
           </div>
         </div>
+        
+        {/*<MultiSelector*/}
+        {/*  list={emp_seats}*/}
+        {/*  selectedName={selected_responsible}*/}
+        {/*  valueField={'emp_seat'}*/}
+        {/*  fieldName='Відповідальні'*/}
+        {/*  onChange={this.selectResponsible}*/}
+        {/*  addItem={this.addResponsible(selected_responsible_id)}*/}
+        {/*  disabled={disabled}*/}
+        {/*/>*/}
 
-        <MultiSelector
+        <MultiSelectorWithFilter
+          fieldName='Відповідальні'
           list={emp_seats}
-          selectedName={selected_responsible}
-          valueField={'emp_seat'}
-          fieldName={'Відповідальні'}
           onChange={this.selectResponsible}
-          addItem={this.addResponsible(selected_responsible_id)}
-          disabled={disabled}
+          getOptionLabel={(option) => option.name}
+          getOptionValue={(option) => option.id}
+          disabled={false}
         />
 
         <If condition={!all_chiefs_added && !disabled}>
