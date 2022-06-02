@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
 from plxk.api.try_except import try_except
-# from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
+from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
 from edms.api.getters import get_main_field
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm, MarkDemandChangeRecipientForm
@@ -173,10 +173,10 @@ def new_mail(email_type, recipients, doc_request):
 
         for recipient in recipients:
             mail = Employee_Seat.objects.values_list('employee__user__email', flat=True).filter(id=recipient['id'])[0]
-            # if mail:
-            #     if email_type == 'new':
-            #         send_email_new(doc_request, mail, main_field)
-            #     elif email_type == 'mark':
-            #         send_email_mark(doc_request, mail, main_field)
-            #     elif email_type == 'answer':
-            #         send_email_answer(doc_request, mail)
+            if mail:
+                if email_type == 'new':
+                    send_email_new(doc_request, mail, main_field)
+                elif email_type == 'mark':
+                    send_email_mark(doc_request, mail, main_field)
+                elif email_type == 'answer':
+                    send_email_answer(doc_request, mail)
