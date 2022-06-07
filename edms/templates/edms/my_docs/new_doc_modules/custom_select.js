@@ -13,6 +13,27 @@ class CustomSelect extends React.Component {
         return ['Операційна підтримка', 'Стратегічна підтримка', 'Управління доступами'];
       case 'importancy':
         return ['Дуже терміново', 'Терміново', 'Не терміново', 'На потім'];
+      case 'cost_rates_type':
+        return ['Основні', 'Тимчасові', 'Для планування'];
+      case 'cost_rates_accounting':
+        return ['Бухгалтерський облік', 'Управлінський облік'];
+      case 'cost_rates_department':
+        return ['Цех 1', 'Цех 2', 'Цех 3', 'Лісна біржа'];
+      case 'cost_rates_product_type':
+        return ['Напівфабрикати', 'Готова продукція'];
+      case 'cost_rates_product':
+        return [
+          'Валове вугілля',
+          'Валові ДВБ',
+          'Розфасова деревного вугілля',
+          'Розфасовка ДВБ',
+          'Одноразові грилі',
+          'Етилацетат (розчинники)',
+          'Етилацетат (етиловий спирт)',
+          'КФК 80%',
+          'КФК 82%',
+          'Переробка деревини'
+        ];
       default:
         return [];
     }
@@ -46,24 +67,23 @@ class CustomSelect extends React.Component {
         <label className='mr-1 full_width' htmlFor={'select-' + module_info.queue}>
           <If condition={module_info.required}>{'* '}</If>
           {module_info.field_name}:{' '}
-        
-        <select
-          className='form-control'
-          id={'select-' + module_info.queue}
-          name='select'
-          value={this.getSelectText(module_info.queue)}
-          onChange={this.onChange}
-        >
-          <option key={0} data-key={0} value='0'>
-            ------------
-          </option>
-          <For each='option' index='index' of={this.getSelectOptions(module_info.field)}>
-            <option key={index} data-key={index} value={option}>
-              {option}
+          <select
+            className='form-control'
+            id={'select-' + module_info.queue}
+            name='select'
+            value={this.getSelectText(module_info.queue)}
+            onChange={this.onChange}
+          >
+            <option key={0} data-key={0} value='0'>
+              ------------
             </option>
-          </For>
-        </select>
-          </label>
+            <For each='option' index='index' of={this.getSelectOptions(module_info.field)}>
+              <option key={index} data-key={index} value={option}>
+                {option}
+              </option>
+            </For>
+          </select>
+        </label>
         <small className='text-danger'>{module_info?.additional_info}</small>
       </>
     );
