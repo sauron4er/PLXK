@@ -18,7 +18,7 @@ class Docs extends React.Component {
       {name: 'id', title: '№'},
       {name: 'type', title: 'Тип'},
       {name: 'main_field', title: 'Зміст'},
-      {name: 'author', title: 'Ініціатор'}
+      {name: 'responsible', title: 'Відповідальний'}
     ],
     my_docs_col_width: [
       {columnName: 'id', width: 70},
