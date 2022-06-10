@@ -34,6 +34,8 @@
     <a href={% url 'edms:my_docs' %}><button class="css_homepage_button">Мої документи</button></a>
     <a href={% url 'edms:archive' %}><button class="css_homepage_button">Архів</button></a>
     <a href={% url 'edms:sub_docs' %}><button class="css_homepage_button">Документи підлеглих</button></a>
+{#    <a href="https://www.google.com" target="_blank"><button class="css_homepage_button css_charts_button">Виробничі показники</button></a>#}
+    <a href="http://10.10.10.234:3000" target="_blank"><img class="css_charts_button" src="{% static 'img/chart_svg.svg' %}" alt="Виробничі показники"/></a>
     <hr/>
     <div class="css_homepage_section">Зведені таблиці по документам</div>
     <a href={% url 'edms:tables' %}><button class="css_homepage_button">Усі зведені таблиці</button></a>
