@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 testing = settings.STAS_DEBUG
 
 
-def create_mail_body(post_request, mail, req_type):
+def create_mail_body(post_request, mail, req_type, author_mail):
     message = MIMEMultipart("alternative")
     if req_type == 'new':
         message["Subject"] = "На сайті ПЛХК додано новий запит клієнта"
@@ -26,11 +26,11 @@ def create_mail_body(post_request, mail, req_type):
         .format(post_request['request'])
 
     if req_type == 'new':
-        text = 'На сайті ПЛХК опубліковано новий запит клієнта. {}.'.format(link)
+        text = 'На сайті ПЛХК опубліковано новий запит клієнта. Автор - {}. {}.'.format(author_mail, link)
     elif req_type == 'edit':
-        text = 'На сайті ПЛХК відредаговано запит клієнта. {}.'.format(link)
+        text = 'На сайті ПЛХК відредаговано запит клієнта. Автор - {}. {}.'.format(author_mail, link)
     else:  # 'acquaint'
-        text = 'Вас додано в список осіб для ознайомлення з запитом клієнта на сайті ПЛХК. {}.'.format(link)
+        text = 'Вас додано в список осіб для ознайомлення з запитом клієнта на сайті ПЛХК. Автор - {}. {}.'.format(author_mail, link)
 
     message.attach(MIMEText(text, "plain"))
 
@@ -39,7 +39,9 @@ def create_mail_body(post_request, mail, req_type):
 
 def send_mails(post_request, req_type):
     if not testing:
-        correspondence_mail_query_list = list(UserProfile.objects.values_list('user__email').filter(is_correspondence_mail=True))
+        correspondence_mail_query_list = list(UserProfile.objects.values_list('user__email')
+                                              .filter(is_correspondence_mail=True)
+                                              .filter(is_active=True))
         correspondence_mail_list = list(sum(correspondence_mail_query_list, ()))
 
         author_mail = Request.objects.values_list('added_by__email', flat=True).filter(id=post_request['request'])[0]
@@ -51,12 +53,13 @@ def send_mails(post_request, req_type):
         mails_without_duplicates = list(dict.fromkeys(mails))
 
         for mail in mails_without_duplicates:
-            body = create_mail_body(post_request, mail, req_type)
+            body = create_mail_body(post_request, mail, req_type, author_mail)
             send_email(mail, body)
 
 
 def send_acquaints_mails(post_request):
     if not testing:
+        author_mail = Request.objects.values_list('added_by__email', flat=True).filter(id=post_request['request'])[0]
         acquaints = json.loads(post_request['acquaints'])
         acquaints_mails = []
         for acquaint in acquaints:
@@ -64,5 +67,5 @@ def send_acquaints_mails(post_request):
                 acquaints_mails.append(get_user_mail(acquaint['id']))
 
         for mail in acquaints_mails:
-            body = create_mail_body(post_request, mail, 'acquaint')
+            body = create_mail_body(post_request, mail, 'acquaint', author_mail)
             send_email(mail, body)
