@@ -3,6 +3,7 @@ import smtplib
 
 def send_email(mail, body):
     if mail != '':
+    # if 1 == 2:
         sender = "it@lxk.com.ua"
         host = "smtp.lxk.com.ua"
         try:

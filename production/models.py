@@ -38,3 +38,18 @@ class Certification_type(models.Model):
 class Scope(models.Model):
     name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Номенклатура продукції для норм витрат
+class Cost_Rates_Product(models.Model):
+    name = models.CharField(max_length=30)
+    is_active = models.BooleanField(default=True)
+
+
+# Номенклатура норм витрат
+class Cost_Rates_Nom(models.Model):
+    name = models.CharField(max_length=200)
+    unit = models.CharField(max_length=10)
+    is_active = models.BooleanField(default=True)
+# ---------------------------------------------------------------------------------------------------------------------
