@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict, Http404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
@@ -1162,7 +1162,10 @@ def edms_mark(request):
                     doc_registration_instance = Doc_Registration(document_id=doc_request['document'])
 
                 doc_registration_instance.registration_number = doc_request['registration_number']
-                doc_registration_instance.save()
+                try:
+                    doc_registration_instance.save()
+                except IntegrityError:
+                    return HttpResponse('reg_unique_fail')
 
                 mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
                     .filter(document=doc_request['document']) \

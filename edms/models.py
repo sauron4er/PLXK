@@ -367,7 +367,7 @@ class Doc_Doc_Link(models.Model):
 # Реєстраційний номер
 class Doc_Registration(models.Model):
     document = models.ForeignKey(Document, related_name='doc_registration', on_delete=models.RESTRICT)
-    registration_number = models.CharField(max_length=50, null=True, blank=True)
+    registration_number = models.CharField(max_length=50, unique=True)
     is_active = models.BooleanField(default=True)
 
 
