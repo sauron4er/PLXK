@@ -104,6 +104,7 @@ class Document extends React.Component {
   postMark = (mark_id) => {
     const {info, new_files, comment, resolutions, acquaints, approvals} = this.state;
     const {doc_id, removeRow, opened_in_modal} = this.props;
+    let all_good = true;
 
     let formData = new FormData();
     new_files.map((file) => {
@@ -149,7 +150,11 @@ class Document extends React.Component {
 
         if (response === 'not deletable') {
           notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
-        } else {
+        } else if (response === 'reg_unique_fail') {
+          notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
+          all_good = false
+        }
+        else {
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response,
@@ -163,6 +168,7 @@ class Document extends React.Component {
           const responsible_id = info.responsible_seat_id;
           removeRow(doc_id, mark_id, responsible_id);
         }
+        if (all_good) this.onCloseModal();
       })
       .catch((error) => notify(error));
   };
@@ -190,7 +196,7 @@ class Document extends React.Component {
       // Віза з коментарем: признак відмови при натисканні візи
       this.openModal(mark_id);
     } else if ([25, 27].includes(mark_id)) {
-      // Вікно делегування
+      // Вікно делегування чи реєстрації
       this.openModal(mark_id);
     } else {
       this.postMark(mark_id);
@@ -350,7 +356,6 @@ class Document extends React.Component {
 
   handleSimpleModalSubmit = (mark) => {
     this.postMark(mark);
-    this.onCloseModal();
   };
 
   onNewFiles = (new_files) => {

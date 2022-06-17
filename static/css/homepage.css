@@ -75,3 +75,10 @@
   background-position: top;
   background-attachment: fixed;
 }
+
+.css_charts_button {
+  height: 13vh;
+  position: fixed;
+  top: 100px;
+  right: 50px;
+}

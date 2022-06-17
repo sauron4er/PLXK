@@ -25,3 +25,5 @@ def send_email(mail, body):
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)
             server.quit()
+        except Exception as err:
+            print(err)
