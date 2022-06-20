@@ -7,7 +7,7 @@ from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_
 from edms.views import edms_archive, edms_get_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_it_tickets, get_doc_type_versions, get_all_employees, \
-    del_foyer_range, save_foyer_range
+    del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes
 from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^.+/get_doc_type_versions/(?P<doc_type_id>\d+)', get_doc_type_versions, name='get_doc_type_versions'),
     url(r'^.+/get_contract/(?P<pk>\d+)/$', get_contract, name='get_contract'),
 
+
     url(r'^hr/emp/(?P<pk>\d+)/$', edms_hr_emp, name='hr_emp'),
     url(r'^hr/get_user/(?P<pk>\d+)/$', edms_get_user, name='hr_emp'),
     url(r'^hr/dep/(?P<pk>\d+)/$', edms_hr_dep, name='hr_dep'),
@@ -56,6 +57,8 @@ urlpatterns = [
     url(r'^my_docs/change_text_module', change_text_module, name='change_text_module'),
     url(r'^my_docs/del_foyer_range/(?P<pk>\d+)$', del_foyer_range, name='del_foyer_range'),
     url(r'^my_docs/save_foyer_range', save_foyer_range, name='save_foyer_range'),
+    url(r'^my_docs/get_cost_rates_products', get_cost_rates_products, name='get_cost_rates_products'),
+    url(r'^my_docs/get_cost_rates_fields/(?P<product_id>\d+)', get_cost_rates_fields, name='get_cost_rates_fields'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),

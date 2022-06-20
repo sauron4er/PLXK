@@ -8,6 +8,7 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
 from docs.api.contracts_api import add_contract_from_edms
 from docs.models import Article_responsible, Contract
+from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
 from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Meta_Type
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
@@ -228,6 +229,17 @@ def edms_main(request):
 def edms_get_doc_types(request):
     if request.method == 'GET':
         return HttpResponse(json.dumps(get_meta_doc_types()))
+
+
+@login_required(login_url='login')
+def get_cost_rates_products(request):
+    if request.method == 'GET':
+        return HttpResponse(json.dumps(get_cost_rates_product_list()))
+
+
+@login_required(login_url='login')
+def get_cost_rates_fields(request, product_id):
+    return HttpResponse(json.dumps(get_cost_rates_fields_list(product_id)))
 
 
 @login_required(login_url='login')

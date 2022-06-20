@@ -1,4 +1,5 @@
-from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, Certification_type, Scope
+from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, \
+    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom
 from plxk.api.try_except import try_except
 
 
@@ -88,3 +89,27 @@ def get_certification_types():
         'id': type.pk,
         'name': type.name,
     } for type in cert_types]
+
+
+@try_except
+def get_cost_rates_product_list():
+    cost_rate_products = Cost_Rates_Product.objects.filter(is_active=True).order_by('name')
+    return [{
+        'id': product.pk,
+        'department': product.department,
+        'name': product.name,
+    } for product in cost_rate_products]
+
+
+@try_except
+def get_cost_rates_fields_list(product_id):
+    cost_rate_fields = Cost_Rates_Nom.objects\
+        .filter(product_id=product_id)\
+        .filter(is_active=True)\
+        .order_by('name')
+    return [{
+        'id': field.pk,
+        'name': field.name,
+        'unit': field.unit,
+        'is_required': field.is_required,
+    } for field in cost_rate_fields]

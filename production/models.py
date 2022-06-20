@@ -44,12 +44,15 @@ class Scope(models.Model):
 # Номенклатура продукції для норм витрат
 class Cost_Rates_Product(models.Model):
     name = models.CharField(max_length=30)
+    department = models.CharField(max_length=11)
     is_active = models.BooleanField(default=True)
 
 
 # Номенклатура норм витрат
 class Cost_Rates_Nom(models.Model):
-    name = models.CharField(max_length=200)
+    product = models.ForeignKey(Cost_Rates_Product, related_name='fields', on_delete=models.RESTRICT)
+    name = models.CharField(max_length=100)
     unit = models.CharField(max_length=10)
+    is_required = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
 # ---------------------------------------------------------------------------------------------------------------------

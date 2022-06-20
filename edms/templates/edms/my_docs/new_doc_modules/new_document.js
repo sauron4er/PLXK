@@ -46,6 +46,7 @@ import DocTypeVersion from 'edms/templates/edms/my_docs/new_doc_modules/doc_type
 import EmployeesAll from 'edms/templates/edms/my_docs/new_doc_modules/employees_all';
 import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
 import FoyerRanges from 'edms/templates/edms/my_docs/new_doc_modules/foyer_ranges';
+import CostRates from "edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates";
 
 class NewDocument extends React.Component {
   state = {
@@ -668,6 +669,9 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'foyer_ranges'}>
                           <FoyerRanges module_info={module} />
+                        </When>
+                        <When condition={module.module === 'cost_rates'}>
+                          <CostRates module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

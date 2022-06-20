@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('correspondence', '0021_auto_20210608_1155'),
         ('production', '0006_cost_rates_nom_cost_rates_product'),
-        ('edms', '0153_auto_20220401_1021'),
+        ('edms', '0154_auto_20220616_1133'),
     ]
 
     operations = [

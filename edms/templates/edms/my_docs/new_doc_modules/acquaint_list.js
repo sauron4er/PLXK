@@ -3,8 +3,9 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from "edms/api/get_emp_seats";
+import {getEmpSeats} from 'edms/api/get_emp_seats';
 import 'static/css/my_styles.css';
+import MultiSelectorWithFilter from 'templates/components/form_modules/multi_selector_with_filter';
 
 class AcquaintList extends React.Component {
   state = {
@@ -14,12 +15,18 @@ class AcquaintList extends React.Component {
     seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
   };
 
-  onChange = (event) => {
-    const selectedIndex = event.target.options.selectedIndex;
+  onChange = (e) => {
     this.setState({
-      select_acquaint_id: event.target.options[selectedIndex].getAttribute('data-key'),
-      select_acquaint: event.target.options[selectedIndex].getAttribute('value')
+      select_acquaint_id: e.id,
+      select_acquaint: e.name
     });
+    this.addNewAcquaint(e.id, e.name)
+    
+    // const selectedIndex = e.target.options.selectedIndex;
+    // this.setState({
+    //   select_acquaint_id: e.target.options[selectedIndex].getAttribute('data-key'),
+    //   select_acquaint: e.target.options[selectedIndex].getAttribute('value')
+    // });
   };
 
   // перевіряємо, чи оновився список співробітників з часу останнього візиту
@@ -31,9 +38,7 @@ class AcquaintList extends React.Component {
         // Але якщо на сторінці два компоненти запитують про зміни,
         // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
         // але список не оновлять, тому оновлюємо список самі
-        this.state.seat_list.length === 0
-          ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))})
-          : null;
+        this.state.seat_list.length === 0 ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))}) : null;
       } else {
         this.setState({seat_list: result});
       }
@@ -52,23 +57,38 @@ class AcquaintList extends React.Component {
   };
 
   // додає нову посаду у список
-  addNewAcquaint = (e) => {
-    e.preventDefault();
-    if (this.state.select_acquaint !== '') {
-      let acquaint_list = [...this.state.acquaint_list];
-      acquaint_list.push({
-        id: this.state.select_acquaint_id,
-        emp_seat: this.state.select_acquaint
-      });
-      const unique_seats = uniqueArray(acquaint_list);
-      this.setState({
-        acquaint_list: unique_seats,
-        select_acquaint_id: '',
-        select_acquaint: ''
-      });
-      // надсилаємо новий список у батьківський компонент
-      this.changeList(unique_seats);
-    }
+  addNewAcquaint = (id, name) => {
+    // e.preventDefault();
+    // if (this.state.select_acquaint !== '') {
+    //   let acquaint_list = [...this.state.acquaint_list];
+    //   acquaint_list.push({
+    //     id: this.state.select_acquaint_id,
+    //     emp_seat: this.state.select_acquaint
+    //   });
+    //   const unique_seats = uniqueArray(acquaint_list);
+    //   this.setState({
+    //     acquaint_list: unique_seats,
+    //     select_acquaint_id: '',
+    //     select_acquaint: ''
+    //   });
+    //   // надсилаємо новий список у батьківський компонент
+    //   this.changeList(unique_seats);
+    // }
+    
+    let acquaint_list = [...this.state.acquaint_list];
+    acquaint_list.push({
+      id: id,
+      emp_seat: name
+    });
+    const unique_seats = uniqueArray(acquaint_list);
+    this.setState({
+      acquaint_list: unique_seats,
+      select_acquaint_id: '',
+      select_acquaint: ''
+    });
+    // надсилаємо новий список у батьківський компонент
+    this.changeList(unique_seats);
+    
   };
 
   // видає посаду з списку
@@ -88,32 +108,41 @@ class AcquaintList extends React.Component {
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <div className='w-75 d-flex align-items-center mt-1'>
-            <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_acquaint'>
-              <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
-            </label>
-            <select className='form-control' id='select_acquaint' name='select_acquaint' value={select_acquaint} onChange={this.onChange}>
-              <option key={0} data-key={0} value='0'>
-                ------------
-              </option>
+          <MultiSelectorWithFilter
+            fieldName={module_info.required ? `* ${module_info.field_name}` : module_info.field_name}
+            list={seat_list}
+            onChange={this.onChange}
+            getOptionLabel={(option) => option.emp + ', ' + option.seat}
+            getOptionValue={(option) => option.id}
+            disabled={false}
+          />
+          {/*<div className='w-75 d-flex align-items-center mt-1'>*/}
+          {/*  <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_acquaint'>*/}
+          {/*    <If condition={module_info.required}>{'* '}</If>*/}
+          {/*    {module_info.field_name}:*/}
+          {/*  </label>            */}
+          {/*  <select className='form-control' id='select_acquaint' name='select_acquaint' value={select_acquaint} onChange={this.onChange}>*/}
+          {/*    <option key={0} data-key={0} value='0'>*/}
+          {/*      ------------*/}
+          {/*    </option>*/}
 
-              <For each='seat' index='index' of={seat_list}>
-                <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
-                  {seat.emp + ', ' + seat.seat}
-                </option>
-              </For>
-            </select>
-            <button
-              className={
-                select_acquaint
-                  ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
-                  : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
-              }
-              onClick={this.addNewAcquaint}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
-          </div>
+          {/*    <For each='seat' index='index' of={seat_list}>*/}
+          {/*      <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>*/}
+          {/*        {seat.emp + ', ' + seat.seat}*/}
+          {/*      </option>*/}
+          {/*    </For>*/}
+          {/*  </select>*/}
+          {/*  <button*/}
+          {/*    className={*/}
+          {/*      select_acquaint*/}
+          {/*        ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'*/}
+          {/*        : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'*/}
+          {/*    }*/}
+          {/*    onClick={this.addNewAcquaint}*/}
+          {/*  >*/}
+          {/*    <FontAwesomeIcon icon={faPlus} />*/}
+          {/*  </button>*/}
+          {/*</div>*/}
           <If condition={acquaint_list.length > 0}>
             <ul className='mt-1'>
               <For each='seat' index='index' of={acquaint_list}>
@@ -129,7 +158,7 @@ class AcquaintList extends React.Component {
               </For>
             </ul>
           </If>
-          <br />
+          {/*<br />*/}
         </When>
         <Otherwise>
           <div className='mt-3 loader-small' id='loader-1'>
@@ -147,7 +176,7 @@ class AcquaintList extends React.Component {
       queue: 0,
       required: false,
       additional_info: null
-    },
+    }
   };
 }
 

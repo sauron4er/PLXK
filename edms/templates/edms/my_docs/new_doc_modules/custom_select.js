@@ -13,10 +13,6 @@ class CustomSelect extends React.Component {
         return ['Операційна підтримка', 'Стратегічна підтримка', 'Управління доступами'];
       case 'importancy':
         return ['Дуже терміново', 'Терміново', 'Не терміново', 'На потім'];
-      case 'cost_rates_type':
-        return ['Основні', 'Тимчасові', 'Для планування'];
-      case 'cost_rates_accounting':
-        return ['Бухгалтерський облік', 'Управлінський облік'];
       case 'cost_rates_department':
         return ['Цех 1', 'Цех 2', 'Цех 3', 'Лісна біржа'];
       case 'cost_rates_product_type':

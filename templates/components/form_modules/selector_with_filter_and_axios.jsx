@@ -26,7 +26,7 @@ class SelectorWithFilterAndAxios extends React.Component {
   render() {
     const {onChange, fieldName, disabled, classes, value, selectId} = this.props;
     const {loading, list} = this.state;
-
+  
     return (
       <Choose>
         <When condition={!loading}>

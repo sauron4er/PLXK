@@ -83,6 +83,16 @@ const newDocStore = store({
       TU: '',
       binding: '',
       additional_requirements: []
+    },
+    cost_rates: {
+      type: '',
+      accountin: '',
+      product_type: '',
+      product: 0,
+      product_name: '',
+      department: '',
+      date: '',
+      fields: []
     }
   },
   clean_fields: () => {
@@ -165,6 +175,16 @@ const newDocStore = store({
         TU: '',
         binding: '',
         additional_requirements: []
+      },
+      cost_rates: {
+        type: '',
+        accountin: '',
+        product_type: '',
+        product: 0,
+        product_name: '',
+        department: '',
+        date: '',
+        fields: []
       }
     };
   },
@@ -277,8 +297,8 @@ const newDocStore = store({
     return false;
   },
   addBlankAdditionalRequirement: () => {
-    newDocStore.new_document.client_requirements.additional_requirements.push({id: 0, name: '', requirement: ''})
-  },
+    newDocStore.new_document.client_requirements.additional_requirements.push({id: 0, name: '', requirement: ''});
+  }
 });
 
 export default newDocStore;

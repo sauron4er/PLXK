@@ -1,10 +1,10 @@
-'use strict';
 import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from "edms/api/get_emp_seats";
+import {getEmpSeats} from 'edms/api/get_emp_seats';
 import 'static/css/my_styles.css';
+import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
 
 class ApprovalList extends React.Component {
   state = {
@@ -14,12 +14,18 @@ class ApprovalList extends React.Component {
     seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
   };
 
-  onChange = (event) => {
-    const selectedIndex = event.target.options.selectedIndex;
+  onChange = (e) => {
     this.setState({
-      select_approval_id: event.target.options[selectedIndex].getAttribute('data-key'),
-      select_approval: event.target.options[selectedIndex].getAttribute('value')
+      select_approval_id: e.id,
+      select_approval: e.name
     });
+    this.addNewApproval(e.id, e.name);
+
+    // const selectedIndex = e.target.options.selectedIndex;
+    // this.setState({
+    //   select_approval_id: e.target.options[selectedIndex].getAttribute('data-key'),
+    //   select_approval: e.target.options[selectedIndex].getAttribute('value')
+    // });
   };
 
   // перевіряємо, чи оновився список співробітників з часу останнього візиту
@@ -31,9 +37,7 @@ class ApprovalList extends React.Component {
         // Але якщо на сторінці два компоненти запитують про зміни,
         // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
         // але список не оновлять, тому оновлюємо список самі
-        this.state.seat_list.length === 0
-          ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))})
-          : null;
+        this.state.seat_list.length === 0 ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))}) : null;
       } else {
         this.setState({seat_list: result});
       }
@@ -52,24 +56,39 @@ class ApprovalList extends React.Component {
   };
 
   // додає нову посаду у список
-  addNewApproval = (e) => {
-    e.preventDefault();
-    if (this.state.select_approval !== '') {
-      let approval_list = [...this.state.approval_list];
-      approval_list.push({
-        id: this.state.select_approval_id,
-        emp_seat: this.state.select_approval,
-        approve_queue: 1 // Всі обрані користувачем особи ідуть в черзі після автора і перед директором
-      });
-      const unique_seats = uniqueArray(approval_list);
-      this.setState({
-        approval_list: unique_seats,
-        select_approval_id: '',
-        select_approval: ''
-      });
-      // надсилаємо новий список у батьківський компонент
-      this.changeList(unique_seats);
-    }
+  addNewApproval = (id, name) => {
+    // e.preventDefault();
+    // if (this.state.select_approval !== '') {
+    //   let approval_list = [...this.state.approval_list];
+    //   approval_list.push({
+    //     id: this.state.select_approval_id,
+    //     emp_seat: this.state.select_approval,
+    //     approve_queue: 1 // Всі обрані користувачем особи ідуть в черзі після автора і перед директором
+    //   });
+    //   const unique_seats = uniqueArray(approval_list);
+    //   this.setState({
+    //     approval_list: unique_seats,
+    //     select_approval_id: '',
+    //     select_approval: ''
+    //   });
+    //   // надсилаємо новий список у батьківський компонент
+    //   this.changeList(unique_seats);
+    // }
+
+    let approval_list = [...this.state.approval_list];
+    approval_list.push({
+      id: id,
+      emp_seat: name,
+      approve_queue: 1 // Всі обрані користувачем особи ідуть в черзі після автора і перед директором
+    });
+    const unique_seats = uniqueArray(approval_list);
+    this.setState({
+      approval_list: unique_seats,
+      select_approval_id: '',
+      select_approval: ''
+    });
+    // надсилаємо новий список у батьківський компонент
+    this.changeList(unique_seats);
   };
 
   // видає посаду з списку
@@ -87,31 +106,40 @@ class ApprovalList extends React.Component {
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <div className='w-75 d-flex align-items-center mt-1'>
-            <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval'>
-              <If condition={module_info.required}>{'* '}</If>{module_info.field_name}:
-            </label>
-            <select className='form-control' id='select_approval' name='select_approval' value={select_approval} onChange={this.onChange}>
-              <option key={0} data-key={0} value='0'>
-                ------------
-              </option>
-              <For each='seat' index='index' of={seat_list}>
-                <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
-                  {seat.emp + ', ' + seat.seat}
-                </option>
-              </For>
-            </select>
-            <button
-              className={
-                select_approval
-                  ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'
-                  : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
-              }
-              onClick={this.addNewApproval}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
-          </div>
+          <MultiSelectorWithFilter
+            fieldName={module_info.required ? `* ${module_info.field_name}` : module_info.field_name}
+            list={seat_list}
+            onChange={this.onChange}
+            getOptionLabel={(option) => option.emp + ', ' + option.seat}
+            getOptionValue={(option) => option.id}
+            disabled={false}
+          />
+          {/*<div className='w-75 d-flex align-items-center mt-1'>*/}
+          {/*  <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_approval'>*/}
+          {/*    <If condition={module_info.required}>{'* '}</If>*/}
+          {/*    {module_info.field_name}:*/}
+          {/*  </label>*/}
+          {/*  <select className='form-control' id='select_approval' name='select_approval' value={select_approval} onChange={this.onChange}>*/}
+          {/*    <option key={0} data-key={0} value='0'>*/}
+          {/*      ------------*/}
+          {/*    </option>*/}
+          {/*    <For each='seat' index='index' of={seat_list}>*/}
+          {/*      <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>*/}
+          {/*        {seat.emp + ', ' + seat.seat}*/}
+          {/*      </option>*/}
+          {/*    </For>*/}
+          {/*  </select>*/}
+          {/*  <button*/}
+          {/*    className={*/}
+          {/*      select_approval*/}
+          {/*        ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'*/}
+          {/*        : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'*/}
+          {/*    }*/}
+          {/*    onClick={this.addNewApproval}*/}
+          {/*  >*/}
+          {/*    <FontAwesomeIcon icon={faPlus} />*/}
+          {/*  </button>*/}
+          {/*</div>*/}
           <small className='text-danger'>{module_info?.additional_info}</small>
 
           <If condition={approval_list.length > 0}>
