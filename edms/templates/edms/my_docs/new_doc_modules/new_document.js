@@ -465,7 +465,7 @@ class NewDocument extends React.Component {
             }
           })
           .catch((error) => {
-            notify('Виникла помилка на сервері, документ не збережено в базу. Зверністься до адміністратора.');
+            console.log(error);
           });
       }
     } catch (e) {
