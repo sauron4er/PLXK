@@ -171,7 +171,7 @@ class NewDocument extends React.Component {
   };
 
   getDocTypeModules = () => {
-    const meta_type_id = this.props.status === 'template' ? 0 : this.props.doc.meta_type_id
+    const meta_type_id = this.props.status === 'template' ? 0 : this.props.doc.meta_type_id;
     axiosGetRequest('get_doc_type_modules/' + meta_type_id + '/' + this.props.doc.type_id + '/')
       .then((response) => {
         this.setState({
@@ -294,9 +294,11 @@ class NewDocument extends React.Component {
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
     for (const module of this.state.type_modules) {
-      if (module.required
-        && module.module !== 'choose_company'
-        && (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)) {
+      if (
+        module.required &&
+        module.module !== 'choose_company' &&
+        (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)
+      ) {
         if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
@@ -382,7 +384,7 @@ class NewDocument extends React.Component {
     try {
       const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
-  
+
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
@@ -418,9 +420,8 @@ class NewDocument extends React.Component {
           } else if (['scope', 'law', 'client_requirements', 'doc_type_version'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'foyer_ranges') {
-            doc_modules[module.module] = this.getFoyerRanges()
-          }
-          else if (module.module === 'document_link') {
+            doc_modules[module.module] = this.getFoyerRanges();
+          } else if (module.module === 'document_link') {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
             doc_modules[module.module] = newDocStore.new_document.registration_number;
@@ -428,7 +429,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.state[module.module];
           }
         });
-  
+
         let formData = new FormData();
         // інфа нового документу:
         formData.append('doc_type_version', newDocStore.new_document.doc_type_version);
@@ -452,34 +453,36 @@ class NewDocument extends React.Component {
 
         axiosPostRequest('post_doc', formData)
           .then((response) => {
-            // опублікування документу оновлює таблицю документів:
-            this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
-            newDocStore.clean_fields();
+            if (response === 'reg_number_taken') {
+              notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
+            } else {
+              // опублікування документу оновлює таблицю документів:
+              this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
+              newDocStore.clean_fields();
 
-            // видаляємо чернетку:
-            if (status === 'draft') this.delDoc();
+              // видаляємо чернетку:
+              if (status === 'draft') this.delDoc();
+              this.props.onCloseModal();
+            }
           })
           .catch((error) => {
-            newDocStore.clean_fields();
-            notify(error);
+            console.log(error);
           });
-
-        this.props.onCloseModal();
       }
     } catch (e) {
       notify(e);
     }
   };
-  
+
   getFoyerRanges = () => {
     const {foyer_ranges} = newDocStore.new_document;
-    let new_ranges = []
+    let new_ranges = [];
     for (const i in foyer_ranges) {
-      const r_out = foyer_ranges[i].out instanceof Date ? foyer_ranges[i].out.getTime() / 1000 : foyer_ranges[i].out
-      const r_in = foyer_ranges[i].in instanceof Date ? foyer_ranges[i].in.getTime() / 1000 : foyer_ranges[i].in
-      new_ranges.push({out: r_out, in: r_in})
+      const r_out = foyer_ranges[i].out instanceof Date ? foyer_ranges[i].out.getTime() / 1000 : foyer_ranges[i].out;
+      const r_in = foyer_ranges[i].in instanceof Date ? foyer_ranges[i].in.getTime() / 1000 : foyer_ranges[i].in;
+      new_ranges.push({out: r_out, in: r_in});
     }
-    return new_ranges
+    return new_ranges;
   };
 
   getMainField = () => {

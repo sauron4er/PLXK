@@ -22,7 +22,7 @@ class Registration extends React.Component {
             id='registration'
             value={registration_number}
             onChange={this.onChange}
-            maxLength={30}
+            maxLength={50}
           />
         </div>
         <If condition={additional_info}><small className='text-danger'>{additional_info}</small></If>
