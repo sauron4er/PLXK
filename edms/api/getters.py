@@ -1333,3 +1333,12 @@ def get_doc_flow(doc_id):
             flow.append(step)
 
     return {'flow': flow, 'acquaints': acquaints}
+
+
+@try_except
+def is_reg_number_free(reg_number):
+    is_taken = Doc_Registration.objects \
+        .filter(registration_number=reg_number) \
+        .filter(is_active=True) \
+        .exists()
+    return not is_taken
