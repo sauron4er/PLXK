@@ -27,7 +27,7 @@ def get_users_list():
         'mail': emp.email
     } for emp in
         User.objects.only('id', 'last_name', 'first_name')
-            .exclude(id=10)  # Викидуємо зі списка користувача Охорона
+            .exclude(userprofile__delete_from_noms=True)
             .filter(is_active=True).filter(userprofile__is_active=True)
             .order_by('last_name')]
 
@@ -42,7 +42,10 @@ def get_emp_seats_list(request=''):
         'seat_id': emp_seat.seat.id,
         'is_dep_chief': emp_seat.seat.is_dep_chief,
     } for emp_seat in
-        Employee_Seat.objects.filter(is_active=True).order_by('employee__pip')]
+        Employee_Seat.objects
+            .filter(is_active=True)
+            .exclude(employee__delete_from_noms=True)
+            .order_by('employee__pip')]
 
 
 # Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера

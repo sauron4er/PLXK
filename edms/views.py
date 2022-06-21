@@ -460,6 +460,7 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee')
                 .filter(employee__is_pc_user=True)
+                .exclude(employee__delete_from_noms=True)
                 .filter(is_active=True).order_by('employee__pip')]
 
         return HttpResponse(json.dumps(emp_seats))
@@ -1346,7 +1347,9 @@ def get_doc_type_versions(request, doc_type_id):
 @try_except
 def get_all_employees(request):
     employees = UserProfile.objects \
-        .filter(is_active=True).order_by('pip')
+        .filter(is_active=True) \
+        .exclude(delete_from_noms=True) \
+        .order_by('pip')
 
     employees_list = [{
         'id': employee.pk,

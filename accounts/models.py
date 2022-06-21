@@ -60,6 +60,9 @@ class UserProfile(models.Model):
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
     tab_number = models.CharField(max_length=15, unique=True, null=True)
 
+    delete_from_noms = models.BooleanField(default=False)  # Фізично звільнені, але не ясно,
+    # кому передавати їх документи. Ця змінна дає змогу прибрати таких людей зі списків у довідниках
+
     def __str__(self):
         # return self.user.last_name
         return self.pip

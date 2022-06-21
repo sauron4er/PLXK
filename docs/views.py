@@ -126,7 +126,6 @@ def get_docs_excel(request, fk='0'):
                     mimetype="vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 
-
 # ------------------------------------------------------------------------------------------------------------ Orders
 @login_required(login_url='login')
 @try_except
@@ -144,29 +143,10 @@ def orders(request):
     employees = get_users_list()
     emp_seats = get_emp_seats_list()
 
-    # orders - цей список потрібен для непажинованої таблиці.
-    # orders = [{
-    #     'id': order.id,
-    #     'code': get_order_code_for_table(order.id, order.doc_type.name, order.code),
-    #     'doc_type__name': order.doc_type.name,
-    #     'name': order.name,
-    #     'author__last_name': order.author.last_name + ' ' + order.author.first_name,
-    #     'date_start': str(order.date_start.year) + '-' +
-    #                   normalize_month(order.date_start) + '-' +
-    #                   normalize_day(order.date_start) if order.date_start else '',
-    #     'date_canceled': str(order.date_canceled.year) + '-' +
-    #                      normalize_month(order.date_canceled) + '-' +
-    #                      normalize_day(order.date_canceled) if order.date_canceled else '',
-    #     'is_actual': order.is_act,
-    #     'status': 'ok' if order.done else 'in progress'
-    # } for order in Order_doc.objects.filter(is_act=True)]
-
-    return render(request, 'docs/orders/index.html', {
-                                                    # 'orders': json.dumps(orders),
-                                                       'types': json.dumps(types),
-                                                       'is_orders_admin': is_orders_admin,
-                                                       'employees': json.dumps(employees),
-                                                       'emp_seats': json.dumps(emp_seats)})
+    return render(request, 'docs/orders/index.html', {'types': json.dumps(types),
+                                                      'is_orders_admin': is_orders_admin,
+                                                      'employees': json.dumps(employees),
+                                                      'emp_seats': json.dumps(emp_seats)})
 
 
 @login_required(login_url='login')
