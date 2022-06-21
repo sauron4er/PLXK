@@ -129,6 +129,7 @@ def phones(request):
     phones_and_mails = User.objects\
         .filter(is_active=True)\
         .filter(userprofile__is_active=True)\
+        .exclude(userprofile__delete_from_noms=True)\
         .filter(userprofile__is_pc_user=True)\
         .order_by('userprofile__pip')
 
