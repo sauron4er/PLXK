@@ -641,7 +641,7 @@ def edms_my_docs(request):
 
     elif request.method == 'POST':
         doc_modules = json.loads(request.POST['doc_modules'])
-        if not is_reg_number_free(doc_modules['registration']):
+        if 'registration' in doc_modules and  not is_reg_number_free(doc_modules['registration']):
             return HttpResponse('reg_number_taken')
 
         doc_request = request.POST.copy()
