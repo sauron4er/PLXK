@@ -1,6 +1,6 @@
 import * as React from 'react';
-import DayPicker from 'react-day-picker';
-import 'react-day-picker/lib/style.css';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 const MONTHS = [
   'Січень',
@@ -27,6 +27,6 @@ export function Calendar() {
       months={MONTHS}
       weekdaysShort={WEEKDAYS_SHORT}
       firstDayOfWeek={1}
-      showWeekNumbers />
+      showWeekNumber />
   );
 }

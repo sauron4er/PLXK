@@ -5,6 +5,8 @@ import SelectorWithFilterAndAxios from 'templates/components/form_modules/select
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import CostRatesItem from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates_item';
 import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import DateInput from 'templates/components/form_modules/date_input';
+import AdditionalCostRates from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/additional_rates';
 
 class CostRates extends React.Component {
   state = {
@@ -25,22 +27,32 @@ class CostRates extends React.Component {
     newDocStore.new_document.cost_rates.department = e.department;
     this.getFields();
   };
-  
+
   onTypeChange = (e) => {
     newDocStore.new_document.cost_rates.type = e.name;
   };
-  
+
   onAccountingChange = (e) => {
     newDocStore.new_document.cost_rates.accounting = e.name;
   };
-  
+
   onProductTypeChange = (e) => {
     newDocStore.new_document.cost_rates.product_type = e.name;
   };
 
+  onClientChange = (e) => {
+    newDocStore.new_document.cost_rates.client = e.id;
+    newDocStore.new_document.cost_rates.client_name = e.name;
+  };
+
+  onDateStartTypeChange = (e) => {
+    newDocStore.new_document.cost_rates.date_start = e.target.value;
+  };
+
   render() {
-    const {type, accounting, product_type,  department, product, product_name, fields} = newDocStore.new_document.cost_rates;
-  
+    const {type, accounting, product_type, department, product, product_name, client, client_name, date_start, fields} =
+      newDocStore.new_document.cost_rates;
+
     return (
       <>
         <SelectorWithFilter
@@ -54,8 +66,8 @@ class CostRates extends React.Component {
           onChange={this.onTypeChange}
           disabled={false}
         />
-        <hr/>
-        
+        <hr />
+
         <SelectorWithFilter
           list={[
             {id: 0, name: 'Бухгалтерський'},
@@ -66,8 +78,8 @@ class CostRates extends React.Component {
           onChange={this.onAccountingChange}
           disabled={false}
         />
-        <hr/>
-        
+        <hr />
+
         <SelectorWithFilter
           list={[
             {id: 0, name: 'Напівфабрикати'},
@@ -78,8 +90,21 @@ class CostRates extends React.Component {
           onChange={this.onProductTypeChange}
           disabled={false}
         />
-        <hr/>
-        
+        <hr />
+
+        <DateInput date={date_start} fieldName={'* Дата введення в дію'} onChange={this.onDateStartTypeChange} disabled={false} />
+        <hr />
+
+        <SelectorWithFilterAndAxios
+          listNameForUrl='counterparties/clients'
+          fieldName='Клієнт'
+          selectId='client'
+          value={{name: client_name, id: client}}
+          onChange={this.onClientChange}
+          disabled={false}
+        />
+        <hr />
+
         <SelectorWithFilterAndAxios
           listNameForUrl='cost_rates_products'
           fieldName='* Тип продукції'
@@ -93,12 +118,13 @@ class CostRates extends React.Component {
             Виробничий підрозділ: <span className='font-weight-bold'>{department}</span>
           </small>
         </If>
-        
+
         <If condition={fields.length}>
           <hr />
           <For each='field' of={fields} index='idx'>
             <CostRatesItem key={idx} index={idx} name={field.name} unit={field.unit} isRequired={field.is_required} />
           </For>
+          <AdditionalCostRates />
         </If>
       </>
     );

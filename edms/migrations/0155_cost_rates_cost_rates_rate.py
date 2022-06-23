@@ -33,10 +33,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('term', models.CharField(blank=True, max_length=10, null=True)),
-                ('norm_for_one_t', models.CharField(blank=True, max_length=10, null=True)),
+                ('norm', models.CharField(blank=True, max_length=10, null=True)),
                 ('comment', models.CharField(blank=True, max_length=200, null=True)),
                 ('cost_rates', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='fields', to='edms.cost_rates')),
-                ('field', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='cost_rates', to='production.cost_rates_nom')),
+                ('name', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, related_name='cost_rates', to='production.cost_rates_nom')),
             ],
         ),
     ]

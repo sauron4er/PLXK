@@ -171,6 +171,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'employee' in doc_modules:
             post_employee(new_doc, doc_modules['employee'])
 
+        if 'cost_rates' in doc_modules:
+            post_cost_rates(new_doc, doc_modules['cost_rates'])
+
         return recipients
     except ValidationError as err:
         raise err
@@ -654,7 +657,7 @@ def edms_my_docs(request):
 
     elif request.method == 'POST':
         doc_modules = json.loads(request.POST['doc_modules'])
-        if 'registration' in doc_modules and  not is_reg_number_free(doc_modules['registration']):
+        if 'registration' in doc_modules and not is_reg_number_free(doc_modules['registration']):
             return HttpResponse('reg_number_taken')
 
         doc_request = request.POST.copy()

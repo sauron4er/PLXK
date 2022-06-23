@@ -27,7 +27,7 @@
  * Компонент відображає список файлів у комірці, якщо ця комірка має name = files*
  * */
 import * as React from 'react';
-import Paper from '@material-ui/core/Paper';
+import Paper from '@mui/material/Paper';
 import {
   Grid,
   Table,

@@ -46,7 +46,9 @@ import DocTypeVersion from 'edms/templates/edms/my_docs/new_doc_modules/doc_type
 import EmployeesAll from 'edms/templates/edms/my_docs/new_doc_modules/employees_all';
 import Datetime from 'edms/templates/edms/my_docs/new_doc_modules/datetime';
 import FoyerRanges from 'edms/templates/edms/my_docs/new_doc_modules/foyer_ranges';
-import CostRates from "edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates";
+import CostRates from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates';
+import {areCostRatesValid} from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/validation';
+import SubmitButton from 'templates/components/form_modules/submit_button';
 
 class NewDocument extends React.Component {
   state = {
@@ -293,10 +295,13 @@ class NewDocument extends React.Component {
 
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
+    if (!areCostRatesValid()) {
+      return false;
+    }
     for (const module of this.state.type_modules) {
       if (
         module.required &&
-        module.module !== 'choose_company' &&
+        !['choose_company', 'cost_rates'].includes(module.module) &&
         (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)
       ) {
         if (module.module === 'dimensions') {
@@ -417,7 +422,7 @@ class NewDocument extends React.Component {
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
-          } else if (['scope', 'law', 'client_requirements', 'doc_type_version'].includes(module.module)) {
+          } else if (['scope', 'law', 'client_requirements', 'doc_type_version', 'cost_rates'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'foyer_ranges') {
             doc_modules[module.module] = this.getFoyerRanges();
@@ -698,12 +703,11 @@ class NewDocument extends React.Component {
                 <button className='float-sm-left btn btn-sm btn-outline-info mb-1' onClick={() => this.newDocument('template')}>
                   Зберегти як шаблон
                 </button>
-                <button
-                  className='float-sm-left btn btn-info mb-1'
+                <SubmitButton
+                  className='btn-info'
+                  text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
-                >
-                  Підтвердити
-                </button>
+                />
               </div>
             </If>
           </div>

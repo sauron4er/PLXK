@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DxTable from 'templates/components/tables/dx_table_for_pagination';
-import Paper from '@material-ui/core/Paper';
+import Paper from '@mui/material/Paper';
 import ReactPaginate from 'react-paginate';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';

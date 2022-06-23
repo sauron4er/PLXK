@@ -5,94 +5,116 @@ import {faCheck, faPlus, faSave, faTimes} from '@fortawesome/free-solid-svg-icon
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
 import {isBlankOrZero, notify} from 'templates/components/my_extras';
-import counterpartyStore from 'boards/templates/boards/counterparty/components/counterparty_store';
-import {axiosPostRequest} from 'templates/components/axios_requests';
 
-class AdditionalRequirement extends React.Component {
+class AdditionalCostRate extends React.Component {
   state = {
-    name: '',
-    requirement: '',
     saved: 'false'
   };
 
-  isNameFieldFilled = () => {
-    if (isBlankOrZero(this.props.ar.name)) {
-      notify('Заповніть поле "Назва показника"');
+  areEssentialFieldsFilled = () => {
+    const acr = newDocStore.new_document.cost_rates.additional_fields[this.props.index];
+    if (isBlankOrZero(acr.name)) {
+      notify('Заповніть поле "Назва показника" в доданій нормі');
+      return false;
+    }
+    if (isBlankOrZero(acr.unit)) {
+      notify('Заповніть поле "Одиниця виміру" в доданій нормі');
+      return false;
+    }
+    if (isBlankOrZero(acr.term)) {
+      notify('Заповніть поле "Артикул 1С8" в доданій нормі');
+      return false;
+    }
+    if (isBlankOrZero(acr.norm)) {
+      notify('Заповніть поле "Норма на 1 т." в доданій нормі');
       return false;
     }
     return true;
   };
 
-  onNameChange = (e) => {
-    this.props.changeAR(this.props.index, e.target.value, this.props.ar.requirement);
-  };
-
-  onRequirementChange = (e) => {
-    this.props.changeAR(this.props.index, this.props.ar.name, e.target.value);
-  };
-
-  changeSaveButtonValue = () => {
-    this.setState({saved: true}, () => {
-      setTimeout(() => {
-        this.setState({saved: false});
-      }, 5000);
-    });
+  onChange = (e) => {
+    newDocStore.new_document.cost_rates.additional_fields[this.props.index][e.target.name] = e.target.value;
   };
 
   getSaveButton = () => {
-    if (this.props.ar.id === 0) return <FontAwesomeIcon icon={faPlus} />;
+    if (newDocStore.new_document.cost_rates.additional_fields[this.props.index].id === 0) return <FontAwesomeIcon icon={faPlus} />;
     else {
       if (this.state.saved === true) return <FontAwesomeIcon icon={faCheck} />;
     }
     return <FontAwesomeIcon icon={faSave} />;
   };
 
-  deleteAR = () => {
-    newDocStore.new_document.client_requirements.additional_requirements.splice(this.props.index, 1);
+  deleteACR = () => {
+    newDocStore.new_document.cost_rates.additional_fields.splice(this.props.index, 1);
+  };
+
+  addBlankAdditionalCostRate = () => {
+    newDocStore.new_document.cost_rates.additional_fields.push({id: 0, name: '', unit: '', term: '', norm: '', comment: ''});
   };
 
   render() {
-    const {ar, index} = this.props;
-    const ars_length = newDocStore.new_document.client_requirements.additional_requirements.length;
-    const {addBlankAdditionalRequirement} = newDocStore;
+    const {index} = this.props;
+    const acr = newDocStore.new_document.cost_rates.additional_fields[this.props.index];
+    const acrs_length = newDocStore.new_document.cost_rates.additional_fields.length;
 
     return (
-      <div className='d-flex mb-1'>
-        <input
-          className='form-control mr-1'
-          id={ar.id + '_name'}
-          value={ar.name}
-          onChange={this.onNameChange}
-          placeholder='Назва'
-          maxLength={200}
-        />
+      <div className='css_edms_client_requirement'>
+        <div className='d-flex mb-1'>
+          <input
+            className='form-control mr-1'
+            name='name'
+            id={acr.id + '_name'}
+            value={acr.name}
+            onChange={this.onChange}
+            placeholder='Назва'
+            maxLength={100}
+          />
 
-        <input
-          className='form-control mr-1'
-          id={ar.id + '_end'}
-          value={ar.requirement}
-          onChange={this.onRequirementChange}
-          placeholder='Показник'
-          maxLength={50}
-        />
+          <div className='d-flex ml-auto'>
+            <button onClick={() => this.deleteACR()} className='btn btn-sm btn-outline-dark mr-1'>
+              <span className='text-danger'><FontAwesomeIcon icon={faTimes} /></span>
+            </button>
+            <If condition={index + 1 === acrs_length}>
+              <button onClick={() => this.addBlankAdditionalCostRate()} className='btn btn-sm btn-outline-dark'>
+                <FontAwesomeIcon icon={faPlus} />
+              </button>
+            </If>
+          </div>
+        </div>
 
-        <button onClick={() => this.deleteAR()} className='btn btn-sm btn-outline-dark mr-1'>
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <If condition={index + 1 === ars_length}>
-          <button onClick={() => addBlankAdditionalRequirement()} className='btn btn-sm btn-outline-dark'>
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
-        </If>
+        <table className='table w-auto small'>
+          <thead className='thead-light'>
+            <tr>
+              <th>Артикул 1С8</th>
+              <th>Норма на 1 т.</th>
+              <th>Одиниця виміру</th>
+              <th>Коментар</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type='text' name='term' maxLength={10} onChange={this.onChange} />
+              </td>
+              <td>
+                <input type='text' name='norm' maxLength={10} onChange={this.onChange} />
+              </td>
+              <td>
+                <input type='text' name='unit' maxLength={10} onChange={this.onChange} />
+              </td>
+              <td>
+                <input type='text' name='comment' maxLength={200} onChange={this.onChange} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   }
 
   static defaultProps = {
-    index: 0,
-    changeAR: () => {},
-    ar: {id: 0, name: '', requirement: ''}
+    index: 0
   };
 }
 
-export default view(AdditionalRequirement);
+export default view(AdditionalCostRate);

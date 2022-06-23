@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
-    Doc_Foyer_Range, Doc_Employee, Document_Type_Version
+    Doc_Foyer_Range, Doc_Employee, Document_Type_Version, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -341,6 +341,39 @@ def post_client_requirements(new_doc, client_requirements):
     cr.save()
 
     post_additional_requirement(cr, additional_requirements)
+
+
+@try_except
+def post_cost_rates(new_doc, cost_rates):
+    cr = Cost_Rates(document=new_doc)
+
+    cr.type = 'o' if cost_rates['type'] == 'Основні' else 't' if cost_rates['type'] == 'Тимчасові' else 'p'  # Планування
+    cr.accounting = 'b' if cost_rates['accounting'] == 'Бухгалтерський' else 'u'  # Управлінський
+    cr.product_type = 'n' if cost_rates['product_type'] == 'Напівфабрикати' else 'p'  # Готова продукція
+    cr.product_id = cost_rates['product']
+    if cost_rates['client'] != 0:
+        cr.client_id = cost_rates['client']
+    cr.date_start = cost_rates['date_start']
+    cr.save()
+
+    for field in cost_rates['fields']:
+        cr_field = Cost_Rates_Rate(cost_rates=cr)
+        cr_field.name_id = field['id']
+        cr_field.term = field['term']
+        cr_field.norm = field['norm']
+        if 'comment' in field:
+            cr_field.comment = field['comment']
+        cr_field.save()
+
+    for field in cost_rates['additional_fields']:
+        add_field = Cost_Rates_Additional(cost_rates=cr)
+        add_field.name = field['name']
+        add_field.unit = field['unit']
+        add_field.term = field['term']
+        add_field.norm = field['norm']
+        if 'comment' in field:
+            add_field.comment = field['comment']
+        add_field.save()
 
 
 @try_except

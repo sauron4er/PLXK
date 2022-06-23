@@ -1,2 +1,13 @@
 webpack-bundle-tracker  # не можна оновлювати вище 0.4.3 - бо перестає працювати з django-webpack-loader.
 webpack                 # 5 версії конфліктує з babel 7.12.1, може потім будуть робити нормально
+
+
+# 23.06 видалив
+# "js-cookie": "^2.2.1",
+# "react-flow-renderer": "^9.6.4",
+
+
+# react-tabs 5 вимагає реакт 18
+# react-tostify 9 мабуть просить реакт 18
+
+# style-loader 3, css-loader 6 і webpack 5 треба оновляти одночасно з webpack-bundle-tracker, а той тільки після оновлення на django
