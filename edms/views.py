@@ -21,7 +21,7 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, get_archive_by_doc_meta_type, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, get_phase_info, \
     get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, get_delegated_docs, \
-    is_reg_number_free
+    is_reg_number_free, get_doc_version_from_description_matching
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
     set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module
 from .api.phases_handler import new_phase
@@ -53,7 +53,7 @@ def post_path(doc_request):
 # Функції модульних документів -----------------------------------------------------------------------------------------
 
 # Функція, яка додає у бд новий документ та повертає його id
-def post_document(request):
+def post_document(request, doc_modules):
     doc_request = request.POST.copy()
 
     new_doc = Document(document_type_id=doc_request['document_type'],
@@ -67,11 +67,13 @@ def post_document(request):
     if doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
         new_doc.doc_type_version_id = doc_request['doc_type_version']
 
+    if 'cost_rates' in doc_modules:
+        doc_type_version_id = get_doc_version_from_description_matching(
+            doc_request['document_type'], doc_modules['cost_rates']['department'])
+        new_doc.doc_type_version_id = doc_type_version_id
+
     new_doc.save()
     return new_doc
-    #
-    #     doc_request.update({'employee': request.user.userprofile.id})
-    #
 
 
 # Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
@@ -665,10 +667,8 @@ def edms_my_docs(request):
         doc_files = request.FILES.getlist('file')
 
         # Записуємо документ і отримуємо його ід, тип
-        new_doc = post_document(request)
+        new_doc = post_document(request, doc_modules)
         doc_request.update({'document': new_doc.pk})
-
-        defines_doc_version = new_doc.document_type.module_types.values_list('defines_doc_version', flat=True).filter(is_active=True).filter(module_id=31)
 
         doc_type = Document.objects.values_list('document_type', flat=True).filter(id=doc_request['document'])[0]
         doc_request.update({'document_type': doc_type})

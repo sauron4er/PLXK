@@ -51,7 +51,7 @@ class CostRatesItem extends React.Component {
                 <input type='text' name='norm' maxLength={10} onChange={this.onNormChange} />
               </td>
               <td>
-                <input type='text' name='unit' value={unit} />
+                <input type='text' name='unit' value={unit} onChange={() => {}} />
               </td>
               <td>
                 <input type='text' name='comment' maxLength={200} onChange={this.onCommentChange} />

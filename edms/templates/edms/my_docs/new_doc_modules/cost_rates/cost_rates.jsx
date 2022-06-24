@@ -25,7 +25,28 @@ class CostRates extends React.Component {
     newDocStore.new_document.cost_rates.product = e.id;
     newDocStore.new_document.cost_rates.product_name = e.name;
     newDocStore.new_document.cost_rates.department = e.department;
+    this.changeDocVersion(e.department);
     this.getFields();
+  };
+  
+  changeDocVersion = (department) => {
+    switch (department) {
+      case 'Цех 1':
+        newDocStore.new_document.doc_type_version = 1;
+        break;
+      case 'Цех 2':
+        newDocStore.new_document.doc_type_version = 2;
+        break;
+      case 'Цех 3':
+        newDocStore.new_document.doc_type_version = 3;
+        break;
+      case 'Лісна біржа':
+        newDocStore.new_document.doc_type_version = 4;
+        break;
+      default:
+        newDocStore.new_document.doc_type_version = 0;
+        break;
+    }
   };
 
   onTypeChange = (e) => {

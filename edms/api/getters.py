@@ -1342,3 +1342,12 @@ def is_reg_number_free(reg_number):
         .filter(is_active=True) \
         .exists()
     return not is_taken
+
+
+@try_except
+def get_doc_version_from_description_matching(document_type_id, description):
+    doc_type_version = Document_Type_Version.objects.values_list('id', flat=True)\
+        .filter(document_type_id=document_type_id) \
+        .filter(description=description) \
+        .filter(is_active=True)[0]
+    return doc_type_version
