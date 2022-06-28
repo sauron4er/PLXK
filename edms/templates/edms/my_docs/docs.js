@@ -164,6 +164,9 @@ class Docs extends React.Component {
       case 25:
         answer = 'Документ №' + id + ' делеговано';
         break;
+      case 26:
+        answer = 'Документ №' + id + ' деактивовано';
+        break;
       case 27:
         answer = 'Документ №' + id + ' зареєстровано';
         break;

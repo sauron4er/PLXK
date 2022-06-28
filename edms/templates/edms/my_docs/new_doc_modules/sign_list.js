@@ -5,6 +5,7 @@ import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
 import {getEmpSeats} from "edms/api/get_emp_seats";
 import 'static/css/my_styles.css';
+import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
 
 class SignList extends React.Component {
   state = {
@@ -14,12 +15,13 @@ class SignList extends React.Component {
     seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
   };
 
-  onChange = (event) => {
-    const selectedIndex = event.target.options.selectedIndex;
+  onChange = (e) => {
     this.setState({
-      select_sign_id: event.target.options[selectedIndex].getAttribute('data-key'),
-      select_sign: event.target.options[selectedIndex].getAttribute('value')
+      select_sign_id: e.id,
+      select_sign: e.name
     });
+    
+    this.addNewSign(e.id, e.name);
   };
 
   // перевіряємо, чи оновився список співробітників з часу останнього візиту
@@ -56,23 +58,20 @@ class SignList extends React.Component {
   };
 
   // додає нову посаду у список
-  addNewSign = (e) => {
-    e.preventDefault();
-    if (this.state.select_sign !== '') {
-      let sign_list = [...this.state.sign_list];
-      sign_list.push({
-        id: this.state.select_sign_id,
-        emp_seat: this.state.select_sign
-      });
-      const unique_seats = uniqueArray(sign_list);
-      this.setState({
-        sign_list: unique_seats,
-        select_sign_id: '',
-        select_sign: ''
-      });
-      // надсилаємо новий список у батьківський компонент
-      this.changeList(unique_seats);
-    }
+  addNewSign = (id, name) => {
+    let sign_list = [...this.state.sign_list];
+    sign_list.push({
+      id: id,
+      emp_seat: name
+    });
+    const unique_seats = uniqueArray(sign_list);
+    this.setState({
+      sign_list: unique_seats,
+      select_sign_id: '',
+      select_sign: ''
+    });
+    // надсилаємо новий список у батьківський компонент
+    this.changeList(unique_seats);
   };
 
   // видає посаду з списку
@@ -89,32 +88,19 @@ class SignList extends React.Component {
   render() {
     const {seat_list, select_sign, sign_list} = this.state;
     const {module_info} = this.props;
+  
     return (
       <Choose>
         <When condition={seat_list.length > 0}>
-          <div className='w-75 d-flex align-items-start mt-1'>
-            <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_sign'>
-              {module_info.field_name}:
-            </label>
-            <select className='form-control' id='select_sign' name='select_sign' value={select_sign} onChange={this.onChange}>
-              <option key={0} data-key={0} value='0'>
-                ------------
-              </option>
-              <For each='seat' index='index' of={seat_list}>
-                <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>
-                  {seat.emp + ', ' + seat.seat}
-                </option>
-              </For>
-            </select>
-            <button
-              className={
-                select_sign ? 'btn btn-sm font-weight-bold ml-1 css_flash_button' : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'
-              }
-              onClick={this.addNewSign}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </button>
-          </div>
+          <MultiSelectorWithFilter
+            fieldName={module_info.required ? `* ${module_info.field_name}` : module_info.field_name}
+            list={seat_list}
+            onChange={this.onChange}
+            getOptionLabel={(option) => option.emp + ', ' + option.seat}
+            getOptionValue={(option) => option.id}
+            disabled={false}
+          />
+          
           <small className='text-danger'>{module_info?.additional_info}</small>
           <If condition={sign_list.length > 0}>
             <ul className='mt-1'>

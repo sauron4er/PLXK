@@ -20,6 +20,7 @@ import CounterpartyCorrespondence from './correspondence';
 import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mockups';
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
 import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
+import CounterpartyCostRates from "boards/templates/boards/counterparty/clients/cost_rates";
 
 class Counterparty extends React.Component {
   state = {
@@ -111,6 +112,7 @@ class Counterparty extends React.Component {
                   <Tab>Листування</Tab>
                   <Tab>Дизайн-макети</Tab>
                   <Tab>Вимоги</Tab>
+                  <Tab>Норми витрат</Tab>
                 </If>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
@@ -147,6 +149,9 @@ class Counterparty extends React.Component {
                 </TabPanel>
                 <TabPanel>
                   <CounterpartyRequirements />
+                </TabPanel>
+                <TabPanel>
+                  <CounterpartyCostRates />
                 </TabPanel>
               </If>
               <TabPanel>

@@ -1,4 +1,3 @@
-'use strict';
 import * as React from 'react';
 import Approvals from './doc_info_modules/approvals';
 import Recipient from './doc_info_modules/recipient';
@@ -13,6 +12,8 @@ import {getTextByQueue, getDayByQueue, getDatetimeByQueue} from 'templates/compo
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
 import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link';
 import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
+import CostRates from "edms/templates/edms/my_docs/doc_info/doc_info_modules/cost_rates";
+import Approved from "edms/templates/edms/my_docs/doc_info/doc_info_modules/approved";
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -23,7 +24,7 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
-
+  
     if (info.path) {
       return (
         <div>
@@ -145,6 +146,12 @@ class Info extends React.Component {
                       doc_type_version={info.doc_type_version.id}
                       editable={this.isFoyerRangesEditable()}
                     />
+                  </When>
+                  <When condition={module.module === 'cost_rates'}>
+                    <CostRates module={module} costRates={info.cost_rates} />
+                  </When>
+                  <When condition={module.module === 'auto_approved'}>
+                    <Approved signed={info.approved} />
                   </When>
                 </Choose>
               </div>

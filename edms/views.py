@@ -543,6 +543,7 @@ def edms_get_doc(request, pk):
             'type': doc.document_type.description,
             'date': convert_to_localtime(doc.path.values_list('timestamp', flat=True).filter(mark_id__in=[1, 16, 19])[0], 'day'),
             'is_changeable': doc.document_type.is_changeable,
+            'is_deactivatable': doc.document_type.is_deactivatable,
             'approved': doc.approved,
             'archived': not doc.is_active,
             'closed': doc.closed,

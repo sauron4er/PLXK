@@ -295,16 +295,17 @@ class NewDocument extends React.Component {
 
   // Перевіряє, чи всі необхідні поля заповнені
   requiredFieldsFilled = () => {
-    if (!areCostRatesValid()) {
-      return false;
-    }
     for (const module of this.state.type_modules) {
       if (
         module.required &&
-        !['choose_company', 'cost_rates'].includes(module.module) &&
+        !['choose_company'].includes(module.module) &&
         (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)
       ) {
-        if (module.module === 'dimensions') {
+        if (module.module === 'cost_rates') {
+          if (!areCostRatesValid()) {
+            return false;
+          }
+        } else if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
@@ -527,7 +528,7 @@ class NewDocument extends React.Component {
 
   render() {
     let {doc} = this.props;
-
+  
     const {
       open,
       type_modules,
@@ -545,7 +546,7 @@ class NewDocument extends React.Component {
       carry_out_items,
       auto_recipients
     } = this.state;
-
+    
     const {doc_type_version} = newDocStore.new_document;
 
     // Визначаємо, наскільки великим буде текстове поле:

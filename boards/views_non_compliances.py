@@ -116,7 +116,6 @@ def get_non_compliance(request, pk):
         'status_updated': nc_instance.status_updated or '',
         'return_date': date_to_json(nc_instance.return_date) or '',
         'quality_director_name': get_quality_director('name'),
-
         'comments': get_comments(pk)
     }
 

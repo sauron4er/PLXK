@@ -57,24 +57,6 @@ class ApprovalList extends React.Component {
 
   // додає нову посаду у список
   addNewApproval = (id, name) => {
-    // e.preventDefault();
-    // if (this.state.select_approval !== '') {
-    //   let approval_list = [...this.state.approval_list];
-    //   approval_list.push({
-    //     id: this.state.select_approval_id,
-    //     emp_seat: this.state.select_approval,
-    //     approve_queue: 1 // Всі обрані користувачем особи ідуть в черзі після автора і перед директором
-    //   });
-    //   const unique_seats = uniqueArray(approval_list);
-    //   this.setState({
-    //     approval_list: unique_seats,
-    //     select_approval_id: '',
-    //     select_approval: ''
-    //   });
-    //   // надсилаємо новий список у батьківський компонент
-    //   this.changeList(unique_seats);
-    // }
-
     let approval_list = [...this.state.approval_list];
     approval_list.push({
       id: id,

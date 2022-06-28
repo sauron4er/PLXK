@@ -58,6 +58,7 @@ class Document_Type(models.Model):
     description = models.CharField(max_length=1000)
     creator = models.ForeignKey(Employee_Seat, related_name='creator', null=True, on_delete=models.RESTRICT)
     is_changeable = models.BooleanField(default=False)  # Якщо True, документ можна змінювати після опублікування.
+    is_deactivatable = models.BooleanField(default=False)  # Якщо True, документ можна "деактивувати", в результаті чого він буде показуватися червоним кольором у звередній таблиці, як не актуальний.
     is_active = models.BooleanField(default=True)
     testing = models.BooleanField(default=False)
 
@@ -438,8 +439,8 @@ class Cost_Rates(models.Model):
     accounting = models.CharField(max_length=1)  # b - Бухгалтерський облік, u - Управлінський облік
     product_type = models.CharField(max_length=1)  # n - Напівфабрикати, p - Готова продукція
     product = models.ForeignKey(Cost_Rates_Product, related_name='cost_rates', on_delete=models.RESTRICT)
-    client = models.ForeignKey(Client, related_name='cost_rates', on_delete=models.RESTRICT, null=True)
-    date_start = models.CharField(max_length=30)
+    client = models.ForeignKey(Counterparty, related_name='cost_rates', on_delete=models.RESTRICT, null=True)
+    date_start = models.DateField(null=True)
     signed = models.BooleanField(null=True)
     is_active = models.BooleanField(default=True)
 

@@ -2,7 +2,6 @@
 import {notify} from 'templates/components/my_extras';
 
 export const areCostRatesValid = () => {
-  console.log(1);
   const {type, accounting, product_type, product, date_start} = newDocStore.new_document.cost_rates;
   
   if (!type) notify('Оберіть тип норм витрат');

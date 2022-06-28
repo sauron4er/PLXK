@@ -1,7 +1,9 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
-from edms.models import Document_Type_Module, Document, File, Document_Path
+from django.shortcuts import get_object_or_404
+from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
+from plxk.api.convert_to_local_time import convert_to_localtime
 
 testing = settings.STAS_DEBUG
 
@@ -10,13 +12,9 @@ testing = settings.STAS_DEBUG
 # Повертає перші 23 рядки з таблиці
 def create_table_first(doc_type, counterparty):
     modules_list = get_modules_list(doc_type)
-
     column_widths = get_column_widths(modules_list)
-
     table_header = get_table_header(modules_list)
-
     table_rows = get_table_rows(doc_type, modules_list, 23, counterparty)
-
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
     return table
 
@@ -37,7 +35,12 @@ def get_column_widths(modules):
         {'columnName': 'approved', 'width': 80},
         {'columnName': 'stage', 'width': 100},
         {'columnName': 'importancy', 'width': 90},
-        # {'columnName': 'files', 'width': 300},
+        {'columnName': 'department', 'width': 200},
+        {'columnName': 'type', 'width': 200},
+        {'columnName': 'accounting', 'width': 200},
+        {'columnName': 'product_type', 'width': 200},
+        {'columnName': 'date_start', 'width': 200},
+        {'columnName': 'client', 'width': 250},
         {'columnName': 'choose_company', 'width': 85},
         {'columnName': 'day', 'width': 160},
         {'columnName': 'datetime', 'width': 160}]
@@ -110,6 +113,14 @@ def get_table_header(modules):
             header.append({'name': 'sub_product_type', 'title': 'Тип продукції'})
         elif module['module'] == 'dimensions':
             header.append(get_dimensions_header(module))
+        elif module['module'] == 'cost_rates':  # Норми витрат
+            header.append({'name': 'product', 'title': 'Продукція'})
+            header.append({'name': 'department', 'title': 'Підрозділ'})
+            header.append({'name': 'type', 'title': 'Тип норм'})
+            header.append({'name': 'accounting', 'title': 'Тип обліку'})
+            header.append({'name': 'product_type', 'title': 'Тип продукції'})
+            header.append({'name': 'date_start', 'title': 'Дата введення в дію'})
+            header.append({'name': 'client', 'title': 'Клієнт'})
         elif module['module_id'] == 1:
             # Відсортовуємо модуль files
             a = 1
@@ -130,9 +141,11 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     if not testing:
         documents = documents.filter(testing=False)
 
-    if counterparty != '0':
-        if any(module['module_id'] in [26, 34] for module in modules):  # Клієнт
+    if counterparty != '0':  # Клієнт
+        if any(module['module_id'] in [26, 34] for module in modules):
             documents = documents.filter(counterparty__counterparty_id=counterparty)
+        if any(module['module_id'] == 44 for module in modules):  # cost_rates
+            documents = documents.filter(cost_rates__client_id=counterparty)
 
     if rows_count != 0:
         documents = documents[:rows_count]
@@ -165,6 +178,17 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         if document['texts']:
             for text in document['texts']:
                 document.update({text['name']: text['text']})
+
+    if any(module['module'] == 'cost_rates' for module in modules):
+        for document in documents_arranged:
+            cost_rates = get_object_or_404(Cost_Rates, document_id=document['id'])
+            document.update({'product': cost_rates.product.name})
+            document.update({'department': cost_rates.product.department})
+            document.update({'type': 'Основні' if cost_rates.type == 'o' else 'Тимчасові' if cost_rates.type == 't' else 'Планування'}),  # p})
+            document.update({'accounting': 'Бухгалтерський' if cost_rates.accounting == 'b' else 'Управлінський'}),  # u})
+            document.update({'product_type': 'Напівфабрикати' if cost_rates.product_type == 'n' else 'Готова продукція'}),  # p})
+            document.update({'date_start': convert_to_localtime(cost_rates.date_start, 'day')})
+            document.update({'client': cost_rates.client.name})
 
     return documents_arranged
 

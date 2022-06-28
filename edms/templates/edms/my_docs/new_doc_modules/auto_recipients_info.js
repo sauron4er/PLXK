@@ -8,9 +8,6 @@ class AutoRecipientsInfo extends React.Component {
     const {autoRecipients} = this.props;
     const {doc_type_version} = newDocStore.new_document;
   
-    console.log(autoRecipients);
-    console.log(doc_type_version);
-  
     return (
       <If condition={autoRecipients.length > 0}>
         <div className='css_new_doc_module mt-1 mb-3'>

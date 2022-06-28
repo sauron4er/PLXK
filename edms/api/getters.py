@@ -10,7 +10,7 @@ from plxk.api.datetime_normalizers import date_to_json
 from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
-from edms.api.modules_getter import get_foyer_ranges
+from edms.api.modules_getter import get_foyer_ranges, get_cost_rates
 
 testing = settings.STAS_DEBUG
 
@@ -1131,6 +1131,9 @@ def get_doc_modules(doc):
 
             doc_modules.update({'registration_number': registration_number[0] if registration_number else ''})
 
+        elif module['module'] == 'cost_rates':
+            doc_modules.update({'cost_rates': get_cost_rates(doc.id)})
+
     return doc_modules
 
 
@@ -1155,7 +1158,7 @@ def is_already_approved(document_id, emp_seat_id):
 
 @try_except
 def get_main_field(document):
-    main_field_data = Document_Type_Module.objects.values('module_id', 'queue')\
+    main_field_data = Document_Type_Module.objects.values('module_id', 'module__module', 'queue')\
         .filter(document_type_id=document.document_type_id)\
         .filter(is_main_field=True)[0]
 
@@ -1185,6 +1188,10 @@ def get_main_field(document):
                 return doc_counterparty[0]['input']
     elif main_field_data['module_id'] == 42:  # Версія документу
         main_field = [document.doc_type_version.description if document.doc_type_version else '']
+    elif main_field_data['module__module'] == 'cost_rates':  # Версія документу
+        # main_field = [document.doc_type_version.description if document.doc_type_version else '']
+        cost_rates = get_object_or_404(Cost_Rates, document=document)
+        main_field = [cost_rates.product.name]
 
     if len(main_field) > 0:
         return main_field[0]
