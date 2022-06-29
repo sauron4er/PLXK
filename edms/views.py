@@ -395,12 +395,12 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
         if form.data['is_active'] == 'false':
             # Якщо у mark_demand є хоча б один документ і не визначено "спадкоємця", повертаємо помилку
             active_docs = Mark_Demand.objects.filter(recipient_id=pk).filter(is_active=True).first()
-            if active_docs is not None and form.data['successor_id'] == '':
+            if active_docs is not None and form.data['successor_id'] == '' and form.data['successor_old_emp'] == '0':
                 return HttpResponseForbidden('active flow')
 
             # Якщо у mark_demand є хоча б один документ і не визначено "спадкоємця", повертаємо помилку
             active_orders = Article_responsible.objects.filter(employee_seat_id=pk).filter(done=False).filter(is_active=True).first()
-            if active_orders is not None and form.data['successor_id'] == '':
+            if active_orders is not None and form.data['successor_id'] == '' and form.data['successor_old_emp'] == '0':
                 return HttpResponseForbidden('active orders')
 
             # В іншому разі зберігаємо форму і додаємо "спадкоємцю" (якщо такий є) посаду:
@@ -424,13 +424,19 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
                             move_approvals(pk, new_successor.pk)
                             move_orders(pk, new_successor.pk)
 
-                            #TODO Перевірити що буде, якщо відмовити в візуванні по документу, який перейшов наступнику
-
                             #TODO Відправляти листа про отримання наказів і документів від попередника
                             # -- Перегляньте накази на стоірнці Накази в розділі "Мій календар",
                             # -- Перегляньте документи на сторінці "Документи"
 
                             return HttpResponse('')
+                elif form.data['successor_old_emp'] != '':
+                    form.data['successor'] = form.data['successor_old_emp']
+                    if form.is_valid():
+                        form.save()
+                        move_docs(pk, form.data['successor_old_emp'])
+                        move_approvals(pk, form.data['successor_old_emp'])
+                        move_orders(pk, form.data['successor_old_emp'])
+                        return HttpResponse('')
                 else:
                     if form.is_valid():
                         form.save()

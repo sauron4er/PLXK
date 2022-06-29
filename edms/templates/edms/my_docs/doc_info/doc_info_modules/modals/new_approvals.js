@@ -2,8 +2,9 @@
 import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import {notify} from 'templates/components/my_extras';
+import { notify, uniqueArray } from "templates/components/my_extras";
 import {axiosGetRequest} from 'templates/components/axios_requests';
+import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
 
 class NewApprovals extends React.Component {
   state = {
@@ -14,7 +15,7 @@ class NewApprovals extends React.Component {
   };
 
   componentWillMount() {
-    axiosGetRequest('get_emp_seats/')
+    axiosGetRequest('get_emp_seats')
       .then((response) => {
         this.setState({emp_seats: response});
       })
@@ -22,39 +23,29 @@ class NewApprovals extends React.Component {
         notify(error);
       });
   }
-
-  onChange = (event) => {
-    if (event.target.name === 'approval') {
-      const selectedIndex = event.target.options.selectedIndex;
-      this.setState({
-        emp_seat_id: event.target.options[selectedIndex].getAttribute('data-key'),
-        emp_seat: event.target.options[selectedIndex].getAttribute('value')
-      });
-    } else {
-      this.setState({[event.target.name]: event.target.value});
-    }
+  
+  onChange = (e) => {
+    this.setState({
+      emp_seat_id: e.id,
+      emp_seat: e.name
+    });
+    this.addApproval(e.id, e.name);
   };
-
-  // заставляє батьківський компонент запостити позначку
-  onClick = (e) => {
-    e.preventDefault();
-    this.props.onSubmit(this.state.approvals);
-  };
-
-  addApproval = () => {
-    if (this.state.emp_seat_id !== '0') {
-      const new_approval = {
-        emp_seat_id: this.state.emp_seat_id,
-        emp_seat: this.state.emp_seat
-      };
-      this.setState((prevState) => ({
-        approvals: [...prevState.approvals, new_approval],
-        emp_seat_id: '0',
-        emp_seat: ''
-      }));
-    } else {
-      notify('Оберіть отримувача.');
-    }
+  
+  addApproval = (id, name) => {
+    let approval_list = [...this.state.approvals];
+    approval_list.push({
+      emp_seat_id: id,
+      emp_seat: name
+    });
+    const unique_seats = uniqueArray(approval_list);
+    this.setState({
+      approvals: approval_list,
+      emp_seat_id: '',
+      emp_seat: ''
+    });
+    // надсилаємо новий список у батьківський компонент
+    this.changeList(unique_seats);
   };
 
   delApproval = (index) => {
@@ -62,12 +53,18 @@ class NewApprovals extends React.Component {
     approvals.splice(index, 1);
     this.setState({approvals: approvals});
   };
+  
+  // заставляє батьківський компонент запостити позначку
+  onClick = (e) => {
+    e.preventDefault();
+    this.props.onSubmit(this.state.approvals);
+  };
 
   render() {
-    const {emp_seat, approvals, emp_seats} = this.state;
+    const {approvals, emp_seats} = this.state;
     const {onCloseModal} = this.props;
     return (
-      <>
+      <div style={{minHeight: '400px', minWidth: '600px'}}>
         <div className='modal-header d-flex justify-content-between'>
           <h5 className='modal-title font-weight-bold'>Створення списку на погодження</h5>
           <button className='btn btn-link' onClick={onCloseModal}>
@@ -77,22 +74,15 @@ class NewApprovals extends React.Component {
         <Choose>
           <When condition={emp_seats.length > 0}>
             <div className='modal-body'>
-              <label htmlFor='approval-select'>На погодження:</label>
-              <select className='full_width form-control' id='approval-select' name='approval' value={emp_seat} onChange={this.onChange}>
-                <option data-key={0} value='Не внесено'>
-                  ------------
-                </option>
-                {emp_seats.map((emp_seat) => {
-                  return (
-                    <option key={emp_seat.id} data-key={emp_seat.id} value={emp_seat.emp + ', ' + emp_seat.seat}>
-                      {emp_seat.emp}, {emp_seat.seat}
-                    </option>
-                  );
-                })}
-              </select>
-              <button className='mt-2 btn btn-outline-secondary' onClick={this.addApproval}>
-                Додати
-              </button>
+              <MultiSelectorWithFilter
+                fieldName='На погодження'
+                list={emp_seats}
+                onChange={this.onChange}
+                getOptionLabel={(option) => option.emp + ', ' + option.seat}
+                getOptionValue={(option) => option.id}
+                disabled={false}
+              />
+              
               <If condition={approvals.length > 0}>
                 <ul className='mt-1'>
                   {approvals.map((approval, index) => {
@@ -121,7 +111,7 @@ class NewApprovals extends React.Component {
             </div>
           </Otherwise>
         </Choose>
-      </>
+      </div>
     );
   }
 

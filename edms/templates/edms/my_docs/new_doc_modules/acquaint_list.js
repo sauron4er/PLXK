@@ -14,21 +14,7 @@ class AcquaintList extends React.Component {
     select_acquaint: '',
     seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
   };
-
-  onChange = (e) => {
-    this.setState({
-      select_acquaint_id: e.id,
-      select_acquaint: e.name
-    });
-    this.addNewAcquaint(e.id, e.name)
-    
-    // const selectedIndex = e.target.options.selectedIndex;
-    // this.setState({
-    //   select_acquaint_id: e.target.options[selectedIndex].getAttribute('data-key'),
-    //   select_acquaint: e.target.options[selectedIndex].getAttribute('value')
-    // });
-  };
-
+  
   // перевіряємо, чи оновився список співробітників з часу останнього візиту
   componentWillMount() {
     const get_emp_seats = getEmpSeats();
@@ -45,36 +31,16 @@ class AcquaintList extends React.Component {
     });
   }
 
-  // надсилає новий список у батьківський компонент:
-  changeList = (new_list) => {
-    const changed_event = {
-      target: {
-        name: 'acquaint_list',
-        value: new_list
-      }
-    };
-    this.props.onChange(changed_event);
+  onChange = (e) => {
+    this.setState({
+      select_acquaint_id: e.id,
+      select_acquaint: e.name
+    });
+    this.addNewAcquaint(e.id, e.name)
   };
-
-  // додає нову посаду у список
+  
+    // додає нову посаду у список
   addNewAcquaint = (id, name) => {
-    // e.preventDefault();
-    // if (this.state.select_acquaint !== '') {
-    //   let acquaint_list = [...this.state.acquaint_list];
-    //   acquaint_list.push({
-    //     id: this.state.select_acquaint_id,
-    //     emp_seat: this.state.select_acquaint
-    //   });
-    //   const unique_seats = uniqueArray(acquaint_list);
-    //   this.setState({
-    //     acquaint_list: unique_seats,
-    //     select_acquaint_id: '',
-    //     select_acquaint: ''
-    //   });
-    //   // надсилаємо новий список у батьківський компонент
-    //   this.changeList(unique_seats);
-    // }
-    
     let acquaint_list = [...this.state.acquaint_list];
     acquaint_list.push({
       id: id,
@@ -88,7 +54,17 @@ class AcquaintList extends React.Component {
     });
     // надсилаємо новий список у батьківський компонент
     this.changeList(unique_seats);
-    
+  };
+
+  // надсилає новий список у батьківський компонент:
+  changeList = (new_list) => {
+    const changed_event = {
+      target: {
+        name: 'acquaint_list',
+        value: new_list
+      }
+    };
+    this.props.onChange(changed_event);
   };
 
   // видає посаду з списку
@@ -116,33 +92,7 @@ class AcquaintList extends React.Component {
             getOptionValue={(option) => option.id}
             disabled={false}
           />
-          {/*<div className='w-75 d-flex align-items-center mt-1'>*/}
-          {/*  <label className='flex-grow-1 text-nowrap mr-1' htmlFor='select_acquaint'>*/}
-          {/*    <If condition={module_info.required}>{'* '}</If>*/}
-          {/*    {module_info.field_name}:*/}
-          {/*  </label>            */}
-          {/*  <select className='form-control' id='select_acquaint' name='select_acquaint' value={select_acquaint} onChange={this.onChange}>*/}
-          {/*    <option key={0} data-key={0} value='0'>*/}
-          {/*      ------------*/}
-          {/*    </option>*/}
-
-          {/*    <For each='seat' index='index' of={seat_list}>*/}
-          {/*      <option key={index} data-key={seat.id} value={seat.emp + ', ' + seat.seat}>*/}
-          {/*        {seat.emp + ', ' + seat.seat}*/}
-          {/*      </option>*/}
-          {/*    </For>*/}
-          {/*  </select>*/}
-          {/*  <button*/}
-          {/*    className={*/}
-          {/*      select_acquaint*/}
-          {/*        ? 'btn btn-sm font-weight-bold ml-1 css_flash_button'*/}
-          {/*        : 'btn btn-sm font-weight-bold ml-1 btn-outline-secondary'*/}
-          {/*    }*/}
-          {/*    onClick={this.addNewAcquaint}*/}
-          {/*  >*/}
-          {/*    <FontAwesomeIcon icon={faPlus} />*/}
-          {/*  </button>*/}
-          {/*</div>*/}
+          
           <If condition={acquaint_list.length > 0}>
             <ul className='mt-1'>
               <For each='seat' index='index' of={acquaint_list}>

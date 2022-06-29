@@ -3,7 +3,9 @@ import * as React from 'react';
 import axios from 'axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import {notify} from 'templates/components/my_extras';
+import {notify, uniqueArray} from 'templates/components/my_extras';
+import {axiosGetRequest} from 'templates/components/axios_requests';
+import MultiSelectorWithFilter from 'templates/components/form_modules/multi_selector_with_filter';
 
 class NewAcquaints extends React.Component {
   state = {
@@ -14,55 +16,35 @@ class NewAcquaints extends React.Component {
   };
 
   componentWillMount() {
-    axios({
-      method: 'get',
-      url: 'get_emp_seats/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    axiosGetRequest(`get_emp_seats`)
       .then((response) => {
-        this.setState({
-          emp_seats: response.data
-        });
+        this.setState({emp_seats: response});
       })
-      .catch((error) => {
-        console.log('errorpost: ' + error);
-      });
+      .catch((error) => notify(error));
   }
 
-  onChange = (event) => {
-    if (event.target.name === 'acquaint') {
-      const selectedIndex = event.target.options.selectedIndex;
-      this.setState({
-        emp_seat_id: event.target.options[selectedIndex].getAttribute('data-key'),
-        emp_seat: event.target.options[selectedIndex].getAttribute('value')
-      });
-    } else {
-      this.setState({[event.target.name]: event.target.value});
-    }
+  onChange = (e) => {
+    this.setState({
+      emp_seat_id: e.id,
+      emp_seat: e.name
+    });
+    this.addAcquaint(e.id, e.name);
   };
 
-  // заставляє батьківський компонент запостити позначку
-  onClick = (e) => {
-    e.preventDefault();
-    this.props.onSubmit(this.state.acquaints);
-  };
-
-  addAcquaint = () => {
-    if (this.state.emp_seat_id !== '0') {
-      const new_acquaint = {
-        emp_seat_id: this.state.emp_seat_id,
-        emp_seat: this.state.emp_seat
-      };
-      this.setState((prevState) => ({
-        acquaints: [...prevState.acquaints, new_acquaint],
-        emp_seat_id: '0',
-        emp_seat: ''
-      }));
-    } else {
-      notify('Оберіть отримувача.');
-    }
+  addAcquaint = (id, name) => {
+    let acquaint_list = [...this.state.acquaints];
+    acquaint_list.push({
+      emp_seat_id: id,
+      emp_seat: name
+    });
+    const unique_seats = uniqueArray(acquaint_list);
+    this.setState({
+      acquaints: unique_seats,
+      emp_seat_id: '',
+      emp_seat: ''
+    });
+    // надсилаємо новий список у батьківський компонент
+    this.changeList(unique_seats);
   };
 
   delAcquaint = (index) => {
@@ -70,12 +52,18 @@ class NewAcquaints extends React.Component {
     acquaints.splice(index, 1);
     this.setState({acquaints: acquaints});
   };
+  
+  // заставляє батьківський компонент запостити позначку
+  onClick = (e) => {
+    e.preventDefault();
+    this.props.onSubmit(this.state.acquaints);
+  };
 
   render() {
-    const {emp_seat, acquaints, emp_seats} = this.state;
+    const {acquaints, emp_seats} = this.state;
     const {onCloseModal} = this.props;
     return (
-      <>
+      <div style={{minHeight: '400px', minWidth: '600px'}}>
         <div className='modal-header d-flex justify-content-between'>
           <h5 className='modal-title font-weight-bold'>Створення списку на ознайомлення</h5>
           <button className='btn btn-link' onClick={onCloseModal}>
@@ -85,32 +73,15 @@ class NewAcquaints extends React.Component {
         <Choose>
           <When condition={emp_seats.length > 0}>
             <div className='modal-body'>
-              <label htmlFor='acquaint-select'>На ознайомлення:</label>
-              <select
-                className='full_width form-control'
-                id='acquaint-select'
-                name='acquaint'
-                value={emp_seat}
+              <MultiSelectorWithFilter
+                fieldName='На ознайомлення'
+                list={emp_seats}
                 onChange={this.onChange}
-              >
-                <option data-key={0} value='Не внесено'>
-                  ------------
-                </option>
-                {emp_seats.map((emp_seat) => {
-                  return (
-                    <option
-                      key={emp_seat.id}
-                      data-key={emp_seat.id}
-                      value={emp_seat.emp + ', ' + emp_seat.seat}
-                    >
-                      {emp_seat.emp}, {emp_seat.seat}
-                    </option>
-                  );
-                })}
-              </select>
-              <button className='mt-2 btn btn-outline-secondary' onClick={this.addAcquaint}>
-                Додати
-              </button>
+                getOptionLabel={(option) => option.emp + ', ' + option.seat}
+                getOptionValue={(option) => option.id}
+                disabled={false}
+              />
+
               <If condition={acquaints.length > 0}>
                 <ul className='mt-1'>
                   {acquaints.map((acquaint, index) => {
@@ -139,7 +110,7 @@ class NewAcquaints extends React.Component {
             </div>
           </Otherwise>
         </Choose>
-      </>
+      </div>
     );
   }
 
