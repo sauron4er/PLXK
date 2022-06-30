@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Approvals from './doc_info_modules/approvals';
+import Approvals from './doc_info_modules/approvals/approvals';
 import Recipient from './doc_info_modules/recipient';
 import Text from './doc_info_modules/text';
 import Day from './doc_info_modules/day';
@@ -12,8 +12,8 @@ import {getTextByQueue, getDayByQueue, getDatetimeByQueue} from 'templates/compo
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
 import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link';
 import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
-import CostRates from "edms/templates/edms/my_docs/doc_info/doc_info_modules/cost_rates";
-import Approved from "edms/templates/edms/my_docs/doc_info/doc_info_modules/approved";
+import CostRates from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/cost_rates';
+import Approved from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approved';
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -24,7 +24,7 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
-  
+
     if (info.path) {
       return (
         <div>
@@ -90,7 +90,7 @@ class Info extends React.Component {
                     <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
                   </When>
                   <When condition={module.module === 'approval_list'}>
-                    <Approvals approvals={info.approval_list} />
+                    <Approvals approvals={info.approval_list} changeable={info.viewer_is_author || info.viewer_is_admin} />
                   </When>
                   <When
                     condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law', 'doc_type_version'].includes(
@@ -160,7 +160,7 @@ class Info extends React.Component {
           </If>
 
           <If condition={info.approvals}>
-            <Approvals approvals={info.approvals} />
+            <Approvals approvals={info.approvals} viewer_is_admin={info.viewer_is_author || info.viewer_is_admin} />
           </If>
 
           {/*Резолюції керівника (показуються, якщо документ чекає позначку "Виконано")*/}

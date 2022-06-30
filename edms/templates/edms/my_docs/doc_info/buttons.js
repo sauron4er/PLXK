@@ -161,7 +161,7 @@ class Buttons extends React.Component {
               Створити новий документ на основі цього
             </button>
           </If>
-          {/* Якщо ніхто не встиг відреагувати - можна видалити документ */}
+          {/* Якщо ніхто не встиг відреагувати (або це Договір) - можна видалити документ */}
           <If condition={deletable === true}>
             <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(13)} disabled={button_clicked}>
               Видалити
