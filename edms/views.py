@@ -1126,6 +1126,14 @@ def edms_mark(request):
 
                 add_contract_from_edms(doc_request, request.FILES)
 
+                if is_auto_approved_phase_used(doc_request['document_type']):
+                    completely_approved = is_doc_completely_approved(doc_request)
+                    if completely_approved:
+                        doc_request.update({'approved': completely_approved})
+                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                else:
+                    new_phase(doc_request, this_phase['phase'] + 1, [])
+
             # Взято у роботу
             elif doc_request['mark'] == '23':
                 # Перетворюємо фазу документу на "Взято у роботу"
@@ -1201,9 +1209,10 @@ def edms_mark(request):
                     .filter(is_active=True)
                 for md in mark_demands:
                     deactivate_mark_demand(doc_request, md)
+
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
-                # На погодження
+            # На погодження
             elif doc_request['mark'] == '28':
                 approvals = json.loads(doc_request['approvals'])
                 # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.

@@ -150,7 +150,8 @@ class Info extends React.Component {
                   <When condition={module.module === 'cost_rates'}>
                     <CostRates module={module} costRates={info.cost_rates} />
                   </When>
-                  <When condition={module.module === 'auto_approved'}>
+                  <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
+                    {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}
                     <Approved signed={info.approved} />
                   </When>
                 </Choose>
