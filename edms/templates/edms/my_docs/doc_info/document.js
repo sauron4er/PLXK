@@ -28,9 +28,8 @@ import {notify} from 'templates/components/my_extras';
 import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_with_comment';
 import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
 import {Loader} from 'templates/components/loaders';
-import Registration from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
 import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
-import NewApprovals from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_approvals';
+import NewSigners from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_signers";
 
 class Document extends React.Component {
   state = {
@@ -294,7 +293,7 @@ class Document extends React.Component {
       case 28:
         this.setState({
           modal: (
-            <NewApprovals
+            <NewSigners
               onCloseModal={this.onCloseModal}
               onSubmit={this.handleApprovals}
               doc_id={this.props.doc_id}

@@ -164,6 +164,26 @@ def save_foyer_ranges(doc_id):
         new_foyer.save()
 
 
+@try_except
+def deactivate_approval(approval_id):
+    try:
+        approval = get_object_or_404(Doc_Approval, pk=approval_id)
+        approval.is_active = False
+        approval.save()
+
+        mark_demand = get_object_or_404(Mark_Demand,
+                                        document=approval.document,
+                                        recipient=approval.emp_seat,
+                                        mark_id=17,
+                                        is_active=True)
+        mark_demand.is_active = False
+        mark_demand.save()
+
+        return 'ok'
+    except():
+        return 'error'
+
+
 # Функція, яка відправляє листи:
 @try_except
 def new_mail(email_type, recipients, doc_request):

@@ -21,23 +21,21 @@ class Approval extends React.Component {
   };
 
   deleteApproval = () => {
-    axiosGetRequest('get_archive/' + doc_type_id + '/')
-      .then((response) => {
-        this.setState({
-          my_archive: response.my_archive,
-          work_archive: response.work_archive,
-          loading: false
-        });
-      })
-      .catch((error) => notify(error));
-
-    this.setState({delete_loading: true});
+    this.setState({delete_loading: true}, () => {
+      axiosGetRequest(`del_approval/${this.props.approval.id}`)
+        .then((response) => {
+          this.setState({delete_loading: false});
+          if (response === 'ok') this.props.delApproval(this.props.index);
+          else notify('Помилка при видаленні візуючого, оновіть сторінку або зверніться до адміністратора')
+        })
+        .catch((error) => notify(error));
+    });
   };
 
   render() {
     const {approval, changeable} = this.props;
     const {delete_loading} = this.state;
-
+  
     return (
       <tr>
         <td className='align-middle text-center'>
@@ -85,7 +83,9 @@ class Approval extends React.Component {
 
   static defaultProps = {
     approval: [],
-    changeable: false
+    changeable: false,
+    index: -1,
+    delApproval: () => {}
   };
 }
 

@@ -873,7 +873,8 @@ def get_doc_modules(doc):
 
         elif module['module'] == 'approval_list':
             approval_list = [{
-                'id': item.emp_seat.id,
+                'id': item.id,
+                'emp_seat_id': item.emp_seat.id,
                 'emp_seat': item.emp_seat.employee.pip + ', ' + item.emp_seat.seat.seat + get_acting_flag(
                     item.emp_seat.is_main),
                 'approved': True if item.approved else False,
@@ -882,7 +883,8 @@ def get_doc_modules(doc):
                 'comment': item.approve_path.comment if item.approve_path else '',
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
-            doc_modules.update({'approval_list': approval_list})
+            changeable = are_approvals_on_first_phase(doc.id, approval_list)
+            doc_modules.update({'approval_list': approval_list, 'approvals_changeable': changeable})
 
         elif module['module'] == 'files':
             files = [{
@@ -1358,3 +1360,15 @@ def get_doc_version_from_description_matching(document_type_id, description):
         .filter(description=description) \
         .filter(is_active=True)[0]
     return doc_type_version
+
+
+@try_except
+def are_approvals_on_first_phase(doc_id, approvals_list=None):
+    if approvals_list is None:
+        approvals_list = []
+    if approvals_list == '':
+        a=1
+    else:
+        for approval in approvals_list:
+            if approval['approve_queue'] == 1 and not approval['approved']: return True
+        return False

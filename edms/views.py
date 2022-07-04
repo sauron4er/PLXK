@@ -23,7 +23,7 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, get_delegated_docs, \
     is_reg_number_free, get_doc_version_from_description_matching
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, deactivate_approval
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
 from .api.tables.free_time_table import get_free_times_table
@@ -1420,3 +1420,9 @@ def save_foyer_range(request):
                                     )
     new_range.save()
     return HttpResponse(new_range.pk)
+
+
+@login_required(login_url='login')
+@try_except
+def del_approval(request, approval_id):
+    return HttpResponse(deactivate_approval(approval_id))
