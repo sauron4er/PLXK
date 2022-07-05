@@ -19,9 +19,7 @@ class NewApprovals extends React.Component {
       .then((response) => {
         this.setState({emp_seats: response});
       })
-      .catch((error) => {
-        notify(error);
-      });
+      .catch((error) => notify(error));
   }
   
   onChange = (e) => {
@@ -38,14 +36,12 @@ class NewApprovals extends React.Component {
       emp_seat_id: id,
       emp_seat: name
     });
-    const unique_seats = uniqueArray(approval_list);
+    const unique_seats = uniqueArray(approval_list, 'emp_seat_id');
     this.setState({
-      approvals: approval_list,
+      approvals: unique_seats,
       emp_seat_id: '',
       emp_seat: ''
     });
-    // надсилаємо новий список у батьківський компонент
-    this.changeList(unique_seats);
   };
 
   delApproval = (index) => {
@@ -116,7 +112,10 @@ class NewApprovals extends React.Component {
   }
 
   static defaultProps = {
-    resolutions: []
+    onCloseModal: () => {},
+    onSubmit: () => {},
+    doc_id: 0,
+    new_path_id: 0,
   };
 }
 
