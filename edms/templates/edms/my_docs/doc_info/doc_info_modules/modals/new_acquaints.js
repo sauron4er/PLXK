@@ -15,7 +15,7 @@ class NewAcquaints extends React.Component {
     emp_seat: ''
   };
 
-  componentWillMount() {
+  componentDidMount() {
     axiosGetRequest(`get_emp_seats`)
       .then((response) => {
         this.setState({emp_seats: response});

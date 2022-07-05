@@ -14,7 +14,7 @@ class NewSigners extends React.Component {
     emp_seat: ''
   };
 
-  componentWillMount() {
+  componentDidMount() {
     axiosGetRequest('get_emp_seats')
       .then((response) => {
         this.setState({emp_seats: response});
@@ -38,14 +38,12 @@ class NewSigners extends React.Component {
       emp_seat_id: id,
       emp_seat: name
     });
-    const unique_seats = uniqueArray(signer_list);
+    const unique_seats = uniqueArray(signer_list, 'emp_seat_id');
     this.setState({
-      signers: signer_list,
+      signers: unique_seats,
       emp_seat_id: '',
       emp_seat: ''
     });
-    // надсилаємо новий список у батьківський компонент
-    this.changeList(unique_seats);
   };
 
   delSigner = (index) => {
