@@ -4,9 +4,10 @@ import {faCheckDouble} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Approval from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approvals/approval';
 import SubmitButton from 'templates/components/form_modules/submit_button';
-import {ToastContainer} from 'react-toastify';
 import Modal from 'react-responsive-modal';
-import NewApprovals from "edms/templates/edms/my_docs/doc_info/doc_info_modules/approvals/new_approvals";
+import NewApprovals from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approvals/new_approvals';
+import {axiosPostRequest} from 'templates/components/axios_requests';
+import {notify} from 'templates/components/my_extras';
 
 class Approvals extends React.Component {
   state = {
@@ -14,12 +15,25 @@ class Approvals extends React.Component {
     modal_open: false
   };
 
-  openModal = () => {
-    this.setState({modal_open: true})
+  postApprovals = (new_approvals) => {
+    let formData = new FormData();
+    formData.append('doc_id', this.props.docId);
+    formData.append('approvals', JSON.stringify(new_approvals));
+    axiosPostRequest('add_approvals', formData)
+      .then((response) => {
+        if (response === 'ok') {
+          this.addApprovals(new_approvals);
+          this.onCloseModal();
+        }
+        else notify('Помилка при додаванні візуючих, оновіть сторінку або зверніться до адміністратора');
+      })
+      .catch((error) => notify(error));
   };
-  
-  addApprovals = () => {
-    console.log(1);
+
+  addApprovals = (new_approvals) => {
+    let approvals = [...this.state.approvals];
+    approvals.splice(1, 0, new_approvals);
+    this.setState({approvals});
   };
 
   delApproval = (index) => {
@@ -27,10 +41,14 @@ class Approvals extends React.Component {
     approvals.splice(index, 1);
     this.setState({approvals});
   };
-  
-  onCloseModal = () => {
-    this.setState({modal_open: false})
-  }
+
+  openModal = () => {
+    this.setState({modal_open: true});
+  };
+
+  closeModal = () => {
+    this.setState({modal_open: false});
+  };
 
   render() {
     const {changeable} = this.props;
@@ -69,13 +87,14 @@ class Approvals extends React.Component {
           closeOnOverlayClick={false}
           styles={{modal: {marginTop: 100}}}
         >
-          <NewApprovals addApprovals={this.addApprovals} />
+          <NewApprovals postApprovals={this.postApprovals} closeModal={this.closeModal} />
         </Modal>
       </div>
     );
   }
 
   static defaultProps = {
+    docId: 0,
     approvals: [],
     changeable: false
   };

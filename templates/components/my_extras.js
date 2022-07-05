@@ -5,14 +5,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Спливаючі повідомлення
 export const notify = (message) =>
-    toast.error(message, {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
+  toast.error(message, {
+    position: 'bottom-right',
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true
+  });
 
 export const getIndex = (id, array) => {
   for (let i = 0; i < array.length; i++) {
@@ -23,8 +23,9 @@ export const getIndex = (id, array) => {
   return -1; //to handle the case where the value doesn't exist
 };
 
-export const uniqueArray = (array) => {
-  return array.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
+export const uniqueArray = (array, unique_field = null) => {
+  if (unique_field) return array.filter((item, index, self) => index == self.findIndex((t) => t[unique_field] == item[unique_field]));
+  else return array.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
   // спеціально == а не ===, бо в js id - string, а сервер висилає integer
 };
 

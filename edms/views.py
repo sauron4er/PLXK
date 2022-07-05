@@ -1426,3 +1426,16 @@ def save_foyer_range(request):
 @try_except
 def del_approval(request, approval_id):
     return HttpResponse(deactivate_approval(approval_id))
+
+
+@login_required(login_url='login')
+@try_except
+def add_approvals(request):
+    try:
+        new_approvals = json.loads(request.POST['approvals'])
+        for new_approval in new_approvals:
+            approval = Doc_Approval(document_id=request.POST['doc_id'], emp_seat_id=approval['emp_seat_id'], approve_queue=1)
+            approval.save()
+        return 'ok'
+    except():
+        return 'not ok'

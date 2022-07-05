@@ -90,7 +90,7 @@ class Info extends React.Component {
                     <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
                   </When>
                   <When condition={module.module === 'approval_list'}>
-                    <Approvals approvals={info.approval_list} changeable={info.approvals_changeable} />
+                    <Approvals approvals={info.approval_list} changeable={info.approvals_changeable} docId={info.id} />
                   </When>
                   <When
                     condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law', 'doc_type_version'].includes(

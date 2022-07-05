@@ -47,6 +47,7 @@ class AcquaintList extends React.Component {
       emp_seat: name
     });
     const unique_seats = uniqueArray(acquaint_list);
+    console.log(unique_seats);
     this.setState({
       acquaint_list: unique_seats,
       select_acquaint_id: '',

@@ -38,7 +38,7 @@ class NewApprovals extends React.Component {
       emp_seat_id: id,
       emp_seat: name
     });
-    const unique_seats = uniqueArray(approval_list);
+    const unique_seats = uniqueArray(approval_list, 'emp_seat_id');
     this.setState({
       approvals: unique_seats,
       emp_seat_id: '',
@@ -52,26 +52,18 @@ class NewApprovals extends React.Component {
     this.setState({approvals: approvals});
   };
   
-  postNewApprovals = (e) => {
-    //TODO
-    let formData = new FormData();
-    formData.append('approvals', JSON.stringify(this.state.approvals));
-    axiosPostRequest('add_approvals', formData)
-      .then((response) => {
-        if (response === 'ok') this.props.addApprovals(this.state.approvals);
-        else notify('Помилка при видаленні візуючого, оновіть сторінку або зверніться до адміністратора')
-      })
-      .catch((error) => notify(error));
-  };
+  postApprovals = () => {
+    this.props.postApprovals(this.state.approvals)
+  }
 
   render() {
     const {approvals, emp_seats} = this.state;
-    const {onCloseModal} = this.props;
+    const {closeModal} = this.props;
     return (
       <div style={{minHeight: '400px', minWidth: '600px'}}>
         <div className='modal-header d-flex justify-content-between'>
           <h5 className='modal-title font-weight-bold'>Додаткові візуючі</h5>
-          <button className='btn btn-link' onClick={onCloseModal}>
+          <button className='btn btn-link' onClick={closeModal}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
@@ -103,7 +95,7 @@ class NewApprovals extends React.Component {
                     );
                   })}
                 </ul>
-                <button className='btn btn-info' onClick={this.postNewApprovals}>
+                <button className='btn btn-info' onClick={this.postApprovals}>
                   Відправити
                 </button>
               </If>
@@ -120,8 +112,9 @@ class NewApprovals extends React.Component {
   }
 
   static defaultProps = {
+    doc_id: 0,
     resolutions: [],
-    addApprovals: () => {}
+    postApprovals: () => {}
   };
 }
 
