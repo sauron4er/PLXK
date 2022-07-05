@@ -24,8 +24,10 @@ export const getIndex = (id, array) => {
 };
 
 export const uniqueArray = (array, unique_field = null) => {
-  if (unique_field) return array.filter((item, index, self) => index == self.findIndex((t) => t[unique_field] == item[unique_field]));
-  else return array.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
+  if (unique_field)
+    return array.filter((item, index, self) => index == self.findIndex((t) => t[unique_field] == item[unique_field]));
+  else
+    return array.filter((item, index, self) => index == self.findIndex((t) => t.id == item.id));
   // спеціально == а не ===, бо в js id - string, а сервер висилає integer
 };
 

@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import { notify, uniqueArray } from "templates/components/my_extras";
-import { axiosGetRequest, axiosPostRequest } from "templates/components/axios_requests";
+import {axiosGetRequest} from 'templates/components/axios_requests';
 import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
 
 class NewApprovals extends React.Component {
@@ -19,9 +19,7 @@ class NewApprovals extends React.Component {
       .then((response) => {
         this.setState({emp_seats: response});
       })
-      .catch((error) => {
-        notify(error);
-      });
+      .catch((error) => notify(error));
   }
   
   onChange = (e) => {
@@ -52,18 +50,20 @@ class NewApprovals extends React.Component {
     this.setState({approvals: approvals});
   };
   
-  postApprovals = () => {
-    this.props.postApprovals(this.state.approvals)
-  }
+  // заставляє батьківський компонент запостити позначку
+  onClick = (e) => {
+    e.preventDefault();
+    this.props.onSubmit(this.state.approvals);
+  };
 
   render() {
     const {approvals, emp_seats} = this.state;
-    const {closeModal} = this.props;
+    const {onCloseModal} = this.props;
     return (
       <div style={{minHeight: '400px', minWidth: '600px'}}>
         <div className='modal-header d-flex justify-content-between'>
-          <h5 className='modal-title font-weight-bold'>Додаткові візуючі</h5>
-          <button className='btn btn-link' onClick={closeModal}>
+          <h5 className='modal-title font-weight-bold'>Створення списку на погодження</h5>
+          <button className='btn btn-link' onClick={onCloseModal}>
             <FontAwesomeIcon icon={faTimes} />
           </button>
         </div>
@@ -71,7 +71,7 @@ class NewApprovals extends React.Component {
           <When condition={emp_seats.length > 0}>
             <div className='modal-body'>
               <MultiSelectorWithFilter
-                fieldName='На візування'
+                fieldName='На погодження'
                 list={emp_seats}
                 onChange={this.onChange}
                 getOptionLabel={(option) => option.emp + ', ' + option.seat}
@@ -95,7 +95,7 @@ class NewApprovals extends React.Component {
                     );
                   })}
                 </ul>
-                <button className='btn btn-info' onClick={this.postApprovals}>
+                <button className='btn btn-info' onClick={this.onClick}>
                   Відправити
                 </button>
               </If>
@@ -112,9 +112,10 @@ class NewApprovals extends React.Component {
   }
 
   static defaultProps = {
+    onCloseModal: () => {},
+    onSubmit: () => {},
     doc_id: 0,
-    resolutions: [],
-    postApprovals: () => {}
+    new_path_id: 0,
   };
 }
 

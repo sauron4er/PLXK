@@ -37,14 +37,12 @@ class NewAcquaints extends React.Component {
       emp_seat_id: id,
       emp_seat: name
     });
-    const unique_seats = uniqueArray(acquaint_list);
+    const unique_seats = uniqueArray(acquaint_list, 'emp_seat_id');
     this.setState({
       acquaints: unique_seats,
       emp_seat_id: '',
       emp_seat: ''
     });
-    // надсилаємо новий список у батьківський компонент
-    this.changeList(unique_seats);
   };
 
   delAcquaint = (index) => {
@@ -115,7 +113,10 @@ class NewAcquaints extends React.Component {
   }
 
   static defaultProps = {
-    resolutions: []
+    onCloseModal: () => {},
+    onSubmit: () => {},
+    doc_id: 0,
+    new_path_id: 0,
   };
 }
 
