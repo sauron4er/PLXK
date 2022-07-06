@@ -88,11 +88,11 @@ def get_modules_list(meta_doc_type):
     } for module in Document_Type_Module.objects
         # .filter(document_type_id=)
         .filter(document_type__meta_doc_type_id=meta_doc_type)
+        .filter(document_type__is_active=True)
         .filter(table_view=True)
         .filter(is_active=True)
         .order_by('queue')
     ]
-
     return modules
 
 
@@ -188,7 +188,7 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
             document.update({'accounting': 'Бухгалтерський' if cost_rates.accounting == 'b' else 'Управлінський'}),  # u})
             document.update({'product_type': 'Напівфабрикати' if cost_rates.product_type == 'n' else 'Готова продукція'}),  # p})
             document.update({'date_start': convert_to_localtime(cost_rates.date_start, 'day')})
-            document.update({'client': cost_rates.client.name})
+            document.update({'client': cost_rates.client.name if cost_rates.client else ''})
 
     return documents_arranged
 

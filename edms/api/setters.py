@@ -136,7 +136,8 @@ def post_mark_deactivate(doc_request):
     mark_demands = [{
         'id': md.id,
     } for md in
-        Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True).exclude(mark_id=8)]
+        Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True)]
+        # Mark_Demand.objects.filter(document_id=doc_request['document']).filter(is_active=True).exclude(mark_id=8)]
 
     for md in mark_demands:
         deactivate_mark_demand(doc_request, md['id'])

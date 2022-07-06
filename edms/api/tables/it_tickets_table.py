@@ -38,8 +38,7 @@ def get_it_tickets_table(request, doc_type_version, page):
     if doc_type_version == '5':  # IT
         it_tickets_docs = [{
             'id': it_ticket.pk,
-            'added_date': normalize_whole_date(
-                Document_Path.objects.values('timestamp').filter(document_id=it_ticket.id).filter(mark_id=1)[0]),
+            'added_date': get_added_date(it_ticket),
             'done_date': get_done_date(it_ticket),
             'author': it_ticket.employee_seat.employee.pip,
             'name': get_name(it_ticket),
@@ -50,8 +49,7 @@ def get_it_tickets_table(request, doc_type_version, page):
     elif doc_type_version == '6':  # 1C8
         it_tickets_docs = [{
             'id': it_ticket.pk,
-            'added_date': normalize_whole_date(
-                Document_Path.objects.values('timestamp').filter(document_id=it_ticket.id).filter(mark_id=1)[0]),
+            'added_date': get_added_date(it_ticket),
             'done_date': get_done_date(it_ticket),
             'author': it_ticket.employee_seat.employee.pip,
             'name': get_name(it_ticket),
@@ -65,8 +63,7 @@ def get_it_tickets_table(request, doc_type_version, page):
     elif doc_type_version == '7':  # PLXK
         it_tickets_docs = [{
             'id': it_ticket.pk,
-            'added_date': normalize_whole_date(
-                Document_Path.objects.values('timestamp').filter(document_id=it_ticket.id).filter(mark_id=1)[0]),
+            'added_date': get_added_date(it_ticket),
             'done_date': get_done_date(it_ticket),
             'author': it_ticket.employee_seat.employee.pip,
             'name': get_name(it_ticket),
@@ -120,6 +117,16 @@ def get_accounting(it_ticket):
     else:  # Старі заявки
         return ''
     return ''
+
+
+@try_except
+def get_added_date(doc):
+    added_date = Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)
+    if added_date:
+        return normalize_whole_date(added_date[0])
+    else:
+        return ''
+
 
 @try_except
 def get_done_date(doc):
