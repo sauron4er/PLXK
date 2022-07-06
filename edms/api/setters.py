@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 
 from plxk.api.try_except import try_except
-from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
+from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
 from edms.api.getters import get_main_field
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
     Document_Type, Doc_Type_Phase, Document_Path
@@ -188,6 +188,11 @@ def deactivate_approval(request, approval_id):
             # Якщо активної mark_demand нема, то нічого і не робимо
             pass
 
+        # Надсилаємо листа про видалення зі списку візуючих
+        info_for_mail = {'doc_type_name': approval.document.document_type.description,
+                         'document': doc_id}
+        new_mail('deleted_from_approvals', [{'id': approval.emp_seat}], info_for_mail)
+
         return 'ok'
     except():
         return 'error'
@@ -197,7 +202,7 @@ def deactivate_approval(request, approval_id):
 def post_new_doc_approvals(request):
     try:
         doc_id = request.POST['doc_id']
-        resp_seat_id = request.POST['resp_seat_id']
+        resp_emp_seat_id = request.POST['resp_seat_id']
         new_approvals = json.loads(request.POST['approvals'])
 
         # Видаляємо тих, хто вже є у візуванні:
@@ -213,10 +218,12 @@ def post_new_doc_approvals(request):
 
         if cleared_approvals:
             # Створюємо позначку (для запису у mark_demands)
-            new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_seat_id, mark_id=29)
+            new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_emp_seat_id, mark_id=29)
             new_path.save()
 
             # Додаємо візуючих у таблицю і додаємо їм mark_demand
+            doc_type = get_object_or_404(Document_Type, meta_doc_type=5, is_active=True)
+            approval_phase = get_object_or_404(Doc_Type_Phase, document_type=doc_type, mark_id=17)
             for approval in cleared_approvals:
                 approval_instance = Doc_Approval(document_id=doc_id,
                                                  emp_seat_id=approval['emp_seat_id'],
@@ -226,11 +233,17 @@ def post_new_doc_approvals(request):
                 approval['id'] = approval_instance.id
 
                 # Додаємо mark_demand
-                doc_type = get_object_or_404(Document_Type, meta_doc_type=5, is_active=True)
-                approval_phase = get_object_or_404(Doc_Type_Phase, document_type=doc_type, mark_id=17)
                 post_mark_demand({'document': doc_id, 'comment': None, 'document_path': new_path.id},
                                  approval_instance.emp_seat_id,
                                  approval_phase.id, 17)
+
+            # Надсилаємо листи після того, як обробили весь список
+            responsible = get_object_or_404(Employee_Seat, id=resp_emp_seat_id)
+            info_for_mail = {'doc_type_name': doc_type.description,
+                             'document': doc_id,
+                             'doc_author_name': responsible.employee.pip}
+            for approval in cleared_approvals:
+                new_mail('new', [{'id': approval['emp_seat_id']}], info_for_mail)
 
         return json.dumps(cleared_approvals)
     except():
@@ -244,6 +257,7 @@ def new_mail(email_type, recipients, doc_request):
         main_field = get_main_field(document_instance)
 
         for recipient in recipients:
+            # mail = 'sauron4er@gmail.com'
             mail = Employee_Seat.objects.values_list('employee__user__email', flat=True).filter(id=recipient['id'])[0]
             if mail:
                 if email_type == 'new':
@@ -252,3 +266,5 @@ def new_mail(email_type, recipients, doc_request):
                     send_email_mark(doc_request, mail, main_field)
                 elif email_type == 'answer':
                     send_email_answer(doc_request, mail)
+                elif email_type == 'deleted_from_approvals':
+                    send_email_deleted_from_approvals(doc_request, mail, main_field)

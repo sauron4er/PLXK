@@ -58,6 +58,23 @@ def send_email_answer(doc_request, mail):
     send_email(mail, message.as_string())
 
 
+# Лист візуючому про видалення зі списку візуючих:
+def send_email_deleted_from_approvals(doc_request, mail, main_field):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = 'Вас видалено зі списку візуючих ({} "{}")'.format(doc_request['doc_type_name'], main_field)
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
+        .format(doc_request['document'])
+    text = 'Вас видалили зі списку візуючих щодо документу № {} ({} "{}"). {}' \
+        .format(doc_request['document'], doc_request['doc_type_name'], main_field, link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email(mail, message.as_string())
+
+
 # Лист щодо створення нового документа особі, яка має доступ до перегляду всіх таких документів.
 # Наприклад Терещенко і заявки по 1С8:
 def send_email_supervisor(stage, doc_request, mail):
