@@ -90,7 +90,7 @@ class Info extends React.Component {
                     <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
                   </When>
                   <When condition={module.module === 'approval_list'}>
-                    <Approvals approvals={info.approval_list} changeable={info.approvals_changeable} docId={info.id} />
+                    <Approvals info={info} />
                   </When>
                   <When
                     condition={['mockup_type', 'mockup_product_type', 'counterparty', 'scope', 'law', 'doc_type_version'].includes(
@@ -160,7 +160,7 @@ class Info extends React.Component {
           </If>
 
           <If condition={info.approvals}>
-            <Approvals approvals={info.approvals} viewer_is_admin={info.viewer_is_author || info.viewer_is_admin} />
+            <Approvals info={info} />
           </If>
 
           {/*Резолюції керівника (показуються, якщо документ чекає позначку "Виконано")*/}

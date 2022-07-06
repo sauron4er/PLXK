@@ -98,7 +98,8 @@ def arrange_approve(doc_request, is_approved):
     recipient = doc_request['employee_seat']
     approve_id = Doc_Approval.objects.values_list('id', flat=True) \
         .filter(document_id=doc_request['document']) \
-        .filter(emp_seat_id=recipient)
+        .filter(emp_seat_id=recipient)\
+        .filter(is_active=True)
 
     if approve_id:
         post_approve(doc_request, approve_id[0], is_approved)

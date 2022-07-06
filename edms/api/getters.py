@@ -42,9 +42,9 @@ def get_doc_create_day(doc):
 def get_phase_info(doc_request):
     phase_id = doc_request['phase_id']
     if phase_id == '0':
-        phase_id = Doc_Type_Phase.objects.values_list('id', flat=True)\
-            .filter(document_type_id=doc_request['document_type'])\
-            .filter(phase=0)\
+        phase_id = Doc_Type_Phase.objects.values_list('id', flat=True) \
+            .filter(document_type_id=doc_request['document_type']) \
+            .filter(phase=0) \
             .filter(is_active=True)[0]
 
     return Doc_Type_Phase.objects.values('id', 'phase', 'mark_id') \
@@ -84,8 +84,8 @@ def get_sub_seats(seat):
 @try_except
 def get_sub_emps(seat, with_fired=False):
     # Знаходимо підлеглих посади:
-    emp_seats = Employee_Seat.objects.filter(seat__chief_id=seat)\
-        .filter(employee__is_pc_user=True)\
+    emp_seats = Employee_Seat.objects.filter(seat__chief_id=seat) \
+        .filter(employee__is_pc_user=True) \
         .order_by('-is_active', 'employee__pip')
 
     if not with_fired:
@@ -138,9 +138,9 @@ def is_access_granted(user, emp_seat, doc):
         return True
 
     # Є дозвіл на перегляд усіх документів цього мета-типу
-    is_view_granted = User_Doc_Type_View.objects\
-        .filter(employee=user.userprofile)\
-        .filter(meta_doc_type=doc.document_type.meta_doc_type)\
+    is_view_granted = User_Doc_Type_View.objects \
+        .filter(employee=user.userprofile) \
+        .filter(meta_doc_type=doc.document_type.meta_doc_type) \
         .filter(is_active=True).exists()
     if is_view_granted:
         return True
@@ -207,7 +207,7 @@ def get_archive_by_doc_meta_type(user_id, doc_type_id):
             compare_list.append(entity)
             work_archive.append(work_archive_with_duplicates[i])
 
-    #TODO як позбавитись дублікатів, якщо користувач працював з документом під різними посадами?
+    # TODO як позбавитись дублікатів, якщо користувач працював з документом під різними посадами?
 
     return {'my_archive': my_archive, 'work_archive': work_archive}
 
@@ -222,7 +222,8 @@ def get_chiefs_list(seat):
         'id': empSeat.id,
         'name': empSeat.employee.pip,
         'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
-    } for empSeat in Employee_Seat.objects.filter(seat_id=chief_id).filter(is_active=True).filter(employee__on_vacation=False)]
+    } for empSeat in
+        Employee_Seat.objects.filter(seat_id=chief_id).filter(is_active=True).filter(employee__on_vacation=False)]
 
     temp_chiefs = []
     if chief_id is not None:  # якщо начальник є:
@@ -344,6 +345,7 @@ def get_dep_chief(dep_id):
         return {'id': id, 'name': name}
     return None
 
+
 # Функція, яка повертає посаду безпосереднього керівника людинопосади
 @try_except
 def get_chief_id(emp_seat_id):
@@ -390,9 +392,9 @@ def get_doc_type_modules(doc_type):
 
 @try_except
 def get_auto_recipients(doc_type_id):
-    doc_type_phases = Doc_Type_Phase.objects\
-        .filter(document_type=doc_type_id)\
-        .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24])\
+    doc_type_phases = Doc_Type_Phase.objects \
+        .filter(document_type=doc_type_id) \
+        .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24]) \
         .filter(is_active=True)
 
     if not doc_type_phases:
@@ -425,15 +427,14 @@ def get_auto_recipients(doc_type_id):
 # назву типу документа і назву позначки для оформлення електронних листів отримувачам
 @try_except
 def get_additional_doc_info(doc_request):
-
     document_info = Document.objects \
         .values(
-            'employee_seat_id',
-            'employee_seat__employee__pip',
-            'document_type',
-            'document_type__description',
-            'document_type__meta_doc_type_id'
-            ) \
+        'employee_seat_id',
+        'employee_seat__employee__pip',
+        'document_type',
+        'document_type__description',
+        'document_type__meta_doc_type_id'
+    ) \
         .filter(id=doc_request['document'])[0]
 
     # doc_type_name = Document_Type.objects.values_list('description', flat=True).filter(id=doc_request['document_type'])[0]
@@ -460,7 +461,8 @@ def get_additional_doc_info(doc_request):
 
     if 'mark' in doc_request.keys():
         mark_name = Mark.objects.values_list('mark', flat=True).filter(id=doc_request['mark'])[0]
-        mark_author_name = Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=doc_request['employee_seat'])[0]
+        mark_author_name = \
+        Employee_Seat.objects.values_list('employee__pip', flat=True).filter(id=doc_request['employee_seat'])[0]
         doc_request.update({
             'mark_name': mark_name,
             'mark_author_name': mark_author_name,
@@ -481,8 +483,8 @@ def get_actual_emp_seat_from_seat(seat_id):
 # Знаходить список працівників, які займають визначену посаду
 @try_except
 def get_employees_by_seat(seat_id):
-    emp_seats = Employee_Seat.objects\
-        .filter(seat_id=seat_id)\
+    emp_seats = Employee_Seat.objects \
+        .filter(seat_id=seat_id) \
         .filter(is_active=True)
     if emp_seats:
         emp_seats = [{
@@ -492,11 +494,12 @@ def get_employees_by_seat(seat_id):
         return list(emp_seats)
     return []
 
+
 @try_except
 def get_phase_recipient_list(phase_id, doc_type_version=0):
-    recipients = Doc_Type_Phase_Queue.objects\
-        .filter(phase_id=phase_id)\
-        .filter(is_active=True)\
+    recipients = Doc_Type_Phase_Queue.objects \
+        .filter(phase_id=phase_id) \
+        .filter(is_active=True) \
         .order_by('queue')
 
     if doc_type_version != 0:
@@ -527,16 +530,16 @@ def get_phase_recipients_and_doc_type_version(phase):
             'doc_type_version': int(phase.doc_type_version_id) if phase.doc_type_version else 0,
         }]
 
-    phase_recipients = Doc_Type_Phase_Queue.objects\
-        .filter(phase_id=phase.id)\
-        .filter(is_active=True)\
+    phase_recipients = Doc_Type_Phase_Queue.objects \
+        .filter(phase_id=phase.id) \
+        .filter(is_active=True) \
         .order_by('queue')
 
     phase_recipients = [{
         'seat_id': item.seat_id,
         'employee_seat_id': item.employee_seat_id,
         'doc_type_version': int(item.doc_type_version) if item.doc_type_version
-                        else int(item.phase.doc_type_version_id) if item.phase.doc_type_version else 0,
+        else int(item.phase.doc_type_version_id) if item.phase.doc_type_version else 0,
     } for item in phase_recipients]
 
     recipients = []
@@ -561,7 +564,7 @@ def get_phase_recipients_and_doc_type_version(phase):
 def get_zero_phase_id(document_type):
     return Doc_Type_Phase.objects.values_list('id', flat=True) \
         .filter(document_type_id=document_type) \
-        .filter(phase=0)\
+        .filter(phase=0) \
         .filter(is_active=True)[0]
 
 
@@ -575,7 +578,8 @@ def get_phase_id_sole_recipients(phase_id, emp_seat, doc_type_version=0):
 
     sole = Doc_Type_Phase.objects.values_list('sole', flat=True).filter(id=phase_id)[0]
     if sole:
-        chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat).filter(is_active=True)
+        chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=emp_seat).filter(
+            is_active=True)
         if chief_seat_id:  # False якщо у посади нема внесеного шефа
             chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                 .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
@@ -583,7 +587,8 @@ def get_phase_id_sole_recipients(phase_id, emp_seat, doc_type_version=0):
             chief_emp_seat_id = vacation_check(chief_emp_seat_id)
 
             while chief_emp_seat_id not in recipients:
-                chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(id=chief_emp_seat_id).filter(is_active=True)
+                chief_seat_id = Employee_Seat.objects.values_list('seat__chief_id', flat=True).filter(
+                    id=chief_emp_seat_id).filter(is_active=True)
                 if chief_seat_id:  # False якщо у посади нема внесеного шефа
                     chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
                         .filter(seat_id=chief_seat_id[0]).filter(is_main=True).filter(is_active=True)[0]
@@ -766,9 +771,9 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
 
 @try_except
 def get_delegated_docs(emp, sub=0, doc_meta_type=0):
-    docs = Mark_Demand.objects\
-        .filter(document__testing=testing)\
-        .filter(document__closed=False)\
+    docs = Mark_Demand.objects \
+        .filter(document__testing=testing) \
+        .filter(document__closed=False) \
         .filter(delegated_from_id=emp)
 
     if sub != '0':
@@ -795,7 +800,7 @@ def get_delegated_docs(emp, sub=0, doc_meta_type=0):
 
 
 @try_except
-def get_doc_modules(doc):
+def get_doc_modules(doc, responsible_id):
     doc_modules = {}
 
     type_modules = [{
@@ -883,7 +888,9 @@ def get_doc_modules(doc):
                 'comment': item.approve_path.comment if item.approve_path else '',
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
-            changeable = are_approvals_on_first_phase(doc.id, approval_list)
+
+            changeable = are_approvals_on_first_phase(approval_list) and int(responsible_id) == doc.employee_seat_id
+
             doc_modules.update({'approval_list': approval_list, 'approvals_changeable': changeable})
 
         elif module['module'] == 'files':
@@ -914,7 +921,7 @@ def get_doc_modules(doc):
                 })
         elif module['module'] == 'foyer_ranges':
             if 'foyer_ranges' not in doc_modules.keys():
-                doc_modules.update({'foyer_ranges': get_foyer_ranges(doc.id),})
+                doc_modules.update({'foyer_ranges': get_foyer_ranges(doc.id), })
         elif module['module'] == 'gate':
             gate = [{
                 'gate': item.gate,
@@ -1032,7 +1039,7 @@ def get_doc_modules(doc):
                         'id': client[0]['id'],
                         'name': client[0]['name'],
                         'country': client[0]['country']
-                }})
+                    }})
 
         elif module['module'] == 'counterparty':
             counterparty = [{
@@ -1050,18 +1057,18 @@ def get_doc_modules(doc):
                         'counterparty': {
                             'id': counterparty[0]['id'],
                             'name': (counterparty[0]['name'] + ', ' + counterparty[0]['country'])
-                                if counterparty[0]['country']
-                                else counterparty[0]['name']
-                    }})
+                            if counterparty[0]['country']
+                            else counterparty[0]['name']
+                        }})
                 else:
                     doc_modules.update({
                         'counterparty': {
                             'id': counterparty[0]['id'],
                             'name': counterparty[0]['input'],
-                    }})
+                        }})
         elif module['module'] == 'contract_link':
-            contract_link_id = Doc_Contract.objects.values_list('contract_id', flat=True)\
-                .filter(document_id=doc.id)\
+            contract_link_id = Doc_Contract.objects.values_list('contract_id', flat=True) \
+                .filter(document_id=doc.id) \
                 .filter(is_active=True)
 
             if contract_link_id:
@@ -1119,7 +1126,8 @@ def get_doc_modules(doc):
             doc_modules.update({'employee': employee[0]})
 
         elif module['module'] == 'document_link':
-            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(is_active=True)
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(
+                is_active=True)
             if dl:
                 dl_id = dl[0]
                 dl = get_object_or_404(Document, pk=dl_id)
@@ -1127,8 +1135,8 @@ def get_doc_modules(doc):
                 doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl_main_field}})
 
         elif module['module'] == 'registration':
-            registration_number = Doc_Registration.objects.values_list('registration_number', flat=True)\
-                .filter(document_id=doc.id)\
+            registration_number = Doc_Registration.objects.values_list('registration_number', flat=True) \
+                .filter(document_id=doc.id) \
                 .filter(is_active=True)
 
             doc_modules.update({'registration_number': registration_number[0] if registration_number else ''})
@@ -1141,17 +1149,17 @@ def get_doc_modules(doc):
 
 @try_except
 def is_mark_demand_exists(emp_seat_id, document_id):
-    return Mark_Demand.objects\
-        .filter(recipient_id=emp_seat_id)\
-        .filter(document_id=document_id)\
-        .filter(is_active=True)\
+    return Mark_Demand.objects \
+        .filter(recipient_id=emp_seat_id) \
+        .filter(document_id=document_id) \
+        .filter(is_active=True) \
         .exists()
 
 
 @try_except
 def is_already_approved(document_id, emp_seat_id):
-    is_approved = Doc_Approval.objects.values_list('approved', flat=True)\
-        .filter(document_id=document_id)\
+    is_approved = Doc_Approval.objects.values_list('approved', flat=True) \
+        .filter(document_id=document_id) \
         .filter(emp_seat_id=emp_seat_id)[0]
     if is_approved:
         return is_approved[0]
@@ -1160,16 +1168,16 @@ def is_already_approved(document_id, emp_seat_id):
 
 @try_except
 def get_main_field(document):
-    main_field_data = Document_Type_Module.objects.values('module_id', 'module__module', 'queue')\
-        .filter(document_type_id=document.document_type_id)\
+    main_field_data = Document_Type_Module.objects.values('module_id', 'module__module', 'queue') \
+        .filter(document_type_id=document.document_type_id) \
         .filter(is_main_field=True)[0]
 
     main_field = []
 
     if main_field_data['module_id'] == 16:  # Текст
-        main_field = Doc_Text.objects.values_list('text', flat=True)\
-            .filter(document=document)\
-            .filter(queue_in_doc=main_field_data['queue'])\
+        main_field = Doc_Text.objects.values_list('text', flat=True) \
+            .filter(document=document) \
+            .filter(queue_in_doc=main_field_data['queue']) \
             .filter(is_active=True)
     elif main_field_data['module_id'] == 26:  # Клієнт
         main_field = Doc_Counterparty.objects.values_list('counterparty__name', flat=True) \
@@ -1204,11 +1212,11 @@ def get_main_field(document):
 def get_supervisors(doc_type):
     meta_doc_type = Document_Type.objects.values_list('meta_doc_type', flat=True).filter(id=doc_type)[0]
     supervisors = [{
-            'emp_id': item.employee.id,
-            'mail': item.employee.user.email,
-        } for item in User_Doc_Type_View.objects\
-        .filter(meta_doc_type_id=meta_doc_type)\
-        .filter(send_mails=True)\
+        'emp_id': item.employee.id,
+        'mail': item.employee.user.email,
+    } for item in User_Doc_Type_View.objects \
+        .filter(meta_doc_type_id=meta_doc_type) \
+        .filter(send_mails=True) \
         .filter(is_active=True)]
     if supervisors:
         return supervisors
@@ -1218,15 +1226,15 @@ def get_supervisors(doc_type):
 @try_except
 def get_allowed_new_doc_types(request):
     # Документи, які можна створювати всім, не мають записів у таблиці edms_doc_type_create_rights
-    free_doc_types = Document_Type.objects\
-        .filter(is_active=True)\
+    free_doc_types = Document_Type.objects \
+        .filter(is_active=True) \
         .filter(~Exists(Doc_Type_Create_Rights.objects
                         .filter(is_active=True)
                         .filter(document_meta_type=OuterRef('meta_doc_type'))))
 
     # Права відділу, до якого відноситься UserProfile
-    dep_doc_types = Document_Type.objects\
-        .filter(is_active=True)\
+    dep_doc_types = Document_Type.objects \
+        .filter(is_active=True) \
         .filter(Exists(Doc_Type_Create_Rights.objects
                        .filter(document_meta_type=OuterRef('meta_doc_type'))
                        .filter(department=request.user.userprofile.department)))
@@ -1235,7 +1243,7 @@ def get_allowed_new_doc_types(request):
         free_doc_types = free_doc_types.filter(testing=False)
         dep_doc_types = dep_doc_types.filter(testing=False)
 
-    doc_types = free_doc_types.union(dep_doc_types)\
+    doc_types = free_doc_types.union(dep_doc_types) \
         # .order_by('description')
 
     return [{  # Список документів, які може створити юзер
@@ -1355,7 +1363,7 @@ def is_reg_number_free(reg_number):
 
 @try_except
 def get_doc_version_from_description_matching(document_type_id, description):
-    doc_type_version = Document_Type_Version.objects.values_list('id', flat=True)\
+    doc_type_version = Document_Type_Version.objects.values_list('id', flat=True) \
         .filter(document_type_id=document_type_id) \
         .filter(description=description) \
         .filter(is_active=True)[0]
@@ -1363,11 +1371,9 @@ def get_doc_version_from_description_matching(document_type_id, description):
 
 
 @try_except
-def are_approvals_on_first_phase(doc_id, approvals_list=None):
+def are_approvals_on_first_phase(approvals_list=None):
     if approvals_list is None:
         approvals_list = []
-    if approvals_list == '':
-        a=1
     else:
         for approval in approvals_list:
             if approval['approve_queue'] == 1 and not approval['approved']: return True

@@ -23,7 +23,7 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, get_delegated_docs, \
     is_reg_number_free, get_doc_version_from_description_matching
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, deactivate_approval
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, deactivate_approval, post_new_doc_approvals
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor
 from .api.tables.free_time_table import get_free_times_table
@@ -585,7 +585,7 @@ def edms_get_doc(request, pk):
                 doc_info.update({'acquaints': flow_and_acquaints['acquaints']})
 
         # Модулі
-        doc_info.update(get_doc_modules(doc))
+        doc_info.update(get_doc_modules(doc, request.POST['employee_seat']))
 
         is_super_manager = User_Doc_Type_View.objects.values_list('super_manager', flat=True)\
             .filter(employee=request.user.userprofile)\
@@ -1425,17 +1425,10 @@ def save_foyer_range(request):
 @login_required(login_url='login')
 @try_except
 def del_approval(request, approval_id):
-    return HttpResponse(deactivate_approval(approval_id))
+    return HttpResponse(deactivate_approval(request, approval_id))
 
 
 @login_required(login_url='login')
 @try_except
 def add_approvals(request):
-    try:
-        new_approvals = json.loads(request.POST['approvals'])
-        for new_approval in new_approvals:
-            approval = Doc_Approval(document_id=request.POST['doc_id'], emp_seat_id=approval['emp_seat_id'], approve_queue=1)
-            approval.save()
-        return 'ok'
-    except():
-        return 'not ok'
+    return HttpResponse(post_new_doc_approvals(request))

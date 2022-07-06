@@ -36,7 +36,10 @@ class NewApprovals extends React.Component {
     let approval_list = [...this.state.approvals];
     approval_list.push({
       emp_seat_id: id,
-      emp_seat: name
+      emp_seat: name,
+      approve_queue: 1,
+      approved: false,
+      id: 0
     });
     const unique_seats = uniqueArray(approval_list, 'emp_seat_id');
     this.setState({

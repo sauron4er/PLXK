@@ -1,10 +1,14 @@
+import json
+
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer
 from edms.api.getters import get_main_field
-from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval
+from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
+    Document_Type, Doc_Type_Phase, Document_Path
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm, MarkDemandChangeRecipientForm
 from edms.api.vacations import vacation_check
 
@@ -25,8 +29,6 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
     request = doc_request.copy()
     emp_seat_id = vacation_check(emp_seat_id)
 
-    # Якщо на ознайомлення, то не відправляємо, якщо є будь-який інший mark_demand,
-    # в іншому разі не відправляємо, якщо є такий самий mark_demand
     already_exists = Mark_Demand.objects \
         .filter(document_id=doc_request['document']) \
         .filter(recipient_id=emp_seat_id) \
@@ -93,7 +95,6 @@ def deactivate_mark_demand(doc_request, md_id):
         raise ValidationError('edms/views deactivate_mark_demand deactivate_mark_demand_form invalid')
 
 
-# Деактивація всіх MarkDemand документа:
 @try_except
 def deactivate_doc_mark_demands(doc_request, doc_id):
     mark_demands = [{
@@ -122,7 +123,6 @@ def set_doc_text_module(request):
         new_text.save()
 
 
-# Обробка різних видів позначок: ---------------------------------------------------------------------------------------
 @try_except
 def post_mark_delete(doc_request):
     delete_doc(doc_request, int(doc_request['document']))
@@ -133,7 +133,6 @@ def post_mark_delete(doc_request):
 def post_mark_deactivate(doc_request):
     deactivate_doc(doc_request, int(doc_request['document']))
 
-    # Деактивуємо всі mаrk_demands крім на ознайомлення:
     mark_demands = [{
         'id': md.id,
     } for md in
@@ -159,32 +158,85 @@ def save_foyer_ranges(doc_id):
             employee_id=employee,
             out_datetime=range.out_datetime,
             in_datetime=range.in_datetime,
-            absence_based=doc_version == 1  # 1 - Звільнююча, 2 - тимчасова/забув
+            absence_based=doc_version == 1  # 1 - Р· РІРёС…РѕРґСѓ РґРѕ РІС…РѕРґСѓ РїСЂР°С†С–РІРЅРёРєР°, 2 - РЅР°РІРїР°РєРё
         )
         new_foyer.save()
 
 
 @try_except
-def deactivate_approval(approval_id):
+def deactivate_approval(request, approval_id):
     try:
+        # РЎС‚РІРѕСЂСЋС”РјРѕ РїРѕР·РЅР°С‡РєСѓ (РґР»СЏ Р·Р°РїРёСЃСѓ Сѓ mark_demands)
+        doc_id = request.POST['doc_id']
+        resp_seat_id = request.POST['resp_seat_id']
+        new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_seat_id, mark_id=30)
+        new_path.save()
+
         approval = get_object_or_404(Doc_Approval, pk=approval_id)
         approval.is_active = False
         approval.save()
 
-        mark_demand = get_object_or_404(Mark_Demand,
-                                        document=approval.document,
-                                        recipient=approval.emp_seat,
-                                        mark_id=17,
-                                        is_active=True)
-        mark_demand.is_active = False
-        mark_demand.save()
+        try:
+            mark_demand = get_object_or_404(Mark_Demand,
+                                            document=approval.document,
+                                            recipient=approval.emp_seat,
+                                            mark_id=17,
+                                            is_active=True)
+            mark_demand.is_active = False
+            mark_demand.save()
+        except Http404:
+            # РЇРєС‰Рѕ Р°РєС‚РёРІРЅРѕС— mark_demand РЅРµРјР°, С‚Рѕ РЅС–С‡РѕРіРѕ С– РЅРµ СЂРѕР±РёРјРѕ
+            pass
 
         return 'ok'
     except():
         return 'error'
 
 
-# Функція, яка відправляє листи:
+@try_except
+def post_new_doc_approvals(request):
+    try:
+        doc_id = request.POST['doc_id']
+        resp_seat_id = request.POST['resp_seat_id']
+        new_approvals = json.loads(request.POST['approvals'])
+
+        # Р’РёРґР°Р»СЏС”РјРѕ С‚РёС…, С…С‚Рѕ РІР¶Рµ С” Сѓ РІС–Р·СѓРІР°РЅРЅС–:
+        cleared_approvals = []
+        for new_approval in new_approvals:
+            already_exists = Doc_Approval.objects\
+                .filter(document_id=doc_id)\
+                .filter(emp_seat_id=new_approval['emp_seat_id'])\
+                .filter(is_active=True)\
+                .exists()
+            if not already_exists:
+                cleared_approvals.append(new_approval)
+
+        if cleared_approvals:
+            # РЎС‚РІРѕСЂСЋС”РјРѕ РїРѕР·РЅР°С‡РєСѓ (РґР»СЏ Р·Р°РїРёСЃСѓ Сѓ mark_demands)
+            new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_seat_id, mark_id=29)
+            new_path.save()
+
+            # Р”РѕРґР°С”РјРѕ РІС–Р·СѓСЋС‡РёС… Сѓ С‚Р°Р±Р»РёС†СЋ С– РґРѕРґР°С”РјРѕ С—Рј mark_demand
+            for approval in cleared_approvals:
+                approval_instance = Doc_Approval(document_id=doc_id,
+                                                 emp_seat_id=approval['emp_seat_id'],
+                                                 approve_queue=1)
+                approval_instance.save()
+
+                approval['id'] = approval_instance.id
+
+                # Р”РѕРґР°С”РјРѕ mark_demand
+                doc_type = get_object_or_404(Document_Type, meta_doc_type=5, is_active=True)
+                approval_phase = get_object_or_404(Doc_Type_Phase, document_type=doc_type, mark_id=17)
+                post_mark_demand({'document': doc_id, 'comment': None, 'document_path': new_path.id},
+                                 approval_instance.emp_seat_id,
+                                 approval_phase.id, 17)
+
+        return json.dumps(cleared_approvals)
+    except():
+        return 'error'
+
+
 @try_except
 def new_mail(email_type, recipients, doc_request):
     if not testing:

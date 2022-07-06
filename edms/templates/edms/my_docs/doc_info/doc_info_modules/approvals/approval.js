@@ -2,7 +2,7 @@
 import * as React from 'react';
 import {faCircle, faCheckCircle, faTimesCircle} from '@fortawesome/free-regular-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {axiosGetRequest} from 'templates/components/axios_requests';
+import { axiosPostRequest } from "templates/components/axios_requests";
 import {notify} from 'templates/components/my_extras';
 
 class Approval extends React.Component {
@@ -22,7 +22,10 @@ class Approval extends React.Component {
 
   deleteApproval = () => {
     this.setState({delete_loading: true}, () => {
-      axiosGetRequest(`del_approval/${this.props.approval.id}`)
+      let formData = new FormData();
+      formData.append('doc_id', this.props.info.id);
+      formData.append('resp_seat_id', this.props.info.responsible_seat_id);
+      axiosPostRequest(`del_approval/${this.props.approval.id}`, formData)
         .then((response) => {
           this.setState({delete_loading: false});
           if (response === 'ok') this.props.delApproval(this.props.index);
@@ -33,7 +36,7 @@ class Approval extends React.Component {
   };
 
   render() {
-    const {approval, changeable} = this.props;
+    const {approval, info} = this.props;
     const {delete_loading} = this.state;
   
     return (
@@ -60,7 +63,7 @@ class Approval extends React.Component {
           <small>{approval.approved_date}</small>
         </td>
 
-        <If condition={changeable && approval.approve_queue === 1}>
+        <If condition={info?.approvals_changeable && approval.approve_queue === 1}>
           <td className='align-middle text-center'>
             {/*approval.approve_queue === 0 - автор, 1 - візуючі, 2 - директори*/}
             <Choose>
@@ -83,7 +86,7 @@ class Approval extends React.Component {
 
   static defaultProps = {
     approval: [],
-    changeable: false,
+    info: {},
     index: -1,
     delApproval: () => {}
   };
