@@ -8,6 +8,7 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 import {LoaderSmall} from 'templates/components/loaders';
+import PaginatedTable from "templates/components/tables/paginated_table";
 
 // налаштування колонок для таблиць
 const my_archive_columns = [
@@ -51,8 +52,9 @@ class Archive extends React.Component {
   };
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
-  getMainDivRef = (input) => {
-    this.mainDivRef = input;
+  getArchiveMainDivRef = (input) => {
+      this.mainDivRef = input;
+      if (this.mainDivRef) this.setState({main_div_height: this.mainDivRef.clientHeight - 50});
   };
 
   getArchive = (doc_type_id) => {
@@ -81,7 +83,7 @@ class Archive extends React.Component {
       doc_type_id: e.target.options[selectedIndex].getAttribute('data-key'),
       doc_type_name: e.target.options[selectedIndex].getAttribute('value')
     });
-    this.getArchive(e.target.options[selectedIndex].getAttribute('data-key'));
+    // this.getArchive(e.target.options[selectedIndex].getAttribute('data-key'));
   };
 
   onNewMark = (id, mark_id, author_id) => {
@@ -109,8 +111,8 @@ class Archive extends React.Component {
   };
 
   render() {
-    const {main_div_height, doc_type_name, my_archive, work_archive, opened_doc_id, loading} = this.state;
-
+    const {main_div_height, doc_type_id, doc_type_name, my_archive, work_archive, opened_doc_id, loading} = this.state;
+  
     return (
       <>
         <div className='d-flex justify-content-between'>
@@ -132,35 +134,55 @@ class Archive extends React.Component {
             </Choose>
           </div>
         </div>
-        <div className='row css_main_div' ref={this.getMainDivRef}>
-          <div className='col-lg-4'>
-            Створені вами документи
-            <DxTable
-              rows={my_archive}
-              columns={my_archive_columns}
-              defaultSorting={[{columnName: 'id', direction: 'desc'}]}
-              colWidth={my_archive_col_width}
-              onRowClick={this.onRowClick}
-              height={main_div_height}
-              filter
-            />
+        <If condition={doc_type_id !== null && doc_type_id !== 0}>
+          <div className="row css_main_div" ref={this.getArchiveMainDivRef}>
+            <div className="col-lg-4">
+              Створені вами документи
+              <PaginatedTable
+                url={`get_my_archive/${doc_type_id}`}
+                columns={my_archive_columns}
+                defaultSorting={[{ columnName: "id", direction: "desc" }]}
+                colWidth={my_archive_col_width}
+                onRowClick={this.onRowClick}
+                height={main_div_height}
+                filter
+              />
+              {/*<DxTable*/}
+              {/*  rows={my_archive}*/}
+              {/*  columns={my_archive_columns}*/}
+              {/*  defaultSorting={[{columnName: 'id', direction: 'desc'}]}*/}
+              {/*  colWidth={my_archive_col_width}*/}
+              {/*  onRowClick={this.onRowClick}*/}
+              {/*  height={main_div_height}*/}
+              {/*  filter*/}
+              {/*/>*/}
+            </div>
+            <div className="col-lg-4">
+              Документи, що були у роботі
+              <PaginatedTable
+                url={`get_my_work_archive/${doc_type_id}`}
+                columns={work_archive_columns}
+                defaultSorting={[{ columnName: "id", direction: "desc" }]}
+                colWidth={work_archive_col_width}
+                onRowClick={this.onRowClick}
+                height={main_div_height}
+                filter
+              />
+              {/*<DxTable*/}
+              {/*  rows={work_archive}*/}
+              {/*  columns={work_archive_columns}*/}
+              {/*  defaultSorting={[{ columnName: "id", direction: "desc" }]}*/}
+              {/*  colWidth={work_archive_col_width}*/}
+              {/*  onRowClick={this.onRowClick}*/}
+              {/*  height={main_div_height}*/}
+              {/*  filter*/}
+              {/*/>*/}
+            </div>
+            <div className="col-lg-4 css_height_100">
+              <Document doc_id={opened_doc_id} archived={true} removeRow={this.onNewMark} />
+            </div>
           </div>
-          <div className='col-lg-4'>
-            Документи, що були у роботі
-            <DxTable
-              rows={work_archive}
-              columns={work_archive_columns}
-              defaultSorting={[{columnName: 'id', direction: 'desc'}]}
-              colWidth={work_archive_col_width}
-              onRowClick={this.onRowClick}
-              height={main_div_height}
-              filter
-            />
-          </div>
-          <div className='col-lg-4 css_height_100'>
-            <Document doc_id={opened_doc_id} archived={true} removeRow={this.onNewMark} />
-          </div>
-        </div>
+        </If>
       </>
     );
   }

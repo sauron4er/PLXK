@@ -111,7 +111,8 @@ class Doc_Type_Phase_Queue(models.Model):
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type', on_delete=models.RESTRICT)
     title = models.CharField(max_length=100, null=True, blank=True)
-    employee_seat = models.ForeignKey(Employee_Seat, related_name='initiated_documents', on_delete=models.RESTRICT)
+    # author = models.ForeignKey(Employee_Seat, related_name='initiated_documents', on_delete=models.RESTRICT, null=True)
+    employee_seat = models.ForeignKey(Employee_Seat, related_name='responsible_for_documents', on_delete=models.RESTRICT)  # Відповідальний
     is_draft = models.BooleanField(default=False)
     is_template = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True, null=True)
@@ -123,6 +124,11 @@ class Document(models.Model):
     closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
     # doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу
     doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='documents', on_delete=models.RESTRICT)  # Підтип документу
+
+    # TODO При записі документа записуємо перші 50 символів з main_field у це поле.
+    #  При пошуку документа для таблиці беремо дані з цього поля
+    main_field = models.CharField(max_length=50, null=True)  # Записуємо сюди перші 50 символів Змісту, для легкого пошуку і фільтрації
+
     is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
 
 

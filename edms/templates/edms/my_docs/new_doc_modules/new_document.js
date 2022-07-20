@@ -507,6 +507,9 @@ class NewDocument extends React.Component {
     if (this.state.type_modules[this.state.main_field_queue].module === 'doc_type_version') {
       return newDocStore.new_document.doc_type_version_name;
     }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'cost_rates') {
+      return newDocStore.new_document.cost_rates.product_name;
+    }
     return 0;
   };
 
