@@ -813,24 +813,24 @@ def edms_del_doc(request, pk):
 @login_required(login_url='login')
 def edms_archive(request):
     if request.method == 'GET':
-        write_main_fields()
+        # write_main_fields()  # Використано один раз при переводі архіву на пажинацію
         return render(request, 'edms/archive/archive.html', {'doc_types': get_meta_doc_types()})
     return HttpResponse(status=405)
 
 
-@try_except
-def write_main_fields():
-    docs = Document.objects.all()  # 5579
-    count = 0
-    for doc in docs:
-        main_field = get_main_field(doc)
-
-        document = get_object_or_404(Document, id=doc.id)
-        document.main_field = main_field[0:50]
-        document.save()
-
-        count += 1
-        print(count)
+# @try_except
+# def write_main_fields():  # Використано один раз при переводі архіву на пажинацію
+#     docs = Document.objects.all()  # 5579
+#     count = 0
+#     for doc in docs:
+#         main_field = get_main_field(doc)
+#
+#         document = get_object_or_404(Document, id=doc.id)
+#         document.main_field = main_field[0:50]
+#         document.save()
+#
+#         count += 1
+#         print(count)
 
 
 @login_required(login_url='login')
