@@ -4,7 +4,7 @@ from edms.views import edms_hr, edms_hr_emp, edms_hr_dep, edms_hr_seat, edms_hr_
 from edms.views import edms_my_docs, edms_get_doc, edms_get_chiefs, edms_get_direct_subs, edms_get_emp_seats, edms_get_contracts  # Мої документи get
 from edms.views import edms_mark, edms_del_doc  # Мої документи post
 from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_templates, edms_get_doc_type_modules  # Нові документи
-from edms.views import edms_archive, edms_get_archive, get_my_archive, get_my_work_archive, edms_tables, edms_get_table_first, edms_get_table_all
+from edms.views import edms_archive, get_archive, get_work_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_it_tickets, get_doc_type_versions, get_all_employees, \
     del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields, del_approval, add_approvals
@@ -63,9 +63,8 @@ urlpatterns = [
     url(r'^my_docs/add_approvals', add_approvals, name='add_approvals'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
-    url(r'^archive/get_my_archive/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_my_archive, name='get_my_archive'),
-    url(r'^archive/get_my_work_archive/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_my_work_archive, name='get_my_work_archive'),
-    url(r'^archive/get_archive/(?P<pk>\d+)/$', edms_get_archive, name='get_archive'),
+    url(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_archive, name='get_archive'),
+    url(r'^archive/get_work_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_work_archive, name='get_work_archive'),
     url(r'^archive/', edms_archive, name='archive'),
 
     url(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_meta_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),

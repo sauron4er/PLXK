@@ -15,9 +15,9 @@
                             <li class="nav-item {% if request.resolver_match.url_name == "archive" %}active{% endif %}">
                                 <a class="nav-link" href="{% url 'edms:archive' %}">Архів</a>
                             </li>
-                            <li class="nav-item {% if request.resolver_match.url_name == "sub_docs" %}active{% endif %}">
-                              <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>
-                            </li>
+{#                            <li class="nav-item {% if request.resolver_match.url_name == "sub_docs" %}active{% endif %}">#}
+{#                              <a class="nav-link" href="{% url 'edms:sub_docs' %}">Документи підлеглих</a>#}
+{#                            </li>#}
                             <li class="nav-item {% if request.resolver_match.url_name == "delegated" %}active{% endif %}">
                               <a class="nav-link" href="{% url 'edms:delegated' %}">Делеговані документи</a>
                             </li>

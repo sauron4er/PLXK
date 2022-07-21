@@ -9,7 +9,6 @@ class FancyRadio extends React.Component {
   };
 
   render() {
-
     return (
       <>
         <div className='row align-items-center mr-lg-1'>
@@ -21,7 +20,7 @@ class FancyRadio extends React.Component {
                 name='requirements_type'
                 id='DV'
                 onChange={this.onChange}
-                checked={}
+                checked={true}
               />
               <label className='for-checkbox-tools' htmlFor='DV'>
                 ДВ
@@ -32,7 +31,7 @@ class FancyRadio extends React.Component {
                 name='requirements_type'
                 id='DVB'
                 onChange={this.onChange}
-                checked={}
+                checked={false}
               />
               <label className='for-checkbox-tools' htmlFor='DVB'>
                 ДВБ
@@ -43,7 +42,7 @@ class FancyRadio extends React.Component {
                 name='requirements_type'
                 id='ETA'
                 onChange={this.onChange}
-                checked={}
+                checked={false}
               />
               <label className='for-checkbox-tools' htmlFor='ETA'>
                 ЕТА
@@ -54,7 +53,7 @@ class FancyRadio extends React.Component {
                 name='requirements_type'
                 id='KFS'
                 onChange={this.onChange}
-                checked={}
+                checked={false}
               />
               <label className='for-checkbox-tools' htmlFor='KFS'>
                 КФС
@@ -65,7 +64,7 @@ class FancyRadio extends React.Component {
                 name='requirements_type'
                 id='MKFS'
                 onChange={this.onChange}
-                checked={}
+                checked={false}
               />
               <label className='for-checkbox-tools' htmlFor='MKFS'>
                 МКФС

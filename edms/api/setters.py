@@ -6,7 +6,6 @@ from django.http import Http404
 
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
-from edms.api.getters import get_main_field
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
     Document_Type, Doc_Type_Phase, Document_Path
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm, MarkDemandChangeRecipientForm
@@ -255,7 +254,7 @@ def post_new_doc_approvals(request):
 def new_mail(email_type, recipients, doc_request):
     if not testing:
         document_instance = get_object_or_404(Document, pk=doc_request['document'])
-        main_field = get_main_field(document_instance)
+        main_field = document_instance.main_field
 
         for recipient in recipients:
             # mail = 'sauron4er@gmail.com'

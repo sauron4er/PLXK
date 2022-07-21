@@ -18,7 +18,7 @@ from .api.modules_post import *
 from .api.approvals_handler import *
 from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_access_granted, get_main_field, \
     get_doc_path, get_path_steps, get_doc_flow, get_doc_modules, get_my_seats, get_allowed_new_doc_types, \
-    get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, get_archive_by_doc_meta_type, \
+    get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
     get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching
@@ -29,7 +29,7 @@ from .api.edms_mail_sender import send_email_supervisor
 from .api.tables.free_time_table import get_free_times_table
 from .api.tables.it_tickets_table import get_it_tickets_table
 from .api.move_to_new_employee import move_docs, move_orders, move_approvals
-from .api.archives import get_my_archive_docs, get_my_work_archive_docs
+from .api.archives import get_archive_docs, get_work_archive_docs
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -554,7 +554,7 @@ def edms_get_doc(request, pk):
             'approved': doc.approved,
             'archived': not doc.is_active,
             'closed': doc.closed,
-            'main_field': get_main_field(doc),
+            'main_field': doc.main_field,
             'doc_type_version': doc.doc_type_version.id if doc.doc_type_version else 0,
             'doc_type_version_name': doc.doc_type_version.description if doc.doc_type_version else '',
             'stage': doc.stage,
@@ -635,7 +635,7 @@ def edms_my_docs(request):
             'date': convert_to_localtime(doc.date, 'day'),
             'responsible': request.user.userprofile.pip,
             'responsible_seat_id': doc.employee_seat.id,
-            'main_field': get_main_field(doc),
+            'main_field': doc.main_field,
             'status': 'draft' if doc.is_draft else ('template' if doc.is_template else 'doc'),
         } for doc in Document.objects
             .filter(employee_seat__employee_id=request.user.userprofile.id)
@@ -653,7 +653,7 @@ def edms_my_docs(request):
             'expected_mark': demand.mark.id,
             'responsible': demand.document.employee_seat.employee.pip,
             'responsible_seat_id': demand.document.employee_seat_id,
-            'main_field': get_main_field(demand.document),
+            'main_field': demand.document.main_field,
             'mark_demand_id': demand.id,
             'phase_id': demand.phase_id,
         } for demand in Mark_Demand.objects
@@ -813,42 +813,19 @@ def edms_del_doc(request, pk):
 @login_required(login_url='login')
 def edms_archive(request):
     if request.method == 'GET':
-        # write_main_fields()  # Використано один раз при переводі архіву на пажинацію
         return render(request, 'edms/archive/archive.html', {'doc_types': get_meta_doc_types()})
     return HttpResponse(status=405)
 
 
-# @try_except
-# def write_main_fields():  # Використано один раз при переводі архіву на пажинацію
-#     docs = Document.objects.all()  # 5579
-#     count = 0
-#     for doc in docs:
-#         main_field = get_main_field(doc)
-#
-#         document = get_object_or_404(Document, id=doc.id)
-#         document.main_field = main_field[0:50]
-#         document.save()
-#
-#         count += 1
-#         print(count)
-
-
 @login_required(login_url='login')
-def edms_get_archive(request, pk):  # deprecated after archive went to pagination
-    if request.method == 'GET':
-        return HttpResponse(json.dumps(get_archive_by_doc_meta_type(request.user.userprofile.id, pk)))
-    return HttpResponse(status=405)
-
-
-@login_required(login_url='login')
-def get_my_archive(request, meta_doc_id, page):
-    archive = get_my_archive_docs(request, meta_doc_id, page)
+def get_archive(request, archive_type, meta_doc_id, page):
+    archive = get_archive_docs(request, archive_type, meta_doc_id, page)
     return HttpResponse(json.dumps(archive))
 
 
 @login_required(login_url='login')
-def get_my_work_archive(request, meta_doc_id, page):
-    archive = get_my_work_archive_docs(request, meta_doc_id, page)
+def get_work_archive(request, archive_type, meta_doc_id, page):
+    archive = get_work_archive_docs(request, archive_type, meta_doc_id, page)
     return HttpResponse(json.dumps(archive))
 
 

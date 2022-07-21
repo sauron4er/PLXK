@@ -170,7 +170,7 @@ class Article extends React.Component {
         </div>
 
         <If condition={article.term === 'term' || !disabled}>
-          <div className={'form-inline mt-1'}>
+          <div className='form-inline mt-1'>
             <input
               type='radio'
               name={index + 'term_radio'}

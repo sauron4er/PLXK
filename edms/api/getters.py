@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import FilteredRelation, Q
 import json
 from django.core import serializers
 from django.db.models import Prefetch
@@ -67,7 +67,7 @@ def get_phase_id(doc_request):
     return phase
 
 
-# Функція, яка рекурсією шукає всіх підлеглих посади користувача і їх підлеглих
+# Функція, яка рекурсією шукає всі підлеглі посади користувача і їх підлеглі (без користувачів, лише посади)
 @try_except
 def get_sub_seats(seat):
     seats = [{'id': seat.id} for seat in Seat.objects.filter(chief_id=seat)]  # Знаходимо підлеглих посади
@@ -86,7 +86,7 @@ def get_sub_seats(seat):
 
 # Знаходить всі підлеглі людино-посади конкретної посади
 @try_except
-def get_sub_emps(seat, with_fired=False):
+def get_sub_emps(seat, with_fired=False, only_ids=False):
     # Знаходимо підлеглих посади:
     emp_seats = Employee_Seat.objects.filter(seat__chief_id=seat) \
         .filter(employee__is_pc_user=True) \
@@ -100,6 +100,7 @@ def get_sub_emps(seat, with_fired=False):
         'seat': emp_seat.seat.seat,
         'seat_id': emp_seat.seat_id,
         'emp': emp_seat.employee.pip,
+        'userprofile_id': emp_seat.employee_id,
     } for emp_seat in emp_seats]
 
     temp_emp_seats = []
@@ -132,13 +133,16 @@ def get_meta_doc_types():
 
 @try_except
 def is_access_granted(user, emp_seat, doc):
-    emp_seats = user.userprofile.positions.all().values_list('id', flat=True)
+    emp_seats = user.userprofile.positions.all().filter(is_active=True).values_list('id', flat=True)
+    seats = user.userprofile.positions.all().filter(is_active=True).values('seat_id', 'seat__department_id', 'seat__is_dep_chief')
 
     if doc.employee_seat_id in emp_seats:  # Це автор документу
         return True
     if doc.path.filter(employee_seat__in=emp_seats).exists():  # Мав документ у роботі
         return True
     if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Мав документ у mark_demands
+        return True
+    if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Керівник відділу автора
         return True
 
     # Є дозвіл на перегляд усіх документів цього мета-типу
@@ -149,142 +153,46 @@ def is_access_granted(user, emp_seat, doc):
     if is_view_granted:
         return True
 
-    # TODO шукати усіх підлеглих усіх посад користувача, зараз шукаються лише підлеглі однієї посади
-    my_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat)[0]
-    sub_emps = get_sub_emps(my_seat)
-    sub_emps_flat = [sub_emp['id'] for sub_emp in sub_emps] if sub_emps else []
+    # Це начальник автора
+    author_chief = get_dep_chief(doc.employee_seat.seat.department_id)
+    if author_chief:
+        author_chief_id = get_dep_chief(doc.employee_seat.seat.department_id)['id']
+        seat_ids = [x['seat_id'] for x in seats]
+        if author_chief_id in seat_ids:
+            return True
 
-    if doc.employee_seat_id in sub_emps_flat:
+    # Це начальник когось із працівників, у кого є доступ
+    # 1. Знаходимо відділи працівників, які працювали над документом
+    deps_query = Document.objects.filter(id=doc.id)\
+        .annotate(doc_path=FilteredRelation('path', ), )\
+        .values('doc_path__employee_seat__seat__department_id')\
+        .distinct()
+    deps_that_worked_on_doc = [dep['doc_path__employee_seat__seat__department_id'] for dep in deps_query]
+
+    # 2. Знаходимо відділи, у яких є начальником даний користувач
+    chief_of_deps_id = []
+    for seat in seats:
+        if seat['seat__is_dep_chief']:
+            chief_of_deps_id.append(seat['seat__department_id'])
+
+    # 3. Перевіряємо чи є користувач начальником хоча б одного з відділів, що працювали над документом
+    chief_of_deps = list(set(deps_that_worked_on_doc).intersection(chief_of_deps_id))
+    if len(chief_of_deps) > 0:
         return True
-    if doc.path.filter(employee_seat__in=sub_emps_flat).exists():
-        return True
-    if doc.document_demands.filter(recipient__in=sub_emps_flat).exists():
-        return True
+
+    # # TODO шукати усіх підлеглих усіх посад користувача, зараз шукаються лише підлеглі однієї посади
+    # my_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat)[0]
+    # sub_emps = get_sub_emps(my_seat)
+    # sub_emps_flat = [sub_emp['id'] for sub_emp in sub_emps] if sub_emps else []
+    #
+    # if doc.employee_seat_id in sub_emps_flat:
+    #     return True
+    # if doc.path.filter(employee_seat__in=sub_emps_flat).exists():
+    #     return True
+    # if doc.document_demands.filter(recipient__in=sub_emps_flat).exists():
+    #     return True
 
     return False
-
-
-@try_except
-def get_archive_by_doc_meta_type(user_id, meta_doc_type_id):  # deprecated after archive went to pagination
-    # Документи, з якими мав справу користувач:
-    # Витягуємо всі документи даного типу
-    work_archive_query = Document.objects \
-        .filter(document_type__meta_doc_type_id=meta_doc_type_id) \
-        .filter(testing=testing) \
-        .filter(closed=False)
-
-    # Фільтруємо по path від користувача і прибираємо дублікати. 
-    work_archive_query = work_archive_query\
-        .filter(path__employee_seat__employee_id=user_id)\
-        .distinct()
-
-    # Підтягуємо в queryset інфу про path для визначення автора
-    work_archive_query = work_archive_query.prefetch_related(
-        Prefetch('path', queryset=Document_Path.objects.filter(mark_id=1))
-    )
-
-    work_archive_list = [{
-        'id': doc.id,
-        'type': doc.document_type.description,
-        'type_id': doc.document_type_id,
-        # 'date': convert_to_localtime(doc.date, 'day'),
-        # 'emp_seat_id': 1,
-        'author': get_doc_author(doc.id),
-        # 'author_seat_id': 1,
-        'main_field': get_main_field(doc),
-    } for doc in work_archive_query]
-
-    # for doc in work_archive_query:
-    #     creator = [step.employee_seat.employee.pip for step in doc.path.all()]
-    #     work_archive_list.append({'creator': creator[0]})
-
-    # employee_seat.employee.pip
-
-    # my_archive = [{  # Список документів, створених даним юзером
-    #     'id': path.document.id,
-    #     'type': path.document.document_type.description,
-    #     'type_id': path.document.document_type.id,
-    #     'date': convert_to_localtime(path.timestamp, 'day'),
-    #     'emp_seat_id': path.employee_seat.id,
-    #     'author': path.employee_seat.employee.pip,
-    #     'author_seat_id': path.employee_seat.id,
-    #     'main_field': get_main_field(path.document),
-    # } for path in Document_Path.objects
-    #     .filter(document__document_type__meta_doc_type_id=meta_doc_type_id)
-    #     .filter(mark=1)
-    #     .filter(employee_seat__employee_id=user_id)
-    #     .filter(document__testing=testing)
-    #     .filter(document__closed=False)]
-
-
-    # work_archive_with_duplicates = [{  # Список документів, які були у роботі користувача
-    #     'id': path.document_id,
-    #     'type': path.document.document_type.description,
-    #     'type_id': path.document.document_type_id,
-    #     'date': convert_to_localtime(path.document.date, 'day'),
-    #     'emp_seat_id': path.employee_seat_id,
-    #     'author': path.document.employee_seat.employee.pip,
-    #     'author_seat_id': path.document.employee_seat_id,
-    #     'main_field': get_main_field(path.document),
-    # } for path in Document_Path.objects.distinct()
-    #     .filter(document__document_type__meta_doc_type_id=meta_doc_type_id)
-    #     .filter(employee_seat_id__employee_id=user_id)
-    #     .filter(document__testing=testing)
-    #     .filter(document__closed=False)
-    #     .exclude(document__employee_seat__employee=user_id)]
-    # 
-    # # Позбавляємось дублікатів:
-    # work_archive = []
-    # compare_list = []
-    # for i in range(0, len(work_archive_with_duplicates)):
-    #     # Порівнюємо документи по ід та ід людино-посади, бо один документ може попасти до декількох людинопосад людини
-    #     entity = {
-    #         'id': work_archive_with_duplicates[i]['id'],
-    #         'emp_seat_id': work_archive_with_duplicates[i]['emp_seat_id']
-    #     }
-    #     if entity not in compare_list:
-    #         compare_list.append(entity)
-    #         work_archive.append(work_archive_with_duplicates[i])
-
-    # TODO як позбавитись дублікатів, якщо користувач працював з документом під різними посадами?
-    my_archive=[]
-
-    return {'my_archive': my_archive, 'work_archive': work_archive_list}
-
-
-@try_except
-def get_my_archive_docs(request, meta_doc_type_id, page):
-    # Архів документів, створених даним юзером
-    archive = Document_Path.objects \
-        .filter(document__document_type__meta_doc_type_id=meta_doc_type_id) \
-        .filter(mark=1) \
-        .filter(employee_seat__employee_id=request.user.userprofile.id) \
-        .filter(document__testing=testing) \
-        .filter(document__closed=False)
-
-    archive = filter_query_set(archive, json.loads(request.POST['filtering']))
-    archive = sort_query_set(archive, request.POST['sort_name'], request.POST['sort_direction'])
-
-    paginator = Paginator(archive, 25)
-    try:
-        archive_page = paginator.page(int(page) + 1)
-    except PageNotAnInteger:
-        archive_page = paginator.page(1)
-    except EmptyPage:
-        archive_page = paginator.page(1)
-
-    archive = [{
-        'id': path.document.id,
-        'type': path.document.document_type.description,
-        'type_id': path.document.document_type.id,
-        'date': convert_to_localtime(path.timestamp, 'day'),
-        'emp_seat_id': path.employee_seat.id,
-        'author': path.employee_seat.employee.pip,
-        'author_seat_id': path.employee_seat.id,
-        'main_field': get_main_field(path.document),
-    } for path in archive_page.object_list]
-
-    return {'rows': archive, 'pagesCount': paginator.num_pages}
 
 
 @try_except
@@ -353,6 +261,7 @@ def get_my_seats(emp_id, only_active=True):
         'id': empSeat.id,
         'seat_id': empSeat.seat_id,
         'seat': empSeat.seat.seat if empSeat.is_main else '(в.о.) ' + empSeat.seat.seat,
+        'dep_id': empSeat.seat.department.id
     } for empSeat in my_seats]
 
     for emp_seat in my_seats:
@@ -701,7 +610,7 @@ def get_all_subs_docs(emp_seat):
             'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
             'author': path.employee_seat.employee.pip,
             'is_active': path.document.is_active,
-            'main_field': get_main_field(path.document),
+            'main_field': path.document.main_field,
         } for path in Document_Path.objects
             .filter(mark_id=1)
             .filter(employee_seat__seat_id__in=subs)
@@ -714,7 +623,7 @@ def get_all_subs_docs(emp_seat):
             'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
             'author': md.document_path.employee_seat.employee.pip,
             'is_active': md.document.is_active,
-            'main_field': get_main_field(md.document),
+            'main_field': md.document.main_field,
         } for md in Mark_Demand.objects
             .filter(recipient__seat_id__in=subs)
             .filter(document__testing=testing)
@@ -734,7 +643,7 @@ def get_emp_seat_docs(emp_seat, sub_emp):
         'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
         'author': path.employee_seat.employee.pip,
         'is_active': path.document.is_active,
-        'main_field': get_main_field(path.document),
+        'main_field': path.document.main_field,
     } for path in Document_Path.objects
         .filter(mark_id=1)
         .filter(employee_seat_id=sub_emp)
@@ -747,7 +656,7 @@ def get_emp_seat_docs(emp_seat, sub_emp):
         'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
         'author': md.document_path.employee_seat.employee.pip,
         'is_active': md.document.is_active,
-        'main_field': get_main_field(md.document),
+        'main_field': md.document.main_field,
     } for md in Mark_Demand.objects
         .filter(recipient=sub_emp)
         .filter(document__testing=testing)
@@ -767,7 +676,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
         'author': path.employee_seat.employee.pip,
         'is_active': path.document.is_active,
-        'main_field': get_main_field(path.document),
+        'main_field': path.document.main_field,
     } for path in Document_Path.objects
         .filter(mark_id=1)
         .filter(document__document_type__meta_doc_type=doc_meta_type)
@@ -781,7 +690,7 @@ def get_emp_seat_and_doc_type_docs(emp_seat, sub_emp, doc_meta_type):
         'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
         'author': md.document_path.employee_seat.employee.pip,
         'is_active': md.document.is_active,
-        'main_field': get_main_field(md.document),
+        'main_field': md.document.main_field,
     } for md in Mark_Demand.objects
         .filter(document__document_type__meta_doc_type=doc_meta_type)
         .filter(recipient=sub_emp)
@@ -815,7 +724,7 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'date': datetime.strftime(path.timestamp, '%d.%m.%Y'),
             'author': path.employee_seat.employee.pip,
             'is_active': path.document.is_active,
-            'main_field': get_main_field(path.document),
+            'main_field': path.document.main_field,
         } for path in Document_Path.objects
             .filter(mark_id=1)
             .filter(employee_seat__seat_id__in=subs)
@@ -829,7 +738,7 @@ def get_doc_type_docs(emp_seat, doc_meta_type):
             'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
             'author': md.document_path.employee_seat.employee.pip,
             'is_active': md.document.is_active,
-            'main_field': get_main_field(md.document),
+            'main_field': md.document.main_field,
         } for md in Mark_Demand.objects
             .filter(document__document_type__meta_doc_type_id=doc_meta_type)
             .exclude(document__employee_seat__seat_id__in=subs)
@@ -875,7 +784,7 @@ def get_delegated_docs(emp, sub=0, doc_meta_type=0):
         'date': datetime.strftime(md.document_path.timestamp, '%d.%m.%Y'),
         'author': md.document_path.employee_seat.employee.pip,
         'md_is_active': md.is_active,
-        'main_field': get_main_field(md.document),
+        'main_field': md.document.main_field,
     } for md in docs]
 
     return docs_list
@@ -1213,8 +1122,7 @@ def get_doc_modules(doc, responsible_id):
             if dl:
                 dl_id = dl[0]
                 dl = get_object_or_404(Document, pk=dl_id)
-                dl_main_field = get_main_field(dl)
-                doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl_main_field}})
+                doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl.main_field}})
 
         elif module['module'] == 'registration':
             registration_number = Doc_Registration.objects.values_list('registration_number', flat=True) \
@@ -1249,7 +1157,7 @@ def is_already_approved(document_id, emp_seat_id):
 
 
 @try_except
-def get_main_field(document):
+def get_main_field(document):  # Знаходимо значення main_field для запису у новостворений документ
     main_field_data = Document_Type_Module.objects.values('module_id', 'module__module', 'queue') \
         .filter(document_type_id=document.document_type_id) \
         .filter(is_main_field=True)[0]

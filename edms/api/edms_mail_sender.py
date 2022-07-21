@@ -1,7 +1,6 @@
 from plxk.api.mail_sender import send_email
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from edms.api.getters import get_main_field
 from django.shortcuts import get_object_or_404
 from edms.models import Document
 
@@ -79,11 +78,10 @@ def send_email_deleted_from_approvals(doc_request, mail, main_field):
 # Наприклад Терещенко і заявки по 1С8:
 def send_email_supervisor(stage, doc_request, mail):
     document_instance = get_object_or_404(Document, pk=doc_request['document'])
-    main_field = get_main_field(document_instance)
 
     message = MIMEMultipart("alternative")
     message["Subject"] = "Створена нова заявка по 1С8. {}" if stage == 'new' \
-        else 'Змінився статус заявки по 1С8 "{}" ({})'.format(main_field, stage)
+        else 'Змінився статус заявки по 1С8 "{}" ({})'.format(document_instance.main_field, stage)
     message["From"] = 'it@lxk.com.ua'
     message["To"] = mail
 
@@ -92,10 +90,10 @@ def send_email_supervisor(stage, doc_request, mail):
 
     if stage == 'new':
         text = 'На внутрішньому сайті ПЛХК опубліковано нову заявку по 1С8 № {} "{}". Автор: {}. {}' \
-            .format(doc_request['document'], main_field, doc_request['doc_author_name'], link)
+            .format(doc_request['document'], document_instance.main_field, doc_request['doc_author_name'], link)
     else:
         text = 'Новий статус заявки по 1С8 № {} "{}" (автор: {}) – "{}". {}' \
-            .format(doc_request['document'], main_field, doc_request['doc_author_name'], stage, link)
+            .format(doc_request['document'], document_instance.main_field, doc_request['doc_author_name'], stage, link)
 
     message.attach(MIMEText(text, "plain"))
 
