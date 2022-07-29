@@ -2,10 +2,10 @@
     z-index: 100 !important;
 }
 
-[type="checkbox"]:checked,
-[type="checkbox"]:not(:checked),
-[type="radio"]:checked,
-[type="radio"]:not(:checked){
+[class="checkbox"].checkbox-tools:checked,
+[class="checkbox"].checkbox-tools:not(:checked),
+[type="radio"].checkbox-tools:checked,
+[type="radio"].checkbox-tools:not(:checked){
 	position: absolute;
 	left: -9999px;
 	width: 0;

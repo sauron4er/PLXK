@@ -96,10 +96,6 @@ class Archive extends React.Component {
   onRadioChange = (e) => {
     this.setState({archive_type: e.target.name});
   };
-  
-  getRadioItems = () => {
-  
-  }
 
   render() {
     const {main_div_height, doc_type_id, doc_type_name, opened_doc_id, archive_type} = this.state;
@@ -117,20 +113,22 @@ class Archive extends React.Component {
               disabled={false}
             />
           </div>
-          <div className='d-flex ml-auto'><FancyRadio
-            items={[
-              ["my", "Мої документи"],
-              ["dep", "Документи відділу"],
-              ["subs", "Документи підлеглих"]
-            ]}
-            active={archive_type}
-            onChange={this.onRadioChange}
-          /></div>
+          <div className='d-flex ml-auto'>
+            <FancyRadio
+              items={[
+                ['my', 'Мої документи'],
+                ['dep', 'Документи відділу'],
+                ['subs', 'Документи підлеглих']
+              ]}
+              active={archive_type}
+              onChange={this.onRadioChange}
+            />
+          </div>
         </div>
         <If condition={doc_type_id !== null && doc_type_id !== 0}>
           <div className='row css_main_div' ref={this.getArchiveMainDivRef}>
             <div className='col-lg-4'>
-              {`Створені ${archive_type==='my'? 'вами' : archive_type==='dep'? 'працівниками відділу' : 'підлеглими'}  документи`}
+              {`Створені ${archive_type === 'my' ? 'вами' : archive_type === 'dep' ? 'працівниками відділу' : 'підлеглими'}  документи`}
               <PaginatedTable
                 url={`get_archive/${archive_type}/${doc_type_id}`}
                 columns={archive_columns}
