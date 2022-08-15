@@ -8,6 +8,9 @@ import Modal from 'react-responsive-modal';
 import NewApprovals from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approvals/new_approvals';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import { notify } from "templates/components/my_extras";
+import {view, store} from '@risingstack/react-easy-state';
+import docInfoStore from "edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store";
+
 
 class Approvals extends React.Component {
   state = {
@@ -37,10 +40,15 @@ class Approvals extends React.Component {
     this.setState({approvals});
   };
 
-  delApproval = (index) => {
+  delApproval = (index, approval_id) => {
+    // Видаляємо зі списку в таблиці
     let approvals = [...this.state.approvals];
     approvals.splice(index, 1);
     this.setState({approvals});
+    
+    // Даємо знати серверу, що треба перевірити, чи відправляти документ на наступну фазу
+    docInfoStore.deleted_approval_id = approval_id
+    this.props.postMark(30)
   };
 
   openModal = () => {
@@ -99,4 +107,4 @@ class Approvals extends React.Component {
   };
 }
 
-export default Approvals;
+export default view(Approvals);

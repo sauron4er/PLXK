@@ -170,6 +170,9 @@ class Docs extends React.Component {
       case 27:
         answer = 'Документ №' + id + ' зареєстровано';
         break;
+      case 30:
+        answer = 'Візуючого видалено';
+        break;
     }
     this.setState({opened_doc_id: 0});
     docInfoStore.answer = answer;

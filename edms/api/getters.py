@@ -1368,3 +1368,16 @@ def are_approvals_on_first_phase(approvals_list=None):
         for approval in approvals_list:
             if approval['approve_queue'] == 1 and not approval['approved']: return True
         return False
+
+
+# Перевіряє, чи є на даній фазі невиконані mark_demands
+@try_except
+def remaining_required_md(doc_id, phase_id):
+    count = Mark_Demand.objects \
+        .filter(document_id=doc_id) \
+        .filter(phase_id=phase_id) \
+        .filter(phase__required=True) \
+        .filter(is_active=True) \
+        .exclude(mark_id=8) \
+        .count()
+    return count

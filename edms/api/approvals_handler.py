@@ -2,9 +2,10 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from datetime import datetime
 from plxk.api.try_except import try_except
-from ..models import Document_Type_Module, Doc_Approval, Doc_Type_Phase
-from ..forms import ApproveForm, DeactivateApproveForm, ApprovedDocForm, Document, NewApprovalForm, ApprovedApprovalForm
-from .getters import get_main_employee, get_phase_recipient_list
+from edms.models import Document_Type_Module, Doc_Approval, Doc_Type_Phase, Mark_Demand, Document_Path
+from edms.forms import ApproveForm, DeactivateApproveForm, ApprovedDocForm, Document, NewApprovalForm
+from edms.api.getters import get_main_employee, get_phase_recipient_list
+from django.http import Http404
 
 
 @try_except
@@ -121,3 +122,34 @@ def is_in_approval_list(emp_seat_id, document):
         .filter(is_active=True)\
         .exists()
     return is_in_approval_list
+
+
+@try_except
+def deactivate_approval(request, approval_instance):
+    try:
+        # Додаємо запис про видалення у path
+        doc_id = request.POST['doc_id']
+        resp_seat_id = request.POST['resp_seat_id']
+        new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_seat_id, mark_id=30)
+        new_path.save()
+
+        # Деактивуємо doc_approval
+        approval_instance.is_active = False
+        approval_instance.save()
+
+        # Деактивуємо mark_demand, якщо такий є
+        try:
+            mark_demand = get_object_or_404(Mark_Demand,
+                                            document=approval_instance.document,
+                                            recipient=approval_instance.emp_seat,
+                                            mark_id=17,
+                                            is_active=True)
+            mark_demand.is_active = False
+            mark_demand.save()
+        except Http404:
+            # Якщо активної mark_demand нема, то нічого і не робимо
+            pass
+
+        return 'ok'
+    except():
+        return 'error'

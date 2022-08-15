@@ -10,7 +10,7 @@ from docs.api.contracts_api import add_contract_from_edms
 from docs.models import Article_responsible, Contract
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
-from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Meta_Type
+from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Type, Document_Meta_Type
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all
@@ -21,11 +21,11 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
-    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching
+    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching, remaining_required_md
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, deactivate_approval, post_new_doc_approvals
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals
 from .api.phases_handler import new_phase
-from .api.edms_mail_sender import send_email_supervisor
+from .api.edms_mail_sender import send_email_supervisor, send_email_lebedev
 from .api.tables.free_time_table import get_free_times_table
 from .api.tables.it_tickets_table import get_it_tickets_table
 from .api.move_to_new_employee import move_docs, move_orders, move_approvals
@@ -725,6 +725,10 @@ def edms_my_docs(request):
                 if supervisor['emp_id'] != request.user.userprofile.id:
                     send_email_supervisor('new', doc_request, supervisor['mail'])
 
+            # Відправляємо листа Лебедєву
+            if request.POST['document_type'] in ['14', '3']:
+                send_email_lebedev(doc_request, main_field)
+
         return HttpResponse(new_doc.pk)
 
 
@@ -1234,6 +1238,27 @@ def edms_mark(request):
                     post_mark_demand(doc_request, approval, get_phase_id(doc_request), 2)
                     new_mail('new', [{'id': approval}], doc_request)
 
+            # Видалення візуючого
+            elif doc_request['mark'] == '30':
+                # TODO Це захардкодена функція, яка працює до серйозних змін у бізнес-логіці документу!!!
+                # Після видалення візуючого перевіряємо, чи є ще активні mark_demands візуючих,
+                # якщо ні - відправляємо на наступну фазу.
+                # Працює лише якщо всі візуючі знаходяться в одній і тій же фазі, і документ теж зараз в цій фазі.
+                # Тобто у document_type=14 усі візуючі знаходяться у фазі 1 - яка іде відразу після створення документа.
+                # Кнопка "видалити візуючого" активна лише під час цієї фази, тому захардкодений mark_id=17 працює.
+                # Якщо візуючі будуть розділені на декілька фаз,
+                # або перед візуючими зявиться ще одна фаза, ця функція зламається.
+                # TODO Необхідно переробити, щоб ця функція перевіряла, на якій фазі ми знаходимось
+
+                remaining_required_md = Mark_Demand.objects \
+                    .filter(document_id=doc_request['document']) \
+                    .filter(mark_id=17) \
+                    .filter(is_active=True) \
+                    .count()
+
+                if remaining_required_md == 0:
+                    new_phase(doc_request, this_phase['phase'] + 1, [])
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
@@ -1437,7 +1462,16 @@ def save_foyer_range(request):
 @login_required(login_url='login')
 @try_except
 def del_approval(request, approval_id):
-    return HttpResponse(deactivate_approval(request, approval_id))
+    approval_instance = get_object_or_404(Doc_Approval, pk=approval_id)
+    deactivated = deactivate_approval(request, approval_instance)
+
+    if deactivated == 'ok':
+        # Надсилаємо листа про видалення зі списку візуючих
+        info_for_mail = {'doc_type_name': approval_instance.document.document_type.description,
+                         'document': request.POST['doc_id']}
+        new_mail('deleted_from_approvals', [{'id': approval_instance.emp_seat}], info_for_mail)
+
+    return HttpResponse(deactivated)
 
 
 @login_required(login_url='login')

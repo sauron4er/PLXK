@@ -27,9 +27,9 @@ class Approval extends React.Component {
       formData.append('resp_seat_id', this.props.info.responsible_seat_id);
       axiosPostRequest(`del_approval/${this.props.approval.id}`, formData)
         .then((response) => {
-          this.setState({delete_loading: false});
-          if (response === 'ok') this.props.delApproval(this.props.index);
+          if (response === 'ok') this.props.delApproval(this.props.index, this.props.approval.id);
           else notify('Помилка при видаленні візуючого, оновіть сторінку або зверніться до адміністратора')
+          this.setState({delete_loading: false});
         })
         .catch((error) => notify(error));
     });

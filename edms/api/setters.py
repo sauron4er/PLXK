@@ -2,13 +2,12 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from django.http import Http404
 
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
     Document_Type, Doc_Type_Phase, Document_Path
-from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm, MarkDemandChangeRecipientForm
+from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from edms.api.vacations import vacation_check
 
 from django.conf import settings
@@ -161,41 +160,6 @@ def save_foyer_ranges(doc_id):
             absence_based=doc_version == 1  # 1 - з виходу до входу працівника, 2 - навпаки
         )
         new_foyer.save()
-
-
-@try_except
-def deactivate_approval(request, approval_id):
-    try:
-        # Створюємо позначку (для запису у mark_demands)
-        doc_id = request.POST['doc_id']
-        resp_seat_id = request.POST['resp_seat_id']
-        new_path = Document_Path(document_id=doc_id, employee_seat_id=resp_seat_id, mark_id=30)
-        new_path.save()
-
-        approval = get_object_or_404(Doc_Approval, pk=approval_id)
-        approval.is_active = False
-        approval.save()
-
-        try:
-            mark_demand = get_object_or_404(Mark_Demand,
-                                            document=approval.document,
-                                            recipient=approval.emp_seat,
-                                            mark_id=17,
-                                            is_active=True)
-            mark_demand.is_active = False
-            mark_demand.save()
-        except Http404:
-            # Якщо активної mark_demand нема, то нічого і не робимо
-            pass
-
-        # Надсилаємо листа про видалення зі списку візуючих
-        info_for_mail = {'doc_type_name': approval.document.document_type.description,
-                         'document': doc_id}
-        new_mail('deleted_from_approvals', [{'id': approval.emp_seat}], info_for_mail)
-
-        return 'ok'
-    except():
-        return 'error'
 
 
 @try_except

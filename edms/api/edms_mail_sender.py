@@ -22,6 +22,23 @@ def send_email_new(doc_request, mail, main_field):
     send_email(mail, message.as_string())
 
 
+# Тимчасова функція для відправлення Лебедєву листів про створення нових документів
+def send_email_lebedev(doc_request, main_field):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = 'Новий електронний документ – {} "{}"'.format(doc_request['doc_type_name'], main_field)
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = 'lebedev.oo@lxk.com.ua'
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
+        .format(doc_request['document'])
+    text = 'На сайті створено новий документ ({} "{}", автор: {}). {}' \
+        .format(doc_request['doc_type_name'], main_field, doc_request['doc_author_name'], link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email('lebedev.oo@lxk.com.ua', message.as_string())
+
+
 # Складаємо лист автору документа про нову позначку EDMS:
 def send_email_mark(doc_request, mail, main_field):
     message = MIMEMultipart("alternative")

@@ -142,6 +142,7 @@ class Document extends React.Component {
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
     formData.append('doc_type_version', docInfoStore.info.doc_type_version?.id);
+    formData.append('deleted_approval_id', docInfoStore.deleted_approval_id);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -415,7 +416,7 @@ class Document extends React.Component {
 
                     {/*Початкова інфа про документ:*/}
                     <div className='css_border bg-light p-2 mt-2 mr-1'>
-                      <Info info={info} />
+                      <Info info={info} postMark={this.postMark} />
                     </div>
 
                     <If condition={!info.closed}>
