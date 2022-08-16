@@ -8,7 +8,7 @@ def send_email(mail, body):
         host = "smtp.lxk.com.ua"
         try:
             server = smtplib.SMTP(host, timeout=2000)
-            server.login('lxk_it', 'J2NYEHb50nymRF1L')
+            server.login('lxk_it', 'E5sY_N3dV_A83v_MW64')
             server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)
