@@ -20,6 +20,8 @@ const docInfoStore = store({
   delegation_receiver_id: 0,
   registration_number: '',
   deleted_approval_id: 0,
+  inform_employees: false,
+  employees_to_inform: [],
 
   clearChangedFiles: () => {
     docInfoStore.changed_files = {

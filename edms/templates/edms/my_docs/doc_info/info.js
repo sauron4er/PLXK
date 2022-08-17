@@ -40,6 +40,13 @@ class Info extends React.Component {
               №: {info.id}. Дата: {info.date}
             </span>
           </div>
+          <If condition={info.hasOwnProperty('signed_files')}>
+            <div className='border rounded border-success p-2'>
+              <div className='text-success font-weight-bold'>Підписано</div>
+              <Files files={info.signed_files} fieldName={'Скан-копії підписаних документів'} is_editable={false} />
+            </div>
+            
+          </If>
           <div>
             Відповідальний:
             <span className='font-italic'> {info.responsible}</span>
@@ -87,7 +94,7 @@ class Info extends React.Component {
                     <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'files' && info.old_files.length > 0}>
-                    <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} />
+                    <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} only_first_path />
                   </When>
                   <When condition={module.module === 'approval_list'}>
                     <Approvals info={info} postMark={this.props.postMark} />

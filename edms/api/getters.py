@@ -132,7 +132,7 @@ def get_meta_doc_types():
 
 
 @try_except
-def is_access_granted(user, emp_seat, doc):
+def is_access_granted(user, author_emp_seat, doc):
     emp_seats = user.userprofile.positions.all().filter(is_active=True).values_list('id', flat=True)
     seats = user.userprofile.positions.all().filter(is_active=True).values('seat_id', 'seat__department_id', 'seat__is_dep_chief')
 

@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+import json
 from plxk.api.try_except import try_except
 from edms.forms import NewApprovalForm, ApprovedApprovalForm
 from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
@@ -227,6 +228,13 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                 elif phase_info['mark_id'] in [22, 27]:
                     # додавання засканованих підписаних документів, Підтвердження виконання заявки, реєстрація
                     handle_phase_marks(doc_request, phase_info)
+
+                elif phase_info['mark_id'] == 23:
+                    # Прийняття у роботу договору. Прийняття у роботу заявки проходить без окремої фази, у фазі Виконано
+                    for employee in json.loads(doc_request['employees_to_inform']):
+                        recipient = vacation_check(employee['id'])
+                        post_mark_demand(doc_request, recipient, phase_info['id'], 23)
+                        new_mail('new', [{'id': recipient}], doc_request)
 
                 # Підтвердження
                 elif phase_info['mark_id'] == 24:
