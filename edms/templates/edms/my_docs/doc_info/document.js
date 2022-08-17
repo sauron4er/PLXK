@@ -143,6 +143,7 @@ class Document extends React.Component {
     formData.append('registration_number', docInfoStore.info.registration_number);
     formData.append('doc_type_version', docInfoStore.info.doc_type_version?.id);
     formData.append('deleted_approval_id', docInfoStore.deleted_approval_id);
+    if (docInfoStore.inform_employees) formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
 
     axiosPostRequest('mark/', formData)
       .then((response) => {

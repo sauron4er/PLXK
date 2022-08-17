@@ -28,7 +28,7 @@ class Docs extends React.Component {
     work_docs_col_width: [
       {columnName: 'id', width: 70},
       {columnName: 'type', width: 100},
-      {columnName: 'author', width: 100},
+      {columnName: 'author', width: 100}
     ],
     row: '',
     opened_doc_id: 0,
@@ -50,9 +50,9 @@ class Docs extends React.Component {
     // Якщо ми отримали посилання на документ, шукаємо його в таблиці Мої документи:
     if (prevProps.openDocId !== this.props.openDocId) {
       this.setState({
-        opened_doc_id: this.props.openDocId,
+        opened_doc_id: this.props.openDocId
       });
-      
+
       let doc_info = '';
       for (let i = 0; i < this.props.my_docs.length; i++) {
         if (this.props.my_docs[i].id === this.props.openDocId) {
@@ -69,7 +69,7 @@ class Docs extends React.Component {
           }
         }
       }
-      
+
       //Якщо знайшли документ, показуємо його:
       if (doc_info !== '') {
         this.setState({row: doc_info});
@@ -91,14 +91,15 @@ class Docs extends React.Component {
     // видаляємо документ зі списку, якщо реакція не коментар, файл, взято у роботу чи "на ознайомлення"
     // або якщо автор позначки не автор документу і позначка не "взято у роботу":
     // TODO реформатувати цей кошмарний код. (Переробити дві таблиці на одну і працювати з однією?)
-    
+
     if (author_id === parseInt(localStorage.getItem('my_seat'))) {
       // Якщо автор закриває чи видаляє документ, видаляємо документ зі списку створених та отриманих
       [7, 13].includes(mark_id) ? this.props.removeMyDoc(id, author_id) : null;
       // Якщо автор ставить іншу позначку, видаляємо документ тільки зі списку отриманих:
       this.props.removeWorkDoc(id, author_id);
-      
-    } else if (![4, 12, 15, 23].includes(mark_id)) {
+    } else if (mark_id === 23) {
+      docInfoStore.info.expected_mark === 23 ? this.props.removeWorkDoc(id, author_id) : null;
+    } else if (![4, 12, 15].includes(mark_id)) {
       // Якщо позначку ставить не автор, видаляємо документ зі списку отриманих
       // (Якщо позначка: Коментар, Файл чи На ознайомлення - не робимо нічого)
       this.props.removeWorkDoc(id, author_id);
@@ -179,18 +180,11 @@ class Docs extends React.Component {
   };
 
   render() {
-    const {
-      work_docs_columns,
-      my_docs_columns,
-      my_docs_col_width,
-      work_docs_col_width,
-      main_div_height,
-      opened_doc_id
-    } = this.state;
-    
-    const my_docs = this.props.my_docs ? this.props.my_docs.filter(doc => doc.status === 'doc') : [];
+    const {work_docs_columns, my_docs_columns, my_docs_col_width, work_docs_col_width, main_div_height, opened_doc_id} = this.state;
+
+    const my_docs = this.props.my_docs ? this.props.my_docs.filter((doc) => doc.status === 'doc') : [];
     const {work_docs} = this.props;
-  
+
     return (
       <div className='row css_main_div' ref={this.getMainDivRef}>
         <div className='col-lg-4'>

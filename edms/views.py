@@ -7,7 +7,7 @@ from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
 from docs.api.contracts_api import add_contract_from_edms
-from docs.models import Article_responsible, Contract
+from docs.models import Article_responsible, Contract, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
 from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Type, Document_Meta_Type
@@ -597,6 +597,21 @@ def edms_get_doc(request, pk):
 
         doc_info.update({'user_is_super_manager': True in list(is_super_manager)})
 
+        # Якщо це Договір, то перевіряємо, чи прикріплено скани підписаного договору і підтягуємо їх:
+        if doc.document_type.meta_doc_type_id == 5 and doc.approved:
+            try:
+                signed_files = [{
+                    'id': file.id,
+                    'name': file.name,
+                    'file': file.file.name,
+                    'status': 'old'
+                } for file in Contract_File.objects.filter(is_active=True).filter(contract__edms_doc_id=doc.id)]
+
+                doc_info.update({'signed_files': signed_files})
+            except Http404:
+                pass
+                # doc_info.update({'signed_files': []})
+
     else:
         doc_info = {'access_granted': False}
 
@@ -1154,24 +1169,30 @@ def edms_mark(request):
 
             # Взято у роботу
             elif doc_request['mark'] == '23':
-                # Перетворюємо фазу документу на "Взято у роботу"
-                set_stage(doc_request['document'], 'in work')
+                # Якщо це Договір, деактивуємо mark_demand і не робимо більше нічого.
+                # Якщо у Договорі з'явиться фаза Виконано (у якій є підфаза Взято у роботу),
+                # то цей крок можна переробити на перевірку mark_demand == 23 (бо у фазі Виконано mark_demand = 11)
+                if doc_request['doc_meta_type_id'] == 5:
+                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+                else:
+                    # Перетворюємо фазу документу на "Взято у роботу"
+                    set_stage(doc_request['document'], 'in work')
 
-                # Деактивуємо MarkDemand інших виконавців, якщо цю позначку поставив не супер-менеджер:
-                if doc_request['user_is_super_manager'] != 'true':
-                    executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
-                        .filter(document=doc_request['document'])\
-                        .filter(mark_id=11)\
-                        .exclude(recipient_id=doc_request['employee_seat'])\
-                        .filter(is_active=True)
-                    for md in executants_mark_demands:
-                        deactivate_mark_demand(doc_request, md)
+                    # Деактивуємо MarkDemand всіх виконавців, якщо цю позначку поставив не супер-менеджер:
+                    if doc_request['user_is_super_manager'] != 'true':
+                        executants_mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
+                            .filter(document=doc_request['document'])\
+                            .filter(mark_id=11)\
+                            .exclude(recipient_id=doc_request['employee_seat'])\
+                            .filter(is_active=True)
+                        for md in executants_mark_demands:
+                            deactivate_mark_demand(doc_request, md)
 
-                if not testing:
-                    supervisors = get_supervisors(
-                        doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
-                    for supervisor in supervisors:
-                        send_email_supervisor('Взято у роботу', doc_request, supervisor['mail'])
+                    if not testing:
+                        supervisors = get_supervisors(
+                            doc_request['document_type'])  # Список осіб, яким треба відправити лист про створення документу
+                        for supervisor in supervisors:
+                            send_email_supervisor('Взято у роботу', doc_request, supervisor['mail'])
 
             # Підтвердження виконання
             elif doc_request['mark'] == '24':

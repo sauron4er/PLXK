@@ -1,9 +1,9 @@
 'use strict';
 import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {axiosGetRequest} from 'templates/components/axios_requests';
-import {getIndex, getItemById, notify, uniqueArray} from 'templates/components/my_extras';
+import {getItemById, notify} from 'templates/components/my_extras';
 import {LoaderSmall} from 'templates/components/loaders';
 import Select from 'react-select';
 

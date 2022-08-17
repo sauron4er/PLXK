@@ -3,13 +3,13 @@ import React, {Fragment} from 'react';
 
 class Files extends React.Component {
   render() {
-    const {fieldName, files, is_editable} = this.props;
-
+    const {fieldName, files, is_editable, only_first_path} = this.props;
+  
     return (
       <>
         <div>{fieldName}:</div>
         <For each='file' index='id' of={files}>
-          <If condition={file.first_path}>
+          <If condition={!only_first_path || file.first_path}>
             <div key={file.id}>
               <a href={'../../media/' + file.file} target='_blank'>
                 {file.name}{' '}
@@ -27,7 +27,8 @@ class Files extends React.Component {
   static defaultProps = {
     files: [],
     fieldName: '???',
-    is_editable: false
+    is_editable: false,
+    only_first_path: false
   };
 }
 

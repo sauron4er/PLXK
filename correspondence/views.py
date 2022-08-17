@@ -282,14 +282,15 @@ def get_correspondence(request, counterparty):
         accessed_correspondence = all_correspondence.filter(added_by=request.user) | \
                                   all_correspondence.filter(responsible=request.user) | \
                                   all_correspondence.filter(answer_responsible=request.user) | \
-                                  all_correspondence.filter(acquaints__acquaint=request.user).filter(
-                                      acquaints__is_active=True)
-        # Прибираємо дублікати, які чомусь створюються у великій кількості при фільтруванні по acquaints_acquaint
-        accessed_correspondence = [rows.__next__() for (key, rows) in
-                                   groupby(accessed_correspondence, key=lambda obj: obj.id)]
+                                  all_correspondence.filter(acquaints__acquaint=request.user)\
+                                      .filter(acquaints__is_active=True)
 
     if counterparty != '0':
         accessed_correspondence = accessed_correspondence.filter(client_id=counterparty)
+
+    # Прибираємо дублікати, які чомусь створюються у великій кількості при фільтруванні по acquaints_acquaint
+    accessed_correspondence = [rows.__next__() for (key, rows) in
+                               groupby(accessed_correspondence, key=lambda obj: obj.id)]
 
     correspondence = [{
         'id': request.pk,
