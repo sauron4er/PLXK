@@ -137,7 +137,7 @@ def phones(request):
         'id': item.id,
         'pip': item.userprofile.pip or '',
         'mail': item.email or '',
-        'phone': item.userprofile.n_main or ''
+        'phone': item.userprofile.n_main or '',
     } for item in phones_and_mails]
 
     return render(request, 'boards/phones/phones.html', {'pam': pam})

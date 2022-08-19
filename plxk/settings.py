@@ -25,10 +25,10 @@ SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = False
+STAS_DEBUG = True
 
 
-ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', 'plxk.com.ua', 'plhk.com.ua']
+ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', 'plxk.com.ua', 'plhk.com.ua', '10.20.10.128']
 
 
 # Application definition
