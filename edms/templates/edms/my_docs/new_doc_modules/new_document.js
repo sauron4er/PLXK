@@ -550,7 +550,8 @@ class NewDocument extends React.Component {
       auto_recipients
     } = this.state;
     
-
+    const {doc_type_version} = newDocStore.new_document;
+    
     // Визначаємо, наскільки великим буде текстове поле:
     let rows = 1;
     switch (doc.type_id) {
