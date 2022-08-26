@@ -535,9 +535,12 @@ def get_phase_recipients_and_doc_type_version(phase):
 
     recipients = []
     for recipient in phase_recipients:
-        emp_seat_id = recipient['employee_seat_id']
+        seat = recipient['seat_id']
+
         if recipient['seat_id']:
             emp_seat_id = get_actual_emp_seat_from_seat(recipient['seat_id'])
+        else:
+            emp_seat_id = recipient['employee_seat_id']
 
         employee_seat = Employee_Seat.objects.filter(id=emp_seat_id)[0]
         employee_seat_info = employee_seat.employee.pip + ', ' + employee_seat.seat.seat
@@ -791,7 +794,7 @@ def get_delegated_docs(emp, sub=0, doc_meta_type=0):
 
 
 @try_except
-def get_doc_modules(doc, responsible_id):
+def get_doc_modules(doc, responsible_id=0):
     doc_modules = {}
 
     type_modules = [{
