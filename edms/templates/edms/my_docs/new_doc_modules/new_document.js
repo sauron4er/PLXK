@@ -244,8 +244,8 @@ class NewDocument extends React.Component {
           newDocStore.new_document.client_requirements = response?.client_requirements;
           newDocStore.new_document.document_link = response?.document_link;
           newDocStore.new_document.document_link_name = response?.document_link_name;
-          newDocStore.new_document.doc_type_version = response?.doc_type_version?.id;
-          newDocStore.new_document.doc_type_version_name = response?.doc_type_version?.name;
+          newDocStore.new_document.doc_type_version = response?.doc_type_version;
+          newDocStore.new_document.doc_type_version_name = response?.doc_type_version_name;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -551,7 +551,7 @@ class NewDocument extends React.Component {
     } = this.state;
     
     const {doc_type_version} = newDocStore.new_document;
-
+    
     // Визначаємо, наскільки великим буде текстове поле:
     let rows = 1;
     switch (doc.type_id) {
@@ -564,7 +564,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-
+  
     return (
       <>
         <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 70}}}>

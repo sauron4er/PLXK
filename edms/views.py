@@ -588,7 +588,8 @@ def edms_get_doc(request, pk):
                 doc_info.update({'acquaints': flow_and_acquaints['acquaints']})
 
         # Модулі
-        doc_info.update(get_doc_modules(doc, request.POST['employee_seat']))
+        employee_seat_id = request.POST['employee_seat'] if 'employee_seat' in request.POST else 0
+        doc_info.update(get_doc_modules(doc, employee_seat_id))
 
         is_super_manager = User_Doc_Type_View.objects.values_list('super_manager', flat=True)\
             .filter(employee=request.user.userprofile)\

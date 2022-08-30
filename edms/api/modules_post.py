@@ -76,10 +76,20 @@ def post_foyer_ranges(doc_request, datetimes):
 
 
 @try_except
-def post_approvals(doc_request, approvals, company):
-    # TODO Не додавати нікого, якщо це шаблон чи чернетка
-    # Додаємо у список погоджуючих автора, керівника відділу та директора
+def handle_approvals_from_template(approvals):
+    # Обробляє список візуючих, отриманий з шаблону, замінює дані з emp_seat_id в id
+    for approval in approvals:
+        if 'emp_seat_id' in approval:
+            approval['id'] = approval['emp_seat_id']
+    return approvals
 
+
+@try_except
+def post_approvals(doc_request, approvals, company):
+    # Обробляємо список візуючих, отриманий з шаблону
+    approvals = handle_approvals_from_template(approvals)
+
+    # Додаємо у список погоджуючих автора, керівника відділу та директора
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
         .filter(phase__document_type=doc_request['document_type']) \
         .exclude(phase__mark_id=27)
