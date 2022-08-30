@@ -17,6 +17,7 @@ from plxk.api.pagination import sort_query_set, filter_query_set
 # from boards.api.auto_vacations import auto_arrange_vacations
 from boards.api.auto_orders import send_orders_reminders
 from edms.models import Employee_Seat, Foyer
+from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from plxk.api.try_except import try_except
 from .models import Board, Topic, Post, Ad
@@ -126,18 +127,21 @@ def home(request):
 @login_required(login_url='login')
 @try_except
 def phones(request):
-    phones_and_mails = User.objects\
-        .filter(is_active=True)\
-        .filter(userprofile__is_active=True)\
-        .exclude(userprofile__delete_from_noms=True)\
-        .filter(userprofile__is_pc_user=True)\
-        .order_by('userprofile__pip')
+    phones_and_mails = UserProfile.objects\
+        .prefetch_related('positions') \
+        .filter(is_active=True) \
+        .filter(user__is_active=True) \
+        .exclude(delete_from_noms=True) \
+        .filter(is_pc_user=True) \
+        .order_by('pip')
 
     pam = [{
-        'id': item.id,
-        'pip': item.userprofile.pip or '',
-        'mail': item.email or '',
-        'phone': item.userprofile.n_main or ''
+        'id': item.user.id,
+        'pip': item.pip or '',
+        'mail': item.user.email or '',
+        'phone': item.n_main or '',
+        'seats': [emp_seat.seat.seat if emp_seat.is_main else emp_seat.seat.seat + ' (в.о.)'
+                  for emp_seat in item.positions.filter(is_active=True)],
     } for item in phones_and_mails]
 
     return render(request, 'boards/phones/phones.html', {'pam': pam})

@@ -26,7 +26,10 @@ class Phones extends React.Component {
     const filter = e.target.value.toLowerCase();
     let pam = [...window.pam];
     pam = pam.filter((item) => {
-      return item.pip.toLowerCase().indexOf(filter) !== -1 || item.phone.indexOf(filter) !== -1 || item.mail.indexOf(filter) !== -1;
+      return item.pip.toLowerCase().indexOf(filter) !== -1 ||
+        item.phone.indexOf(filter) !== -1 ||
+        item.mail.indexOf(filter) !== -1 ||
+        item.seats.filter(seat => seat.toLowerCase().indexOf(filter) !== -1).length;
     });
     this.setState({
       filter: e.target.value,
@@ -57,6 +60,7 @@ class Phones extends React.Component {
             <tr>
               <th>П.І.Б.</th>
               <th>№ тел.</th>
+              <th>Посади</th>
               <th>e-mail</th>
               <If condition={is_staff}>
                 <th> </th>
@@ -68,6 +72,11 @@ class Phones extends React.Component {
               <tr key={index}>
                 <td className='align-middle'>{item.pip}</td>
                 <td className='text-center align-middle'>{item.phone}</td>
+                <td className='align-middle'>
+                  <For each='seat' of={item.seats} index='seat_idx'>
+                    <small style={{display: 'block'}}>{seat}</small>
+                  </For>
+                </td>
                 <td className='align-middle'>
                   <a href={this.getMailto(item.mail)}>{item.mail}</a>
                 </td>
