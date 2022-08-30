@@ -1483,6 +1483,7 @@ def save_foyer_range(request):
     return HttpResponse(new_range.pk)
 
 
+@transaction.atomic
 @login_required(login_url='login')
 @try_except
 def del_approval(request, approval_id):
