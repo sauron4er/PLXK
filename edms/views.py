@@ -1493,7 +1493,7 @@ def del_approval(request, approval_id):
         # Надсилаємо листа про видалення зі списку візуючих
         info_for_mail = {'doc_type_name': approval_instance.document.document_type.description,
                          'document': request.POST['doc_id']}
-        new_mail('deleted_from_approvals', [{'id': approval_instance.emp_seat}], info_for_mail)
+        new_mail('deleted_from_approvals', [{'id': approval_instance.emp_seat.id}], info_for_mail)
 
     return HttpResponse(deactivated)
 
