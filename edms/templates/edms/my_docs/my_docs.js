@@ -1,6 +1,5 @@
 'use strict';
 import * as React from 'react';
-import axios from 'axios';
 import 'static/css/my_styles.css';
 import 'react-responsive-modal/styles.css';
 import NewDoc from './new_doc';
@@ -8,9 +7,8 @@ import Docs from './docs';
 import Drafts from './drafts';
 import Templates from './templates';
 import SeatChooser from '../components/seat_chooser';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded, x-xsrf-token';
+import { axiosGetRequest } from "templates/components/axios_requests";
+import { notify } from "templates/components/my_extras";
 
 class MyDocs extends React.Component {
   state = {
@@ -23,23 +21,12 @@ class MyDocs extends React.Component {
   };
 
   getDirectSubs = (seat_id) => {
-    axios({
-      method: 'get',
-      url: 'get_direct_subs/' + seat_id + '/',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    // Не використовується. Планувалося для компоненту "надавання резолюцій по документам".
+    axiosGetRequest(`get_direct_subs/${seat_id}/`)
       .then((response) => {
-        // Передаємо список у state, якщо він є
-        if (response.data) {
-          this.setState({direct_subs: response.data});
-          
-        }
+        this.setState({direct_subs: response});
       })
-      .catch((error) => {
-        console.log('errorpost: ' + error);
-      });
+      .catch((error) => notify(error));
   };
 
   // Оновлює списки документів
@@ -64,7 +51,7 @@ class MyDocs extends React.Component {
   // шукає обрану посаду або обирає першу зі списку і показує відповідні їй документи, керівники, підлеглі
   componentDidMount() {
     const seat_id = parseInt(localStorage.getItem('my_seat') ? localStorage.getItem('my_seat') : window.my_seats[0].id);
-    this.getDirectSubs(seat_id);
+    // this.getDirectSubs(seat_id);
     this.updateLists(seat_id);
 
     // Визначаємо, чи відкриваємо просто список документів, чи це посилання на конкретний документ:
@@ -90,7 +77,7 @@ class MyDocs extends React.Component {
 
   // отримує нову посаду з компоненту SeatChooser і відповідно змінює списки
   onSeatChange = (new_seat_id) => {
-    this.getDirectSubs(new_seat_id);
+    // this.getDirectSubs(new_seat_id);
     this.updateLists(new_seat_id);
   };
 
@@ -116,8 +103,12 @@ class MyDocs extends React.Component {
 
   // Видаляє документ зі списку створених користувачем
   removeDoc = (id) => {
-    this.setState((prevState) => ({my_docs: prevState.my_docs.filter((doc) => doc.id !== id)}));
-    window.my_docs = window.my_docs.filter((doc) => doc.id !== id);
+    axiosGetRequest(`del_doc/${id}/`)
+      .then((response) => {
+        this.setState((prevState) => ({my_docs: prevState.my_docs.filter((doc) => doc.id !== id)}));
+        window.my_docs = window.my_docs.filter((doc) => doc.id !== id);
+      })
+      .catch((error) => notify(error));
   };
 
   // Видаляє документ зі списку отриманих документів
