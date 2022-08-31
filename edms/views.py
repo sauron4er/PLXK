@@ -825,9 +825,8 @@ def edms_get_templates(request):
 @login_required(login_url='login')
 def edms_del_doc(request, pk):
     try:
-        if request.method == 'POST':
-            delete_doc(request.POST.copy(), pk)
-            return HttpResponse(pk)
+        delete_doc(request.POST.copy(), pk)
+        return HttpResponse(pk)
     except Exception as err:
         return HttpResponse(status=405, content=err)
 
@@ -1483,6 +1482,7 @@ def save_foyer_range(request):
     return HttpResponse(new_range.pk)
 
 
+@transaction.atomic
 @login_required(login_url='login')
 @try_except
 def del_approval(request, approval_id):
@@ -1493,7 +1493,7 @@ def del_approval(request, approval_id):
         # Надсилаємо листа про видалення зі списку візуючих
         info_for_mail = {'doc_type_name': approval_instance.document.document_type.description,
                          'document': request.POST['doc_id']}
-        new_mail('deleted_from_approvals', [{'id': approval_instance.emp_seat}], info_for_mail)
+        new_mail('deleted_from_approvals', [{'id': approval_instance.emp_seat.id}], info_for_mail)
 
     return HttpResponse(deactivated)
 
