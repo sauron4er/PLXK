@@ -257,6 +257,8 @@ def filter_archive_query(query_set, filtering):
             query_set = query_set.filter(document__document_type__description__icontains=filter['value'])
         elif filter['columnName'] == 'main_field':
             query_set = query_set.filter(document__main_field__icontains=filter['value'])
+        elif filter['columnName'] == 'author':
+            query_set = query_set.filter(document__employee_seat__employee__pip__icontains=filter['value'])
         elif filter['columnName'] == 'date':
             query_set = query_set.filter(document__date__year=filter['value'])
     return query_set
