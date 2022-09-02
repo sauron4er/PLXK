@@ -110,7 +110,20 @@ def arrange_approve(doc_request, is_approved):
         approve_id = Doc_Approval.objects.values_list('id', flat=True) \
             .filter(document_id=doc_request['document']) \
             .filter(emp_seat_id=main_employee)
-        post_approve(doc_request, approve_id[0], is_approved)
+        if approve_id:
+            post_approve(doc_request, approve_id[0], is_approved)
+        else:
+            # Якщо approval все ще нема, то значить це працює людина, яка заступила на посаду замість автора.
+            # Шукаємо approve автора, деактивовуємо його і додаємо нового відповідального.
+            author_approval = get_object_or_404(Doc_Approval, document_id=doc_request['document'], approve_queue=0, is_active=True)
+            author_approval.is_active = False
+            author_approval.save()
+
+            new_approval = Doc_Approval(document_id=doc_request['document'],
+                                        emp_seat_id=recipient,
+                                        approve_queue=0)
+            new_approval.save()
+            post_approve(doc_request, new_approval.id, is_approved)
 
 
 # Визначає, чи внесений вже користувач у таблицю погоджень
