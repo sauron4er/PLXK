@@ -606,7 +606,10 @@ def edms_get_doc(request, pk):
                     'name': file.name,
                     'file': file.file.name,
                     'status': 'old'
-                } for file in Contract_File.objects.filter(is_active=True).filter(contract__edms_doc_id=doc.id)]
+                } for file in Contract_File.objects
+                    .filter(is_active=True)
+                    .filter(contract__is_active=True)
+                    .filter(contract__edms_doc_id=doc.id)]
 
                 doc_info.update({'signed_files': signed_files})
             except Http404:

@@ -24,7 +24,7 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
-
+  
     if (info.path) {
       return (
         <div>
@@ -45,7 +45,6 @@ class Info extends React.Component {
               <div className='text-success font-weight-bold'>Підписано</div>
               <Files files={info.signed_files} fieldName={'Скан-копії підписаних документів'} is_editable={false} />
             </div>
-            
           </If>
           <div>
             Відповідальний:

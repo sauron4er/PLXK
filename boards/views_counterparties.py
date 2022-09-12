@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db import transaction
 from datetime import date
 import json
@@ -324,24 +324,27 @@ def get_clients(request, page):
 @login_required(login_url='login')
 @try_except
 def get_client(request, pk):
-    client_instance = get_object_or_404(Counterparty, pk=pk)
-    client = {
-        'id': client_instance.id,
-        'name': client_instance.name,
-        'legal_address': client_instance.legal_address or '',
-        'actual_address': client_instance.actual_address or '',
-        'country': client_instance.country or '',
-        'edrpou': client_instance.edrpou or '',
-        'bank_details': client_instance.bank_details or '',
-        'contacts': client_instance.contacts or '',
-        'responsible_id': client_instance.responsible_id,
-        'responsible': client_instance.responsible.pip if client_instance.responsible else '',
-        'product_id': client_instance.product.id,
-        'product': client_instance.product.name,
-        'scope_id': client_instance.scope_id,
-        'scope': client_instance.scope.name if client_instance.scope else '',
-        'commentary': client_instance.commentary or '',
-    }
+    try:
+        client_instance = get_object_or_404(Counterparty, pk=pk)
+        client = {
+            'id': client_instance.id,
+            'name': client_instance.name,
+            'legal_address': client_instance.legal_address or '',
+            'actual_address': client_instance.actual_address or '',
+            'country': client_instance.country or '',
+            'edrpou': client_instance.edrpou or '',
+            'bank_details': client_instance.bank_details or '',
+            'contacts': client_instance.contacts or '',
+            'responsible_id': client_instance.responsible_id,
+            'responsible': client_instance.responsible.pip if client_instance.responsible else '',
+            'product_id': client_instance.product.id,
+            'product': client_instance.product.name,
+            'scope_id': client_instance.scope_id,
+            'scope': client_instance.scope.name if client_instance.scope else '',
+            'commentary': client_instance.commentary or '',
+        }
+    except Http404:
+        client = {}
     scopes = get_scopes_list()
     employees = get_userprofiles_list()
 

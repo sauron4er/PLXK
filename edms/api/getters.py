@@ -883,7 +883,10 @@ def get_doc_modules(doc, responsible_id=0):
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
 
-            changeable = are_approvals_on_first_phase(approval_list) and int(responsible_id) == doc.employee_seat_id
+            # Лише для договорів
+            changeable = doc.document_type.meta_doc_type_id == 5 \
+                         and are_approvals_on_first_phase(approval_list) \
+                         and int(responsible_id) == doc.employee_seat_id
 
             doc_modules.update({'approval_list': approval_list, 'approvals_changeable': changeable})
 

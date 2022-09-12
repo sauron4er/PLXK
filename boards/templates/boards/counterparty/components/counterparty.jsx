@@ -29,8 +29,8 @@ class Counterparty extends React.Component {
   };
 
   componentDidMount() {
+    this.getCounterparty();
     if (this.props.id !== 0) {
-      this.getCounterparty();
       this.getGoogleApi();
     } else {
       this.setState({loading: false});
@@ -50,7 +50,9 @@ class Counterparty extends React.Component {
     axiosGetRequest(url + this.props.id + '/')
       .then((response) => {
         this.setState({loading: false});
-        counterpartyStore.counterparty = response.counterparty;
+        if (this.props.id !== 0) {
+          counterpartyStore.counterparty = response.counterparty;
+        }
         counterpartyStore.scopes = response.scopes;
         counterpartyStore.employees = response.employees;
       })
