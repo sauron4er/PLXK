@@ -180,7 +180,17 @@ class Buttons extends React.Component {
               В архів
             </button>
           </If>
+          {/* якщо це погоджений договір, додаємо кнопку "Відправити у роботу" */}
+          <If condition={info.meta_type_id === 5 && docInfoStore?.info?.approved}>
+            {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
+            <button type='button' className='btn btn-secondary mr-1 mb-1'
+                    onClick={() => this.onClick(31)}
+                    disabled={button_clicked}>
+              Повідомити про підписання договору
+            </button>
+          </If>
         </If>
+        
         {/* Якщо це Договір або Тендер, додаємо кнопку "оновити файл" */}
         {/* В майбутньому переробити на перевірку використання модуля approvals і редагуємого поля Файли */}
         <If condition={[5, 9].includes(info.meta_type_id) && !archived && !info.archived}>

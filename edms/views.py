@@ -1285,6 +1285,16 @@ def edms_mark(request):
                 if remaining_required_md == 0:
                     new_phase(doc_request, this_phase['phase'] + 1, [])
 
+            # На прийняття в роботу
+            elif doc_request['mark'] == '31':
+                recipients = json.loads(doc_request['employees_to_inform'])
+                # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.
+
+                for recipient in recipients:
+                    recipient = vacation_check(recipient['emp_seat_id'])
+                    post_mark_demand(doc_request, recipient, get_phase_id(doc_request), 23)
+                    new_mail('new', [{'id': recipient}], doc_request)
+
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
 
