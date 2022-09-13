@@ -9,8 +9,7 @@ class Counterparty extends React.Component {
   state = {
     counterparties: [],
     filtered_counterparties: [],
-    radio: 'provider', //, 'client'
-    from_base_area: false
+    radio: 'client', //, 'provider'
   };
 
   componentDidMount() {
@@ -22,7 +21,7 @@ class Counterparty extends React.Component {
             filtered_counterparties: response
           },
           () => {
-            this.filterCounterparties('provider');
+            this.filterCounterparties('client');
           }
         );
       })
@@ -48,97 +47,65 @@ class Counterparty extends React.Component {
     this.filterCounterparties(e.target.value);
   };
 
-  onCounterpartyInputChange = (e) => {
-    newDocStore.new_document.counterparty_input = e.target.value;
-  };
-
-  changeFromBaseArea = (e) => {
-    this.setState({from_base_area: !this.state.from_base_area});
-    newDocStore.new_document.counterparty_input = '';
-  };
-
   render() {
     const {module_info} = this.props;
-    const {filtered_counterparties, radio, from_base_area} = this.state;
+    const {filtered_counterparties, radio} = this.state;
 
     return (
-      <div>
+      <>
         <label className='mr-1'>
           <If condition={module_info.required}>{'* '}</If>
           {module_info.field_name}:
         </label>
         <br />
-        <If condition={!from_base_area}>
-          <textarea
-            className='form-control full_width'
-            name='counterparty_input'
-            id='counterparty_input'
-            value={newDocStore.new_document.counterparty_input}
-            rows={1}
-            onChange={this.onCounterpartyInputChange}
-            maxLength={100}
-          />
-        </If>
-
         <input
-          className='mr-1'
-          type='checkbox'
-          id='from_base_area'
-          name='from_base_area'
-          onClick={this.changeFromBaseArea}
-          checked={from_base_area}
+          type='radio'
+          name='counterparty_radio'
+          id='client'
+          value='client'
+          onChange={this.onRadioChange}
+          checked={radio === 'client'}
         />
-        <label htmlFor='from_base_area'>Обрати контрагента з бази</label>
+        <label className='radio-inline mx-1' htmlFor='client'>
+          {' '}
+          Клієнт
+        </label>
+        
+        <input
+          type='radio'
+          name='counterparty_radio'
+          id='provider'
+          value='provider'
+          onChange={this.onRadioChange}
+          checked={radio === 'provider'}
+          className='ml-2'
+        />
+        <label className='radio-inline mx-1 mr-4' htmlFor='provider'>
+          {' '}
+          Постачальник
+        </label>
 
-        <If condition={from_base_area}>
-          <br />
-          <input
-            type='radio'
-            name='counterparty_radio'
-            id='provider'
-            value='provider'
-            onChange={this.onRadioChange}
-            checked={radio === 'provider'}
-          />
-          <label className='radio-inline mx-1 mr-4' htmlFor='provider'>
-            {' '}
-            Постачальник
-          </label>
-          <input
-            type='radio'
-            name='counterparty_radio'
-            id='client'
-            value='client'
-            onChange={this.onRadioChange}
-            checked={radio === 'client'}
-          />
-          <label className='radio-inline mx-1' htmlFor='client'>
-            {' '}
-            Клієнт
-          </label>
+        <Select
+          options={filtered_counterparties}
+          onChange={this.onSelectChange}
+          value={{name: newDocStore.new_document.counterparty_name, id: newDocStore.new_document.counterparty}}
+          getOptionLabel={(option) => option.name}
+          getOptionValue={(option) => option.id}
+        />
 
-          <Select
-            options={filtered_counterparties}
-            onChange={this.onSelectChange}
-            value={{name: newDocStore.new_document.counterparty_name, id: newDocStore.new_document.counterparty}}
-            getOptionLabel={(option) => option.name}
-            getOptionValue={(option) => option.id}
-          />
-
-          <small>
-            Якщо потрібного контрагента нема в списку, його можна додати на сторінці{' '}
-            <a href={`${window.location.origin}/boards/providers/`} target='_blank'>
-              Постачальники
-            </a>{' '}
-            або{' '}
-            <a href={`${window.location.origin}/boards/clients/`} target='_blank'>
-              Клієнти
-            </a>
-            . Якщо у вас нема прав на додавання контрагента у базу, зверніться до адміністратора
-          </small>
-          <small className='text-danger'>{module_info?.additional_info}</small>
-        </If>
-      </div>
+        <small>
+          Якщо потрібного контрагента нема в списку, його можна додати на сторінці{' '}
+          <a href={`${window.location.origin}/boards/providers/`} target='_blank'>
+            Постачальники
+          </a>{' '}
+          або{' '}
+          <a href={`${window.location.origin}/boards/clients/`} target='_blank'>
+            Клієнти
+          </a>
+          . Якщо у вас нема прав на додавання контрагента у базу, зверніться до адміністратора
+        </small>
+        <small className='text-danger'>{module_info?.additional_info}</small>
+      </>
     );
   }
 
