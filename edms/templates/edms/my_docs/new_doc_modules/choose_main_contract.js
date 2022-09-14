@@ -11,38 +11,49 @@ import SelectorWithFilter from 'templates/components/form_modules/selector_with_
 class ChooseMainContract extends React.Component {
   state = {
     is_main_contract: true,
-    contracts: {},
+    contracts: [],
     contract_modal_open: false,
+    company: newDocStore.new_document.company,
+    counterparty: newDocStore.new_document.counterparty,
     loading: false
   };
 
   // отримуємо з бд список шефів
-  getContracts(company) {
-    this.setState({loading: true}, () => {
-      axiosGetRequest('get_contracts/' + company + '/')
-        .then((response) => {
-          this.setState({
-            contracts: response,
-            loading: false
-          });
-        })
-        .catch((error) => notify(error));
-    });
+  getContracts() {
+    if (newDocStore.new_document.counterparty) {
+      this.setState({loading: true}, () => {
+        axiosGetRequest(`get_contracts/${newDocStore.new_document.company}/${newDocStore.new_document.counterparty}`)
+          .then((response) => {
+            this.setState({
+              contracts: response,
+              loading: false
+            });
+          })
+          .catch((error) => notify(error));
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.is_main_contract !== this.state.is_main_contract) {
-      if (this.state.is_main_contract !== true && !this.state.contracts?.length) {
-        this.getContracts(this.props.company);
+    if (!this.state.is_main_contract && prevState.loading === this.state.loading) {
+      // мусимо ігнорувати loading, бо він запускає в безкінечний componentDidUpdate
+
+      if (prevState.company !== newDocStore.new_document.company) {
+        this.getContracts();
+        this.setState({company: newDocStore.new_document.company});
+      } else if (prevState.counterparty !== newDocStore.new_document.counterparty) {
+        this.getContracts();
+        this.setState({counterparty: newDocStore.new_document.counterparty});
+      } else if (newDocStore.new_document.counterparty && !this.state.contracts?.length) {
+        this.getContracts();
       }
-    } else if (prevProps.company !== this.props.company) {
-      this.getContracts(this.props.company);
     }
   }
 
   render() {
     const {is_main_contract, contracts, contract_modal_open, loading} = this.state;
-    const {contract_link, contract_link_name} = newDocStore.new_document;
+    const {contract_link, contract_link_name, company, counterparty} = newDocStore.new_document;
+    // company мушу сюди підтягувати, бо інакше на цю змінну не дивиться ComponentDidUpdate
     const {module_info, onChange} = this.props;
 
     return (
@@ -74,42 +85,31 @@ class ChooseMainContract extends React.Component {
         <small className='text-danger'>{module_info?.additional_info}</small>
         <If condition={!is_main_contract}>
           <Choose>
-            <When condition={!loading && contracts?.length > 0}>
-              <SelectorWithFilter
-                list={contracts}
-                fieldName={module_info.field_name}
-                valueField='name'
-                selectedName=''
-                disabled={false}
-                value={{name: contract_link_name, id: contract_link}}
-                onChange={onChange}
-              />
-              {/*<label className='full_width' htmlFor='contract_select'>*/}
-              {/*  <select*/}
-              {/*    id='contract_select'*/}
-              {/*    name='contract'*/}
-              {/*    className='form-control full_width'*/}
-              {/*    value={contract_link_name}*/}
-              {/*    onChange={onChange}*/}
-              {/*  >*/}
-              {/*    <option key={0} data-key={0} value='0'>*/}
-              {/*      ------------*/}
-              {/*    </option>*/}
-              {/*    {contracts.map((contract) => {*/}
-              {/*      return (*/}
-              {/*        <option key={contract.id} data-key={contract.id} value={contract.name}>*/}
-              {/*          {contract.name}*/}
-              {/*        </option>*/}
-              {/*      );*/}
-              {/*    })}*/}
-              {/*  </select>*/}
-              {/*</label>*/}
-
-              <If condition={contract_link !== 0}>
-                <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
-                  Переглянути Договір
-                </button>
-              </If>
+            <When condition={!loading}>
+              <Choose>
+                <When condition={!counterparty}>
+                  <div className='font-italic'>Оберіть контрагента, щоб вибрати основний Договір</div>
+                </When>
+                <When condition={contracts?.length !== 0}>
+                  <SelectorWithFilter
+                    list={contracts}
+                    fieldName={module_info.field_name}
+                    valueField='name'
+                    selectedName=''
+                    disabled={false}
+                    value={{name: contract_link_name, id: contract_link}}
+                    onChange={onChange}
+                  />
+                  <If condition={contract_link !== 0}>
+                    <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
+                      Переглянути Договір
+                    </button>
+                  </If>
+                </When>
+                <Otherwise>
+                  <div className='font-italic'>В базу не внесено жодного Договору з обраним контрагентом</div>
+                </Otherwise>
+              </Choose>
             </When>
             <Otherwise>
               <div className='mt-3 loader-small' id='loader-1'>
@@ -139,7 +139,6 @@ class ChooseMainContract extends React.Component {
       required: false,
       additional_info: null
     },
-    company: 'ТДВ',
     onChange: () => {}
   };
 }

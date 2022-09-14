@@ -48,7 +48,7 @@ urlpatterns = [
 
 
     url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
-    url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
+    url(r'^my_docs/get_contracts/(?P<company>\w+)/(?P<counterparty_id>\d+)', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),
     url(r'^my_docs/get_chiefs/(?P<pk>\d+)/$', edms_get_chiefs, name='my_docs_get_chiefs'),

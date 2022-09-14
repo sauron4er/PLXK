@@ -646,7 +646,6 @@ class NewDocument extends React.Component {
                           <ChooseMainContract
                             onChange={this.onChangeContract}
                             module_info={module}
-                            company={newDocStore.new_document.company}
                           />
                         </When>
                         <When condition={module.module === 'choose_company'}>

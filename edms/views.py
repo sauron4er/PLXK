@@ -491,13 +491,16 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
 
 
 @login_required(login_url='login')
-def edms_get_contracts(request, company):
+def edms_get_contracts(request, company, counterparty_id):
     if request.method == 'GET':
         contracts = [{
             'id': contract.pk,
             'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
             'company': contract.company
-        } for contract in Contract.objects.filter(is_active=True).filter(company=company)]
+        } for contract in Contract.objects
+            .filter(company=company)
+            .filter(counterparty_link__id=counterparty_id)
+            .filter(is_active=True)]
 
         return HttpResponse(json.dumps(contracts))
 
