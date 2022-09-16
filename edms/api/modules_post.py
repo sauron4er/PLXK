@@ -275,6 +275,7 @@ def post_mockup_product_type(doc_request, mockup_product_type):
 
 @try_except
 def post_counterparty(doc_request, counterparty, counterparty_input=''):
+    # TODO прибрати counterparty_input взагалі з системи.
     doc_counterparty = Doc_Counterparty()
     doc_counterparty.document_id = doc_request['document']
     if counterparty != 0:

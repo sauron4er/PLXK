@@ -865,7 +865,7 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'acquaint_list':
             acquaint_list = [{
-                'emp_seat_id': item.acquaint_emp_seat.id,
+                'id': item.acquaint_emp_seat.id,
                 'emp_seat': item.acquaint_emp_seat.employee.pip + ', ' + item.acquaint_emp_seat.seat.seat,
             } for item in Doc_Acquaint.objects.filter(document_id=doc.id).filter(is_active=True)]
             doc_modules.update({'acquaint_list': acquaint_list})

@@ -142,7 +142,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_counterparty(doc_request, doc_modules['client']['value'])
 
         if 'counterparty' in doc_modules:
-            post_counterparty(doc_request, doc_modules['counterparty'], doc_modules['counterparty_input'])
+            post_counterparty(doc_request, doc_modules['counterparty'])
 
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
             post_files(doc_request, doc_files, new_path.pk)
