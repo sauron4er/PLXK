@@ -89,7 +89,7 @@ def post_approvals(doc_request, approvals, company):
     # Обробляємо список візуючих, отриманий з шаблону
     approvals = handle_approvals_from_template(approvals)
 
-    # Додаємо у список погоджуючих автора, керівника відділу та директора
+    # Додаємо у список погоджуючих автора, керівника відділу та директорів
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
         .filter(phase__document_type=doc_request['document_type']) \
         .exclude(phase__mark_id=27)
@@ -126,7 +126,7 @@ def post_approvals(doc_request, approvals, company):
         'approve_queue': 0  # Автор документа перший у списку погоджень
     })
 
-    # Видаляємо директора зі списку і додаємо, щоб він там був лише раз:
+    # Видаляємо директорів зі списку і додаємо, щоб вони там були лише раз:
     director = Employee_Seat.objects.values_list('id', flat=True) \
         .filter(seat_id=16) \
         .filter(is_active=True) \
@@ -141,11 +141,22 @@ def post_approvals(doc_request, approvals, company):
 
     acting_tov_director = vacation_check(tov_director)
 
+    tov_tech_director = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=281) \
+        .filter(is_active=True) \
+        .filter(is_main=True)[0]
+
+    acting_tov_tech_director = vacation_check(tov_tech_director)
+
     if doc_request['document_type'] == 17:  # Тендери
         # Директор ТОВ отримує на погодження усі тендери
         approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
         approvals.extend([{
             'id': acting_tov_director,
+            'approve_queue': 3
+        },
+        {
+            'id': acting_tov_tech_director,
             'approve_queue': 2
         }])
 
@@ -154,20 +165,24 @@ def post_approvals(doc_request, approvals, company):
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals.extend([{
                 'id': acting_director,
-                'approve_queue': 2
+                'approve_queue': 3
             }])
 
     else:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+            approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_tech_director)]
 
             approvals.extend([{
                 'id': acting_director,
-                'approve_queue': 3  # Директор останній у списку погоджень
+                'approve_queue': 4  # Директор останній у списку погоджень
             }, {
                 'id': acting_tov_director,
-                'approve_queue': 2  # Директор ТОВ теж отримує на погодження
+                'approve_queue': 3  # Директор ТОВ теж отримує на погодження
+            }, {
+                'id': acting_tov_tech_director,
+                'approve_queue': 2  # Технічний директор ТОВ теж отримує на погодження
             }])
         else:
             zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -177,8 +192,13 @@ def post_approvals(doc_request, approvals, company):
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
             approvals.extend([{
                 'id': acting_tov_director,
-                'approve_queue': 2  # Директор останній у списку погоджень
-            }])
+                'approve_queue': 3  # Директор останній у списку погоджень
+            },
+            {
+                'id': acting_tov_tech_director,
+                'approve_queue': 2  # Технічний директор теж отримує на погодження
+            }
+            ])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
     chief = get_dep_chief_id(doc_request['employee_seat'])
