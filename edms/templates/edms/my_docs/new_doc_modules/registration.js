@@ -20,11 +20,14 @@ class Registration extends React.Component {
             className='form-control mr-1'
             name='registration'
             id='registration'
-            value={registration_number}
+            value={registration_number !== 'not unique' ? registration_number : ''}
             onChange={this.onChange}
             maxLength={50}
           />
         </div>
+        <If condition={registration_number === 'not unique'}>
+          <div><small className="text-danger">Автоматично згенерований номер не унікальний. Залиште поле пустим для опрацювання юридичним відділом</small></div>
+        </If>
         <If condition={additional_info}><small className='text-danger'>{additional_info}</small></If>
       </>
     );

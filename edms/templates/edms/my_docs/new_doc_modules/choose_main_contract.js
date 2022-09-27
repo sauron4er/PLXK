@@ -17,8 +17,7 @@ class ChooseMainContract extends React.Component {
     counterparty: newDocStore.new_document.counterparty,
     loading: false
   };
-
-  // отримуємо з бд список шефів
+  
   getContracts() {
     if (newDocStore.new_document.counterparty) {
       this.setState({loading: true}, () => {
@@ -32,6 +31,15 @@ class ChooseMainContract extends React.Component {
           .catch((error) => notify(error));
       });
     }
+  }
+
+  // отримуємо від серверу реєстраційний номер цієї угоди
+  getRegistrationNumber(main_contract_id) {
+    axiosGetRequest(`get_add_contract_reg_number/${main_contract_id}`)
+      .then((response) => {
+        newDocStore.new_document.registration_number = response;
+      })
+      .catch((error) => notify(error));
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -50,11 +58,16 @@ class ChooseMainContract extends React.Component {
     }
   }
 
+  onMainContractChange = (contract) => {
+    this.props.onChange(contract);
+    this.getRegistrationNumber(contract.id);
+  };
+
   render() {
     const {is_main_contract, contracts, contract_modal_open, loading} = this.state;
     const {contract_link, contract_link_name, company, counterparty} = newDocStore.new_document;
     // company мушу сюди підтягувати, бо інакше на цю змінну не дивиться ComponentDidUpdate
-    const {module_info, onChange} = this.props;
+    const {module_info} = this.props;
 
     return (
       <>
@@ -98,7 +111,7 @@ class ChooseMainContract extends React.Component {
                     selectedName=''
                     disabled={false}
                     value={{name: contract_link_name, id: contract_link}}
-                    onChange={onChange}
+                    onChange={this.onMainContractChange}
                   />
                   <If condition={contract_link !== 0}>
                     <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
