@@ -6,7 +6,7 @@ from django.db import transaction, IntegrityError
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
-from docs.api.contracts_api import add_contract_from_edms
+from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts
 from docs.models import Article_responsible, Contract, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
@@ -493,16 +493,7 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
 @login_required(login_url='login')
 def edms_get_contracts(request, company, counterparty_id):
     if request.method == 'GET':
-        contracts = [{
-            'id': contract.pk,
-            'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
-            'company': contract.company
-        } for contract in Contract.objects
-            .filter(company=company)
-            .filter(counterparty_link__id=counterparty_id)
-            .filter(is_active=True)]
-
-        return HttpResponse(json.dumps(contracts))
+        return HttpResponse(json.dumps(get_main_contracts(company, counterparty_id)))
 
 
 @login_required(login_url='login')
@@ -1518,3 +1509,9 @@ def del_approval(request, approval_id):
 @try_except
 def add_approvals(request):
     return HttpResponse(post_new_doc_approvals(request))
+
+
+@login_required(login_url='login')
+@try_except
+def get_add_contract_reg_number(request, main_contract_id):
+    return HttpResponse(get_additional_contract_reg_number(main_contract_id))
