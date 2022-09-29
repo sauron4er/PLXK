@@ -177,6 +177,9 @@ class Docs extends React.Component {
       case 31:
         answer = 'Документ відправлено обраним особам';
         break;
+      case 33:
+        answer = 'Позначку "Оригінали документів отримано" додано';
+        break;
     }
     this.setState({opened_doc_id: 0});
     docInfoStore.answer = answer;

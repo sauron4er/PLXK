@@ -1,7 +1,10 @@
 import json
 from datetime import datetime
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.db import IntegrityError
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
@@ -328,6 +331,22 @@ def post_registration(new_doc, registration_number):
     if registration_number != '':
         new_doc_registration = Doc_Registration(document=new_doc, registration_number=registration_number)
         new_doc_registration.save()
+
+
+@try_except
+def change_registration_number(doc_id, registration_number):
+    try:
+        doc_registration_instance = Doc_Registration.objects.get(document_id=doc_id)
+    except Doc_Registration.DoesNotExist:
+        doc_registration_instance = Doc_Registration(document_id=doc_id)
+
+    doc_registration_instance.registration_number = registration_number
+
+    try:
+        doc_registration_instance.save()
+        return True
+    except IntegrityError:
+        return False
 
 
 @try_except

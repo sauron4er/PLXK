@@ -1,16 +1,16 @@
-from django.http import HttpResponse, HttpResponseForbidden, QueryDict, Http404
+from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.db import transaction, IntegrityError
+from django.db import transaction
 
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
-from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts
-from docs.models import Article_responsible, Contract, Contract_File
+from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, check_lawyers_received
+from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
-from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Type, Document_Meta_Type
+from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all
@@ -21,7 +21,7 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
-    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching, remaining_required_md
+    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
     set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals
 from .api.phases_handler import new_phase
@@ -1228,24 +1228,11 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                try:
-                    doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
-                except Http404:
-                    doc_registration_instance = Doc_Registration(document_id=doc_request['document'])
-
-                doc_registration_instance.registration_number = doc_request['registration_number']
-                try:
-                    doc_registration_instance.save()
-                except IntegrityError:
+                registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
+                if not registered:
                     return HttpResponse('reg_unique_fail')
 
-                mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
-                    .filter(document=doc_request['document']) \
-                    .filter(mark_id=27) \
-                    .filter(is_active=True)
-                for md in mark_demands:
-                    deactivate_mark_demand(doc_request, md)
-
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # На погодження
@@ -1288,6 +1275,12 @@ def edms_mark(request):
                     recipient = vacation_check(recipient['emp_seat_id'])
                     post_mark_demand(doc_request, recipient, get_phase_id(doc_request), 23)
                     new_mail('new', [{'id': recipient}], doc_request)
+
+            # Оригінали отримано
+            elif doc_request['mark'] == '33':
+                check_lawyers_received(doc_request['document'])
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 33)
+                new_phase(doc_request, this_phase['phase'] + 1, [])
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)

@@ -115,6 +115,12 @@ class Buttons extends React.Component {
                 Зареєструвати
               </button>
             </When>
+            <When condition={info.expected_mark === 33}>
+              {/* Оригінали отримано */}
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(33)} disabled={button_clicked}>
+                Оригінали отримано
+              </button>
+            </When>
           </Choose>
         </If>
 

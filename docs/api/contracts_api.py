@@ -245,3 +245,10 @@ def get_additional_contract_reg_number(main_contract_id):
         return 'not unique'
     else:
         return new_number
+
+
+@try_except
+def check_lawyers_received(edms_doc_id):
+    contract_instance = Contract.objects.get(edms_doc_id=edms_doc_id)
+    contract_instance.lawyers_received = True
+    contract_instance.save()

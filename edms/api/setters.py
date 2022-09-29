@@ -94,13 +94,15 @@ def deactivate_mark_demand(doc_request, md_id):
 
 
 @try_except
-def deactivate_doc_mark_demands(doc_request, doc_id):
-    mark_demands = [{
-        'id': md.id,
-    } for md in Mark_Demand.objects.filter(document_id=doc_id).filter(is_active=True)]
+def deactivate_doc_mark_demands(doc_request, doc_id, mark_id=None):
+    mark_demands = Mark_Demand.objects.values_list('id', flat=True)\
+        .filter(document_id=doc_id)\
+        .filter(is_active=True)
+    if mark_id:
+        mark_demands = mark_demands.filter(mark_id=mark_id)
 
     for md in mark_demands:
-        deactivate_mark_demand(doc_request, md['id'])
+        deactivate_mark_demand(doc_request, md)
 
 
 @try_except
