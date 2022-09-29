@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Номенклатура "Предмет договору"{% endblock %}
+{% block second_nav %}{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+    <script>
+      {#const user_id = JSON.parse(document.getElementById('user_id').textContent);#}
+      {#const department_name = JSON.parse(document.getElementById('department_name').textContent);#}
+      window.contract_subjects = {{ contract_subjects|safe }};
+      window.employees = {{ employees|safe }};
+      {#window.edit_access = {{ edit_access|safe }};#}
+    </script>
+
+    <div class="container-fluid px-3" id="contract_subjects">
+      <div id="bundle">{% render_bundle 'production' %}</div>
+    </div>
+{% endblock %}

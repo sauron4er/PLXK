@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from plxk.api.global_getters import get_simple_emp_seats_list
 from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
     NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
 from production.api.getters import *
@@ -139,5 +140,25 @@ def del_scope(request):
 @login_required(login_url='login')
 @try_except
 def get_scopes(request):
-
     return HttpResponse(json.dumps(get_scopes_list()))
+
+
+@login_required(login_url='login')
+@try_except
+def contract_subjects(request):
+    employees = get_simple_emp_seats_list()
+    contract_subjects = get_contract_subjects()
+    return render(request, 'production/contract_subjects/index.html', {'contract_subjects': contract_subjects,
+                                                                       'employees': employees})
+
+
+@try_except
+def post_contract_subject(request):
+    # post or edit contract_subject
+    return HttpResponseRedirect('scopes.html')
+
+
+@try_except
+def del_contract_subject(request):
+    # delete contract_subject
+    return HttpResponseRedirect('scopes.html')

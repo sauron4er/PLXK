@@ -1,5 +1,5 @@
 from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, \
-    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom
+    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
 from plxk.api.try_except import try_except
 
 
@@ -113,3 +113,16 @@ def get_cost_rates_fields_list(product_id):
         'unit': field.unit,
         'is_required': field.is_required,
     } for field in cost_rate_fields]
+
+
+@try_except
+def get_contract_subjects():
+    contract_subjects = Contract_Subject.objects\
+        .filter(is_active=True)\
+        .order_by('name')
+    return [{
+        'id': subject.pk,
+        'name': subject.name,
+        'approval_list': [],
+        'to_work_list': [],
+    } for subject in contract_subjects]

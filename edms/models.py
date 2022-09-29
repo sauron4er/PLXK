@@ -493,7 +493,7 @@ class Contract_Subject_Approval(models.Model):
 
 
 # Список людинопосад, яким відправляється документ на прийом у роботу в залежності від предмету
-class Contract_Subject_ToWork(models.Model):
+class Contract_Subject_To_Work(models.Model):
     subject = models.ForeignKey(Contract_Subject, related_name='to_work_recipients', on_delete=models.RESTRICT)
     recipient = models.ForeignKey(Employee_Seat, related_name='to_work_for_contract_subject', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

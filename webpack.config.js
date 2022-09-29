@@ -15,6 +15,7 @@ module.exports = {
     ordering: './static/index/ordering.js',
     accounts: './static/index/accounts.js',
     hr: './static/index/hr.js',
+    production: './static/index/production.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),
@@ -82,6 +83,7 @@ module.exports = {
       ordering: path.resolve(__dirname, 'ordering'),
       accounts: path.resolve(__dirname, 'accounts'),
       hr: path.resolve(__dirname, 'hr'),
+      production: path.resolve(__dirname, 'production'),
     }
   }
 };
