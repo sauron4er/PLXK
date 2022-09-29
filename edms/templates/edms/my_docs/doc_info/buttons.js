@@ -200,9 +200,13 @@ class Buttons extends React.Component {
         {/* Якщо це Договір або Тендер, додаємо кнопку "оновити файл" */}
         {/* В майбутньому переробити на перевірку використання модуля approvals і редагуємого поля Файли */}
         <If condition={[5, 9].includes(info.meta_type_id) && !archived && !info.archived}>
-          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
-            Додати/оновити файл(и)
-          </button>
+          <If condition={![23, 27, 33, 8].includes(info.expected_mark)}>
+            {/*Ця кнопка лише для автора і візуючих*/}
+            <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={() => this.onClick(18)}
+                    disabled={button_clicked}>
+              Додати/оновити файл(и)
+            </button>
+          </If>
         </If>
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={button_clicked}>
