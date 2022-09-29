@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
 from production.models import Mockup_type, Mockup_product_type, Sub_product_type, Scope, \
-    Cost_Rates_Product, Cost_Rates_Nom
+    Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
 from correspondence.models import Client, Law
 from boards.models import Counterparty
 # from docs.models import Contract # - напряму функцію імпортувати не можна, буде помилка circular import
@@ -480,3 +480,22 @@ class Foyer(models.Model):
     absence_based = models.BooleanField()  # True: Звільнююча, рахується час відсутності, False: навпаки
     edms_doc = models.ForeignKey(Document, related_name='foyer', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Contract Subject Nomenclature
+
+# Список людинопосад, яким відправляється документ на візування в залежності від предмету
+class Contract_Subject_Approval(models.Model):
+    subject = models.ForeignKey(Contract_Subject, related_name='approval_recipients', on_delete=models.RESTRICT)
+    recipient = models.ForeignKey(Employee_Seat, related_name='approval_for_contract_subject', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Список людинопосад, яким відправляється документ на прийом у роботу в залежності від предмету
+class Contract_Subject_ToWork(models.Model):
+    subject = models.ForeignKey(Contract_Subject, related_name='to_work_recipients', on_delete=models.RESTRICT)
+    recipient = models.ForeignKey(Employee_Seat, related_name='to_work_for_contract_subject', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+# ---------------------------------------------------------------------------------------------------------------------

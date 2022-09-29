@@ -42,6 +42,7 @@ class UserProfile(models.Model):
     stationery_type_add = models.BooleanField(default=False)  # Право редагування довідника канцтоварів
     stationery_orders_view = models.BooleanField(default=False)  # Право перегляду замовлень канцтоварів
     dep_regulations_add = models.BooleanField(default=False)  # Право додавати посадові інструкції та положення про відділ
+    contract_subject_edit = models.BooleanField(default=False)  # Право редагувати номенклатуру Предметів Договорів
 
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True, null=True)
