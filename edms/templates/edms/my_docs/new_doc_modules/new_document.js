@@ -74,7 +74,8 @@ class NewDocument extends React.Component {
     gate: 1,
     carry_out_items: [],
     main_field_queue: 0,
-    auto_recipients: []
+    auto_recipients: [],
+    post_request_sent: false
   };
 
   componentDidMount() {
@@ -456,11 +457,16 @@ class NewDocument extends React.Component {
             formData.append('file', file);
           });
         }
+        
+        this.setState({
+          post_request_sent: true
+        })
 
         axiosPostRequest('post_doc', formData)
           .then((response) => {
             if (response === 'reg_number_taken') {
               notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
+              this.setState({post_request_sent: true})
             } else {
               // опублікування документу оновлює таблицю документів:
               this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
@@ -472,6 +478,7 @@ class NewDocument extends React.Component {
             }
           })
           .catch((error) => {
+            this.setState({post_request_sent: true})
             console.log(error);
           });
       }
@@ -547,7 +554,8 @@ class NewDocument extends React.Component {
       days,
       gate,
       carry_out_items,
-      auto_recipients
+      auto_recipients,
+      post_request_sent
     } = this.state;
     
     const {doc_type_version} = newDocStore.new_document;
@@ -710,6 +718,7 @@ class NewDocument extends React.Component {
                   className='btn-info'
                   text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
+                  requestSent={post_request_sent}
                 />
               </div>
             </If>

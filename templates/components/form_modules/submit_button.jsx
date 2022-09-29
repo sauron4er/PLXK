@@ -1,31 +1,43 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import useSetState from 'templates/hooks/useSetState';
+import {LoaderMini, LoaderSmall} from 'templates/components/loaders';
 
 function SubmitButton(props) {
   const [state, setState] = useSetState({
     clicked: false
   });
-  
+
   function onClick() {
     setState({clicked: true});
     props.onClick();
-    setTimeout(() => setState({clicked: false}), props.timeout)
   }
-  
+
+  useEffect(() => {
+    if (state.clicked && !props.requestSent) {
+      const timer = setTimeout(() => setState({clicked: false}), props.timeout);
+      return () => clearTimeout(timer);
+    }
+  }, [state.clicked]);
+
   return (
-      <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={props.disabled || state.clicked}>
-        {props.text}
-      </button>
-    );
-  
+    <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={state.clicked}>
+      <Choose>
+        <When condition={props.requestSent}>
+          <LoaderMini />
+        </When>
+        <Otherwise>{props.text}</Otherwise>
+      </Choose>
+    </button>
+  );
 }
 
 SubmitButton.defaultProps = {
-    className: '',
-    text: '???',
-    onClick: () => {},
-    disabled: false,
-    timeout: 10000
-  };
+  className: '',
+  text: '???',
+  onClick: () => {},
+  disabled: false,
+  timeout: 5000,
+  requestSent: false // Означає, що пішов запит до сервера і нажимати на кнопку в очікуванні не можна
+};
 
 export default SubmitButton;

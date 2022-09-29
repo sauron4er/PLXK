@@ -59,3 +59,25 @@ div.css_loader {
     transform: rotate(360deg);
   }
 }
+
+.loader-mini {
+  animation: pulse 2s infinite;
+}
+
+.loader-mini::before, .loader-mini::after {
+  content: '●'
+}
+
+@keyframes pulse {
+  0% {
+    color: var(--main_color);
+  }
+
+  50% {
+    color: white
+  }
+
+  100% {
+    color: var(--main_color);
+  }
+}
