@@ -23,7 +23,8 @@ import SelectorWithFilter from 'templates/components/form_modules/selector_with_
 class Order extends React.Component {
   state = {
     loading: false,
-    error404: false
+    error404: false,
+    request_sent: false
   };
 
   componentDidMount() {
@@ -152,13 +153,19 @@ class Order extends React.Component {
       if (cancels_files && cancels_files.length > 0) cancels_files.map((file) => formData.append('cancels_files', file));
 
       const url = ordersStore.order.id === 0 ? 'add_order/' : 'edit_order/';
+      
+      this.setState({request_sent: true})
 
       axiosPostRequest(url, formData)
         .then((response) => {
           this.postResponsibleFiles(articles);
           ordersStore.order.id === 0 ? this.addOrder(response) : this.editOrder(response);
+          this.setState({request_sent: false})
         })
-        .catch((error) => notify(error));
+        .catch((error) => {
+          this.setState({request_sent: false})
+          notify(error);
+        });
     }
   };
 
@@ -258,7 +265,7 @@ class Order extends React.Component {
   render() {
     // const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done, articles} = ordersStore.order;
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
-    const {loading, error404} = this.state;
+    const {loading, error404, request_sent} = this.state;
 
     return (
       <Choose>
@@ -455,7 +462,13 @@ class Order extends React.Component {
               <OrderMail />
             </If>
 
-            <SubmitButton className='btn-info' text='Зберегти' onClick={this.postOrder} />
+            <SubmitButton
+              className='btn-info'
+              text='Зберегти'
+              onClick={this.postOrder}
+              requestSent={request_sent}
+            
+            />
 
             <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />

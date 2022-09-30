@@ -95,7 +95,7 @@ def post_approvals(doc_request, approvals, company):
     # Додаємо у список погоджуючих автора, керівника відділу та директорів
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
         .filter(phase__document_type=doc_request['document_type']) \
-        .exclude(phase__mark_id=27)
+        .exclude(phase__mark_id__in=[27, 33])
 
     if doc_request['doc_type_version'] != '0':
         # doc_type_version = Document_Type_Version.objects.values_list('id', flat=True)\
