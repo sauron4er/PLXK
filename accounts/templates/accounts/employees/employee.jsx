@@ -2,7 +2,7 @@ import * as React from 'react';
 import { axiosGetRequest, axiosPostRequest } from "templates/components/axios_requests";
 import {notify} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 
 
 class Employee extends React.Component {

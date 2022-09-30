@@ -18,9 +18,13 @@ function SubmitButton(props) {
       return () => clearTimeout(timer);
     }
   }, [state.clicked]);
+  
+  useEffect(() => {
+    if (!props.requestSent) setState({clicked: false})
+  }, [props.requestSent])
 
   return (
-    <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={state.clicked}>
+    <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={state.clicked || props.disabled}>
       <Choose>
         <When condition={props.requestSent}>
           <LoaderMini />

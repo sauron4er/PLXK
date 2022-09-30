@@ -6,7 +6,7 @@ import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
-import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 
 class ChooseMainContract extends React.Component {
   state = {

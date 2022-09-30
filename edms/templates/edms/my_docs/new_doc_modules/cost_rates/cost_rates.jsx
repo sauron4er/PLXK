@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import CostRatesItem from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates_item';
-import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 import DateInput from 'templates/components/form_modules/date_input';
 import AdditionalCostRates from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/additional_rates';
 

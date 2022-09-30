@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit, faCheckDouble, faBackward, faForward, faPrint} from '@fortawesome/free-solid-svg-icons';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {getIndex, notify} from 'templates/components/my_extras';
-import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 import TextInput from 'templates/components/form_modules/text_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import DxTable from 'templates/components/tables/dx_table';

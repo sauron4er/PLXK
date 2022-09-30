@@ -6,6 +6,7 @@ from plxk.api.global_getters import get_simple_emp_seats_list
 from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
     NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
 from production.api.getters import *
+from production.api.setters import add_or_change_contract_subject, deactivate_contract_subject
 
 
 @try_except
@@ -154,11 +155,10 @@ def contract_subjects(request):
 
 @try_except
 def post_contract_subject(request):
-    # post or edit contract_subject
-    return HttpResponseRedirect('scopes.html')
+    new_cs_id = add_or_change_contract_subject(request)
+    return HttpResponse(new_cs_id)
 
 
 @try_except
 def del_contract_subject(request):
-    # delete contract_subject
-    return HttpResponseRedirect('scopes.html')
+    return HttpResponse(deactivate_contract_subject(request.POST['id']))

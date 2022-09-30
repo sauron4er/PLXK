@@ -6,7 +6,7 @@ import 'static/css/files_uploader.css';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 import {notify} from 'templates/components/my_extras';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 
 class ApprovalDelegation extends React.Component {
   state = {

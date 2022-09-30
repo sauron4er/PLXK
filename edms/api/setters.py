@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
-    Document_Type, Doc_Type_Phase, Document_Path
+    Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from edms.api.vacations import vacation_check
 
@@ -234,3 +234,25 @@ def new_mail(email_type, recipients, doc_request):
                     send_email_answer(doc_request, mail)
                 elif email_type == 'deleted_from_approvals':
                     send_email_deleted_from_approvals(doc_request, mail, main_field)
+
+
+@try_except
+def edit_contract_subject_approval(contract_subject_id, approval):
+    if approval['status'] == 'new':
+        cs = Contract_Subject_Approval(subject_id=contract_subject_id, recipient_id=approval['id'])
+        cs.save()
+    elif approval['status'] == 'del':
+        cs = Contract_Subject_Approval.objects.get(id=approval['approval_id'])
+        cs.is_active = False
+        cs.save()
+
+
+@try_except
+def edit_contract_subject_to_work(contract_subject_id, to_work):
+    if to_work['status'] == 'new':
+        cs = Contract_Subject_To_Work(subject_id=contract_subject_id, recipient_id=to_work['id'])
+        cs.save()
+    elif to_work['status'] == 'del':
+        cs = Contract_Subject_To_Work.objects.get(id=to_work['to_work_id'])
+        cs.is_active = False
+        cs.save()

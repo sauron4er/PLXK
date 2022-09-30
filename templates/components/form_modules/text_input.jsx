@@ -5,7 +5,7 @@ class TextInput extends React.Component {
   
   render() {
     const {fieldName, text, onChange, maxLength, type, disabled, className, placeholder} = this.props;
-    
+  
     const rows = Math.round(text.length / 100)
   
     return (

@@ -4,11 +4,11 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
-import MultiSelector from 'templates/components/form_modules/multi_selector';
+import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
 import Responsible from 'templates/components/form_modules/articles/responsible';
-import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
-import MultiSelectorWithFilter from 'templates/components/form_modules/multi_selector_with_filter';
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
+import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
 
 class Article extends React.Component {
   state = {

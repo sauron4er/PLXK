@@ -4,7 +4,7 @@ import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
 import {getEmpSeats} from 'edms/api/get_emp_seats';
 import 'static/css/my_styles.css';
-import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
+import MultiSelectorWithFilter from "templates/components/form_modules/selectors/multi_selector_with_filter";
 
 class ApprovalList extends React.Component {
   state = {

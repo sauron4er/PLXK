@@ -118,11 +118,25 @@ def get_cost_rates_fields_list(product_id):
 @try_except
 def get_contract_subjects():
     contract_subjects = Contract_Subject.objects\
+        .prefetch_related('approval_recipients')\
+        .prefetch_related('to_work_recipients')\
         .filter(is_active=True)\
         .order_by('name')
-    return [{
+    list = [{
         'id': subject.pk,
         'name': subject.name,
-        'approval_list': [],
-        'to_work_list': [],
+        'approval_list': [{
+            'approval_id': approval.id,
+            'id': approval.recipient.id,
+            'name': approval.recipient.employee.pip + ', ' + approval.recipient.seat.seat,
+            'status': 'old'
+        } for approval in subject.approval_recipients.filter(is_active=True)],
+        'to_work_list': [{
+            'to_work_id': to_work.id,
+            'id': to_work.recipient.id,
+            'name': to_work.recipient.employee.pip + ', ' + to_work.recipient.seat.seat,
+            'status': 'old'
+        } for to_work in subject.to_work_recipients.filter(is_active=True)]
     } for subject in contract_subjects]
+
+    return list

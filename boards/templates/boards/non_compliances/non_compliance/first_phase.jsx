@@ -6,15 +6,15 @@ import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 import NCRow from 'boards/templates/boards/non_compliances/non_compliance/row';
 import NCItem from 'boards/templates/boards/non_compliances/non_compliance/item';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import Files from 'templates/components/form_modules/files';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {isBlankOrZero, notify} from 'templates/components/my_extras';
 import Modal from 'react-responsive-modal';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import NumberInput from 'templates/components/form_modules/number_input';
-import MultiSelectorWithAxios from 'templates/components/form_modules/multi_selector_with_axios';
+import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/multi_selector_with_axios';
 
 class NCFirstPhase extends React.Component {
   state = {

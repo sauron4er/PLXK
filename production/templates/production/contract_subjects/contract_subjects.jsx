@@ -15,7 +15,6 @@ class ContractSubjects extends React.Component {
     this.setState({main_div_height: this.mainDivRef.clientHeight});
     contractSubjectsStore.contract_subjects = window.contract_subjects;
     contractSubjectsStore.employees = window.employees;
-    console.log(window.employees);
   }
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -24,20 +23,19 @@ class ContractSubjects extends React.Component {
   };
 
   onRowClick = (row) => {
-    this.setState({clicked_subject_id: row.id})
-    contractSubjectsStore.contract_subject.name = row.name;
-    contractSubjectsStore.contract_subject.approval_list = row.approval_list;
-    contractSubjectsStore.contract_subject.to_work_list = row.to_work_list;
+    this.setState({clicked_subject_id: row.id});
+    contractSubjectsStore.contract_subject = {...row};
   };
 
   render() {
     const {main_div_height, clicked_subject_id} = this.state;
+    const {contract_subjects} = contractSubjectsStore;
 
     return (
-      <div ref={this.getMainDivRef} className='d-flex mt-2'>
-        <div className='col-4'>
+      <div ref={this.getMainDivRef} className='d-md-flex mt-2'>
+        <div className='col-md-4'>
           <DxTable
-            rows={contractSubjectsStore.contract_subjects}
+            rows={contract_subjects}
             columns={[{name: 'name', title: 'Предмет договору'}]}
             defaultSorting={[{columnName: 'name', direction: 'asc'}]}
             onRowClick={this.onRowClick}
@@ -45,8 +43,8 @@ class ContractSubjects extends React.Component {
             filter
           />
         </div>
-        <div className='col-8'>
-          <ContractSubject id={clicked_subject_id} />
+        <div className='col-md-8'>
+          <ContractSubject />
         </div>
       </div>
     );

@@ -12,13 +12,13 @@ import {Loader} from 'templates/components/loaders';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import TextInput from 'templates/components/form_modules/text_input';
 import Files from 'templates/components/form_modules/files';
 import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
 import SubmitButton from 'templates/components/form_modules/submit_button';
-import SelectorWithFilter from 'templates/components/form_modules/selector_with_filter';
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 
 class Order extends React.Component {
   state = {
@@ -467,7 +467,6 @@ class Order extends React.Component {
               text='Зберегти'
               onClick={this.postOrder}
               requestSent={request_sent}
-            
             />
 
             <If condition={order.id && is_orders_admin}>

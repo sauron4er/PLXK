@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Loader} from 'templates/components/loaders';
 import TextInput from 'templates/components/form_modules/text_input';
 import Files from 'templates/components/form_modules/files';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import DateInput from 'templates/components/form_modules/date_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
