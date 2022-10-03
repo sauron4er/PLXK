@@ -8,7 +8,8 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
-    Doc_Foyer_Range, Doc_Employee, Document_Type_Version, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional
+    Doc_Foyer_Range, Doc_Employee, Document_Type_Version, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
+    Doc_Contract_Subject, Doc_Deadline
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -88,9 +89,22 @@ def handle_approvals_from_template(approvals):
 
 
 @try_except
-def post_approvals(doc_request, approvals, company):
-    # Обробляємо список візуючих, отриманий з шаблону
-    approvals = handle_approvals_from_template(approvals)
+def post_approvals(doc_request, approvals, company, contract_subject_approvals):
+    # 1. Обробляємо список візуючих, отриманий з шаблону
+    # approvals = handle_approvals_from_template(approvals)
+    approvals = []
+
+    # 2. Додаємо у список doc_approval_list
+    for approval in contract_subject_approvals:
+        approvals.append({
+            'id': approval['emp_seat_id'],
+            'approve_queue': 1
+        })
+
+    # 3. Додаємо погоджуючих з phase_queue
+    # 4. Опрацьовуємо створений вручну список - видаляємо звідти уже доданих
+    # 5. Додаємо опрацьований створений вручну список
+
 
     # Додаємо у список погоджуючих автора, керівника відділу та директорів
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
@@ -228,7 +242,7 @@ def post_gate(doc_request, gate):
     if gate_form.is_valid():
         gate_form.save()
     else:
-        raise ValidationError('post_modules/post_day/day_form invalid')
+        raise ValidationError('post_modules/post_gate/gate_form invalid')
 
 
 @try_except
@@ -377,6 +391,23 @@ def post_scope(new_doc, scope):
 def post_law(new_doc, law):
     doc_law = Doc_Law(document=new_doc, law_id=law)
     doc_law.save()
+
+
+@try_except
+def post_contract_subject(new_doc, contract_subject):
+    if contract_subject['id'] != 0:
+        new_contract_subject = Doc_Contract_Subject(document=new_doc, contract_subject_id=contract_subject['id'])
+    else:
+        new_contract_subject = Doc_Contract_Subject(document=new_doc, text=contract_subject['input'])
+
+    new_contract_subject.save()
+
+
+@try_except
+def post_deadline(new_doc, deadline):
+    if deadline:
+        new_deadline = Doc_Deadline(document=new_doc, deadline=deadline)
+        new_deadline.save()
 
 
 @try_except

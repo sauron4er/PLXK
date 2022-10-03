@@ -4,6 +4,7 @@ const newDocStore = store({
   mockup_type_loading: true,
   additional_modal_opened: false,
   additional_modal_content: '',
+  auto_recipients: [],
   new_document: {
     doc_type_id: 0,
     doc_type_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта
@@ -38,6 +39,12 @@ const newDocStore = store({
     select: [],
     employee: 0,
     employee_name: '',
+    contract_subject: 0,
+    contract_subject_name: '',
+    contract_subject_input: '',
+    deadline: '',
+    approval_list: [],
+    to_work_list: [],
     client_requirements: {
       bag_name: '',
       weight_kg: '',
@@ -133,6 +140,12 @@ const newDocStore = store({
       select: [],
       employee: 0,
       employee_name: '',
+      contract_subject: 0,
+      contract_subject_name: '',
+      contract_subject_input: '',
+      deadline: '',
+      approval_list: [],
+      to_work_list: [],
       client_requirements: {
         bag_name: '',
         weight_kg: '',

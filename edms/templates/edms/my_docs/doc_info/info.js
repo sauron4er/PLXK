@@ -156,6 +156,12 @@ class Info extends React.Component {
                   <When condition={module.module === 'cost_rates'}>
                     <CostRates module={module} costRates={info.cost_rates} />
                   </When>
+                  <When condition={module.module === 'deadline'}>
+                    <Day day={info.deadline.deadline} fieldName={module.field_name} status={info.deadline.status} />
+                  </When>
+                  <When condition={module.module === 'contract_subject'}>
+                    <Text text_info={module} text={info.contract_subject} doc_info={info} />
+                  </When>
                   <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
                     {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}
                     <Approved signed={info.approved} />

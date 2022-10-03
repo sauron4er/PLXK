@@ -21,9 +21,9 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
-    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching
+    get_delegated_docs, is_reg_number_free, get_approvals_for_contract_subject
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals, handle_doc_type_version
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor, send_email_lebedev
 from .api.tables.free_time_table import get_free_times_table
@@ -65,13 +65,7 @@ def post_document(request, doc_modules):
         new_doc.is_draft = True
     elif doc_request['status'] == 'template':
         new_doc.is_template = True
-    if doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
-        new_doc.doc_type_version_id = doc_request['doc_type_version']
-
-    if 'cost_rates' in doc_modules:
-        doc_type_version_id = get_doc_version_from_description_matching(
-            doc_request['document_type'], doc_modules['cost_rates']['department'])
-        new_doc.doc_type_version_id = doc_type_version_id
+    new_doc = handle_doc_type_version(new_doc, doc_request, doc_modules)
 
     new_doc.save()
     return new_doc
@@ -118,7 +112,11 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
             company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
-            post_approvals(doc_request, doc_modules['approval_list'], company)
+            if 'contract_subject' in doc_modules:
+                contract_subject_approvals = get_approvals_for_contract_subject(doc_modules['contract_subject']['id'])
+            else:
+                contract_subject_approvals = []
+            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
 
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
@@ -176,6 +174,12 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         if 'cost_rates' in doc_modules:
             post_cost_rates(new_doc, doc_modules['cost_rates'])
+
+        if 'contract_subject' in doc_modules:
+            post_contract_subject(new_doc, doc_modules['contract_subject'])
+
+        if 'deadline' in doc_modules:
+            post_deadline(new_doc, doc_modules['deadline'])
 
         return recipients
     except ValidationError as err:
@@ -551,7 +555,7 @@ def edms_get_doc(request, pk):
             'archived': not doc.is_active,
             'closed': doc.closed,
             'main_field': doc.main_field,
-            'doc_type_version': doc.doc_type_version.id if doc.doc_type_version else 0,
+            'doc_type_version': doc.doc_type_version.version_id if doc.doc_type_version else 0,
             'doc_type_version_name': doc.doc_type_version.description if doc.doc_type_version else '',
             'stage': doc.stage,
         }

@@ -122,7 +122,7 @@ def get_contract_subjects():
         .prefetch_related('to_work_recipients')\
         .filter(is_active=True)\
         .order_by('name')
-    list = [{
+    subjects_list = [{
         'id': subject.pk,
         'name': subject.name,
         'approval_list': [{
@@ -139,4 +139,4 @@ def get_contract_subjects():
         } for to_work in subject.to_work_recipients.filter(is_active=True)]
     } for subject in contract_subjects]
 
-    return list
+    return subjects_list

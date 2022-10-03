@@ -142,7 +142,7 @@ class Document extends React.Component {
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
-    formData.append('doc_type_version', docInfoStore.info.doc_type_version?.id);
+    formData.append('doc_type_version', docInfoStore.info.doc_type_version);
     formData.append('deleted_approval_id', docInfoStore.deleted_approval_id);
     formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
 

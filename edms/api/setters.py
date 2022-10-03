@@ -6,9 +6,10 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
-    Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work
+    Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work, Document_Type_Version
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from edms.api.vacations import vacation_check
+from edms.api.getters import get_doc_version_from_description_matching
 
 from django.conf import settings
 
@@ -256,3 +257,21 @@ def edit_contract_subject_to_work(contract_subject_id, to_work):
         cs = Contract_Subject_To_Work.objects.get(id=to_work['to_work_id'])
         cs.is_active = False
         cs.save()
+
+
+@try_except
+def handle_doc_type_version(new_doc, doc_request, doc_modules):
+    if 'cost_rates' in doc_modules:
+        doc_type_version_id = get_doc_version_from_description_matching(
+            doc_request['document_type'], doc_modules['cost_rates']['department'])
+        new_doc.doc_type_version_id = doc_type_version_id
+        return new_doc
+
+    elif doc_request['document_type'] == '20':
+        doc_type_version = Document_Type_Version.objects.get(document_type_id=20, version_id=doc_request['doc_type_version'])
+        new_doc.doc_type_version_id = doc_type_version.id
+        return new_doc
+
+    elif doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
+        new_doc.doc_type_version_id = doc_request['doc_type_version']
+        return new_doc

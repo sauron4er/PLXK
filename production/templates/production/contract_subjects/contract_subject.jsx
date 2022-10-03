@@ -88,6 +88,7 @@ function ContractSubject() {
         onChange={editApprovalList}
         disabled={false}
       />
+      <small className="text-danger">Генеральних директорів ТОВ та ТДВ буде додано автоматично, вносити їх в цей список не потрібно</small>
       <hr />
       <MultiSelectorWithItemStatus
         options={contractSubjectsStore.employees}

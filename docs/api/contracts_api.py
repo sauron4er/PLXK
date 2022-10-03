@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from docs.models import Contract, Contract_File
 from docs.forms import NewContractForm, DeactivateContractForm, DeactivateContractFileForm
-from edms.models import Document, Document_Type_Module
+from edms.models import Document, Document_Type_Module, Doc_Contract_Subject
 from docs.api.contracts_mail_sender import send_mail
 
 
@@ -89,7 +89,7 @@ def add_contract_from_edms(doc_request, files):
         'company': edms_doc.company,
         'basic_contract': basic_contract,
         'number': get_contract_number(edms_doc, fields_queue),
-        'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
+        'subject': get_subject_from_edms(edms_doc, fields_queue['subject']),
         'counterparty': counterparty_id,
         'counterparty_text': counterparty_text,
         'nomenclature_group': get_texts_from_edms(edms_doc, fields_queue['nomenclature_group']),
@@ -120,6 +120,17 @@ def get_contract_number(edms_doc, fields_queue):
         number = get_texts_from_edms(edms_doc, fields_queue['number'])
 
     return number
+
+
+@try_except
+def get_subject_from_edms(edms_doc, queue):
+    if edms_doc.document_type_id >= 20:
+        doc_subject = Doc_Contract_Subject.objects.get(document=edms_doc)
+        subject = doc_subject.contract_subject.name if doc_subject.contract_subject else doc_subject.text
+    else:
+        subject = get_texts_from_edms(edms_doc, queue),
+
+    return subject
 
 
 @try_except

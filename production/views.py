@@ -153,6 +153,12 @@ def contract_subjects(request):
                                                                        'employees': employees})
 
 
+@login_required(login_url='login')
+@try_except
+def contract_subjects_select(request):
+    return HttpResponse(json.dumps(get_contract_subjects()))
+
+
 @try_except
 def post_contract_subject(request):
     new_cs_id = add_or_change_contract_subject(request)

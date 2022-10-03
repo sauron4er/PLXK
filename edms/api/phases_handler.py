@@ -5,7 +5,7 @@ from edms.forms import NewApprovalForm, ApprovedApprovalForm
 from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
-    get_my_seats, get_phase_id_sole_recipients
+    get_my_seats, get_phase_id_sole_recipients, get_to_work_for_contract_subject
 from edms.api.approvals_handler import is_approval_module_used, is_approvals_used, post_auto_approve, \
     add_zero_phase_auto_approvals, is_in_approval_list
 from edms.api.vacations import vacation_check
@@ -230,8 +230,13 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     handle_phase_marks(doc_request, phase_info)
 
                 elif phase_info['mark_id'] == 23:
-                    # Прийняття у роботу договору. Прийняття у роботу заявки проходить без окремої фази, у фазі Виконано
-                    for employee in json.loads(doc_request['employees_to_inform']):
+                    # Прийняття у роботу договору. Опрацьовуємо і автосписок і обраних вручну
+                    contract_subject_to_work_list = get_to_work_for_contract_subject(doc_request['document'])
+                    receivers_from_form = json.loads(doc_request['employees_to_inform'])
+
+                    receivers = contract_subject_to_work_list + receivers_from_form
+
+                    for employee in receivers:
                         recipient = vacation_check(employee['id'])
                         post_mark_demand(doc_request, recipient, phase_info['id'], 23)
                         new_mail('new', [{'id': recipient}], doc_request)
@@ -249,8 +254,8 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                         # Якщо визначеного отримувача нема, надсилаємо автору
                         handle_phase_marks(doc_request, phase_info)
 
-                # Список на погодження може бути пустий. Якщо так, переходимо на наступну фазу
-                elif phase_info['mark_id'] == 2 and not modules_recipients:
+                # Список на погодження у новоствореному документі може бути пустий. Тоді переходимо на наступну фазу
+                elif phase_number == 1 and phase_info['mark_id'] == 2 and not modules_recipients:
                     handle_phase_approvals(doc_request, phase_info)
 
                 else:

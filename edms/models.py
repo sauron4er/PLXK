@@ -379,6 +379,13 @@ class Doc_Registration(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Дедлайн виконання/візування
+class Doc_Deadline(models.Model):
+    document = models.ForeignKey(Document, related_name='deadline', on_delete=models.RESTRICT)
+    deadline = models.DateField(null=True)
+    is_active = models.BooleanField(default=True)
+
+
 # Вимоги клієнта
 class Client_Requirements(models.Model):
     document = models.ForeignKey(Document, related_name='client_requirements', on_delete=models.RESTRICT)
@@ -484,6 +491,15 @@ class Foyer(models.Model):
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Contract Subject Nomenclature
+
+
+# Предмет договору
+class Doc_Contract_Subject(models.Model):
+    document = models.ForeignKey(Document, related_name='contract_subject', on_delete=models.RESTRICT)
+    contract_subject = models.ForeignKey(Contract_Subject, related_name='documents', on_delete=models.RESTRICT, null=True)
+    text = models.CharField(max_length=100, null=True)
+    is_active = models.BooleanField(default=True)
+
 
 # Список людинопосад, яким відправляється документ на візування в залежності від предмету
 class Contract_Subject_Approval(models.Model):
