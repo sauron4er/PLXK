@@ -1277,6 +1277,22 @@ def edms_mark(request):
                     post_mark_demand(doc_request, recipient, get_phase_id(doc_request), 23)
                     new_mail('new', [{'id': recipient}], doc_request)
 
+            # Нагадати про строки
+            elif doc_request['mark'] == '34':
+                remaining_required_mds = Mark_Demand.objects \
+                    .filter(document_id=doc_request['document']) \
+                    .exclude(mark_id=8) \
+                    .filter(is_active=True)
+
+                remaining_required_mds = [{
+                    'id': md.id,
+                    'emp_seat_id': md.recipient.id
+                } for md in remaining_required_mds]
+
+                for md in remaining_required_mds:
+                    recipient = vacation_check(md['emp_seat_id'])
+                    new_mail('remind', [{'id': recipient}], doc_request)
+
             # Оригінали отримано
             elif doc_request['mark'] == '33':
                 check_lawyers_received(doc_request['document'])

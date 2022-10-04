@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
 from plxk.api.try_except import try_except
-from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer, send_email_deleted_from_approvals
+from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer,\
+    send_email_deleted_from_approvals, send_email_remind
 from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
     Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work, Document_Type_Version
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
@@ -235,6 +236,8 @@ def new_mail(email_type, recipients, doc_request):
                     send_email_answer(doc_request, mail)
                 elif email_type == 'deleted_from_approvals':
                     send_email_deleted_from_approvals(doc_request, mail, main_field)
+                elif email_type == 'remind':
+                    send_email_remind(doc_request, mail, main_field)
 
 
 @try_except

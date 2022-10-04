@@ -15,7 +15,7 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_responsible = info.responsible_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-
+  
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -124,21 +124,21 @@ class Buttons extends React.Component {
           </Choose>
         </If>
 
-        <If condition={info.user_is_super_manager}>
-          <If condition={!['done', 'confirm', 'denied'].includes(info?.stage)}>
-            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>
-              Виконано
-            </button>
-            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
-              Відмовити
-            </button>
-            <If condition={info?.stage != 'in work'}>
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>
-                Взяти в роботу
-              </button>
-            </If>
-          </If>
-        </If>
+        {/*<If condition={info.user_is_super_manager}>*/}
+        {/*  <If condition={!['done', 'confirm', 'denied'].includes(info?.stage)}>*/}
+        {/*    <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(11)} disabled={button_clicked}>*/}
+        {/*      Виконано*/}
+        {/*    </button>*/}
+        {/*    <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>*/}
+        {/*      Відмовити*/}
+        {/*    </button>*/}
+        {/*    <If condition={info?.stage != 'in work'}>*/}
+        {/*      <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(23)} disabled={button_clicked}>*/}
+        {/*        Взяти в роботу*/}
+        {/*      </button>*/}
+        {/*    </If>*/}
+        {/*  </If>*/}
+        {/*</If>*/}
 
         {/*Якщо це погоджений тендер, додаємо кнопку "Створити договір"*/}
         <If condition={info.meta_type_id === 9 && info.approved}>
@@ -162,6 +162,17 @@ class Buttons extends React.Component {
 
         {/* Якщо автор я */}
         <If condition={user_is_doc_responsible}>
+          {/*Якщо є дедлайн*/}
+          <If condition={docInfoStore?.info?.deadline !== '' && !info.archived}>
+            <button
+              type='button'
+              className='btn btn-secondary mr-1 mb-1'
+              onClick={() => this.onClick(34)}
+              disabled={button_clicked}
+            >
+              Нагадати про строк
+            </button>
+          </If>
           {/*Якщо тип документа редагуємий*/}
           <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
             <button
@@ -175,7 +186,9 @@ class Buttons extends React.Component {
           </If>
           {/* Якщо ніхто не встиг відреагувати (або це Договір) - можна видалити документ */}
           <If condition={deletable === true}>
-            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(13)} disabled={button_clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1'
+                    onClick={() => this.onClick(13)}
+                    disabled={button_clicked}>
               Видалити
             </button>
           </If>
