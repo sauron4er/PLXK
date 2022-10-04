@@ -1,7 +1,8 @@
 from django.conf import settings
 from plxk.api.try_except import try_except
 from django.shortcuts import get_object_or_404
-from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates
+from plxk.api.datetime_normalizers import normalize_date
+from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 
@@ -43,6 +44,7 @@ def get_column_widths(modules):
         {'columnName': 'client', 'width': 250},
         {'columnName': 'choose_company', 'width': 85},
         {'columnName': 'day', 'width': 160},
+        {'columnName': 'deadline', 'width': 130},
         {'columnName': 'datetime', 'width': 160}]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
@@ -150,6 +152,8 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     if rows_count != 0:
         documents = documents[:rows_count]
 
+    # TODO Переробити на підтягування модулів в залежності від їх наявності, а не всіх підряд як зараз
+
     documents_arranged = [{
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
@@ -171,7 +175,8 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         'choose_company': doc.company + ' ПЛХК',
         'added_date': normalize_whole_date(
             Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
-        'done_date': get_done_date(doc)
+        'done_date': get_done_date(doc),
+        'deadline': get_deadline(modules, doc)
     } for doc in documents]
 
     for document in documents_arranged:
@@ -329,3 +334,13 @@ def get_done_date(doc):
             Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=11).order_by('-id')[0]
         )
     return ''
+
+
+@try_except
+def get_deadline(modules, doc):
+    if any(module['module'] == 'deadline' for module in modules):
+        try:
+            deadline_instance = doc.deadline.get(is_active=True)
+            return normalize_date(deadline_instance.deadline)
+        except Doc_Deadline.DoesNotExist:
+            return ''

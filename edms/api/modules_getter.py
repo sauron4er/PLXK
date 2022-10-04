@@ -74,14 +74,17 @@ def get_contract_subject(doc_modules, doc_id):
 
 
 @try_except
-def get_deadline(doc_id):
+def get_deadline(doc):
     try:
-        deadline_instance = Doc_Deadline.objects\
-            .get(document_id=doc_id, is_active=True)
+        deadline_instance = doc.deadline.get(is_active=True)
         deadline = deadline_instance.deadline
 
         days_remains = (deadline_instance.deadline - date.today()).days
-        status = 'good' if days_remains > 2 else 'alert' if days_remains > 0 else 'danger'
+
+        if doc.approved:
+            status = ''
+        else:
+            status = 'good' if days_remains > 2 else 'alert' if days_remains > 0 else 'danger'
 
         return {'deadline': normalize_date(deadline), 'status': status}
     except Doc_Deadline.DoesNotExist:

@@ -1165,7 +1165,7 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules = get_contract_subject(doc_modules, doc.id)
 
         elif module['module'] == 'deadline':
-            doc_modules.update({'deadline': get_deadline(doc.id)})
+            doc_modules.update({'deadline': get_deadline(doc)})
 
     return doc_modules
 
