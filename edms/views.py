@@ -10,7 +10,7 @@ from docs.api.contracts_api import add_contract_from_edms, get_additional_contra
 from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
-from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type
+from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type, Document_Type_Version
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all

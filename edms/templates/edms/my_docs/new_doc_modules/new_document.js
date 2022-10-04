@@ -735,9 +735,7 @@ class NewDocument extends React.Component {
                   className='btn-info'
                   text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
-                  // TODO розкоментувати!!!!!!!
                   requestSent={post_request_sent}
-                  // TODO розкоментувати!!!!!!!
                 />
               </div>
             </If>
