@@ -208,8 +208,14 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
     if phases:
+        # phases_started = []
+        # TODO Сюди записуємо чи стартували підфази даної фази, чи вони не відносяться
+        #  до даної версії документу. Якщо всі фази в цьому архіві == 0, значить жодна фаза не стартувала,
+        #  переходимо до наступної
+
         for phase_info in phases:
             if phase_info['doc_type_version_id'] is None or str(phase_info['doc_type_version_id']) == doc_request['doc_type_version']:
+
                 # Переходимо на наступну фазу, якщо позначка для цієї фази вже проставлена
                 # (написано для опрацювання позначки "Виконано" поставленої суперменеджером замість менеджера)
                 if doc_request['mark'] == '11' and phase_info['mark_id'] == int(doc_request['mark']):
@@ -267,6 +273,10 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                         handle_phase_marks(doc_request, phase_info)
                         # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
                         handle_phase_recipients(doc_request, phase_info, modules_recipients)
+            elif len(phases) == 1:
+                # Якщо ця фаза не пішла в роботу і вона єдина тут, переходимо на наступний крок
+                new_phase(doc_request, phase_number+1)
+
     # Відправляємо документ на ознайомлення, якщо отримувачі уже не мають цей документ на погодженні тощо
     # Для цього використовується фаза 0, бо ознайомлення фактично не є фазою і не впливає на шлях документа
     handle_phase_acquaints(doc_request, modules_recipients)

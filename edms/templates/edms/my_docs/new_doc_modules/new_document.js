@@ -251,6 +251,7 @@ class NewDocument extends React.Component {
           newDocStore.new_document.deadline = response?.deadline;
           newDocStore.new_document.contract_subject = response?.contract_subject;
           newDocStore.new_document.contract_subject_name = response?.contract_subject_name;
+          newDocStore.new_document.contract_subject_input = response?.contract_subject_text;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -735,7 +736,7 @@ class NewDocument extends React.Component {
                   text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
                   // TODO розкоментувати!!!!!!!
-                  // requestSent={post_request_sent}
+                  requestSent={post_request_sent}
                   // TODO розкоментувати!!!!!!!
                 />
               </div>

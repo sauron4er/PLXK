@@ -160,7 +160,7 @@ class Info extends React.Component {
                     <Day day={info.deadline.deadline} fieldName={module.field_name} status={info.deadline.status} />
                   </When>
                   <When condition={module.module === 'contract_subject'}>
-                    <Text text_info={module} text={info.contract_subject} doc_info={info} />
+                    <Text text_info={module} text={info.contract_subject_name ? info.contract_subject_name : info.contract_subject_text} doc_info={info} />
                   </When>
                   <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
                     {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}

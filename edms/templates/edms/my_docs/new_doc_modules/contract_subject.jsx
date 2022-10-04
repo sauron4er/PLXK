@@ -18,6 +18,7 @@ class ContractSubject extends React.Component {
         this.setState({subjects: response});
       })
       .catch((error) => console.log(error));
+    if (newDocStore.new_document.contract_subject_input !=='') this.setState({text_area_open: true})
   }
 
   onSelectChange = (e) => {

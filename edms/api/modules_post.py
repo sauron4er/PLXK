@@ -1,14 +1,13 @@
 import json
 from datetime import datetime
 from django.db import IntegrityError
-from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
-    Doc_Foyer_Range, Doc_Employee, Document_Type_Version, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
+    Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
     Doc_Contract_Subject, Doc_Deadline
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
@@ -91,8 +90,7 @@ def handle_approvals_from_template(approvals):
 @try_except
 def post_approvals(doc_request, approvals, company, contract_subject_approvals):
     # 1. Обробляємо список візуючих, отриманий з шаблону
-    # approvals = handle_approvals_from_template(approvals)
-    approvals = []
+    approvals = handle_approvals_from_template(approvals)
 
     # 2. Додаємо у список doc_approval_list
     for approval in contract_subject_approvals:
@@ -100,11 +98,6 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
             'id': approval['emp_seat_id'],
             'approve_queue': 1
         })
-
-    # 3. Додаємо погоджуючих з phase_queue
-    # 4. Опрацьовуємо створений вручну список - видаляємо звідти уже доданих
-    # 5. Додаємо опрацьований створений вручну список
-
 
     # Додаємо у список погоджуючих автора, керівника відділу та директорів
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
@@ -395,7 +388,7 @@ def post_law(new_doc, law):
 
 @try_except
 def post_contract_subject(new_doc, contract_subject):
-    if contract_subject['id'] != 0:
+    if 'id' in contract_subject and contract_subject['id'] != 0:
         new_contract_subject = Doc_Contract_Subject(document=new_doc, contract_subject_id=contract_subject['id'])
     else:
         new_contract_subject = Doc_Contract_Subject(document=new_doc, text=contract_subject['input'])

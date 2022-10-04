@@ -56,15 +56,21 @@ def get_cost_rates(doc_id):
 
 
 @try_except
-def get_contract_subject(doc_id):
+def get_contract_subject(doc_modules, doc_id):
     try:
         dcs_instance = Doc_Contract_Subject.objects\
             .get(document_id=doc_id, is_active=True)
 
-        return dcs_instance.contract_subject.name if dcs_instance.contract_subject else dcs_instance.text
+        if dcs_instance.contract_subject:
+            doc_modules.update({'contract_subject': dcs_instance.contract_subject.id})
+            doc_modules.update({'contract_subject_name': dcs_instance.contract_subject.name})
+        else:
+            doc_modules.update({'contract_subject_text': dcs_instance.text})
+
+        return doc_modules
 
     except Doc_Contract_Subject.DoesNotExist:
-        return ''
+        return doc_modules
 
 
 @try_except

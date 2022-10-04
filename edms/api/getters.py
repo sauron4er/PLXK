@@ -1162,7 +1162,7 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'cost_rates': get_cost_rates(doc.id)})
 
         elif module['module'] == 'contract_subject':
-            doc_modules.update({'contract_subject': get_contract_subject(doc.id)})
+            doc_modules = get_contract_subject(doc_modules, doc.id)
 
         elif module['module'] == 'deadline':
             doc_modules.update({'deadline': get_deadline(doc.id)})
@@ -1417,17 +1417,19 @@ def remaining_required_md(doc_id, phase_id):
 
 
 @try_except
-def get_approvals_for_contract_subject(contract_subject_id):
-    approvals_query = Contract_Subject_Approval.objects\
-        .filter(subject_id=contract_subject_id)\
-        .filter(is_active=True)
+def get_approvals_for_contract_subject(doc_modules):
+    if 'contract_subject' in doc_modules and 'id' in doc_modules['contract_subject']:
+        approvals_query = Contract_Subject_Approval.objects\
+            .filter(subject_id=doc_modules['contract_subject']['id'])\
+            .filter(is_active=True)
 
-    approvals_list = [{
-        'emp_seat_id': approval.recipient.id,
-        'name': approval.recipient.employee.pip
-    } for approval in approvals_query]
+        approvals_list = [{
+            'emp_seat_id': approval.recipient.id,
+            'name': approval.recipient.employee.pip
+        } for approval in approvals_query]
 
-    return approvals_list
+        return approvals_list
+    return []
 
 
 @try_except
