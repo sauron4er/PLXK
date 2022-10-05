@@ -147,10 +147,12 @@ def get_scopes(request):
 @login_required(login_url='login')
 @try_except
 def contract_subjects(request):
-    employees = get_simple_emp_seats_list()
-    contract_subjects = get_contract_subjects()
-    return render(request, 'production/contract_subjects/index.html', {'contract_subjects': contract_subjects,
+    if request.user.userprofile.is_it_admin or request.user.userprofile.contract_subject_edit:
+        employees = get_simple_emp_seats_list()
+        contract_subjects = get_contract_subjects()
+        return render(request, 'production/contract_subjects/index.html', {'contract_subjects': contract_subjects,
                                                                        'employees': employees})
+    return render(request, '../templates/denied.html')
 
 
 @login_required(login_url='login')

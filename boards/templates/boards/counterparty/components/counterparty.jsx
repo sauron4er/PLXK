@@ -21,6 +21,7 @@ import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mo
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
 import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
 import CounterpartyCostRates from "boards/templates/boards/counterparty/clients/cost_rates";
+import CounterpartyLetters from "boards/templates/boards/counterparty/components/letters";
 
 class Counterparty extends React.Component {
   state = {
@@ -116,6 +117,7 @@ class Counterparty extends React.Component {
                   <Tab>Вимоги</Tab>
                   <Tab>Норми витрат</Tab>
                 </If>
+                <Tab>Офіційні листи</Tab>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
 
@@ -156,6 +158,9 @@ class Counterparty extends React.Component {
                   <CounterpartyCostRates />
                 </TabPanel>
               </If>
+              <TabPanel>
+                <CounterpartyLetters />
+              </TabPanel>
               <TabPanel>
                 <CounterpartyMap google_api_key={google_api_key} />
               </TabPanel>

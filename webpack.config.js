@@ -9,13 +9,18 @@ module.exports = {
   context: __dirname,
   entry: {
     boards: './static/index/boards.js',
+    foyer: './static/index/foyer.js',
+    non_compliances: './static/index/non_compliances.js',
     docs: './static/index/docs.js',
     edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',
+    counterparties: './static/index/counterparties.js',
     ordering: './static/index/ordering.js',
     accounts: './static/index/accounts.js',
     hr: './static/index/hr.js',
     production: './static/index/production.js',
+    corr_templates: './static/index/corr_templates.js',
+    vacations: './static/index/vacations.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Відпустки{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script>
+      window.vacations = {{ vacations|safe }};
+    </script>
+
+    <div class="container-fluid p-2" id="vacations">
+        <script> </script>
+        {% render_bundle 'vacations' %}
+    </div>
+{% endblock %}

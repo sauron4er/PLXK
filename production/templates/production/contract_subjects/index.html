@@ -6,11 +6,8 @@
 
 {% block content %}
     <script>
-      {#const user_id = JSON.parse(document.getElementById('user_id').textContent);#}
-      {#const department_name = JSON.parse(document.getElementById('department_name').textContent);#}
       window.contract_subjects = {{ contract_subjects|safe }};
       window.employees = {{ employees|safe }};
-      {#window.edit_access = {{ edit_access|safe }};#}
     </script>
 
     <div class="container-fluid px-3" id="contract_subjects">

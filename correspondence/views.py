@@ -14,6 +14,7 @@ from accounts.models import UserProfile
 from .api import corr_api, corr_mail_sender
 from boards.models import Counterparty
 from plxk.api.datetime_normalizers import date_to_json
+from correspondence.api.corr_templates_api import get_corr_templates, add_or_change_corr_template, deactivate_corr_template
 
 
 def get_request_status(request_date, request_term, answer_date):
@@ -362,3 +363,25 @@ def get_correspondence_info(request):
 
     return HttpResponse(json.dumps({'clients': clients, 'scopes': scopes, 'products': products,
                                     'laws': laws, 'employees': employees}))
+
+
+#  --------------------------------------------------- Correspondence Templates
+@login_required(login_url='login')
+@try_except
+def corr_templates(request):
+    editable = 'true' if request.user.userprofile.is_it_admin or request.user.userprofile.contract_subject_edit \
+        else 'false'
+    return render(request, 'corr_templates/index.html', {'corr_templates': get_corr_templates(), 'editable': editable})
+
+
+@login_required(login_url='login')
+@try_except
+def post_corr_template(request):
+    new_cs_id = add_or_change_corr_template(request)
+    return HttpResponse(new_cs_id)
+
+
+@login_required(login_url='login')
+@try_except
+def del_corr_template(request):
+    return HttpResponse(deactivate_corr_template(request.POST['id']))

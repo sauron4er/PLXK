@@ -5,12 +5,15 @@
     <title>{% block title %}ПЛХК{% endblock %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/snow.css' %}">
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/my_styles.css' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
   {% block stylesheet %}  {% endblock %}
  {% block script %}  {% endblock %}
 </head>
@@ -68,6 +71,7 @@
                 <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
                 <a class="dropdown-item" href="{% url 'boards:clients' %}">Клієнти</a>
                 <a class="dropdown-item" href="{% url 'correspondence:index' %}">Листування з клієнтами</a>
+                <a class="dropdown-item" href="{% url 'correspondence:corr_templates' %}">Шаблони офіційних листів</a>
                 <a class="dropdown-item" href="{% url 'boards:non_compliances' %}">Акти невідповідності</a>
               </div>
             </li>
@@ -139,13 +143,14 @@
                 {{ user.first_name}} {{ user.last_name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-{#              <a class="dropdown-item" href="#">Мій аккаунт</a>#}
-            {% if user.userprofile.is_it_admin  %}
-              <a class="dropdown-item" href="{% url 'edms:hr' %}">Відділ кадрів</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'admin:index' %}"> Адмінка</a>
-              <div class="dropdown-divider"></div>
-            {% endif %}
+{#              <a class="dropdown-item" href="{% url 'boards:vacations' %}">Мої відпустки</a>#}
+{#              <div class="dropdown-divider"></div>#}
+              {% if user.userprofile.is_it_admin  %}
+                <a class="dropdown-item" href="{% url 'edms:hr' %}">Відділ кадрів</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'admin:index' %}"> Адмінка</a>
+                <div class="dropdown-divider"></div>
+              {% endif %}
               <a class="dropdown-item" href="{% url 'logout' %}">Вихід</a>
             </div>
           </li>

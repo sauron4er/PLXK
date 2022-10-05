@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Шаблони листів{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script>
+      window.corr_templates = {{ corr_templates|safe }};
+      window.editable = {{ editable|safe }};
+    </script>
+
+    <div class="container-fluid p-2" id="corr_templates">
+        <script> </script>
+        {% render_bundle 'corr_templates' %}
+    </div>
+{% endblock %}

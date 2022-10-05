@@ -74,3 +74,17 @@ class Answer_file(models.Model):
     name = models.CharField(max_length=100)
     request = models.ForeignKey(Request, related_name='answer_files', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+# ----------------------------------- Correspondence Templates
+class Corr_Template(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    comment = models.CharField(max_length=1000, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Corr_Template_File(models.Model):
+    file = models.FileField(upload_to='correspondence/corr_templates/%Y/%m')
+    name = models.CharField(max_length=100)
+    corr_template = models.ForeignKey(Corr_Template, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)

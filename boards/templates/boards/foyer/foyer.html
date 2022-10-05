@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{#{% extends 'edms/main.html' %}#}
 {% load static %}
 {% block title %}Прохідна{% endblock %}
 {% load render_bundle from webpack_loader %}
@@ -13,6 +12,6 @@
     </script>
 
     <div class="container-fluid px-3" id="foyer">
-      <div id="bundle">{% render_bundle 'boards' %}</div>
+      <div id="bundle">{% render_bundle 'foyer' %}</div>
     </div>
 {% endblock %}
