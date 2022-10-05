@@ -278,3 +278,5 @@ def handle_doc_type_version(new_doc, doc_request, doc_modules):
     elif doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
         new_doc.doc_type_version_id = doc_request['doc_type_version']
         return new_doc
+
+    return new_doc
