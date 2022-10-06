@@ -21,7 +21,7 @@ import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mo
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
 import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
 import CounterpartyCostRates from "boards/templates/boards/counterparty/clients/cost_rates";
-import CounterpartyLetters from "boards/templates/boards/counterparty/components/letters";
+import CounterpartyLetters from "boards/templates/boards/counterparty/components/letters/letters";
 
 class Counterparty extends React.Component {
   state = {
@@ -159,7 +159,7 @@ class Counterparty extends React.Component {
                 </TabPanel>
               </If>
               <TabPanel>
-                <CounterpartyLetters />
+                <CounterpartyLetters counterparty_id={this.props.id} />
               </TabPanel>
               <TabPanel>
                 <CounterpartyMap google_api_key={google_api_key} />

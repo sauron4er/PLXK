@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 from accounts.models import UserProfile, Department
 from production.models import Product_type, Certification_type, Scope
@@ -149,4 +150,22 @@ class Non_compliance_decision(models.Model):
     decision = models.CharField(max_length=50, null=True)
     decision_time = models.DateTimeField(null=True)
     phase = models.SmallIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+
+
+# ----------------------------------- Letters
+class Letter(models.Model):
+    counterparty = models.ForeignKey(Counterparty, related_name='letters', on_delete=models.RESTRICT)
+    name = models.CharField(max_length=100)
+    text = models.CharField(max_length=1000)
+    date = models.DateField(null=True, blank=True, default=timezone.now)
+    counterparty_mail = models.CharField(max_length=50)
+    comment = models.CharField(max_length=1000, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Letter_File(models.Model):
+    file = models.FileField(upload_to='counterparties/letters/%Y/%m')
+    name = models.CharField(max_length=100)
+    letter = models.ForeignKey(Letter, related_name='files', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

@@ -7,7 +7,6 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify, notifySuccess} from 'templates/components/my_extras';
 import Files from "templates/components/form_modules/files";
-import corrStore from "correspondence/templates/correspondence/store";
 
 function CorrTemplate() {
   const [request_sent, setRequestSent] = useState(false);
@@ -20,7 +19,7 @@ function CorrTemplate() {
     corrTemplatesStore.corr_template.new_files = e.target.value;
   }
   
-  function onFilesDelete(id, old_files_field) {
+  function onFilesDelete(id) {
     // Необхідно проводити зміни через додаткову перемінну,
     // бо react-easy-state не помічає змін глибоко всередині перемінних, як тут.
     let old_files = [...corrTemplatesStore.corr_template.old_files];
@@ -102,7 +101,7 @@ function CorrTemplate() {
         newFiles={corrTemplatesStore.corr_template.new_files}
         fieldName={'Файли'}
         onChange={onFilesChange}
-        onDelete={(id) => onFilesDelete(id, 'old_answer_files')}
+        onDelete={onFilesDelete}
         disabled={!window.editable}
       />
       <hr/>

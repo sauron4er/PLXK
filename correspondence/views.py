@@ -377,8 +377,8 @@ def corr_templates(request):
 @login_required(login_url='login')
 @try_except
 def post_corr_template(request):
-    new_cs_id = add_or_change_corr_template(request)
-    return HttpResponse(new_cs_id)
+    new_ct_id = add_or_change_corr_template(request)
+    return HttpResponse(new_ct_id)
 
 
 @login_required(login_url='login')
