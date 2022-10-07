@@ -655,7 +655,7 @@ def edms_my_docs(request):
             'status': 'draft' if doc.is_draft else ('template' if doc.is_template else 'doc'),
         } for doc in Document.objects
             .filter(employee_seat__employee_id=request.user.userprofile.id)
-            .filter(testing=testing)
+            # .filter(testing=testing)
             .filter(is_active=True)
             .filter(closed=False).order_by('-id')]
 
@@ -674,7 +674,7 @@ def edms_my_docs(request):
             'phase_id': demand.phase_id,
         } for demand in Mark_Demand.objects
             .filter(recipient_id__employee_id=request.user.userprofile.id)
-            .filter(document__testing=testing)
+            # .filter(document__testing=testing)
             .filter(is_active=True).filter(document__closed=False)
             .order_by('document_id')]
         return render(request, 'edms/my_docs/my_docs.html', {
