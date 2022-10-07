@@ -1,7 +1,0 @@
-https://softwareengineeringdaily.com/category/all-episodes/exclusive-content/Podcast/ 
-https://reactjs.org/blog/2020/02/26/react-v16.13.0.html
-https://nomcopter.github.io/react-mosaic/
-https://github.com/malerba118/react-particle-image 
-https://github.com/ZEISS/react-view-pdf 
-http://projects.wojtekmaj.pl/react-pdf/ 
-https://react-pdf.org/  

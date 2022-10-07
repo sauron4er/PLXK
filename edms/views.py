@@ -1,3 +1,6 @@
+import os
+import chardet
+
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -617,11 +620,39 @@ def edms_get_doc(request, pk):
     return HttpResponse(json.dumps(doc_info))
 
 
+@try_except
+def convert_files_names_to_utf():
+    # Перейменування усіх файлів з linux кракозябри на кирилицю:
+
+    folder = 'D:/Робота/Code/EDMS/PLXK/files/media'
+    # Програма проходить по всьому дереву і перейменовує всі файли.
+    # Якщо щось не може перейменувати, то пропускає.
+
+    for root, dirs, files in os.walk(folder):
+        root = root.replace('\\', '/')
+        for file in os.listdir(root):
+            if os.path.isfile(root + '/' + file) and file != 'react_статті.txt':
+                try:
+                    print('--------------------------')
+                    print(root + '/' + file)
+                    print(chardet.detect(file.encode()))
+                    file_decoded = file.encode('cp1251').decode('utf8')
+                    old_path = os.path.join(root, file)
+                    new_path = os.path.join(root, file_decoded)
+                    os.rename(old_path, new_path)
+                    print('done')
+                    print('--------------------------')
+                except Exception:
+                    pass
+
+
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
 def edms_my_docs(request):
     if request.method == 'GET':
+        # Треба запустити один раз при переїзді на windows сервер
+        # convert_files_names_to_utf()
 
         my_seats = get_my_seats(request.user.userprofile.id)
 
