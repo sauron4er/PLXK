@@ -1,9 +1,10 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.datetime_normalizers import date_to_json
 import json
 
-from edms.models import Document, Document_Path
+from edms.models import Document, Document_Path, Doc_Deadline
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_whole_date
 
@@ -43,6 +44,7 @@ def get_it_tickets_table(request, doc_type_version, page):
             'author': it_ticket.employee_seat.employee.pip,
             'name': get_name(it_ticket),
             'importancy': get_importancy(it_ticket),
+            'deadline': get_deadline(it_ticket),
             'stage': get_stage(it_ticket.stage),
         } for it_ticket in it_tickets_docs_page.object_list]
 
@@ -57,6 +59,7 @@ def get_it_tickets_table(request, doc_type_version, page):
             'accounting': get_accounting(it_ticket),
             'task_type': get_task_type(it_ticket),
             'importancy': get_importancy(it_ticket),
+            'deadline': get_deadline(it_ticket),
             'stage': get_stage(it_ticket.stage),
         } for it_ticket in it_tickets_docs_page.object_list]
 
@@ -69,6 +72,18 @@ def get_it_tickets_table(request, doc_type_version, page):
             'name': get_name(it_ticket),
             'task_type': get_task_type(it_ticket),
             'importancy': get_importancy(it_ticket),
+            'deadline': get_deadline(it_ticket),
+            'stage': get_stage(it_ticket.stage),
+        } for it_ticket in it_tickets_docs_page.object_list]
+
+    if doc_type_version == '14':  # 10.10
+        it_tickets_docs = [{
+            'id': it_ticket.pk,
+            'added_date': get_added_date(it_ticket),
+            'done_date': get_done_date(it_ticket),
+            'author': it_ticket.employee_seat.employee.pip,
+            'name': get_name(it_ticket),
+            'deadline': get_deadline(it_ticket),
             'stage': get_stage(it_ticket.stage),
         } for it_ticket in it_tickets_docs_page.object_list]
 
@@ -84,6 +99,15 @@ def get_name(it_ticket):
     else:  # Старі заявки
         return ''
     return ''
+
+
+@try_except
+def get_deadline(it_ticket):
+    try:
+        deadline_instance = it_ticket.deadline.get(is_active=True)
+        return normalize_date(deadline_instance.deadline)
+    except Doc_Deadline.DoesNotExist:
+        return ''
 
 
 @try_except

@@ -5,7 +5,7 @@ from edms.forms import NewApprovalForm, ApprovedApprovalForm
 from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
 from edms.api.setters import post_mark_demand, new_mail
 from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
-    get_my_seats, get_phase_id_sole_recipients
+    get_my_seats, get_phase_id_sole_recipients, get_to_work_for_contract_subject
 from edms.api.approvals_handler import is_approval_module_used, is_approvals_used, post_auto_approve, \
     add_zero_phase_auto_approvals, is_in_approval_list
 from edms.api.vacations import vacation_check
@@ -208,8 +208,14 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
     if phases:
+        # phases_started = []
+        # TODO Сюди записуємо чи стартували підфази даної фази, чи вони не відносяться
+        #  до даної версії документу. Якщо всі фази в цьому архіві == 0, значить жодна фаза не стартувала,
+        #  переходимо до наступної
+
         for phase_info in phases:
             if phase_info['doc_type_version_id'] is None or str(phase_info['doc_type_version_id']) == doc_request['doc_type_version']:
+
                 # Переходимо на наступну фазу, якщо позначка для цієї фази вже проставлена
                 # (написано для опрацювання позначки "Виконано" поставленої суперменеджером замість менеджера)
                 if doc_request['mark'] == '11' and phase_info['mark_id'] == int(doc_request['mark']):
@@ -230,8 +236,13 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                     handle_phase_marks(doc_request, phase_info)
 
                 elif phase_info['mark_id'] == 23:
-                    # Прийняття у роботу договору. Прийняття у роботу заявки проходить без окремої фази, у фазі Виконано
-                    for employee in json.loads(doc_request['employees_to_inform']):
+                    # Прийняття у роботу договору. Опрацьовуємо і автосписок і обраних вручну
+                    contract_subject_to_work_list = get_to_work_for_contract_subject(doc_request['document'])
+                    receivers_from_form = json.loads(doc_request['employees_to_inform'])
+
+                    receivers = contract_subject_to_work_list + receivers_from_form
+
+                    for employee in receivers:
                         recipient = vacation_check(employee['id'])
                         post_mark_demand(doc_request, recipient, phase_info['id'], 23)
                         new_mail('new', [{'id': recipient}], doc_request)
@@ -249,8 +260,8 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                         # Якщо визначеного отримувача нема, надсилаємо автору
                         handle_phase_marks(doc_request, phase_info)
 
-                # Список на погодження може бути пустий. Якщо так, переходимо на наступну фазу
-                elif phase_info['mark_id'] == 2 and not modules_recipients:
+                # Список на погодження у новоствореному документі може бути пустий. Тоді переходимо на наступну фазу
+                elif phase_number == 1 and phase_info['mark_id'] == 2 and not modules_recipients:
                     handle_phase_approvals(doc_request, phase_info)
 
                 else:
@@ -262,6 +273,10 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                         handle_phase_marks(doc_request, phase_info)
                         # 5. Перебираємо modules_recipients в пошуках отримувачів, яких визначено при створенні документа:
                         handle_phase_recipients(doc_request, phase_info, modules_recipients)
+            elif len(phases) == 1:
+                # Якщо ця фаза не пішла в роботу і вона єдина тут, переходимо на наступний крок
+                new_phase(doc_request, phase_number+1)
+
     # Відправляємо документ на ознайомлення, якщо отримувачі уже не мають цей документ на погодженні тощо
     # Для цього використовується фаза 0, бо ознайомлення фактично не є фазою і не впливає на шлях документа
     handle_phase_acquaints(doc_request, modules_recipients)

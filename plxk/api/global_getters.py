@@ -48,6 +48,19 @@ def get_emp_seats_list(request=''):
             .order_by('employee__pip')]
 
 
+@try_except
+def get_simple_emp_seats_list(request=''):
+    return [{
+        'id': emp_seat.pk,
+        'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
+        'name': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,
+    } for emp_seat in
+        Employee_Seat.objects
+            .filter(is_active=True)
+            .exclude(employee__delete_from_noms=True)
+            .order_by('employee__pip')]
+
+
 # Функція, яка повертає список всіх актуальних посад та керівників щодо цих посад юзера
 @try_except
 def get_users_emp_seat_ids(employee_id):

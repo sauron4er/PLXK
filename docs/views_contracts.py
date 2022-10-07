@@ -31,8 +31,11 @@ def get_info_for_contracts_page(request):
 
 @login_required(login_url='login')
 @try_except
-def get_simple_contracts_list(request, counterparty, company):
+def get_simple_contracts_list(request, counterparty, company, only_main=True):
     all_contracts = Contract.objects.filter(company=company).filter(is_active=True)
+
+    if only_main:
+        all_contracts = all_contracts.filter(basic_contract__isnull=True)
 
     if counterparty == '0':
         # При отриманні списку на сторінку Договорів фільтруємо по ТДВ-ТОВ.

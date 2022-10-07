@@ -4,7 +4,7 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import {LoaderSmall} from 'templates/components/loaders';
-import SelectorWithFilter from "templates/components/form_modules/selector_with_filter";
+import SelectorWithFilter from "templates/components/form_modules/selectors/selector_with_filter";
 
 class Client extends React.Component {
   state = {

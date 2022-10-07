@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^.+/post_decision', views_non_compliances.post_decision, name='post_decision'),
     url(r'^.+/non_compliance_done', views_non_compliances.done, name='done'),
 
+    url(r'^.+get_letters/(?P<counterparty_id>\d+)', views_counterparties.get_letters, name='get_letters'),
+    url(r'^.+post_letter', views_counterparties.post_letter, name='post_letter'),
+    url(r'^.+del_letter', views_counterparties.del_letter, name='del_letter'),
+
     url(r'^providers/get_providers/(?P<wood_only>\w+)/(?P<page>\d+)/$', views_counterparties.get_providers, name='get_providers'),
     url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_provider'),
     url(r'^providers/post_provider/', views_counterparties.post_provider, name='post_provider'),
@@ -64,6 +68,8 @@ urlpatterns = [
     url(r'^clients/mark/', edms_mark, name='my_docs_mark'),
     url(r'^clients/get_google_api', views_counterparties.get_google_api, name='get_google_api'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
+
+    url(r'^vacations/', views.vacations, name='vacations'),
 
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 ]

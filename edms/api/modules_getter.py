@@ -1,7 +1,9 @@
-from plxk.api.convert_to_local_time import convert_to_localtime
-from plxk.api.try_except import try_except
-from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional
+from datetime import date, timedelta
 from django.shortcuts import get_object_or_404
+from plxk.api.try_except import try_except
+from plxk.api.datetime_normalizers import normalize_date
+from plxk.api.convert_to_local_time import convert_to_localtime
+from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, Doc_Deadline
 
 
 @try_except
@@ -51,3 +53,39 @@ def get_cost_rates(doc_id):
     cost_rates_info.update({'additional_fields': additional_fields})
 
     return cost_rates_info
+
+
+@try_except
+def get_contract_subject(doc_modules, doc_id):
+    try:
+        dcs_instance = Doc_Contract_Subject.objects\
+            .get(document_id=doc_id, is_active=True)
+
+        if dcs_instance.contract_subject:
+            doc_modules.update({'contract_subject': dcs_instance.contract_subject.id})
+            doc_modules.update({'contract_subject_name': dcs_instance.contract_subject.name})
+        else:
+            doc_modules.update({'contract_subject_text': dcs_instance.text})
+
+        return doc_modules
+
+    except Doc_Contract_Subject.DoesNotExist:
+        return doc_modules
+
+
+@try_except
+def get_deadline(doc):
+    try:
+        deadline_instance = doc.deadline.get(is_active=True)
+        deadline = deadline_instance.deadline
+
+        days_remains = (deadline_instance.deadline - date.today()).days
+
+        if doc.approved:
+            status = ''
+        else:
+            status = 'good' if days_remains > 2 else 'alert' if days_remains > 0 else 'danger'
+
+        return {'deadline': normalize_date(deadline), 'status': status}
+    except Doc_Deadline.DoesNotExist:
+        return ''

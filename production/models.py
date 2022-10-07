@@ -55,4 +55,13 @@ class Cost_Rates_Nom(models.Model):
     unit = models.CharField(max_length=10)
     is_required = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
+
+# ---------------------------------------------------------------------------------------------------------------------
+
+
+# Номенклатура предмету договору (від нього залежать списки візуючих та отримуючих у роботу
+class Contract_Subject(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    is_active = models.BooleanField(default=True)
+
 # ---------------------------------------------------------------------------------------------------------------------

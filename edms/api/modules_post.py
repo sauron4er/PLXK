@@ -1,11 +1,14 @@
 import json
 from datetime import datetime
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+
 from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
-    Doc_Foyer_Range, Doc_Employee, Document_Type_Version, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional
+    Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
+    Doc_Contract_Subject, Doc_Deadline
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -85,14 +88,21 @@ def handle_approvals_from_template(approvals):
 
 
 @try_except
-def post_approvals(doc_request, approvals, company):
-    # Обробляємо список візуючих, отриманий з шаблону
+def post_approvals(doc_request, approvals, company, contract_subject_approvals):
+    # 1. Обробляємо список візуючих, отриманий з шаблону
     approvals = handle_approvals_from_template(approvals)
 
-    # Додаємо у список погоджуючих автора, керівника відділу та директора
+    # 2. Додаємо у список doc_approval_list
+    for approval in contract_subject_approvals:
+        approvals.append({
+            'id': approval['emp_seat_id'],
+            'approve_queue': 1
+        })
+
+    # Додаємо у список погоджуючих автора, керівника відділу та директорів
     auto_approval_seats = Doc_Type_Phase_Queue.objects \
         .filter(phase__document_type=doc_request['document_type']) \
-        .exclude(phase__mark_id=27)
+        .exclude(phase__mark_id__in=[27, 33])
 
     if doc_request['doc_type_version'] != '0':
         # doc_type_version = Document_Type_Version.objects.values_list('id', flat=True)\
@@ -126,7 +136,7 @@ def post_approvals(doc_request, approvals, company):
         'approve_queue': 0  # Автор документа перший у списку погоджень
     })
 
-    # Видаляємо директора зі списку і додаємо, щоб він там був лише раз:
+    # Видаляємо директорів зі списку і додаємо, щоб вони там були лише раз:
     director = Employee_Seat.objects.values_list('id', flat=True) \
         .filter(seat_id=16) \
         .filter(is_active=True) \
@@ -141,11 +151,22 @@ def post_approvals(doc_request, approvals, company):
 
     acting_tov_director = vacation_check(tov_director)
 
+    tov_tech_director = Employee_Seat.objects.values_list('id', flat=True) \
+        .filter(seat_id=281) \
+        .filter(is_active=True) \
+        .filter(is_main=True)[0]
+
+    acting_tov_tech_director = vacation_check(tov_tech_director)
+
     if doc_request['document_type'] == 17:  # Тендери
         # Директор ТОВ отримує на погодження усі тендери
         approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
         approvals.extend([{
             'id': acting_tov_director,
+            'approve_queue': 3
+        },
+        {
+            'id': acting_tov_tech_director,
             'approve_queue': 2
         }])
 
@@ -154,20 +175,24 @@ def post_approvals(doc_request, approvals, company):
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals.extend([{
                 'id': acting_director,
-                'approve_queue': 2
+                'approve_queue': 3
             }])
 
     else:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+            approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_tech_director)]
 
             approvals.extend([{
                 'id': acting_director,
-                'approve_queue': 3  # Директор останній у списку погоджень
+                'approve_queue': 4  # Директор останній у списку погоджень
             }, {
                 'id': acting_tov_director,
-                'approve_queue': 2  # Директор ТОВ теж отримує на погодження
+                'approve_queue': 3  # Директор ТОВ теж отримує на погодження
+            }, {
+                'id': acting_tov_tech_director,
+                'approve_queue': 2  # Технічний директор ТОВ теж отримує на погодження
             }])
         else:
             zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -177,8 +202,13 @@ def post_approvals(doc_request, approvals, company):
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
             approvals.extend([{
                 'id': acting_tov_director,
-                'approve_queue': 2  # Директор останній у списку погоджень
-            }])
+                'approve_queue': 3  # Директор останній у списку погоджень
+            },
+            {
+                'id': acting_tov_tech_director,
+                'approve_queue': 2  # Технічний директор теж отримує на погодження
+            }
+            ])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
     chief = get_dep_chief_id(doc_request['employee_seat'])
@@ -205,7 +235,7 @@ def post_gate(doc_request, gate):
     if gate_form.is_valid():
         gate_form.save()
     else:
-        raise ValidationError('post_modules/post_day/day_form invalid')
+        raise ValidationError('post_modules/post_gate/gate_form invalid')
 
 
 @try_except
@@ -275,6 +305,7 @@ def post_mockup_product_type(doc_request, mockup_product_type):
 
 @try_except
 def post_counterparty(doc_request, counterparty, counterparty_input=''):
+    # TODO прибрати counterparty_input взагалі з системи.
     doc_counterparty = Doc_Counterparty()
     doc_counterparty.document_id = doc_request['document']
     if counterparty != 0:
@@ -310,6 +341,22 @@ def post_registration(new_doc, registration_number):
 
 
 @try_except
+def change_registration_number(doc_id, registration_number):
+    try:
+        doc_registration_instance = Doc_Registration.objects.get(document_id=doc_id)
+    except Doc_Registration.DoesNotExist:
+        doc_registration_instance = Doc_Registration(document_id=doc_id)
+
+    doc_registration_instance.registration_number = registration_number
+
+    try:
+        doc_registration_instance.save()
+        return True
+    except IntegrityError:
+        return False
+
+
+@try_except
 def post_employee(new_doc, employee):
     new_employee = Doc_Employee(document=new_doc, queue_in_doc=employee['queue'], employee_id=employee['value'])
     new_employee.save()
@@ -337,6 +384,23 @@ def post_scope(new_doc, scope):
 def post_law(new_doc, law):
     doc_law = Doc_Law(document=new_doc, law_id=law)
     doc_law.save()
+
+
+@try_except
+def post_contract_subject(new_doc, contract_subject):
+    if 'id' in contract_subject and contract_subject['id'] != 0:
+        new_contract_subject = Doc_Contract_Subject(document=new_doc, contract_subject_id=contract_subject['id'])
+    else:
+        new_contract_subject = Doc_Contract_Subject(document=new_doc, text=contract_subject['input'])
+
+    new_contract_subject.save()
+
+
+@try_except
+def post_deadline(new_doc, deadline):
+    if deadline:
+        new_deadline = Doc_Deadline(document=new_doc, deadline=deadline)
+        new_deadline.save()
 
 
 @try_except

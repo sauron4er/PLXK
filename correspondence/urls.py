@@ -18,6 +18,11 @@ urlpatterns = [
     url(r'^get_correspondence/(?P<counterparty>\d+)$', views.get_correspondence, name='get_correspondence'),
     url(r'^get_correspondence_info', views.get_correspondence_info, name='get_correspondence_info'),
     url(r'^(?P<pk>\d+)/$', views.index, name='index'),
+
+    url(r'^corr_templates/$', views.corr_templates, name='corr_templates'),
+    url(r'^corr_templates/post_corr_template', views.post_corr_template, name='post_corr_template'),
+    url(r'^corr_templates/del_corr_template', views.del_corr_template, name='del_corr_template'),
+
     url(r'corr/', views.index, name='index'),
     url(r'^$', views.index, name='index'),
 ]

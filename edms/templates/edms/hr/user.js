@@ -11,7 +11,7 @@ import UserVacation from './user_vacation';
 import {getIndex, notify} from 'templates/components/my_extras.js';
 import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';

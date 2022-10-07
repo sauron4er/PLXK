@@ -43,6 +43,7 @@ class ITTicketsTable extends React.Component {
             {name: 'author', title: 'Автор'},
             {name: 'name', title: 'Назва заявки'},
             {name: 'importancy', title: 'Важливість'},
+            {name: 'deadline', title: 'Строк виконання'},
             {name: 'added_date', title: 'Створено'},
             {name: 'done_date', title: 'Виконано'},
             {name: 'stage', title: 'Стадія'},
@@ -52,6 +53,7 @@ class ITTicketsTable extends React.Component {
             {columnName: 'author', width: 200},
             {columnName: 'stage', width: 100},
             {columnName: 'importancy', width: 105},
+            {columnName: 'deadline', width: 105},
             {columnName: 'added_date', width: 105},
             {columnName: 'done_date', width: 105},
         ]})
@@ -66,6 +68,7 @@ class ITTicketsTable extends React.Component {
             {name: 'accounting', title: 'Вид обліку'},
             {name: 'task_type', title: 'Тип задачі'},
             {name: 'importancy', title: 'Важливість'},
+            {name: 'deadline', title: 'Строк виконання'},
             {name: 'added_date', title: 'Створено'},
             {name: 'done_date', title: 'Виконано'},
             {name: 'stage', title: 'Стадія'},
@@ -75,6 +78,7 @@ class ITTicketsTable extends React.Component {
             {columnName: 'author', width: 200},
             {columnName: 'stage', width: 100},
             {columnName: 'importancy', width: 105},
+            {columnName: 'deadline', width: 105},
             {columnName: 'added_date', width: 105},
             {columnName: 'done_date', width: 105},
             {columnName: 'task_type', width: 150},
@@ -90,6 +94,7 @@ class ITTicketsTable extends React.Component {
             {name: 'name', title: 'Назва заявки'},
             {name: 'task_type', title: 'Тип задачі'},
             {name: 'importancy', title: 'Важливість'},
+            {name: 'deadline', title: 'Строк виконання'},
             {name: 'added_date', title: 'Створено'},
             {name: 'done_date', title: 'Виконано'},
             {name: 'stage', title: 'Стадія'},
@@ -99,6 +104,29 @@ class ITTicketsTable extends React.Component {
             {columnName: 'author', width: 200},
             {columnName: 'stage', width: 100},
             {columnName: 'importancy', width: 105},
+            {columnName: 'deadline', width: 105},
+            {columnName: 'added_date', width: 105},
+            {columnName: 'done_date', width: 105},
+            {columnName: 'task_type', width: 150},
+        ]})
+        break;
+      case '14':
+        this.setState({
+          columns: [
+            {name: 'id', title: 'id'},
+            {name: 'author', title: 'Автор'},
+            {name: 'name', title: 'Назва заявки'},
+            {name: 'task_type', title: 'Тип задачі'},
+            {name: 'deadline', title: 'Строк виконання'},
+            {name: 'added_date', title: 'Створено'},
+            {name: 'done_date', title: 'Виконано'},
+            {name: 'stage', title: 'Стадія'},
+          ],
+          col_width: [
+            {columnName: 'id', width: 50},
+            {columnName: 'author', width: 200},
+            {columnName: 'stage', width: 100},
+            {columnName: 'deadline', width: 105},
             {columnName: 'added_date', width: 105},
             {columnName: 'done_date', width: 105},
             {columnName: 'task_type', width: 150},
@@ -125,6 +153,9 @@ class ITTicketsTable extends React.Component {
             </option>
             <option key={3} data-key={7} value={7}>
               Заявка ПЛХК
+            </option>
+            <option key={4} data-key={14} value={14}>
+              Заявка по сайту 10.10
             </option>
           </select>
           <If condition={doc_type_version}>

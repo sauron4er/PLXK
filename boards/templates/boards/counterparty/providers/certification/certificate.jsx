@@ -3,7 +3,7 @@ import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from '../../components/counterparty_store';
 import SubmitButton from 'templates/components/form_modules/submit_button';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import {getIndex, isBlankOrZero, notify} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';

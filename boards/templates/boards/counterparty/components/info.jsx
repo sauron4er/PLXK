@@ -3,11 +3,11 @@ import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from './counterparty_store';
 import TextInput from 'templates/components/form_modules/text_input';
-import MultiSelector from 'templates/components/form_modules/multi_selector';
+import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import corrStore from '../../../../../correspondence/templates/correspondence/store';
 
 class CounterpartyInfo extends React.Component {

@@ -7,9 +7,9 @@ from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_
 from edms.views import edms_archive, get_archive, get_work_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_it_tickets, get_doc_type_versions, get_all_employees, \
-    del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields, del_approval, add_approvals
+    del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields, del_approval, add_approvals, get_add_contract_reg_number
 from docs.views_contracts import get_contract
-from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes
+from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes, contract_subjects_select
 from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
 from correspondence.views import get_laws
 
@@ -46,9 +46,8 @@ urlpatterns = [
     url(r'^hr/start_vacations_arrange/', edms_start_vacations_arrange, name='start_vacations_arrange'),
     url(r'^hr/', edms_hr, name='hr'),
 
-
     url(r'^my_docs/get_counterparties/', get_counterparties, name='get_counterparties'),
-    url(r'^my_docs/get_contracts/(?P<company>\w+)/$', edms_get_contracts, name='my_docs_get_contracts'),
+    url(r'^my_docs/get_contracts/(?P<company>\w+)/(?P<counterparty_id>\d+)', edms_get_contracts, name='my_docs_get_contracts'),
     url(r'^my_docs/get_drafts/', edms_get_drafts, name='my_docs_get_drafts'),
     url(r'^my_docs/get_templates/', edms_get_templates, name='my_docs_get_templates'),
     url(r'^my_docs/get_chiefs/(?P<pk>\d+)/$', edms_get_chiefs, name='my_docs_get_chiefs'),
@@ -61,6 +60,8 @@ urlpatterns = [
     url(r'^my_docs/get_cost_rates_fields/(?P<product_id>\d+)', get_cost_rates_fields, name='get_cost_rates_fields'),
     url(r'^my_docs/del_approval/(?P<approval_id>\d+)', del_approval, name='del_approval'),
     url(r'^my_docs/add_approvals', add_approvals, name='add_approvals'),
+    url(r'^my_docs/get_add_contract_reg_number/(?P<main_contract_id>\d+)', get_add_contract_reg_number, name='get_add_contract_reg_number'),
+    url(r'^my_docs/get_contract_subjects_select', contract_subjects_select, name='contract_subjects_select'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_archive, name='get_archive'),

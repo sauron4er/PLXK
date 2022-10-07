@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from accounts import models as accounts  # import models Department, UserProfile
 from production.models import Mockup_type, Mockup_product_type, Sub_product_type, Scope, \
-    Cost_Rates_Product, Cost_Rates_Nom
+    Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
 from correspondence.models import Client, Law
 from boards.models import Counterparty
 # from docs.models import Contract # - напряму функцію імпортувати не можна, буде помилка circular import
@@ -379,6 +379,13 @@ class Doc_Registration(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Дедлайн виконання/візування
+class Doc_Deadline(models.Model):
+    document = models.ForeignKey(Document, related_name='deadline', on_delete=models.RESTRICT)
+    deadline = models.DateField(null=True)
+    is_active = models.BooleanField(default=True)
+
+
 # Вимоги клієнта
 class Client_Requirements(models.Model):
     document = models.ForeignKey(Document, related_name='client_requirements', on_delete=models.RESTRICT)
@@ -480,3 +487,31 @@ class Foyer(models.Model):
     absence_based = models.BooleanField()  # True: Звільнююча, рахується час відсутності, False: навпаки
     edms_doc = models.ForeignKey(Document, related_name='foyer', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Contract Subject Nomenclature
+
+
+# Предмет договору
+class Doc_Contract_Subject(models.Model):
+    document = models.ForeignKey(Document, related_name='contract_subject', on_delete=models.RESTRICT)
+    contract_subject = models.ForeignKey(Contract_Subject, related_name='documents', on_delete=models.RESTRICT, null=True)
+    text = models.CharField(max_length=100, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+# Список людинопосад, яким відправляється документ на візування в залежності від предмету
+class Contract_Subject_Approval(models.Model):
+    subject = models.ForeignKey(Contract_Subject, related_name='approval_recipients', on_delete=models.RESTRICT)
+    recipient = models.ForeignKey(Employee_Seat, related_name='approval_for_contract_subject', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# Список людинопосад, яким відправляється документ на прийом у роботу в залежності від предмету
+class Contract_Subject_To_Work(models.Model):
+    subject = models.ForeignKey(Contract_Subject, related_name='to_work_recipients', on_delete=models.RESTRICT)
+    recipient = models.ForeignKey(Employee_Seat, related_name='to_work_for_contract_subject', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+# ---------------------------------------------------------------------------------------------------------------------

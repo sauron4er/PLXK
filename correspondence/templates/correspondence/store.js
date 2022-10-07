@@ -46,7 +46,8 @@ const corrStore = store({
   clients: [],
   employees: [],
   products: [],
-  scopes: []
+  scopes: [],
+  acquaints_added: false
 });
 
 export default corrStore;

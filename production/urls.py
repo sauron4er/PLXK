@@ -19,4 +19,8 @@ urlpatterns = [
     url(r'^scopes', views.scopes, name='scopes'),
     url(r'^new_scope', views.new_scope, name='new_scope'),
     url(r'^del_scope', views.del_scope, name='del_scope'),
+
+    url(r'^contract_subjects', views.contract_subjects, name='contract_subjects'),
+    url(r'^post_contract_subject', views.post_contract_subject, name='post_contract_subject'),
+    url(r'^del_contract_subject', views.del_contract_subject, name='del_contract_subject'),
 ]

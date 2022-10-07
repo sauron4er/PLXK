@@ -14,11 +14,11 @@ def date_to_json(data):
         return data.__str__()
 
 
-def normalize_date(data):
-    if data is not None \
-            and data != '' \
-            and isinstance(data, datetime.date):
-        return data.strftime("%d.%m.%Y")
+def normalize_date(date):
+    if date is not None \
+            and date != '' \
+            and isinstance(date, datetime.date):
+        return date.strftime("%d.%m.%Y")
     return ''
 
 

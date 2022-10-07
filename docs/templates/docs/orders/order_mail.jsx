@@ -6,7 +6,7 @@ import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import 'static/css/my_styles.css';
 import {view, store} from '@risingstack/react-easy-state';
 import ordersStore from 'docs/templates/docs/orders/orders_store';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 
 class OrderMail extends React.Component {
   state = {

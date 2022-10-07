@@ -14,7 +14,7 @@ from plxk.api.pagination import sort_query_set, filter_query_set
 from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
-from edms.api.modules_getter import get_foyer_ranges, get_cost_rates
+from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline
 
 testing = settings.STAS_DEBUG
 
@@ -383,6 +383,9 @@ def get_doc_type_modules(doc_type):
 
 @try_except
 def get_auto_recipients(doc_type_id):
+    # if doc_type_id == '20':
+    #     recipients = get_contract_recipients()
+    # else:
     doc_type_phases = Doc_Type_Phase.objects \
         .filter(document_type=doc_type_id) \
         .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24]) \
@@ -412,6 +415,24 @@ def get_auto_recipients(doc_type_id):
             recipients.append(phase_recipients)
 
     return recipients
+
+
+@try_except
+def get_contract_recipients():
+    recipients = [
+        {
+            'mark': 'Віза',
+            'recipients': [],
+            'sole': False,
+            'doc_type_version': 0
+        }, {
+            'mark': 'Погоджено',
+            'recipients': [],
+            'sole': False,
+            'doc_type_version': 0
+        },
+    ]
+    return []
 
 
 # Функція, яка дописує у doc_request інформацію про автора документа, автора позначки,
@@ -865,7 +886,7 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'acquaint_list':
             acquaint_list = [{
-                'emp_seat_id': item.acquaint_emp_seat.id,
+                'id': item.acquaint_emp_seat.id,
                 'emp_seat': item.acquaint_emp_seat.employee.pip + ', ' + item.acquaint_emp_seat.seat.seat,
             } for item in Doc_Acquaint.objects.filter(document_id=doc.id).filter(is_active=True)]
             doc_modules.update({'acquaint_list': acquaint_list})
@@ -883,7 +904,10 @@ def get_doc_modules(doc, responsible_id=0):
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
 
-            changeable = are_approvals_on_first_phase(approval_list) and int(responsible_id) == doc.employee_seat_id
+            # Лише для договорів
+            changeable = doc.document_type.meta_doc_type_id == 5 \
+                         and are_approvals_on_first_phase(approval_list) \
+                         and int(responsible_id) == doc.employee_seat_id
 
             doc_modules.update({'approval_list': approval_list, 'approvals_changeable': changeable})
 
@@ -1137,6 +1161,12 @@ def get_doc_modules(doc, responsible_id=0):
         elif module['module'] == 'cost_rates':
             doc_modules.update({'cost_rates': get_cost_rates(doc.id)})
 
+        elif module['module'] == 'contract_subject':
+            doc_modules = get_contract_subject(doc_modules, doc.id)
+
+        elif module['module'] == 'deadline':
+            doc_modules.update({'deadline': get_deadline(doc)})
+
     return doc_modules
 
 
@@ -1384,3 +1414,39 @@ def remaining_required_md(doc_id, phase_id):
         .exclude(mark_id=8) \
         .count()
     return count
+
+
+@try_except
+def get_approvals_for_contract_subject(doc_modules):
+    if 'contract_subject' in doc_modules and 'id' in doc_modules['contract_subject']:
+        approvals_query = Contract_Subject_Approval.objects\
+            .filter(subject_id=doc_modules['contract_subject']['id'])\
+            .filter(is_active=True)
+
+        approvals_list = [{
+            'emp_seat_id': approval.recipient.id,
+            'name': approval.recipient.employee.pip
+        } for approval in approvals_query]
+
+        return approvals_list
+    return []
+
+
+@try_except
+def get_to_work_for_contract_subject(document_id):
+    try:
+        contract_subject_id = Doc_Contract_Subject.objects.get(document_id=document_id)
+
+        to_work_query = Contract_Subject_To_Work.objects\
+            .filter(subject_id=contract_subject_id.contract_subject.id)\
+            .filter(is_active=True)
+
+        to_works_list = [{
+            'id': to_work.recipient.id,
+            'name': to_work.recipient.employee.pip
+        } for to_work in to_work_query]
+
+        return to_works_list
+
+    except Doc_Contract_Subject.DoesNotExist:
+        return []

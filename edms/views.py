@@ -1,16 +1,16 @@
-from django.http import HttpResponse, HttpResponseForbidden, QueryDict, Http404
+from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.db import transaction, IntegrityError
+from django.db import transaction
 
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
-from docs.api.contracts_api import add_contract_from_edms
-from docs.models import Article_responsible, Contract, Contract_File
+from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, check_lawyers_received
+from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
-from .models import Seat, Vacation, Mark_Demand, User_Doc_Type_View, Document_Type, Doc_Recipient, Document_Type, Document_Meta_Type
+from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type, Document_Type_Version
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all
@@ -21,9 +21,9 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
-    get_delegated_docs, is_reg_number_free, get_doc_version_from_description_matching, remaining_required_md
+    get_delegated_docs, is_reg_number_free, get_approvals_for_contract_subject
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals, handle_doc_type_version
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor, send_email_lebedev
 from .api.tables.free_time_table import get_free_times_table
@@ -65,13 +65,7 @@ def post_document(request, doc_modules):
         new_doc.is_draft = True
     elif doc_request['status'] == 'template':
         new_doc.is_template = True
-    if doc_request['doc_type_version'] != '0' and doc_request['doc_type_version'] != 'undefined':
-        new_doc.doc_type_version_id = doc_request['doc_type_version']
-
-    if 'cost_rates' in doc_modules:
-        doc_type_version_id = get_doc_version_from_description_matching(
-            doc_request['document_type'], doc_modules['cost_rates']['department'])
-        new_doc.doc_type_version_id = doc_type_version_id
+    new_doc = handle_doc_type_version(new_doc, doc_request, doc_modules)
 
     new_doc.save()
     return new_doc
@@ -118,7 +112,8 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         # Додаємо список отримувачів на візування
         if 'approval_list' in doc_modules:
             company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
-            post_approvals(doc_request, doc_modules['approval_list'], company)
+            contract_subject_approvals = get_approvals_for_contract_subject(doc_modules)
+            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
 
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
@@ -142,7 +137,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_counterparty(doc_request, doc_modules['client']['value'])
 
         if 'counterparty' in doc_modules:
-            post_counterparty(doc_request, doc_modules['counterparty'], doc_modules['counterparty_input'])
+            post_counterparty(doc_request, doc_modules['counterparty'])
 
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
             post_files(doc_request, doc_files, new_path.pk)
@@ -176,6 +171,12 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         if 'cost_rates' in doc_modules:
             post_cost_rates(new_doc, doc_modules['cost_rates'])
+
+        if 'contract_subject' in doc_modules:
+            post_contract_subject(new_doc, doc_modules['contract_subject'])
+
+        if 'deadline' in doc_modules:
+            post_deadline(new_doc, doc_modules['deadline'])
 
         return recipients
     except ValidationError as err:
@@ -491,15 +492,9 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
 
 
 @login_required(login_url='login')
-def edms_get_contracts(request, company):
+def edms_get_contracts(request, company, counterparty_id):
     if request.method == 'GET':
-        contracts = [{
-            'id': contract.pk,
-            'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
-            'company': contract.company
-        } for contract in Contract.objects.filter(is_active=True).filter(company=company)]
-
-        return HttpResponse(json.dumps(contracts))
+        return HttpResponse(json.dumps(get_main_contracts(company, counterparty_id)))
 
 
 @login_required(login_url='login')
@@ -557,7 +552,7 @@ def edms_get_doc(request, pk):
             'archived': not doc.is_active,
             'closed': doc.closed,
             'main_field': doc.main_field,
-            'doc_type_version': doc.doc_type_version.id if doc.doc_type_version else 0,
+            'doc_type_version': doc.doc_type_version.version_id if doc.doc_type_version else 0,
             'doc_type_version_name': doc.doc_type_version.description if doc.doc_type_version else '',
             'stage': doc.stage,
         }
@@ -606,7 +601,10 @@ def edms_get_doc(request, pk):
                     'name': file.name,
                     'file': file.file.name,
                     'status': 'old'
-                } for file in Contract_File.objects.filter(is_active=True).filter(contract__edms_doc_id=doc.id)]
+                } for file in Contract_File.objects
+                    .filter(is_active=True)
+                    .filter(contract__is_active=True)
+                    .filter(contract__edms_doc_id=doc.id)]
 
                 doc_info.update({'signed_files': signed_files})
             except Http404:
@@ -1231,24 +1229,11 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                try:
-                    doc_registration_instance = get_object_or_404(Doc_Registration, document_id=doc_request['document'])
-                except Http404:
-                    doc_registration_instance = Doc_Registration(document_id=doc_request['document'])
-
-                doc_registration_instance.registration_number = doc_request['registration_number']
-                try:
-                    doc_registration_instance.save()
-                except IntegrityError:
+                registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
+                if not registered:
                     return HttpResponse('reg_unique_fail')
 
-                mark_demands = Mark_Demand.objects.values_list('id', flat=True) \
-                    .filter(document=doc_request['document']) \
-                    .filter(mark_id=27) \
-                    .filter(is_active=True)
-                for md in mark_demands:
-                    deactivate_mark_demand(doc_request, md)
-
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # На погодження
@@ -1281,6 +1266,38 @@ def edms_mark(request):
 
                 if remaining_required_md == 0:
                     new_phase(doc_request, this_phase['phase'] + 1, [])
+
+            # На прийняття в роботу
+            elif doc_request['mark'] == '31':
+                recipients = json.loads(doc_request['employees_to_inform'])
+                # Створюємо MarkDemand для кожного користувача зі списку, більше нічого не змінюємо.
+
+                for recipient in recipients:
+                    recipient = vacation_check(recipient['emp_seat_id'])
+                    post_mark_demand(doc_request, recipient, get_phase_id(doc_request), 23)
+                    new_mail('new', [{'id': recipient}], doc_request)
+
+            # Нагадати про строки
+            elif doc_request['mark'] == '34':
+                remaining_required_mds = Mark_Demand.objects \
+                    .filter(document_id=doc_request['document']) \
+                    .exclude(mark_id=8) \
+                    .filter(is_active=True)
+
+                remaining_required_mds = [{
+                    'id': md.id,
+                    'emp_seat_id': md.recipient.id
+                } for md in remaining_required_mds]
+
+                for md in remaining_required_mds:
+                    recipient = vacation_check(md['emp_seat_id'])
+                    new_mail('remind', [{'id': recipient}], doc_request)
+
+            # Оригінали отримано
+            elif doc_request['mark'] == '33':
+                check_lawyers_received(doc_request['document'])
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 33)
+                new_phase(doc_request, this_phase['phase'] + 1, [])
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
@@ -1502,3 +1519,9 @@ def del_approval(request, approval_id):
 @try_except
 def add_approvals(request):
     return HttpResponse(post_new_doc_approvals(request))
+
+
+@login_required(login_url='login')
+@try_except
+def get_add_contract_reg_number(request, main_contract_id):
+    return HttpResponse(get_additional_contract_reg_number(main_contract_id))

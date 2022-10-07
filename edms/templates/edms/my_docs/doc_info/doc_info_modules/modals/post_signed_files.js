@@ -7,7 +7,7 @@ import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 import FilesUpload from 'templates/components/files_uploader/files_upload';
 import { notify } from "templates/components/my_extras";
-import MultiSelectorWithAxios from "templates/components/form_modules/multi_selector_with_axios";
+import MultiSelectorWithAxios from "templates/components/form_modules/selectors/multi_selector_with_axios";
 
 class PostSignedFiles extends React.Component {
   onSubmit = () => {

@@ -1,10 +1,12 @@
 import * as React from 'react';
+import ReactDOM from "react-dom";
 import PaginatedTable from 'templates/components/tables/paginated_table';
 import Modal from 'react-responsive-modal';
 import Document from 'edms/templates/edms/my_docs/doc_info/document';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import SubmitButton from 'templates/components/form_modules/submit_button';
+import 'react-responsive-modal/styles.css';
 
 const columns = [
   {name: 'id', title: 'id'},
@@ -94,4 +96,6 @@ class Foyer extends React.Component {
   }
 }
 
-export default Foyer;
+ReactDOM.render(<Foyer />, document.getElementById('bundle'));
+
+// export default Foyer;

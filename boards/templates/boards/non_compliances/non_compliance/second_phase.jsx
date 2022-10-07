@@ -4,12 +4,12 @@ import {view, store} from '@risingstack/react-easy-state';
 import nonComplianceStore from '../non_compliance_store';
 import NCRow from 'boards/templates/boards/non_compliances/non_compliance/row';
 import NCItem from 'boards/templates/boards/non_compliances/non_compliance/item';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Modal from 'react-responsive-modal';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selector_with_filter_and_axios';
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 class NCSecondPhase extends React.Component {
   state = {
     responsible_modal_opened: false

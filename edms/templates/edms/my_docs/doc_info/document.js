@@ -29,7 +29,8 @@ import ApprovalWithComment from 'edms/templates/edms/my_docs/doc_info/doc_info_m
 import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/approval_delegation';
 import {Loader} from 'templates/components/loaders';
 import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
-import NewSigners from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_signers";
+import NewSigners from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_signers';
+import ToInform from "./doc_info_modules/modals/to_inform";
 
 class Document extends React.Component {
   state = {
@@ -141,9 +142,10 @@ class Document extends React.Component {
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
-    formData.append('doc_type_version', docInfoStore.info.doc_type_version?.id);
+    formData.append('doc_type_version', docInfoStore.info.doc_type_version);
     formData.append('deleted_approval_id', docInfoStore.deleted_approval_id);
-    if (docInfoStore.inform_employees) formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
+    formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
+    formData.append('deadline', JSON.stringify(docInfoStore?.info?.deadline?.deadline));
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -153,9 +155,8 @@ class Document extends React.Component {
           notify('На документ відреагували, видалити неможливо, оновіть сторінку.');
         } else if (response === 'reg_unique_fail') {
           notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
-          all_good = false
-        }
-        else {
+          all_good = false;
+        } else {
           // направляємо документ на видалення з черги, якщо це не коментар
           this.setState({
             new_path_id: response,
@@ -187,7 +188,7 @@ class Document extends React.Component {
       docInfoStore.button_clicked = false;
 
       // Кнопка "Резолюція" відкриває окремий модуль
-    } else if ([10, 15, 18, 21, 22, 28].includes(mark_id)) {
+    } else if ([10, 15, 18, 21, 22, 28, 31].includes(mark_id)) {
       this.openModal(mark_id);
 
       // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
@@ -305,6 +306,18 @@ class Document extends React.Component {
           modal_open: true
         });
         break;
+      case 31:
+        this.setState({
+          modal: (
+            <ToInform
+              onCloseModal={this.onCloseModal}
+              onSubmit={this.handleToInform}
+              doc_id={this.props.doc_id}
+            />
+          ),
+          modal_open: true
+        });
+        break;
     }
   };
 
@@ -336,6 +349,16 @@ class Document extends React.Component {
         this.postMark(28);
         this.onCloseModal();
       });
+    } else {
+      notify('Додайте отримувачів');
+    }
+  };
+
+  handleToInform = (recipients) => {
+    if (recipients.length > 0) {
+      docInfoStore.employees_to_inform = recipients;
+      this.postMark(31);
+      this.onCloseModal();
     } else {
       notify('Додайте отримувачів');
     }

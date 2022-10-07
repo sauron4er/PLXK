@@ -1,0 +1,1 @@
+import 'boards/templates/boards/counterparty/index'

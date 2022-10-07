@@ -5,8 +5,8 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import {view, store} from '@risingstack/react-easy-state';
 import corrStore from '../store';
 import TextInput from 'templates/components/form_modules/text_input';
-import Selector from 'templates/components/form_modules/selector';
-import MultiSelector from 'templates/components/form_modules/multi_selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
+import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
 import DateInput from 'templates/components/form_modules/date_input';
 import List from 'templates/components/form_modules/list';
 import {getItemById, isBlankOrZero, uniqueArray, getIndex, notify} from 'templates/components/my_extras';
@@ -284,6 +284,7 @@ class Request extends React.Component {
         selected_acquaint = {...selected_acquaint, status: 'new'};
         corrStore.request.acquaints.push(selected_acquaint);
         corrStore.request.acquaints = uniqueArray(corrStore.request.acquaints);
+        corrStore.acquaints_added = true
       }
       corrStore.request.selected_acquaint_name = '';
       corrStore.request.selected_acquaint_id = 0;
@@ -456,23 +457,29 @@ class Request extends React.Component {
                 fieldName={'На ознайомлення'}
                 onChange={(e) => this.onSelectorChange(e, 'selected_acquaint_id', 'selected_acquaint_name')}
                 addItem={this.addAcquaint}
-                disabled={!edit_mode}
+                disabled={false}
               />
-              <List list={corrStore.request.acquaints} deleteItem={this.deleteAcquaint} disabled={!edit_mode} />
+              <List list={corrStore.request.acquaints} deleteItem={this.deleteAcquaint} disabled={!edit_mode && !corrStore.acquaints_added} />
             </div>
-            <If condition={edit_mode}>
-              <div className='modal-footer'>
-                <If condition={corrStore.request.id === 0}>
-                  <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
-                    Очистити
-                  </button>
-                </If>
-                <If condition={corrStore.request.id !== 0 && user_is_author}>
-                  <SubmitButton className='btn-outline-danger' text='Видалити' onClick={() => this.postDelRequest()} />
-                </If>
+            <Choose>
+              <When condition={edit_mode}>
+                <div className='modal-footer'>
+                  <If condition={corrStore.request.id === 0}>
+                    <button className='btn btn-outline-dark' onClick={() => this.clearRequest()}>
+                      Очистити
+                    </button>
+                  </If>
+                  <If condition={corrStore.request.id !== 0 && user_is_author}>
+                    <SubmitButton className='btn-outline-danger' text='Видалити' onClick={() => this.postDelRequest()} />
+                  </If>
+                  <SubmitButton className='btn-outline-info' text='Зберегти' onClick={() => this.postRequest()} />
+                </div>
+              </When>
+              <When condition={corrStore.acquaints_added}>
                 <SubmitButton className='btn-outline-info' text='Зберегти' onClick={() => this.postRequest()} />
-              </div>
-            </If>
+              </When>
+            </Choose>
+            
 
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />

@@ -2,9 +2,11 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from plxk.api.global_getters import get_simple_emp_seats_list
 from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
     NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
 from production.api.getters import *
+from production.api.setters import add_or_change_contract_subject, deactivate_contract_subject
 
 
 @try_except
@@ -139,5 +141,32 @@ def del_scope(request):
 @login_required(login_url='login')
 @try_except
 def get_scopes(request):
-
     return HttpResponse(json.dumps(get_scopes_list()))
+
+
+@login_required(login_url='login')
+@try_except
+def contract_subjects(request):
+    if request.user.userprofile.is_it_admin or request.user.userprofile.contract_subject_edit:
+        employees = get_simple_emp_seats_list()
+        contract_subjects = get_contract_subjects()
+        return render(request, 'production/contract_subjects/index.html', {'contract_subjects': contract_subjects,
+                                                                       'employees': employees})
+    return render(request, '../templates/denied.html')
+
+
+@login_required(login_url='login')
+@try_except
+def contract_subjects_select(request):
+    return HttpResponse(json.dumps(get_contract_subjects()))
+
+
+@try_except
+def post_contract_subject(request):
+    new_cs_id = add_or_change_contract_subject(request)
+    return HttpResponse(new_cs_id)
+
+
+@try_except
+def del_contract_subject(request):
+    return HttpResponse(deactivate_contract_subject(request.POST['id']))

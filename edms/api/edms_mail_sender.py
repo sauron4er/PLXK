@@ -14,7 +14,7 @@ def send_email_new(doc_request, mail, main_field):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Вашої реакції очікує новий документ ({} "{}", автор: {}). {}' \
+    text = 'Вашої реакції очікує новий документ ({} "{}", автор: {}). \n\n{}' \
         .format(doc_request['doc_type_name'], main_field, doc_request['doc_author_name'], link)
 
     message.attach(MIMEText(text, "plain"))
@@ -31,7 +31,7 @@ def send_email_lebedev(doc_request, main_field):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'На сайті створено новий документ ({} "{}", автор: {}). {}' \
+    text = 'На сайті створено новий документ ({} "{}", автор: {}). \n\n{}' \
         .format(doc_request['doc_type_name'], main_field, doc_request['doc_author_name'], link)
 
     message.attach(MIMEText(text, "plain"))
@@ -48,7 +48,7 @@ def send_email_mark(doc_request, mail, main_field):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Ваш документ #{} ({}) отримав позначку "{}". Автор позначки: {}. {}' \
+    text = 'Ваш документ #{} ({}) отримав позначку "{}". Автор позначки: {}. \n\n{}' \
         .format(doc_request['document'], doc_request['doc_type_name'],
                 doc_request['mark_name'], doc_request['mark_author_name'], link)
 
@@ -66,7 +66,7 @@ def send_email_answer(doc_request, mail):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Ви отримали відповідь на коментар до документу № {} ({}). {}' \
+    text = 'Ви отримали відповідь на коментар до документу № {} ({}). \n\n{}' \
         .format(doc_request['document'], doc_request['doc_type_name'], link)
 
     message.attach(MIMEText(text, "plain"))
@@ -83,7 +83,7 @@ def send_email_deleted_from_approvals(doc_request, mail, main_field):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Вас видалили зі списку візуючих щодо документу № {} ({} "{}"). {}' \
+    text = 'Вас видалили зі списку візуючих щодо документу № {} ({} "{}"). \n\n{}' \
         .format(doc_request['document'], doc_request['doc_type_name'], main_field, link)
 
     message.attach(MIMEText(text, "plain"))
@@ -106,10 +106,10 @@ def send_email_supervisor(stage, doc_request, mail):
         .format(doc_request['document'])
 
     if stage == 'new':
-        text = 'На внутрішньому сайті ПЛХК опубліковано нову заявку по 1С8 № {} "{}". Автор: {}. {}' \
+        text = 'На внутрішньому сайті ПЛХК опубліковано нову заявку по 1С8 № {} "{}". Автор: {}. \n\n{}' \
             .format(doc_request['document'], document_instance.main_field, doc_request['doc_author_name'], link)
     else:
-        text = 'Новий статус заявки по 1С8 № {} "{}" (автор: {}) – "{}". {}' \
+        text = 'Новий статус заявки по 1С8 № {} "{}" (автор: {}) – "{}". \n\n{}' \
             .format(doc_request['document'], document_instance.main_field, doc_request['doc_author_name'], stage, link)
 
     message.attach(MIMEText(text, "plain"))
@@ -126,8 +126,30 @@ def send_email_successor(doc_request, mail):
 
     link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}' \
         .format(doc_request['document'])
-    text = 'Ви отримали відповідь на коментар до документу № {} ({}). {}' \
+    text = 'Ви отримали відповідь на коментар до документу № {} ({}). \n\n{}' \
         .format(doc_request['document'], doc_request['doc_type_name'], link)
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email(mail, message.as_string())
+
+
+# Лист-нагадування про візування чи виконання
+def send_email_remind(doc_request, mail, main_field):
+    message = MIMEMultipart("alternative")
+    message["Subject"] = 'Нагадування про візування/виконання – {} "{}"'.format(doc_request['doc_type_name'], main_field)
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = mail
+
+    main_text = 'Нагадуємо, Вашої реакції очікує документ ({} "{}", автор: {}).'\
+        .format(doc_request['doc_type_name'], main_field, doc_request['doc_author_name'])
+
+    link = 'Щоб переглянути, перейдіть за посиланням: http://10.10.10.22/edms/my_docs/{}.' \
+        .format(doc_request['document'])
+
+    deadline = 'Строк візування/виконання, визначений автором, закінчується {}.'.format(doc_request['deadline'])
+
+    text = '{}\n\n{}\n\n{}'.format(main_text, deadline, link)
 
     message.attach(MIMEText(text, "plain"))
 

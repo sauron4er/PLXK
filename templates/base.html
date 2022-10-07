@@ -5,11 +5,15 @@
     <title>{% block title %}ПЛХК{% endblock %}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/snow.css' %}">
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/my_styles.css' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+
   {% block stylesheet %}  {% endblock %}
  {% block script %}  {% endblock %}
 </head>
@@ -67,36 +71,47 @@
                 <a class="dropdown-item" href="{% url 'boards:providers' %}">Постачальники</a>
                 <a class="dropdown-item" href="{% url 'boards:clients' %}">Клієнти</a>
                 <a class="dropdown-item" href="{% url 'correspondence:index' %}">Листування з клієнтами</a>
+                <a class="dropdown-item" href="{% url 'correspondence:corr_templates' %}">Шаблони офіційних листів</a>
                 <a class="dropdown-item" href="{% url 'boards:non_compliances' %}">Акти невідповідності</a>
               </div>
             </li>
             <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Довідники</a>
-                      <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'phones' %}">Телефонний і поштовий довідник</a>
-                        {% if user.userprofile.is_it_admin or user.userprofile.product_type_add %}
-                          <a class="dropdown-item" href="{% url 'production:products' %}">Продукція</a>
-                        {% endif %}
-                        {% if user.userprofile.is_it_admin or user.userprofile.scope_add %}
-                          <a class="dropdown-item" href="{% url 'production:scopes' %}">Сфери застосування</a>
-                        {% endif %}
-                        {% if user.userprofile.is_it_admin or user.userprofile.mockup_type_add   %}
-                          <a class="dropdown-item" href="{% url 'production:mockup_types' %}">Типи дизайн-макетів</a>
-                        {% endif %}
-                        {% if user.userprofile.is_it_admin or user.userprofile.mockup_product_type_add   %}
-                          <a class="dropdown-item" href="{% url 'production:mockup_product_types' %}">Типи продукції для дизайн-макетів</a>
-                        {% endif %}
-                        {% if user.userprofile.is_it_admin or user.userprofile.stationery_type_add   %}
-                          <a class="dropdown-item" href="{% url 'ordering:stationery_catalogue' %}">Канцелярські товари</a>
-                        {% endif %}
-                      </div>
-             </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Замовлення</a>
+              <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Довідники</a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{% url 'ordering:stationery' %}">Канцелярія</a>
+                  <a class="dropdown-item" href="{% url 'phones' %}">Телефонний і поштовий довідник</a>
                 </div>
-              </li>
+             </li>
+            {% if user.userprofile.is_it_admin or user.userprofile.product_type_add or user.userprofile.scope_add or user.userprofile.mockup_type_add or contract_subject_edit %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Номенклатура</a>
+                  <div class="dropdown-menu">
+                    {% if user.userprofile.is_it_admin or user.userprofile.product_type_add %}
+                      <a class="dropdown-item" href="{% url 'production:products' %}">Продукція</a>
+                    {% endif %}
+                    {% if user.userprofile.is_it_admin or user.userprofile.scope_add %}
+                      <a class="dropdown-item" href="{% url 'production:scopes' %}">Сфери застосування</a>
+                    {% endif %}
+                    {% if user.userprofile.is_it_admin or user.userprofile.mockup_type_add %}
+                      <a class="dropdown-item" href="{% url 'production:mockup_types' %}">Типи дизайн-макетів</a>
+                    {% endif %}
+                    {% if user.userprofile.is_it_admin or user.userprofile.mockup_product_type_add   %}
+                      <a class="dropdown-item" href="{% url 'production:mockup_product_types' %}">Типи продукції для дизайн-макетів</a>
+                    {% endif %}
+{#                    {% if user.userprofile.is_it_admin or user.userprofile.stationery_type_add   %}#}
+{#                      <a class="dropdown-item" href="{% url 'ordering:stationery_catalogue' %}">Канцелярські товари</a>#}
+{#                    {% endif %}#}
+                  {% if user.userprofile.is_it_admin or user.userprofile.contract_subject_edit %}
+                    <a class="dropdown-item" href="{% url 'production:contract_subjects' %}">Предмет договору</a>
+                  {% endif %}
+                  </div>
+               </li>
+             {% endif %}
+{#              <li class="nav-item dropdown">#}
+{#                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Замовлення</a>#}
+{#                <div class="dropdown-menu">#}
+{#                  <a class="dropdown-item" href="{% url 'ordering:stationery' %}">Канцелярія</a>#}
+{#                </div>#}
+{#              </li>#}
 
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Кадри</a>
@@ -128,13 +143,14 @@
                 {{ user.first_name}} {{ user.last_name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-{#              <a class="dropdown-item" href="#">Мій аккаунт</a>#}
-            {% if user.userprofile.is_it_admin  %}
-              <a class="dropdown-item" href="{% url 'edms:hr' %}">Відділ кадрів</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'admin:index' %}"> Адмінка</a>
-              <div class="dropdown-divider"></div>
-            {% endif %}
+{#              <a class="dropdown-item" href="{% url 'boards:vacations' %}">Мої відпустки</a>#}
+{#              <div class="dropdown-divider"></div>#}
+              {% if user.userprofile.is_it_admin  %}
+                <a class="dropdown-item" href="{% url 'edms:hr' %}">Відділ кадрів</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{% url 'admin:index' %}"> Адмінка</a>
+                <div class="dropdown-divider"></div>
+              {% endif %}
               <a class="dropdown-item" href="{% url 'logout' %}">Вихід</a>
             </div>
           </li>

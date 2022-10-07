@@ -1,5 +1,5 @@
 from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, \
-    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom
+    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
 from plxk.api.try_except import try_except
 
 
@@ -113,3 +113,30 @@ def get_cost_rates_fields_list(product_id):
         'unit': field.unit,
         'is_required': field.is_required,
     } for field in cost_rate_fields]
+
+
+@try_except
+def get_contract_subjects():
+    contract_subjects = Contract_Subject.objects\
+        .prefetch_related('approval_recipients')\
+        .prefetch_related('to_work_recipients')\
+        .filter(is_active=True)\
+        .order_by('name')
+    subjects_list = [{
+        'id': subject.pk,
+        'name': subject.name,
+        'approval_list': [{
+            'approval_id': approval.id,
+            'id': approval.recipient.id,
+            'name': approval.recipient.employee.pip + ', ' + approval.recipient.seat.seat,
+            'status': 'old'
+        } for approval in subject.approval_recipients.filter(is_active=True)],
+        'to_work_list': [{
+            'to_work_id': to_work.id,
+            'id': to_work.recipient.id,
+            'name': to_work.recipient.employee.pip + ', ' + to_work.recipient.seat.seat,
+            'status': 'old'
+        } for to_work in subject.to_work_recipients.filter(is_active=True)]
+    } for subject in contract_subjects]
+
+    return subjects_list

@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 import Document from 'edms/templates/edms/my_docs/doc_info/document';
-import Selector from 'templates/components/form_modules/selector';
+import Selector from 'templates/components/form_modules/selectors/selector';
 import 'static/css/my_styles.css';
 import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/doc_info_store';
 import PaginatedTable from 'templates/components/tables/paginated_table';

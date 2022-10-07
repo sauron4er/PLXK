@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import { notify, uniqueArray } from "templates/components/my_extras";
 import { axiosGetRequest, axiosPostRequest } from "templates/components/axios_requests";
-import MultiSelectorWithFilter from "templates/components/form_modules/multi_selector_with_filter";
+import MultiSelectorWithFilter from "templates/components/form_modules/selectors/multi_selector_with_filter";
 
 class NewApprovals extends React.Component {
   state = {

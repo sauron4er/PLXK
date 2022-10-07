@@ -14,6 +14,18 @@ export const notify = (message) =>
     draggable: true
   });
 
+export const notifySuccess = (message) =>
+  toast.success(message, {
+    position: 'bottom-right',
+    autoClose: 5000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true
+  });
+
+// --------------------------------------
+
 export const getIndex = (id, array) => {
   for (let i = 0; i < array.length; i++) {
     if (array[i].id === id) {

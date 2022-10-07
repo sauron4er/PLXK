@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from docs.models import Contract, Contract_File
 from docs.forms import NewContractForm, DeactivateContractForm, DeactivateContractFileForm
-from edms.models import Document, Document_Type_Module
+from edms.models import Document, Document_Type_Module, Doc_Contract_Subject
 from docs.api.contracts_mail_sender import send_mail
 
 
@@ -89,7 +89,7 @@ def add_contract_from_edms(doc_request, files):
         'company': edms_doc.company,
         'basic_contract': basic_contract,
         'number': get_contract_number(edms_doc, fields_queue),
-        'subject': get_texts_from_edms(edms_doc, fields_queue['subject']),
+        'subject': get_subject_from_edms(edms_doc, fields_queue['subject']),
         'counterparty': counterparty_id,
         'counterparty_text': counterparty_text,
         'nomenclature_group': get_texts_from_edms(edms_doc, fields_queue['nomenclature_group']),
@@ -120,6 +120,17 @@ def get_contract_number(edms_doc, fields_queue):
         number = get_texts_from_edms(edms_doc, fields_queue['number'])
 
     return number
+
+
+@try_except
+def get_subject_from_edms(edms_doc, queue):
+    if edms_doc.document_type_id >= 20:
+        doc_subject = Doc_Contract_Subject.objects.get(document=edms_doc)
+        subject = doc_subject.contract_subject.name if doc_subject.contract_subject else doc_subject.text
+    else:
+        subject = get_texts_from_edms(edms_doc, queue),
+
+    return subject
 
 
 @try_except
@@ -168,7 +179,7 @@ def post_files(files, doc_request):
     new_files = files.getlist('new_files')
     old_files = json.loads(doc_request['old_files']) if 'old_files' in doc_request else []
 
-    # TODO �������� ������� ��������� old_files ��� signed_files
+    # TODO доробити обробку відсутності old_files або signed_files
 
     signed_files = files.getlist('signed_files')
     contract = get_object_or_404(Contract, pk=doc_request['contract'])
@@ -212,3 +223,43 @@ def deactivate_contract_file(post_request, file):
     form = DeactivateContractFileForm(post_request, instance=file)
     if form.is_valid():
         form.save()
+
+
+@try_except
+def get_main_contracts(company, counterparty_id):
+    contracts = [{
+        'id': contract.pk,
+        'name': (contract.number if contract.number else 'б/н') + ', "' + contract.subject + '"',
+        'company': contract.company
+    } for contract in Contract.objects
+        .filter(company=company)
+        .filter(counterparty_link__id=counterparty_id)
+        .filter(basic_contract__isnull=True)
+        .filter(is_active=True)]
+    return contracts
+
+
+@try_except
+def get_additional_contract_reg_number(main_contract_id):
+    # Отримуємо номер договору і очищаємо його від лишніх символів
+    main_contract = get_object_or_404(Contract, pk=main_contract_id)
+    main_contract_number = " ".join(main_contract.number.split())
+    main_contract_number = main_contract_number.replace("№", "")
+
+    # Знаходимо кількість уже погоджених додаткових угод до цього договору, додаємо нумерацію
+    add_contracts_count = Contract.objects.filter(basic_contract=main_contract).count()
+    new_number = 'ДУ ' + main_contract_number + '/' + str(add_contracts_count + 1)
+
+    # Перевіряємо унікальність цього номеру
+    new_number_is_not_unique = Contract.objects.filter(number=new_number)
+    if new_number_is_not_unique:
+        return 'not unique'
+    else:
+        return new_number
+
+
+@try_except
+def check_lawyers_received(edms_doc_id):
+    contract_instance = Contract.objects.get(edms_doc_id=edms_doc_id)
+    contract_instance.lawyers_received = True
+    contract_instance.save()

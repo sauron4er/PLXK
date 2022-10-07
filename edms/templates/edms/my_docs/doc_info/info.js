@@ -24,7 +24,7 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
-
+    
     if (info.path) {
       return (
         <div>
@@ -45,7 +45,6 @@ class Info extends React.Component {
               <div className='text-success font-weight-bold'>Підписано</div>
               <Files files={info.signed_files} fieldName={'Скан-копії підписаних документів'} is_editable={false} />
             </div>
-            
           </If>
           <div>
             Відповідальний:
@@ -156,6 +155,12 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'cost_rates'}>
                     <CostRates module={module} costRates={info.cost_rates} />
+                  </When>
+                  <When condition={module.module === 'deadline'}>
+                    <Day day={info.deadline.deadline} fieldName={module.field_name} status={info.deadline.status} />
+                  </When>
+                  <When condition={module.module === 'contract_subject'}>
+                    <Text text_info={module} text={info.contract_subject_name ? info.contract_subject_name : info.contract_subject_text} doc_info={info} />
                   </When>
                   <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
                     {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}

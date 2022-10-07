@@ -21,6 +21,7 @@ import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mo
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
 import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
 import CounterpartyCostRates from "boards/templates/boards/counterparty/clients/cost_rates";
+import CounterpartyLetters from "boards/templates/boards/counterparty/components/letters/letters";
 
 class Counterparty extends React.Component {
   state = {
@@ -29,8 +30,8 @@ class Counterparty extends React.Component {
   };
 
   componentDidMount() {
+    this.getCounterparty();
     if (this.props.id !== 0) {
-      this.getCounterparty();
       this.getGoogleApi();
     } else {
       this.setState({loading: false});
@@ -50,7 +51,9 @@ class Counterparty extends React.Component {
     axiosGetRequest(url + this.props.id + '/')
       .then((response) => {
         this.setState({loading: false});
-        counterpartyStore.counterparty = response.counterparty;
+        if (this.props.id !== 0) {
+          counterpartyStore.counterparty = response.counterparty;
+        }
         counterpartyStore.scopes = response.scopes;
         counterpartyStore.employees = response.employees;
       })
@@ -114,6 +117,7 @@ class Counterparty extends React.Component {
                   <Tab>Вимоги</Tab>
                   <Tab>Норми витрат</Tab>
                 </If>
+                <Tab>Офіційні листи</Tab>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
               </TabList>
 
@@ -154,6 +158,9 @@ class Counterparty extends React.Component {
                   <CounterpartyCostRates />
                 </TabPanel>
               </If>
+              <TabPanel>
+                <CounterpartyLetters counterparty_id={this.props.id} />
+              </TabPanel>
               <TabPanel>
                 <CounterpartyMap google_api_key={google_api_key} />
               </TabPanel>

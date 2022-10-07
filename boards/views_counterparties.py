@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db import transaction
 from datetime import date
 import json
@@ -12,6 +12,7 @@ from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
 from production.api.getters import get_products_list, get_certification_types, get_scopes_list
 from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
+from .api.letters_api import get_letters_list, add_or_change_letter, deactivate_letter
 # from .api.counterparty_mail_sender import send_provider_mail
 
 
@@ -324,24 +325,27 @@ def get_clients(request, page):
 @login_required(login_url='login')
 @try_except
 def get_client(request, pk):
-    client_instance = get_object_or_404(Counterparty, pk=pk)
-    client = {
-        'id': client_instance.id,
-        'name': client_instance.name,
-        'legal_address': client_instance.legal_address or '',
-        'actual_address': client_instance.actual_address or '',
-        'country': client_instance.country or '',
-        'edrpou': client_instance.edrpou or '',
-        'bank_details': client_instance.bank_details or '',
-        'contacts': client_instance.contacts or '',
-        'responsible_id': client_instance.responsible_id,
-        'responsible': client_instance.responsible.pip if client_instance.responsible else '',
-        'product_id': client_instance.product.id,
-        'product': client_instance.product.name,
-        'scope_id': client_instance.scope_id,
-        'scope': client_instance.scope.name if client_instance.scope else '',
-        'commentary': client_instance.commentary or '',
-    }
+    try:
+        client_instance = get_object_or_404(Counterparty, pk=pk)
+        client = {
+            'id': client_instance.id,
+            'name': client_instance.name,
+            'legal_address': client_instance.legal_address or '',
+            'actual_address': client_instance.actual_address or '',
+            'country': client_instance.country or '',
+            'edrpou': client_instance.edrpou or '',
+            'bank_details': client_instance.bank_details or '',
+            'contacts': client_instance.contacts or '',
+            'responsible_id': client_instance.responsible_id,
+            'responsible': client_instance.responsible.pip if client_instance.responsible else '',
+            'product_id': client_instance.product.id,
+            'product': client_instance.product.name,
+            'scope_id': client_instance.scope_id,
+            'scope': client_instance.scope.name if client_instance.scope else '',
+            'commentary': client_instance.commentary or '',
+        }
+    except Http404:
+        client = {}
     scopes = get_scopes_list()
     employees = get_userprofiles_list()
 
@@ -437,3 +441,24 @@ def get_counterparty_name_with_country(counterparty):
 def get_google_api(request):
     from my_config import google_api_key
     return HttpResponse(google_api_key)
+
+
+#  --------------------------------------------------- Letters
+@login_required(login_url='login')
+@try_except
+def get_letters(request, counterparty_id):
+    letters = get_letters_list(counterparty_id)
+    return HttpResponse(json.dumps(letters))
+
+
+@login_required(login_url='login')
+@try_except
+def post_letter(request):
+    return HttpResponse(add_or_change_letter(request))
+
+
+@login_required(login_url='login')
+@try_except
+def del_letter(request):
+    return HttpResponse(deactivate_letter(request.POST['id']))
+

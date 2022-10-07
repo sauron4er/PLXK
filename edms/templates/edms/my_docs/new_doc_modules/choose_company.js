@@ -16,9 +16,11 @@ class ChooseCompany extends React.Component {
     if (this.props.module_info.defines_doc_version) {
       switch (event.target.value) {
         case 'ТДВ':
+          if (this.props.module_info.defines_doc_version) newDocStore.new_document.doc_type_version = 1
           newDocStore.new_document.doc_type_version = 1;
           break;
         case 'ТОВ':
+          if (this.props.module_info.defines_doc_version) newDocStore.new_document.doc_type_version = 2
           newDocStore.new_document.doc_type_version = 2;
       }
     }
@@ -27,7 +29,7 @@ class ChooseCompany extends React.Component {
   render() {
     const {module_info} = this.props;
     const {company} = newDocStore.new_document;
-
+  
     return (
       <div className='mt-1'>
         <label className='mr-1'>{module_info.field_name}:</label>

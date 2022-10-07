@@ -18,3 +18,11 @@ export function LoaderSmall() {
     </div>
   );
 }
+
+export function LoaderMini() {
+  return (
+    <div className='loader-mini'>
+      ●
+    </div>
+  );
+}

@@ -49,6 +49,8 @@ import FoyerRanges from 'edms/templates/edms/my_docs/new_doc_modules/foyer_range
 import CostRates from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/cost_rates';
 import {areCostRatesValid} from 'edms/templates/edms/my_docs/new_doc_modules/cost_rates/validation';
 import SubmitButton from 'templates/components/form_modules/submit_button';
+import Deadline from 'edms/templates/edms/my_docs/new_doc_modules/deadline';
+import ContractSubject from 'edms/templates/edms/my_docs/new_doc_modules/contract_subject';
 
 class NewDocument extends React.Component {
   state = {
@@ -74,7 +76,7 @@ class NewDocument extends React.Component {
     gate: 1,
     carry_out_items: [],
     main_field_queue: 0,
-    auto_recipients: []
+    post_request_sent: false
   };
 
   componentDidMount() {
@@ -178,10 +180,10 @@ class NewDocument extends React.Component {
       .then((response) => {
         this.setState({
           type_modules: response.doc_type_modules,
-          main_field_queue: response.main_field_queue,
-          auto_recipients: response.auto_recipients
+          main_field_queue: response.main_field_queue
         });
         newDocStore.new_document.doc_type_id = response.doc_type_id;
+        newDocStore.auto_recipients = response.auto_recipients;
       })
       .catch((error) => notify(error));
   };
@@ -246,6 +248,10 @@ class NewDocument extends React.Component {
           newDocStore.new_document.document_link_name = response?.document_link_name;
           newDocStore.new_document.doc_type_version = response?.doc_type_version;
           newDocStore.new_document.doc_type_version_name = response?.doc_type_version_name;
+          newDocStore.new_document.deadline = response?.deadline;
+          newDocStore.new_document.contract_subject = response?.contract_subject;
+          newDocStore.new_document.contract_subject_name = response?.contract_subject_name;
+          newDocStore.new_document.contract_subject_input = response?.contract_subject_text;
         })
         .catch((error) => notify(error));
     } else this.setState({render_ready: true});
@@ -375,6 +381,11 @@ class NewDocument extends React.Component {
           }
         } else if (module.module === 'foyer_ranges') {
           if (!this.isFoyerDatetimesFilled()) return false;
+        } else if (module.module === 'contract_subject') {
+          if (isBlankOrZero(newDocStore.new_document.contract_subject) && isBlankOrZero(newDocStore.new_document.contract_subject_input)) {
+            notify('Необхідно обрати Предмет договору зі списку, або внести вручну');
+            return false;
+          }
         } else {
           if (this.state[module.module].length === 0 || this.state[module.module].id === 0) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -423,7 +434,7 @@ class NewDocument extends React.Component {
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
-          } else if (['scope', 'law', 'client_requirements', 'doc_type_version', 'cost_rates'].includes(module.module)) {
+          } else if (['scope', 'law', 'client_requirements', 'doc_type_version', 'cost_rates', 'deadline'].includes(module.module)) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'foyer_ranges') {
             doc_modules[module.module] = this.getFoyerRanges();
@@ -431,6 +442,11 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
             doc_modules[module.module] = newDocStore.new_document.registration_number;
+          } else if (module.module === 'contract_subject') {
+            doc_modules[module.module] = {
+              id: newDocStore.new_document.contract_subject,
+              input: newDocStore.new_document.contract_subject_input
+            };
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -457,10 +473,15 @@ class NewDocument extends React.Component {
           });
         }
 
+        this.setState({
+          post_request_sent: true
+        });
+
         axiosPostRequest('post_doc', formData)
           .then((response) => {
             if (response === 'reg_number_taken') {
               notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
+              this.setState({post_request_sent: true});
             } else {
               // опублікування документу оновлює таблицю документів:
               this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
@@ -472,7 +493,8 @@ class NewDocument extends React.Component {
             }
           })
           .catch((error) => {
-            console.log(error);
+            this.setState({post_request_sent: true});
+            notify('Не вдалося зберегти документ, зверніться до адміністратора');
           });
       }
     } catch (e) {
@@ -531,7 +553,7 @@ class NewDocument extends React.Component {
 
   render() {
     let {doc} = this.props;
-  
+
     const {
       open,
       type_modules,
@@ -547,11 +569,11 @@ class NewDocument extends React.Component {
       days,
       gate,
       carry_out_items,
-      auto_recipients
+      post_request_sent
     } = this.state;
-    
+
     const {doc_type_version} = newDocStore.new_document;
-    
+
     // Визначаємо, наскільки великим буде текстове поле:
     let rows = 1;
     switch (doc.type_id) {
@@ -564,7 +586,7 @@ class NewDocument extends React.Component {
       default:
         rows = 1;
     }
-  
+
     return (
       <>
         <Modal open={open} onClose={this.onCloseModal} showCloseIcon={false} closeOnOverlayClick={false} styles={{modal: {marginTop: 70}}}>
@@ -643,11 +665,7 @@ class NewDocument extends React.Component {
                           <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                         </When>
                         <When condition={module.module === 'contract_link'}>
-                          <ChooseMainContract
-                            onChange={this.onChangeContract}
-                            module_info={module}
-                            company={newDocStore.new_document.company}
-                          />
+                          <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
                         </When>
                         <When condition={module.module === 'choose_company'}>
                           <ChooseCompany module_info={module} />
@@ -685,13 +703,19 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'cost_rates'}>
                           <CostRates module_info={module} />
                         </When>
+                        <When condition={module.module === 'deadline'}>
+                          <Deadline module_info={module} />
+                        </When>
+                        <When condition={module.module === 'contract_subject'}>
+                          <ContractSubject module_info={module} />
+                        </When>
                         <Otherwise> </Otherwise>
                       </Choose>
                     </div>
                   </If>
                 </For>
-                <If condition={auto_recipients}>
-                  <AutoRecipientsInfo autoRecipients={auto_recipients} />
+                <If condition={newDocStore.auto_recipients}>
+                  <AutoRecipientsInfo />
                 </If>
               </div>
 
@@ -711,6 +735,7 @@ class NewDocument extends React.Component {
                   className='btn-info'
                   text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
+                  requestSent={post_request_sent}
                 />
               </div>
             </If>
