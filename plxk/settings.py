@@ -117,30 +117,12 @@ else:
             'NAME': db_name,
             'USER': db_user,
             'PASSWORD': db_pass,
-            'HOST': '10.10.10.22',
+            # 'HOST': '10.10.10.22',
+            'HOST': 'localhost',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
             # 'CONN_MAX_AGE': 28700
         },
-        # ці підключення не працюють після оновлення django.
-        # 'fb_test': {
-        #     'ENGINE': 'firebird',
-        #     'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-        #     'USER': 'SYSDBA',  # Your db user
-        #     'PASSWORD': 'Cvjhjlbyf11',  # db user password
-        #     'HOST': '10.10.10.8',  # Your host machine
-        #     'PORT': '3050',  # If is empty, use default 3050
-        #     'OPTIONS': {'charset': 'win1251'}
-        # },
-        # 'fb1': {
-        #     'ENGINE': 'firebird',
-        #     'NAME': 'E:/db/lis.fdb',  # Path to database or db alias
-        #     'USER': 'SYSDBA',  # Your db user
-        #     'PASSWORD': 'masterke',  # db user password
-        #     'HOST': '10.10.10.7',  # Your host machine
-        #     'PORT': '3050',  # If is empty, use default 3050
-        #     'OPTIONS': {'charset': 'win1251'}
-        # },
     }
 
 # Password validation
