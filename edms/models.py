@@ -33,10 +33,11 @@ class Employee_Seat(models.Model):
 
 
 class Vacation(models.Model):
-    employee = models.ForeignKey(accounts.UserProfile, related_name='vacations', on_delete=models.RESTRICT)
+    # Deprecated. Переніс цю модель у accounts
+    employee = models.ForeignKey(accounts.UserProfile, related_name='vacations_depr', on_delete=models.RESTRICT)
     begin = models.DateField(default=timezone.now)
     end = models.DateField(null=True)
-    acting = models.ForeignKey(accounts.UserProfile, related_name='acting_for', null=True, on_delete=models.RESTRICT)  # Acting user, while this on vacation
+    acting = models.ForeignKey(accounts.UserProfile, related_name='acting_for_depr', null=True, on_delete=models.RESTRICT)  # Acting user, while this on vacation
     started = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 

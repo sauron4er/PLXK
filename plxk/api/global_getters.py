@@ -49,7 +49,7 @@ def get_emp_seats_list(request=''):
 
 
 @try_except
-def get_simple_emp_seats_list(request=''):
+def get_simple_emp_seats_list():
     return [{
         'id': emp_seat.pk,
         'emp_seat': emp_seat.employee.pip + ', ' + emp_seat.seat.seat,

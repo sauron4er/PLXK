@@ -332,11 +332,3 @@ def create_foyer_report(request):
     tree.write('files/media/foyer/' + filename)
 
     return HttpResponse('media/foyer/' + filename)
-
-
-#  --------------------------------------------------- Vacations
-@login_required(login_url='login')
-@try_except
-def vacations(request):
-    vacations_list = []
-    return render(request, 'boards/vacations/index.html', {'vacations': vacations_list})

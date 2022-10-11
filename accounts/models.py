@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Department(models.Model):
@@ -72,3 +73,12 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = 'Профіль'
         verbose_name_plural = 'Профілі'
+
+
+class Vacation(models.Model):
+    employee = models.ForeignKey(UserProfile, related_name='vacations', on_delete=models.RESTRICT)
+    begin = models.DateField(default=timezone.now)
+    end = models.DateField(null=True)
+    acting = models.ForeignKey(UserProfile, related_name='acting_for', on_delete=models.RESTRICT)  # Acting user, while this on vacation
+    started = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)

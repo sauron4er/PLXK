@@ -4,10 +4,12 @@ from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
 import json
 from .forms import SignUpForm
-from .models import Department, UserProfile
 from edms.api.getters import get_dep_chief
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User
+from .models import Department, UserProfile
+from plxk.api.global_getters import get_simple_emp_seats_list
+from .api.vacations import get_vacations_list, add_or_change_vacation, deactivate_vacation
 
 
 def signup(request):
@@ -105,4 +107,30 @@ def deact_employee(request, pk):
     employee = get_object_or_404(UserProfile, pk=pk)
     employee.is_active = False
     employee.save()
+    return HttpResponse('ok')
+
+
+#  --------------------------------------------------- Vacations
+@login_required(login_url='login')
+@try_except
+def vacations(request):
+    vacations_list = get_vacations_list(request)
+    employees_list = get_simple_emp_seats_list()
+    return render(request, 'accounts/vacations/index.html', {'vacations': vacations_list, 'employees': employees_list})
+
+
+@try_except
+def get_vacations(request):
+    # TODO фільтрування по юзеру або показ всіх
+    return HttpResponse(json.dumps(get_vacations_list(request)))
+
+
+@try_except
+def edit_vacation(request):
+    return HttpResponse(add_or_change_vacation(request.POST))
+
+
+@try_except
+def del_vacation(request):
+    deactivate_vacation(request.POST['id'])
     return HttpResponse('ok')

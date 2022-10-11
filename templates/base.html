@@ -143,7 +143,7 @@
                 {{ user.first_name}} {{ user.last_name }}
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-              <a class="dropdown-item" href="{% url 'boards:vacations' %}">Мої відпустки</a>
+              <a class="dropdown-item" href="{% url 'accounts:vacations' %}">Мої відпустки</a>
               <div class="dropdown-divider"></div>
               {% if user.userprofile.is_it_admin  %}
                 <a class="dropdown-item" href="{% url 'edms:hr' %}">Відділ кадрів</a>

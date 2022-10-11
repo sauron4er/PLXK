@@ -11,14 +11,17 @@
   height: 50px;
   /*font-size:1.6em;*/
   padding: 0 2em;
+  margin-bottom: .5em;
   cursor: pointer;
   transition: 800ms ease all;
   outline: none;
 }
+
 .css_homepage_button:hover {
   background: #ffffff;
   color: #3eacba;
 }
+
 .css_homepage_button:before,
 .css_homepage_button:after {
   content: '';
@@ -30,12 +33,14 @@
   background: #3eacba;
   transition: 400ms ease all;
 }
+
 .css_homepage_button:after {
   right: inherit;
   top: inherit;
   left: 0;
   bottom: 0;
 }
+
 .css_homepage_button:hover:before,
 .css_homepage_button:hover:after {
   width: 100%;

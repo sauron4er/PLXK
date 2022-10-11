@@ -1,1 +1,1 @@
-import 'boards/templates/boards/vacations/index'
+import 'accounts/templates/accounts/vacations/index'
