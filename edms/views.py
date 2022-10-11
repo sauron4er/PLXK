@@ -1,5 +1,5 @@
 import os
-import chardet
+# import chardet
 
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
@@ -635,7 +635,8 @@ def convert_files_names_to_utf():
                 try:
                     print('--------------------------')
                     print(root + '/' + file)
-                    print(chardet.detect(file.encode()))
+                    # print(chardet.detect(file.encode()))
+                    # TODO розкоментувати
                     file_decoded = file.encode('cp1251').decode('utf8')
                     old_path = os.path.join(root, file)
                     new_path = os.path.join(root, file_decoded)
