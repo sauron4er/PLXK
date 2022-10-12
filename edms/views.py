@@ -533,9 +533,9 @@ def edms_get_doc(request, pk):
     # Всю інформацію про документ записуємо сюди
 
     # Якщо employee_seat нема в запиті, значить запит прийшов зі створення нового документа, доступ треба дати
-    # user_id == 52 - тимчасово доданий Лебедєв
+    # request.user.id in [52, 66, 112] - Лебедєв, Мальцев, Лишак
     if request.user.userprofile.is_it_admin or \
-            request.user.id == 52 or \
+            request.user.id in [52, 66, 112] or \
             'employee_seat' not in request.POST or \
             is_access_granted(request.user, request.POST['employee_seat'], doc):
         doc_info = {
