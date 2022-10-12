@@ -31,9 +31,10 @@ function Vacation(props) {
 
   function fieldsAreValid() {
     const dates_not_empty = !!start.length && !!end.length;
+    const end_is_later_than_start = start < end
     const acting_selected = actingId !== 0;
-
-    return dates_not_empty && acting_selected;
+  
+    return dates_not_empty && end_is_later_than_start && acting_selected;
   }
 
   function postVacation() {
@@ -104,7 +105,7 @@ function Vacation(props) {
       <hr />
       <SelectorWithFilter
         list={window.employees}
-        fieldName='Виконуючий обовязки'
+        fieldName='Виконуючий обов’язки (на час вашої відсутності усі документи та накази перейдуть до в.о.)'
         value={{name: actingName, id: actingId}}
         onChange={onActingChange}
         disabled={false}

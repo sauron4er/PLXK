@@ -15,6 +15,7 @@ def get_userprofiles_list():
     } for emp in
         UserProfile.objects
             .exclude(id=11)  # Викидуємо зі списка користувача Охорона
+            .filter(is_pc_user=True)
             .filter(is_active=True)
             .order_by('pip')]
 

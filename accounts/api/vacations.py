@@ -1,24 +1,30 @@
 from django.utils.timezone import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
+from django.db.models import Q
 
-from accounts import models as accounts
 from ..models import Vacation
 from edms.api.move_to_new_employee import move_docs, move_approvals
 
 
 @try_except
 def get_vacations_list(request):
-    # TODO фільтрування по юзеру або показ всіх
+    vacations = Vacation.objects.filter(is_active=True)
+
+    if not request.user.userprofile.is_it_admin and not request.user.userprofile.is_hr:
+        vacations = vacations.filter(Q(employee__id=request.user.userprofile.id) | Q(acting__id=request.user.userprofile.id))\
+
     vacations = [{
         'id': vacation.id,
-        'begin': vacation.begin.strftime('%Y-%m-%d'),
-        'end': vacation.end.strftime('%Y-%m-%d'),
-        'employee': vacation.employee.pip,
-        'acting': vacation.acting.pip,
-        'started': vacation.started
-    } for vacation in Vacation.objects
-        .filter(is_active=True)]
+        'begin': vacation.begin.strftime('%d.%m.%Y'),
+        'end': vacation.end.strftime('%d.%m.%Y'),
+        'employee_id': vacation.employee.id,
+        'employee_name': vacation.employee.pip,
+        'acting_id': vacation.acting.id,
+        'acting_name': vacation.acting.pip,
+        'started': 'true' if vacation.started else 'false',
+        'user_is_acting': 'true' if vacation.acting_id == request.user.userprofile.id else 'false'
+    } for vacation in vacations]
 
     return vacations
 

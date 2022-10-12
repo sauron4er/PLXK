@@ -8,7 +8,7 @@ from edms.api.getters import get_dep_chief
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User
 from .models import Department, UserProfile
-from plxk.api.global_getters import get_simple_emp_seats_list
+from plxk.api.global_getters import get_userprofiles_list
 from .api.vacations import get_vacations_list, add_or_change_vacation, deactivate_vacation
 
 
@@ -115,13 +115,12 @@ def deact_employee(request, pk):
 @try_except
 def vacations(request):
     vacations_list = get_vacations_list(request)
-    employees_list = get_simple_emp_seats_list()
+    employees_list = get_userprofiles_list()
     return render(request, 'accounts/vacations/index.html', {'vacations': vacations_list, 'employees': employees_list})
 
 
 @try_except
 def get_vacations(request):
-    # TODO фільтрування по юзеру або показ всіх
     return HttpResponse(json.dumps(get_vacations_list(request)))
 
 
