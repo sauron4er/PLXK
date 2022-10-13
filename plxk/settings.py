@@ -28,7 +28,7 @@ DEBUG = True
 STAS_DEBUG = False
 
 
-ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', 'plxk.com.ua', 'plhk.com.ua']
+ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', '10.20.10.195', 'plxk.com.ua', 'plhk.com.ua']
 
 
 # Application definition
