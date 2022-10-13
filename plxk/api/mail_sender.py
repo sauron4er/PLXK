@@ -1,4 +1,5 @@
 import smtplib
+from my_config import mail_pass
 
 
 def send_email(mail, body):
@@ -8,22 +9,24 @@ def send_email(mail, body):
         host = "smtp.lxk.com.ua"
         try:
             server = smtplib.SMTP(host, timeout=2000)
-            server.login('lxk_it', 'E5sY_N3dV_A83v_MW64')
+            server.login('lxk_it', mail_pass)
             server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)
             server.quit()
         except OSError as err:
             print(err)
+            # TODO gmail заблокував цю можливість без використання двохфакторної авт.
+            # TODO треба повертати користувачу помилку про те, що лежить поштовий сервер і нема змогу відправити листи
             # Якщо внутрішня пошта it@lxk.com.ua лежить, відправляємо з gmail:
-            sender = "edms.lxk@gmail.com"
-            server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
-            server.ehlo()
-            server.starttls()
-            server.login('edms.lxk', '[svpfdjlgjinf]')
-            server.sendmail(sender, [mail], body)
+            # sender = "edms.lxk@gmail.com"
+            # server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
+            # server.ehlo()
+            # server.starttls()
+            # server.login('edms.lxk', '[svpfdjlgjinf]')
+            # server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)
-            server.quit()
+            # server.quit()
         except Exception as err:
             print(err)
