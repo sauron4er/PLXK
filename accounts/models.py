@@ -81,4 +81,5 @@ class Vacation(models.Model):
     end = models.DateField(null=True)
     acting = models.ForeignKey(UserProfile, related_name='acting_for', on_delete=models.RESTRICT)  # Acting user, while this on vacation
     started = models.BooleanField(default=False)
+    finished = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

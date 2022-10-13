@@ -114,9 +114,10 @@ def deact_employee(request, pk):
 @login_required(login_url='login')
 @try_except
 def vacations(request):
-    vacations_list = get_vacations_list(request)
+    vacations = get_vacations_list(request)
     employees_list = get_userprofiles_list()
-    return render(request, 'accounts/vacations/index.html', {'vacations': vacations_list, 'employees': employees_list})
+    return render(request, 'accounts/vacations/index.html', {'vacations': vacations,
+                                                             'employees': employees_list})
 
 
 @try_except
@@ -126,10 +127,9 @@ def get_vacations(request):
 
 @try_except
 def edit_vacation(request):
-    return HttpResponse(add_or_change_vacation(request.POST))
+    return HttpResponse(add_or_change_vacation(request))
 
 
 @try_except
 def del_vacation(request):
-    deactivate_vacation(request.POST['id'])
-    return HttpResponse('ok')
+    return HttpResponse(deactivate_vacation(request.POST['id']))

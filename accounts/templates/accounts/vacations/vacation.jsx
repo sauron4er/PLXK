@@ -1,23 +1,40 @@
 'use strict';
-import React, {useState} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
-import {getIndex, notify, notifySuccess} from 'templates/components/my_extras';
-import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
+import React, {useEffect, useState} from 'react';
+import {notify} from 'templates/components/my_extras';
+import {axiosPostRequest} from 'templates/components/axios_requests';
 import DateInput from 'templates/components/form_modules/date_input';
-import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import SubmitButton from 'templates/components/form_modules/submit_button';
-import contractSubjectsStore from 'production/templates/production/contract_subjects/contract_subjects_store';
-import SelectorWithFilter from "templates/components/form_modules/selectors/selector_with_filter";
+import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 
 function Vacation(props) {
   const [request_sent, setRequestSent] = useState(false);
-  const [start, setStart] = useState('');
+  const [id, setId] = useState(0);
+  const [begin, setBegin] = useState('');
   const [end, setEnd] = useState('');
   const [actingId, setActingId] = useState(0);
   const [actingName, setActingName] = useState('');
   const [employeeId, setEmployeeId] = useState(0);
   const [employeeName, setEmployeeName] = useState('');
+
+  useEffect(() => {
+    if (props.vacation?.id !== 0) {
+      setId(props.vacation.id);
+      setBegin(props.vacation.begin);
+      setEnd(props.vacation.end);
+      setActingId(props.vacation.acting_id);
+      setActingName(props.vacation.acting_name);
+      setEmployeeId(props.vacation.employee_id);
+      setEmployeeName(props.vacation.employee_name);
+    } else {
+      setId(0);
+      setBegin('');
+      setEnd('');
+      setActingId(0);
+      setActingName('');
+      setEmployeeId(0);
+      setEmployeeName('');
+    }
+  }, [props.vacation]);
 
   function onActingChange(e) {
     setActingId(e.id);
@@ -30,19 +47,19 @@ function Vacation(props) {
   }
 
   function fieldsAreValid() {
-    const dates_not_empty = !!start.length && !!end.length;
-    const end_is_later_than_start = start < end
+    const dates_not_empty = !!begin.length && !!end.length;
+    const end_is_later_than_begin = begin < end;
     const acting_selected = actingId !== 0;
-  
-    return dates_not_empty && end_is_later_than_start && acting_selected;
+
+    return dates_not_empty && end_is_later_than_begin && acting_selected;
   }
 
   function postVacation() {
     setRequestSent(true);
 
     let formData = new FormData();
-    formData.append('id', props.id);
-    formData.append('start', start);
+    formData.append('id', id);
+    formData.append('begin', begin);
     formData.append('end', end);
     formData.append('employee_id', employeeId);
     formData.append('acting_id', actingId);
@@ -54,7 +71,6 @@ function Vacation(props) {
           clearFields();
           setRequestSent(false);
         }
-        
       })
       .catch((error) => {
         setRequestSent(false);
@@ -63,7 +79,8 @@ function Vacation(props) {
   }
 
   function clearFields() {
-    setStart('');
+    setId(0);
+    setBegin('');
     setEnd('');
     setActingId(0);
     setActingName('');
@@ -71,7 +88,7 @@ function Vacation(props) {
 
   function delVacation() {
     let formData = new FormData();
-    formData.append('id', props.id);
+    formData.append('id', id);
 
     axiosPostRequest('del_vacation', formData)
       .then((response) => {
@@ -88,7 +105,7 @@ function Vacation(props) {
       <h5>Нова відпустка / редагування відпустки</h5>
       <hr />
       <div className='d-flex'>
-        <DateInput fieldName='Дата початку' date={start} disabled={false} onChange={(e) => setStart(e.target.value)} />
+        <DateInput fieldName='Дата початку' date={begin} disabled={false} onChange={(e) => setBegin(e.target.value)} />
         <DateInput fieldName='Дата кінця' date={end} disabled={false} onChange={(e) => setEnd(e.target.value)} className='ml-3' />
       </div>
       <hr />
@@ -113,8 +130,8 @@ function Vacation(props) {
       <hr />
       <div className='d-flex justify-content-between'>
         <SubmitButton className='btn-info' text='Зберегти' onClick={postVacation} disabled={!fieldsAreValid()} requestSent={request_sent} />
-        <If condition={props.id !== 0}>
-          <SubmitButton className='btn-outline-danger' text='Видалити' onClick={delVacation} />
+        <If condition={id !== 0}>
+          <SubmitButton className='btn-outline-danger' text={props.vacation.started ? 'Закінчити' : 'Видалити'} onClick={delVacation} />
         </If>
       </div>
     </>
@@ -122,7 +139,7 @@ function Vacation(props) {
 }
 
 Vacation.defaultProps = {
-  id: 0,
+  vacation: {id: 0},
   reloadVacations: () => {}
 };
 

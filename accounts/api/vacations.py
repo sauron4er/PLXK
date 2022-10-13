@@ -11,19 +11,30 @@ from edms.api.move_to_new_employee import move_docs, move_approvals
 def get_vacations_list(request):
     vacations = Vacation.objects.filter(is_active=True)
 
+    if 'all' not in request.POST:
+        vacations = vacations # фільтруємо по юзеру
+
+    if 'with_archive' not in request.POST or request.POST['with_archive'] == 'false':
+        vacations = vacations.filter(finished=False)
+
     if not request.user.userprofile.is_it_admin and not request.user.userprofile.is_hr:
-        vacations = vacations.filter(Q(employee__id=request.user.userprofile.id) | Q(acting__id=request.user.userprofile.id))\
+        vacations = vacations\
+            .filter(Q(employee__id=request.user.userprofile.id) | Q(acting__id=request.user.userprofile.id))\
+            .order_by('-begin')
 
     vacations = [{
         'id': vacation.id,
-        'begin': vacation.begin.strftime('%d.%m.%Y'),
-        'end': vacation.end.strftime('%d.%m.%Y'),
+        'begin': vacation.begin.strftime('%Y-%m-%d'),
+        'end': vacation.end.strftime('%Y-%m-%d'),
+        'begin_table': vacation.begin.strftime('%d.%m.%Y'),
+        'end_table': vacation.end.strftime('%d.%m.%Y'),
         'employee_id': vacation.employee.id,
         'employee_name': vacation.employee.pip,
         'acting_id': vacation.acting.id,
         'acting_name': vacation.acting.pip,
-        'started': 'true' if vacation.started else 'false',
-        'user_is_acting': 'true' if vacation.acting_id == request.user.userprofile.id else 'false'
+        'started': 'true' if vacation.started else '',
+        'user_is_acting': 'true' if vacation.acting_id == request.user.userprofile.id else '',
+        'finished': 'true' if vacation.finished else '',
     } for vacation in vacations]
 
     return vacations
@@ -53,15 +64,18 @@ def arrange_vacations():
             deactivate_vacation(vacation)
 
 
-def add_or_change_vacation(request_post):
+def add_or_change_vacation(request):
     try:
-        vacation_instance = Vacation.objects.get(id=request_post['id'])
+        vacation_instance = Vacation.objects.get(id=request.POST['id'])
     except Vacation.DoesNotExist:
         vacation_instance = Vacation()
-    vacation_instance.start = request_post['start']
-    vacation_instance.end = request_post['end']
-    vacation_instance.employee_id = request_post['employee_id']
-    vacation_instance.acting_id = request_post['acting_id']
+    vacation_instance.begin = request.POST['begin']
+    vacation_instance.end = request.POST['end']
+    if request.POST['employee_id'] == '0':
+        vacation_instance.employee_id = request.user.userprofile.id
+    else:
+        vacation_instance.employee_id = request.POST['employee_id']
+    vacation_instance.acting_id = request.POST['acting_id']
     vacation_instance.save()
     # TODO запуск якщо відпустка вже почалася
     return 'ok'
@@ -80,17 +94,11 @@ def start_vacation(vacation):
 
 
 def deactivate_vacation(vacation):
-    pass
-    # vacation.update({'is_active': False})
-    # vacation_instance = get_object_or_404(Vacation, pk=vacation['id'])
-    #
-    # if vacation_instance.is_active:
-    #     change_status_in_userprofile(vacation_instance.employee_id, None, False)
-    #     deactivate_acting_emp_seats(vacation_instance.employee_id, vacation_instance.acting_id)
-    #
-    # form = DeactivateVacationForm(vacation, instance=vacation_instance)
-    # if form.is_valid:
-    #     form.save()
+    # TODO if started = реорганізувати документи, призначити finished
+    vacation_instance = Vacation.objects.get(id=vacation)
+    vacation_instance.is_active = False
+    vacation_instance.save()
+    return 'ok'
 
 
 def change_status_in_userprofile(employee, acting, on_vacation):
