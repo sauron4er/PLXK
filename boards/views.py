@@ -13,6 +13,7 @@ import random
 # import time
 import pytz
 import json
+import os
 from plxk.api.pagination import sort_query_set, filter_query_set
 # from boards.api.auto_vacations import auto_arrange_vacations
 from boards.api.auto_orders import send_orders_reminders
@@ -340,3 +341,35 @@ def create_foyer_report(request):
 def vacations(request):
     vacations_list = []
     return render(request, 'boards/vacations/index.html', {'vacations': vacations_list})
+
+
+@login_required(login_url='login')
+@try_except
+def convert_files_names_to_utf(request):
+    # Перейменування усіх файлів з linux кракозябри на кирилицю:
+
+    folder = 'C:/PLXK/files/media'
+    # Програма проходить по всьому дереву і перейменовує всі файли.
+    # Якщо щось не може перейменувати, то пропускає.
+
+    for root, dirs, files in os.walk(folder):
+        root = root.replace('\\', '/')
+        for file in os.listdir(root):
+            if os.path.isfile(root + '/' + file) and file != 'react_статті.txt':
+                try:
+                    print('--------------------------')
+                    print(root + '/' + file)
+                    file_decoded = file.encode('cp1251').decode('utf8')
+                    old_path = os.path.join(root, file)
+                    new_path = os.path.join(root, file_decoded)
+                    os.rename(old_path, new_path)
+                    print('done')
+                    print('--------------------------')
+                except Exception:
+                    pass
+
+    return render(request, 'home.html', {
+        'auto_functions_started': auto_functions_started,
+        'birthdays': get_bds(),
+        'ads': get_ads(),
+        'bg': random.randint(1, 10)})
