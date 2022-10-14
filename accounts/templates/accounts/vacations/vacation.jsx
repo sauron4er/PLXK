@@ -102,13 +102,12 @@ function Vacation(props) {
 
   return (
     <>
-      <h5>Нова відпустка / редагування відпустки</h5>
+      <h5>{props.vacation.id === 0 ? 'Нова відпустка' : 'Редагування відпустки'}</h5>
       <hr />
-      <div className='d-flex'>
+      <div className='d-flex justify-content-between'>
         <DateInput fieldName='Дата початку' date={begin} disabled={false} onChange={(e) => setBegin(e.target.value)} />
         <DateInput fieldName='Дата кінця' date={end} disabled={false} onChange={(e) => setEnd(e.target.value)} className='ml-3' />
       </div>
-      <hr />
       <If condition={window.is_admin || window.is_hr}>
         <hr />
         <SelectorWithFilter
@@ -122,7 +121,7 @@ function Vacation(props) {
       <hr />
       <SelectorWithFilter
         list={window.employees}
-        fieldName='Виконуючий обов’язки (на час вашої відсутності усі документи та накази перейдуть до в.о.)'
+        fieldName='Виконуючий обов’язки (на час відпустки усі документи та накази перейдуть до в.о.)'
         value={{name: actingName, id: actingId}}
         onChange={onActingChange}
         disabled={false}
