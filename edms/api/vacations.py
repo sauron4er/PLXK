@@ -9,6 +9,7 @@ from edms.api.move_to_new_employee import move_docs, move_approvals
 
 
 def arrange_vacations():
+    # DEPRECATED
     today = datetime.today()
     vacations = [{
         'id': vacation.id,
@@ -32,6 +33,7 @@ def arrange_vacations():
 
 
 def add_vacation(request):
+    # DEPRECATED
     doc_request = request.POST.copy()
     form = VacationForm(doc_request)
     if form.is_valid():
@@ -46,6 +48,7 @@ def add_vacation(request):
 
 
 def start_vacation(vacation):
+    # DEPRECATED
     vacation.update({'started': True})
     vacation_instance = get_object_or_404(Vacation, pk=vacation['id'])
     change_status_in_userprofile(vacation_instance.employee_id, vacation_instance.acting_id, True)
@@ -57,6 +60,7 @@ def start_vacation(vacation):
 
 
 def deactivate_vacation(vacation):
+    # DEPRECATED
     vacation.update({'is_active': False})
     vacation_instance = get_object_or_404(Vacation, pk=vacation['id'])
 
@@ -70,6 +74,7 @@ def deactivate_vacation(vacation):
 
 
 def change_status_in_userprofile(employee, acting, on_vacation):
+    # DEPRECATED
     form_data = {
         'acting': acting,
         'on_vacation': on_vacation

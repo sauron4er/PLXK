@@ -60,12 +60,22 @@ div.css_loader {
   }
 }
 
-.loader-mini {
-  animation: pulse 2s infinite;
-}
+/*------------ mini ------------*/
 
 .loader-mini::before, .loader-mini::after {
   content: '●'
+}
+
+.loader-mini {
+  animation: pulse 2s infinite .1s;
+}
+
+.loader-mini::before {
+  animation: pulse 2s infinite;
+}
+
+.loader-mini::after {
+  animation: pulse 2s infinite .2s;
 }
 
 @keyframes pulse {

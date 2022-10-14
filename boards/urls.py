@@ -69,8 +69,6 @@ urlpatterns = [
     url(r'^clients/get_google_api', views_counterparties.get_google_api, name='get_google_api'),
     url(r'^clients/', views_counterparties.clients, name='clients'),
 
-    url(r'^vacations/', views.vacations, name='vacations'),
-
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
 
     url(r'^convert_files_names_to_utf/', views.convert_files_names_to_utf, name='convert_files_names_to_utf'),
