@@ -70,13 +70,14 @@ def create_acting_end_mail_body(employee, address):
 
 
 def send_acting_mail(vacation, mail_type):
-    address = 'khramtsov.sa@lxk.com.ua'
-    if testing:
+    if not testing:
+        address = vacation.acting.user.email
+
         if mail_type == 'planned':
             body = create_acting_planned_mail_body(vacation.employee.pip, vacation.begin, vacation.end, address)
-        if mail_type == 'begin':
+        elif mail_type == 'begin':
             body = create_acting_begin_mail_body(vacation.employee.pip, vacation.begin, vacation.end, address)
-        if mail_type == 'changed':
+        elif mail_type == 'changed':
             body = create_acting_changed_mail_body(vacation.employee.pip, address)
         else:
             body = create_acting_end_mail_body(vacation.employee.pip, address)
