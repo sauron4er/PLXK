@@ -719,7 +719,7 @@ def edms_my_docs(request):
 
         # Записуємо main_field
         main_field = get_main_field(new_doc)
-        new_doc.main_field = main_field
+        new_doc.main_field = main_field[0:49]
         new_doc.save()
 
         # Запускаємо в роботу
