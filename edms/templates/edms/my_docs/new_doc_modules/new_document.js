@@ -51,6 +51,8 @@ import {areCostRatesValid} from 'edms/templates/edms/my_docs/new_doc_modules/cos
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Deadline from 'edms/templates/edms/my_docs/new_doc_modules/deadline';
 import ContractSubject from 'edms/templates/edms/my_docs/new_doc_modules/contract_subject';
+import EmployeeSeat from "edms/templates/edms/my_docs/new_doc_modules/employee_seat";
+import DecreeArticles from "edms/templates/edms/my_docs/new_doc_modules/decree_articles";
 
 class NewDocument extends React.Component {
   state = {
@@ -708,6 +710,12 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'contract_subject'}>
                           <ContractSubject module_info={module} />
+                        </When>
+                        <When condition={module.module === 'employee_seat'}>
+                          <EmployeeSeat module_info={module} />
+                        </When>
+                        <When condition={module.module === 'decree_articles'}>
+                          <DecreeArticles module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>
