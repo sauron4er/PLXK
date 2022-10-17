@@ -98,7 +98,7 @@ def start_vacation(vacation):
     vacation.started = True
     vacation.save()
     change_status_in_userprofile(vacation.employee, vacation.acting, True)
-    activate_acting_emp_seats(vacation.employee, vacation.acting)
+    activate_acting_emp_seats(vacation)
 
     send_acting_mail(vacation, 'begin')
 
@@ -108,7 +108,7 @@ def end_vacation(vacation):
     vacation.save()
 
     change_status_in_userprofile(vacation.employee, None, False)
-    deactivate_acting_emp_seats(vacation.employee, vacation.acting)
+    deactivate_acting_emp_seats(vacation)
 
     send_acting_mail(vacation, 'end')
 
