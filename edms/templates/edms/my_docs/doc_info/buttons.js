@@ -163,7 +163,7 @@ class Buttons extends React.Component {
         {/* Якщо автор я */}
         <If condition={user_is_doc_responsible}>
           {/*Якщо є дедлайн*/}
-          <If condition={docInfoStore?.info?.deadline !== '' && !info.archived}>
+          <If condition={docInfoStore.info.deadline && docInfoStore.info.deadline !== '' && !info.archived}>
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
