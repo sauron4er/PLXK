@@ -51,8 +51,9 @@ import {areCostRatesValid} from 'edms/templates/edms/my_docs/new_doc_modules/cos
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import Deadline from 'edms/templates/edms/my_docs/new_doc_modules/deadline';
 import ContractSubject from 'edms/templates/edms/my_docs/new_doc_modules/contract_subject';
-import EmployeeSeat from "edms/templates/edms/my_docs/new_doc_modules/employee_seat";
-import DecreeArticles from "edms/templates/edms/my_docs/new_doc_modules/decree_articles";
+import EmployeeSeat from 'edms/templates/edms/my_docs/new_doc_modules/employee_seat';
+import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/decree_articles';
+import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
 
 class NewDocument extends React.Component {
   state = {
@@ -139,6 +140,7 @@ class NewDocument extends React.Component {
     let {days} = this.state;
     let day_id = event.target.id.substring(4); // видаляємо 'day-' з ід інпуту
     const queue = getIndexByProperty(days, 'queue', parseInt(day_id));
+  
     if (queue === -1) {
       days.push({
         queue: parseInt(day_id),
@@ -147,6 +149,7 @@ class NewDocument extends React.Component {
     } else {
       days[queue].day = event.target.value;
     }
+    
     this.setState({days});
   };
 
@@ -313,15 +316,28 @@ class NewDocument extends React.Component {
           if (!areCostRatesValid()) {
             return false;
           }
+        }
+        if (module.module === 'decree_articles') {
+          if (!areArticlesValid()) {
+            return false;
+          }
         } else if (module.module === 'dimensions') {
           if (!this.isDimensionsFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити (тільки цифри)');
             return false;
           }
         } else if (
-          ['mockup_type', 'mockup_product_type', 'client', 'packaging_type', 'scope', 'law', 'doc_type_version', 'employee'].includes(
-            module.module
-          )
+          [
+            'mockup_type',
+            'mockup_product_type',
+            'client',
+            'packaging_type',
+            'scope',
+            'law',
+            'doc_type_version',
+            'employee',
+            'employee_seat'
+          ].includes(module.module)
         ) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
@@ -353,11 +369,11 @@ class NewDocument extends React.Component {
           }
         } else if (module.module === 'day') {
           const days = this.state.days;
-
+  
           let day_exists = false;
           for (const i in days) {
             if (days[i].queue === module.queue) {
-              if (days[i].text !== '') {
+              if (days[i].day && days[i]?.day !== '') {
                 day_exists = true;
               }
             }
@@ -436,7 +452,18 @@ class NewDocument extends React.Component {
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
-          } else if (['scope', 'law', 'client_requirements', 'doc_type_version', 'cost_rates', 'deadline'].includes(module.module)) {
+          } else if (
+            [
+              'scope',
+              'law',
+              'client_requirements',
+              'doc_type_version',
+              'cost_rates',
+              'deadline',
+              'employee_seat',
+              'decree_articles'
+            ].includes(module.module)
+          ) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'foyer_ranges') {
             doc_modules[module.module] = this.getFoyerRanges();
@@ -444,7 +471,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
             doc_modules[module.module] = newDocStore.new_document.registration_number;
-          } else if (module.module === 'contract_subject') {
+          }  else if (module.module === 'contract_subject') {
             doc_modules[module.module] = {
               id: newDocStore.new_document.contract_subject,
               input: newDocStore.new_document.contract_subject_input
@@ -627,9 +654,6 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'recipient_chief'}>
                           <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
                         </When>
-                        <When condition={module.module === 'articles'}>
-                          <Articles onChange={this.onChange} articles={articles} modules={type_modules} fieldName={module.field_name} />
-                        </When>
                         <When condition={module.module === 'files'}>
                           <FilesUpload onChange={this.onChange} files={files} module_info={module} />
                         </When>
@@ -743,7 +767,7 @@ class NewDocument extends React.Component {
                   className='btn-info'
                   text='Підтвердити'
                   onClick={() => this.newDocument(this.props.status === 'change' ? 'change' : 'doc')}
-                  requestSent={post_request_sent}
+                  // requestSent={post_request_sent}
                 />
               </div>
             </If>

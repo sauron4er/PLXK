@@ -1,24 +1,26 @@
 'use strict';
-import React, {useEffect} from 'react';
+import React, { useState } from "react";
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
-import SelectorWithFilterAndAxios from "templates/components/form_modules/selectors/selector_with_filter_and_axios";
+import SelectorWithFilter from "templates/components/form_modules/selectors/selector_with_filter";
+import getEmpSeatsFromLocalStorage from "templates/components/emps_seats_getter";
 
 function EmployeeSeat(props) {
+  const [empSeats, setEmpSeats] = useState(getEmpSeatsFromLocalStorage())
   
   function onSelectChange(e) {
-    newDocStore.new_document.emp_seat = e.id;
-    newDocStore.new_document.emp_seat_name = e.name;
+    newDocStore.new_document.employee_seat = e.id;
+    newDocStore.new_document.employee_seat_name = e.name;
   }
 
   return (
     <div>
-      <SelectorWithFilterAndAxios
-        listNameForUrl='emp_seats'
+      <SelectorWithFilter
+        list={empSeats}
         fieldName={`${props.module_info.required ? '* ' : ''}${props.module_info.field_name}`}
         selectId='emp_seat_select'
         onChange={onSelectChange}
-        value={{name: newDocStore.new_document.emp_seat_name, id: newDocStore.new_document.emp_seat}}
+        value={{name: newDocStore.new_document.employee_seat_name, id: newDocStore.new_document.employee_seat}}
         getOptionLabel={(option) => option.name}
         getOptionValue={(option) => option.id}
         disabled={false}

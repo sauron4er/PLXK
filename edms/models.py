@@ -262,7 +262,7 @@ class Doc_Approval(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Адресат документу
+# Адресат документу, або відповідальний за виконання у наказі
 class Doc_Recipient(models.Model):
     document = models.ForeignKey(Document, related_name='recipients', on_delete=models.RESTRICT)
     recipient = models.ForeignKey(Employee_Seat, related_name='recipient_doc', on_delete=models.RESTRICT)

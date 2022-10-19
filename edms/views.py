@@ -178,6 +178,12 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'deadline' in doc_modules:
             post_deadline(new_doc, doc_modules['deadline'])
 
+        if 'decree_articles' in doc_modules:
+            post_employee_seat(new_doc, doc_modules['employee_seat'])
+
+        if 'decree_articles' in doc_modules:
+            post_decree_articles(new_doc, doc_modules['decree_articles'])
+
         return recipients
     except ValidationError as err:
         raise err
@@ -482,6 +488,8 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
             'emp': empSeat.employee.pip,
             'name': empSeat.employee.pip + ', ' + (empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)'),
+            'is_dep_chief': 'true' if empSeat.seat.is_dep_chief else '',
+            'on_vacation': 'true' if empSeat.employee.on_vacation else ''
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee')
                 .filter(employee__is_pc_user=True)

@@ -13,17 +13,6 @@ class MultiSelectorWithList extends React.Component {
     selected_list: []
   };
 
-  // componentDidMount() {
-  //   axiosGetRequest(`get_${this.props.listNameForUrl}'`)
-  //     .then((response) => {
-  //       this.setState({
-  //         choice_list: response,
-  //         loading: false
-  //       });
-  //     })
-  //     .catch((error) => notify(error));
-  // }
-
   onChooseItem = (item) => {
     const selected_item = {
       id: item.id,

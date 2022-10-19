@@ -1,20 +1,18 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
-from django.db.models import FilteredRelation, Q
+from django.db.models import FilteredRelation
 import json
 from django.core import serializers
-from django.db.models import Prefetch
 from django.utils.timezone import datetime
 from django.db.models import Exists, OuterRef
 from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
-from plxk.api.pagination import sort_query_set, filter_query_set
 from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
-from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline
+from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
+    get_employee_seat, get_decree_articles
 
 testing = settings.STAS_DEBUG
 
@@ -1166,6 +1164,12 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'deadline':
             doc_modules.update({'deadline': get_deadline(doc)})
+
+        elif module['module'] == 'employee_seat':
+            doc_modules.update({'employee_seat': get_employee_seat(doc)})
+
+        elif module['module'] == 'decree_articles':
+            doc_modules.update({'decree_articles': get_decree_articles(doc)})
 
     return doc_modules
 

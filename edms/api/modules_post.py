@@ -8,7 +8,7 @@ from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
     Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
-    Doc_Contract_Subject, Doc_Deadline
+    Doc_Contract_Subject, Doc_Deadline, Doc_Recipient, Decree_Article, Decree_Article_Responsible
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -401,6 +401,34 @@ def post_deadline(new_doc, deadline):
     if deadline:
         new_deadline = Doc_Deadline(document=new_doc, deadline=deadline)
         new_deadline.save()
+
+
+@try_except
+def post_employee_seat(new_doc, employee_seat):
+    if employee_seat:
+        new_doc_employee_seat = Doc_Recipient(document=new_doc, recipient_id=employee_seat)
+        new_doc_employee_seat.save()
+
+
+@try_except
+def post_decree_articles(new_doc, decree_articles):
+    if decree_articles:
+        for article in decree_articles:
+            decree_article_instance = Decree_Article(document=new_doc,
+                                                     text=article['text'],
+                                                     term=article['term'])
+            if article['term'] == 'term':
+                decree_article_instance.deadline = article['deadline']
+                decree_article_instance.periodicity = article['periodicity']
+            decree_article_instance.save()
+            post_decree_article_responsibles(decree_article_instance.id, article['responsibles'])
+
+
+@try_except
+def post_decree_article_responsibles(new_article_id, responsibles):
+    for responsible in responsibles:
+        new_resp = Decree_Article_Responsible(article_id=new_article_id, responsible_id=responsible['id'])
+        new_resp.save()
 
 
 @try_except
