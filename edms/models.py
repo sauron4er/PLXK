@@ -519,7 +519,7 @@ class Contract_Subject_To_Work(models.Model):
 # ---------------------------------------------------------------------------------------------------------------------
 # Пункти проекту договору
 class Decree_Article(models.Model):
-    document = models.ForeignKey(Document, related_name='articles', on_delete=models.RESTRICT)
+    document = models.ForeignKey(Document, related_name='decree_articles', on_delete=models.RESTRICT)
     text = models.CharField(max_length=5000)
     term = models.CharField(max_length=8, default='term')  # 'term', 'constant', 'no_term'
     deadline = models.DateField(null=True, blank=True)

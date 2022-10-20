@@ -119,19 +119,20 @@ def get_decree_articles(doc):
 
         decree_articles = [{
             'id': article.id,
-            'text': article.id,
+            'text': article.text,
             'term': article.term,
-            'deadline': normalize_date(article.deadline) if article.deadline else '',
+            'deadline': date.strftime(article.deadline, '%Y-%m-%d') if article.deadline else '',
+            'status': 'old',
+            # 'deadline': normalize_date(article.deadline) if article.deadline else '',
             'periodicity': article.periodicity or '',
             'responsibles': [{
-                'id': responsible.id,
-                'responsible_id': responsible.responsible.id,
+                'article_responsible_id': responsible.id,
+                'id': responsible.responsible.id,
                 'name': responsible.responsible.employee.pip +
                         ', ' + (responsible.responsible.seat.seat
                                 if responsible.responsible.is_main is True
                                 else responsible.responsible.seat.seat + ' (в.о.)'),
-
-                # responsible.seat.seat if responsible.is_main else responsible.seat.seat + ' (в.о.)'
+                'status': 'old',
 
             } for responsible in article.responsibles.filter(is_active=True)],
         } for article in decree_articles_query]

@@ -30,7 +30,9 @@ import ApprovalDelegation from 'edms/templates/edms/my_docs/doc_info/doc_info_mo
 import {Loader} from 'templates/components/loaders';
 import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/registration';
 import NewSigners from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_signers';
-import ToInform from "./doc_info_modules/modals/to_inform";
+import ToInform from './doc_info_modules/modals/to_inform';
+import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
+import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 
 class Document extends React.Component {
   state = {
@@ -84,6 +86,7 @@ class Document extends React.Component {
           ready_for_render: true
         });
         docInfoStore.info = response;
+        decreeArticlesStore.decree_articles = response?.decree_articles;
 
         // Якщо в історії документа автор хоч одного запису не є автором документа - документ не видаляється.
         for (let i = 0; i <= response.path.length - 1; i++) {
@@ -126,7 +129,7 @@ class Document extends React.Component {
         formData.append('change__updated_files', file);
       });
     }
-  
+
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
@@ -142,10 +145,11 @@ class Document extends React.Component {
     formData.append('delegation_receiver_id', docInfoStore.delegation_receiver_id);
     formData.append('user_is_super_manager', info.user_is_super_manager);
     formData.append('registration_number', docInfoStore.info.registration_number);
-    formData.append('doc_type_version', docInfoStore.info.doc_type_version.id);
+    formData.append('doc_type_version', docInfoStore.info.doc_type_version);
     formData.append('deleted_approval_id', docInfoStore.deleted_approval_id);
     formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
     formData.append('deadline', JSON.stringify(docInfoStore?.info?.deadline?.deadline));
+    formData.append('decree_articles', JSON.stringify(decreeArticlesStore?.decree_articles));
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -187,7 +191,7 @@ class Document extends React.Component {
       notify('Оберіть файл.');
       docInfoStore.button_clicked = false;
 
-      // Кнопка "Резолюція" відкриває окремий модуль
+      // Відкриваємо модуль
     } else if ([10, 15, 18, 21, 22, 28, 31].includes(mark_id)) {
       this.openModal(mark_id);
 
@@ -258,10 +262,22 @@ class Document extends React.Component {
         });
         break;
       case 18:
-        this.setState({
-          modal: <EditFiles onCloseModal={this.onCloseModal} onSubmit={this.handleFilesChange} files={this.state.info.old_files} />,
-          modal_open: true
-        });
+        if (this.state.info.meta_type_id === 14) {
+          this.setState({
+            modal: (
+              <EditDecreeArticles
+                onCloseModal={this.onCloseModal}
+                onSubmit={this.handleDecreeArticlesChange}
+              />
+            ),
+            modal_open: true
+          });
+        } else {
+          this.setState({
+            modal: <EditFiles onCloseModal={this.onCloseModal} onSubmit={this.handleFilesChange} files={this.state.info.old_files} />,
+            modal_open: true
+          });
+        }
         break;
       case 21:
         this.setState({
@@ -308,13 +324,7 @@ class Document extends React.Component {
         break;
       case 31:
         this.setState({
-          modal: (
-            <ToInform
-              onCloseModal={this.onCloseModal}
-              onSubmit={this.handleToInform}
-              doc_id={this.props.doc_id}
-            />
-          ),
+          modal: <ToInform onCloseModal={this.onCloseModal} onSubmit={this.handleToInform} doc_id={this.props.doc_id} />,
           modal_open: true
         });
         break;
@@ -372,6 +382,13 @@ class Document extends React.Component {
   };
 
   handleFilesChange = (comment) => {
+    this.setState({comment: comment}, () => {
+      this.postMark(18);
+      this.onCloseModal();
+    });
+  };
+
+  handleDecreeArticlesChange = (comment) => {
     this.setState({comment: comment}, () => {
       this.postMark(18);
       this.onCloseModal();

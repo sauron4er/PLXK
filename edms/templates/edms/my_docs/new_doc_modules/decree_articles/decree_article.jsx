@@ -2,9 +2,8 @@
 import React, {useEffect, useState} from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
+import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 import TextInput from 'templates/components/form_modules/text_input';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import ListForMultiSelector from 'templates/components/form_modules/selectors/list_for_multi_selector';
@@ -12,28 +11,28 @@ import DecreeArticleDeadlines from 'edms/templates/edms/my_docs/new_doc_modules/
 
 function DecreeArticle(props) {
   const [allChiefsAdded, setallChiefsAdded] = useState(false);
-  const [selectedResponsible, setSelectedResponsible] = useState(0);
-  const [selectedResponsibleName, setSelectedResponsibleName] = useState('');
+  // const [selectedResponsible, setSelectedResponsible] = useState(0);
+  // const [selectedResponsibleName, setSelectedResponsibleName] = useState('');
 
   function delArticle(e) {
-    let articles = [...newDocStore.new_document.decree_articles];
+    let articles = [...decreeArticlesStore.decree_articles];
     let article = articles[props.index];
 
     if (article.status === 'new') articles.splice(props.index, 1);
     else article.status = 'delete';
 
-    newDocStore.new_document.decree_articles = [...articles];
+    decreeArticlesStore.decree_articles = [...articles];
   }
 
   function changeField(e, field) {
-    let article = {...newDocStore.new_document.decree_articles[props.index]};
+    let article = {...decreeArticlesStore.decree_articles[props.index]};
     article[field] = e.target.value;
-    newDocStore.new_document.decree_articles[props.index] = {...article};
+    decreeArticlesStore.decree_articles[props.index] = {...article};
   }
 
   function selectResponsible(item) {
-    setSelectedResponsible(item.id);
-    setSelectedResponsibleName(item.name);
+    // setSelectedResponsible(item.id);
+    // setSelectedResponsibleName(item.name);
 
     addResponsible(item.id);
   }
@@ -47,9 +46,9 @@ function DecreeArticle(props) {
   }
 
   function addResponsible(selected_responsible_id) {
-    let articles = [...newDocStore.new_document.decree_articles];
-
-    const item = getItemById(selected_responsible_id, articles[props.index].responsibles);
+    let article = { ...decreeArticlesStore.decree_articles[props.index] };
+  
+    const item = getItemById(selected_responsible_id, article.responsibles);
 
     if (item === -1) {
       const selected_responsible = {
@@ -58,26 +57,26 @@ function DecreeArticle(props) {
         files_old: [],
         done: false
       };
-      let new_responsibles = [...articles[props.index].responsibles];
+      let new_responsibles = [...article.responsibles];
       new_responsibles.push(selected_responsible);
       // new_responsibles = uniqueArray(new_responsibles);
-      articles[props.index].responsibles = new_responsibles;
-      newDocStore.new_document.decree_articles[props.index] = articles[props.index];
+      article.responsibles = new_responsibles;
+      decreeArticlesStore.decree_articles[props.index] = article;
     } else {
       if (item.status === 'delete') {
-        const responsible_index = getIndex(item.id, articles[props.index].responsibles);
-        articles[props.index].responsibles[responsible_index].status = 'old';
-        articles[props.index].responsibles[responsible_index].done = 'false';
-        newDocStore.new_document.decree_articles[props.index] = articles[props.index];
+        const responsible_index = getIndex(item.id, article.responsibles);
+        article.responsibles[responsible_index].status = 'old';
+        // article.responsibles[responsible_index].done = 'false';
+        decreeArticlesStore.decree_articles[props.index] = article;
       }
     }
 
-    setSelectedResponsible(0);
-    setSelectedResponsibleName('');
+    // setSelectedResponsible(0);
+    // setSelectedResponsibleName('');
   }
 
   function delResponsible(i) {
-    let article = {...newDocStore.new_document.decree_articles[props.index]};
+    let article = {...decreeArticlesStore.decree_articles[props.index]};
 
     if (article.responsibles[i].status === 'new') {
       article.responsibles.splice(i, 1);
@@ -86,7 +85,7 @@ function DecreeArticle(props) {
       article.status = 'change';
     }
 
-    newDocStore.new_document.decree_articles[props.index] = {...article};
+    decreeArticlesStore.decree_articles[props.index] = {...article};
   }
 
   return (
@@ -94,14 +93,14 @@ function DecreeArticle(props) {
       <div className='font-weight-bold'>{props.index + 1}</div>
       <div className='d-flex'>
         <TextInput
-          text={newDocStore.new_document.decree_articles[props.index].text}
+          text={decreeArticlesStore.decree_articles[props.index].text}
           onChange={(e) => changeField(e, 'text')}
           maxLength={5000}
           disabled={false}
         />
         <div>
           <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={delArticle}>
-            <FontAwesomeIcon icon={faTimes} />
+            <span aria-hidden='true'>&times;</span>
           </button>
         </div>
       </div>
@@ -114,7 +113,7 @@ function DecreeArticle(props) {
         getOptionValue={(option) => option.id}
         disabled={false}
       />
-      <ListForMultiSelector list={newDocStore.new_document.decree_articles[props.index].responsibles} delItem={delResponsible} />
+      <ListForMultiSelector list={decreeArticlesStore.decree_articles[props.index].responsibles} delItem={delResponsible} />
 
       <If condition={!allChiefsAdded}>
         <button className='btn btn-sm btn-outline-secondary mt-1' onClick={() => addAllChiefs()}>

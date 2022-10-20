@@ -1,22 +1,22 @@
 'use strict';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from '../new_doc_store';
+import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 import DateInput from 'templates/components/form_modules/date_input';
 
 function DecreeArticleDeadlines(props) {
-  const article = {...newDocStore.new_document.decree_articles[props.index]};
+  const article = {...decreeArticlesStore.decree_articles[props.index]};
 
   function changeTerm(type) {
-    newDocStore.new_document.decree_articles[props.index].term = type;
+    decreeArticlesStore.decree_articles[props.index].term = type;
   }
 
   function changeDeadline(e) {
-    newDocStore.new_document.decree_articles[props.index].deadline = e.target.value;
+    decreeArticlesStore.decree_articles[props.index].deadline = e.target.value;
   }
 
   function changePeriodicity(periodicity) {
-    newDocStore.new_document.decree_articles[props.index].periodicity = periodicity;
+    decreeArticlesStore.decree_articles[props.index].periodicity = periodicity;
   }
 
   return (

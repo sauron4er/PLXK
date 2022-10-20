@@ -33,6 +33,7 @@ import {
 } from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
+import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 import 'static/css/my_styles.css';
 import CustomSelect from 'edms/templates/edms/my_docs/new_doc_modules/custom_select';
 import ProductType from 'edms/templates/edms/my_docs/new_doc_modules/product_type';
@@ -87,6 +88,8 @@ class NewDocument extends React.Component {
     this.getDocTypeModules();
     // Якщо це чернетка чи шаблон, отримуємо з бд дані:
     this.getDocInfo();
+    // Стираємо пункти наказу, які могли залишитись після редагування попереднього наказу
+    decreeArticlesStore.decree_articles = [];
   }
 
   onChange = (event) => {
@@ -461,7 +464,6 @@ class NewDocument extends React.Component {
               'cost_rates',
               'deadline',
               'employee_seat',
-              'decree_articles'
             ].includes(module.module)
           ) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
@@ -471,7 +473,9 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.props.doc.document_link;
           } else if (module.module === 'registration') {
             doc_modules[module.module] = newDocStore.new_document.registration_number;
-          }  else if (module.module === 'contract_subject') {
+          } else if (module.module === 'decree_articles') {
+            doc_modules[module.module] = decreeArticlesStore.decree_articles;
+          } else if (module.module === 'contract_subject') {
             doc_modules[module.module] = {
               id: newDocStore.new_document.contract_subject,
               input: newDocStore.new_document.contract_subject_input

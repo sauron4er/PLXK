@@ -22,12 +22,14 @@ function ListForMultiSelector(props) {
   
   return (
     <For each='item' index='index' of={props.list}>
-      <li key={index} className='ml-3'>
-        {item.name}{' '}
-        <button className='btn btn-sm btn-outline-secondary ml-1' onClick={() => props.delItem(index)}>
-          <span aria-hidden='true'>&times;</span>
-        </button>
-      </li>
+      <If condition={item.status !== 'delete'}>
+        <li key={index} className="ml-3">
+          {item.name}{" "}
+          <button className="btn btn-sm btn-outline-secondary ml-1" onClick={() => props.delItem(index)}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </li>
+      </If>
     </For>
   );
 }

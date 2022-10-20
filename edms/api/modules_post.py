@@ -178,7 +178,7 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
                 'approve_queue': 3
             }])
 
-    else:  # Договори
+    elif doc_request['document_type'] == 20:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
@@ -209,6 +209,21 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
                 'approve_queue': 2  # Технічний директор теж отримує на погодження
             }
             ])
+    else:  # Накази
+        if company == 'ТДВ':
+            approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
+
+            approvals.extend([{
+                'id': acting_director,
+                'approve_queue': 2  # Директор останній у списку погоджень
+            }])
+        else:
+            approvals[:] = [i for i in approvals if
+                            not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
+            approvals.extend([{
+                'id': acting_tov_director,
+                'approve_queue': 2  # Директор останній у списку погоджень
+            }])
 
     # Видаляємо керівника відділу зі списку і додаємо, щоб він там був лише раз (якщо це не директор):
     chief = get_dep_chief_id(doc_request['employee_seat'])
@@ -414,14 +429,46 @@ def post_employee_seat(new_doc, employee_seat):
 def post_decree_articles(new_doc, decree_articles):
     if decree_articles:
         for article in decree_articles:
-            decree_article_instance = Decree_Article(document=new_doc,
-                                                     text=article['text'],
-                                                     term=article['term'])
-            if article['term'] == 'term':
-                decree_article_instance.deadline = article['deadline']
-                decree_article_instance.periodicity = article['periodicity']
-            decree_article_instance.save()
-            post_decree_article_responsibles(decree_article_instance.id, article['responsibles'])
+            post_article(new_doc.id, article)
+
+
+@try_except
+def change_decree_articles(document_id, decree_articles):
+    for article in decree_articles:
+        if 'id' in article:
+            change_article(article)
+        else:
+            post_article(document_id, article)
+
+
+@try_except
+def change_article(article):
+    article_instance = Decree_Article.objects.get(id=article['id'])
+
+    if article['status'] == 'delete':
+        article_instance.is_active = False
+        article_instance.save()
+    else:
+        article_instance.text = article['text']
+        article_instance.term = article['term']
+
+        if article['term'] == 'term':
+            article_instance.deadline = article['deadline']
+            article_instance.periodicity = article['periodicity']
+
+        article_instance.save()
+
+
+@try_except
+def post_article(doc_id, article):
+    decree_article_instance = Decree_Article(document_id=doc_id,
+                                             text=article['text'],
+                                             term=article['term'])
+    if article['term'] == 'term':
+        decree_article_instance.deadline = article['deadline']
+        decree_article_instance.periodicity = article['periodicity']
+    decree_article_instance.save()
+    post_decree_article_responsibles(decree_article_instance.id, article['responsibles'])
 
 
 @try_except

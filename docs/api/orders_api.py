@@ -226,3 +226,8 @@ def get_order_code_for_table(order, type_name, code):
         return type_letter + code
     else:
         return ''
+
+
+@try_except
+def post_order_from_edms(edms_doc_instance):
+    pass
