@@ -752,7 +752,7 @@ def edms_my_docs(request):
                     send_email_supervisor('new', doc_request, supervisor['mail'])
 
             # Відправляємо листа Лебедєву
-            if request.POST['document_type'] in ['14', '3']:
+            if request.POST['document_type'] in ['20', '14', '3']:
                 send_email_lebedev(doc_request, main_field)
 
         return HttpResponse(new_doc.pk)
