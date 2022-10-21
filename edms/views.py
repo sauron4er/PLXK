@@ -96,25 +96,6 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_recipient_chief(doc_request, doc_modules['recipient_chief']['id'])
             recipients.append({'id': doc_modules['recipient_chief']['id'], 'type': 'chief'})
 
-        # Додаємо список отримувачів на ознайомлення
-        if 'acquaint_list' in doc_modules:
-            post_acquaint_list(doc_request, doc_modules['acquaint_list'])
-            for acquaint in doc_modules['acquaint_list']:
-                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
-
-        # Додаємо список отримувачів на підпис
-        if 'sign_list' in doc_modules:
-            for sign in doc_modules['sign_list']:
-                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
-                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
-                    recipients.append({'id': sign['id'], 'type': 'sign'})
-
-        # Додаємо список отримувачів на візування
-        if 'approval_list' in doc_modules:
-            company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
-            contract_subject_approvals = get_approvals_for_contract_subject(doc_modules)
-            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
-
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
 
@@ -178,7 +159,32 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'deadline' in doc_modules:
             post_deadline(new_doc, doc_modules['deadline'])
 
-        return recipients
+        # Записуємо main_field
+        main_field = get_main_field(new_doc)
+        new_doc.main_field = main_field[0:49]
+        new_doc.save()
+
+        # Наступні три модулі треба опрацьовувати в кінці, щоб надсилання листів відбувалося з записаними main_field
+        # Додаємо список отримувачів на ознайомлення
+        if 'acquaint_list' in doc_modules:
+            post_acquaint_list(doc_request, doc_modules['acquaint_list'])
+            for acquaint in doc_modules['acquaint_list']:
+                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
+
+        # Додаємо список отримувачів на підпис
+        if 'sign_list' in doc_modules:
+            for sign in doc_modules['sign_list']:
+                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
+                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
+                    recipients.append({'id': sign['id'], 'type': 'sign'})
+
+        # Додаємо список отримувачів на візування
+        if 'approval_list' in doc_modules:
+            company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
+            contract_subject_approvals = get_approvals_for_contract_subject(doc_modules)
+            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
+
+        return recipients, new_doc
     except ValidationError as err:
         raise err
 
@@ -715,12 +721,8 @@ def edms_my_docs(request):
         # Модульна система:
         # В деяких модулях прямо може бути вказано отримувачів,
         # тому post_modules повертає їх в array, який може бути і пустий
-        module_recipients = post_modules(doc_request, doc_files, new_path, new_doc)
-
-        # Записуємо main_field
-        main_field = get_main_field(new_doc)
-        new_doc.main_field = main_field[0:49]
-        new_doc.save()
+        # також post_modules зберігає main_field в документі і повертає оновлений документ
+        module_recipients, new_doc = post_modules(doc_request, doc_files, new_path, new_doc)
 
         # Запускаємо в роботу
         if doc_request['status'] in ['doc', 'change']:
@@ -743,7 +745,7 @@ def edms_my_docs(request):
 
             # Відправляємо листа Лебедєву
             if request.POST['document_type'] in ['20', '14', '3']:
-                send_email_lebedev(doc_request, main_field)
+                send_email_lebedev(doc_request, new_doc.main_field)
 
         return HttpResponse(new_doc.pk)
 
