@@ -29,7 +29,8 @@ def get_order_info(order, employee_id):
         'responsible_name': order.responsible.last_name + ' ' + order.responsible.first_name if order.responsible else '',
         'supervisory': order.supervisory_id,
         'supervisory_name': order.supervisory.last_name + ' ' + order.supervisory.first_name,
-        'done': order.done
+        'done': order.done,
+        'edms_doc_id': order.edms_doc.id if order.edms_doc else 0
     }
 
     articles_raw = Order_article.objects.filter(order_id=order['id']).filter(is_active=True)
@@ -226,8 +227,3 @@ def get_order_code_for_table(order, type_name, code):
         return type_letter + code
     else:
         return ''
-
-
-@try_except
-def post_order_from_edms(edms_doc_instance):
-    pass

@@ -14,10 +14,12 @@ export const areArticlesValid = () => {
     if (!article.text) {
       notify("Потрібно заповнити поле \"Текст\" у всіх пунктах");
       return false;
-    } else if (!article.responsibles.length || !article.responsibles.some(not_deleted)) {
-      notify("Потрібно обрати відповідальних у всіх пунктах");
-      return false;
-    } else if (article.term === 'term' && !article.deadline) {
+    }
+    // else if (!article.responsibles.length || !article.responsibles.some(not_deleted)) {
+    //   notify("Потрібно обрати відповідальних у всіх пунктах");
+    //   return false;
+    // }
+    else if (article.term === 'term' && !article.deadline) {
       notify("Потрібно обрати термін у пунктах зі строком виконання");
       return false;
     }

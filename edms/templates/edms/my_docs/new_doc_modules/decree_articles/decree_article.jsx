@@ -114,7 +114,7 @@ function DecreeArticle(props) {
         disabled={false}
       />
       <ListForMultiSelector list={decreeArticlesStore.decree_articles[props.index].responsibles} delItem={delResponsible} />
-
+      
       <If condition={!allChiefsAdded}>
         <button className='btn btn-sm btn-outline-secondary mt-1' onClick={() => addAllChiefs()}>
           Додати начальників всіх відділів

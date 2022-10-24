@@ -8,7 +8,7 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
 from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, \
     check_lawyers_received
-from docs.api.orders_api import post_order_from_edms
+from docs.api.orders_save_from_edms_api import post_order_from_edms
 from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
@@ -1237,15 +1237,15 @@ def edms_mark(request):
             # Реєстрація документа
             elif doc_request['mark'] == '27':
                 if doc_request['doc_meta_type_id'] == 14:  # Наказ
-                    document_instance = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
-                    post_order_from_edms(document_instance)
+                    # document_query = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
+                    post_order_from_edms(doc_request['document'], doc_request['registration_number'])
                 else:
                     registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
                     if not registered:
                         return HttpResponse('reg_unique_fail')
 
-                    deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
-                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
+                new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # На погодження
             elif doc_request['mark'] == '28':
