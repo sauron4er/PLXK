@@ -19,12 +19,15 @@ import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
+import Document from "edms/templates/edms/my_docs/doc_info/document";
+import Modal from "react-responsive-modal";
 
 class Order extends React.Component {
   state = {
     loading: false,
     error404: false,
-    request_sent: false
+    request_sent: false,
+    edms_doc_opened: false,
   };
 
   componentDidMount() {
@@ -265,8 +268,10 @@ class Order extends React.Component {
   render() {
     // const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done, articles} = ordersStore.order;
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
-    const {loading, error404, request_sent} = this.state;
-
+    const {loading, error404, request_sent, edms_doc_opened} = this.state;
+  
+    console.log(order);
+  
     return (
       <Choose>
         <When condition={error404}>
@@ -403,6 +408,14 @@ class Order extends React.Component {
                 </div>
               </div>
             </If>
+            
+            <If condition={order.edms_doc_id}>
+              <hr/>
+              <div>Документ в системі електронного документообігу: № {order.edms_doc_id}</div>
+              <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
+                Показати
+              </button>
+            </If>
 
             <hr />
             <div className='d-flex'>
@@ -472,6 +485,16 @@ class Order extends React.Component {
             <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />
             </If>
+            
+            <Modal
+              open={edms_doc_opened}
+              onClose={() => this.setState({edms_doc_opened: false})}
+              showCloseIcon={true}
+              closeOnOverlayClick={true}
+              styles={{modal: {marginTop: 50}}}
+            >
+              <Document doc_id={order.edms_doc_id} closed={true} />
+            </Modal>
 
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />

@@ -262,7 +262,7 @@ class Doc_Approval(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Адресат документу
+# Адресат документу, або відповідальний за виконання у наказі
 class Doc_Recipient(models.Model):
     document = models.ForeignKey(Document, related_name='recipients', on_delete=models.RESTRICT)
     recipient = models.ForeignKey(Employee_Seat, related_name='recipient_doc', on_delete=models.RESTRICT)
@@ -513,6 +513,25 @@ class Contract_Subject_Approval(models.Model):
 class Contract_Subject_To_Work(models.Model):
     subject = models.ForeignKey(Contract_Subject, related_name='to_work_recipients', on_delete=models.RESTRICT)
     recipient = models.ForeignKey(Employee_Seat, related_name='to_work_for_contract_subject', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Пункти проекту договору
+class Decree_Article(models.Model):
+    document = models.ForeignKey(Document, related_name='decree_articles', on_delete=models.RESTRICT)
+    text = models.CharField(max_length=5000)
+    term = models.CharField(max_length=8, default='term')  # 'term', 'constant', 'no_term'
+    deadline = models.DateField(null=True, blank=True)
+    periodicity = models.CharField(max_length=1, null=True, blank=True)  # null - одноразовий, 'm' - щомісяця, 'y' - щороку
+    all_chiefs = models.BooleanField(default=False)  # Розіслати наказ усім начальникам відділів
+    is_active = models.BooleanField(default=True)
+
+
+# Відповідальні за виконання
+class Decree_Article_Responsible(models.Model):
+    article = models.ForeignKey(Decree_Article, related_name='responsibles', on_delete=models.RESTRICT)
+    responsible = models.ForeignKey(Employee_Seat, related_name='responsible_for_decree_articles', null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
-from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, Doc_Deadline
+from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, \
+    Doc_Deadline, Doc_Recipient, Decree_Article
 
 
 @try_except
@@ -88,4 +89,54 @@ def get_deadline(doc):
 
         return {'deadline': normalize_date(deadline), 'status': status}
     except Doc_Deadline.DoesNotExist:
+        return ''
+
+
+@try_except
+def get_employee_seat(doc):
+    try:
+        emp_seat_instance = Doc_Recipient.objects.get(document_id=doc.id, is_active=True)
+
+        employee_seat = {
+            'id': emp_seat_instance.id,
+            'name': emp_seat_instance.recipient.employee.pip,
+            'seat': emp_seat_instance.recipient.seat.seat
+            if emp_seat_instance.recipient.is_main
+            else '(в.о.) ' + emp_seat_instance.recipient.seat.seat,
+        }
+
+        return employee_seat
+
+    except Doc_Recipient.DoesNotExist:
+        return ''
+
+
+@try_except
+def get_decree_articles(doc):
+    decree_articles_query = Decree_Article.objects.prefetch_related('responsibles').filter(document_id=doc.id, is_active=True)
+
+    if decree_articles_query:
+
+        decree_articles = [{
+            'id': article.id,
+            'text': article.text,
+            'term': article.term,
+            'deadline': date.strftime(article.deadline, '%Y-%m-%d') if article.deadline else '',
+            'status': 'old',
+            # 'deadline': normalize_date(article.deadline) if article.deadline else '',
+            'periodicity': article.periodicity or '',
+            'responsibles': [{
+                'article_responsible_id': responsible.id,
+                'id': responsible.responsible.id,
+                'name': responsible.responsible.employee.pip +
+                        ', ' + (responsible.responsible.seat.seat
+                                if responsible.responsible.is_main is True
+                                else responsible.responsible.seat.seat + ' (в.о.)'),
+                'status': 'old',
+
+            } for responsible in article.responsibles.filter(is_active=True)],
+        } for article in decree_articles_query]
+
+        return decree_articles
+    else:
         return ''

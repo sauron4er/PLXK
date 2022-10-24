@@ -148,7 +148,7 @@ class Docs extends React.Component {
         answer = 'Документ №' + id + ' погоджено.';
         break;
       case 18:
-        answer = 'Файли документу №' + id + ' оновлено.';
+        answer = 'Зміни в документі №' + id + ' збережено.';
         break;
       case 21:
         answer = 'Відповідь на коментар додано';

@@ -67,6 +67,7 @@ class Order_doc(models.Model):
     author = models.ForeignKey(User, related_name='Created_documents', on_delete=models.RESTRICT)
     responsible = models.ForeignKey(User, related_name='responsible_for_documents', null=True, blank=True, on_delete=models.RESTRICT)
     supervisory = models.ForeignKey(User, related_name='supervisory_for_documents', null=True, blank=True, on_delete=models.RESTRICT)
+    edms_doc = models.ForeignKey(edms.Document, related_name='created_order', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Наказ
     done = models.BooleanField(default=False)
     is_act = models.BooleanField(default=True)
 
@@ -123,7 +124,7 @@ class Contract(models.Model):
     responsible = models.ForeignKey(User, null=True, blank=True, related_name='responsible_for_contracts', on_delete=models.RESTRICT)
     department = models.ForeignKey(Department, related_name='contracts', null=True, blank=True, on_delete=models.RESTRICT)
     lawyers_received = models.BooleanField(default=False)
-    edms_doc = models.ForeignKey(edms.Document, related_name='edms_docs', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
+    edms_doc = models.ForeignKey(edms.Document, related_name='created_contract', null=True, on_delete=models.RESTRICT)  # посилання на документ в edms, яким було створено цей Договір (для отримання тим документом файлів для історії)
     incoterms = models.CharField(max_length=5000, null=True)
     purchase_terms = models.CharField(max_length=5000, null=True)
     basic_contract = models.ForeignKey('self', related_name='additional_contracts', null=True, blank=True, on_delete=models.RESTRICT)

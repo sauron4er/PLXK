@@ -6,7 +6,9 @@ from django.db import transaction
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
-from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, check_lawyers_received
+from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, \
+    check_lawyers_received
+from docs.api.orders_save_from_edms_api import post_order_from_edms
 from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
@@ -158,6 +160,12 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         if 'deadline' in doc_modules:
             post_deadline(new_doc, doc_modules['deadline'])
+        
+        if 'decree_articles' in doc_modules:
+            post_employee_seat(new_doc, doc_modules['employee_seat'])
+
+        if 'decree_articles' in doc_modules:
+            post_decree_articles(new_doc, doc_modules['decree_articles'])
 
         # Записуємо main_field
         main_field = get_main_field(new_doc)
@@ -488,6 +496,8 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
             'emp': empSeat.employee.pip,
             'name': empSeat.employee.pip + ', ' + (empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)'),
+            'is_dep_chief': 'true' if empSeat.seat.is_dep_chief else '',
+            'on_vacation': 'true' if empSeat.employee.on_vacation else ''
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee')
                 .filter(employee__is_pc_user=True)
@@ -1108,12 +1118,6 @@ def edms_mark(request):
 
                 # Автору оновлення ставимо галочку у таблицю
                 arrange_approve(doc_request, True)
-                # approval_instance = Doc_Approval.objects.filter(recipient_id=doc_request['employee_seat'])
-                # approval_id = Doc_Approval.objects.values_list('id', flat=True) \
-                #     .filter(document_id=doc_request['document']) \
-                #     .filter(approve_queue=0) \
-                #     .filter(is_active=True)[0]
-                # post_approve(doc_request, approval_id, True)
 
                 if mark_author == doc_request['doc_author_id']:
                     # Якщо автор оновлення = автор документа, відправляємо на першу фазу
@@ -1124,15 +1128,18 @@ def edms_mark(request):
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
                     post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 6)
 
-                # Опрацьовуємо оновлені файли AAA
-                if 'change__new_files' in request.FILES:
-                    changes_add_files(request.FILES.getlist('change__new_files'), doc_request)
+                if doc_request['doc_meta_type_id'] == 14:  # Проект наказу
+                    change_decree_articles(doc_request['document'], json.loads(doc_request['decree_articles']))
+                else:  # Зміна файлів у візуванні договору
+                    # Опрацьовуємо оновлені файли AAA
+                    if 'change__new_files' in request.FILES:
+                        changes_add_files(request.FILES.getlist('change__new_files'), doc_request)
 
-                if 'change__deleted_files' in request.POST:
-                    deactivate_files(doc_request)
+                    if 'change__deleted_files' in request.POST:
+                        deactivate_files(doc_request)
 
-                if 'change__updated_files' in request.FILES:
-                    update_files(request.FILES.getlist('change__updated_files'), doc_request)
+                    if 'change__updated_files' in request.FILES:
+                        update_files(request.FILES.getlist('change__updated_files'), doc_request)
 
             # Відповідь на коментар (відправляємо документ у MarkDemand автору оригінального коментарю)
             elif doc_request['mark'] == '21':
@@ -1231,9 +1238,13 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
-                if not registered:
-                    return HttpResponse('reg_unique_fail')
+                if doc_request['doc_meta_type_id'] == 14:  # Наказ
+                    # document_query = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
+                    post_order_from_edms(doc_request['document'], doc_request['registration_number'])
+                else:
+                    registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
+                    if not registered:
+                        return HttpResponse('reg_unique_fail')
 
                 deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
