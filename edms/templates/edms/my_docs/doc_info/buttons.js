@@ -163,7 +163,7 @@ class Buttons extends React.Component {
         {/* Якщо автор я */}
         <If condition={user_is_doc_responsible}>
           {/*Якщо є дедлайн*/}
-          <If condition={docInfoStore?.info?.deadline !== '' && !info.archived}>
+          <If condition={docInfoStore.info.deadline && docInfoStore.info.deadline !== '' && !info.archived}>
             <button
               type='button'
               className='btn btn-secondary mr-1 mb-1'
@@ -184,12 +184,20 @@ class Buttons extends React.Component {
               Створити новий документ на основі цього
             </button>
           </If>
-          {/* Якщо ніхто не встиг відреагувати (або це Договір) - можна видалити документ */}
-          <If condition={deletable === true}>
+          {/* якщо це погоджений договір, додаємо кнопку "Відправити у роботу" */}
+          <If condition={info.meta_type_id === 5 && docInfoStore?.info?.approved}>
+            {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
             <button type='button' className='btn btn-secondary mr-1 mb-1'
-                    onClick={() => this.onClick(13)}
+                    onClick={() => this.onClick(31)}
                     disabled={button_clicked}>
-              Видалити
+              Повідомити про підписання договору
+            </button>
+          </If>
+          {/* Редагування наказу автором */}
+          <If condition={info.meta_type_id===14 && !archived && !info.archived}>
+            <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={() => this.onClick(18)}
+                    disabled={button_clicked}>
+              Редагувати пункти наказу
             </button>
           </If>
           {/* Додаємо кнопку Закрити */}
@@ -199,13 +207,12 @@ class Buttons extends React.Component {
               В архів
             </button>
           </If>
-          {/* якщо це погоджений договір, додаємо кнопку "Відправити у роботу" */}
-          <If condition={info.meta_type_id === 5 && docInfoStore?.info?.approved}>
-            {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
+          {/* Якщо ніхто не встиг відреагувати (або це Договір) - можна видалити документ */}
+          <If condition={deletable === true}>
             <button type='button' className='btn btn-secondary mr-1 mb-1'
-                    onClick={() => this.onClick(31)}
+                    onClick={() => this.onClick(13)}
                     disabled={button_clicked}>
-              Повідомити про підписання договору
+              Видалити
             </button>
           </If>
         </If>
@@ -221,6 +228,7 @@ class Buttons extends React.Component {
             </button>
           </If>
         </If>
+        
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={button_clicked}>
           Коментар

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {getEmpSeats} from 'edms/api/get_emp_seats';
+// import {getEmpSeats} from 'edms/api/get_emp_seats';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -56,18 +56,18 @@ export const compareById = (a, b) => {
   return true;
 };
 
-export const getEmpSeatList = () => {
-  const cached_emp_seat_list = JSON.parse(localStorage.getItem('emp_seat_list'));
-  // Знаходимо новий список співробітників, і якщо він != кешованому, оновлюємо кеш і повертаємо результат
-  const get_emp_seats = getEmpSeats();
-  get_emp_seats.then((result) => {
-    if (!compareById(JSON.parse(localStorage.getItem('emp_seat_list')), result)) {
-      localStorage.setItem('emp_seat_list', JSON.stringify(result));
-      return result;
-    }
-    return 0;
-  });
-};
+// export const getEmpSeatList = () => {
+//   const cached_emp_seat_list = JSON.parse(localStorage.getItem('emp_seat_list'));
+//   // Знаходимо новий список співробітників, і якщо він != кешованому, оновлюємо кеш і повертаємо результат
+//   const get_emp_seats = getEmpSeats();
+//   get_emp_seats.then((result) => {
+//     if (!compareById(JSON.parse(localStorage.getItem('emp_seat_list')), result)) {
+//       localStorage.setItem('emp_seat_list', JSON.stringify(result));
+//       return result;
+//     }
+//     return 0;
+//   });
+// };
 
 export const getTextByQueue = (text_list, queue) => {
   for (const i of text_list) {

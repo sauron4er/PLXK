@@ -11,6 +11,8 @@ class CustomSelect extends React.Component {
         return ['Бухгалтерський облік', 'Управлінський облік', 'Податковий облік', 'Загальний'];
       case 'type':
         return ['Операційна підтримка', 'Стратегічна підтримка', 'Управління доступами'];
+      case 'decree_type':
+        return ['Наказ', 'Розпорядження'];
       case 'importancy':
         return ['Дуже терміново', 'Терміново', 'Не терміново', 'На потім'];
       case 'cost_rates_department':

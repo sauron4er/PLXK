@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login
 from django.http import HttpResponse
+from django.db import transaction
 import json
 from .forms import SignUpForm
-from .models import Department, UserProfile
 from edms.api.getters import get_dep_chief
 from plxk.api.try_except import try_except
 from django.contrib.auth.models import User
+from .models import Department, UserProfile, Vacation
+from plxk.api.global_getters import get_userprofiles_list
+from .api.vacations import get_vacations_list, add_or_change_vacation, deactivate_vacation, arrange_vacations_api, end_vacation
 
 
 def signup(request):
@@ -106,3 +109,43 @@ def deact_employee(request, pk):
     employee.is_active = False
     employee.save()
     return HttpResponse('ok')
+
+
+#  --------------------------------------------------- Vacations
+@login_required(login_url='login')
+@try_except
+def vacations(request):
+    vacations = get_vacations_list(request)
+    employees_list = get_userprofiles_list()
+    return render(request, 'accounts/vacations/index.html', {'vacations': vacations,
+                                                             'employees': employees_list})
+
+
+@try_except
+def get_vacations(request):
+    return HttpResponse(json.dumps(get_vacations_list(request)))
+
+
+@transaction.atomic
+@try_except
+def edit_vacation(request):
+    return HttpResponse(add_or_change_vacation(request))
+
+
+@transaction.atomic
+@try_except
+def del_vacation(request):
+    return HttpResponse(deactivate_vacation(request.POST['id']))
+
+
+@transaction.atomic
+@try_except
+def finish_vacation(request):
+    vacation = Vacation.objects.get(id=request.POST['id'])
+    return HttpResponse(end_vacation(vacation))
+
+
+@transaction.atomic
+@try_except
+def arrange_vacations(request):
+    return HttpResponse(arrange_vacations_api())

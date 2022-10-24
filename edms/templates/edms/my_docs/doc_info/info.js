@@ -14,6 +14,8 @@ import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/
 import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
 import CostRates from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/cost_rates';
 import Approved from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approved';
+import EmployeeSeat from "edms/templates/edms/my_docs/doc_info/doc_info_modules/employee_seat";
+import DecreeArticles from "edms/templates/edms/my_docs/doc_info/doc_info_modules/decree_articles/decree_articles";
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -24,7 +26,7 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
-    
+  
     if (info.path) {
       return (
         <div>
@@ -165,6 +167,12 @@ class Info extends React.Component {
                   <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
                     {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}
                     <Approved signed={info.approved} />
+                  </When>
+                  <When condition={module.module === 'decree_articles'}>
+                    <DecreeArticles fieldName={module.field_name} articles={info.decree_articles} />
+                  </When>
+                  <When condition={module.module === 'employee_seat'}>
+                    <EmployeeSeat fieldName={module.field_name} emp_seat={info.employee_seat} />
                   </When>
                 </Choose>
               </div>

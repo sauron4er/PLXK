@@ -3,9 +3,10 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-import {getEmpSeats} from "edms/api/get_emp_seats";
+// import {getEmpSeats} from "edms/api/get_emp_seats";
 import 'static/css/my_styles.css';
 import MultiSelectorWithFilter from "templates/components/form_modules/selectors/multi_selector_with_filter";
+import newDocStore from "edms/templates/edms/my_docs/new_doc_modules/new_doc_store";
 
 class SignList extends React.Component {
   state = {
@@ -26,24 +27,25 @@ class SignList extends React.Component {
 
   // перевіряємо, чи оновився список співробітників з часу останнього візиту
   componentWillMount() {
-    const get_emp_seats = getEmpSeats();
-    get_emp_seats.then((result) => {
-      // Якщо result === 0 - змін у базі не виявлено
-      if (result === 0) {
-        // Але якщо на сторінці два компоненти запитують про зміни,
-        // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
-        // але список не оновлять, тому оновлюємо список самі
-        this.state.seat_list.length === 0
-          ? this.setState({
-              seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
-            })
-          : null;
-      } else {
-        this.setState({
-          seat_list: result
-        });
-      }
-    });
+    this.setState({seat_list: newDocStore.emps_seats_from_local_storage})
+    // const get_emp_seats = getEmpSeats();
+    // get_emp_seats.then((result) => {
+    //   // Якщо result === 0 - змін у базі не виявлено
+    //   if (result === 0) {
+    //     // Але якщо на сторінці два компоненти запитують про зміни,
+    //     // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
+    //     // але список не оновлять, тому оновлюємо список самі
+    //     this.state.seat_list.length === 0
+    //       ? this.setState({
+    //           seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
+    //         })
+    //       : null;
+    //   } else {
+    //     this.setState({
+    //       seat_list: result
+    //     });
+    //   }
+    // });
   }
 
   // надсилає новий список у батьківський компонент:

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import ReactDOM from 'react-dom'
-import Vacations from "boards/templates/boards/vacations/vacations";
+import Vacations from "accounts/templates/accounts/vacations/vacations";
 
 class VacationsIndex extends React.Component {
   render() {

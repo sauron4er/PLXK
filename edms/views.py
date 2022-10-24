@@ -1,6 +1,3 @@
-import os
-import chardet
-
 from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -9,7 +6,9 @@ from django.db import transaction
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
-from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, check_lawyers_received
+from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, \
+    check_lawyers_received
+from docs.api.orders_save_from_edms_api import post_order_from_edms
 from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
@@ -99,25 +98,6 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_recipient_chief(doc_request, doc_modules['recipient_chief']['id'])
             recipients.append({'id': doc_modules['recipient_chief']['id'], 'type': 'chief'})
 
-        # Додаємо список отримувачів на ознайомлення
-        if 'acquaint_list' in doc_modules:
-            post_acquaint_list(doc_request, doc_modules['acquaint_list'])
-            for acquaint in doc_modules['acquaint_list']:
-                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
-
-        # Додаємо список отримувачів на підпис
-        if 'sign_list' in doc_modules:
-            for sign in doc_modules['sign_list']:
-                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
-                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
-                    recipients.append({'id': sign['id'], 'type': 'sign'})
-
-        # Додаємо список отримувачів на візування
-        if 'approval_list' in doc_modules:
-            company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
-            contract_subject_approvals = get_approvals_for_contract_subject(doc_modules)
-            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
-
         if 'days' in doc_modules:
             post_days(doc_request, doc_modules['days'])
 
@@ -180,8 +160,39 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         if 'deadline' in doc_modules:
             post_deadline(new_doc, doc_modules['deadline'])
+        
+        if 'decree_articles' in doc_modules:
+            post_employee_seat(new_doc, doc_modules['employee_seat'])
 
-        return recipients
+        if 'decree_articles' in doc_modules:
+            post_decree_articles(new_doc, doc_modules['decree_articles'])
+
+        # Записуємо main_field
+        main_field = get_main_field(new_doc)
+        new_doc.main_field = main_field[0:49]
+        new_doc.save()
+
+        # Наступні три модулі треба опрацьовувати в кінці, щоб надсилання листів відбувалося з записаними main_field
+        # Додаємо список отримувачів на ознайомлення
+        if 'acquaint_list' in doc_modules:
+            post_acquaint_list(doc_request, doc_modules['acquaint_list'])
+            for acquaint in doc_modules['acquaint_list']:
+                recipients.append({'id': acquaint['id'], 'type': 'acquaint'})
+
+        # Додаємо список отримувачів на підпис
+        if 'sign_list' in doc_modules:
+            for sign in doc_modules['sign_list']:
+                sign_seat = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=sign['id'])[0]
+                if not (doc_request['document_type'] == 2 and sign_seat in [16, 21]):
+                    recipients.append({'id': sign['id'], 'type': 'sign'})
+
+        # Додаємо список отримувачів на візування
+        if 'approval_list' in doc_modules:
+            company = doc_modules['choose_company'] if 'choose_company' in doc_modules else 'ТДВ'
+            contract_subject_approvals = get_approvals_for_contract_subject(doc_modules)
+            post_approvals(doc_request, doc_modules['approval_list'], company, contract_subject_approvals)
+
+        return recipients, new_doc
     except ValidationError as err:
         raise err
 
@@ -485,6 +496,8 @@ def edms_get_emp_seats(request, doc_meta_type_id=0):
             'seat': empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)',
             'emp': empSeat.employee.pip,
             'name': empSeat.employee.pip + ', ' + (empSeat.seat.seat if empSeat.is_main is True else empSeat.seat.seat + ' (в.о.)'),
+            'is_dep_chief': 'true' if empSeat.seat.is_dep_chief else '',
+            'on_vacation': 'true' if empSeat.employee.on_vacation else ''
         } for empSeat in
             Employee_Seat.objects.only('id', 'seat', 'employee')
                 .filter(employee__is_pc_user=True)
@@ -533,9 +546,9 @@ def edms_get_doc(request, pk):
     # Всю інформацію про документ записуємо сюди
 
     # Якщо employee_seat нема в запиті, значить запит прийшов зі створення нового документа, доступ треба дати
-    # user_id == 52 - тимчасово доданий Лебедєв
+    # request.user.id in [52, 66, 112] - Лебедєв, Мальцев, Лишак
     if request.user.userprofile.is_it_admin or \
-            request.user.id == 52 or \
+            request.user.id in [52, 66, 112] or \
             'employee_seat' not in request.POST or \
             is_access_granted(request.user, request.POST['employee_seat'], doc):
         doc_info = {
@@ -620,39 +633,11 @@ def edms_get_doc(request, pk):
     return HttpResponse(json.dumps(doc_info))
 
 
-@try_except
-def convert_files_names_to_utf():
-    # Перейменування усіх файлів з linux кракозябри на кирилицю:
-
-    folder = 'D:/Робота/Code/EDMS/PLXK/files/media'
-    # Програма проходить по всьому дереву і перейменовує всі файли.
-    # Якщо щось не може перейменувати, то пропускає.
-
-    for root, dirs, files in os.walk(folder):
-        root = root.replace('\\', '/')
-        for file in os.listdir(root):
-            if os.path.isfile(root + '/' + file) and file != 'react_статті.txt':
-                try:
-                    print('--------------------------')
-                    print(root + '/' + file)
-                    print(chardet.detect(file.encode()))
-                    file_decoded = file.encode('cp1251').decode('utf8')
-                    old_path = os.path.join(root, file)
-                    new_path = os.path.join(root, file_decoded)
-                    os.rename(old_path, new_path)
-                    print('done')
-                    print('--------------------------')
-                except Exception:
-                    pass
-
-
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
 def edms_my_docs(request):
     if request.method == 'GET':
-        # Треба запустити один раз при переїзді на windows сервер
-        # convert_files_names_to_utf()
 
         my_seats = get_my_seats(request.user.userprofile.id)
 
@@ -746,12 +731,8 @@ def edms_my_docs(request):
         # Модульна система:
         # В деяких модулях прямо може бути вказано отримувачів,
         # тому post_modules повертає їх в array, який може бути і пустий
-        module_recipients = post_modules(doc_request, doc_files, new_path, new_doc)
-
-        # Записуємо main_field
-        main_field = get_main_field(new_doc)
-        new_doc.main_field = main_field
-        new_doc.save()
+        # також post_modules зберігає main_field в документі і повертає оновлений документ
+        module_recipients, new_doc = post_modules(doc_request, doc_files, new_path, new_doc)
 
         # Запускаємо в роботу
         if doc_request['status'] in ['doc', 'change']:
@@ -773,8 +754,8 @@ def edms_my_docs(request):
                     send_email_supervisor('new', doc_request, supervisor['mail'])
 
             # Відправляємо листа Лебедєву
-            if request.POST['document_type'] in ['14', '3']:
-                send_email_lebedev(doc_request, main_field)
+            if request.POST['document_type'] in ['20', '14', '3']:
+                send_email_lebedev(doc_request, new_doc.main_field)
 
         return HttpResponse(new_doc.pk)
 
@@ -1137,12 +1118,6 @@ def edms_mark(request):
 
                 # Автору оновлення ставимо галочку у таблицю
                 arrange_approve(doc_request, True)
-                # approval_instance = Doc_Approval.objects.filter(recipient_id=doc_request['employee_seat'])
-                # approval_id = Doc_Approval.objects.values_list('id', flat=True) \
-                #     .filter(document_id=doc_request['document']) \
-                #     .filter(approve_queue=0) \
-                #     .filter(is_active=True)[0]
-                # post_approve(doc_request, approval_id, True)
 
                 if mark_author == doc_request['doc_author_id']:
                     # Якщо автор оновлення = автор документа, відправляємо на першу фазу
@@ -1153,15 +1128,18 @@ def edms_mark(request):
                     zero_phase_id = get_zero_phase_id(doc_request['document_type'])
                     post_mark_demand(doc_request, doc_request['doc_author_id'], zero_phase_id, 6)
 
-                # Опрацьовуємо оновлені файли AAA
-                if 'change__new_files' in request.FILES:
-                    changes_add_files(request.FILES.getlist('change__new_files'), doc_request)
+                if doc_request['doc_meta_type_id'] == 14:  # Проект наказу
+                    change_decree_articles(doc_request['document'], json.loads(doc_request['decree_articles']))
+                else:  # Зміна файлів у візуванні договору
+                    # Опрацьовуємо оновлені файли AAA
+                    if 'change__new_files' in request.FILES:
+                        changes_add_files(request.FILES.getlist('change__new_files'), doc_request)
 
-                if 'change__deleted_files' in request.POST:
-                    deactivate_files(doc_request)
+                    if 'change__deleted_files' in request.POST:
+                        deactivate_files(doc_request)
 
-                if 'change__updated_files' in request.FILES:
-                    update_files(request.FILES.getlist('change__updated_files'), doc_request)
+                    if 'change__updated_files' in request.FILES:
+                        update_files(request.FILES.getlist('change__updated_files'), doc_request)
 
             # Відповідь на коментар (відправляємо документ у MarkDemand автору оригінального коментарю)
             elif doc_request['mark'] == '21':
@@ -1260,9 +1238,13 @@ def edms_mark(request):
 
             # Реєстрація документа
             elif doc_request['mark'] == '27':
-                registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
-                if not registered:
-                    return HttpResponse('reg_unique_fail')
+                if doc_request['doc_meta_type_id'] == 14:  # Наказ
+                    # document_query = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
+                    post_order_from_edms(doc_request['document'], doc_request['registration_number'])
+                else:
+                    registered = change_registration_number(doc_request['document'], doc_request['registration_number'])
+                    if not registered:
+                        return HttpResponse('reg_unique_fail')
 
                 deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
