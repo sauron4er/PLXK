@@ -2,6 +2,9 @@
 import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'static/css/react-quill-custom.css';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
@@ -9,6 +12,7 @@ import DateInput from 'templates/components/form_modules/date_input';
 import Responsible from 'templates/components/form_modules/articles/responsible';
 import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
+import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
 
 class Article extends React.Component {
   state = {
@@ -24,6 +28,12 @@ class Article extends React.Component {
     this.props.changeArticle(article, index);
   };
 
+  onTextChange = (value) => {
+    let {article, index} = this.props;
+    article.text = value;
+    this.props.changeArticle(article, index);
+  };
+
   selectResponsible = (e) => {
     // const selectedIndex = e.target.options.selectedIndex;
     // this.setState({
@@ -34,7 +44,7 @@ class Article extends React.Component {
       selected_responsible_id: e.id,
       selected_responsible: e.name
     });
-    this.addResponsible(e.id)
+    this.addResponsible(e.id);
   };
 
   addResponsible = (selected_responsible_id) => {
@@ -119,16 +129,26 @@ class Article extends React.Component {
 
     return (
       <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
-        <div className='font-weight-bold'>{index + 1}</div>
         <div className='d-flex'>
-          <TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={5000} disabled={disabled} />
+          <div className='font-weight-bold mr-1'>{index + 1}</div>
+          {/*<TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={5000} disabled={disabled} />*/}
+          <div className='flex-grow-1'>
+            <Choose>
+              <When condition={!disabled}>
+                <ReactQuill theme='snow' value={article.text} onChange={this.onTextChange} />
+              </When>
+              <Otherwise>
+                <ReactQuill theme='snow' value={article.text} readOnly={true} modules={{toolbar: false}} className='css_read_only' />
+              </Otherwise>
+            </Choose>
+          </div>
           <div>
             <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={this.delArticle} disabled={disabled}>
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </div>
         </div>
-        
+
         {/*<MultiSelector*/}
         {/*  list={emp_seats}*/}
         {/*  selectedName={selected_responsible}*/}

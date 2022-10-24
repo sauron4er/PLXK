@@ -86,7 +86,7 @@ def post_order_articles(order, edms_doc_instance):
         if article['deadline']:
             new_article.deadline = article['deadline']
         if article['periodicity']:
-            new_article.deadline = article['periodicity']
+            new_article.periodicity = article['periodicity']
         new_article.save()
 
         post_article_responsibles(new_article, article['responsibles'])

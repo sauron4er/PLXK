@@ -76,6 +76,7 @@ def post_approve(doc_request, approve_id, is_approved):
 
 @try_except
 def post_auto_approve(doc_request):
+    doc_request.update({'approved': True})
     doc_request.update({'approved_date': datetime.now()})
 
     doc = get_object_or_404(Document, pk=doc_request['document'])

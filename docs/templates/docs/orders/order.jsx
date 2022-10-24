@@ -270,8 +270,6 @@ class Order extends React.Component {
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
     const {loading, error404, request_sent, edms_doc_opened} = this.state;
   
-    console.log(order);
-  
     return (
       <Choose>
         <When condition={error404}>
