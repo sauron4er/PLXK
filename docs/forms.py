@@ -24,7 +24,7 @@ class NewDocForm(forms.ModelForm):
 class NewDocOrderForm(forms.ModelForm):
     class Meta:
         model = Order_doc
-        fields = ['name', 'code', 'doc_type', 'created_by', 'author', 'supervisory', 'date_start',
+        fields = ['name', 'preamble', 'code', 'doc_type', 'created_by', 'author', 'supervisory', 'date_start',
                   'cancels_code', 'date_canceled', 'cancels'
                   ]
 

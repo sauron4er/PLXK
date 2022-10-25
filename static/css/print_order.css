@@ -1,0 +1,36 @@
+﻿.order {
+    font-size: 3em;
+    padding: 1em 5em;
+}
+
+.order_number {
+    background-color: greenyellow;
+    text-align: center;
+    font-weight: bold;
+}
+
+.order_code {
+    margin-left: 1em;
+}
+
+.date_and_place {
+    display: flex;
+    justify-content: space-between;
+}
+
+.order_name {
+    margin: 1em 0;
+    font-style: italic;
+    width: 50%;
+}
+
+.order_preamble {
+    font-size: 0.8em;
+}
+
+.order_ordering {
+    margin: 1em 0;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}

@@ -19,8 +19,10 @@ import DateInput from 'templates/components/form_modules/date_input';
 import Articles from 'templates/components/form_modules/articles/articles';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
-import Document from "edms/templates/edms/my_docs/doc_info/document";
-import Modal from "react-responsive-modal";
+import Document from 'edms/templates/edms/my_docs/doc_info/document';
+import Modal from 'react-responsive-modal';
+import PrintOrder from 'docs/templates/docs/orders/print_order';
+import CompanyChoose from "templates/components/form_modules/company_choose";
 
 class Order extends React.Component {
   state = {
@@ -28,6 +30,7 @@ class Order extends React.Component {
     error404: false,
     request_sent: false,
     edms_doc_opened: false,
+    company: 'ТДВ'
   };
 
   componentDidMount() {
@@ -111,10 +114,12 @@ class Order extends React.Component {
     if (this.isAllFieldsFilled() && this.areDatesInOrder()) {
       const {
         id,
+        company,
         type,
         type_name,
         code,
         name,
+        preamble,
         author,
         responsible,
         supervisory,
@@ -133,11 +138,13 @@ class Order extends React.Component {
       } = ordersStore.order;
 
       let formData = new FormData();
+      formData.append('company', company);
       formData.append('doc_type', type);
       formData.append('type_name', type_name);
       formData.append('id', id);
       formData.append('code', code);
       formData.append('name', name);
+      formData.append('preamble', preamble);
       formData.append('author', author);
       formData.append('articles', JSON.stringify(articles));
       formData.append('responsible', responsible);
@@ -156,17 +163,17 @@ class Order extends React.Component {
       if (cancels_files && cancels_files.length > 0) cancels_files.map((file) => formData.append('cancels_files', file));
 
       const url = ordersStore.order.id === 0 ? 'add_order/' : 'edit_order/';
-      
-      this.setState({request_sent: true})
+
+      this.setState({request_sent: true});
 
       axiosPostRequest(url, formData)
         .then((response) => {
           this.postResponsibleFiles(articles);
           ordersStore.order.id === 0 ? this.addOrder(response) : this.editOrder(response);
-          this.setState({request_sent: false})
+          this.setState({request_sent: false});
         })
         .catch((error) => {
-          this.setState({request_sent: false})
+          this.setState({request_sent: false});
           notify(error);
         });
     }
@@ -235,6 +242,10 @@ class Order extends React.Component {
   onInputChange = (e, field_name) => {
     ordersStore.order[field_name] = e.target.value;
   };
+  
+  onCompanyChange = (company) => {
+    this.setState({company: company})
+  }
 
   onArticlesChange = (articles) => {
     ordersStore.order.articles = [...articles];
@@ -265,22 +276,28 @@ class Order extends React.Component {
     return './' + ordersStore.order.canceled_by_id;
   };
 
+  openPDFModal = () => {
+    this.setState({pdf_modal_open: true});
+  };
+
+  closePDFModal = () => {
+    this.setState({pdf_modal_open: false});
+  };
+
   render() {
-    // const {id, canceled_by_code, canceled_by_id, cancels_other_doc, cancels_id, done, articles} = ordersStore.order;
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
-    const {loading, error404, request_sent, edms_doc_opened} = this.state;
-  
+    const {loading, error404, request_sent, edms_doc_opened, company} = this.state;
+
     return (
       <Choose>
         <When condition={error404}>
           <div className='row'>Наказу під таким номером не існує.</div>
         </When>
         <When condition={!loading}>
-          <div>
-            <button className='btn btn-info css_sticky_back_button' onClick={() => this.closeOrderView()}>
-              Назад
-            </button>
-          </div>
+          <button className='btn btn-info css_sticky_back_button' onClick={() => this.closeOrderView()}>
+            Назад
+          </button>
+
           <div className='shadow-lg p-3 mb-5 bg-white rounded'>
             <div className='d-flex flex-row'>
               {order.done ? (
@@ -294,7 +311,7 @@ class Order extends React.Component {
               )}
 
               <SelectorWithFilter
-                classes='mr-2 flex-fill'
+                classes='flex-fill'
                 fieldName='Тип документа'
                 list={types}
                 onChange={(e) => this.onSelectorChange(e, 'type', 'type_name')}
@@ -304,7 +321,7 @@ class Order extends React.Component {
                 disabled={false}
               />
 
-              <div>
+              <div className='mx-2'>
                 <TextInput
                   text={order.code}
                   fieldName={'№'}
@@ -313,13 +330,28 @@ class Order extends React.Component {
                   disabled={!is_orders_admin}
                 />
               </div>
+              
+              <PrintOrder openPDFModal={this.openPDFModal} />
+              
             </div>
+            
+            <hr />
+            <CompanyChoose fieldName='Підприємство' onChange={this.onCompanyChange} company={company} id='company' />
 
             <hr />
             <TextInput
               text={order.name}
               fieldName={'Назва'}
               onChange={(e) => this.onInputChange(e, 'name')}
+              maxLength={500}
+              disabled={!is_orders_admin}
+            />
+
+            <hr />
+            <TextInput
+              text={order.preamble}
+              fieldName={'Преамбула'}
+              onChange={(e) => this.onInputChange(e, 'preamble')}
               maxLength={500}
               disabled={!is_orders_admin}
             />
@@ -406,9 +438,9 @@ class Order extends React.Component {
                 </div>
               </div>
             </If>
-            
+
             <If condition={order.edms_doc_id}>
-              <hr/>
+              <hr />
               <div>Документ в системі електронного документообігу: № {order.edms_doc_id}</div>
               <button className='btn btn-outline-info' onClick={() => this.setState({edms_doc_opened: true})}>
                 Показати
@@ -473,17 +505,12 @@ class Order extends React.Component {
               <OrderMail />
             </If>
 
-            <SubmitButton
-              className='btn-info'
-              text='Зберегти'
-              onClick={this.postOrder}
-              requestSent={request_sent}
-            />
+            <SubmitButton className='btn-info' text='Зберегти' onClick={this.postOrder} requestSent={request_sent} />
 
             <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />
             </If>
-            
+
             <Modal
               open={edms_doc_opened}
               onClose={() => this.setState({edms_doc_opened: false})}

@@ -52,7 +52,9 @@ class Order_doc_type(models.Model):
 
 
 class Order_doc(models.Model):
+    company = models.CharField(max_length=3, default='ТДВ')
     name = models.CharField(max_length=500)
+    preamble = models.CharField(max_length=5000, null=True)
     doc_type = models.ForeignKey(Order_doc_type, related_name='Documents', on_delete=models.RESTRICT)
     code = models.CharField(max_length=100, null=True, blank=True)
     cancels_code = models.CharField(max_length=100, null=True, blank=True)
