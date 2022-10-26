@@ -30,7 +30,9 @@ class Order extends React.Component {
     error404: false,
     request_sent: false,
     edms_doc_opened: false,
-    company: 'ТДВ'
+    company: 'ТДВ',
+    sign_seat: '',
+    sign_employee: ''
   };
 
   componentDidMount() {
@@ -283,10 +285,14 @@ class Order extends React.Component {
   closePDFModal = () => {
     this.setState({pdf_modal_open: false});
   };
+  
+  func = () => {
+  
+  }
 
   render() {
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
-    const {loading, error404, request_sent, edms_doc_opened, company} = this.state;
+    const {loading, error404, request_sent, edms_doc_opened, company, sign_seat, sign_employee} = this.state;
 
     return (
       <Choose>
@@ -330,14 +336,13 @@ class Order extends React.Component {
                   disabled={!is_orders_admin}
                 />
               </div>
-              
+
               <PrintOrder openPDFModal={this.openPDFModal} />
-              
             </div>
             
             <hr />
             <CompanyChoose fieldName='Підприємство' onChange={this.onCompanyChange} company={company} id='company' />
-
+            
             <hr />
             <TextInput
               text={order.name}
@@ -346,7 +351,7 @@ class Order extends React.Component {
               maxLength={500}
               disabled={!is_orders_admin}
             />
-
+            
             <hr />
             <TextInput
               text={order.preamble}
@@ -355,10 +360,10 @@ class Order extends React.Component {
               maxLength={500}
               disabled={!is_orders_admin}
             />
-
+            
             <Articles disabled={!is_orders_admin} articles={order.articles} changeArticles={this.onArticlesChange} emp_seats={emp_seats} />
+            
             <hr />
-
             <Files
               oldFiles={order.files_old}
               newFiles={order.files}
@@ -367,7 +372,7 @@ class Order extends React.Component {
               onDelete={(id) => this.onFilesDelete(id, 'files_old')}
               disabled={!is_orders_admin}
             />
-
+            
             <hr />
             <SelectorWithFilter
               fieldName='Автор'
@@ -378,7 +383,7 @@ class Order extends React.Component {
               getOptionValue={(option) => option.id}
               disabled={false}
             />
-
+            
             <If condition={order.responsible_name !== ''}>
               <hr />
               <SelectorWithFilter
@@ -391,7 +396,6 @@ class Order extends React.Component {
                 disabled={false}
               />
             </If>
-
             <hr />
             <SelectorWithFilter
               fieldName='Контроль'
@@ -402,7 +406,6 @@ class Order extends React.Component {
               getOptionValue={(option) => option.id}
               disabled={false}
             />
-
             <hr />
             <div className='row'>
               <div className='col-md-3'>
@@ -422,7 +425,6 @@ class Order extends React.Component {
                 />
               </div>
             </div>
-
             <If condition={order.canceled_by_id && order.canceled_by_id !== '0'}>
               <hr />
               <div className='row'>
@@ -438,7 +440,6 @@ class Order extends React.Component {
                 </div>
               </div>
             </If>
-
             <If condition={order.edms_doc_id}>
               <hr />
               <div>Документ в системі електронного документообігу: № {order.edms_doc_id}</div>
@@ -446,7 +447,6 @@ class Order extends React.Component {
                 Показати
               </button>
             </If>
-
             <hr />
             <div className='d-flex'>
               <input id='cancels' onChange={this.onCancelsChange} type='checkbox' checked={order.cancels_other_doc} disabled={true} />
@@ -499,18 +499,37 @@ class Order extends React.Component {
                 </If>
               </If>
             </If>
+            
+            <div className='d-flex flex-row'>
+              <TextInput
+                text={sign_seat}
+                fieldName={'Посада підписуючого наказ'}
+                onChange={(e) => this.onInputChange(e, 'code')}
+                maxLength={100}
+                disabled={!is_orders_admin}
+              />
 
+              <div className='mx-2'>
+                <TextInput
+                  text={sign_employee}
+                  fieldName={'П.І.Б. підписуючого наказ'}
+                  onChange={(e) => this.onInputChange(e, 'code')}
+                  maxLength={100}
+                  disabled={!is_orders_admin}
+                />
+              </div>
+
+              <PrintOrder openPDFModal={this.openPDFModal} />
+            </div>
+            
             <hr />
             <If condition={is_orders_admin}>
               <OrderMail />
             </If>
-
             <SubmitButton className='btn-info' text='Зберегти' onClick={this.postOrder} requestSent={request_sent} />
-
             <If condition={order.id && is_orders_admin}>
               <SubmitButton className='float-sm-right btn-danger' text='Видалити' onClick={this.deactivateOrder} />
             </If>
-
             <Modal
               open={edms_doc_opened}
               onClose={() => this.setState({edms_doc_opened: false})}
@@ -520,7 +539,6 @@ class Order extends React.Component {
             >
               <Document doc_id={order.edms_doc_id} closed={true} />
             </Modal>
-
             {/*Вспливаюче повідомлення*/}
             <ToastContainer />
           </div>

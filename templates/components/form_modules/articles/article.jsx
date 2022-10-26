@@ -117,10 +117,10 @@ class Article extends React.Component {
   getBackground = () => {
     const {text, deadline, responsibles, term} = this.props.article;
     if (text === '' || (term === 'term' && deadline === '')) {
-      return 'LightPink';
+      return '#ffd7d7';
     }
-    if (term !== 'constant' && responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return 'LightGreen';
-    return '';
+    if (term !== 'constant' && responsibles.filter((resp) => resp.status !== 'delete').every((resp) => resp.done)) return '#ddffd7';
+    return '#f5f5f5';
   };
 
   render() {
@@ -128,17 +128,18 @@ class Article extends React.Component {
     const {selected_responsible, selected_responsible_id, all_chiefs_added} = this.state;
 
     return (
-      <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
+      // <div className='border border-info rounded p-1 mb-2' style={{background: this.getBackground()}}>
+      <div className='rounded p-1 mb-2' style={{background: this.getBackground()}}>
         <div className='d-flex'>
           <div className='font-weight-bold mr-1'>{index + 1}</div>
           {/*<TextInput text={article.text} onChange={(e) => this.changeField(e, 'text')} maxLength={5000} disabled={disabled} />*/}
           <div className='flex-grow-1'>
             <Choose>
               <When condition={!disabled}>
-                <ReactQuill theme='snow' value={article.text} onChange={this.onTextChange} />
+                <ReactQuill theme='snow' value={article.text} onChange={this.onTextChange} className='bg-white' />
               </When>
               <Otherwise>
-                <ReactQuill theme='snow' value={article.text} readOnly={true} modules={{toolbar: false}} className='css_read_only' />
+                <ReactQuill theme='snow' value={article.text} readOnly={true} modules={{toolbar: false}} className='css_read_only bg-white' />
               </Otherwise>
             </Choose>
           </div>
