@@ -129,7 +129,7 @@ class Document extends React.Component {
         formData.append('change__updated_files', file);
       });
     }
-  
+
     new_files.length > 0 ? formData.append('new_files', JSON.stringify(new_files)) : null;
     formData.append('document', doc_id);
     formData.append('employee_seat', localStorage.getItem('my_seat'));
