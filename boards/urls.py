@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from . import views, views_counterparties, views_non_compliances
+from . import views, views_counterparties, views_non_compliances, views_reclamations
 from docs.views_contracts import get_info_for_contracts_page, get_contracts, get_contract, \
     get_simple_contracts_list, add_contract
 from correspondence.views import get_correspondence, get_correspondence_info, get_request
@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^clients/', views_counterparties.clients, name='clients'),
 
     url(r'^non_compliances/', views_non_compliances.non_compliances, name='non_compliances'),
+    url(r'^reclamations/', views_reclamations.reclamations, name='reclamations'),
 
     url(r'^convert_files_names_to_utf/', views.convert_files_names_to_utf, name='convert_files_names_to_utf'),
 ]

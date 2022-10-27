@@ -11,6 +11,7 @@ module.exports = {
     boards: './static/index/boards.js',
     foyer: './static/index/foyer.js',
     non_compliances: './static/index/non_compliances.js',
+    reclamations: './static/index/reclamations.js',
     docs: './static/index/docs.js',
     edms: './static/index/edms.js',
     correspondence: './static/index/correspondence.js',
