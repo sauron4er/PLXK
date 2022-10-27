@@ -10,7 +10,7 @@ def post_order_from_edms(edms_doc_id, registration_number):
     new_order = Order_doc(edms_doc=edms_doc_instance)
     new_order.company = edms_doc_instance.company
     new_order.name = get_name_from_edms_doc(edms_doc_instance)
-    new_order.name = get_preamble_from_edms_doc(edms_doc_instance)
+    new_order.preamble = get_preamble_from_edms_doc(edms_doc_instance)
     new_order.code = registration_number
     new_order.doc_type_id = get_doc_type_from_edms_doc(edms_doc_instance)
     new_order.created_by = edms_doc_instance.employee_seat.employee.user

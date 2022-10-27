@@ -39,13 +39,16 @@ function DecreeArticle(props) {
           </div>
         </Otherwise>
       </Choose>
-      <hr className='my-1' />
-      <div>Відповідальні особи:</div>
-      <For each='responsible' of={props.article.responsibles} index='resp_idx'>
-        <small key={resp_idx}><li className='ml-3'>
-          {responsible.name}
-        </li></small>
-      </For>
+      <If condition={props.article.responsibles.length}>
+        <hr className="my-1" />
+        <div>Відповідальні особи:</div>
+        <For each="responsible" of={props.article.responsibles} index="resp_idx">
+          <small key={resp_idx}>
+            <li className="ml-3">
+              {responsible.name}
+            </li>
+          </small>
+        </For></If>
     </div>
   );
 }
