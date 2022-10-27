@@ -1,10 +1,21 @@
 import * as React from 'react';
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css'
+import 'static/css/react-quill-custom.css'
 
 function DecreeArticle(props) {
   return (
     <div className='css_note_text mb-1'>
-      <div>
-        <span className='font-weight-bold'>{props.index + 1}.</span> {props.article.text}
+      <div className='d-flex'>
+        <span className='font-weight-bold mr-1'>{props.index + 1}.</span>
+        <ReactQuill
+          theme="snow"
+          value={props.article.text}
+          // style={{minHeight: '400px'}}
+          readOnly={true}
+          modules={{ "toolbar": false }}
+          className='flex-grow-1 css_read_only'
+        />
       </div>
       <hr className='my-1' />
       <Choose>

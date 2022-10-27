@@ -1122,14 +1122,6 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'client_requirements': data[0]['fields']})
             doc_modules.update({'additional_requirements': ar})
 
-        elif module['module'] == 'doc_type_version':
-            dtv = {
-                'id': doc.doc_type_version_id,
-                'name': doc.doc_type_version.description if doc.doc_type_version else ''
-            }
-
-            doc_modules.update({'doc_type_version': dtv})
-
         elif module['module'] == 'employee':
             employee = [{
                 'id': employee.employee_id,
@@ -1170,6 +1162,14 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'decree_articles':
             doc_modules.update({'decree_articles': get_decree_articles(doc)})
+
+        # doc_type_version module підтягуємо для всіх документів
+        dtv = {
+            'id': doc.doc_type_version_id,
+            'name': doc.doc_type_version.description if doc.doc_type_version else ''
+        }
+
+        doc_modules.update({'doc_type_version': dtv})
 
     return doc_modules
 

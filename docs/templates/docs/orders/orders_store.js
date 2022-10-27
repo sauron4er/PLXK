@@ -30,6 +30,8 @@ const ordersStore = store({
     mail_mode: 'to_default',
     mail_list: [],
     status: 'in progress',
+    sign_seat: '',
+    sign_employee: '',
     done: false
   },
   employees: [],
@@ -65,6 +67,8 @@ const ordersStore = store({
       mail_list: [],
       articles: [],
       status: 'in progress',
+      sign_seat: '',
+      sign_employee: '',
       done: false
     };
   }

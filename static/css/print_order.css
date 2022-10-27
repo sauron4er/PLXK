@@ -1,0 +1,57 @@
+﻿.order {
+    padding: 5em;
+    font-size: 1.1em;
+}
+
+.order_company {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.order_number {
+    background-color: greenyellow;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.order_code {
+    margin-left: .5em;
+}
+
+.date_and_place {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.order_name {
+    margin: 1.5em;
+    font-style: italic;
+    width: 50%;
+}
+
+.order_ordering {
+    margin: 1em 0;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.order_article_list {
+    margin-bottom: 4em;
+}
+
+.order-article {
+    text-align: justify;
+}
+
+.order_director {
+    font-size: 1.5em;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,9 +1,10 @@
 'use strict';
 import React, {useEffect, useState} from 'react';
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css'
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
 import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
-import TextInput from 'templates/components/form_modules/text_input';
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
 import ListForMultiSelector from 'templates/components/form_modules/selectors/list_for_multi_selector';
@@ -28,6 +29,10 @@ function DecreeArticle(props) {
     let article = {...decreeArticlesStore.decree_articles[props.index]};
     article[field] = e.target.value;
     decreeArticlesStore.decree_articles[props.index] = {...article};
+  }
+  
+  function onTextChange(value) {
+    decreeArticlesStore.decree_articles[props.index].text = value
   }
 
   function selectResponsible(item) {
@@ -92,12 +97,18 @@ function DecreeArticle(props) {
     <div className='border border-info rounded p-1 mb-2'>
       <div className='font-weight-bold'>{props.index + 1}</div>
       <div className='d-flex'>
-        <TextInput
-          text={decreeArticlesStore.decree_articles[props.index].text}
-          onChange={(e) => changeField(e, 'text')}
-          maxLength={5000}
-          disabled={false}
-        />
+        <div className='w-100'><ReactQuill
+          theme="snow"
+          value={decreeArticlesStore.decree_articles[props.index].text}
+          onChange={onTextChange}
+          // style={{minHeight: '400px'}}
+        /></div>
+        {/*<TextInput*/}
+        {/*  text={decreeArticlesStore.decree_articles[props.index].text}*/}
+        {/*  onChange={(e) => changeField(e, 'text')}*/}
+        {/*  maxLength={5000}*/}
+        {/*  disabled={false}*/}
+        {/*/>*/}
         <div>
           <button className='btn btn-sm btn-outline-secondary ml-1 mb-2' onClick={delArticle}>
             <span aria-hidden='true'>&times;</span>

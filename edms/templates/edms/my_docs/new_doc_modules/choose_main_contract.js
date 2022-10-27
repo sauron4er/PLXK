@@ -137,7 +137,7 @@ class ChooseMainContract extends React.Component {
           onClose={() => this.setState({contract_modal_open: false})}
           showCloseIcon={true}
           closeOnOverlayClick={true}
-          styles={{modal: {marginTop: 50}}}
+          styles={{modal: {marginTop: 75}}}
         >
           <ContractView id={contract_link} />
         </Modal>

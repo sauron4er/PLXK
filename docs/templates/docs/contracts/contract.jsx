@@ -627,7 +627,7 @@ class Contract extends React.Component {
                   onClose={() => this.setState({edms_doc_opened: false})}
                   showCloseIcon={true}
                   closeOnOverlayClick={true}
-                  styles={{modal: {marginTop: 50}}}
+                  styles={{modal: {marginTop: 75}}}
                 >
                   <Document doc_id={contract.edms_doc_id} closed={true} />
                 </Modal>

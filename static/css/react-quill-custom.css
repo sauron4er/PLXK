@@ -1,0 +1,17 @@
+﻿.ql-editor {
+    font-size: 1.2em;
+}
+
+.css_read_only .ql-toolbar.ql-snow {
+    border: none !important;
+}
+
+.css_read_only .quill, .css_read_only .ql-container {
+   border: none !important;
+   padding-top: 0 !important;
+}
+
+.css_read_only .ql-editor {
+    padding-top: 3px !important;
+    padding-left: 0 !important;
+}

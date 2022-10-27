@@ -3,36 +3,16 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-// import {getEmpSeats} from 'edms/api/get_emp_seats';
 import 'static/css/my_styles.css';
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
-import newDocStore from "edms/templates/edms/my_docs/new_doc_modules/new_doc_store";
 
 class AcquaintList extends React.Component {
   state = {
     acquaint_list: this.props.acquaintList,
     select_acquaint_id: 0,
     select_acquaint: '',
-    seat_list: JSON.parse(localStorage.getItem('emp_seat_list')) ? JSON.parse(localStorage.getItem('emp_seat_list')) : []
+    seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
   };
-  
-  // перевіряємо, чи оновився список співробітників з часу останнього візиту
-  componentWillMount() {
-    this.setState({seat_list: newDocStore.emps_seats_from_local_storage})
-    
-    // const get_emp_seats = getEmpSeats();
-    // get_emp_seats.then((result) => {
-    //   // Якщо result === 0 - змін у базі не виявлено
-    //   if (result === 0) {
-    //     // Але якщо на сторінці два компоненти запитують про зміни,
-    //     // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
-    //     // але список не оновлять, тому оновлюємо список самі
-    //     this.state.seat_list.length === 0 ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))}) : null;
-    //   } else {
-    //     this.setState({seat_list: result});
-    //   }
-    // });
-  }
 
   onChange = (e) => {
     this.setState({
@@ -83,8 +63,9 @@ class AcquaintList extends React.Component {
   };
 
   render() {
-    const {seat_list, select_acquaint, acquaint_list} = this.state;
+    const {seat_list, acquaint_list} = this.state;
     const {module_info} = this.props;
+    
     return (
       <Choose>
         <When condition={seat_list.length > 0}>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {uniqueArray} from 'templates/components/my_extras';
-// import {getEmpSeats} from 'edms/api/get_emp_seats';
 import 'static/css/my_styles.css';
 import MultiSelectorWithFilter from "templates/components/form_modules/selectors/multi_selector_with_filter";
 import newDocStore from "edms/templates/edms/my_docs/new_doc_modules/new_doc_store";
@@ -12,6 +11,7 @@ class ApprovalList extends React.Component {
     approval_list: this.props.approvalList,
     select_approval_id: 0,
     select_approval: '',
+    seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))
   };
 
   onChange = (e) => {
@@ -21,23 +21,6 @@ class ApprovalList extends React.Component {
     });
     this.addNewApproval(e.id, e.name);
   };
-
-  // перевіряємо, чи оновився список співробітників з часу останнього візиту
-  componentWillMount() {
-    // this.setState({seat_list: newDocStore.emps_seats_from_local_storage})
-    // const get_emp_seats = getEmpSeats();
-    // get_emp_seats.then((result) => {
-    //   // Якщо result === 0 - змін у базі не виявлено
-    //   if (result === 0) {
-    //     // Але якщо на сторінці два компоненти запитують про зміни,
-    //     // їх правильно покаже тільки перший, всі наступні будуть показувати result===0,
-    //     // але список не оновлять, тому оновлюємо список самі
-    //     this.state.seat_list.length === 0 ? this.setState({seat_list: JSON.parse(localStorage.getItem('emp_seat_list'))}) : null;
-    //   } else {
-    //     this.setState({seat_list: result});
-    //   }
-    // });
-  }
 
   // надсилає новий список у батьківський компонент:
   changeList = (new_list) => {
@@ -78,14 +61,14 @@ class ApprovalList extends React.Component {
   };
 
   render() {
-    const {select_approval, approval_list} = this.state;
+    const {seat_list, approval_list} = this.state;
     const {module_info} = this.props;
     return (
       <Choose>
-        <When condition={newDocStore.emps_seats_from_local_storage.length > 0}>
+        <When condition={seat_list.length > 0}>
           <MultiSelectorWithFilter
             fieldName={module_info.required ? `* ${module_info.field_name}` : module_info.field_name}
-            list={newDocStore.emps_seats_from_local_storage}
+            list={seat_list}
             onChange={this.onChange}
             getOptionLabel={(option) => option.emp + ', ' + option.seat}
             getOptionValue={(option) => option.id}

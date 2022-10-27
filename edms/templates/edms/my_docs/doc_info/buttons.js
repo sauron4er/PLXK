@@ -194,7 +194,7 @@ class Buttons extends React.Component {
             </button>
           </If>
           {/* Редагування наказу автором */}
-          <If condition={info.meta_type_id===14 && !archived && !info.archived}>
+          <If condition={info.meta_type_id===14 && !info.approved && !archived && !info.archived}>
             <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={() => this.onClick(18)}
                     disabled={button_clicked}>
               Редагувати пункти наказу
