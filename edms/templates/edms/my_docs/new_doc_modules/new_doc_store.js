@@ -1,12 +1,10 @@
 import {store} from '@risingstack/react-easy-state';
-import getEmpSeatsFromLocalStorage from "templates/components/emps_seats_getter";
 
 const newDocStore = store({
   mockup_type_loading: true,
   additional_modal_opened: false,
   additional_modal_content: '',
   auto_recipients: [],
-  emps_seats_from_local_storage: getEmpSeatsFromLocalStorage(), // список emp_seats для всіх зацікавлених модулів
   new_document: {
     doc_type_id: 0,
     doc_type_version: 0, // Версія документа, впливає на список отримувачів на візування у випадку Вимог клієнта

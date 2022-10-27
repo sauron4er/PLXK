@@ -84,6 +84,18 @@
   padding: 5px;
 }
 
+.css_list_item--order {
+  align-items: start;
+  margin-bottom: 7px;
+  padding: 5px;
+}
+
+.css_list_item--order__editing {
+  border-style: solid;
+  border-width: thin;
+  border-color: #2ba749;
+}
+
 @keyframes flash {
   0% {
     opacity: 1;

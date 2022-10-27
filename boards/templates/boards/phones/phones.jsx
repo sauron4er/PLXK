@@ -95,7 +95,7 @@ class Phones extends React.Component {
           open={modal_opened}
           onClose={() => this.setState({modal_opened: false})}
           closeOnOverlayClick={false}
-          styles={{modal: {marginTop: 50}}}
+          styles={{modal: {marginTop: 75}}}
         >
           <EmployeePAM employee={employee} />
         </Modal>

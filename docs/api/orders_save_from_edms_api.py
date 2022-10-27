@@ -8,7 +8,9 @@ def post_order_from_edms(edms_doc_id, registration_number):
     edms_doc_instance = Document.objects.get(id=edms_doc_id)
 
     new_order = Order_doc(edms_doc=edms_doc_instance)
+    new_order.company = edms_doc_instance.company
     new_order.name = get_name_from_edms_doc(edms_doc_instance)
+    new_order.name = get_preamble_from_edms_doc(edms_doc_instance)
     new_order.code = registration_number
     new_order.doc_type_id = get_doc_type_from_edms_doc(edms_doc_instance)
     new_order.created_by = edms_doc_instance.employee_seat.employee.user
@@ -31,6 +33,17 @@ def get_name_from_edms_doc(edms_doc_instance):
         .get(document=edms_doc_instance, queue_in_doc=name_field_queue)
 
     return name
+
+
+@try_except
+def get_preamble_from_edms_doc(edms_doc_instance):
+    preamble_field_queue = Document_Type_Module.objects.values_list('queue', flat=True).filter(is_active=True)\
+        .get(document_type=edms_doc_instance.document_type, field='preamble')
+
+    preamble = Doc_Text.objects.values_list('text', flat=True).filter(is_active=True)\
+        .get(document=edms_doc_instance, queue_in_doc=preamble_field_queue)
+
+    return preamble
 
 
 @try_except
@@ -86,7 +99,7 @@ def post_order_articles(order, edms_doc_instance):
         if article['deadline']:
             new_article.deadline = article['deadline']
         if article['periodicity']:
-            new_article.deadline = article['periodicity']
+            new_article.periodicity = article['periodicity']
         new_article.save()
 
         post_article_responsibles(new_article, article['responsibles'])

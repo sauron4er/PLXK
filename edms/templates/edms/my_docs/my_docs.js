@@ -9,6 +9,7 @@ import Templates from './templates';
 import SeatChooser from '../components/seat_chooser';
 import { axiosGetRequest } from "templates/components/axios_requests";
 import { notify } from "templates/components/my_extras";
+import getEmpSeatsToLocalStorage from "templates/components/emps_seats_getter";
 
 class MyDocs extends React.Component {
   state = {
@@ -61,6 +62,8 @@ class MyDocs extends React.Component {
     if (is_link) {
       this.setState({open_doc_id: last_href_piece});
     }
+    
+    getEmpSeatsToLocalStorage()
   }
 
   showDrafts = () => {

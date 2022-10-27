@@ -12,10 +12,12 @@ from docs.forms import NewDocOrderForm, CancelOrderForm, DeactivateOrderForm, Or
 def get_order_info(order, employee_id):
     order = {
         'id': order.id,
+        'company': order.company,
         'code': order.code,
         'type': order.doc_type_id,
         'type_name': order.doc_type.name,
         'name': order.name,
+        'preamble': order.preamble or '',
         'author': order.author_id,
         'author_name': order.author.last_name + ' ' + order.author.first_name,
         'canceled_by_id': order.canceled_by_id,
@@ -109,7 +111,9 @@ def post_order(post_request):
 @try_except
 def change_order(post_request):
     order = get_object_or_404(Order_doc, pk=post_request['id'])
-    order_form = NewDocOrderForm(post_request, instance=order, initial={'date_canceled': None, 'canceled_by': None, 'cancels': None})
+    order_form = NewDocOrderForm(post_request, instance=order, initial={'date_canceled': None,
+                                                                        'canceled_by': None,
+                                                                        'cancels': None})
     if order_form.is_valid():
         order_form.save()
     else:
