@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import {view, store} from '@risingstack/react-easy-state';
-import newDocStore from '../new_doc_store';
 import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
 import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
@@ -12,6 +11,7 @@ import DecreeArticleDeadlines from 'edms/templates/edms/my_docs/new_doc_modules/
 
 function DecreeArticle(props) {
   const [allChiefsAdded, setallChiefsAdded] = useState(false);
+  const seat_list = JSON.parse(localStorage.getItem('emp_seat_list'));
   // const [selectedResponsible, setSelectedResponsible] = useState(0);
   // const [selectedResponsibleName, setSelectedResponsibleName] = useState('');
 
@@ -43,7 +43,7 @@ function DecreeArticle(props) {
   }
 
   function addAllChiefs() {
-    newDocStore.emps_seats_from_local_storage.map((emp_seat) => {
+    seat_list.map((emp_seat) => {
       if (emp_seat.is_dep_chief && !emp_seat.on_vacation) addResponsible(emp_seat.id);
     });
 
@@ -57,7 +57,7 @@ function DecreeArticle(props) {
 
     if (item === -1) {
       const selected_responsible = {
-        ...getItemById(selected_responsible_id, newDocStore.emps_seats_from_local_storage),
+        ...getItemById(selected_responsible_id, seat_list),
         status: 'new',
         files_old: [],
         done: false
@@ -118,7 +118,7 @@ function DecreeArticle(props) {
 
       <MultiSelectorWithFilter
         fieldName='Відповідальні'
-        list={newDocStore.emps_seats_from_local_storage}
+        list={seat_list}
         onChange={selectResponsible}
         getOptionLabel={(option) => option.name}
         getOptionValue={(option) => option.id}
