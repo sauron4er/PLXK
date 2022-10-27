@@ -14,13 +14,11 @@ function PrintOrder(props) {
 
   const order = ordersStore.order;
 
-  console.log(order);
-
   return (
     <>
       <ReactToPrint
         trigger={() => (
-          <button className='btn btn-sm btn-outline-dark' onClick={props.openPDFModal}>
+          <button className='btn btn-sm btn-outline-dark' onClick={props.openPDFModal} disabled={props.disabled}>
             Друк/PDF
           </button>
         )}
@@ -56,7 +54,8 @@ function PrintOrder(props) {
               </If>
             </ol>
             <div className="order_director">
-              {/*<Choose></Choose>*/}
+              <div className="order_director--seat">{order.sign_seat}</div>
+              <div className="order_director--employee">{order.sign_employee}</div>
             </div>
           </div>
         </div>
@@ -66,7 +65,8 @@ function PrintOrder(props) {
 }
 
 PrintOrder.defaultProps = {
-  openPDFModal: () => {}
+  openPDFModal: () => {},
+  disabled: false
 };
 
 export default view(PrintOrder);

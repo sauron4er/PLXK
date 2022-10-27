@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import SelectorWithFilter from "templates/components/form_modules/selectors/selector_with_filter";
-import getEmpSeatsFromLocalStorage from "templates/components/emps_seats_getter";
 
 function EmployeeSeat(props) {
-  const [empSeats, setEmpSeats] = useState(getEmpSeatsFromLocalStorage())
+  const [empSeats, setEmpSeats] = useState(JSON.parse(localStorage.getItem('emp_seat_list')))
   
   function onSelectChange(e) {
     newDocStore.new_document.employee_seat = e.id;

@@ -88,7 +88,7 @@ class NonCompliance extends React.Component {
             onClose={this.onCloseModal}
             showCloseIcon={false}
             closeOnOverlayClick={true}
-            styles={{modal: {marginTop: 50, width: '100%', height: '95%'}}}
+            styles={{modal: {marginTop: 75, width: '100%', height: '95%'}}}
           >
             <NCPrint/>
           </Modal>

@@ -119,7 +119,7 @@ class NCSecondPhase extends React.Component {
           onClose={this.onCloseModal}
           showCloseIcon={false}
           closeOnOverlayClick={false}
-          styles={{modal: {marginTop: 50, width: '100%'}}}
+          styles={{modal: {marginTop: 75, width: '100%'}}}
         >
           Оберіть відповідального за виконання вашого рішення.
           <SelectorWithFilterAndAxios

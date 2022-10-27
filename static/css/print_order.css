@@ -42,7 +42,7 @@
 }
 
 .order_article_list {
-    margin-bottom: 3em;
+    margin-bottom: 4em;
 }
 
 .order-article {
@@ -52,4 +52,6 @@
 .order_director {
     font-size: 1.5em;
     font-weight: bold;
+    display: flex;
+    justify-content: space-between;
 }
