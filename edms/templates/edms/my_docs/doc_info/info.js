@@ -42,7 +42,7 @@ class Info extends React.Component {
               №: {info.id}. Дата: {info.date}
             </span>
           </div>
-          <If condition={info.hasOwnProperty('signed_files')}>
+          <If condition={info?.signed_files?.length > 0}>
             <div className='border rounded border-success p-2'>
               <div className='text-success font-weight-bold'>Підписано</div>
               <Files files={info.signed_files} fieldName={'Скан-копії підписаних документів'} is_editable={false} />
