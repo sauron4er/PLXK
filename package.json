@@ -38,7 +38,9 @@
     "react-to-print": "^2.12.6",
     "react-toastify": "^8.2.0",
     "react-validation": "^3.0.7",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "@react-buddy/ide-toolbox": "^2.2.1",
+    "@react-buddy/palette-mui": "^1.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.18.5",

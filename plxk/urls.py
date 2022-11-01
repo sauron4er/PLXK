@@ -7,14 +7,16 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from accounts import views as accounts_views
 from boards import views as board_views
-from production.views import get_products
-from boards.views_counterparties import get_counterparties
+from production.views import get_products, get_product_types_flat, get_products_for_product_type
+from boards.views_counterparties import get_counterparties, get_clients_for_product_type
 from docs.views_contracts import edit_contract, get_additional_contracts
 from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
 
 
 urlpatterns = [
-    url(r'^.+/.+/get_products', get_products, name='get_products'),
+    url(r'^.+/.+/get_product_types_flat/(?P<direction>\w+)', get_product_types_flat, name='get_product_types'),
+    url(r'^.+/.+/get_products/(?P<product_type_id>\d+)', get_products_for_product_type, name='get_products_for_product_type'),
+    url(r'^.+/.+/get_clients', get_clients_for_product_type, name='clients'),
     url(r'^.+/.+/get_counterparties/(?P<cp_type>\w+)', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),

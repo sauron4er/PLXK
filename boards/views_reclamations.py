@@ -14,6 +14,7 @@ from plxk.api.global_getters import get_dep_chief, get_director_userprofile, get
 from plxk.api.pagination import sort_query_set, filter_query_set
 from .models import Non_compliance, Non_compliance_file, \
     Non_compliance_comment, Non_compliance_comment_file, Non_compliance_decision
+from .models import Reclamation, Reclamation_file, Reclamation_decision, Reclamation_comment, Reclamation_comment_file
 from .api.non_compliance_mail_sender import create_and_send_mail
 
 
@@ -24,17 +25,17 @@ def reclamations(request):
 
 
 @try_except
-def get_non_compliances(request, counterparty, page):
-    ncs = Non_compliance.objects.filter(is_active=True)
+def get_reclamations(request, counterparty, page):
+    reclamations_query = Reclamation.objects.filter(is_active=True)
 
     if counterparty != '0':
         # При отриманні списку на сторінці контрагента фільтруємо по контрагенту
-        ncs = ncs.filter(provider_id=counterparty)
+        reclamations_query = reclamations_query.filter(client_id=counterparty)
 
-    ncs = filter_query_set(ncs, json.loads(request.POST['filtering']))
-    ncs = sort_query_set(ncs, request.POST['sort_name'], request.POST['sort_direction'])
+    reclamations_query = filter_query_set(reclamations_query, json.loads(request.POST['filtering']))
+    reclamations_query = sort_query_set(reclamations_query, request.POST['sort_name'], request.POST['sort_direction'])
 
-    paginator = Paginator(ncs, 23)
+    paginator = Paginator(reclamations_query, 23)
     try:
         ncs_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
@@ -42,17 +43,17 @@ def get_non_compliances(request, counterparty, page):
     except EmptyPage:
         ncs_page = paginator.page(1)
 
-    ncs = [{
+    reclamations_list = [{
         'id': nc.pk,
-        'provider': nc.provider.name,
+        'client': nc.client.name,
         'product': nc.product.name,
-        'order_number': nc.order_number,
+        'car_number': nc.car_number,
         'author': nc.author.pip,
         'responsible': nc.responsible.pip if nc.responsible else '',
         'status': 'ok' if nc.phase == 4 else '' if nc.phase == 666 else 'in progress'
     } for nc in ncs_page.object_list]
 
-    response = {'rows': ncs, 'pagesCount': paginator.num_pages}
+    response = {'rows': reclamations_list, 'pagesCount': paginator.num_pages}
     return HttpResponse(json.dumps(response))
 
 
@@ -135,51 +136,40 @@ def get_non_compliance(request, pk):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def post_non_compliance(request):
-    data = json.loads(request.POST.copy()['non_compliance'])
+def post_reclamation(request):
+    data = json.loads(request.POST.copy()['reclamation'])
 
     if data['id'] == 0:
-        nc = Non_compliance(author=request.user.userprofile)
+        reclamation = Reclamation(author=request.user.userprofile)
     else:
-        nc = get_object_or_404(Non_compliance, pk=data['id'])
+        reclamation = Reclamation.objects.get(pk=data['id'])
 
     if data['phase'] < 2:
         # Вносимо початкові дані або зміни, внесені автором/керівником автора перед поданням на візування
-        nc.department = request.user.userprofile.department
-        nc.dep_chief_id = data['dep_chief'] if data['dep_chief'] != 0 else get_dep_chief(request.user.userprofile, 'id')
-        nc.dep_chief_approved = None if data['dep_chief_approved'] == '' else data['dep_chief_approved']
-        nc.name = data['name']
-        nc.product_id = data['product']
-        nc.party_number = data['party_number']
-        nc.order_number = data['order_number']
-        nc.manufacture_date = data['manufacture_date']
-        nc.total_quantity = data['total_quantity']
-        nc.nc_quantity = data['nc_quantity']
-        nc.packing_type = data['packing_type']
-        nc.provider_id = data['provider']
-        nc.reason = data['reason']
-        nc.status = data['status']
-        nc.classification = data['classification']
-        nc.defect = data['defect']
-        nc.analysis_results = data['analysis_results']
-        nc.sector = data['sector']
+        reclamation.department = request.user.userprofile.department
+        reclamation.dep_chief_id = data['dep_chief'] if data['dep_chief'] != 0 else get_dep_chief(request.user.userprofile, 'id')
+        reclamation.dep_chief_approved = None if data['dep_chief_approved'] == '' else data['dep_chief_approved']
+        reclamation.product_id = data['product']
+        reclamation.client_id = data['client']
+        reclamation.reason = data['reason']
+        reclamation.car_number = data['car_number']
+        reclamation.date_manufacture = data['date_manufacture']
+        reclamation.date_shipment = data['date_shipment']
+        reclamation.date_received = data['date_received']
 
         if data['dep_chief_approved'] == '' or data['dep_chief_approved'] is None:
-            nc.phase = 1
+            reclamation.phase = 1
         elif data['dep_chief_approved'] is True:
-            nc.phase = 2
+            reclamation.phase = 2
         else:
-            nc.phase = 666  # Відмінено
+            reclamation.phase = 666  # Відмінено
 
-        nc.save()
+        reclamation.save()
 
-        post_files(nc.id, request.FILES, data['old_files'])
+        post_files(reclamation.id, request.FILES, data['old_files'])
 
         if data['phase'] == 0:
-            create_and_send_mail('dep_chief', nc.dep_chief_id, nc.id)
-        # elif data['phase'] == 1:
-        # Сюди при потребі можна буде дописати відправку листа автору про те, що в полях його акту відбулися зміни.
-        #     create_and_send_mail('author', nc.author_id, nc.id)
+            create_and_send_mail('dep_chief', reclamation.dep_chief_id, reclamation.id)
 
     return HttpResponse('provider.pk')
 
@@ -214,12 +204,12 @@ def dep_chief_approval(request):
 
 
 @try_except
-def post_files(nc_id, new_files, old_files):
-    nc = get_object_or_404(Non_compliance, pk=nc_id)
+def post_files(reclamation_id, new_files, old_files):
+    reclamation = get_object_or_404(Non_compliance, pk=reclamation_id)
 
     for file in new_files.getlist('new_files'):
-        Non_compliance_file.objects.create(
-            non_compliance=nc,
+        Reclamation_file.objects.create(
+            reclamation=reclamation,
             file=file,
             name=file.name
         )

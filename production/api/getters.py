@@ -1,4 +1,4 @@
-from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, \
+from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, Product, \
     Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
 from plxk.api.try_except import try_except
 
@@ -44,7 +44,7 @@ def get_scopes_list():
 
 
 @try_except
-def get_products_list(direction=''):
+def get_product_types_list(direction=''):
     products = Product_type.objects.filter(is_active=True).order_by('name')
     if direction != '':
         products = products.filter(direction=direction)
@@ -69,6 +69,18 @@ def get_sub_products(direction=''):
         'direction': sub_product.type.direction,
         'type_id': sub_product.type_id,
     } for sub_product in sub_products]
+
+
+@try_except
+def get_products_list(product_type_id=''):
+    products = Product.objects.filter(is_active=True).order_by('name')
+    if product_type_id != '0':
+        products = products.filter(type_id=product_type_id)
+
+    return [{
+        'id': product.pk,
+        'name': product.name,
+    } for product in products]
 
 
 @try_except

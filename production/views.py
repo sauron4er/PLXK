@@ -11,13 +11,13 @@ from production.api.setters import add_or_change_contract_subject, deactivate_co
 
 @try_except
 def get_products(request, direction=''):
-    return HttpResponse(json.dumps(get_products_list(direction)))
+    return HttpResponse(json.dumps(get_product_types_list(direction)))
 
 
 @login_required(login_url='login')
 @try_except
 def products(request):
-    products_list = get_products_list()
+    products_list = get_product_types_list()
     meta_types = get_meta_types()
     return render(request, 'production/products.html', {'products': products_list, 'meta_types': meta_types})
 
@@ -79,9 +79,21 @@ def get_mockup_product_types(request):
 
 @try_except
 def get_product_types(request, direction):
-    products = get_products_list(direction)
+    products = get_product_types_list(direction)
     sub_products = get_sub_products(direction)
     return HttpResponse(json.dumps({'products': products, 'sub_products': sub_products}))
+
+
+@try_except
+def get_product_types_flat(request, direction):
+    product_types = get_product_types_list(direction)
+    return HttpResponse(json.dumps(product_types))
+
+
+@try_except
+def get_products_for_product_type(request, product_type_id):
+    products = get_products_list(product_type_id)
+    return HttpResponse(json.dumps(products))
 
 
 @login_required(login_url='login')

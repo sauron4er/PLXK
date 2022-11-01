@@ -28,6 +28,14 @@ urlpatterns = [
     url(r'^.+/post_decision', views_non_compliances.post_decision, name='post_decision'),
     url(r'^.+/non_compliance_done', views_non_compliances.done, name='done'),
 
+    url(r'^.+/get_reclamations/(?P<counterparty>\w+)/(?P<page>\d+)/$', views_reclamations.get_reclamations, name='get_reclamations'),
+    # url(r'^.+/get_non_compliance/(?P<pk>\d+)/$', views_non_compliances.get_non_compliance, name='get_non_compliance'),
+    url(r'^.+/post_reclamation', views_reclamations.post_reclamation, name='post_reclamation'),
+    # url(r'^.+/dep_chief_approval', views_non_compliances.dep_chief_approval, name='dep_chief_approval'),
+    # url(r'^.+/post_new_comment', views_non_compliances.post_new_comment, name='post_new_comment'),
+    # url(r'^.+/post_decision', views_non_compliances.post_decision, name='post_decision'),
+    # url(r'^.+/non_compliance_done', views_non_compliances.done, name='done'),
+
     url(r'^.+get_letters/(?P<counterparty_id>\d+)', views_counterparties.get_letters, name='get_letters'),
     url(r'^.+post_letter', views_counterparties.post_letter, name='post_letter'),
     url(r'^.+del_letter', views_counterparties.del_letter, name='del_letter'),

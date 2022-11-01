@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from accounts.models import UserProfile, Department
-from production.models import Product_type, Certification_type, Scope
+from production.models import Product_type, Certification_type, Scope, Product
 
 
 class Board(models.Model):
@@ -84,6 +84,8 @@ class Counterparty_certificate_pause(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# Non Compliances
 class Non_compliance(models.Model):
     author = models.ForeignKey(UserProfile, related_name='non_compliances_added', on_delete=models.RESTRICT)
     phase = models.PositiveSmallIntegerField()  # 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
@@ -148,6 +150,60 @@ class Non_compliance_decision(models.Model):
     non_compliance = models.ForeignKey(Non_compliance, related_name='decisions', on_delete=models.RESTRICT)
     user = models.ForeignKey(UserProfile, related_name='non_compliance_decisions', on_delete=models.RESTRICT)
     decision = models.CharField(max_length=50, null=True)
+    decision_time = models.DateTimeField(null=True)
+    phase = models.SmallIntegerField(default=1)
+    is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Reclamations
+class Reclamation(models.Model):
+    author = models.ForeignKey(UserProfile, related_name='reclamations_added', on_delete=models.RESTRICT)
+    phase = models.PositiveSmallIntegerField()  # 0 - creating, 1 - chief, 2 - visas, 3 - director, 4 - execution, 5 - done
+    department = models.ForeignKey(Department, related_name='reclamations', on_delete=models.RESTRICT)
+    dep_chief = models.ForeignKey(UserProfile, related_name='dep_reclamations', on_delete=models.RESTRICT)
+    dep_chief_approved = models.BooleanField(null=True)
+    product = models.ForeignKey(Product, related_name='reclamations', on_delete=models.RESTRICT)
+    client = models.ForeignKey(Counterparty, related_name='reclamations', on_delete=models.RESTRICT)
+    reason = models.CharField(max_length=300)
+    car_number = models.CharField(max_length=10)
+    date_manufacture = models.DateField()
+    date_shipment = models.DateField()
+    date_received = models.DateField(auto_now_add=True)
+    date_db_added = models.DateField(auto_now_add=True)
+    final_decision = models.CharField(max_length=500, null=True)
+    final_decision_time = models.DateTimeField(null=True)
+    responsible = models.ForeignKey(UserProfile, related_name='reclamations_responsible', on_delete=models.RESTRICT, null=True)
+    answer_responsible_dep = models.ForeignKey(Department, related_name='reclamations_responsible', on_delete=models.RESTRICT, null=True)
+    is_active = models.BooleanField(default=True)
+
+
+class Reclamation_file(models.Model):
+    file = models.FileField(upload_to='boards/reclamations/%Y/%m')
+    name = models.CharField(max_length=100)
+    reclamation = models.ForeignKey(Reclamation, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Reclamation_comment(models.Model):
+    reclamation = models.ForeignKey(Reclamation, related_name='comments', on_delete=models.RESTRICT)
+    author = models.ForeignKey(UserProfile, related_name='reclamations_comments', on_delete=models.RESTRICT)
+    comment = models.CharField(max_length=1000, null=True)
+    original_comment = models.ForeignKey('self', related_name='answers', null=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Reclamation_comment_file(models.Model):
+    file = models.FileField(upload_to='boards/reclamations/%Y/%m')
+    name = models.CharField(max_length=100)
+    comment = models.ForeignKey(Reclamation_comment, related_name='comment_files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Reclamation_decision(models.Model):
+    reclamation = models.ForeignKey(Reclamation, related_name='decisions', on_delete=models.RESTRICT)
+    user = models.ForeignKey(UserProfile, related_name='reclamations_decisions', on_delete=models.RESTRICT)
+    decision = models.CharField(max_length=500, null=True)
     decision_time = models.DateTimeField(null=True)
     phase = models.SmallIntegerField(default=1)
     is_active = models.BooleanField(default=True)

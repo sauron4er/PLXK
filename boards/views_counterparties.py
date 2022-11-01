@@ -10,7 +10,7 @@ from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
-from production.api.getters import get_products_list, get_certification_types, get_scopes_list
+from production.api.getters import get_product_types_list, get_certification_types, get_scopes_list
 from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
 from .api.letters_api import get_letters_list, add_or_change_letter, deactivate_letter
 # from .api.counterparty_mail_sender import send_provider_mail
@@ -29,7 +29,7 @@ def deact_counterparty(request, pk):
 @login_required(login_url='login')
 @try_except
 def providers(request):
-    products = get_products_list('buy')
+    products = get_product_types_list('buy')
     edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.providers_add
     return render(request, 'boards/counterparty/providers/providers.html', {
         'products_list': products,
@@ -289,7 +289,7 @@ def get_active_certificates_names(provider):
 @login_required(login_url='login')
 @try_except
 def clients(request):
-    products = get_products_list('sell')
+    products = get_product_types_list('sell')
     edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.clients_add
     return render(request, 'boards/counterparty/clients/clients.html', {
         'products_list': products,

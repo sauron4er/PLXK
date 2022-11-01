@@ -13,6 +13,16 @@ class SelectorWithFilterAndAxios extends React.Component {
   };
 
   componentDidMount() {
+    this.getList();
+  }
+  
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.listNameForUrl !== this.props.listNameForUrl) {
+      this.getList();
+    }
+  }
+  
+  getList = () => {
     axiosGetRequest(`get_${this.props.listNameForUrl}'`)
       .then((response) => {
         this.setState({
@@ -22,7 +32,7 @@ class SelectorWithFilterAndAxios extends React.Component {
       })
       .catch((error) => notify(error));
   }
-
+  
   render() {
     const {onChange, fieldName, disabled, classes, value, selectId} = this.props;
     const {loading, list} = this.state;

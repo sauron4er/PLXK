@@ -11,36 +11,76 @@ const reclamationsStore = store({
   counterparty_name: '',
   reclamation: {
     id: 0,
-      phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - execution, 4 - done, 666 - denied
+    phase: 0, // 0 - creating, 1 - chief, 2 - visas, 3 - execution, 4 - done, 666 - denied
+    author_name: '',
+    department_name: department_name,
+    dep_chief: 0,
+    dep_chief_name: '',
+    dep_chief_approved: '',
+
+    product_type: 0,
+    product_type_name: '',
+    product: 0,
+    product_name: '',
+    client: 0,
+    client_name: '',
+    car_number: '',
+    date_manufacture: '',
+    date_shipment: '',
+    date_received: getToday(),
+    reason: '',
+    old_files: [],
+    new_files: [],
+
+    final_decisioner: '',
+    final_decision: '',
+    final_decision_time: '',
+
+    decisions: [],
+    edited_decision: '',
+    edited_decision_index: 0,
+
+    responsible: 0,
+    responsible_name: '',
+    answer_responsible_dep: 0,
+    answer_responsible_dep_name: '',
+
+    new_comment: '',
+    new_comment_files: [],
+    comments: []
+  },
+
+  onFormChange: (e, field) => {
+    reclamationsStore.reclamation[field] = e.target.value;
+  },
+
+  clearReclamation: () => {
+    reclamationsStore.reclamation = {
+      id: 0,
+      phase: 0,
       author_name: '',
       department_name: department_name,
       dep_chief: 0,
       dep_chief_name: '',
       dep_chief_approved: '',
-      date_added: getToday(),
-      manufacture_date: '',
-      name: '',
-      party_number: '',
-      order_number: '',
-      total_quantity: '',
-      nc_quantity: '',
-      packing_type: '',
+
+      product_type: 0,
+      product_type_name: '',
       product: 0,
       product_name: '',
-      provider: 0,
-      provider_name: '',
+      client: 0,
+      client_name: '',
+      car_number: '',
+      date_manufacture: '',
+      date_shipment: '',
+      date_received: getToday(),
       reason: '',
-      status: '',
       old_files: [],
       new_files: [],
-      classification: '',
-      defect: '',
-      analysis_results: '',
-      sector: '',
+
       final_decisioner: '',
       final_decision: '',
       final_decision_time: '',
-      quality_director_name: '',
 
       decisions: [],
       edited_decision: '',
@@ -48,28 +88,12 @@ const reclamationsStore = store({
 
       responsible: 0,
       responsible_name: '',
-      
-      corrective_action: '',
-      corrective_action_number: '',
-      retreatment_date: '',
-      spent_time: '',
-      people_involved: '',
-      quantity_updated: '',
-      status_updated: '',
-      return_date: '',
+      answer_responsible_dep: 0,
+      answer_responsible_dep_name: '',
 
       new_comment: '',
       new_comment_files: [],
       comments: []
-  },
-
-  onFormChange: (e, field) => {
-    reclamationStore.reclamation[field] = e.target.value;
-  },
-
-  clearNonCompliance: () => {
-    reclamationsStore.reclamation = {
-    
     };
   },
 
@@ -90,7 +114,7 @@ const reclamationsStore = store({
     }
 
     return div_style;
-  },
+  }
 });
 
 export default reclamationsStore;

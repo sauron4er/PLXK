@@ -1,12 +1,13 @@
 'use strict';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import reclamationsStore from "boards/templates/boards/reclamations/store";
+import ReclamationTable from "boards/templates/boards/reclamations/table";
+import Reclamation from "boards/templates/boards/reclamations/reclamation";
 
 function Reclamations(props) {
   const [view, setView] = useState('table'); // , reclamation
-
-  // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+  
   // getMainDivRef = (input) => {
   //   this.mainDivRef = input;
   // };
@@ -29,7 +30,7 @@ function Reclamations(props) {
   }
 
   function onRowClick(clicked_row) {
-    reclamationStore.non_compliance.id = clicked_row.id;
+    reclamationsStore.non_compliance.id = clicked_row.id;
     setView('non_compliance');
   }
 
@@ -43,25 +44,25 @@ function Reclamations(props) {
   }
 
   return (
-    <div>asd</div>
-    // <Choose>
-    //   <When condition={view === 'table'}>
-    //     <div className='row mt-2' ref={this.getMainDivRef} style={{height: '90vh'}}>
-    //       <div className='ml-3'>
-    //         <button onClick={() => this.changeView('non_compliance')} className='btn btn-sm btn-info mr-2'>
-    //           Додати акт невідповідності
-    //         </button>
-    //       </div>
-    //       <NonComplianceTable onRowClick={this.onRowClick} />
-    //     </div>
-    //   </When>
-    //   <Otherwise>
-    //     <button className='btn btn-sm btn-info my-2' onClick={() => location.reload()}>
-    //       Назад
-    //     </button>
-    //     <NonCompliance id={counterparty_id} />
-    //   </Otherwise>
-    // </Choose>
+    <Choose>
+      <When condition={view === 'table'}>
+        <div className='row mt-2' style={{height: '90vh'}}>
+          <div className='ml-3'>
+            <button onClick={() => changeView('reclamation')} className='btn btn-sm btn-info mr-2'>
+              Додати рекламацію
+            </button>
+          </div>
+          {/*<ReclamationTable onRowClick={onRowClick} />*/}
+        </div>
+      </When>
+      <Otherwise>
+        <button className='btn btn-sm btn-info my-2' onClick={() => location.reload()}>
+          Назад
+        </button>
+        <Reclamation />
+        {/*<NonCompliance id={counterparty_id} />*/}
+      </Otherwise>
+    </Choose>
   );
 }
 
