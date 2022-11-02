@@ -16,7 +16,7 @@ import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/
 
 function ReclamationFirstPhase() {
   const [editable, setEditable] = useState(false);
-  const [decisionModalOpen, setDecisionModalOpen] = useState(false);
+  const [decisionModalOpen, setDecisionModalOpen] = useState(true);
   const {reclamation, onFormChange} = reclamationsStore;
 
   useEffect(() => {
@@ -26,6 +26,8 @@ function ReclamationFirstPhase() {
   function onProductTypeChange(e) {
     reclamation.product_type = e.id;
     reclamation.product_type_name = e.name;
+    reclamation.product = 0;
+    reclamation.product_name = '';
   }
 
   function onProductChange(e) {
@@ -88,7 +90,12 @@ function ReclamationFirstPhase() {
   }
 
   function openDecisionsModal() {
+    console.log(1);
     setDecisionModalOpen(true);
+  }
+
+  function closeDecisionsModal() {
+    setDecisionModalOpen(false);
   }
 
   function postDepChiefApproval(approved) {
@@ -104,10 +111,6 @@ function ReclamationFirstPhase() {
         location.reload();
       })
       .catch((error) => notify(error));
-  }
-
-  function onCloseModal() {
-    setDecisionModalOpen(false);
   }
 
   function onAcquaintsChange(list) {
@@ -144,30 +147,57 @@ function ReclamationFirstPhase() {
       </NCRow>
 
       <NCRow>
-        <NCItem cols='2'>
-          <DateInput
-            fieldName='Дата виробництва'
-            date={reclamation.date_manufacture}
-            disabled={!editable}
-            onChange={(e) => onFormChange(e, 'date_manufacture')}
-          />
-        </NCItem>
-        <NCItem cols='2'>
-          <DateInput
-            fieldName='Дата відвантаження'
-            date={reclamation.date_shipment}
-            disabled={!editable}
-            onChange={(e) => onFormChange(e, 'date_shipment')}
-          />
-        </NCItem>
-        <NCItem cols='4' className='d-flex'>
-          <DateInput
-            fieldName='Дата отримання рекламації'
-            date={reclamation.date_received}
-            disabled={!editable}
-            onChange={(e) => onFormChange(e, 'date_received')}
-          />
-        </NCItem>
+        <div className='col-lg-8 align-content-start p-0'>
+          <NCRow>
+            <NCItem cols='4'>
+              <DateInput
+                fieldName='Дата виробництва'
+                date={reclamation.date_manufacture}
+                disabled={!editable}
+                onChange={(e) => onFormChange(e, 'date_manufacture')}
+              />
+            </NCItem>
+            <NCItem cols='4'>
+              <DateInput
+                fieldName='Дата відвантаження'
+                date={reclamation.date_shipment}
+                disabled={!editable}
+                onChange={(e) => onFormChange(e, 'date_shipment')}
+              />
+            </NCItem>
+            <NCItem cols='4' className='d-flex'>
+              <DateInput
+                fieldName='Дата отримання рекламації'
+                date={reclamation.date_received}
+                disabled={!editable}
+                onChange={(e) => onFormChange(e, 'date_received')}
+              />
+            </NCItem>
+          </NCRow>
+
+          <NCRow>
+            <NCItem cols='4'>
+              <TextInput
+                fieldName='Номер автомобіля'
+                text={reclamation.car_number}
+                maxLength={10}
+                disabled={!editable}
+                onChange={(e) => onFormChange(e, 'car_number')}
+              />
+            </NCItem>
+            <NCItem cols='8'>
+              <SelectorWithFilterAndAxios
+                listNameForUrl='clients'
+                fieldName='Клієнт'
+                selectId='client_select'
+                value={{name: reclamation.client_name, id: reclamation.client}}
+                onChange={onClientChange}
+                disabled={!editable}
+              />
+            </NCItem>
+          </NCRow>
+        </div>
+
         <NCItem cols='4' style={reclamation.dep_chief_approved === '' ? {background: 'Cornsilk'} : null}>
           Віза начальника підрозділу:
           <div className='font-weight-bold'>{reclamation.dep_chief_name}</div>
@@ -187,29 +217,7 @@ function ReclamationFirstPhase() {
           </Choose>
         </NCItem>
       </NCRow>
-      
-      <NCRow>
-        <NCItem cols='8'>
-          <SelectorWithFilterAndAxios
-            listNameForUrl='clients'
-            fieldName='Клієнт'
-            selectId='client_select'
-            value={{name: reclamation.client_name, id: reclamation.client}}
-            onChange={onClientChange}
-            disabled={!editable}
-          />
-        </NCItem>
-        <NCItem cols='4'>
-          <TextInput
-            fieldName='Номер автомобіля'
-            text={reclamation.car_number}
-            maxLength={10}
-            disabled={!editable}
-            onChange={(e) => onFormChange(e, 'car_number')}
-          />
-        </NCItem>
-      </NCRow>
-      
+
       <NCRow>
         <NCItem cols='8'>
           <TextInput
@@ -231,7 +239,7 @@ function ReclamationFirstPhase() {
           />
         </NCItem>
       </NCRow>
-      
+
       <If condition={reclamation.phase < 2 && ['author', 'dep_chief'].includes(reclamationsStore.user_role)}>
         <NCRow>
           <NCItem>
@@ -239,16 +247,16 @@ function ReclamationFirstPhase() {
           </NCItem>
         </NCRow>
       </If>
-      
+
       <Modal
         open={decisionModalOpen}
-        onClose={onCloseModal}
+        onClose={closeDecisionsModal}
         showCloseIcon={false}
         closeOnOverlayClick={false}
         styles={{modal: {marginTop: 100, height: '45%'}}}
       >
         Оберіть членів комісії по роботі з рекламацією.
-        <MultiSelectorWithAxios listNameForUrl='employees' onChange={onAcquaintsChange} disabled={!editable} />
+        <MultiSelectorWithAxios listNameForUrl='employeessss' onChange={onAcquaintsChange} disabled={!editable} />
         <If condition={reclamation.decisions.length > 0}>
           <SubmitButton className='btn-info' text='Зберегти' onClick={(e) => postDepChiefApproval(true)} />
         </If>

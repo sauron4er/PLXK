@@ -168,7 +168,7 @@ class NCFirstPhase extends React.Component {
             <NCRow>
               <NCItem cols='4'>
                 <SelectorWithFilterAndAxios
-                  listNameForUrl='product_types_flat'
+                  listNameForUrl='product_types_flat/buy'
                   fieldName='Вид продукції'
                   selectId='product_select'
                   value={{name: non_compliance.product_name, id: non_compliance.product}}
