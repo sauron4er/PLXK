@@ -1,6 +1,8 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
+import Modal from 'react-responsive-modal';
+import 'react-responsive-modal/styles.css';
 import nonComplianceStore from '../non_compliance_store';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
@@ -11,7 +13,6 @@ import Files from 'templates/components/form_modules/files';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {isBlankOrZero, notify} from 'templates/components/my_extras';
-import Modal from 'react-responsive-modal';
 import Selector from 'templates/components/form_modules/selectors/selector';
 import NumberInput from 'templates/components/form_modules/number_input';
 import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/multi_selector_with_axios';

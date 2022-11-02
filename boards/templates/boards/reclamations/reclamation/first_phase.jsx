@@ -1,22 +1,23 @@
 'use strict';
 import React, {useState, useEffect} from 'react';
 import {view, store} from '@risingstack/react-easy-state';
+import Modal from 'react-responsive-modal';
+import 'react-responsive-modal/styles.css';
 import reclamationsStore from 'boards/templates/boards/reclamations/store';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
-import NCRow from 'boards/templates/boards/non_compliances/non_compliance/row';
-import NCItem from 'boards/templates/boards/non_compliances/non_compliance/item';
+import NCRow from 'boards/templates/boards/reclamations/reclamation/row';
+import NCItem from 'boards/templates/boards/reclamations/reclamation/item';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import Files from 'templates/components/form_modules/files';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {isBlankOrZero, notify} from 'templates/components/my_extras';
-import Modal from 'react-responsive-modal';
 import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/multi_selector_with_axios';
 
 function ReclamationFirstPhase() {
   const [editable, setEditable] = useState(false);
-  const [decisionModalOpen, setDecisionModalOpen] = useState(true);
+  const [decisionModalOpen, setDecisionModalOpen] = useState(false);
   const {reclamation, onFormChange} = reclamationsStore;
 
   useEffect(() => {
@@ -38,6 +39,16 @@ function ReclamationFirstPhase() {
   function onClientChange(e) {
     reclamation.client = e.id;
     reclamation.client_name = e.name;
+  }
+
+  function onResponsibleChange(e) {
+    reclamation.responsible = e.id;
+    reclamation.responsible_name = e.name;
+  }
+
+  function onResponsibleDepChange(e) {
+    reclamation.answer_responsible_dep = e.id;
+    reclamation.answer_responsible_dep_name = e.name;
   }
 
   function onFilesChange(e) {
@@ -90,7 +101,6 @@ function ReclamationFirstPhase() {
   }
 
   function openDecisionsModal() {
-    console.log(1);
     setDecisionModalOpen(true);
   }
 
@@ -106,7 +116,7 @@ function ReclamationFirstPhase() {
     formData.append('approved', approved);
     formData.append('decisions', decisions ? JSON.stringify(decisions) : JSON.stringify([]));
 
-    axiosPostRequest('dep_chief_approval', formData)
+    axiosPostRequest('reclamation_dep_chief_approval', formData)
       .then((response) => {
         location.reload();
       })
@@ -239,6 +249,28 @@ function ReclamationFirstPhase() {
           />
         </NCItem>
       </NCRow>
+      <NCRow>
+        <NCItem cols='6' className='d-flex'>
+          <SelectorWithFilterAndAxios
+            listNameForUrl='user_profiles'
+            fieldName='Відповідальний за оформлення рішеня комісії'
+            selectId='users_select'
+            value={{name: reclamation.responsible_name, id: reclamation.responsible}}
+            onChange={onResponsibleChange}
+            disabled={true}
+          />
+        </NCItem>
+        <NCItem cols='6'>
+          <SelectorWithFilterAndAxios
+            listNameForUrl='departments'
+            fieldName='Відділ, відповідальний за надання відповіді'
+            selectId='departments_select'
+            value={{name: reclamation.answer_responsible_dep_name, id: reclamation.answer_responsible_dep}}
+            onChange={onResponsibleDepChange}
+            disabled={!editable}
+          />
+        </NCItem>
+      </NCRow>
 
       <If condition={reclamation.phase < 2 && ['author', 'dep_chief'].includes(reclamationsStore.user_role)}>
         <NCRow>
@@ -256,7 +288,7 @@ function ReclamationFirstPhase() {
         styles={{modal: {marginTop: 100, height: '45%'}}}
       >
         Оберіть членів комісії по роботі з рекламацією.
-        <MultiSelectorWithAxios listNameForUrl='employeessss' onChange={onAcquaintsChange} disabled={!editable} />
+        <MultiSelectorWithAxios listNameForUrl='employees' onChange={onAcquaintsChange} disabled={!editable} />
         <If condition={reclamation.decisions.length > 0}>
           <SubmitButton className='btn-info' text='Зберегти' onClick={(e) => postDepChiefApproval(true)} />
         </If>

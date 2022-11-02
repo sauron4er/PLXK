@@ -2,7 +2,7 @@
 import * as React from 'react';
 import Modal from 'react-responsive-modal';
 import Files from 'react-files';
-import {ToastContainer, toast} from 'react-toastify'; // спливаючі повідомлення:
+import {ToastContainer, toast} from 'react-toastify'; // спливні повідомлення:
 import 'react-toastify/dist/ReactToastify.min.css';
 import Info from './info';
 import NewFilesList from 'templates/components/files_uploader/new_files_list';

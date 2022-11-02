@@ -44,14 +44,14 @@ def get_reclamations(request, counterparty, page):
         ncs_page = paginator.page(1)
 
     reclamations_list = [{
-        'id': nc.pk,
-        'client': nc.client.name,
-        'product': nc.product.name,
-        'car_number': nc.car_number,
-        'author': nc.author.pip,
-        'responsible': nc.responsible.pip if nc.responsible else '',
-        'status': 'ok' if nc.phase == 4 else '' if nc.phase == 666 else 'in progress'
-    } for nc in ncs_page.object_list]
+        'id': reclamation.pk,
+        'client': reclamation.client.name,
+        'product': reclamation.product.name,
+        'car_number': reclamation.car_number,
+        'author': reclamation.author.pip,
+        'responsible': reclamation.responsible.pip if reclamation.responsible else '',
+        'status': 'ok' if reclamation.phase == 4 else '' if reclamation.phase == 666 else 'in progress'
+    } for reclamation in ncs_page.object_list]
 
     response = {'rows': reclamations_list, 'pagesCount': paginator.num_pages}
     return HttpResponse(json.dumps(response))
@@ -60,7 +60,7 @@ def get_reclamations(request, counterparty, page):
 @login_required(login_url='login')
 @try_except
 def get_reclamation(request, pk):
-    reclamation = get_object_or_404(Reclamation, pk=pk)
+    reclamation = Reclamation.objects.get(pk=pk)
 
     reclamation_fields = {
         'id': reclamation.id,
@@ -93,10 +93,10 @@ def get_reclamation(request, pk):
             'id': decision.id,
             'user': decision.user_id,
             'user_name': decision.user.pip,
-            'decision': decision.decision or '---------',
+            'decision': decision.decision or '',
             'decision_time': convert_to_localtime(decision.decision_time, 'time') if decision.decision_time else '',
             'phase': decision.phase
-        } for decision in Non_compliance_decision.objects.filter(non_compliance_id=reclamation.id).filter(is_active=True)],
+        } for decision in Reclamation_decision.objects.filter(reclamation=reclamation).filter(is_active=True)],
 
         'final_decisioner': get_director_userprofile(),
         'final_decision': reclamation.final_decision or '',
@@ -145,13 +145,15 @@ def post_reclamation(request):
         reclamation.date_manufacture = data['date_manufacture']
         reclamation.date_shipment = data['date_shipment']
         reclamation.date_received = data['date_received']
+        reclamation.responsible = data['responsible']
+        reclamation.answer_responsible_dep = data['answer_responsible_dep']
 
         if data['dep_chief_approved'] == '' or data['dep_chief_approved'] is None:
             reclamation.phase = 1
         elif data['dep_chief_approved'] is True:
             reclamation.phase = 2
         else:
-            reclamation.phase = 666  # Відмінено
+            reclamation.phase = 666  # Скасовано
 
         reclamation.save()
 
@@ -167,27 +169,28 @@ def post_reclamation(request):
 @login_required(login_url='login')
 @try_except
 def dep_chief_approval(request):
-    nc = get_object_or_404(Non_compliance, pk=request.POST['nc_id'])
-    nc.dep_chief_approved = json.loads(request.POST['approved'])
-    if nc.dep_chief_approved is False:
-        nc.phase = 666
+    reclamation = Reclamation.objects.get(id=request.POST['reclamation_id'])
+    reclamation.dep_chief_approved = json.loads(request.POST['approved'])
+
+    if reclamation.dep_chief_approved is False:
+        reclamation.phase = 666
     else:
-        nc.phase = 2
-        nc.save()
+        reclamation.phase = 2
+        reclamation.save()
 
         director_id = get_director_userprofile('id')
-        new_decision = Non_compliance_decision(non_compliance=nc, user_id=director_id, phase=2)
+        new_decision = Reclamation_decision(reclamation=reclamation, user_id=director_id, phase=2)
         new_decision.save()
 
         decisions = json.loads(request.POST['decisions'])
         for decision in decisions:
             user_id = Employee_Seat.objects.values_list('employee_id', flat=True).filter(id=decision['id'])[0]
             if user_id != director_id:
-                new_decision = Non_compliance_decision(non_compliance=nc, user_id=user_id, phase=1)
+                new_decision = Reclamation_decision(reclamation=reclamation, user_id=user_id, phase=1)
                 new_decision.save()
-                create_and_send_mail('decisioner', user_id, nc.id)
+                create_and_send_mail('decisioner', user_id, reclamation.id)
 
-        create_and_send_mail('author', nc.author_id, nc.id)
+        create_and_send_mail('author', reclamation.author_id, reclamation.id)
 
     return HttpResponse('ok')
 
@@ -238,37 +241,36 @@ def post_comment_files(nc_comment_instance, files):
 @try_except
 def post_decision(request):
     decision = json.loads(request.POST['decision'])
-    decision_instance = get_object_or_404(Non_compliance_decision, pk=decision['id'])
+    decision_instance = get_object_or_404(Reclamation_decision, pk=decision['id'])
     decision_instance.decision = decision['decision']
     decision_instance.decision_time = datetime.now(tz=get_current_timezone())
     decision_instance.save()
 
     if decision_instance.phase == 1:
-        phase_one_is_done = not Non_compliance_decision.objects\
-            .filter(non_compliance__id=request.POST['nc_id'])\
+        phase_one_is_done = not Reclamation_decision.objects\
+            .filter(reclamation_id=request.POST['reclamation_id'])\
             .filter(phase=1)\
             .filter(decision__isnull=True)\
             .filter(is_active=True)\
             .exists()
 
         if phase_one_is_done:
-            director_decided = Non_compliance_decision.objects.values_list('decision', flat=True)\
-                .filter(non_compliance__id=request.POST['nc_id'])\
+            director_decided = Reclamation_decision.objects.values_list('decision', flat=True)\
+                .filter(reclamation_id=request.POST['reclamation_id'])\
                 .filter(phase=2)\
                 .filter(is_active=True)
             if not director_decided:
-                create_and_send_mail('decisioner', get_director_userprofile('id'), decision_instance.non_compliance_id)
+                create_and_send_mail('decisioner', get_director_userprofile('id'), decision_instance.reclamation_id)
 
     else:  # phase = 2 - рішення директора
-        nc_instance = get_object_or_404(Non_compliance, pk=request.POST['nc_id'])
-        nc_instance.final_decision = decision['decision']
-        nc_instance.final_decision_time = datetime.now(tz=get_current_timezone())
-        user_id = Employee_Seat.objects.values_list('employee_id', flat=True).filter(id=request.POST['responsible'])[0]
-        nc_instance.responsible_id = user_id
-        nc_instance.phase = 3
-        nc_instance.save()
+        reclamation_instance = get_object_or_404(Reclamation, pk=request.POST['nc_id'])
+        reclamation_instance.final_decision = decision['decision']
+        reclamation_instance.final_decision_time = datetime.now(tz=get_current_timezone())
+        reclamation_instance.responsible_id = request.POST['responsible']
+        reclamation_instance.phase = 3
+        reclamation_instance.save()
 
-    create_and_send_mail('author', decision_instance.non_compliance.author_id, decision_instance.non_compliance_id)
+    create_and_send_mail('author', decision_instance.reclamation.author_id, decision_instance.reclamation_id)
 
     return HttpResponse(json.dumps(convert_to_localtime(decision_instance.decision_time, 'time')))
 

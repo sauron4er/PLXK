@@ -26,7 +26,6 @@ function Reclamations(props) {
   }
 
   function onRowClick(clicked_row) {
-    console.log(clicked_row);
     reclamationsStore.reclamation.id = clicked_row.id;
     setView('reclamation');
   }

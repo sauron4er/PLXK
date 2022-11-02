@@ -7,6 +7,7 @@ import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import ReclamationFirstPhase from "boards/templates/boards/reclamations/reclamation/first_phase";
+import ReclamationSecondPhase from "boards/templates/boards/reclamations/reclamation/second_phase";
 
 function Reclamation(props) {
   const [loading, setLoading] = useState(false);
@@ -59,7 +60,7 @@ function Reclamation(props) {
               <div className='h-100 overflow-auto'>
                 <ReclamationFirstPhase />
                 <If condition={reclamationsStore.reclamation.phase > 1}>
-                  {/*<NCSecondPhase />*/}
+                  <ReclamationSecondPhase />
                 </If>
                 <If condition={reclamationsStore.reclamation.phase > 2}>
                   {/*<NCThirdPhase />*/}

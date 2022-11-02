@@ -81,6 +81,16 @@ def employees(request):
 
 @login_required(login_url='login')
 @try_except
+def get_user_profiles_for_select(request):
+    user_profiles = [{
+            'id': up.id,
+            'name': up.pip
+        } for up in UserProfile.objects.filter(is_active=True).filter(is_pc_user=True).order_by('pip')]
+    return HttpResponse(json.dumps(user_profiles))
+
+
+@login_required(login_url='login')
+@try_except
 def save_employee(request):
     from django.db import IntegrityError
     if request.POST['id'] == '0':

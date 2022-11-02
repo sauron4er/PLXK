@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^.+/.+/get_counterparties/(?P<cp_type>\w+)', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),
     url(r'^.+/.+/get_providers_list', get_counterparties, {'cp_type': 'providers'}, name='get_providers_list'),
+    url(r'^.+/.+/get_user_profiles', accounts_views.get_user_profiles_for_select, name='get_user_profiles_for_select'),
     url(r'^.+/.+/get_employees', edms_get_emp_seats, name='get_employees'),
     url(r'^.+/.+/get_dep_seats/(?P<dep_id>\d+)', get_dep_seats, name='get_dep_seats'),
     url(r'^.+/.+/get_seats_for_select', get_seats_for_select, name='get_seats_for_select'),
