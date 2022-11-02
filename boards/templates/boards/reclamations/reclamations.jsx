@@ -7,10 +7,6 @@ import Reclamation from "boards/templates/boards/reclamations/reclamation";
 
 function Reclamations(props) {
   const [view, setView] = useState('table'); // , reclamation
-  
-  // getMainDivRef = (input) => {
-  //   this.mainDivRef = input;
-  // };
 
   useEffect(() => {
     reclamationsStore.counterparty_id = props.counterparty_id;
@@ -25,13 +21,14 @@ function Reclamations(props) {
   }, []);
 
   function showReclamation(id) {
-    reclamationsStore.non_compliance.id = id;
-    setView('non_compliance');
+    reclamationsStore.reclamation.id = id;
+    setView('reclamation');
   }
 
   function onRowClick(clicked_row) {
-    reclamationsStore.non_compliance.id = clicked_row.id;
-    setView('non_compliance');
+    console.log(clicked_row);
+    reclamationsStore.reclamation.id = clicked_row.id;
+    setView('reclamation');
   }
 
   function changeView(name) {
@@ -52,7 +49,7 @@ function Reclamations(props) {
               Додати рекламацію
             </button>
           </div>
-          {/*<ReclamationTable onRowClick={onRowClick} />*/}
+          <ReclamationTable onRowClick={onRowClick} />
         </div>
       </When>
       <Otherwise>
@@ -60,7 +57,6 @@ function Reclamations(props) {
           Назад
         </button>
         <Reclamation />
-        {/*<NonCompliance id={counterparty_id} />*/}
       </Otherwise>
     </Choose>
   );

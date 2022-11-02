@@ -59,40 +59,35 @@ def get_reclamations(request, counterparty, page):
 
 @login_required(login_url='login')
 @try_except
-def get_non_compliance(request, pk):
-    nc_instance = get_object_or_404(Non_compliance, pk=pk)
+def get_reclamation(request, pk):
+    reclamation = get_object_or_404(Reclamation, pk=pk)
 
-    nc = {
-        'id': nc_instance.id,
-        'phase': nc_instance.phase,
-        'author_name': nc_instance.author.pip,
-        'date_added': date_to_json(nc_instance.date_added),
-        'department_name': nc_instance.department.name,
-        'dep_chief': nc_instance.dep_chief_id,
-        'dep_chief_name': nc_instance.dep_chief.pip,
-        'dep_chief_approved': nc_instance.dep_chief_approved or '',
-        'name': nc_instance.name,
-        'product': nc_instance.product.id,
-        'product_name': nc_instance.product.name,
-        'party_number': nc_instance.party_number,
-        'order_number': nc_instance.order_number,
-        'manufacture_date': date_to_json(nc_instance.manufacture_date),
-        'total_quantity': nc_instance.total_quantity,
-        'nc_quantity': nc_instance.nc_quantity,
-        'packing_type': nc_instance.packing_type,
-        'provider': nc_instance.provider.id,
-        'provider_name': nc_instance.provider.name,
-        'reason': nc_instance.reason,
-        'status': nc_instance.status,
-        'classification': nc_instance.classification,
-        'defect': nc_instance.defect,
-        'analysis_results': nc_instance.analysis_results,
-        'sector': nc_instance.sector,
+    reclamation_fields = {
+        'id': reclamation.id,
+        'phase': reclamation.phase,
+        'author_name': reclamation.author.pip,
+        'date_added': date_to_json(reclamation.date_db_added),
+        'department_name': reclamation.department.name,
+        'dep_chief': reclamation.dep_chief_id,
+        'dep_chief_name': reclamation.dep_chief.pip,
+        'dep_chief_approved': reclamation.dep_chief_approved or '',
+        'product_type': reclamation.product.type.id,
+        'product_type_name': reclamation.product.type.name,
+        'product': reclamation.product.id,
+        'product_name': reclamation.product.name,
+        'client': reclamation.client.id,
+        'client_name': reclamation.client.name,
+        'reason': reclamation.reason,
+        'car_number': reclamation.car_number,
+        'date_manufacture': date_to_json(reclamation.date_manufacture),
+        'date_shipment': date_to_json(reclamation.date_shipment),
+        'date_received': date_to_json(reclamation.date_received),
+
         'old_files': [{
             'id': file.id,
             'file': file.file.name,
             'name': file.name,
-        } for file in Non_compliance_file.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
+        } for file in Reclamation_file.objects.filter(reclamation_id=reclamation.id).filter(is_active=True)],
 
         'decisions': [{
             'id': decision.id,
@@ -101,36 +96,30 @@ def get_non_compliance(request, pk):
             'decision': decision.decision or '---------',
             'decision_time': convert_to_localtime(decision.decision_time, 'time') if decision.decision_time else '',
             'phase': decision.phase
-        } for decision in Non_compliance_decision.objects.filter(non_compliance_id=nc_instance.id).filter(is_active=True)],
+        } for decision in Non_compliance_decision.objects.filter(non_compliance_id=reclamation.id).filter(is_active=True)],
 
         'final_decisioner': get_director_userprofile(),
-        'final_decision': nc_instance.final_decision or '',
-        'final_decision_time': convert_to_localtime(nc_instance.final_decision_time, 'day') if nc_instance.final_decision_time else '',
-        'responsible': nc_instance.responsible.id if nc_instance.responsible else 0,
-        'responsible_name': nc_instance.responsible.pip if nc_instance.responsible else '',
-        'corrective_action': nc_instance.corrective_action or '',
-        'corrective_action_number': nc_instance.corrective_action_number or '',
-        'retreatment_date': date_to_json(nc_instance.retreatment_date) if nc_instance.retreatment_date else '',
-        'spent_time': nc_instance.spent_time or '',
-        'people_involved': nc_instance.people_involved or '',
-        'quantity_updated': nc_instance.quantity_updated or '',
-        'status_updated': nc_instance.status_updated or '',
-        'return_date': date_to_json(nc_instance.return_date) or '',
-        'quality_director_name': get_quality_director('name'),
+        'final_decision': reclamation.final_decision or '',
+        'final_decision_time': convert_to_localtime(reclamation.final_decision_time, 'day') if reclamation.final_decision_time else '',
+        'responsible': reclamation.responsible.id if reclamation.responsible else 0,
+        'responsible_name': reclamation.responsible.pip if reclamation.responsible else '',
+        'answer_responsible_dep': reclamation.answer_responsible_dep.id if reclamation.answer_responsible_dep else '',
+        'answer_responsible_dep_name': reclamation.answer_responsible_dep.name if reclamation.answer_responsible_dep else '',
+
         'comments': get_comments(pk)
     }
 
     user_role = 'viewer'
-    if nc_instance.responsible and nc_instance.responsible_id == request.user.userprofile.id:
+    if reclamation.responsible and reclamation.responsible_id == request.user.userprofile.id:
         user_role = 'responsible'
-    elif get_dep_chief(nc_instance.author) == request.user.userprofile:
+    elif get_dep_chief(reclamation.author) == request.user.userprofile:
         user_role = 'dep_chief'
-    elif nc_instance.author.user == request.user:
+    elif reclamation.author.user == request.user:
         user_role = 'author'
     elif get_director_userprofile('id') == request.user.userprofile.id:
         user_role = 'director'
 
-    return HttpResponse(json.dumps({'non_compliance': nc, 'user_role': user_role}))
+    return HttpResponse(json.dumps({'reclamation': reclamation_fields, 'user_role': user_role}))
 
 
 @transaction.atomic
@@ -166,7 +155,7 @@ def post_reclamation(request):
 
         reclamation.save()
 
-        post_files(reclamation.id, request.FILES, data['old_files'])
+        post_files(reclamation, request.FILES, data['old_files'])
 
         if data['phase'] == 0:
             create_and_send_mail('dep_chief', reclamation.dep_chief_id, reclamation.id)
@@ -204,9 +193,7 @@ def dep_chief_approval(request):
 
 
 @try_except
-def post_files(reclamation_id, new_files, old_files):
-    reclamation = get_object_or_404(Non_compliance, pk=reclamation_id)
-
+def post_files(reclamation, new_files, old_files):
     for file in new_files.getlist('new_files'):
         Reclamation_file.objects.create(
             reclamation=reclamation,

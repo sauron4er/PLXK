@@ -25,11 +25,11 @@ const col_width = [
 ];
 
 function ReclamationTable(props) {
-  const refMainDiv = useRef(null); // Отримує ref основного div для визначення його висоти і передачі її у DxTable
+  const refMainDiv = useRef(null); // Отримує ref основного div для визначення його висоти та передачі її у DxTable
   const [mainDivHeight, setMainDivHeight] = useState(0);
 
   useEffect(() => {
-    refMainDiv ? setMainDivHeight(refMainDiv.clientHeight - 50) : null;
+    refMainDiv ? setMainDivHeight(refMainDiv.current.clientHeight - 50) : null;
   }, []);
 
   return (
