@@ -1439,18 +1439,21 @@ def get_approvals_for_contract_subject(doc_modules):
 @try_except
 def get_to_work_for_contract_subject(document_id):
     try:
-        contract_subject_id = Doc_Contract_Subject.objects.get(document_id=document_id)
+        doc_contract_subject = Doc_Contract_Subject.objects.get(document_id=document_id)
 
-        to_work_query = Contract_Subject_To_Work.objects\
-            .filter(subject_id=contract_subject_id.contract_subject.id)\
-            .filter(is_active=True)
+        if doc_contract_subject.contract_subject:
+            to_work_query = Contract_Subject_To_Work.objects\
+                .filter(subject_id=doc_contract_subject.contract_subject.id)\
+                .filter(is_active=True)
 
-        to_works_list = [{
-            'id': to_work.recipient.id,
-            'name': to_work.recipient.employee.pip
-        } for to_work in to_work_query]
+            to_works_list = [{
+                'id': to_work.recipient.id,
+                'name': to_work.recipient.employee.pip
+            } for to_work in to_work_query]
 
-        return to_works_list
+            return to_works_list
+
+        return []
 
     except Doc_Contract_Subject.DoesNotExist:
         return []
