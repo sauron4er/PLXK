@@ -8,6 +8,7 @@ import {notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import ReclamationFirstPhase from "boards/templates/boards/reclamations/reclamation/first_phase";
 import ReclamationSecondPhase from "boards/templates/boards/reclamations/reclamation/second_phase";
+import ReclamationComments from "boards/templates/boards/reclamations/comments/comments";
 
 function Reclamation(props) {
   const [loading, setLoading] = useState(false);
@@ -69,7 +70,7 @@ function Reclamation(props) {
             </div>
           </div>
           <div className='col-lg-3 border border-dark rounded'>
-            {/*<NCComments />*/}
+            <ReclamationComments />
           </div>
         </div>
 

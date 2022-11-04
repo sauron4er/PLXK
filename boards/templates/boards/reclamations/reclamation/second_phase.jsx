@@ -4,7 +4,6 @@ import {view, store} from '@risingstack/react-easy-state';
 import reclamationsStore from 'boards/templates/boards/reclamations/store';
 import NCRow from 'boards/templates/boards/reclamations/reclamation/row';
 import NCItem from 'boards/templates/boards/reclamations/reclamation/item';
-import Selector from 'templates/components/form_modules/selectors/selector';
 import {axiosPostRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
 import SubmitButton from 'templates/components/form_modules/submit_button';
@@ -104,7 +103,7 @@ function ReclamationSecondPhase() {
         onClose={onCloseModal}
         showCloseIcon={false}
         closeOnOverlayClick={false}
-        styles={{modal: {marginTop: 75, width: '100%'}}}
+        styles={{modal: {marginTop: 75, width: '100%', minHeight: '500px'}}}
       >
         Оберіть відповідального за виконання вашого рішення.
         <SelectorWithFilterAndAxios

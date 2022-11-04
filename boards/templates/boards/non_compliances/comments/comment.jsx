@@ -30,8 +30,10 @@ class NCComment extends React.Component {
           <hr className='m-0' />
           <If condition={comment.original_comment_id !== 0}>
             <blockquote className='m-1'>
-              <div className='font-italic'>{comment.original_comment_author}</div>
-              <div>{comment.original_comment_text}</div>
+              <small>
+                <div className='font-italic'>{comment.original_comment_author}</div>
+                <div className='font-italic'>{comment.original_comment_text}</div>
+              </small>
             </blockquote>
           </If>
           <div>{comment.text}</div>

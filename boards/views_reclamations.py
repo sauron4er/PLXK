@@ -12,10 +12,8 @@ from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.global_getters import get_dep_chief, get_director_userprofile, get_quality_director
 from plxk.api.pagination import sort_query_set, filter_query_set
-from .models import Non_compliance, Non_compliance_file, \
-    Non_compliance_comment, Non_compliance_comment_file, Non_compliance_decision
 from .models import Reclamation, Reclamation_file, Reclamation_decision, Reclamation_comment, Reclamation_comment_file
-from .api.non_compliance_mail_sender import create_and_send_mail
+from .api.reclamation_mail_sender import create_and_send_mail
 
 
 @login_required(login_url='login')
@@ -205,39 +203,6 @@ def post_files(reclamation, new_files, old_files):
         )
 
 
-@transaction.atomic
-@login_required(login_url='login')
-@try_except
-def post_new_comment(request):
-    nc_comment = Non_compliance_comment(author=request.user.userprofile)
-    nc_comment.non_compliance_id = request.POST['non_compliance_id']
-    nc_comment.comment = request.POST['comment']
-
-    if request.POST['original_comment_id'] != '':
-        nc_comment.original_comment_id = request.POST['original_comment_id']
-
-    nc_comment.save()
-
-    post_comment_files(nc_comment, request.FILES)
-
-    if nc_comment.original_comment:
-        create_and_send_mail('answer', nc_comment.original_comment.author_id, nc_comment.non_compliance_id)
-
-    create_and_send_mail('author', nc_comment.non_compliance.author_id, nc_comment.non_compliance_id)
-
-    return HttpResponse(json.dumps(get_comments(request.POST['non_compliance_id'])))
-
-
-@try_except
-def post_comment_files(nc_comment_instance, files):
-    for file in files.getlist('new_comment_files'):
-        Non_compliance_comment_file.objects.create(
-            comment=nc_comment_instance,
-            file=file,
-            name=file.name
-        )
-
-
 @try_except
 def post_decision(request):
     decision = json.loads(request.POST['decision'])
@@ -263,7 +228,7 @@ def post_decision(request):
                 create_and_send_mail('decisioner', get_director_userprofile('id'), decision_instance.reclamation_id)
 
     else:  # phase = 2 - рішення директора
-        reclamation_instance = get_object_or_404(Reclamation, pk=request.POST['nc_id'])
+        reclamation_instance = Reclamation.objects.get(pk=request.POST['reclamation_id'])
         reclamation_instance.final_decision = decision['decision']
         reclamation_instance.final_decision_time = datetime.now(tz=get_current_timezone())
         reclamation_instance.responsible_id = request.POST['responsible']
@@ -271,12 +236,13 @@ def post_decision(request):
         reclamation_instance.save()
 
     create_and_send_mail('author', decision_instance.reclamation.author_id, decision_instance.reclamation_id)
+    create_and_send_mail('responsible', decision_instance.reclamation.responsible_id, decision_instance.reclamation_id)
 
     return HttpResponse(json.dumps(convert_to_localtime(decision_instance.decision_time, 'time')))
 
 
 @try_except
-def get_comments(nc_id):
+def get_comments(reclamation_id):
     comments = [{
         'id': comment.id,
         'author': comment.author.pip,
@@ -288,9 +254,9 @@ def get_comments(nc_id):
             'id': file.id,
             'file': file.file.name,
             'name': file.name,
-        } for file in Non_compliance_comment_file.objects.filter(comment_id=comment.id).filter(is_active=True)]
-    } for comment in Non_compliance_comment.objects
-        .filter(non_compliance=nc_id)
+        } for file in Reclamation_comment_file.objects.filter(comment_id=comment.id).filter(is_active=True)]
+    } for comment in Reclamation_comment.objects
+        .filter(reclamation=reclamation_id)
         .filter(is_active=True).order_by('-id')]
     return comments
 
@@ -298,25 +264,58 @@ def get_comments(nc_id):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def done(request):
-    data = json.loads(request.POST.copy()['non_compliance'])
-    nc = get_object_or_404(Non_compliance, pk=data['id'])
+def post_new_comment(request):
+    comment = Reclamation_comment(author=request.user.userprofile)
+    comment.reclamation_id = request.POST['reclamation_id']
+    comment.comment = request.POST['comment']
 
-    nc.corrective_action = data['corrective_action']
-    if data['corrective_action_number'] != '':
-        nc.corrective_action_number = data['corrective_action_number']
+    if request.POST['original_comment_id'] != '':
+        comment.original_comment_id = request.POST['original_comment_id']
 
-    if data['final_decision'] == 'Переробка':
-        nc.retreatment_date = data['retreatment_date']
-        nc.spent_time = data['spent_time']
-        nc.people_involved = data['people_involved']
-        nc.quantity_updated = data['quantity_updated']
-        nc.status_updated = data['status_updated']
-    if data['final_decision'] == 'Повернення постачальнику':
-        nc.return_date = data['return_date']
+    comment.save()
 
-    nc.phase = 4
-    nc.save()
+    post_comment_files(comment, request.FILES)
 
-    create_and_send_mail('author', nc.author_id, nc.id)
-    return HttpResponse('ok')
+    if comment.original_comment:
+        create_and_send_mail('answer', comment.original_comment.author_id, comment.reclamation_id)
+
+    create_and_send_mail('author', comment.reclamation.author_id, comment.reclamation_id)
+
+    return HttpResponse(json.dumps(get_comments(request.POST['reclamation_id'])))
+
+
+@try_except
+def post_comment_files(comment_instance, files):
+    for file in files.getlist('new_comment_files'):
+        Reclamation_comment_file.objects.create(
+            comment=comment_instance,
+            file=file,
+            name=file.name
+        )
+
+
+# @transaction.atomic
+# @login_required(login_url='login')
+# @try_except
+# def done(request):
+#     data = json.loads(request.POST.copy()['reclamation'])
+#     nc = get_object_or_404(Reclamation, pk=data['id'])
+#
+#     nc.corrective_action = data['corrective_action']
+#     if data['corrective_action_number'] != '':
+#         nc.corrective_action_number = data['corrective_action_number']
+#
+#     if data['final_decision'] == 'Переробка':
+#         nc.retreatment_date = data['retreatment_date']
+#         nc.spent_time = data['spent_time']
+#         nc.people_involved = data['people_involved']
+#         nc.quantity_updated = data['quantity_updated']
+#         nc.status_updated = data['status_updated']
+#     if data['final_decision'] == 'Повернення постачальнику':
+#         nc.return_date = data['return_date']
+#
+#     nc.phase = 4
+#     nc.save()
+#
+#     create_and_send_mail('author', nc.author_id, nc.id)
+#     return HttpResponse('ok')
