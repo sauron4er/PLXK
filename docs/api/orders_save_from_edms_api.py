@@ -1,6 +1,6 @@
 from plxk.api.try_except import try_except
 from docs.models import Order_doc, File, Order_article, Article_responsible
-from edms.models import Document, Document_Type_Module, Doc_Text, Doc_Recipient, Decree_Article, Doc_Day
+from edms.models import Document, Document_Type_Module, Doc_Text, Doc_Recipient, Decree_Article, Doc_Day, File as EdmsFile
 
 
 @try_except
@@ -19,9 +19,8 @@ def post_order_from_edms(edms_doc_id, registration_number):
     new_order.date_start = get_date_start_from_edms_doc(edms_doc_instance)
     new_order.save()
 
+    post_order_files(new_order, edms_doc_instance)
     post_order_articles(new_order, edms_doc_instance)
-
-    # create_and_save_pdf(new_order)
 
 
 @try_except
@@ -80,6 +79,18 @@ def get_date_start_from_edms_doc(edms_doc_instance):
 
 
 @try_except
+def post_order_files(order, edms_doc_instance):
+    files = EdmsFile.objects.filter(document_path__document=edms_doc_instance)\
+        .filter(first_path=True)\
+        .filter(is_active=True)
+    for file in files:
+        new_file = File(file=file.file)
+        new_file.name = file.name
+        new_file.order = order
+        new_file.save()
+
+
+@try_except
 def post_order_articles(order, edms_doc_instance):
     articles = [{
         'text': article.text,
@@ -111,8 +122,3 @@ def post_article_responsibles(article, responsibles):
         new_article_responsible = Article_responsible(article=article)
         new_article_responsible.employee_seat_id = responsible['id']
         new_article_responsible.save()
-
-
-@try_except
-def create_and_save_pdf(new_order):
-    pass
