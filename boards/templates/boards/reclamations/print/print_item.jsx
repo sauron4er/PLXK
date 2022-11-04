@@ -1,15 +1,12 @@
 ﻿'use strict';
 import * as React from 'react';
 
-class NCPrintItem extends React.Component {
+class ReclamationPrintItem extends React.Component {
   render() {
-    const {ua, en, value, cols, position, className} = this.props;
+    const {ua, value, cols, position, className} = this.props;
     return (
       <div className={`col-${cols} text-${position} ${className}`}>
-        <span className='font-italic'>{ua}</span>{' '}
-        <span className='font-italic'>
-          <small>/ {en}</small>
-        </span>
+        <span className='font-italic'>{ua}</span>
         :{' '}
         <Choose>
           <When condition={value.length > 10}>
@@ -25,7 +22,6 @@ class NCPrintItem extends React.Component {
 
   static defaultProps = {
     ua: '',
-    en: '',
     value: '',
     cols: '12',
     position: 'left',
@@ -33,4 +29,4 @@ class NCPrintItem extends React.Component {
   };
 }
 
-export default NCPrintItem;
+export default ReclamationPrintItem;

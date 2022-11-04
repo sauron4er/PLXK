@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 
-class NCPrintRow extends React.Component {
+class ReclamationPrintRow extends React.Component {
   render() {
     const {className, children, last, right} = this.props;
   
@@ -19,4 +19,4 @@ class NCPrintRow extends React.Component {
   }
 }
 
-export default NCPrintRow;
+export default ReclamationPrintRow;

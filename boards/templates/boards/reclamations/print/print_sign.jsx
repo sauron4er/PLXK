@@ -1,14 +1,14 @@
 'use strict';
 import * as React from 'react';
 
-class NCPrintSign extends React.Component {
+class ReclamationPrintSign extends React.Component {
   render() {
-    const {className, name, role, role_en, cols} = this.props;
+    const {className, name, role, cols} = this.props;
   
     return (
       <div className={`col-${cols} d-flex flex-column`}>
         <If condition={role}>
-          <div className='text-center font-italic'>{role} <small>/ {role_en}</small></div>
+          <div className='text-center font-italic'>{role}</div>
         </If>
         <If condition={name}>
           <div className='text-center font-weight-bold'>{name}</div>
@@ -21,11 +21,10 @@ class NCPrintSign extends React.Component {
   
   static defaultProps = {
     role: '',
-    role_en: '',
     name: '',
     className: '',
     cols: '12'
   }
 }
 
-export default NCPrintSign;
+export default ReclamationPrintSign;

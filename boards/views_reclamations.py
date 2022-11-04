@@ -103,6 +103,7 @@ def get_reclamation(request, pk):
         'responsible_name': reclamation.responsible.pip if reclamation.responsible else '',
         'answer_responsible_dep': reclamation.answer_responsible_dep.id if reclamation.answer_responsible_dep else '',
         'answer_responsible_dep_name': reclamation.answer_responsible_dep.name if reclamation.answer_responsible_dep else '',
+        'quality_director_name': get_quality_director('name'),
 
         'comments': get_comments(pk)
     }

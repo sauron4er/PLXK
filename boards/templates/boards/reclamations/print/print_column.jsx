@@ -1,7 +1,7 @@
 'use strict';
 import * as React from 'react';
 
-class NCPrintColumn extends React.Component {
+class ReclamationPrintColumn extends React.Component {
   render() {
     return (
       <div className={`d-flex flex-column ${this.props.className}`}>
@@ -15,4 +15,4 @@ class NCPrintColumn extends React.Component {
   }
 }
 
-export default NCPrintColumn;
+export default ReclamationPrintColumn;

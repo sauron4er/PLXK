@@ -9,6 +9,7 @@ import {Loader} from 'templates/components/loaders';
 import ReclamationFirstPhase from "boards/templates/boards/reclamations/reclamation/first_phase";
 import ReclamationSecondPhase from "boards/templates/boards/reclamations/reclamation/second_phase";
 import ReclamationComments from "boards/templates/boards/reclamations/comments/comments";
+import ReclamationPrint from "boards/templates/boards/reclamations/print/print";
 
 function Reclamation(props) {
   const [loading, setLoading] = useState(false);
@@ -55,7 +56,7 @@ function Reclamation(props) {
                   {/*<h6 className='text-center'>NON-CONFORMITY REGISTRATION ACT</h6>*/}
                 </div>
                 <div className='col-md-3'>
-                  {/*<NCPrint />*/}
+                  <ReclamationPrint />
                 </div>
               </div>
               <div className='h-100 overflow-auto'>
