@@ -111,13 +111,17 @@ def post_order(post_request):
 @try_except
 def change_order(post_request):
     order = get_object_or_404(Order_doc, pk=post_request['id'])
-    order_form = NewDocOrderForm(post_request, instance=order, initial={'date_canceled': None,
-                                                                        'canceled_by': None,
-                                                                        'cancels': None})
-    if order_form.is_valid():
-        order_form.save()
-    else:
-        raise ValidationError('docs/orders: function change_order: order_form invalid')
+    order.name = post_request['name']
+    order.preamble = post_request['preamble'] if post_request['preamble'] != '' else None
+    order.code = post_request['code']
+    order.doc_type_id = post_request['doc_type']
+    order.author_id = post_request['author']
+    order.supervisory_id = post_request['supervisory']
+    order.date_start = post_request['date_start']
+    order.cancels_code = post_request['cancels_code'] if post_request['cancels_code'] != '' else None
+    order.date_canceled = post_request['date_canceled'] if post_request['date_canceled'] != '' else None
+    order.cancels = post_request['cancels'] if post_request['cancels'] != '' else None
+    order.save()
 
 
 @try_except

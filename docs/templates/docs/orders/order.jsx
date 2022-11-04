@@ -58,11 +58,10 @@ class Order extends React.Component {
       notify('Внесіть інформацію про пункти наказу');
       return false;
     }
-    if (isBlankOrZero(ordersStore.order.files) && isBlankOrZero(ordersStore.order.files_old)) {
-      // if (isBlankOrZero(ordersStore.order.files)) {
-      notify('Додайте файл документу');
-      return false;
-    }
+    // if (isBlankOrZero(ordersStore.order.files) && isBlankOrZero(ordersStore.order.files_old)) {
+    //   notify('Додайте файл документу');
+    //   return false;
+    // }
     if (isBlankOrZero(ordersStore.order.author)) {
       notify('Оберіть автора документу');
       return false;
@@ -364,16 +363,17 @@ class Order extends React.Component {
             />
 
             <Articles disabled={!is_orders_admin} articles={order.articles} changeArticles={this.onArticlesChange} emp_seats={emp_seats} />
-
-            <hr />
-            <Files
-              oldFiles={order.files_old}
-              newFiles={order.files}
-              fieldName={'Файли'}
-              onChange={(e) => this.onInputChange(e, 'files')}
-              onDelete={(id) => this.onFilesDelete(id, 'files_old')}
-              disabled={!is_orders_admin}
-            />
+  
+            <If condition={order?.files_old?.length || is_orders_admin}>
+              <hr />
+              <Files
+                oldFiles={order.files_old}
+                newFiles={order.files}
+                fieldName={"Файли"}
+                onChange={(e) => this.onInputChange(e, "files")}
+                onDelete={(id) => this.onFilesDelete(id, "files_old")}
+                disabled={!is_orders_admin}
+              /></If>
 
             <hr />
             <SelectorWithFilter
