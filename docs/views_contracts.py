@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.db import transaction
 import json
 from edms.models import Employee_Seat
+from edms.api.contract_reg_numbers import get_contract_reg_numbers_list
 from plxk.api.try_except import try_except
 from .models import Contract, Contract_File
 from plxk.api.datetime_normalizers import date_to_json
@@ -214,3 +215,18 @@ def edit_contract(request):
 def deactivate_contract(request, pk):
     contracts_api.deactivate_contract(request, pk)
     return HttpResponse()
+
+
+# ----------------------------------------- Contract reg numbers
+@login_required(login_url='login')
+@try_except
+def contract_reg_numbers(request):
+    return render(request, 'docs/contracts/registration_numbers/index.html')
+
+
+# ----------------------------------------- Contract reg numbers
+@login_required(login_url='login')
+@try_except
+def get_contract_reg_numbers(request, page):
+    response = get_contract_reg_numbers_list(request, page)
+    return HttpResponse(json.dumps(response))

@@ -22,6 +22,7 @@ module.exports = {
     production: './static/index/production.js',
     corr_templates: './static/index/corr_templates.js',
     vacations: './static/index/vacations.js',
+    contract_reg_numbers: './static/index/contract_reg_numbers.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),

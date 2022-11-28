@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Реєстраційні номери{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+{% endblock %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script></script>
+    <div class="container-fluid" id="contract_reg_numbers">
+      {% render_bundle 'contract_reg_numbers' %}
+    </div>
+{% endblock %}
+
+
