@@ -3,8 +3,8 @@ from my_config import mail_pass
 
 
 def send_email(mail, body):
-    if mail != '':
-    # if 1 == 2:
+    # if mail != '':
+    if 1 == 2:
         sender = "it@lxk.com.ua"
         host = "smtp.lxk.com.ua"
         try:
