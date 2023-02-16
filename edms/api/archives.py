@@ -20,7 +20,7 @@ def get_archive_docs(request, archive_type, meta_doc_type_id, page):
         .filter(document__document_type__meta_doc_type_id=meta_doc_type_id) \
         .filter(mark=1) \
         .filter(document__testing=testing) \
-        .filter(document__closed=False)
+        # .filter(document__closed=False)
 
     # Фільтрація відповідно до типу архіву (мій архів, архів відділу, архів підлеглих)
     if archive_type == 'my':

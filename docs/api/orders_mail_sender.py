@@ -182,7 +182,7 @@ def arrange_mail(post_request):
             send_mails_everyone(post_request)
         elif post_request['mail_mode'] == 'list':
             send_mails_list(post_request)
-            send_mails_default(post_request)
+            # send_mails_default(post_request)
 
 
 @try_except
