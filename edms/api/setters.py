@@ -52,7 +52,7 @@ def post_mark_demand(doc_request, emp_seat_id, phase_id, mark):
 
 
 @try_except
-def delete_doc(doc_request, doc_id):
+def delete_doc(doc_request, doc_id, deact=True):
     try:
         doc = get_object_or_404(Document, pk=doc_id)
         doc_request.update({'closed': True})

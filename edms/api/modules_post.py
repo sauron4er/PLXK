@@ -178,7 +178,7 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
                 'approve_queue': 3
             }])
 
-    elif doc_request['document_type'] == 20:  # Договори
+    elif doc_request['document_type'] in [20, 22]:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
@@ -186,13 +186,15 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
 
             approvals.extend([{
                 'id': acting_director,
-                'approve_queue': 4  # Директор останній у списку погоджень
+                'approve_queue': 1  # Директор останній у списку погоджень
+                # 'approve_queue': 4  # Директор останній у списку погоджень
             }, {
                 'id': acting_tov_director,
-                'approve_queue': 3  # Директор ТОВ теж отримує на погодження
+                'approve_queue': 1  # Директор ТОВ теж отримує на погодження
+                # 'approve_queue': 3  # Директор ТОВ теж отримує на погодження
             }, {
                 'id': acting_tov_tech_director,
-                'approve_queue': 2  # Технічний директор ТОВ теж отримує на погодження
+                'approve_queue': 1  # Технічний директор ТОВ теж отримує на погодження
             }])
         else:
             zero_phase_id = get_zero_phase_id(doc_request['document_type'])
@@ -202,11 +204,13 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
             approvals.extend([{
                 'id': acting_tov_director,
-                'approve_queue': 3  # Директор останній у списку погоджень
+                'approve_queue': 1  # Директор останній у списку погоджень
+                # approve_queue: 3, якщо директор погоджує останній, а не з усіма разом
             },
             {
                 'id': acting_tov_tech_director,
-                'approve_queue': 2  # Технічний директор теж отримує на погодження
+                'approve_queue': 1  # Технічний директор теж отримує на погодження
+                # 'approve_queue': 2  # Технічний директор теж отримує на погодження
             }
             ])
     else:  # Накази

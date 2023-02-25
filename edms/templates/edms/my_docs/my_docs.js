@@ -105,8 +105,9 @@ class MyDocs extends React.Component {
   };
 
   // Видаляє документ зі списку створених користувачем
-  removeDoc = (id) => {
-    axiosGetRequest(`del_doc/${id}/`)
+  removeDoc = (id, deactivate) => {  // true - archive and deactivate, false - just archive
+    const deact = deactivate ? 1 : 0
+    axiosGetRequest(`del_doc/${id}/${deactivate}`)
       .then((response) => {
         this.setState((prevState) => ({my_docs: prevState.my_docs.filter((doc) => doc.id !== id)}));
         window.my_docs = window.my_docs.filter((doc) => doc.id !== id);

@@ -833,9 +833,9 @@ def edms_get_templates(request):
 
 
 @login_required(login_url='login')
-def edms_del_doc(request, pk):
+def edms_del_doc(request, pk, deact):
     try:
-        delete_doc(request.POST.copy(), pk)
+        delete_doc(request.POST.copy(), pk, deact == 1)
         return HttpResponse(pk)
     except Exception as err:
         return HttpResponse(status=405, content=err)

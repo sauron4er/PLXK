@@ -94,7 +94,9 @@ class Docs extends React.Component {
 
     if (author_id === parseInt(localStorage.getItem('my_seat'))) {
       // Якщо автор закриває чи видаляє документ, видаляємо документ зі списку створених та отриманих
-      [7, 13].includes(mark_id) ? this.props.removeMyDoc(id, author_id) : null;
+      mark_id === 7 ? this.props.removeMyDoc(id, author_id, false) : null;
+      mark_id === 13 ? this.props.removeMyDoc(id, author_id, true) : null;
+      // [7, 13].includes(mark_id) ? this.props.removeMyDoc(id, author_id) : null;
       // Якщо автор ставить іншу позначку, видаляємо документ тільки зі списку отриманих:
       this.props.removeWorkDoc(id, author_id);
     } else if (mark_id === 23) {
