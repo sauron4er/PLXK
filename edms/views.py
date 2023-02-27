@@ -161,7 +161,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'deadline' in doc_modules:
             post_deadline(new_doc, doc_modules['deadline'])
         
-        if 'decree_articles' in doc_modules:
+        if 'employee_seat' in doc_modules:
             post_employee_seat(new_doc, doc_modules['employee_seat'])
 
         if 'decree_articles' in doc_modules:
