@@ -205,8 +205,10 @@ def get_approved(doc):
     elif doc.approved is False:
         if doc.path.filter(mark=26).exists():
             return 'Деактив.'
+        elif not doc.is_active:
+            return 'Не актуальний'
         return 'Відмовлено'
-    return 'В процесі'
+    return 'Не актуальний' if not doc.is_active or doc.closed else 'В процесі'
 
 
 @try_except

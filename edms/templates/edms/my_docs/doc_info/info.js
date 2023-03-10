@@ -166,7 +166,7 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'auto_approved' && info.meta_type_id !== 5}>
                     {/*Не показуємо в Договорах, хоча використовуємо на сервері*/}
-                    <Approved signed={info.approved} />
+                    <Approved signed={info.approved} is_active={info.is_active} closed={info.closed} />
                   </When>
                   <When condition={module.module === 'decree_articles'}>
                     <DecreeArticles fieldName={module.field_name} articles={info.decree_articles} />
