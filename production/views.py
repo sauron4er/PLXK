@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from plxk.api.global_getters import get_simple_emp_seats_list
 from .forms import NewMockupTypeForm, DelMockupTypeForm, NewMockupProductTypeForm, DelMockupProductTypeForm, \
-    NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm
+    NewProductTypeForm, DelProductForm, NewScopeForm, DelScopeForm, NewPermissionCategoryForm, DelPermissionCategoryForm
 from production.api.getters import *
 from production.api.setters import add_or_change_contract_subject, deactivate_contract_subject
 
@@ -154,6 +154,36 @@ def del_scope(request):
 @try_except
 def get_scopes(request):
     return HttpResponse(json.dumps(get_scopes_list()))
+
+
+@login_required(login_url='login')
+@try_except
+def permission_categories(request):
+    permission_categories_list = get_permission_categories_list()
+    return render(request, 'production/permission_categories.html', {'permission_categories': permission_categories_list})
+
+
+@try_except
+def new_permission_category(request):
+    form = NewPermissionCategoryForm(request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('permission_categories.html')
+
+
+@try_except
+def del_permission_category(request):
+    permission_category = get_object_or_404(Permission_Category, pk=request.POST.get('id'))
+    form = DelPermissionCategoryForm(request.POST, instance=permission_category)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('permission_categories.html')
+
+
+@login_required(login_url='login')
+@try_except
+def get_permission_categories(request):
+    return HttpResponse(json.dumps(get_permission_categories_list()))
 
 
 @login_required(login_url='login')

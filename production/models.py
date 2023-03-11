@@ -46,6 +46,11 @@ class Scope(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class Permission_Category(models.Model):
+    name = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Номенклатура продукції для норм витрат
 class Cost_Rates_Product(models.Model):

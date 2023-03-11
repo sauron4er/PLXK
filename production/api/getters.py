@@ -1,5 +1,5 @@
 from ..models import Mockup_type, Mockup_product_type, Product_type, Sub_product_type, Product_meta_type, Product, \
-    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject
+    Certification_type, Scope, Cost_Rates_Product, Cost_Rates_Nom, Contract_Subject, Permission_Category
 from plxk.api.try_except import try_except
 
 
@@ -41,6 +41,17 @@ def get_scopes_list():
         Scope.objects.filter(is_active=True).order_by('name')]
 
     return scopes
+
+
+@try_except
+def get_permission_categories_list():
+    permission_categories = [{
+        'id': permission_category.pk,
+        'name': permission_category.name
+    } for permission_category in
+        Permission_Category.objects.filter(is_active=True).order_by('name')]
+
+    return permission_categories
 
 
 @try_except

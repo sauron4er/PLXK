@@ -49,3 +49,15 @@ class DelScopeForm(forms.ModelForm):
     class Meta:
         model = Scope
         fields = ['is_active']
+
+
+class NewPermissionCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Permission_Category
+        fields = ['name']
+
+
+class DelPermissionCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Permission_Category
+        fields = ['is_active']
