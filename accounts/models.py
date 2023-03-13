@@ -45,6 +45,7 @@ class UserProfile(models.Model):
     dep_regulations_add = models.BooleanField(default=False)  # Право додавати посадові інструкції та положення про відділ
     contract_subject_edit = models.BooleanField(default=False)  # Право редагувати номенклатуру Предметів Договорів
     corr_template_edit = models.BooleanField(default=False)  # Право редагувати шаблони листування
+    permissions_edit = models.BooleanField(default=False)  # Право працювати з дозволами
 
     is_bets = models.BooleanField(default=False)
     work = models.CharField(max_length=200,blank=True, null=True)

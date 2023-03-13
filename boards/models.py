@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from accounts.models import UserProfile, Department
-from production.models import Product_type, Certification_type, Scope, Product
+from production.models import Product_type, Certification_type, Scope, Product, Permission_Category
 
 
 class Board(models.Model):
@@ -224,4 +224,35 @@ class Letter_File(models.Model):
     file = models.FileField(upload_to='counterparties/letters/%Y/%m')
     name = models.CharField(max_length=100)
     letter = models.ForeignKey(Letter, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# ----------------------------------- Permissions
+class Permission(models.Model):
+    permission_category = models.ForeignKey(Permission_Category, related_name='permissions', on_delete=models.RESTRICT)
+    department = models.ForeignKey(Department, related_name='permissions', on_delete=models.RESTRICT, null=True)
+    name = models.CharField(max_length=200)
+    info = models.CharField(max_length=5000)
+    comment = models.CharField(max_length=2000)
+    is_active = models.BooleanField(default=True)
+
+
+class Permission_Dates(models.Model):
+    permission = models.ForeignKey(Permission, related_name='dates', on_delete=models.RESTRICT)
+    revision_date = models.DateField(null=True, blank=True, default=timezone.now)
+    revisioned = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+
+class Permission_File(models.Model):
+    file = models.FileField(upload_to='permissions/letters/%Y/%m')
+    name = models.CharField(max_length=100)
+    permission = models.ForeignKey(Permission, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+class Permission_Responsible(models.Model):
+    permission = models.ForeignKey(Permission, related_name='responsibles', on_delete=models.RESTRICT)
+    responsible = models.DateField(null=True, blank=True, default=timezone.now)
+    revisioned = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

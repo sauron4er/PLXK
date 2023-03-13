@@ -49,7 +49,9 @@ def get_permission_categories_list():
         'id': permission_category.pk,
         'name': permission_category.name
     } for permission_category in
-        Permission_Category.objects.filter(is_active=True).order_by('name')]
+        Permission_Category.objects
+            .filter(is_active=True)
+            .order_by('name')]
 
     return permission_categories
 
