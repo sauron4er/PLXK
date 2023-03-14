@@ -319,8 +319,7 @@ class NewDocument extends React.Component {
           if (!areCostRatesValid()) {
             return false;
           }
-        }
-        if (module.module === 'decree_articles') {
+        } else if (module.module === 'decree_articles') {
           if (!areArticlesValid()) {
             return false;
           }
@@ -424,6 +423,7 @@ class NewDocument extends React.Component {
       const {doc, status} = this.props;
 
       if (type === 'template' || this.requiredFieldsFilled()) {
+
         // Створюємо список для відправки у бд:
         let doc_modules = {};
         type_modules.map((module) => {
@@ -439,8 +439,9 @@ class NewDocument extends React.Component {
           } else if ([16, 32].includes(module.module_id)) {
             // text, select
             doc_modules.text = newDocStore.new_document.text;
-          } else if ([29, 33].includes(module.module_id)) {
+          } else if ([2, 29, 33].includes(module.module_id)) {
             // Модулі auto_approved, phases не створюються у браузері
+            // Модуль acquaint_list не обов'язковий
           } else if (module.module_id === 22) {
             // Погоджуючі (треба відправити хоча б пустий список)
             doc_modules.approval_list = this.state.approval_list;
@@ -484,6 +485,7 @@ class NewDocument extends React.Component {
             doc_modules[module.module] = this.state[module.module];
           }
         });
+
 
         let formData = new FormData();
         // інфа нового документу:
