@@ -16,4 +16,4 @@ const permissionsStore = store({
   }
 });
 
-export default contractSubjectsStore;
+export default permissionsStore;

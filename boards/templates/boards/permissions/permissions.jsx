@@ -2,8 +2,7 @@ import * as React from 'react';
 import ReactDOM from "react-dom";
 import SelectorWithFilterAndAxios from "templates/components/form_modules/selectors/selector_with_filter_and_axios";
 import DxTable from "templates/components/tables/dx_table";
-import ContractSubject from "production/templates/production/contract_subjects/contract_subject";
-import contractSubjectsStore from "production/templates/production/contract_subjects/contract_subjects_store";
+import permissionsStore from "boards/templates/boards/permissions/permissions_store";
 
 
 class Permissions extends React.Component {
