@@ -2,7 +2,6 @@ import {store} from '@risingstack/react-easy-state';
 
 const permissionsStore = store({
   main_div_height: 0,
-  permission_view: false,
   permission: {
     id: 0,
     category: 0,

@@ -7,6 +7,10 @@ import Permission from "boards/templates/boards/permissions/permission";
 import PermissionsTable from "boards/templates/boards/permissions/table";
 
 class Permissions extends React.Component {
+  state = {
+    permission_view: false
+  }
+
   componentDidMount() {
     permissionsStore.main_div_height = this.mainDivRef.clientHeight - 30; // розмір головного div, з якого вираховується розмір таблиць
   }
@@ -18,22 +22,22 @@ class Permissions extends React.Component {
 
   onRowClick = (clicked_row) => {
     permissionsStore.permission = clicked_row;
-    permissionsStore.permission_view = true;
+    this.setState({permission_view: true})
   };
 
-  onPermissionClose = () => {
-    permissionsStore.clearPermission();
-    permissionsStore.permission_view = false;
-  };
+  changeView = () => {
+    this.setState(prevState => ({permission_view: !prevState.permission_view}))
+  }
 
   render() {
-    const {permission_view, permission} = permissionsStore;
+    const {permission} = permissionsStore;
+    const {permission_view} = this.state;
 
     return (
       <Choose>
         <When condition={!permission_view}>
           <div className='mt-1'>
-            <button onClick={() => (permissionsStore.permission_view = true)} className='btn btn-sm btn-info mt-2'>
+            <button onClick={this.changeView} className='btn btn-sm btn-info mt-2'>
               Додати Дозвіл
             </button>
           </div>
@@ -43,13 +47,13 @@ class Permissions extends React.Component {
           </div>
         </When>
         <Otherwise>
-          <button className='btn btn-sm btn-info my-2' onClick={() => this.onPermissionClose()}>
+          <button className='btn btn-sm btn-info my-2' onClick={this.changeView}>
             Назад
           </button>
           <br />
           <Permission
             id={permission.id}
-            close={this.onPermissionClose}
+            close={this.changeView}
           />
         </Otherwise>
       </Choose>
