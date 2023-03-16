@@ -232,23 +232,24 @@ class Permission(models.Model):
     permission_category = models.ForeignKey(Permission_Category, related_name='permissions', on_delete=models.RESTRICT)
     department = models.ForeignKey(Department, related_name='permissions', on_delete=models.RESTRICT, null=True)
     name = models.CharField(max_length=200)
-    info = models.CharField(max_length=5000)
-    comment = models.CharField(max_length=2000)
+    info = models.CharField(max_length=5000, null=True)
+    comment = models.CharField(max_length=2000, null=True)
+    author = models.ForeignKey(UserProfile, related_name='permissions_added', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 
-class Permission_Dates(models.Model):
+class Permission_Date(models.Model):
     permission = models.ForeignKey(Permission, related_name='dates', on_delete=models.RESTRICT)
     revision_date = models.DateField(null=True, blank=True, default=timezone.now)
     revisioned = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
 
-class Permission_File(models.Model):
-    file = models.FileField(upload_to='permissions/letters/%Y/%m')
-    name = models.CharField(max_length=100)
-    permission = models.ForeignKey(Permission, related_name='files', on_delete=models.RESTRICT)
-    is_active = models.BooleanField(default=True)
+# class Permission_File(models.Model):
+#     file = models.FileField(upload_to='permissions/letters/%Y/%m')
+#     name = models.CharField(max_length=100)
+#     permission = models.ForeignKey(Permission, related_name='files', on_delete=models.RESTRICT)
+#     is_active = models.BooleanField(default=True)
 
 
 class Permission_Responsible(models.Model):

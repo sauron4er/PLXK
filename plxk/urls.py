@@ -7,8 +7,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from accounts import views as accounts_views
 from boards import views as board_views
-from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from boards.views_counterparties import get_counterparties, get_clients_for_product_type
+from boards.views_permissions import permissions, get_permissions, get_permission, post_permission
+from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from docs.views_contracts import edit_contract, get_additional_contracts
 from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
 
@@ -66,7 +67,9 @@ urlpatterns = [
     url(r'^foyer/', board_views.foyer, name='foyer'),
 
     url(r'^permissions/get_permission_categories', get_permission_categories, name='get_permission_categories'),
-    url(r'^permissions/', board_views.permissions, name='permissions'),
+    url(r'^permissions/get_permissions/(?P<page>\d+)/$', get_permissions, name='get_permissions'),
+    url(r'^permissions/get_permission/(?P<pk>\d+)/$', get_permission, name='get_permissions'),
+    url(r'^permissions/', permissions, name='permissions'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

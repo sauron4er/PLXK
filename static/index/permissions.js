@@ -1,1 +1,1 @@
-import '../../boards/templates/boards/permissions/permissions'
+import '../../boards/templates/boards/permissions/index'

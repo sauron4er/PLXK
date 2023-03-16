@@ -335,13 +335,6 @@ def create_foyer_report(request):
     return HttpResponse('media/foyer/' + filename)
 
 
-#  --------------------------------------------------- Permissions
-@login_required(login_url='login')
-@try_except
-def permissions(request):
-    return render(request, 'boards/permissions/permissions.html')
-
-
 #  --------------------------------------------------- Vacations
 @login_required(login_url='login')
 @try_except
