@@ -27,8 +27,37 @@ def permissions(request):
 @login_required(login_url='login')
 @try_except
 def get_permissions(request, page):
-    a=1
-    return render(request, 'boards/permissions/permissions.html')
+    permissions_query = Permission.objects.filter(is_active=True)
+
+    permissions_query = filter_query_set(permissions_query, json.loads(request.POST['filtering']))
+    permissions_query = sort_query_set(permissions_query, request.POST['sort_name'], request.POST['sort_direction'])
+
+    paginator = Paginator(permissions_query, 23)
+    try:
+        permissions_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        permissions_page = paginator.page(1)
+    except EmptyPage:
+        permissions_page = paginator.page(1)
+
+        # {name: 'category', title: 'Категорія'},
+        # {name: 'department', title: 'Підрозділ'},
+        # {name: 'name', title: 'Назва'},
+        # {name: 'date_last', title: 'Попередній перегляд'},
+        # {name: 'date_next', title: 'Наступний перегляд'},
+
+    permissions_list = [{
+        'id': permission.pk,
+        'category': permission.category.name,
+        'department': permission.department.name,
+        'name': permission.name,
+        'date_last': '',
+        'date_next': '',
+        'status': 'ok' if permission.is_active else ''
+    } for permission in permissions_page.object_list]
+
+    response = {'rows': permissions_list, 'pagesCount': paginator.num_pages}
+    return HttpResponse(json.dumps(response))
 
 
 @try_except
