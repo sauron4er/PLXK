@@ -511,13 +511,14 @@ def post_cost_rates(new_doc, cost_rates):
     cr.save()
 
     for field in cost_rates['fields']:
-        cr_field = Cost_Rates_Rate(cost_rates=cr)
-        cr_field.name_id = field['id']
-        cr_field.term = field['term']
-        cr_field.norm = field['norm']
-        if 'comment' in field:
-            cr_field.comment = field['comment']
-        cr_field.save()
+        if 'term' in field and 'norm' in field:
+            cr_field = Cost_Rates_Rate(cost_rates=cr)
+            cr_field.name_id = field['id']
+            cr_field.term = field['term']
+            cr_field.norm = field['norm']
+            if 'comment' in field:
+                cr_field.comment = field['comment']
+            cr_field.save()
 
     for field in cost_rates['additional_fields']:
         add_field = Cost_Rates_Additional(cost_rates=cr)

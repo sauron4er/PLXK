@@ -2,16 +2,16 @@ import * as React from 'react';
 
 class Approved extends React.Component {
   render() {
-    const {signed, is_active, closed} = this.props;
-  
+    const {approved, is_active, closed} = this.props;
+
     return (
       <div className='mt-2'>
         Актуальність:
         <Choose>
-          <When condition={signed===null && is_active && !closed}>
+          <When condition={approved===null && is_active && !closed}>
             <span className='ml-1 p-1 border bg-warning'>На підписанні</span>
           </When>
-          <When condition={signed}>
+          <When condition={approved}>
             <span className='ml-1 p-1 border bg-success'>Актуальний</span>
           </When>
           <Otherwise>
