@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^.+/.+/get_dep_seats/(?P<dep_id>\d+)', get_dep_seats, name='get_dep_seats'),
     url(r'^.+/.+/get_seats_for_select', get_seats_for_select, name='get_seats_for_select'),
     url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
+    url(r'^.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     url(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
     url(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
     url(r'^.+/.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ

@@ -108,15 +108,13 @@ class Permission extends React.Component {
   };
 
   onCategoryChange = (e) => {
-    const selectedIndex = e.target.options.selectedIndex;
-    permissionsStore.permission.category = e.target.options[selectedIndex].getAttribute('data-key');
-    permissionsStore.permission.category_name = e.target.options[selectedIndex].getAttribute('value');
+    permissionsStore.permission.category = e.id;
+    permissionsStore.permission.category_name = e.name;
   };
 
   onDepartmentChange = (e) => {
-    const selectedIndex = e.target.options.selectedIndex;
-    permissionsStore.permission.department = e.target.options[selectedIndex].getAttribute('data-key');
-    permissionsStore.permission.department_name = e.target.options[selectedIndex].getAttribute('value');
+    permissionsStore.permission.department = e.id;
+    permissionsStore.permission.department_name = e.name;
   };
 
   onNameChange = (e) => {
@@ -131,7 +129,7 @@ class Permission extends React.Component {
     permissionsStore.permission.comment = e.target.value;
   };
 
-  onNextDateChange = (e) => {
+  onDateNextChange = (e) => {
     permissionsStore.permission.date_next = e.target.value;
   };
 
@@ -157,10 +155,6 @@ class Permission extends React.Component {
 
   render() {
     const {permission} = permissionsStore;
-
-    console.log(this.state.data_received);
-    console.log(this.props.id);
-
     if (this.state.data_received) {
       return (
         <div className='shadow-lg p-3 mb-5 bg-white rounded'>
@@ -170,11 +164,11 @@ class Permission extends React.Component {
           </div>
           <div className='modal-body'>
             <SelectorWithFilterAndAxios
-              listNameForUrl='categories'
+              listNameForUrl='permission_categories'
               fieldName='* Категорія'
               selectId='category_select'
               value={{name: permission.category_name, id: permission.category}}
-              onChange={this.onCategoryChange()}
+              onChange={this.onCategoryChange}
               disabled={false}
             />
             <hr />
@@ -191,21 +185,26 @@ class Permission extends React.Component {
             <hr />
             <TextInput
               text={permission.info}
-              fieldName={'* Інформація про дозвіл'}
-              onChange={this.onNameChange}
+              fieldName={'Інформація про дозвіл'}
+              onChange={this.onInfoChange}
               maxLength={5000}
               disabled={false}
             />
             <hr />
             <TextInput
               text={permission.comment}
-              fieldName={'* Коментар автора'}
-              onChange={this.onNameChange}
+              fieldName={'Коментар автора'}
+              onChange={this.onCommentChange}
               maxLength={2000}
               disabled={false}
             />
             <hr />
-            <DateInput date={permission.date_next} fieldName={'* Дата наступного перегляду'} onChange={this.onDateStartChange} />
+            <DateInput
+              date={permission.date_next}
+              fieldName={'* Дата наступного перегляду'}
+              onChange={this.onDateNextChange}
+              disabled={false}
+            />
             <hr />
             <div>Таблиця попередніх переглядів</div>
             <hr />
