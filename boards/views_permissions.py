@@ -13,7 +13,7 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.global_getters import get_dep_chief, get_director_userprofile, get_quality_director
 from plxk.api.pagination import sort_query_set, filter_query_set
 from .models import Reclamation, Reclamation_file, Reclamation_decision
-from .models import Permission, Permission_Date, Permission_Category
+from .models import Permission, Permission_Category, Permission_Responsible
 from .api.reclamation_mail_sender import create_and_send_mail
 
 
@@ -40,12 +40,6 @@ def get_permissions(request, page):
     except EmptyPage:
         permissions_page = paginator.page(1)
 
-        # {name: 'category', title: 'Категорія'},
-        # {name: 'department', title: 'Підрозділ'},
-        # {name: 'name', title: 'Назва'},
-        # {name: 'date_last', title: 'Попередній перегляд'},
-        # {name: 'date_next', title: 'Наступний перегляд'},
-
     permissions_list = [{
         'id': permission.pk,
         'category': permission.category.name,
@@ -57,39 +51,6 @@ def get_permissions(request, page):
     } for permission in permissions_page.object_list]
 
     response = {'rows': permissions_list, 'pagesCount': paginator.num_pages}
-    return HttpResponse(json.dumps(response))
-
-
-@try_except
-def get_reclamations(request, counterparty, page):
-    reclamations_query = Reclamation.objects.filter(is_active=True)
-
-    if counterparty != '0':
-        # При отриманні списку на сторінці контрагента фільтруємо по контрагенту
-        reclamations_query = reclamations_query.filter(client_id=counterparty)
-
-    reclamations_query = filter_query_set(reclamations_query, json.loads(request.POST['filtering']))
-    reclamations_query = sort_query_set(reclamations_query, request.POST['sort_name'], request.POST['sort_direction'])
-
-    paginator = Paginator(reclamations_query, 23)
-    try:
-        ncs_page = paginator.page(int(page) + 1)
-    except PageNotAnInteger:
-        ncs_page = paginator.page(1)
-    except EmptyPage:
-        ncs_page = paginator.page(1)
-
-    reclamations_list = [{
-        'id': reclamation.pk,
-        'client': reclamation.client.name,
-        'product': reclamation.product.name,
-        'car_number': reclamation.car_number,
-        'author': reclamation.author.pip,
-        'responsible': reclamation.responsible.pip if reclamation.responsible else '',
-        'status': 'ok' if reclamation.phase == 4 else '' if reclamation.phase == 666 else 'in progress'
-    } for reclamation in ncs_page.object_list]
-
-    response = {'rows': reclamations_list, 'pagesCount': paginator.num_pages}
     return HttpResponse(json.dumps(response))
 
 
@@ -169,7 +130,7 @@ def get_reclamation(request, pk):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def post_permission(request):
+def add_permission(request):
     data = json.loads(request.POST.copy()['permission'])
 
     if data['id'] == 0:
@@ -178,17 +139,18 @@ def post_permission(request):
         permission = Permission.objects.get(pk=data['id'])
 
     permission.author = request.user.userprofile
-    permission.category = data['category']
-    permission.department = data['department']
+    permission.category_id = data['category']
+    permission.department_id = data['department']
     permission.name = data['name']
     permission.info = data['info']
     permission.comment = data['comment']
-
-    # post_files(permission, request.FILES, data['old_files'])
-    post_dates(permission, data['dates'])
+    permission.date_next = data['date_next']
+    permission.save()
 
     if data['responsibles']:
         post_responsibles(permission, data['responsibles'])
+
+    # post_files(permission, request.FILES, data['old_files'])
 
     return HttpResponse('ok')
 
@@ -209,5 +171,8 @@ def post_dates(permission, dates):
 
 
 @try_except
-def post_responsibles(reclamation, responsibles):
-    a=1
+def post_responsibles(permission, responsibles):
+    for resp in responsibles:
+        new_responsible = Permission_Responsible(permission=permission)
+        new_responsible.responsible_id = resp['id']
+        new_responsible.save()

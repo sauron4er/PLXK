@@ -229,19 +229,13 @@ class Letter_File(models.Model):
 
 # ----------------------------------- Permissions
 class Permission(models.Model):
-    permission_category = models.ForeignKey(Permission_Category, related_name='permissions', on_delete=models.RESTRICT)
+    category = models.ForeignKey(Permission_Category, related_name='permissions', on_delete=models.RESTRICT)
     department = models.ForeignKey(Department, related_name='permissions', on_delete=models.RESTRICT, null=True)
     name = models.CharField(max_length=200)
     info = models.CharField(max_length=5000, null=True)
     comment = models.CharField(max_length=2000, null=True)
     author = models.ForeignKey(UserProfile, related_name='permissions_added', on_delete=models.RESTRICT)
-    is_active = models.BooleanField(default=True)
-
-
-class Permission_Date(models.Model):
-    permission = models.ForeignKey(Permission, related_name='dates', on_delete=models.RESTRICT)
-    revision_date = models.DateField(null=True, blank=True, default=timezone.now)
-    revisioned = models.BooleanField(default=False)
+    date_next = models.DateField(default=timezone.now)
     is_active = models.BooleanField(default=True)
 
 
@@ -254,6 +248,5 @@ class Permission_Date(models.Model):
 
 class Permission_Responsible(models.Model):
     permission = models.ForeignKey(Permission, related_name='responsibles', on_delete=models.RESTRICT)
-    responsible = models.DateField(null=True, blank=True, default=timezone.now)
-    revisioned = models.BooleanField(default=False)
+    responsible = models.ForeignKey(UserProfile, related_name='responsible_for_permissions', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

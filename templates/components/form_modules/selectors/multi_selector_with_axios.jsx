@@ -67,21 +67,18 @@ class MultiSelectorWithAxios extends React.Component {
     return (
       <Choose>
         <When condition={!loading}>
-          <If condition={fieldName}>
-            <label className='full_width' htmlFor={fieldName}>
-              {fieldName}:
-            </label>
-          </If>
-
-          <Select
-            className='mt-2'
-            options={choice_list}
-            onChange={this.onChooseItem}
-            isDisabled={disabled}
-            value={selected_item}
-            getOptionLabel={(option) => option.name}
-            getOptionValue={(option) => option.id}
-          />
+          <label className='full_width' htmlFor={fieldName}>
+            <If condition={fieldName}>{fieldName}:</If>
+            <Select
+              className={fieldName ? '' : 'mt-2'}
+              options={choice_list}
+              onChange={this.onChooseItem}
+              isDisabled={disabled}
+              value={selected_item}
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id}
+            />
+          </label>
 
           <div className='mt-2'>
             <For each='item' index='index' of={selected_list}>
