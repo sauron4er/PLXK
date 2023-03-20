@@ -23,4 +23,8 @@ urlpatterns = [
     url(r'^contract_subjects', views.contract_subjects, name='contract_subjects'),
     url(r'^post_contract_subject', views.post_contract_subject, name='post_contract_subject'),
     url(r'^del_contract_subject', views.del_contract_subject, name='del_contract_subject'),
+
+    url(r'^permission_categories', views.permission_categories, name='permission_categories'),
+    url(r'^new_permission_category', views.new_permission_category, name='new_permission_category'),
+    url(r'^del_permission_category', views.del_permission_category, name='del_permission_category'),
 ]

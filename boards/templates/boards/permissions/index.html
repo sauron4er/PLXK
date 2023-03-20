@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Договори{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+{% endblock %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script></script>
+    <div class="container-fluid" id="contracts">
+      <div id="docs">{% render_bundle 'docs' %}</div>
+    </div>
+{% endblock %}
+
+

@@ -4,11 +4,8 @@ import {view, store} from '@risingstack/react-easy-state';
 import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import Contract from 'docs/templates/docs/contracts/contract';
 import ContractsTable from 'docs/templates/docs/contracts/table';
-import counterpartyStore from '../../../../boards/templates/boards/counterparty/components/counterparty_store';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
-import {counter} from '@fortawesome/fontawesome-svg-core';
-import ordersStore from "docs/templates/docs/orders/orders_store";
 
 class Contracts extends React.Component {
   componentDidMount() {

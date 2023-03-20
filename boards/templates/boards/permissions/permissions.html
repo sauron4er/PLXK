@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Дозволи{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid px-3" id="permissions">
+      <div id="bundle">{% render_bundle 'permissions' %}</div>
+    </div>
+{% endblock %}
