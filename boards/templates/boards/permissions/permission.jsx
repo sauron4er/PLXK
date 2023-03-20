@@ -4,7 +4,7 @@ import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import {isBlankOrZero, notify} from 'templates/components/my_extras';
+import {getIndex, getItemById, isBlankOrZero, notify, uniqueArray} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view, store} from '@risingstack/react-easy-state';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
@@ -12,13 +12,15 @@ import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 // import Files from 'templates/components/form_modules/files';
 import SubmitButton from 'templates/components/form_modules/submit_button';
-import permissionsStore from 'boards/templates/boards/permissions/old/permissions_store';
+import permissionsStore from 'boards/templates/boards/permissions/permissions_store';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/multi_selector_with_axios';
 
 class Permission extends React.Component {
   state = {
-    data_received: false
+    data_received: false,
+    selected_responsible: 0,
+    selected_responsible_name: ''
   };
 
   componentDidMount() {
@@ -36,8 +38,9 @@ class Permission extends React.Component {
   getPermission = () => {
     axiosGetRequest('get_permission/' + this.props.id + '/')
       .then((response) => {
-        permissionsStore.permission = response.permission;
+        permissionsStore.permission = response;
         this.setState({data_received: true});
+        console.log(permissionsStore.permission.responsibles);
       })
       .catch((error) => notify(error));
   };
@@ -82,12 +85,11 @@ class Permission extends React.Component {
       //   });
       // }
 
-      const url = this.props.id ? 'edit_permission/' : 'add_permission/';
-      permissionsStore.permission_view = false;
-
-      axiosPostRequest(url, formData)
+      axiosPostRequest('add_permission/', formData)
         .then((response) => {
-          permissionsStore.permission.id = response;
+          window.location.reload()
+          // permissionsStore.permission.id = response;
+          // props.close()
         })
         .catch((error) => notify(error));
     }
@@ -129,6 +131,7 @@ class Permission extends React.Component {
 
   onResponsiblesChange = (list) => {
     permissionsStore.permission.responsibles = list;
+    console.log(permissionsStore.permission.responsibles);
   };
 
   // onFilesChange = (e) => {
@@ -191,7 +194,9 @@ class Permission extends React.Component {
               disabled={false}
             />
             <hr />
+
             <MultiSelectorWithAxios
+              defaultSelected={permissionsStore.permission.responsibles}
               fieldName={'Відповідальні'}
               listNameForUrl='user_profiles'
               onChange={this.onResponsiblesChange}
@@ -246,8 +251,7 @@ class Permission extends React.Component {
   static defaultProps = {
     id: 0,
     is_main_contract: true,
-    close: () => {},
-    changeAdditionalTable: () => {}
+    close: () => {}
   };
 }
 

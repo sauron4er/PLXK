@@ -248,5 +248,5 @@ class Permission(models.Model):
 
 class Permission_Responsible(models.Model):
     permission = models.ForeignKey(Permission, related_name='responsibles', on_delete=models.RESTRICT)
-    responsible = models.ForeignKey(UserProfile, related_name='responsible_for_permissions', on_delete=models.RESTRICT)
+    employee = models.ForeignKey(UserProfile, related_name='responsible_for_permissions', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

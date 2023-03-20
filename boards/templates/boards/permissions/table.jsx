@@ -1,26 +1,24 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import contractsStore from 'docs/templates/docs/contracts/contracts_store';
 import PaginatedTable from 'templates/components/tables/paginated_table';
+import permissionsStore from "boards/templates/boards/permissions/permissions_store";
 
 
 const columns = [
   {name: 'category', title: 'Категорія'},
   {name: 'department', title: 'Підрозділ'},
   {name: 'name', title: 'Назва'},
-  {name: 'date_last', title: 'Попередній перегляд'},
-  {name: 'date_next', title: 'Наступний перегляд'},
-  {name: 'files', title: 'Файли'},
+  {name: 'date_next', title: 'Перегляд'},
+  // {name: 'files', title: 'Файли'},
 ];
 
 const col_width = [
   {columnName: 'category', width: 150},
   {columnName: 'department', width: 150},
   // {columnName: 'name', width: 200},
-  {columnName: 'date_last', width: 80},
-  {columnName: 'date_next', width: 80},
-  {columnName: 'files', width: 100}
+  {columnName: 'date_next', width: 100},
+  // {columnName: 'files', width: 100}
 ];
 
 class PermissionsTable extends React.Component {
@@ -38,8 +36,8 @@ class PermissionsTable extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
-    contractsStore.contract = clicked_row;
-    contractsStore.contract_view = true;
+    permissionsStore.permission = clicked_row;
+    this.props.changeView()
   };
 
   render() {
@@ -50,17 +48,19 @@ class PermissionsTable extends React.Component {
         <PaginatedTable
           url={`get_permissions`}
           columns={columns}
-          defaultSorting={[{columnName: 'date_next', direction: 'desc'}]}
+          defaultSorting={[{columnName: 'date_next', direction: 'asc'}]}
           colWidth={col_width}
           onRowClick={this.onRowClick}
           height={main_div_height}
-          redRow='is_canceled'
-          coloredStatus
           filter
         />
       </div>
     );
   }
+
+  static defaultProps = {
+    changeView: () => {}
+  };
 }
 
 export default view(PermissionsTable);

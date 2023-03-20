@@ -1,8 +1,7 @@
 'use strict';
 import * as React from 'react';
-import permissionsStore from "boards/templates/boards/permissions/old/permissions_store";
 import ReactDOM from "react-dom";
-
+import permissionsStore from "boards/templates/boards/permissions/permissions_store";
 import Permission from "boards/templates/boards/permissions/permission";
 import PermissionsTable from "boards/templates/boards/permissions/table";
 
@@ -43,7 +42,7 @@ class Permissions extends React.Component {
           </div>
 
           <div className='row mt-2' ref={this.getMainDivRef}>
-            <PermissionsTable />
+            <PermissionsTable changeView={this.changeView} />
           </div>
         </When>
         <Otherwise>

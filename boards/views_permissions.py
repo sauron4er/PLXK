@@ -6,15 +6,11 @@ from django.db import transaction
 from datetime import datetime
 from django.utils.timezone import get_current_timezone
 import json
-from edms.models import Employee_Seat
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
-from plxk.api.global_getters import get_dep_chief, get_director_userprofile, get_quality_director
 from plxk.api.pagination import sort_query_set, filter_query_set
-from .models import Reclamation, Reclamation_file, Reclamation_decision
-from .models import Permission, Permission_Category, Permission_Responsible
-from .api.reclamation_mail_sender import create_and_send_mail
+from .models import Permission, Permission_Responsible
 
 
 
@@ -27,10 +23,16 @@ def permissions(request):
 @login_required(login_url='login')
 @try_except
 def get_permissions(request, page):
-    permissions_query = Permission.objects.filter(is_active=True)
+    permissions_query = Permission.objects.filter(is_active=True).order_by('date_next')
+
+    permissions_test = [{
+        'id': item.id,
+        'date': item.date_next
+    } for item in permissions_query]
 
     permissions_query = filter_query_set(permissions_query, json.loads(request.POST['filtering']))
-    permissions_query = sort_query_set(permissions_query, request.POST['sort_name'], request.POST['sort_direction'])
+    if request.POST['sort_name']:
+        permissions_query = sort_query_set(permissions_query, request.POST['sort_name'], request.POST['sort_direction'])
 
     paginator = Paginator(permissions_query, 23)
     try:
@@ -45,9 +47,7 @@ def get_permissions(request, page):
         'category': permission.category.name,
         'department': permission.department.name,
         'name': permission.name,
-        'date_last': '',
-        'date_next': '',
-        'status': 'ok' if permission.is_active else ''
+        'date_next': convert_to_localtime(permission.date_next, 'day')
     } for permission in permissions_page.object_list]
 
     response = {'rows': permissions_list, 'pagesCount': paginator.num_pages}
@@ -57,75 +57,34 @@ def get_permissions(request, page):
 @login_required(login_url='login')
 @try_except
 def get_permission(request, pk):
-    a=1
-    return render(request, 'boards/permissions/permissions.html')
+    permission = Permission.objects.get(pk=pk)
 
+    permission_fields = {
+        'id': permission.pk,
+        'category': permission.category.id,
+        'category_name': permission.category.name,
+        'department': permission.department.id,
+        'department_name': permission.department.name,
+        'name': permission.name,
+        'info': permission.info,
+        'comment': permission.comment,
+        'date_next': date_to_json(permission.date_next),
 
-@login_required(login_url='login')
-@try_except
-def get_reclamation(request, pk):
-    reclamation = Reclamation.objects.get(pk=pk)
+        'responsibles': [{
+            'responsible_id': responsible.id,
+            'id': responsible.employee.id,
+            'value': responsible.employee.pip,
+            'status': 'old',
+        } for responsible in Permission_Responsible.objects.filter(permission=permission).filter(is_active=True)]
 
-    reclamation_fields = {
-        'id': reclamation.id,
-        'phase': reclamation.phase,
-        'author_name': reclamation.author.pip,
-        'date_added': date_to_json(reclamation.date_db_added),
-        'department_name': reclamation.department.name,
-        'dep_chief': reclamation.dep_chief_id,
-        'dep_chief_name': reclamation.dep_chief.pip,
-        'dep_chief_approved': reclamation.dep_chief_approved or '',
-        'product_type': reclamation.product.type.id,
-        'product_type_name': reclamation.product.type.name,
-        'product': reclamation.product.id,
-        'product_name': reclamation.product.name,
-        'client': reclamation.client.id,
-        'client_name': reclamation.client.name,
-        'reason': reclamation.reason,
-        'car_number': reclamation.car_number,
-        'date_manufacture': date_to_json(reclamation.date_manufacture),
-        'date_shipment': date_to_json(reclamation.date_shipment),
-        'date_received': date_to_json(reclamation.date_received),
-
-        'old_files': [{
-            'id': file.id,
-            'file': file.file.name,
-            'name': file.name,
-        } for file in Reclamation_file.objects.filter(reclamation_id=reclamation.id).filter(is_active=True)],
-
-        'decisions': [{
-            'id': decision.id,
-            'user': decision.user_id,
-            'user_name': decision.user.pip,
-            'decision': decision.decision or '',
-            'decision_time': convert_to_localtime(decision.decision_time, 'time') if decision.decision_time else '',
-            'phase': decision.phase
-        } for decision in Reclamation_decision.objects.filter(reclamation=reclamation).filter(is_active=True)],
-
-        'final_decisioner': get_director_userprofile(),
-        'final_decision': reclamation.final_decision or '',
-        'final_decision_time': convert_to_localtime(reclamation.final_decision_time, 'day') if reclamation.final_decision_time else '',
-        'responsible': reclamation.responsible.id if reclamation.responsible else 0,
-        'responsible_name': reclamation.responsible.pip if reclamation.responsible else '',
-        'answer_responsible_dep': reclamation.answer_responsible_dep.id if reclamation.answer_responsible_dep else '',
-        'answer_responsible_dep_name': reclamation.answer_responsible_dep.name if reclamation.answer_responsible_dep else '',
-        'quality_director_name': get_quality_director('name'),
-
-
+        # 'old_files': [{
+        #     'id': file.id,
+        #     'file': file.file.name,
+        #     'name': file.name,
+        # } for file in Reclamation_file.objects.filter(reclamation_id=reclamation.id).filter(is_active=True)],
     }
 
-    user_role = 'viewer'
-    if reclamation.responsible and reclamation.responsible_id == request.user.userprofile.id:
-        user_role = 'responsible'
-    elif get_dep_chief(reclamation.author) == request.user.userprofile:
-        user_role = 'dep_chief'
-    elif reclamation.author.user == request.user:
-        user_role = 'author'
-    elif get_director_userprofile('id') == request.user.userprofile.id:
-        user_role = 'director'
-
-    return HttpResponse(json.dumps({'reclamation': reclamation_fields, 'user_role': user_role}))
-
+    return HttpResponse(json.dumps(permission_fields))
 
 @transaction.atomic
 @login_required(login_url='login')
@@ -152,7 +111,7 @@ def add_permission(request):
 
     # post_files(permission, request.FILES, data['old_files'])
 
-    return HttpResponse('ok')
+    return HttpResponse(permission.id)
 
 
 # @try_except
@@ -164,15 +123,14 @@ def add_permission(request):
 #             name=file.name
 #         )
 
-
-@try_except
-def post_dates(permission, dates):
-    a=1
-
-
 @try_except
 def post_responsibles(permission, responsibles):
     for resp in responsibles:
-        new_responsible = Permission_Responsible(permission=permission)
-        new_responsible.responsible_id = resp['id']
-        new_responsible.save()
+        if resp['status'] == 'new':
+            new_responsible = Permission_Responsible(permission=permission)
+            new_responsible.employee_id = resp['id']
+            new_responsible.save()
+        elif resp['status'] == 'delete':
+            resp_instance = get_object_or_404(Permission_Responsible, id=resp['responsible_id'])
+            resp_instance.is_active = False
+            resp_instance.save()

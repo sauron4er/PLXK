@@ -3,15 +3,15 @@ import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {axiosGetRequest} from 'templates/components/axios_requests';
-import {getItemById, notify} from 'templates/components/my_extras';
+import {getIndex, getItemById, notify} from 'templates/components/my_extras';
 import {LoaderSmall} from 'templates/components/loaders';
 import Select from 'react-select';
 
 class MultiSelectorWithAxios extends React.Component {
   state = {
     choice_list: [],
-    selected_item: {id: 0, value: ''},
-    selected_list: [],
+    selected_item: {id: 0, value: '', status: 'new'},
+    selected_list: this.props.defaultSelected,
     loading: true
   };
 
@@ -29,7 +29,8 @@ class MultiSelectorWithAxios extends React.Component {
   onChooseItem = (item) => {
     const selected_item = {
       id: item.id,
-      value: item.name
+      value: item.name,
+      status: 'new',
     };
     this.setState({selected_item}, () => {
       this.addItem();
@@ -44,18 +45,28 @@ class MultiSelectorWithAxios extends React.Component {
       if (item === -1) {
         let new_list = [...selected_list];
         new_list.push(selected_item);
+
+        this.props.onChange(new_list);
+        this.props.onSelect(selected_item);
+
         this.setState({
           selected_list: new_list,
-          selected_item: {id: 0, value: ''}
+          selected_item: {id: 0, value: '', status: 'new'}
         });
-        this.props.onChange(new_list);
+      } else if (item.status === 'delete') {
+        const index = getIndex(selected_item.id, selected_list)
+        selected_list[index].status = 'old'
       }
     }
-  };
+  }
 
   deleteItem = (index) => {
     let selected_list = [...this.state.selected_list];
-    selected_list.splice(index, 1);
+    if (selected_list[index].status === 'new') {
+      selected_list.splice(index, 1);
+    } else {
+      selected_list[index].status = 'delete'
+    }
     this.setState({selected_list});
     this.props.onChange(selected_list);
   };
@@ -122,7 +133,9 @@ class MultiSelectorWithAxios extends React.Component {
     fieldName: '',
     sideFields: [], // Назви полів, які теж мають відображатися
     hint: '',
-    onChange: () => {},
+    onChange: () => {}, // повертає список обраних
+    onSelect: () => {}, // повертає останнього обраного
+    defaultSelected: [],
     disabled: true
   };
 }
