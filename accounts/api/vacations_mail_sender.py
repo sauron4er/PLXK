@@ -32,7 +32,7 @@ def create_acting_begin_mail_body(employee, begin, end, address):
     text = 'Почалася відпустка у вашого колеги: {}. Термін відпустки: з {} по {}. ' \
            'Вам назначено нову посаду і до вас на розгляд перенаправлено відповідні активні документи, якщо такі є. ' \
            'Щоб переглянути, перейдіть на сторінку http://10.10.10.22/edms/my_docs і оберіть необхідну посаду у верхньому правому куті.'\
-        .format(employee, datetime.datetime.strftime(begin, '%d.%m.%Y'), datetime.datetime.strftime(end, '%d.%m.%Y'))
+        .format(employee, begin, end)
 
     message.attach(MIMEText(text, "plain"))
 
