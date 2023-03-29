@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_serverless_cron',
     'bootstrap4',
     # 'googlecharts',
     # 'qsstats',
@@ -187,3 +188,11 @@ SESSION_COOKIE_SAMESITE_FORCE_ALL = True
 # FILE_UPLOAD_HANDLERS = [
 #     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 # ]
+
+SERVERLESS_CRONJOBS = [
+    (
+        '1_minutes',
+        'plxk.auto_operations.do_stuff',
+        {}
+    ),
+]
