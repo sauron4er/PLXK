@@ -55,6 +55,7 @@ import ContractSubject from 'edms/templates/edms/my_docs/new_doc_modules/contrac
 import EmployeeSeat from 'edms/templates/edms/my_docs/new_doc_modules/employee_seat';
 import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/decree_articles';
 import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
+import ClientRequirementsChoose from "edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose";
 
 class NewDocument extends React.Component {
   state = {
@@ -143,7 +144,7 @@ class NewDocument extends React.Component {
     let {days} = this.state;
     let day_id = event.target.id.substring(4); // видаляємо 'day-' з ід інпуту
     const queue = getIndexByProperty(days, 'queue', parseInt(day_id));
-  
+
     if (queue === -1) {
       days.push({
         queue: parseInt(day_id),
@@ -152,7 +153,7 @@ class NewDocument extends React.Component {
     } else {
       days[queue].day = event.target.value;
     }
-    
+
     this.setState({days});
   };
 
@@ -371,7 +372,7 @@ class NewDocument extends React.Component {
           }
         } else if (module.module === 'day') {
           const days = this.state.days;
-  
+
           let day_exists = false;
           for (const i in days) {
             if (days[i].queue === module.queue) {
@@ -481,6 +482,9 @@ class NewDocument extends React.Component {
               id: newDocStore.new_document.contract_subject,
               input: newDocStore.new_document.contract_subject_input
             };
+          } else if (module.module === 'client_requirements_choose') {
+            console.log(1);
+            // doc_modules[module.module] = decreeArticlesStore.decree_articles;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -588,6 +592,8 @@ class NewDocument extends React.Component {
 
   render() {
     let {doc} = this.props;
+
+    console.log(newDocStore.new_document);
 
     const {
       open,
@@ -746,6 +752,9 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'decree_articles'}>
                           <DecreeArticles module_info={module} />
+                        </When>
+                        <When condition={newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'}>
+                          <ClientRequirementsChoose module_info={module} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

@@ -28,6 +28,7 @@ const newDocStore = store({
     counterparty: 0,
     counterparty_name: '',
     counterparty_input: '',
+    counterparty_type: 'client', //, 'provider'
     packaging_type: {
       queue: -1,
       text: ''

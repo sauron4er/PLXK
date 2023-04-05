@@ -9,7 +9,6 @@ class Counterparty extends React.Component {
   state = {
     counterparties: [],
     filtered_counterparties: [],
-    radio: 'client', //, 'provider'
   };
 
   componentDidMount() {
@@ -41,7 +40,7 @@ class Counterparty extends React.Component {
   };
 
   onRadioChange = (e) => {
-    this.setState({radio: e.target.value});
+    newDocStore.new_document.counterparty_type = e.target.value;
     newDocStore.new_document.counterparty = 0;
     newDocStore.new_document.counterparty_name = '';
     this.filterCounterparties(e.target.value);
@@ -49,7 +48,8 @@ class Counterparty extends React.Component {
 
   render() {
     const {module_info} = this.props;
-    const {filtered_counterparties, radio} = this.state;
+    const {filtered_counterparties} = this.state;
+    const {counterparty_type, counterparty, counterparty_name} = newDocStore.new_document;
 
     return (
       <>
@@ -64,7 +64,7 @@ class Counterparty extends React.Component {
           id='client'
           value='client'
           onChange={this.onRadioChange}
-          checked={radio === 'client'}
+          checked={counterparty_type === 'client'}
         />
         <label className='radio-inline mx-1' htmlFor='client'>
           {' '}
@@ -77,7 +77,7 @@ class Counterparty extends React.Component {
           id='provider'
           value='provider'
           onChange={this.onRadioChange}
-          checked={radio === 'provider'}
+          checked={counterparty_type === 'provider'}
           className='ml-2'
         />
         <label className='radio-inline mx-1 mr-4' htmlFor='provider'>
@@ -88,7 +88,7 @@ class Counterparty extends React.Component {
         <Select
           options={filtered_counterparties}
           onChange={this.onSelectChange}
-          value={{name: newDocStore.new_document.counterparty_name, id: newDocStore.new_document.counterparty}}
+          value={{name: counterparty_name, id: counterparty}}
           getOptionLabel={(option) => option.name}
           getOptionValue={(option) => option.id}
         />
