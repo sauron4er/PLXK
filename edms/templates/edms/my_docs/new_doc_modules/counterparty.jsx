@@ -50,6 +50,7 @@ class Counterparty extends React.Component {
     const {module_info} = this.props;
     const {filtered_counterparties} = this.state;
     const {counterparty_type, counterparty, counterparty_name} = newDocStore.new_document;
+    console.log(counterparty_type);
 
     return (
       <>

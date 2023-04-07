@@ -593,8 +593,6 @@ class NewDocument extends React.Component {
   render() {
     let {doc} = this.props;
 
-    console.log(newDocStore.new_document);
-
     const {
       open,
       type_modules,
@@ -754,7 +752,7 @@ class NewDocument extends React.Component {
                           <DecreeArticles module_info={module} />
                         </When>
                         <When condition={newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'}>
-                          <ClientRequirementsChoose module_info={module} />
+                          <ClientRequirementsChoose module_info={module} counterparty={newDocStore.new_document.counterparty} />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>

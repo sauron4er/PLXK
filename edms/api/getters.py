@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import FilteredRelation
+from django.db.models import FilteredRelation, Q
 import json
 from django.core import serializers
 from django.utils.timezone import datetime
@@ -1457,3 +1457,12 @@ def get_to_work_for_contract_subject(document_id):
 
     except Doc_Contract_Subject.DoesNotExist:
         return []
+
+
+@try_except
+def get_client_requirements_list(counterparty_id):
+    cr_list = Client_Requirements.objects.all()
+    cr_list = Client_Requirements.objects\
+        .annotate(counterparty=FilteredRelation('document', condition=Q(document__counterparty__counterparty__id=counterparty_id)))\
+        .filter(document__counterparty__id=counterparty_id)
+    a=1

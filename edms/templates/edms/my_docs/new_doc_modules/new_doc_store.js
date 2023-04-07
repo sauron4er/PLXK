@@ -199,6 +199,8 @@ const newDocStore = store({
         binding: '',
         additional_requirements: []
       },
+      choosed_client_requirement: 0,
+      choosed_client_requirement_name: 0,
       cost_rates: {
         type: '',
         accounting: '',

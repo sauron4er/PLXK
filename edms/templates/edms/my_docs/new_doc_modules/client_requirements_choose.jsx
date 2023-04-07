@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {axiosGetRequest} from 'templates/components/axios_requests';
 import {notify} from 'templates/components/my_extras';
-import ContractView from 'docs/templates/docs/contracts/contract_simple_view';
 import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
@@ -10,95 +9,75 @@ import SelectorWithFilter from 'templates/components/form_modules/selectors/sele
 
 class ClientRequirementsChoose extends React.Component {
   state = {
-    is_main_contract: true,
-    requirements_document: 0,
-    requirements_document_name: '',
-    loading: false
+    requirements: [],
+    loading: false,
+    modal_open: false
   };
 
-  // getContracts() {
-  //   if (newDocStore.new_document.counterparty) {
-  //     this.setState({loading: true}, () => {
-  //       axiosGetRequest(`get_contracts/${newDocStore.new_document.company}/${newDocStore.new_document.counterparty}`)
-  //         .then((response) => {
-  //           this.setState({
-  //             contracts: response,
-  //             loading: false
-  //           });
-  //         })
-  //         .catch((error) => notify(error));
-  //     });
-  //   }
-  // }
+  getRequirementsDocs() {
+    this.setState({loading: true}, () => {
+      axiosGetRequest(`get_client_requirements_for_choose/${this.props.counterparty}`)
+        .then((response) => {
+          this.setState({
+            requirements: response,
+            loading: false
+          });
+        })
+        .catch((error) => notify(error));
+    });
+  }
 
-  // отримуємо від серверу реєстраційний номер цієї угоди
-  getRegistrationNumber(main_contract_id) {
-    axiosGetRequest(`get_add_contract_reg_number/${main_contract_id}`)
-      .then((response) => {
-        newDocStore.new_document.registration_number = response;
-      })
-      .catch((error) => notify(error));
+  componentDidMount() {
+    if (newDocStore.new_document.counterparty_type === 'client' && this.props.counterparty) {
+      this.getRequirementsDocs();
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (newDocStore.new_document.counterparty_type === 'client' && newDocStore.new_document.counterparty) {
-      console.log(1);
+    if (prevProps.counterparty !== this.props.counterparty) {
+      this.getRequirementsDocs();
     }
-    // if (!this.state.is_main_contract && prevState.loading === this.state.loading) {
-    //   // мусимо ігнорувати loading, бо він запускає в безкінечний componentDidUpdate
-    //
-    //   if (prevState.company !== newDocStore.new_document.company) {
-    //     this.getContracts();
-    //     this.setState({company: newDocStore.new_document.company});
-    //   } else if (prevState.counterparty !== newDocStore.new_document.counterparty) {
-    //     this.getContracts();
-    //     this.setState({counterparty: newDocStore.new_document.counterparty});
-    //   } else if (newDocStore.new_document.counterparty && !this.state.contracts?.length) {
-    //     this.getContracts();
-    //   }
-    // }
   }
 
-  onMainContractChange = (contract) => {
-    this.props.onChange(contract);
-    this.getRegistrationNumber(contract.id);
-  };
+  onChoseRequirementChange(e) {
+    newDocStore.new_document.choosed_client_requirement_name = e.name;
+    newDocStore.new_document.choosed_client_requirement = e.id;
+  }
 
   render() {
-    const {is_main_contract, contracts, contract_modal_open, loading} = this.state;
-    const {contract_link, contract_link_name, company, counterparty} = newDocStore.new_document;
-    // company мушу сюди підтягувати, бо інакше на цю змінну не дивиться ComponentDidUpdate
-    const {module_info} = this.props;
+    const {requirements, loading, modal_open} = this.state;
+    const {choosed_client_requirement, choosed_client_requirement_name, counterparty_type} = newDocStore.new_document;
+    const {module_info, counterparty} = this.props;
 
     return (
       <>
-        <div className="">Вибір вимог клієнта</div>
+        <div className=''>Вибір вимог клієнта</div>
         <small className='text-danger'>{module_info?.additional_info}</small>
-        <If condition={!is_main_contract}>
+        <If condition={counterparty_type === 'client'}>
           <Choose>
             <When condition={!loading}>
               <Choose>
-                <When condition={!counterparty}>
-                  <div className='font-italic'>Оберіть контрагента, щоб вибрати основний Договір</div>
-                </When>
-                <When condition={contracts?.length !== 0}>
+                <When condition={requirements?.length !== 0}>
                   <SelectorWithFilter
-                    list={contracts}
+                    list={requirements}
                     fieldName={module_info.field_name}
                     valueField='name'
                     selectedName=''
                     disabled={false}
-                    value={{name: contract_link_name, id: contract_link}}
-                    onChange={this.onMainContractChange}
+                    value={{name: choosed_client_requirement_name, id: choosed_client_requirement}}
+                    onChange={this.onChoseRequirementChange}
                   />
-                  <If condition={contract_link !== 0}>
-                    <button className='btn btn-outline-info' onClick={() => this.setState({contract_modal_open: true})}>
-                      Переглянути Договір
+                  <If condition={choosed_client_requirement !== 0}>
+                    <button className='btn btn-outline-info' onClick={() => this.setState({modal_open: true})}>
+                      Переглянути Вимоги
                     </button>
                   </If>
                 </When>
+                <When condition={!counterparty}>
+                  <div className='font-italic'>Оберіть клієнта</div>
+                </When>
                 <Otherwise>
-                  <div className='font-italic'>В базу не внесено жодного Договору з обраним контрагентом</div>
+                  <div className='font-italic'>В базу не внесено жодних Вимог обраного клієнта</div>
                 </Otherwise>
               </Choose>
             </When>
@@ -111,13 +90,14 @@ class ClientRequirementsChoose extends React.Component {
         </If>
 
         <Modal
-          open={contract_modal_open}
-          onClose={() => this.setState({contract_modal_open: false})}
+          open={modal_open}
+          onClose={() => this.setState({modal_open: false})}
           showCloseIcon={true}
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 75}}}
         >
-          <ContractView id={contract_link} />
+          1
+          {/*<ContractView id={contract_link} />*/}
         </Modal>
       </>
     );
@@ -125,12 +105,13 @@ class ClientRequirementsChoose extends React.Component {
 
   static defaultProps = {
     module_info: {
-      field_name: 'Посилання на основний Договір',
+      field_name: 'Вибір вимог клієнта',
       queue: 0,
       required: false,
       additional_info: null
     },
-    onChange: () => {}
+    onChange: () => {},
+    counterparty: 0
   };
 }
 

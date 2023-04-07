@@ -23,7 +23,7 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_additional_doc_info, get_supervisors, get_doc_type_modules, get_auto_recipients, \
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
-    get_delegated_docs, is_reg_number_free, get_approvals_for_contract_subject
+    get_delegated_docs, is_reg_number_free, get_approvals_for_contract_subject, get_client_requirements_list
 from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
     set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals, handle_doc_type_version
 from .api.phases_handler import new_phase
@@ -1538,3 +1538,9 @@ def add_approvals(request):
 @try_except
 def get_add_contract_reg_number(request, main_contract_id):
     return HttpResponse(get_additional_contract_reg_number(main_contract_id))
+
+
+@login_required(login_url='login')
+@try_except
+def get_client_requirements_for_choose(request, counterparty_id):
+    return HttpResponse(get_client_requirements_list(counterparty_id))
