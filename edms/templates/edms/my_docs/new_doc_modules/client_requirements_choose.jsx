@@ -6,6 +6,7 @@ import Modal from 'react-responsive-modal';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
 import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
+import DocumentSimpleView from 'edms/templates/edms/my_docs/doc_info/document_simple_view';
 
 class ClientRequirementsChoose extends React.Component {
   state = {
@@ -18,6 +19,7 @@ class ClientRequirementsChoose extends React.Component {
     this.setState({loading: true}, () => {
       axiosGetRequest(`get_client_requirements_for_choose/${this.props.counterparty}`)
         .then((response) => {
+          console.log(response);
           this.setState({
             requirements: response,
             loading: false
@@ -51,7 +53,6 @@ class ClientRequirementsChoose extends React.Component {
 
     return (
       <>
-        <div className=''>Вибір вимог клієнта</div>
         <small className='text-danger'>{module_info?.additional_info}</small>
         <If condition={counterparty_type === 'client'}>
           <Choose>
@@ -68,7 +69,11 @@ class ClientRequirementsChoose extends React.Component {
                     onChange={this.onChoseRequirementChange}
                   />
                   <If condition={choosed_client_requirement !== 0}>
-                    <button className='btn btn-outline-info' onClick={() => this.setState({modal_open: true})}>
+                    <button
+                      className='btn btn-outline-info'
+                      onClick={() => this.setState({modal_open: true})}
+                      disabled={!newDocStore.new_document.choosed_client_requirement}
+                    >
                       Переглянути Вимоги
                     </button>
                   </If>
@@ -96,8 +101,7 @@ class ClientRequirementsChoose extends React.Component {
           closeOnOverlayClick={true}
           styles={{modal: {marginTop: 75}}}
         >
-          1
-          {/*<ContractView id={contract_link} />*/}
+          <DocumentSimpleView doc_id={newDocStore.new_document.choosed_client_requirement} />
         </Modal>
       </>
     );

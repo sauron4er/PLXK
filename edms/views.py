@@ -167,6 +167,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
         if 'decree_articles' in doc_modules:
             post_decree_articles(new_doc, doc_modules['decree_articles'])
 
+        if 'client_requirements_choose' in doc_modules:
+            post_document_link(new_doc, doc_modules['client_requirements_choose'])
+
         # Записуємо main_field
         main_field = get_main_field(new_doc)
         new_doc.main_field = main_field[0:49]
@@ -1543,4 +1546,4 @@ def get_add_contract_reg_number(request, main_contract_id):
 @login_required(login_url='login')
 @try_except
 def get_client_requirements_for_choose(request, counterparty_id):
-    return HttpResponse(get_client_requirements_list(counterparty_id))
+    return HttpResponse(json.dumps(get_client_requirements_list(counterparty_id)))
