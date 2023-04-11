@@ -1134,12 +1134,22 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'employee': employee[0]})
 
         elif module['module'] == 'document_link':
-            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(
-                is_active=True)
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True) \
+                .filter(module_id=39) \
+                .filter(document=doc).filter(is_active=True)
             if dl:
                 dl_id = dl[0]
                 dl = get_object_or_404(Document, pk=dl_id)
                 doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl.main_field}})
+
+        elif module['module'] == 'client_requirements_choose':
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True)\
+                .filter(module_id=46)\
+                .filter(document=doc).filter(is_active=True)
+            if dl:
+                dl_id = dl[0]
+                dl = get_object_or_404(Document, pk=dl_id)
+                doc_modules.update({'client_requirements_choose': {'id': dl_id, 'main_field': dl.main_field}})
 
         elif module['module'] == 'registration':
             registration_number = Doc_Registration.objects.values_list('registration_number', flat=True) \

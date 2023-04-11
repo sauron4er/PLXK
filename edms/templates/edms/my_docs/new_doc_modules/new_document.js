@@ -475,12 +475,9 @@ class NewDocument extends React.Component {
               input: newDocStore.new_document.contract_subject_input
             };
           } else if (module.module === 'client_requirements_choose') {
-            console.log(1);
-            // doc_modules[module.module] = decreeArticlesStore.decree_articles;
+            doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
-          } else if (module.module === 'client_requirements_choose') {
-            doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement
           }
         });
 

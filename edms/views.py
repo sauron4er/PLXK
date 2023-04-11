@@ -144,7 +144,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_client_requirements(new_doc, doc_modules['client_requirements'])
 
         if 'document_link' in doc_modules:
-            post_document_link(new_doc, doc_modules['document_link'])
+            post_document_link(new_doc, doc_modules['document_link'], 39)
             
         if 'registration' in doc_modules:
             post_registration(new_doc, doc_modules['registration'])
@@ -168,7 +168,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_decree_articles(new_doc, doc_modules['decree_articles'])
 
         if 'client_requirements_choose' in doc_modules:
-            post_document_link(new_doc, doc_modules['client_requirements_choose'])
+            post_document_link(new_doc, doc_modules['client_requirements_choose'], 46)
 
         # Записуємо main_field
         main_field = get_main_field(new_doc)

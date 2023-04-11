@@ -16,6 +16,8 @@ import CostRates from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/cos
 import Approved from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/approved';
 import EmployeeSeat from "edms/templates/edms/my_docs/doc_info/doc_info_modules/employee_seat";
 import DecreeArticles from "edms/templates/edms/my_docs/doc_info/doc_info_modules/decree_articles/decree_articles";
+import ClientRequirementsChoosed
+  from "edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_choosed";
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -26,6 +28,8 @@ class Info extends React.Component {
 
   render() {
     const {info} = this.props;
+
+    console.log(info);
 
     if (info.path) {
       return (
@@ -139,6 +143,9 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'document_link'}>
                     <DocumentLink documentLink={info.document_link} fieldName='Тендер' />
+                  </When>
+                  <When condition={module.module === 'client_requirements_choose'}>
+                    <ClientRequirementsChoosed documentLink={info.client_requirements_choose} fieldName='Вимоги клієнта' />
                   </When>
                   <When condition={module.module === 'registration'}>
                     <Text text_info={module} text={info.registration_number} doc_info={info} />

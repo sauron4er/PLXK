@@ -370,6 +370,7 @@ class Doc_Law(models.Model):
 class Doc_Doc_Link(models.Model):
     document = models.ForeignKey(Document, related_name='doc_links', on_delete=models.RESTRICT)
     document_link = models.ForeignKey(Document, related_name='links_for', on_delete=models.RESTRICT)
+    module = models.ForeignKey(Module, related_name='doc_links', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 
 

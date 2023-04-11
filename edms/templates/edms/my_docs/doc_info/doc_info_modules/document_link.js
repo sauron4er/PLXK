@@ -31,6 +31,7 @@ class DocumentLink extends React.Component {
             onClose={() => this.setState({modal_open: false})}
             showCloseIcon={true}
             closeOnOverlayClick={true}
+            styles={{modal: {marginTop: 100}}}
           >
             <DocumentSimpleView doc_id={documentLink.id} />
           </Modal>
