@@ -33,7 +33,7 @@ import {
 } from 'templates/components/my_extras';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from './new_doc_store';
-import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
+import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
 import 'static/css/my_styles.css';
 import CustomSelect from 'edms/templates/edms/my_docs/new_doc_modules/custom_select';
 import ProductType from 'edms/templates/edms/my_docs/new_doc_modules/product_type';
@@ -55,7 +55,7 @@ import ContractSubject from 'edms/templates/edms/my_docs/new_doc_modules/contrac
 import EmployeeSeat from 'edms/templates/edms/my_docs/new_doc_modules/employee_seat';
 import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/decree_articles';
 import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
-import ClientRequirementsChoose from "edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose";
+import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose';
 
 class NewDocument extends React.Component {
   state = {
@@ -424,12 +424,12 @@ class NewDocument extends React.Component {
       const {doc, status} = this.props;
 
       if (type === 'template' || this.requiredFieldsFilled()) {
-
         // Створюємо список для відправки у бд:
         let doc_modules = {};
         type_modules.map((module) => {
           if (
-            ['mockup_type', 'mockup_product_type', 'dimensions', 'client', 'packaging_type', 'contract_link', 'employee'].includes(
+            ['mockup_type', 'mockup_product_type', 'dimensions',
+              'client', 'packaging_type', 'contract_link', 'employee'].includes(
               module.module
             )
           ) {
@@ -458,15 +458,7 @@ class NewDocument extends React.Component {
           } else if (module.module === 'product_type_sell') {
             doc_modules['sub_product_type'] = newDocStore.new_document.sub_product_type;
           } else if (
-            [
-              'scope',
-              'law',
-              'client_requirements',
-              'doc_type_version',
-              'cost_rates',
-              'deadline',
-              'employee_seat',
-            ].includes(module.module)
+            ['scope', 'law', 'client_requirements', 'doc_type_version', 'cost_rates', 'deadline', 'employee_seat'].includes(module.module)
           ) {
             doc_modules[module.module] = newDocStore.new_document[module.module];
           } else if (module.module === 'foyer_ranges') {
@@ -487,9 +479,10 @@ class NewDocument extends React.Component {
             // doc_modules[module.module] = decreeArticlesStore.decree_articles;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
+          } else if (module.module === 'client_requirements_choose') {
+            doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement
           }
         });
-
 
         let formData = new FormData();
         // інфа нового документу:
@@ -751,7 +744,11 @@ class NewDocument extends React.Component {
                         <When condition={module.module === 'decree_articles'}>
                           <DecreeArticles module_info={module} />
                         </When>
-                        <When condition={newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'}>
+                        <When
+                          condition={
+                            newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'
+                          }
+                        >
                           <ClientRequirementsChoose module_info={module} counterparty={newDocStore.new_document.counterparty} />
                         </When>
                         <Otherwise> </Otherwise>
