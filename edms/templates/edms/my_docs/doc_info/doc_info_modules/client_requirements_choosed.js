@@ -14,28 +14,26 @@ class ClientRequirementsChoosed extends React.Component {
     const {modal_open} = this.state;
 
     return (
-
-        <If condition={documentLink.id !== 0}>
-          <div>{fieldName}:</div>
-          <div className='css_note_text'>
-            <div>
-              № {documentLink.id}, "{documentLink.main_field}"
-            </div>
-
+      <If condition={documentLink.id !== 0}>
+        <div>{fieldName}:</div>
+        <div className='css_note_text'>
+          <div>
+            {/*№ {documentLink.id}{" "}*/}
             <button className='btn btn-sm btn-outline-info my-1' onClick={() => this.setState({modal_open: true})}>
               Переглянути
             </button>
           </div>
-          <Modal
-            open={modal_open}
-            onClose={() => this.setState({modal_open: false})}
-            showCloseIcon={true}
-            closeOnOverlayClick={true}
-            styles={{modal: {marginTop: 100}}}
-          >
-            <DocumentSimpleView doc_id={documentLink.id} />
-          </Modal>
-        </If>
+        </div>
+        <Modal
+          open={modal_open}
+          onClose={() => this.setState({modal_open: false})}
+          showCloseIcon={true}
+          closeOnOverlayClick={true}
+          styles={{modal: {marginTop: 100}}}
+        >
+          <DocumentSimpleView doc_id={documentLink.id} />
+        </Modal>
+      </If>
     );
   }
 
