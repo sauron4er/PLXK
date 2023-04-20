@@ -345,9 +345,9 @@ def post_contract(doc_request, contract_id):
 
 
 @try_except
-def post_document_link(new_doc, document_id):
+def post_document_link(new_doc, document_id, module_id):
     if document_id != 0:
-        new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id)
+        new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id, module_id=module_id)
         new_doc_link.save()
 
 

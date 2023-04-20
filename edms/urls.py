@@ -7,7 +7,8 @@ from edms.views import edms_get_deps, edms_get_seats, edms_get_drafts, edms_get_
 from edms.views import edms_archive, get_archive, get_work_archive, edms_tables, edms_get_table_first, edms_get_table_all
 from edms.views import edms_sub_docs, edms_get_sub_docs, edms_get_sub_emps, edms_delegated, edms_get_delegated_docs  # Документи підлеглих
 from edms.views import edms_get_doc_types, change_text_module, edms_get_free_times, get_it_tickets, get_doc_type_versions, get_all_employees, \
-    del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields, del_approval, add_approvals, get_add_contract_reg_number
+    del_foyer_range, save_foyer_range, get_cost_rates_products, get_cost_rates_fields, del_approval, add_approvals, get_add_contract_reg_number, \
+    get_client_requirements_for_choose
 from docs.views_contracts import get_contract
 from production.views import get_mockup_types, get_mockup_product_types, get_product_types, get_scopes, contract_subjects_select
 from boards.views_counterparties import get_clients_for_product_type, get_counterparties, get_counterparties_for_select
@@ -62,6 +63,7 @@ urlpatterns = [
     url(r'^my_docs/add_approvals', add_approvals, name='add_approvals'),
     url(r'^my_docs/get_add_contract_reg_number/(?P<main_contract_id>\d+)', get_add_contract_reg_number, name='get_add_contract_reg_number'),
     url(r'^my_docs/get_contract_subjects_select', contract_subjects_select, name='contract_subjects_select'),
+    url(r'^my_docs/get_client_requirements_for_choose/(?P<counterparty_id>\d+)', get_client_requirements_for_choose, name='get_client_requirements_for_choose'),
     url(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     url(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_archive, name='get_archive'),

@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import FilteredRelation
+from django.db.models import FilteredRelation, Q
 import json
 from django.core import serializers
 from django.utils.timezone import datetime
@@ -1134,12 +1134,22 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'employee': employee[0]})
 
         elif module['module'] == 'document_link':
-            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(
-                is_active=True)
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True) \
+                .filter(module_id=39) \
+                .filter(document=doc).filter(is_active=True)
             if dl:
                 dl_id = dl[0]
                 dl = get_object_or_404(Document, pk=dl_id)
                 doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl.main_field}})
+
+        elif module['module'] == 'client_requirements_choose':
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True)\
+                .filter(module_id=46)\
+                .filter(document=doc).filter(is_active=True)
+            if dl:
+                dl_id = dl[0]
+                dl = get_object_or_404(Document, pk=dl_id)
+                doc_modules.update({'client_requirements_choose': {'id': dl_id, 'main_field': dl.main_field}})
 
         elif module['module'] == 'registration':
             registration_number = Doc_Registration.objects.values_list('registration_number', flat=True) \
@@ -1457,3 +1467,32 @@ def get_to_work_for_contract_subject(document_id):
 
     except Doc_Contract_Subject.DoesNotExist:
         return []
+
+
+@try_except
+def get_client_requirements_list(counterparty_id):
+    documents_binded_to_counterparty = [
+        item.document_id
+     for item in Doc_Counterparty.objects
+        .filter(counterparty_id=counterparty_id)
+        .filter(document__document_type__meta_doc_type_id=11)
+        .exclude(document__approved=False)
+        .filter(document__is_template=False)
+        .filter(document__closed=False)]
+
+    cr_list = [{
+        'id': item.id,
+        'name': get_doc_sub_product_name(item.id) + ' (погоджено)' if item.approved
+            else get_doc_sub_product_name(item.id) + ' (на погодженні)'
+
+    } for item in Document.objects
+        .filter(id__in=documents_binded_to_counterparty)]
+
+    return cr_list
+
+
+def get_doc_sub_product_name(doc_id):
+    doc_sub_product_name = Doc_Sub_Product.objects\
+        .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
+    return doc_sub_product_name
+
