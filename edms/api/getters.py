@@ -484,7 +484,7 @@ def get_additional_doc_info(doc_request):
 @try_except
 def get_actual_emp_seat_from_seat(seat_id):
     emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-        .filter(seat_id=seat_id).filter(is_main=True).filter(is_active=True)
+        .filter(seat_id=seat_id).filter(is_active=True)
     if emp_seat_id:
         emp_seat_id = vacation_check(emp_seat_id[0])
         return emp_seat_id
