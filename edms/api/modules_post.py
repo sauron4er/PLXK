@@ -147,15 +147,13 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
 
     tov_director = Employee_Seat.objects.values_list('id', flat=True) \
         .filter(seat_id=247) \
-        .filter(is_active=True) \
-        .filter(is_main=True)[0]
+        .filter(is_active=True)[0]
 
     acting_tov_director = vacation_check(tov_director)
 
     tov_tech_director = Employee_Seat.objects.values_list('id', flat=True) \
-        .filter(seat_id=281) \
-        .filter(is_active=True) \
-        .filter(is_main=True)[0]
+        .filter(seat_id=285) \
+        .filter(is_active=True)[0]
 
     acting_tov_tech_director = vacation_check(tov_tech_director)
 
