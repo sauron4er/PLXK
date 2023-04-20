@@ -19,7 +19,6 @@ class ClientRequirementsChoose extends React.Component {
     this.setState({loading: true}, () => {
       axiosGetRequest(`get_client_requirements_for_choose/${this.props.counterparty}`)
         .then((response) => {
-          console.log(response);
           this.setState({
             requirements: response,
             loading: false

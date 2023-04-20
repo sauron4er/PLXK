@@ -168,7 +168,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
             post_decree_articles(new_doc, doc_modules['decree_articles'])
 
         if 'client_requirements_choose' in doc_modules:
-            post_document_link(new_doc, doc_modules['client_requirements_choose'], 46)
+            post_document_link(new_doc, doc_modules['client_requirements_choose'], 47)
 
         # Записуємо main_field
         main_field = get_main_field(new_doc)

@@ -1144,7 +1144,7 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'client_requirements_choose':
             dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True)\
-                .filter(module_id=46)\
+                .filter(module_id=47)\
                 .filter(document=doc).filter(is_active=True)
             if dl:
                 dl_id = dl[0]
