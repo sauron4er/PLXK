@@ -345,7 +345,7 @@ def get_chief_id(emp_seat_id):
     if chief_id:  # В БД може не бути запису, хто керівник відділу
         # Активна людино-посада безпосереднього керівника:
         chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-            .filter(seat_id=chief_id[0]).filter(is_main=True).filter(is_active=True)
+            .filter(seat_id=chief_id[0]).filter(is_active=True)
 
         if chief_emp_seat_id:
             return chief_emp_seat_id[0]

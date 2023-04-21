@@ -157,7 +157,7 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
 
     acting_tov_tech_director = vacation_check(tov_tech_director)
 
-    if doc_request['document_type'] == 17:  # Тендери
+    if doc_request['document_type'] in [17, 19]:  # Тендери
         # Директор ТОВ отримує на погодження усі тендери
         approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
         approvals.extend([{
@@ -177,7 +177,7 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
                 'approve_queue': 3
             }])
 
-    elif doc_request['document_type'] in [20, 22]:  # Договори
+    elif doc_request['document_type'] in [20, 22, 23]:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
