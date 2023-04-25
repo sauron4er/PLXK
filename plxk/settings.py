@@ -25,7 +25,7 @@ SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STAS_DEBUG = True
+STAS_DEBUG = False
 
 
 ALLOWED_HOSTS = ['10.10.10.0/24', '127.0.0.1', '10.10.10.22', '10.20.10.128', 'plxk.com.ua', 'plhk.com.ua']
@@ -192,7 +192,7 @@ SESSION_COOKIE_SAMESITE_FORCE_ALL = True
 SERVERLESS_CRONJOBS = [
     (
         '60_minutes',
-        'plxk.auto_operations.arrange_reminders',
+        'plxk.auto_operations.do_automatic_stuff',
         {}
     ),
 ]
