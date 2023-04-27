@@ -22,10 +22,10 @@ const counterpartyStore = store({
     product: '',
     product_id: '',
     commentary: '',
-    new_bag_scheme_files: [],
     old_bag_scheme_files: [],
     is_active: true
   },
+  new_bag_scheme_files: [], // Виведено окремо, щоб не відправлялося разом з іншою інфою в post_counterparty
   scopes: [],
   employees: [],
   certificate: {

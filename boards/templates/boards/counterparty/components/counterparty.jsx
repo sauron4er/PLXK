@@ -76,6 +76,12 @@ class Counterparty extends React.Component {
       let formData = new FormData();
       formData.append('counterparty', JSON.stringify(counterpartyStore.counterparty));
 
+      if (counterpartyStore.new_bag_scheme_files?.length > 0) {
+        counterpartyStore.new_bag_scheme_files.map((file) => {
+          formData.append('new_bag_scheme_files', file);
+        });
+      }
+
       const url = counterpartyStore.type === 'provider' ? 'post_provider/' : 'post_client/';
 
       axiosPostRequest(url, formData)

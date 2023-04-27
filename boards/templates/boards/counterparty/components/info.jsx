@@ -68,7 +68,7 @@ class CounterpartyInfo extends React.Component {
   };
 
   onBagSchemeFilesChange = (e) => {
-    counterpartyStore.counterparty.new_bag_scheme_files = e.target.value;
+    counterpartyStore.new_bag_scheme_files = e.target.value;
   };
 
   onBagSchemeFilesDelete = (id) => {
@@ -130,7 +130,7 @@ class CounterpartyInfo extends React.Component {
           <hr />
           <Files
             oldFiles={counterpartyStore.counterparty.old_bag_scheme_files}
-            newFiles={counterpartyStore.counterparty.new_bag_scheme_files}
+            newFiles={counterpartyStore.new_bag_scheme_files}
             fieldName={'Схема укладки мішків на піддон'}
             onChange={this.onBagSchemeFilesChange}
             onDelete={this.onBagSchemeFilesDelete}

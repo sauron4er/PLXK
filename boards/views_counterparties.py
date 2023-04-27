@@ -11,8 +11,9 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
 from production.api.getters import get_product_types_list, get_certification_types, get_scopes_list
-from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause
+from .models import Counterparty, Counterparty_certificate, Counterparty_certificate_pause, Client_Bag_Scheme
 from .api.letters_api import get_letters_list, add_or_change_letter, deactivate_letter
+from plxk.api.files_query_to_list_converter import files_query_to_list
 # from .api.counterparty_mail_sender import send_provider_mail
 
 
@@ -343,7 +344,7 @@ def get_client(request, pk):
             'scope_id': client_instance.scope_id,
             'scope': client_instance.scope.name if client_instance.scope else '',
             'commentary': client_instance.commentary or '',
-            'old_bag_scheme_files': get_bag_scheme_files(client_instance)
+            'old_bag_scheme_files': get_bag_scheme_files(client_instance.id)
         }
     except Http404:
         client = {}
@@ -354,9 +355,10 @@ def get_client(request, pk):
 
 
 @try_except
-def get_bag_scheme_files(client):
-    bag_scheme_files = []
+def get_bag_scheme_files(client_id):
+    bag_scheme_files = files_query_to_list(Client_Bag_Scheme.objects.filter(client_id=client_id).filter(is_active=True))
     return bag_scheme_files
+
 
 @login_required(login_url='login')
 @try_except
@@ -379,44 +381,31 @@ def post_client(request):
     client.responsible_id = data['responsible_id']
     client.product_id = data['product_id']
     client.old_bag_sheme_files = data['old_bag_scheme_files']
-    client.new_bag_sheme_files = data['new_bag_scheme_files']
     if data['commentary'] != '':
         client.commentary = data['commentary']
 
     client.save()
 
-    arrange_bag_scheme_files(client.id, data['old_bag_scheme_files'], data['new_bag_scheme_files'])
+    arrange_bag_scheme_files(client.id, data['old_bag_scheme_files'], request.FILES.getlist('new_bag_scheme_files'))
 
     return HttpResponse(client.pk)
 
 
 @try_except
 def arrange_bag_scheme_files(client_id, old_files, new_files):
-    if old_files:
-        for old_file in old_files:
-            file = get_object_or_404(File, pk=old_file['id'])
-            file_change_path_form = FileNewPathForm(doc_request, instance=file)
-            if file_change_path_form.is_valid():
-                file_change_path_form.save()
-            else:
-                raise ValidationError('post_modules/post_files/file_change_path_form invalid')
+    for file in new_files:
+        Client_Bag_Scheme.objects.create(
+            client_id=client_id,
+            file=file,
+            name=u'' + file.name
+        )
 
-    # Додаємо нові файли:
-    if files:
-        # Поки що файли додаються тільки якщо документ публікується не як чернетка, тому що
-        # для публікації файла необідно мати перший path_id документа, якого нема в чернетці
-        if new_path is not None:
-            doc_path = get_object_or_404(Document_Path, pk=new_path)
-            # Якщо у doc_request нема "Mark" - це створення нового документу, потрібно внести True у first_path:
-            first_path = doc_request['mark'] == 1
+    for file in old_files:
+        if file['status'] == 'delete':
+            file = get_object_or_404(Client_Bag_Scheme, pk=file['id'])
+            file.is_active = False
+            file.save()
 
-            for file in files:
-                File.objects.create(
-                    document_path=doc_path,
-                    file=file,
-                    name=file.name,
-                    first_path=first_path
-                )
 
 @try_except
 def get_clients_for_product_type(request, product_type='0'):
