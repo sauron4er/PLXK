@@ -343,6 +343,7 @@ def get_client(request, pk):
             'scope_id': client_instance.scope_id,
             'scope': client_instance.scope.name if client_instance.scope else '',
             'commentary': client_instance.commentary or '',
+            'old_bag_scheme_files': get_bag_scheme_files(client_instance)
         }
     except Http404:
         client = {}
@@ -351,6 +352,11 @@ def get_client(request, pk):
 
     return HttpResponse(json.dumps({'counterparty': client, 'scopes': scopes, 'employees': employees}))
 
+
+@try_except
+def get_bag_scheme_files(client):
+    bag_scheme_files = []
+    return bag_scheme_files
 
 @login_required(login_url='login')
 @try_except
@@ -372,13 +378,45 @@ def post_client(request):
     client.scope_id = data['scope_id']
     client.responsible_id = data['responsible_id']
     client.product_id = data['product_id']
+    client.old_bag_sheme_files = data['old_bag_scheme_files']
+    client.new_bag_sheme_files = data['new_bag_scheme_files']
     if data['commentary'] != '':
         client.commentary = data['commentary']
 
     client.save()
 
+    arrange_bag_scheme_files(client.id, data['old_bag_scheme_files'], data['new_bag_scheme_files'])
+
     return HttpResponse(client.pk)
 
+
+@try_except
+def arrange_bag_scheme_files(client_id, old_files, new_files):
+    if old_files:
+        for old_file in old_files:
+            file = get_object_or_404(File, pk=old_file['id'])
+            file_change_path_form = FileNewPathForm(doc_request, instance=file)
+            if file_change_path_form.is_valid():
+                file_change_path_form.save()
+            else:
+                raise ValidationError('post_modules/post_files/file_change_path_form invalid')
+
+    # Додаємо нові файли:
+    if files:
+        # Поки що файли додаються тільки якщо документ публікується не як чернетка, тому що
+        # для публікації файла необідно мати перший path_id документа, якого нема в чернетці
+        if new_path is not None:
+            doc_path = get_object_or_404(Document_Path, pk=new_path)
+            # Якщо у doc_request нема "Mark" - це створення нового документу, потрібно внести True у first_path:
+            first_path = doc_request['mark'] == 1
+
+            for file in files:
+                File.objects.create(
+                    document_path=doc_path,
+                    file=file,
+                    name=file.name,
+                    first_path=first_path
+                )
 
 @try_except
 def get_clients_for_product_type(request, product_type='0'):
