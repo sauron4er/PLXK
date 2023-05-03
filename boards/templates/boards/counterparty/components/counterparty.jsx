@@ -19,9 +19,10 @@ import {ToastContainer} from 'react-toastify';
 import CounterpartyCorrespondence from './correspondence';
 import CounterpartyMockups from 'boards/templates/boards/counterparty/clients/mockups';
 import CounterpartyRequirements from 'boards/templates/boards/counterparty/clients/requirements';
-import CounterpartyNonCompliances from "boards/templates/boards/counterparty/components/non_compliances";
-import CounterpartyCostRates from "boards/templates/boards/counterparty/clients/cost_rates";
-import CounterpartyLetters from "boards/templates/boards/counterparty/components/letters/letters";
+import CounterpartyNonCompliances from 'boards/templates/boards/counterparty/components/non_compliances';
+import CounterpartyCostRates from 'boards/templates/boards/counterparty/clients/cost_rates';
+import CounterpartyLetters from 'boards/templates/boards/counterparty/components/letters/letters';
+import CounterpartyBagScheme from 'boards/templates/boards/counterparty/clients/bag_scheme';
 
 class Counterparty extends React.Component {
   state = {
@@ -37,11 +38,11 @@ class Counterparty extends React.Component {
       this.setState({loading: false});
     }
   }
-  
+
   getGoogleApi = () => {
     axiosGetRequest('get_google_api')
       .then((response) => {
-        this.setState({google_api_key: response})
+        this.setState({google_api_key: response});
       })
       .catch((error) => notify(error));
   };
@@ -122,6 +123,7 @@ class Counterparty extends React.Component {
                   <Tab>Дизайн-макети</Tab>
                   <Tab>Вимоги</Tab>
                   <Tab>Норми витрат</Tab>
+                  <Tab>Схема укладки</Tab>
                 </If>
                 <Tab>Офіційні листи</Tab>
                 <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
@@ -162,6 +164,9 @@ class Counterparty extends React.Component {
                 </TabPanel>
                 <TabPanel>
                   <CounterpartyCostRates />
+                </TabPanel>
+                <TabPanel>
+                  <CounterpartyBagScheme />
                 </TabPanel>
               </If>
               <TabPanel>

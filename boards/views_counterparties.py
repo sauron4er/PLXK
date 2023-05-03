@@ -380,11 +380,22 @@ def post_client(request):
     client.scope_id = data['scope_id']
     client.responsible_id = data['responsible_id']
     client.product_id = data['product_id']
-    client.old_bag_sheme_files = data['old_bag_scheme_files']
     if data['commentary'] != '':
         client.commentary = data['commentary']
 
     client.save()
+
+    arrange_bag_scheme_files(client.id, data['old_bag_scheme_files'], request.FILES.getlist('new_bag_scheme_files'))
+
+    return HttpResponse(client.pk)
+
+
+@login_required(login_url='login')
+@try_except
+def post_client_bag_schemes(request):
+    data = json.loads(request.POST.copy()['counterparty'])
+
+    client = get_object_or_404(Counterparty, pk=data['id'])
 
     arrange_bag_scheme_files(client.id, data['old_bag_scheme_files'], request.FILES.getlist('new_bag_scheme_files'))
 

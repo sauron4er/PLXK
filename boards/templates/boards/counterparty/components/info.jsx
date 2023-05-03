@@ -3,12 +3,7 @@ import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from './counterparty_store';
 import TextInput from 'templates/components/form_modules/text_input';
-import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
-import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Selector from 'templates/components/form_modules/selectors/selector';
-import corrStore from '../../../../../correspondence/templates/correspondence/store';
 import Files from 'templates/components/form_modules/files';
 
 class CounterpartyInfo extends React.Component {
@@ -65,22 +60,6 @@ class CounterpartyInfo extends React.Component {
     const selectedIndex = e.target.options.selectedIndex;
     counterpartyStore.counterparty.responsible_id = e.target.options[selectedIndex].getAttribute('data-key');
     counterpartyStore.counterparty.responsible = e.target.options[selectedIndex].getAttribute('value');
-  };
-
-  onBagSchemeFilesChange = (e) => {
-    counterpartyStore.new_bag_scheme_files = e.target.value;
-  };
-
-  onBagSchemeFilesDelete = (id) => {
-    // Необхідно проводити зміни через додаткову перемінну, бо react-easy-state не помічає змін глибоко всередині перемінних, як тут.
-    let old_files = [...counterpartyStore.counterparty.old_bag_scheme_files];
-    for (const i in old_files) {
-      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
-        old_files[i].status = 'delete';
-        break;
-      }
-    }
-    counterpartyStore.counterparty.old_bag_scheme_files = [...old_files];
   };
 
   render() {
