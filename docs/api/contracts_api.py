@@ -260,6 +260,22 @@ def get_additional_contract_reg_number(main_contract_id):
 
 @try_except
 def check_lawyers_received(edms_doc_id):
-    contract_instance = Contract.objects.get(edms_doc_id=edms_doc_id)
-    contract_instance.lawyers_received = True
-    contract_instance.save()
+    contract_instances = Contract.objects\
+        .filter(edms_doc_id=edms_doc_id)\
+        .filter(is_active=True)
+
+    # Буває, що створюється два контракти по одному документу. Це глюк, який треба відслідкувати.
+    # Поки що обходимо так: шукаємо всі дублікати контрактів, в один записуємо "Отримано",
+    # всі інші деактивовуємо.
+
+    contract_instance_counter = 0
+    for contract in contract_instances:
+        contract_instance_counter = contract_instance_counter + 1
+        if contract_instance_counter > 1:
+            contract.is_active = False
+            contract.save()
+        else:
+            contract.lawyers_received = True
+            contract.save()
+
+
