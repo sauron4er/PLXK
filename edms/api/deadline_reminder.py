@@ -31,9 +31,7 @@ def send_deadline_reminders():
         .filter(is_active=True)\
         .filter(mark__in=[2, 5, 6, 9, 11, 14, 17])  # Рахуються тільки mark Віза, Погоджено, Виконано тощо
 
-    active_md_recipients_list = [
-        item.recipient.employee.id
-    for item in active_mark_demands]
+    active_md_recipients_list = [item.recipient.employee.id for item in active_mark_demands]
 
     active_md_recipients_list_cleared = [*set(active_md_recipients_list)]
 
