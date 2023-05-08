@@ -546,9 +546,6 @@ def edms_get_direct_subs(request, pk):
 @try_except
 def edms_get_doc(request, pk):
 
-    from edms.api.deadline_reminder import send_deadline_reminders
-    send_deadline_reminders()
-
     doc = get_object_or_404(Document, pk=pk)
     # Всю інформацію про документ записуємо сюди
 
