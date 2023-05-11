@@ -42,6 +42,29 @@ class CostRates extends React.Component {
             </If>
           </div>
         </For>
+        <For each='field' of={costRates.additional_fields} index='idx'>
+          <div key={idx} className='bg-white p-1 my-1 border-top border-bottom'>
+            <div className='d-flex'>
+              <div className='col-lg-8'>
+                <div>{field.name}</div>
+                <small className='font-italic'>Артикул 1С8: {field.term}</small>
+              </div>
+              <div className='col-lg-4 font-weight-bold'>
+                {field.norm} {field.unit}
+              </div>
+            </div>
+            <If condition={field.comment}>
+              <div className='d-flex'>
+                <div className='col-lg'>Коментар автора:</div>
+              </div>
+              <div className='d-flex'>
+                <div className='col-lg'>
+                  <div className='font-italic'>{field.comment}</div>
+                </div>
+              </div>
+            </If>
+          </div>
+        </For>
       </>
     );
   }
