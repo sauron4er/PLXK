@@ -2,7 +2,6 @@ from django.http import HttpResponse, HttpResponseForbidden, QueryDict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.db import transaction
-
 from plxk.api.global_getters import get_deps
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import UserProfile, Department
@@ -642,6 +641,9 @@ def edms_get_doc(request, pk):
 @try_except
 def edms_my_docs(request):
     if request.method == 'GET':
+
+        # from edms.api.deadline_reminder import send_deadline_reminders
+        # send_deadline_reminders()
 
         my_seats = get_my_seats(request.user.userprofile.id)
 

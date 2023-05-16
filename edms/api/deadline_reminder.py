@@ -9,7 +9,7 @@ from plxk.api.mail_sender import send_email
 from docs.models import File, Article_responsible, Order_article
 from edms.models import Doc_Deadline, Doc_Approval, Mark_Demand
 from django.db.models import FilteredRelation, Q
-from edms.api.getters import get_my_seats, get_main_field
+from edms.api.getters import get_my_seats, get_main_field, get_document_deadline
 from plxk.api.datetime_normalizers import date_to_json
 testing = settings.STAS_DEBUG
 
@@ -44,16 +44,16 @@ def send_deadline_reminders():
                 'doc_type': item.document.document_type.description,
 
                 # Тут треба знайти активний deadline, мабуть, за допомогою окремої функції
-                'deadline': date_to_json(item.document.deadline.deadline[0]),
+                'deadline': get_document_deadline(item.document),
 
 
                 'author': item.document.employee_seat.employee.pip,
                 'main_field': get_main_field(item.document),
-                'deadline_status': 'overdue' if item.document.deadline.deadline <= today
-                    else 'tomorrow' if item.document.deadline.deadline == tomorrow else 'today'
+                # 'deadline_status': 'overdue' if item.document.deadline.deadline <= today
+                #     else 'tomorrow' if item.document.deadline.deadline == tomorrow else 'today'
             } for item in active_mark_demands.filter(recipient_id__in=emps_seats_ids)]
 
-
+        pass
 
 
         # active_deadlines_for_all_seats = []
@@ -92,3 +92,5 @@ def send_deadline_reminders():
     # Те саме зробити по наказах
 
     a=1
+
+

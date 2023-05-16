@@ -1457,3 +1457,37 @@ def get_to_work_for_contract_subject(document_id):
 
     except Doc_Contract_Subject.DoesNotExist:
         return []
+
+
+@try_except
+def get_client_requirements_list(counterparty_id):
+    documents_binded_to_counterparty = [
+        item.document_id
+     for item in Doc_Counterparty.objects
+        .filter(counterparty_id=counterparty_id)
+        .filter(document__document_type__meta_doc_type_id=11)
+        .exclude(document__approved=False)
+        .filter(document__is_template=False)
+        .filter(document__closed=False)]
+
+    cr_list = [{
+        'id': item.id,
+        'name': get_doc_sub_product_name(item.id) + ' (погоджено)' if item.approved
+            else get_doc_sub_product_name(item.id) + ' (на погодженні)'
+
+    } for item in Document.objects
+        .filter(id__in=documents_binded_to_counterparty)]
+
+    return cr_list
+
+
+def get_doc_sub_product_name(doc_id):
+    doc_sub_product_name = Doc_Sub_Product.objects\
+        .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
+    return doc_sub_product_name
+
+
+def get_document_deadline(document):
+    pass
+    return 'deadline'
+
