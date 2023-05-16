@@ -19,6 +19,7 @@ import Document from 'edms/templates/edms/my_docs/doc_info/document';
 import Modal from 'react-responsive-modal';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import DxTable from 'templates/components/tables/dx_table';
+import ordersStore from '../orders/orders_store';
 
 const additional_contracts_columns = [
   {name: 'number', title: '№'},
@@ -379,6 +380,11 @@ class Contract extends React.Component {
     this.setState({contract});
   };
 
+  onHrefClick = () => {
+    navigator.clipboard.writeText(`http://plhk.com.ua/docs/contracts/${contractsStore.contract.id}`)
+    alert('Посилання на договір скопійовано.')
+  }
+
   render() {
     const {
       data_received,
@@ -409,6 +415,7 @@ class Contract extends React.Component {
                         <h5>{this.props.id !== 0 ? 'Договір № ' + contract.number : 'Новий Договір'}</h5>
                       </Otherwise>
                     </Choose>
+                    <small onClick={this.onHrefClick}>Посилання: http://plhk.com.ua/docs/orders/{contract.id}</small>
                     <div>{`На сайт додав/додала: ${this.state.contract.author_name}`}</div>
                     <small>Поля, позначені зірочкою, є обов’язковими</small>
                     <If condition={this.props.id === 0}>

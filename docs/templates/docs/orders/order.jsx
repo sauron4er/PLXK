@@ -291,6 +291,11 @@ class Order extends React.Component {
     this.setState({sign_employee: e.target.value});
   };
 
+  onHrefClick = () => {
+    navigator.clipboard.writeText(`http://plhk.com.ua/docs/orders/${ordersStore.order.id}`)
+    alert('Посилання на наказ скопійовано.')
+  }
+
   render() {
     const {is_orders_admin, employees, emp_seats, types, order} = ordersStore;
     const {loading, error404, request_sent, edms_doc_opened, company} = this.state;
@@ -341,6 +346,8 @@ class Order extends React.Component {
               {/*<PrintOrder openPDFModal={this.openPDFModal} />*/}
             </div>
 
+            <small onClick={this.onHrefClick}>Посилання: http://plhk.com.ua/docs/orders/{order.id}</small>
+
             <hr />
             <CompanyChoose fieldName='Підприємство' onChange={this.onCompanyChange} company={company} id='company' />
 
@@ -363,17 +370,18 @@ class Order extends React.Component {
             />
 
             <Articles disabled={!is_orders_admin} articles={order.articles} changeArticles={this.onArticlesChange} emp_seats={emp_seats} />
-  
+
             <If condition={order?.files_old?.length || is_orders_admin}>
               <hr />
               <Files
                 oldFiles={order.files_old}
                 newFiles={order.files}
-                fieldName={"Файли"}
-                onChange={(e) => this.onInputChange(e, "files")}
-                onDelete={(id) => this.onFilesDelete(id, "files_old")}
+                fieldName={'Файли'}
+                onChange={(e) => this.onInputChange(e, 'files')}
+                onDelete={(id) => this.onFilesDelete(id, 'files_old')}
                 disabled={!is_orders_admin}
-              /></If>
+              />
+            </If>
 
             <hr />
             <SelectorWithFilter
