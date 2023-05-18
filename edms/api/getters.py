@@ -142,6 +142,8 @@ def is_access_granted(user, author_emp_seat, doc):
         return True
     if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Керівник відділу автора
         return True
+    if user.userprofile.department_id == 50:  # Працівник юридичного-адміністративного відділу
+        return True
 
     # Є дозвіл на перегляд усіх документів цього мета-типу
     is_view_granted = User_Doc_Type_View.objects \
