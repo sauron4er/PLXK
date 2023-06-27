@@ -147,19 +147,17 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
 
     tov_director = Employee_Seat.objects.values_list('id', flat=True) \
         .filter(seat_id=247) \
-        .filter(is_active=True) \
-        .filter(is_main=True)[0]
+        .filter(is_active=True)[0]
 
     acting_tov_director = vacation_check(tov_director)
 
     tov_tech_director = Employee_Seat.objects.values_list('id', flat=True) \
-        .filter(seat_id=281) \
-        .filter(is_active=True) \
-        .filter(is_main=True)[0]
+        .filter(seat_id=285) \
+        .filter(is_active=True)[0]
 
     acting_tov_tech_director = vacation_check(tov_tech_director)
 
-    if doc_request['document_type'] == 17:  # Тендери
+    if doc_request['document_type'] in [17, 19]:  # Тендери
         # Директор ТОВ отримує на погодження усі тендери
         approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
         approvals.extend([{
@@ -179,7 +177,7 @@ def post_approvals(doc_request, approvals, company, contract_subject_approvals):
                 'approve_queue': 3
             }])
 
-    elif doc_request['document_type'] in [20, 22]:  # Договори
+    elif doc_request['document_type'] in [20, 22, 23]:  # Договори
         if company == 'ТДВ':
             approvals[:] = [i for i in approvals if not (int(i['id']) == director or int(i['id']) == acting_director)]
             approvals[:] = [i for i in approvals if not (int(i['id']) == tov_director or int(i['id']) == acting_tov_director)]
@@ -347,9 +345,9 @@ def post_contract(doc_request, contract_id):
 
 
 @try_except
-def post_document_link(new_doc, document_id):
+def post_document_link(new_doc, document_id, module_id):
     if document_id != 0:
-        new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id)
+        new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id, module_id=module_id)
         new_doc_link.save()
 
 

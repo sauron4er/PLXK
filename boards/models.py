@@ -85,6 +85,15 @@ class Counterparty_certificate_pause(models.Model):
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# Clients
+class Client_Bag_Scheme(models.Model):
+    file = models.FileField(upload_to='boards/counterparties/client_bag_schemes/%Y/%m')
+    name = models.CharField(max_length=100)
+    client = models.ForeignKey(Counterparty, related_name='bag_schemes', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # Non Compliances
 class Non_compliance(models.Model):
     author = models.ForeignKey(UserProfile, related_name='non_compliances_added', on_delete=models.RESTRICT)

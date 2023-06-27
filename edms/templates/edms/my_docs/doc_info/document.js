@@ -33,6 +33,7 @@ import NewSigners from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/mo
 import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
 import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
+import ordersStore from '../../../../../docs/templates/docs/orders/orders_store';
 
 class Document extends React.Component {
   state = {
@@ -420,6 +421,11 @@ class Document extends React.Component {
     window.location.reload();
   };
 
+  onHrefClick = () => {
+    navigator.clipboard.writeText(`http://plhk.com.ua/edms/my_docs/${this.props.doc_id}`)
+    alert('Посилання на наказ скопійовано.')
+  }
+
   render() {
     const {doc_id, archived, directSubs} = this.props;
     const {ready_for_render} = this.state;
@@ -447,7 +453,7 @@ class Document extends React.Component {
                   <div className='css_main'>
                     <div className='d-flex justify-content-between mr-2'>
                       <div>
-                        <small>Посилання: http://plhk.com.ua/edms/my_docs/{doc_id}</small>
+                        <small onClick={this.onHrefClick}>Посилання: http://plhk.com.ua/edms/my_docs/{doc_id}</small>
                         <div>Обраний документ:</div>
                       </div>
                       <div>

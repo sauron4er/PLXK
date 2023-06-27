@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import FilteredRelation
+from django.db.models import FilteredRelation, Q
 import json
 from django.core import serializers
 from django.utils.timezone import datetime
@@ -141,6 +141,8 @@ def is_access_granted(user, author_emp_seat, doc):
     if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Мав документ у mark_demands
         return True
     if doc.document_demands.filter(recipient__in=emp_seats).exists():  # Керівник відділу автора
+        return True
+    if user.userprofile.department_id == 50:  # Працівник юридичного-адміністративного відділу
         return True
 
     # Є дозвіл на перегляд усіх документів цього мета-типу
@@ -345,7 +347,7 @@ def get_chief_id(emp_seat_id):
     if chief_id:  # В БД може не бути запису, хто керівник відділу
         # Активна людино-посада безпосереднього керівника:
         chief_emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-            .filter(seat_id=chief_id[0]).filter(is_main=True).filter(is_active=True)
+            .filter(seat_id=chief_id[0]).filter(is_active=True)
 
         if chief_emp_seat_id:
             return chief_emp_seat_id[0]
@@ -484,7 +486,7 @@ def get_additional_doc_info(doc_request):
 @try_except
 def get_actual_emp_seat_from_seat(seat_id):
     emp_seat_id = Employee_Seat.objects.values_list('id', flat=True) \
-        .filter(seat_id=seat_id).filter(is_main=True).filter(is_active=True)
+        .filter(seat_id=seat_id).filter(is_active=True)
     if emp_seat_id:
         emp_seat_id = vacation_check(emp_seat_id[0])
         return emp_seat_id
@@ -902,8 +904,8 @@ def get_doc_modules(doc, responsible_id=0):
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
 
-            # Лише для договорів
-            changeable = doc.document_type.meta_doc_type_id == 5 \
+            # Лише для договорів та тендерів
+            changeable = doc.document_type.meta_doc_type_id in [5, 9] \
                          and are_approvals_on_first_phase(approval_list) \
                          and int(responsible_id) == doc.employee_seat_id
 
@@ -1134,12 +1136,22 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'employee': employee[0]})
 
         elif module['module'] == 'document_link':
-            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True).filter(document=doc).filter(
-                is_active=True)
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True) \
+                .filter(module_id=39) \
+                .filter(document=doc).filter(is_active=True)
             if dl:
                 dl_id = dl[0]
                 dl = get_object_or_404(Document, pk=dl_id)
                 doc_modules.update({'document_link': {'id': dl_id, 'main_field': dl.main_field}})
+
+        elif module['module'] == 'client_requirements_choose':
+            dl = Doc_Doc_Link.objects.values_list('document_link_id', flat=True)\
+                .filter(module_id=47)\
+                .filter(document=doc).filter(is_active=True)
+            if dl:
+                dl_id = dl[0]
+                dl = get_object_or_404(Document, pk=dl_id)
+                doc_modules.update({'client_requirements_choose': {'id': dl_id, 'main_field': dl.main_field}})
 
         elif module['module'] == 'registration':
             registration_number = Doc_Registration.objects.values_list('registration_number', flat=True) \
@@ -1485,9 +1497,4 @@ def get_doc_sub_product_name(doc_id):
     doc_sub_product_name = Doc_Sub_Product.objects\
         .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
     return doc_sub_product_name
-
-
-def get_document_deadline(document):
-    pass
-    return 'deadline'
 

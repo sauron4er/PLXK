@@ -21,6 +21,7 @@ class Approvals extends React.Component {
   postApprovals = (new_approvals) => {
     let formData = new FormData();
     formData.append('doc_id', this.props.info.id);
+    formData.append('meta_doc_type_id', this.props.info.meta_type_id);
     formData.append('approvals', JSON.stringify(new_approvals));
     formData.append('resp_seat_id', this.props.info.responsible_seat_id);
     axiosPostRequest('add_approvals', formData)

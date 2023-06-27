@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^clients/get_clients/(?P<page>\d+)/$', views_counterparties.get_clients, name='get_clients'),
     url(r'^clients/get_client/(?P<pk>\d+)/$', views_counterparties.get_client, name='get_client'),
     url(r'^clients/post_client/', views_counterparties.post_client, name='post_client'),
+    url(r'^clients/post_client_bag_schemes/', views_counterparties.post_client_bag_schemes, name='post_client_bag_schemes'),
     url(r'^clients/deact_counterparty/(?P<pk>\d+)/$', views_counterparties.deact_counterparty, name='deact_counterparty'),
     url(r'^clients/get_info_for_contracts_page', get_info_for_contracts_page, name='get_info_for_contracts_page'),
     url(r'^clients/get_contracts/(?P<counterparty>-?\d+)/(?P<company>\w+)/(?P<with_add>\w+)/(?P<page>\w+)/$', get_contracts, name='get_contracts'),

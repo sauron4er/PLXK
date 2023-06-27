@@ -3,19 +3,15 @@ import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import counterpartyStore from './counterparty_store';
 import TextInput from 'templates/components/form_modules/text_input';
-import MultiSelector from 'templates/components/form_modules/selectors/multi_selector';
-import {getIndex, getItemById, uniqueArray} from 'templates/components/my_extras';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import Selector from 'templates/components/form_modules/selectors/selector';
-import corrStore from '../../../../../correspondence/templates/correspondence/store';
+import Files from 'templates/components/form_modules/files';
 
 class CounterpartyInfo extends React.Component {
   state = {
     selected_product: '',
     selected_product_id: 0
   };
-  
+
   onNameChange = (e) => {
     counterpartyStore.counterparty.name = e.target.value;
   };
@@ -35,7 +31,7 @@ class CounterpartyInfo extends React.Component {
   onActualAddressChange = (e) => {
     counterpartyStore.counterparty.actual_address = e.target.value;
   };
-  
+
   onCommentaryChange = (e) => {
     counterpartyStore.counterparty.commentary = e.target.value;
   };
@@ -53,13 +49,13 @@ class CounterpartyInfo extends React.Component {
   onContactsChange = (e) => {
     counterpartyStore.counterparty.contacts = e.target.value;
   };
-  
+
   onScopeChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     counterpartyStore.counterparty.scope_id = e.target.options[selectedIndex].getAttribute('data-key');
     counterpartyStore.counterparty.scope = e.target.options[selectedIndex].getAttribute('value');
   };
-  
+
   onResponsibleChange = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     counterpartyStore.counterparty.responsible_id = e.target.options[selectedIndex].getAttribute('data-key');
@@ -69,7 +65,7 @@ class CounterpartyInfo extends React.Component {
   render() {
     const {counterparty, type, scopes, employees} = counterpartyStore;
     const {edit_access} = window;
-  
+
     return (
       <>
         <TextInput text={counterparty.name} fieldName={'* Назва'} onChange={this.onNameChange} maxLength={100} disabled={!edit_access} />
@@ -109,6 +105,17 @@ class CounterpartyInfo extends React.Component {
           onChange={this.onProductChange}
           disabled={!edit_access}
         />
+        <If condition={type === 'client'}>
+          <hr />
+          <Files
+            oldFiles={counterpartyStore.counterparty.old_bag_scheme_files}
+            newFiles={counterpartyStore.new_bag_scheme_files}
+            fieldName={'Схема укладки мішків на піддон'}
+            onChange={this.onBagSchemeFilesChange}
+            onDelete={this.onBagSchemeFilesDelete}
+            disabled={!edit_access}
+          />
+        </If>
         <hr />
         <TextInput
           text={counterparty.bank_details}
@@ -144,13 +151,13 @@ class CounterpartyInfo extends React.Component {
           />
         </If>
         <hr />
-          <TextInput
-            text={counterparty.commentary}
-            fieldName={'Коментар'}
-            onChange={this.onCommentaryChange}
-            maxLength={3000}
-            disabled={!edit_access}
-          />
+        <TextInput
+          text={counterparty.commentary}
+          fieldName={'Коментар'}
+          onChange={this.onCommentaryChange}
+          maxLength={3000}
+          disabled={!edit_access}
+        />
       </>
     );
   }

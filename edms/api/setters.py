@@ -190,7 +190,7 @@ def post_new_doc_approvals(request):
             new_path.save()
 
             # Додаємо візуючих у таблицю і додаємо їм mark_demand
-            doc_type = get_object_or_404(Document_Type, meta_doc_type=5, is_active=True)
+            doc_type = get_object_or_404(Document_Type, meta_doc_type=request.POST['meta_doc_type_id'], is_active=True)
             approval_phase = get_object_or_404(Doc_Type_Phase, document_type=doc_type, mark_id=17)
             for approval in cleared_approvals:
                 approval_instance = Doc_Approval(document_id=doc_id,
