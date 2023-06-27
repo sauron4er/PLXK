@@ -904,8 +904,8 @@ def get_doc_modules(doc, responsible_id=0):
             } for item in
                 Doc_Approval.objects.filter(document_id=doc.id).filter(is_active=True).order_by('-approve_queue')]
 
-            # Лише для договорів
-            changeable = doc.document_type.meta_doc_type_id == 5 \
+            # Лише для договорів та тендерів
+            changeable = doc.document_type.meta_doc_type_id in [5, 9] \
                          and are_approvals_on_first_phase(approval_list) \
                          and int(responsible_id) == doc.employee_seat_id
 
