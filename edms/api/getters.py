@@ -1498,3 +1498,7 @@ def get_doc_sub_product_name(doc_id):
         .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
     return doc_sub_product_name
 
+
+def get_document_deadline(document):
+    pass
+    return 'deadline'
