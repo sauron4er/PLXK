@@ -44,7 +44,7 @@ class CalendarItem extends React.Component {
 
         <SubmitButton
           className='mt-1 btn-outline-info ml-auto'
-          text='Позначити виконаним'
+          text='Ознайомлений'
           onClick={() => this.postDone(article.responsible)}
         />
       </div>
