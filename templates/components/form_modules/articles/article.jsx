@@ -13,6 +13,7 @@ import Responsible from 'templates/components/form_modules/articles/responsible'
 import SelectorWithFilter from 'templates/components/form_modules/selectors/selector_with_filter';
 import MultiSelectorWithFilter from 'templates/components/form_modules/selectors/multi_selector_with_filter';
 import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
+import './article.css'
 
 class Article extends React.Component {
   state = {
@@ -175,7 +176,8 @@ class Article extends React.Component {
           </button>
         </If>
 
-        <div className='mt-2'>
+        <div className='mt-2 border border-dark'>
+          <div className="responsibles_check_text">Ознайомлені</div>
           <For each='responsible' index='idx' of={article.responsibles}>
             <Responsible
               key={idx}
