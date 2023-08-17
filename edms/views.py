@@ -548,6 +548,9 @@ def edms_get_doc(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     # Всю інформацію про документ записуємо сюди
 
+    from edms.api.deadline_reminder import send_deadline_reminders
+    send_deadline_reminders()
+
     # Якщо employee_seat нема в запиті, значить запит прийшов зі створення нового документа, доступ треба дати
     # request.user.id in [52, 66, 112] - Лебедєв, Мальцев
     if request.user.userprofile.is_it_admin or \
