@@ -16,3 +16,4 @@ python-dateutil==2.8.2  # 2.8.1
 schedule==1.1.0  # 0.6.0
 pyexcelerate==0.10.0
 django-sendfile2 == 0.6.1
+django_serverless_cron == 0.1.3
