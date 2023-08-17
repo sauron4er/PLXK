@@ -164,7 +164,7 @@ class NewApprovalForm(forms.ModelForm):
         fields = {'document', 'emp_seat', 'approve_queue'}
 
 
-class ApprovedApprovalForm(forms.ModelForm):  # Для створення запису відразу зі значенням True
+class ApprovedApprovalForm(forms.ModelForm):    # Deprecated Для створення запису відразу зі значенням True
     class Meta:
         model = Doc_Approval
         fields = {'document', 'emp_seat', 'approve_queue', 'approved', 'approve_path'}
