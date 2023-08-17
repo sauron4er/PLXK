@@ -45,6 +45,23 @@ def post_approval_list(doc_request, approvals):
     for recipient in approvals:
         # Якщо отримувач уже є в автоматичному списку отримувачів, не додаємо його
         if not is_in_approval_list(recipient['id'], doc_request['document']):
+            new_doc_approval = Doc_Approval()  # {'document', 'emp_seat', 'approve_queue'}
+            new_doc_approval.document_id = doc_request['document']
+            new_doc_approval.emp_seat_id = recipient['id']
+            new_doc_approval.approve_queue = recipient['approve_queue']
+
+            if recipient['id'] == doc_request['employee_seat']:
+                new_doc_approval.approved = True
+                new_doc_approval.approve_path_id = doc_request['document_path']
+
+            new_doc_approval.save()
+
+
+
+def post_approval_list_deprecated(doc_request, approvals):  # Deprecated
+    for recipient in approvals:
+        # Якщо отримувач уже є в автоматичному списку отримувачів, не додаємо його
+        if not is_in_approval_list(recipient['id'], doc_request['document']):
             doc_request.update({'emp_seat': recipient['id']})
             doc_request.update({'approve_queue': recipient['approve_queue']})
             doc_request.update({'approved': None})
@@ -62,7 +79,6 @@ def post_approval_list(doc_request, approvals):
 
             else:
                 raise ValidationError('edms/views post_approval_list approval_form invalid')
-
 
 # Визначає, чи існує користувач у автоматичному списку погоджуючих
 def is_in_doc_phase_queue(recipient, doc_type):
