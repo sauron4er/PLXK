@@ -148,6 +148,29 @@ def phones(request):
     return render(request, 'boards/phones/phones.html', {'pam': pam})
 
 
+@login_required(login_url='login')
+@try_except
+def proposals(request):
+    # phones_and_mails = UserProfile.objects\
+    #     .prefetch_related('positions') \
+    #     .filter(is_active=True) \
+    #     .filter(user__is_active=True) \
+    #     .exclude(delete_from_noms=True) \
+    #     .filter(is_pc_user=True) \
+    #     .order_by('pip')
+    #
+    # pam = [{
+    #     'id': item.user.id,
+    #     'pip': item.pip or '',
+    #     'mail': item.user.email or '',
+    #     'phone': item.n_main or '',
+    #     'seats': [emp_seat.seat.seat if emp_seat.is_main else emp_seat.seat.seat + ' (в.о.)'
+    #               for emp_seat in item.positions.filter(is_active=True)],
+    # } for item in phones_and_mails]
+
+    return render(request, 'boards/proposals/proposals.html')
+    # return render(request, 'boards/proposals/proposals.html', {'pam': pam})
+
 @try_except
 def change_pam(request):
     employee = json.loads(request.POST['employee'])

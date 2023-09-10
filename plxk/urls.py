@@ -65,6 +65,8 @@ urlpatterns = [
     url(r'^phones/change_pam', board_views.change_pam, name='change_pam'),
     url(r'^phones/', board_views.phones, name='phones'),
 
+    url(r'^proposals/', board_views.proposals, name='proposals'),
+
     url(r'^foyer/get_foyer_data/(?P<page>\d+)/$', board_views.get_foyer_data, name='get_foyer_data'),
     url(r'^foyer/create_report', board_views.create_foyer_report, name='create_foyer_report'),
     url(r'^foyer/', board_views.foyer, name='foyer'),
