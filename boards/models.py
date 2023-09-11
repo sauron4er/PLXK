@@ -259,3 +259,15 @@ class Permission_Responsible(models.Model):
     permission = models.ForeignKey(Permission, related_name='responsibles', on_delete=models.RESTRICT)
     employee = models.ForeignKey(UserProfile, related_name='responsible_for_permissions', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+class Work_Conditions_Proposal(models.Model):
+    author = models.ForeignKey(UserProfile, related_name='work_conditions_proposals_author', on_delete=models.RESTRICT)
+    author_department = models.ForeignKey(Department, related_name='work_conditions_proposals', on_delete=models.RESTRICT)
+    incident = models.CharField(max_length=5000, null=True)
+    incident_date = models.DateField(null=True)
+    proposal = models.CharField(max_length=5000)
+    realization_deadline = models.DateField()
+    responsible = models.ForeignKey(UserProfile, related_name='work_conditions_proposals_responsible', on_delete=models.RESTRICT)
+    is_done = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
