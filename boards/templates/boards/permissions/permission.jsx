@@ -40,7 +40,6 @@ class Permission extends React.Component {
       .then((response) => {
         permissionsStore.permission = response;
         this.setState({data_received: true});
-        console.log(permissionsStore.permission.responsibles);
       })
       .catch((error) => notify(error));
   };

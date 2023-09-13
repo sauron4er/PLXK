@@ -9,6 +9,7 @@ from accounts import views as accounts_views
 from boards import views as board_views
 from boards.views_counterparties import get_counterparties, get_clients_for_product_type
 from boards.views_permissions import permissions, get_permissions, get_permission, add_permission
+from boards.views_proposals import proposals, get_proposals  #, get_proposal, add_proposal
 from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from docs.views_contracts import edit_contract, get_additional_contracts
 from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
@@ -65,8 +66,6 @@ urlpatterns = [
     url(r'^phones/change_pam', board_views.change_pam, name='change_pam'),
     url(r'^phones/', board_views.phones, name='phones'),
 
-    url(r'^proposals/', board_views.proposals, name='proposals'),
-
     url(r'^foyer/get_foyer_data/(?P<page>\d+)/$', board_views.get_foyer_data, name='get_foyer_data'),
     url(r'^foyer/create_report', board_views.create_foyer_report, name='create_foyer_report'),
     url(r'^foyer/', board_views.foyer, name='foyer'),
@@ -76,6 +75,11 @@ urlpatterns = [
     url(r'^permissions/get_permission/(?P<pk>\d+)/$', get_permission, name='get_permissions'),
     url(r'^permissions/add_permission/$', add_permission, name='add_permissions'),
     url(r'^permissions/', permissions, name='permissions'),
+
+    url(r'^proposals/get_proposals/(?P<page>\d+)/$', get_proposals, name='get_proposals'),
+    #url(r'^proposals/get_proposal/(?P<pk>\d+)/$', get_proposal, name='get_proposal'),
+    #url(r'^proposals/add_proposal/$', add_proposal, name='add_proposal'),
+    url(r'^proposals/', proposals, name='proposals'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()

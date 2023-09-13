@@ -24,6 +24,7 @@ module.exports = {
     corr_templates: './static/index/corr_templates.js',
     vacations: './static/index/vacations.js',
     contract_reg_numbers: './static/index/contract_reg_numbers.js',
+    proposals: './static/index/proposals.js',
   },
   output: {
     path: path.resolve(__dirname, './static/bundles/'),

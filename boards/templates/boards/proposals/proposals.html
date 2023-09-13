@@ -1,4 +1,4 @@
-{% extends 'edms/main.html' %}
+{% extends 'base.html' %}%}
 {% load static %}
 {% block title %}Випадки та пропозиції{% endblock %}
 {% load render_bundle from webpack_loader %}
@@ -15,15 +15,6 @@
     </script>
 
     <div class="container-fluid px-3" id="proposals">
-      <h4 class="my-4">Реєстр випадків та пропозицій щодо покращення небезпечних умов праці на ТДВ "Перечинський ЛХК"</h4>
-
-      bd:
-      <br>-- записати в базу ід департамента з основної посади автора (на випадок якщо посада зміниться, то департмент лишиться)
-      <br>-- доступ людям - пошук усіх активних посад і якщо одна з них - підходяща, то доступ є
-      <br>-- доступ: адміни, директор, Чобаня (посада?), Артур (посада?), начальник СОП
-
-
-
-{#      <div id="bundle">{% render_bundle 'boards' %}</div>#}
+        <div id="bundle">{% render_bundle 'proposals' %}</div>
     </div>
 {% endblock %}
