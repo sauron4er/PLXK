@@ -130,7 +130,6 @@ class Permission extends React.Component {
 
   onResponsiblesChange = (list) => {
     permissionsStore.permission.responsibles = list;
-    console.log(permissionsStore.permission.responsibles);
   };
 
   // onFilesChange = (e) => {

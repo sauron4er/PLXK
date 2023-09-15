@@ -10,7 +10,7 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from .models import Permission, Permission_Responsible
+from .models import Work_Conditions_Proposal, Permission, Permission_Responsible
 
 
 
@@ -94,29 +94,25 @@ def get_permission(request, pk):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def add_permission(request):
-    data = json.loads(request.POST.copy()['permission'])
+def add_proposal(request):
+    data = json.loads(request.POST.copy()['proposal'])
 
     if data['id'] == 0:
-        permission = Permission(author=request.user.userprofile)
+        proposal = Work_Conditions_Proposal(author=request.user.userprofile)
     else:
-        permission = Permission.objects.get(pk=data['id'])
+        proposal = Work_Conditions_Proposal.objects.get(pk=data['id'])
 
-    permission.author = request.user.userprofile
-    permission.category_id = data['category']
-    permission.department_id = data['department']
-    permission.name = data['name']
-    permission.info = data['info']
-    permission.comment = data['comment']
-    permission.date_next = data['date_next']
-    permission.save()
+    proposal.author = request.user.userprofile
+    proposal.department_id = 'get department from first main job of user'  # TODO
+    proposal.name = data['name']
+    proposal.text = data['text']
+    proposal.incident = data['incident']
+    proposal.incident_date = data['incident_date']
+    proposal.responsible_id = data['responsible']
+    proposal.deadline = data['deadline']
+    proposal.save()
 
-    if data['responsibles']:
-        post_responsibles(permission, data['responsibles'])
-
-    # post_files(permission, request.FILES, data['old_files'])
-
-    return HttpResponse(permission.id)
+    return HttpResponse(proposal.id)
 
 
 # @try_except

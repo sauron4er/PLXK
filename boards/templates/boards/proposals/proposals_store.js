@@ -10,12 +10,13 @@ const proposalsStore = store({
     department_name: '',
     incident: '',
     incident_date: '',
-    proposal_name: '',
-    proposal: '',
+    name: '',
+    text: '',
     deadline: '',
     responsible: 0,
     responsible_name: '',
-    is_done: false
+    is_done: false,
+    editing_allowed: true
   },
   proposals: [],
 
@@ -28,8 +29,8 @@ const proposalsStore = store({
       department_name: '',
       incident: '',
       incident_date: '',
-      proposal_name: '',
-      proposal: '',
+      name: '',
+      text: '',
       deadline: '',
       responsible: 0,
       responsible_name: '',

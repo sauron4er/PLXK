@@ -9,7 +9,7 @@ from accounts import views as accounts_views
 from boards import views as board_views
 from boards.views_counterparties import get_counterparties, get_clients_for_product_type
 from boards.views_permissions import permissions, get_permissions, get_permission, add_permission
-from boards.views_proposals import proposals, get_proposals  #, get_proposal, add_proposal
+from boards.views_proposals import proposals, get_proposals , add_proposal #, get_proposal
 from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from docs.views_contracts import edit_contract, get_additional_contracts
 from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
@@ -78,7 +78,7 @@ urlpatterns = [
 
     url(r'^proposals/get_proposals/(?P<page>\d+)/$', get_proposals, name='get_proposals'),
     #url(r'^proposals/get_proposal/(?P<pk>\d+)/$', get_proposal, name='get_proposal'),
-    #url(r'^proposals/add_proposal/$', add_proposal, name='add_proposal'),
+    url(r'^proposals/add_proposal/$', add_proposal, name='add_proposal'),
     url(r'^proposals/', proposals, name='proposals'),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

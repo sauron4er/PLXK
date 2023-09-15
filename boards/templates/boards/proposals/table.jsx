@@ -37,7 +37,7 @@ class ProposalsTable extends React.Component {
 
   onRowClick = (clicked_row) => {
     proposalsStore.proposal = clicked_row;
-    this.props.onRowClick()
+    this.props.onRowClick(clicked_row.id)
   };
 
   render() {
