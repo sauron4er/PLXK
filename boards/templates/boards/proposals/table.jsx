@@ -7,18 +7,18 @@ import proposalsStore from "boards/templates/boards/proposals/proposals_store";
 
 
 const columns = [
-  {name: 'proposal_name', title: 'Пропозиція'},
+  {name: 'name', title: 'Пропозиція'},
   {name: 'author', title: 'Автор'},
   {name: 'deadline', title: 'Строк'},
   {name: 'responsible', title: 'Відповідальний'},
-  {name: 'done', title: 'Виконано'},
+  {name: 'is_done', title: 'Виконано'},
 ];
 
 const col_width = [
-  {columnName: 'author', width: 250},
-  {columnName: 'deadline', width: 150},
-  {columnName: 'responsible', width: 250},
-  {columnName: 'done', width: 100},
+  {columnName: 'author', width: 200},
+  {columnName: 'deadline', width: 80},
+  {columnName: 'responsible', width: 200},
+  {columnName: 'is_done', width: 90},
 ];
 
 class ProposalsTable extends React.Component {
@@ -36,8 +36,8 @@ class ProposalsTable extends React.Component {
   };
 
   onRowClick = (clicked_row) => {
-    proposalsStore.proposal = clicked_row;
-    this.props.onRowClick(clicked_row.id)
+    proposalsStore.clicked_row_id = clicked_row.id;
+    this.props.onRowClick()
   };
 
   render() {

@@ -24,12 +24,12 @@ def proposals(request):
 @login_required(login_url='login')
 @try_except
 def get_proposals(request, page):
-    proposals_query = Proposal.objects.filter(is_active=True)
+    proposals_query = Proposal.objects.filter(is_active=True).order_by('-id')
 
     proposals_query = filter_query_set(proposals_query, json.loads(request.POST['filtering']))
 
     if request.POST['sort_name']:
-        permissions_query = sort_query_set(proposals_query, request.POST['sort_name'], request.POST['sort_direction'])
+        proposals_query = sort_query_set(proposals_query, request.POST['sort_name'], request.POST['sort_direction'])
 
     paginator = Paginator(proposals_query, 23)
     try:
@@ -41,56 +41,50 @@ def get_proposals(request, page):
 
     proposals_list = [{
         'id': proposal.pk,
-        # 'category': permission.category.name,
-        # 'department': permission.department.name,
-        # 'name': permission.name,
-        # 'date_next': convert_to_localtime(permission.date_next, 'day')
+        'name': proposal.name,
+        'author': proposal.author.pip,
+        'deadline': date_to_json(proposal.deadline),
+        'responsible': proposal.responsible.pip,
+        'is_done': proposal.is_done,
     } for proposal in proposals_page.object_list]
 
     response = {'rows': proposals_list, 'pagesCount': paginator.num_pages}
-
-
-    response = {'rows': [], 'pagesCount': 1}
 
     return HttpResponse(json.dumps(response))
 
 
 @login_required(login_url='login')
 @try_except
-def get_permission(request, pk):
-    permission = Permission.objects.get(pk=pk)
+def get_proposal(request, pk):
+    proposal = Proposal.objects.get(pk=pk)
 
-    permission_fields = {
-        'id': permission.pk,
-        'category': permission.category.id,
-        'category_name': permission.category.name,
-        'department': permission.department.id,
-        'department_name': permission.department.name,
-        'name': permission.name,
-        'info': permission.info,
-        'comment': permission.comment,
-        'date_next': date_to_json(permission.date_next),
-
-        'responsibles': [{
-            'responsible_id': responsible.id,
-            'id': responsible.employee.id,
-            'value': responsible.employee.pip,
-            'status': 'old',
-        } for responsible in Permission_Responsible.objects.filter(permission=permission).filter(is_active=True)]
-
-        # 'old_files': [{
-        #     'id': file.id,
-        #     'file': file.file.name,
-        #     'name': file.name,
-        # } for file in Reclamation_file.objects.filter(reclamation_id=reclamation.id).filter(is_active=True)],
+    proposal_fields = {
+        'id': proposal.pk,
+        'author': proposal.author.id,
+        'author_name': proposal.author.pip,
+        'name': proposal.name,
+        'text': proposal.text,
+        'incident': proposal.incident if proposal.incident else '',
+        'incident_date': date_to_json(proposal.incident_date) if proposal.incident_date else '',
+        'deadline': date_to_json(proposal.deadline) if proposal.deadline else '',
+        'responsible': proposal.responsible.id,
+        'responsible_name': proposal.responsible.pip,
+        'editing_allowed': is_editing_allowed(request.user),
+        'is_done': '',
     }
 
-    return HttpResponse(json.dumps(permission_fields))
+    return HttpResponse(json.dumps(proposal_fields))
+
+
+@try_except
+def is_editing_allowed(user):
+    return True
+
 
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def add_proposal(request):
+def post_proposal(request):
     data = json.loads(request.POST.copy()['proposal'])
 
     if data['id'] == 0:

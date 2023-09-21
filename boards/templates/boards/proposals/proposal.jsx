@@ -15,23 +15,19 @@ import SelectorWithFilterAndAxios from 'templates/components/form_modules/select
 import {useEffect, useState} from 'react';
 import proposalsStore from 'boards/templates/boards/proposals/proposals_store';
 
-function Proposal(props) {
+function Proposal() {
   const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
-    if (props.id !== 0) {
+    if (proposalsStore.clicked_row_id !== 0) {
       getProposal();
     } else {
       setDataReceived(true);
     }
   }, []);
 
-  useEffect(() => {
-    if (props.id !== 0) getProposal();
-  }, [props.id]);
-
   function getProposal() {
-    axiosGetRequest('get_proposal/' + props.id + '/')
+    axiosGetRequest('get_proposal/' + proposalsStore.clicked_row_id + '/')
       .then((response) => {
         proposalsStore.proposal = response;
         setDataReceived(true);
@@ -83,7 +79,7 @@ function Proposal(props) {
   }
 
   function postDelProposal() {
-    axiosPostRequest('deactivate_proposal/' + props.id + '/')
+    axiosPostRequest('deactivate_proposal/' + proposalsStore.clicked_row_id + '/')
       .then((response) => {
         window.location.reload();
       })
@@ -120,7 +116,7 @@ function Proposal(props) {
       <When condition={dataReceived}>
         <div className='shadow-lg p-3 mb-5 bg-white rounded'>
           <div className='modal-header'>
-            <h5>{props.id !== 0 ? 'Перегляд пропозиції' : 'Нова пропозиція'}</h5>
+            <h5>{proposalsStore.clicked_row_id !== 0 ? 'Перегляд пропозиції' : 'Нова пропозиція'}</h5>
             <small>Поля, позначені зірочкою, є обов’язковими</small>
           </div>
           <div className='modal-body'>
@@ -173,7 +169,7 @@ function Proposal(props) {
           </div>
           <div className='modal-footer'>
             <If condition={proposalsStore.proposal.editing_allowed}>
-              <If condition={props.id !== 0}>
+              <If condition={proposalsStore.clicked_row_id !== 0}>
                 <SubmitButton className='btn-outline-danger' onClick={() => postDelProposal()} text='Видалити' />
               </If>
               <SubmitButton

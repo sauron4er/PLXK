@@ -29,7 +29,7 @@ function Proposals() {
           <button className='btn btn-sm btn-info my-2' onClick={(e) => changeView('table')}>
             Назад
           </button>
-          <Proposal id={proposalId} />
+          <Proposal/>
           <br />
           <br />
           -- записати в базу ід департамента з основної посади автора (на випадок якщо посада зміниться, то департмент лишиться)

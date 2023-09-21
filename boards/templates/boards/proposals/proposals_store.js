@@ -2,6 +2,7 @@ import {store} from '@risingstack/react-easy-state';
 
 const proposalsStore = store({
   main_div_height: 0,
+  clicked_row_id: 0,
   proposal: {
     id: 0,
     author: 0,
