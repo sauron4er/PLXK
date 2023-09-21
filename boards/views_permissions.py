@@ -25,11 +25,6 @@ def permissions(request):
 def get_permissions(request, page):
     permissions_query = Permission.objects.filter(is_active=True).order_by('date_next')
 
-    permissions_test = [{
-        'id': item.id,
-        'date': item.date_next
-    } for item in permissions_query]
-
     permissions_query = filter_query_set(permissions_query, json.loads(request.POST['filtering']))
     if request.POST['sort_name']:
         permissions_query = sort_query_set(permissions_query, request.POST['sort_name'], request.POST['sort_direction'])

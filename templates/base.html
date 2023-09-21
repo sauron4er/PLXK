@@ -56,11 +56,11 @@
                         <a class="dropdown-item" href="{% url 'docs:orders' %}">Накази та розпорядження</a>
                         <a class="dropdown-item" href="{% url 'docs:contracts' %}">Договори</a>
                         <a class="dropdown-item" href="{% url 'docs:index' %}">Система якості</a>
-                        <a class="dropdown-item" href="{% url 'edms:my_docs' %}">Електронні документи</a>
                         {% if user.userprofile.is_it_admin or user.userprofile.permissions_edit %}
                           <a class="dropdown-item" href="{% url 'permissions' %}">Перелік дозволів</a>
                         {% endif %}
                         <a class="dropdown-item" href="{% url 'proposals' %}">Випадки та пропозиції</a>
+                        <a class="dropdown-item" href="{% url 'edms:my_docs' %}">Електронні документи</a>
 
 {#                        <a class="dropdown-submenu">#}
 {#                          <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">Кадрова документація</a>#}

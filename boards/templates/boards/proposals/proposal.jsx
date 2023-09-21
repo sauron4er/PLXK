@@ -60,7 +60,6 @@ function Proposal(props) {
     if (proposalsStore.proposal.deadline) {
       const today = new Date();
       const deadline_date = new Date(proposalsStore.proposal.deadline);
-      console.log(today > deadline_date);
       if (today > deadline_date) {
         notify('Строк виконання не може бути раніше за сьогодні');
         return false;
@@ -141,6 +140,21 @@ function Proposal(props) {
               disabled={!proposalsStore.proposal.editing_allowed}
             />
             <hr />
+            <TextInput
+              text={proposalsStore.proposal.incident}
+              fieldName={'Випадок'}
+              onChange={onIncidentChange}
+              maxLength={5000}
+              disabled={!proposalsStore.proposal.editing_allowed}
+            />
+            <hr />
+            <DateInput
+              date={proposalsStore.proposal.incident_date}
+              fieldName={'Дата випадку'}
+              onChange={onIncidentDateChange}
+              disabled={!proposalsStore.proposal.editing_allowed}
+            />
+            <hr />
             <SelectorWithFilterAndAxios
               listNameForUrl='employees'
               fieldName='* Відповідальний за виконання'
@@ -154,21 +168,6 @@ function Proposal(props) {
               date={proposalsStore.proposal.deadline}
               fieldName={'Строк перевірки виконання'}
               onChange={onDeadlineChange}
-              disabled={!proposalsStore.proposal.editing_allowed}
-            />
-            <hr />
-            <TextInput
-              text={proposalsStore.proposal.incident}
-              fieldName={'Випадок'}
-              onChange={onIncidentChange}
-              maxLength={5000}
-              disabled={!proposalsStore.proposal.editing_allowed}
-            />
-            <hr />
-            <DateInput
-              date={proposalsStore.proposal.incident_date}
-              fieldName={'Дата випадку'}
-              onChange={onIncidentDateChange}
               disabled={!proposalsStore.proposal.editing_allowed}
             />
           </div>

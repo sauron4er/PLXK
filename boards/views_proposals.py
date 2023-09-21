@@ -7,10 +7,11 @@ from datetime import datetime
 from django.utils.timezone import get_current_timezone
 import json
 from plxk.api.try_except import try_except
+from plxk.api.global_getters import get_my_seats
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from .models import Work_Conditions_Proposal, Permission, Permission_Responsible
+from .models import Proposal, Permission, Permission_Responsible
 
 
 
@@ -23,36 +24,31 @@ def proposals(request):
 @login_required(login_url='login')
 @try_except
 def get_proposals(request, page):
-    '''
-    permissions_query = Permission.objects.filter(is_active=True).order_by('date_next')
+    proposals_query = Proposal.objects.filter(is_active=True)
 
-    permissions_test = [{
-        'id': item.id,
-        'date': item.date_next
-    } for item in permissions_query]
+    proposals_query = filter_query_set(proposals_query, json.loads(request.POST['filtering']))
 
-    permissions_query = filter_query_set(permissions_query, json.loads(request.POST['filtering']))
     if request.POST['sort_name']:
-        permissions_query = sort_query_set(permissions_query, request.POST['sort_name'], request.POST['sort_direction'])
+        permissions_query = sort_query_set(proposals_query, request.POST['sort_name'], request.POST['sort_direction'])
 
-    paginator = Paginator(permissions_query, 23)
+    paginator = Paginator(proposals_query, 23)
     try:
-        permissions_page = paginator.page(int(page) + 1)
+        proposals_page = paginator.page(int(page) + 1)
     except PageNotAnInteger:
-        permissions_page = paginator.page(1)
+        proposals_page = paginator.page(1)
     except EmptyPage:
-        permissions_page = paginator.page(1)
+        proposals_page = paginator.page(1)
 
-    permissions_list = [{
-        'id': permission.pk,
-        'category': permission.category.name,
-        'department': permission.department.name,
-        'name': permission.name,
-        'date_next': convert_to_localtime(permission.date_next, 'day')
-    } for permission in permissions_page.object_list]
+    proposals_list = [{
+        'id': proposal.pk,
+        # 'category': permission.category.name,
+        # 'department': permission.department.name,
+        # 'name': permission.name,
+        # 'date_next': convert_to_localtime(permission.date_next, 'day')
+    } for proposal in proposals_page.object_list]
 
-    response = {'rows': permissions_list, 'pagesCount': paginator.num_pages}
-    '''
+    response = {'rows': proposals_list, 'pagesCount': paginator.num_pages}
+
 
     response = {'rows': [], 'pagesCount': 1}
 
@@ -98,40 +94,25 @@ def add_proposal(request):
     data = json.loads(request.POST.copy()['proposal'])
 
     if data['id'] == 0:
-        proposal = Work_Conditions_Proposal(author=request.user.userprofile)
+        proposal = Proposal(author=request.user.userprofile)
+        proposal.author = request.user.userprofile
+        employee_seats = get_my_seats(request.user.userprofile)
+        proposal.department_id = employee_seats[0]['dep_id']
     else:
-        proposal = Work_Conditions_Proposal.objects.get(pk=data['id'])
+        proposal = Proposal.objects.get(pk=data['id'])
 
-    proposal.author = request.user.userprofile
-    proposal.department_id = 'get department from first main job of user'  # TODO
     proposal.name = data['name']
     proposal.text = data['text']
     proposal.incident = data['incident']
-    proposal.incident_date = data['incident_date']
+
+    if data['incident_date']:
+        proposal.incident_date = data['incident_date']
+
     proposal.responsible_id = data['responsible']
-    proposal.deadline = data['deadline']
+
+    if data['deadline']:
+        proposal.deadline = data['deadline']
+
     proposal.save()
 
     return HttpResponse(proposal.id)
-
-
-# @try_except
-# def post_files(permission, new_files, old_files):
-#     for file in new_files.getlist('new_files'):
-#         Permission_File.objects.create(
-#             permission=permission,
-#             file=file,
-#             name=file.name
-#         )
-
-@try_except
-def post_responsibles(permission, responsibles):
-    for resp in responsibles:
-        if resp['status'] == 'new':
-            new_responsible = Permission_Responsible(permission=permission)
-            new_responsible.employee_id = resp['id']
-            new_responsible.save()
-        elif resp['status'] == 'delete':
-            resp_instance = get_object_or_404(Permission_Responsible, id=resp['responsible_id'])
-            resp_instance.is_active = False
-            resp_instance.save()
