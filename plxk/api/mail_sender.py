@@ -2,7 +2,7 @@ import smtplib
 from my_config import mail_host, mail_pass
 
 
-def send_email(mail, body):  # from Hostiq
+def send_email_hostiq(mail, body):  # from Hostiq
     if mail != '':
     # if 1 == 2:
         sender = "it@lxk.com.ua"
@@ -19,14 +19,14 @@ def send_email(mail, body):  # from Hostiq
             print(err)
 
 
-def send_email_from_our_server(mail, body):
+def send_email(mail, body):
     if mail != '':
     # if 1 == 2:
         sender = "it@lxk.com.ua"
         host = "smtp.lxk.com.ua"
         try:
             server = smtplib.SMTP(host, timeout=2000)
-            server.login('lxk_it', mail_pass)
+            server.login('it_lxk.com.ua', mail_pass)
             server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
             # server.sendmail(sender, 'it@lxk.com.ua', body)
