@@ -39,6 +39,19 @@ def send_email_lebedev(doc_request, main_field):
     send_email('lebedev.oo@lxk.com.ua', message.as_string())
 
 
+def send_test_email():
+    message = MIMEMultipart("alternative")
+    message["Subject"] = 'Тест'
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = 'sauron4er@gmail.com'
+
+    text = 'Тестове повідомлення'
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email('sauron4er@gmail.com', message.as_string())
+
+
 # Складаємо лист автору документа про нову позначку EDMS:
 def send_email_mark(doc_request, mail, main_field):
     message = MIMEMultipart("alternative")
