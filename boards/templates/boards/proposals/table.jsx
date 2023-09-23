@@ -11,7 +11,7 @@ const columns = [
   {name: 'author', title: 'Автор'},
   {name: 'deadline', title: 'Строк'},
   {name: 'responsible', title: 'Відповідальний'},
-  {name: 'is_done', title: 'Виконано'},
+  {name: 'is_done', title: 'Виконання'},
 ];
 
 const col_width = [

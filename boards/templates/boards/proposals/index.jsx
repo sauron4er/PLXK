@@ -4,12 +4,13 @@ import ReactDOM from 'react-dom';
 import ProposalsTable from 'boards/templates/boards/proposals/table';
 import {useState} from 'react';
 import Proposal from 'boards/templates/boards/proposals/proposal';
+import proposalsStore from "boards/templates/boards/proposals/proposals_store";
 
 function Proposals() {
   const [view, setView] = useState('table'); //, 'proposal
-  const [proposalId, setProposalId] = useState(0); //, 'proposal
 
   function changeView(view_name) {
+    if (view_name === 'new_proposal') {proposalsStore.clearProposal();}
     setView(view_name);
   }
 
@@ -19,7 +20,7 @@ function Proposals() {
         <When condition={view === 'table'}>
           <h5>Реєстр випадків та пропозицій щодо покращення небезпечних умов праці на ТДВ "Перечинський ЛХК"</h5>
           <div className='mt-1'>
-            <button onClick={(e) => changeView('proposal')} className='btn btn-sm btn-info mt-2'>
+            <button onClick={(e) => changeView('new_proposal')} className='btn btn-sm btn-info mt-2'>
               Додати пропозицію
             </button>
           </div>
@@ -30,13 +31,6 @@ function Proposals() {
             Назад
           </button>
           <Proposal/>
-          <br />
-          <br />
-          -- записати в базу ід департамента з основної посади автора (на випадок якщо посада зміниться, то департмент лишиться)
-          <br />
-          -- доступ людям - пошук усіх активних посад і якщо одна з них - підходяща, то доступ є
-          <br />
-          -- доступ: адміни, директор, Чобаня (посада?), Артур (посада?), начальник СОП
         </Otherwise>
       </Choose>
     </div>

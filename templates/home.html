@@ -53,11 +53,12 @@
     <hr/>
     <div class="css_homepage_section">Інше</div>
     <a href={% url 'phones' %}><button class="css_homepage_button">Телефонний та поштовий довідник</button></a>
-    <a href={% url 'correspondence:corr_templates' %}><button class="css_homepage_button">Шаблони офіційних листів</button></a>
+{#    <a href={% url 'correspondence:corr_templates' %}><button class="css_homepage_button">Шаблони офіційних листів</button></a>#}
+    <a href={% url 'proposals' %}><button class="css_homepage_button">Випадки та пропозиції</button></a>
     <a href={% url 'accounts:vacations' %}><button class="css_homepage_button">Мої відпустки</button></a>
-    {% if user.userprofile.id == 5 %}
-      <a href={% url 'boards:convert_files_names_to_utf' %}><button class="css_homepage_button">Зміна кодування</button></a>
-    {% endif %}
+{#    {% if user.userprofile.id == 5 %}#}
+{#      <a href={% url 'boards:convert_files_names_to_utf' %}><button class="css_homepage_button">Зміна кодування</button></a>#}
+{#    {% endif %}#}
     <hr/>
 
     <div class="mt-5">

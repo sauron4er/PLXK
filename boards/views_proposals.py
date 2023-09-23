@@ -45,7 +45,7 @@ def get_proposals(request, page):
         'author': proposal.author.pip,
         'deadline': date_to_json(proposal.deadline),
         'responsible': proposal.responsible.pip,
-        'is_done': proposal.is_done,
+        'is_done': 'Виконано' if proposal.is_done else '',
     } for proposal in proposals_page.object_list]
 
     response = {'rows': proposals_list, 'pagesCount': paginator.num_pages}
@@ -69,16 +69,32 @@ def get_proposal(request, pk):
         'deadline': date_to_json(proposal.deadline) if proposal.deadline else '',
         'responsible': proposal.responsible.id,
         'responsible_name': proposal.responsible.pip,
-        'editing_allowed': is_editing_allowed(request.user),
-        'is_done': '',
+        'editing_allowed': is_editing_allowed(request.user, proposal),
+        'is_done': proposal.is_done,
     }
 
     return HttpResponse(json.dumps(proposal_fields))
 
 
 @try_except
-def is_editing_allowed(user):
-    return True
+def is_editing_allowed(user, proposal):
+    if user.userprofile.is_it_admin:
+        return True
+
+    if user.userprofile == proposal.author:
+        return True
+
+    my_seats = get_my_seats(user.userprofile)
+    for seat in my_seats:
+        if seat['seat_id'] in [16, 247, 281]:  # Директори
+            return True
+        if seat['seat_id'] == 42:  # Директор з якості та екології
+            return True
+        if seat['seat_id'] == 92:  # Начальник СОП
+            return True
+        if seat['seat_id'] == 97:  # Менеджер зі СМЯ
+            return True
+    return False
 
 
 @transaction.atomic
@@ -98,6 +114,7 @@ def post_proposal(request):
     proposal.name = data['name']
     proposal.text = data['text']
     proposal.incident = data['incident']
+    proposal.is_done = data['is_done']
 
     if data['incident_date']:
         proposal.incident_date = data['incident_date']

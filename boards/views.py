@@ -15,6 +15,7 @@ import pytz
 import json
 import os
 from plxk.api.pagination import sort_query_set, filter_query_set
+from plxk.api.global_getters import get_userprofiles_list
 # from boards.api.auto_vacations import auto_arrange_vacations
 from boards.api.auto_orders import send_orders_reminders
 from edms.models import Employee_Seat, Foyer
@@ -26,6 +27,14 @@ from .forms import NewTopicForm
 
 
 auto_functions_started = False
+
+
+@login_required(login_url='login')
+def get_userprofiles(request, added_info=0):
+    # added_info додано для випадку, якщо запрос робиться зі сторінки тіпа .../7/
+    if request.method == 'GET':
+        userprofiles_list = get_userprofiles_list()
+        return HttpResponse(json.dumps(userprofiles_list))
 
 
 def convert_to_localtime(utctime, frmt):

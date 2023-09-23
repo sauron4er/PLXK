@@ -22,6 +22,7 @@ const proposalsStore = store({
   proposals: [],
 
   clearProposal: () => {
+    proposalsStore.clicked_row_id = 0;
     proposalsStore.proposal = {
       id: 0,
       author: 0,
@@ -35,7 +36,8 @@ const proposalsStore = store({
       deadline: '',
       responsible: 0,
       responsible_name: '',
-      is_done: false
+      is_done: false,
+      editing_allowed: true
     };
   }
 });

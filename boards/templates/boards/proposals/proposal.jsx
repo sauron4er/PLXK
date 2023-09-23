@@ -14,6 +14,7 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {useEffect, useState} from 'react';
 import proposalsStore from 'boards/templates/boards/proposals/proposals_store';
+import CheckboxInput from 'templates/components/form_modules/checkbox_input';
 
 function Proposal() {
   const [dataReceived, setDataReceived] = useState(false);
@@ -111,10 +112,14 @@ function Proposal() {
     proposalsStore.proposal.incident_date = e.target.value;
   }
 
+  function onDoneChange(e) {
+    proposalsStore.proposal.is_done = !proposalsStore.proposal.is_done;
+  }
+
   return (
-    <Choose>
-      <When condition={dataReceived}>
-        <div className='shadow-lg p-3 mb-5 bg-white rounded'>
+    <div className='shadow-lg p-3 mb-5 bg-white rounded min-vh-100'>
+      <Choose>
+        <When condition={dataReceived}>
           <div className='modal-header'>
             <h5>{proposalsStore.clicked_row_id !== 0 ? 'Перегляд пропозиції' : 'Нова пропозиція'}</h5>
             <small>Поля, позначені зірочкою, є обов’язковими</small>
@@ -152,23 +157,33 @@ function Proposal() {
             />
             <hr />
             <SelectorWithFilterAndAxios
-              listNameForUrl='employees'
+              listNameForUrl='userprofiles'
               fieldName='* Відповідальний за виконання'
               selectId='responsible_select'
               value={{name: proposalsStore.proposal.responsible_name, id: proposalsStore.proposal.responsible}}
               onChange={onResponsibleChange}
               disabled={!proposalsStore.proposal.editing_allowed}
             />
-            <hr/>
-            <DateInput
-              date={proposalsStore.proposal.deadline}
-              fieldName={'Строк перевірки виконання'}
-              onChange={onDeadlineChange}
-              disabled={!proposalsStore.proposal.editing_allowed}
-            />
+            <hr />
+            <div className='d-flex justify-content-between'>
+              <DateInput
+                date={proposalsStore.proposal.deadline}
+                fieldName={'Строк перевірки виконання'}
+                onChange={onDeadlineChange}
+                disabled={!proposalsStore.proposal.editing_allowed}
+              />
+              <div className={`p-2 rounded ${proposalsStore.proposal.is_done ? 'bg-success' : 'bg-danger'}`}>
+                <CheckboxInput
+                  checked={proposalsStore.proposal.is_done}
+                  fieldName={proposalsStore.proposal.is_done ? 'Виконано' : 'Не виконано'}
+                  onChange={onDoneChange}
+                  disabled={!proposalsStore.proposal.editing_allowed}
+                />
+              </div>
+            </div>
           </div>
-          <div className='modal-footer'>
-            <If condition={proposalsStore.proposal.editing_allowed}>
+          <If condition={proposalsStore.proposal.editing_allowed}>
+            <div className='modal-footer'>
               <If condition={proposalsStore.clicked_row_id !== 0}>
                 <SubmitButton className='btn-outline-danger' onClick={() => postDelProposal()} text='Видалити' />
               </If>
@@ -178,17 +193,17 @@ function Proposal() {
                 text='Зберегти'
                 disabled={!proposalsStore.proposal.name || !proposalsStore.proposal.text || !proposalsStore.proposal.responsible}
               />
-            </If>
-          </div>
+            </div>
+          </If>
 
           {/*Вспливаюче повідомлення*/}
           <ToastContainer />
-        </div>
-      </When>
-      <Otherwise>
-        <Loader />
-      </Otherwise>
-    </Choose>
+        </When>
+        <Otherwise>
+          <Loader />
+        </Otherwise>
+      </Choose>
+    </div>
   );
 }
 

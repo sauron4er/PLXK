@@ -14,12 +14,11 @@ import SelectorWithFilter from 'templates/components/form_modules/selectors/sele
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
 import Files from 'templates/components/form_modules/files';
-import Checkbox from 'templates/components/form_modules/checkbox';
+import CheckboxInput from "templates/components/form_modules/checkbox_input";
 import Document from 'edms/templates/edms/my_docs/doc_info/document';
 import Modal from 'react-responsive-modal';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import DxTable from 'templates/components/tables/dx_table';
-import ordersStore from '../orders/orders_store';
 
 const additional_contracts_columns = [
   {name: 'number', title: '№'},
@@ -477,7 +476,7 @@ class Contract extends React.Component {
                     ТОВ "ПЛХК"
                   </label>
                   <hr />
-                  <Checkbox
+                  <CheckboxInput
                     checked={contract.is_additional_contract}
                     fieldName={'Це додаткова угода'}
                     onChange={this.onIsAdditionalContractChange}
