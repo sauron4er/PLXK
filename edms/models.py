@@ -94,6 +94,8 @@ class Doc_Type_Phase(models.Model):
         default=False
     )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
     is_approve_chained = models.BooleanField(default=False)  # True - вимагає погодження у кожного з ланки керівників аж до отримувача
+    plus_approval_by_chief = models.BooleanField(
+        default=False)  # При True у цій фазі документ буде додатково направлятися безпосередньому начальнику
     doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='doc_type_phases', on_delete=models.RESTRICT)
     testing = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

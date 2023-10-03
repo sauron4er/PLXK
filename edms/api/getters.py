@@ -400,12 +400,19 @@ def get_auto_recipients(doc_type_id):
         doc_type_phases = doc_type_phases.filter(testing=False)
 
     for dtp in doc_type_phases:
+
         phase_recipients = {
             'mark': dtp.mark.mark,
             'recipients': [],
             'sole': dtp.sole,
             'doc_type_version': dtp.doc_type_version_id if dtp.doc_type_version else 0
         }
+
+        if dtp.plus_approval_by_chief:
+            phase_recipients['recipients'].append({
+                'emp_seat': 'Ваш безпосередній начальник',
+                'doc_type_version': 0
+            })
 
         phase_recipients_with_doc_type_version = get_phase_recipients_and_doc_type_version(dtp)
 

@@ -25,6 +25,12 @@ def handle_phase_approvals(doc_request, phase_info):
         # if not auto_recipients:
         doc_type_version = Document.objects.values_list('doc_type_version', flat=True).filter(id=doc_request['document'])[0]
         recipients = get_phase_id_sole_recipients(phase_info['id'], doc_request['employee_seat'], doc_type_version)
+
+        if phase_info['plus_approval_by_chief']:
+            my_chief = get_chief_emp_seat(doc_request['employee_seat'])
+            if my_chief:
+                recipients.append(my_chief['emp_seat_id'])
+
         if recipients:
             for recipient in recipients:
                 recipient = vacation_check(recipient)
@@ -220,7 +226,7 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
     # Тут може бути декілька самих ід фаз. Тобто, документ може йти відразу декільком отримувачам.
     if modules_recipients is None:
         modules_recipients = []
-    phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained', 'doc_type_version_id') \
+    phases = Doc_Type_Phase.objects.values('id', 'phase', 'mark_id', 'is_approve_chained', 'doc_type_version_id', 'plus_approval_by_chief') \
         .filter(document_type_id=doc_request['document_type']).filter(phase=phase_number).filter(is_active=True)
 
     if phases:
