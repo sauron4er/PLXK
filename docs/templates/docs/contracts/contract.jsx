@@ -597,7 +597,7 @@ class Contract extends React.Component {
                     disabled={!edit_mode}
                   />
                   <hr />
-                  <Checkbox
+                  <CheckboxInput
                     checked={contract.lawyers_received}
                     fieldName={'Юридично-адміністративний відділ отримав Договір'}
                     onChange={this.onLawyersReceivedChange}
