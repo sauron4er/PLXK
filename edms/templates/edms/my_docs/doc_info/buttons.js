@@ -15,7 +15,9 @@ class Buttons extends React.Component {
     const {info, isChief, deletable, archived} = this.props;
     const user_is_doc_responsible = info.responsible_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
-  
+
+    console.log(docInfoStore?.info?.client_requirements);
+
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -164,16 +166,11 @@ class Buttons extends React.Component {
         <If condition={user_is_doc_responsible}>
           {/*Якщо є дедлайн*/}
           <If condition={docInfoStore.info.deadline && docInfoStore.info.deadline !== '' && !info.archived}>
-            <button
-              type='button'
-              className='btn btn-secondary mr-1 mb-1'
-              onClick={() => this.onClick(34)}
-              disabled={button_clicked}
-            >
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(34)} disabled={button_clicked}>
               Нагадати про строк
             </button>
           </If>
-          {/*Якщо тип документа редагуємий*/}
+          {/*Якщо тип документа редагуємий і погоджений*/}
           <If condition={docInfoStore?.info?.approved === false && docInfoStore?.info?.is_changeable && !info.archived}>
             <button
               type='button'
@@ -187,16 +184,13 @@ class Buttons extends React.Component {
           {/* якщо це погоджений договір, додаємо кнопку "Відправити у роботу" */}
           <If condition={info.meta_type_id === 5 && docInfoStore?.info?.approved}>
             {/*!archived - отримуємо з пропс, info.archived отримуємо з сервера, коли напряму шукаємо документ*/}
-            <button type='button' className='btn btn-secondary mr-1 mb-1'
-                    onClick={() => this.onClick(31)}
-                    disabled={button_clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(31)} disabled={button_clicked}>
               Повідомити про підписання договору
             </button>
           </If>
           {/* Редагування наказу автором */}
-          <If condition={info.meta_type_id===14 && !info.approved && !archived && !info.archived}>
-            <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={() => this.onClick(18)}
-                    disabled={button_clicked}>
+          <If condition={info.meta_type_id === 14 && !info.approved && !archived && !info.archived}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
               Редагувати пункти наказу
             </button>
           </If>
@@ -209,26 +203,38 @@ class Buttons extends React.Component {
           </If>
           {/* Якщо ніхто не встиг відреагувати (або це Договір) - можна видалити документ */}
           <If condition={deletable === true}>
-            <button type='button' className='btn btn-secondary mr-1 mb-1'
-                    onClick={() => this.onClick(13)}
-                    disabled={button_clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(13)} disabled={button_clicked}>
               Видалити
             </button>
           </If>
         </If>
-        
+
         {/* Якщо це Договір або Тендер, додаємо кнопку "оновити файл" */}
         {/* В майбутньому переробити на перевірку використання модуля approvals і редагуємого поля Файли */}
         <If condition={[5, 9].includes(info.meta_type_id) && !archived && !info.archived}>
           <If condition={![23, 27, 33, 8].includes(info.expected_mark)}>
             {/*Ця кнопка лише для автора і візуючих*/}
-            <button type="button" className="btn btn-secondary mr-1 mb-1" onClick={() => this.onClick(18)}
-                    disabled={button_clicked}>
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
               Додати/оновити файл(и)
             </button>
           </If>
         </If>
-        
+
+        {/*Якщо тип документа редагуємий (але не макет мішків, для якого ще не створена можливість редагуватися)*/}
+          <If condition={docInfoStore?.info?.is_changeable && docInfoStore?.info?.meta_type_id !== 6}>
+            <If condition={docInfoStore?.info?.expected_mark === 17 || docInfoStore?.viewer_is_author || docInfoStore?.info?.viewer_is_admin}>
+              {/*Ця кнопка лише для автора і візуючих*/}
+              <button
+                type='button'
+                className='btn btn-secondary mr-1 mb-1'
+                onClick={() => this.onClick(18)}
+                disabled={button_clicked}
+              >
+                Редагувати
+              </button>
+            </If>
+          </If>
+
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={button_clicked}>
           Коментар

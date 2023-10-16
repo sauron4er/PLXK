@@ -34,6 +34,8 @@ import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
 import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
 import ordersStore from '../../../../../docs/templates/docs/orders/orders_store';
+import EditClientRequirements
+  from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_client_requirements";
 
 class Document extends React.Component {
   state = {
@@ -263,12 +265,23 @@ class Document extends React.Component {
         });
         break;
       case 18:
-        if (this.state.info.meta_type_id === 14) {
+        if (this.state.info.meta_type_id === 14) { // Проект наказу
           this.setState({
             modal: (
               <EditDecreeArticles
                 onCloseModal={this.onCloseModal}
                 onSubmit={this.handleDecreeArticlesChange}
+              />
+            ),
+            modal_open: true
+          });
+        } else if (this.state.info.meta_type_id === 11) { // Вимоги клієнта
+          this.setState({
+            modal: (
+              <EditClientRequirements
+                oldCR={docInfoStore.info.client_requirements}
+                onCloseModal={this.onCloseModal}
+                onSubmit={this.handleClientRequirementsChange}
               />
             ),
             modal_open: true
@@ -394,6 +407,13 @@ class Document extends React.Component {
       this.postMark(18);
       this.onCloseModal();
     });
+  };
+
+  handleClientRequirementsChange = (comment) => {
+    // this.setState({comment: comment}, () => {
+    //   this.postMark(18);
+    //   this.onCloseModal();
+    // });
   };
 
   handleSimpleModalSubmit = (mark) => {
