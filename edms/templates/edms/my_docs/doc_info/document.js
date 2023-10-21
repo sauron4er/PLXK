@@ -33,9 +33,8 @@ import NewSigners from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/mo
 import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
 import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
-import ordersStore from '../../../../../docs/templates/docs/orders/orders_store';
 import EditClientRequirements
-  from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_client_requirements";
+  from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements";
 
 class Document extends React.Component {
   state = {
@@ -280,6 +279,7 @@ class Document extends React.Component {
             modal: (
               <EditClientRequirements
                 oldCR={docInfoStore.info.client_requirements}
+                oldAR={docInfoStore.info.additional_requirements}
                 onCloseModal={this.onCloseModal}
                 onSubmit={this.handleClientRequirementsChange}
               />
