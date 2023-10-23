@@ -1125,7 +1125,8 @@ def get_doc_modules(doc, responsible_id=0):
             ar = [{
                 'id': ar.id,
                 'name': ar.name,
-                'requirement': ar.requirement
+                'requirement': ar.requirement,
+                'status': 'old'
             } for ar in Client_Requirement_Additional.objects.filter(client_requirements_id=data[0]['pk'])]
 
             doc_modules.update({'client_requirements': data[0]['fields']})
