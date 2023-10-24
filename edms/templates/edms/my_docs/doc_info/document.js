@@ -32,9 +32,8 @@ import RegistrationModal from 'edms/templates/edms/my_docs/doc_info/doc_info_mod
 import NewSigners from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/new_signers';
 import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
-import decreeArticlesStore from "edms/templates/edms/my_docs/new_doc_modules/decree_articles/store";
-import EditClientRequirements
-  from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements";
+import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
+import EditClientRequirements from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements';
 
 class Document extends React.Component {
   state = {
@@ -47,6 +46,8 @@ class Document extends React.Component {
     updated_files: [],
     deleted_files: [],
     old_files: [],
+    new_cr_list: [],
+    new_ar_list: [],
     new_path_id: '', // для повернення в компонент Resolutions і посту резолюцій
     deletable: true,
     clicked_button: '', // ід натиснутої кнопки (для модульного вікна коментарю)
@@ -152,6 +153,8 @@ class Document extends React.Component {
     formData.append('employees_to_inform', JSON.stringify(docInfoStore.employees_to_inform));
     formData.append('deadline', JSON.stringify(docInfoStore?.info?.deadline?.deadline));
     formData.append('decree_articles', JSON.stringify(decreeArticlesStore?.decree_articles));
+    formData.append('new_cr_list', JSON.stringify(this.state.new_cr_list));
+    formData.append('new_ar_list', JSON.stringify(this.state.new_ar_list));
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -264,17 +267,14 @@ class Document extends React.Component {
         });
         break;
       case 18:
-        if (this.state.info.meta_type_id === 14) { // Проект наказу
+        if (this.state.info.meta_type_id === 14) {
+          // Проект наказу
           this.setState({
-            modal: (
-              <EditDecreeArticles
-                onCloseModal={this.onCloseModal}
-                onSubmit={this.handleDecreeArticlesChange}
-              />
-            ),
+            modal: <EditDecreeArticles onCloseModal={this.onCloseModal} onSubmit={this.handleDecreeArticlesChange} />,
             modal_open: true
           });
-        } else if (this.state.info.meta_type_id === 11) { // Вимоги клієнта
+        } else if (this.state.info.meta_type_id === 11) {
+          // Вимоги клієнта
           this.setState({
             modal: (
               <EditClientRequirements
@@ -409,11 +409,11 @@ class Document extends React.Component {
     });
   };
 
-  handleClientRequirementsChange = (comment) => {
-    // this.setState({comment: comment}, () => {
-    //   this.postMark(18);
-    //   this.onCloseModal();
-    // });
+  handleClientRequirementsChange = (comment, new_cr_list, new_ar_list) => {
+    this.setState({comment, new_cr_list, new_ar_list}, () => {
+      this.postMark(18);
+      this.onCloseModal();
+    });
   };
 
   handleSimpleModalSubmit = (mark) => {
@@ -442,9 +442,9 @@ class Document extends React.Component {
   };
 
   onHrefClick = () => {
-    navigator.clipboard.writeText(`http://plhk.com.ua/edms/my_docs/${this.props.doc_id}`)
-    alert('Посилання на наказ скопійовано.')
-  }
+    navigator.clipboard.writeText(`http://plhk.com.ua/edms/my_docs/${this.props.doc_id}`);
+    alert('Посилання на наказ скопійовано.');
+  };
 
   render() {
     const {doc_id, archived, directSubs} = this.props;

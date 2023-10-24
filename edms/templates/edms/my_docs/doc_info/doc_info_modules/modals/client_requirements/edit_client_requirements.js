@@ -10,27 +10,11 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 
 function EditClientRequirements(props) {
   const [comment, setComment] = useState('');
-  const [newCR, setNewCR] = useState(props.oldCR);
-  const [newAR, setNewAR] = useState(props.oldAR);
-  const [newCRList, setnewCRList] = useState(Object.entries(props.oldCR));
-  const [newARList, setnewARList] = useState(Object.entries(props.oldAR));
-
-  useEffect(() => {
-  }, []);
-
-  // TODO редагування додаткових вимог
-  // TODO видалення додаткових вимог
-  // TODO додавання нових додаткових вимог
-  // TODO відправка цього всього на сервер
-  // TODO опрацювання запиту на сервері
-  // TODO відправка документа по новому кругу (+ автору, якщо це не його зміни)
+  const [newARList, setNewARList] = useState(props.oldAR);
+  const [newCRList, setNewCRList] = useState(Object.entries(props.oldCR));
 
   function onSubmit() {
-    if (props.oldCR === JSON.stringify(newCR)) {
-      notify('Ви нічого не змінили.');
-    } else {
-      props.onSubmit(comment);
-    }
+    props.onSubmit(comment, newCRList, newARList);
   }
 
   function onClose() {
@@ -40,7 +24,7 @@ function EditClientRequirements(props) {
   function onCRChange(name, new_value, index) {
     const cr_list = [...newCRList];
     cr_list[index][1] = new_value;
-    setnewCRList(cr_list);
+    setNewCRList(cr_list);
   }
 
   function onCommentChange(e) {
@@ -49,35 +33,35 @@ function EditClientRequirements(props) {
 
   function onARNameChange(e, index) {
     const ar_list = [...newARList];
-    ar_list[index][1].name = e.target.value;
-    setnewARList(ar_list);
+    ar_list[index].name = e.target.value;
+    setNewARList(ar_list);
   }
 
   function onARRequirementChange(e, index) {
     const ar_list = [...newARList];
-    ar_list[index][1].requirement = e.target.value;
-    ar_list[index][1].status = 'changed';
-    setnewARList(ar_list);
+    ar_list[index].requirement = e.target.value;
+    ar_list[index].status = 'changed';
+    setNewARList(ar_list);
   }
 
   function delAR(e, id) {
     const ar_list = [...newARList];
 
     for (const [index, value] of ar_list.entries()) {
-      if (value[1].id == id) {
-        if (ar_list[index][1].status === 'new') {
+      if (value.id == id) {
+        if (ar_list[index].status === 'new') {
           ar_list.splice(index, 1);
-        } else ar_list[index][1].status = 'delete';
+        } else ar_list[index].status = 'delete';
+        break;
       }
     }
-    setnewARList(ar_list);
+    setNewARList(ar_list);
   }
 
   function addBlankAdditionalRequirement() {
     const ar_list = [...newARList];
-    ar_list.push(['', {id: 0, name: '', requirement: '', status: 'new'}]);
-    console.log(ar_list);
-    setnewARList(ar_list);
+    ar_list.push({id: 'new_' + ar_list.length, name: '', requirement: '', status: 'new'});
+    setNewARList(ar_list);
   }
 
   return (
@@ -107,13 +91,13 @@ function EditClientRequirements(props) {
         <div>
           <div className='font-weight-bold'>Додаткові вимоги:</div>
           <For each='ar' of={newARList} index='ar_index'>
-            <div className="d-none">{ar[1].status} // Лінь розбиратися, чому без цього не оновлює нормально список при видаленні
+            <div className="d-none">{ar.status} // Лінь розбиратися, чому без цього не оновлює нормально список при видаленні
             </div>
-            <If condition={ar[1].status !== 'delete'}>
+            <If condition={ar.status !== 'delete'}>
               <div key={ar_index} className='d-flex'>
                 <TextInput
                   className='mr-1'
-                  text={ar[1].name}
+                  text={ar.name}
                   fieldName='Назва'
                   onChange={(e) => onARNameChange(e, ar_index)}
                   maxLength={200}
@@ -121,13 +105,13 @@ function EditClientRequirements(props) {
                 />
                 <TextInput
                   className='mr-1'
-                  text={ar[1].requirement}
+                  text={ar.requirement}
                   fieldName='Показник'
                   onChange={(e) => onARRequirementChange(e, ar_index)}
                   maxLength={50}
                   disabled={false}
                 />
-                <SubmitButton className='btn-outline-danger' text='Видалити' onClick={(e) => delAR(e, ar[1].id)} />
+                <SubmitButton className='btn-outline-danger' text='Видалити' onClick={(e) => delAR(e, ar.id)} />
               </div>
               <hr className='mb-1 mt-0' />
             </If>

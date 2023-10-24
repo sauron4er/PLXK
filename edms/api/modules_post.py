@@ -445,6 +445,21 @@ def change_decree_articles(document_id, decree_articles):
 
 
 @try_except
+def change_client_requirements(document_id, new_cr_list, new_ar_list):
+    # TODO 1. Запис нових значень у cr.
+    #      2. Редагування, видалення, додавання ar.
+    #      3. Відправка документа на першу фазу або на нульову (погодження автором)
+
+    pass
+
+    # for article in decree_articles:
+    #     if 'id' in article:
+    #         change_article(article)
+    #     else:
+    #         post_article(document_id, article)
+
+
+@try_except
 def change_article(article):
     article_instance = Decree_Article.objects.get(id=article['id'])
 

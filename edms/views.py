@@ -1120,8 +1120,8 @@ def edms_mark(request):
                             else:
                                 post_approve(doc_request, approval['id'], None)
 
-                # Автору оновлення ставимо галочку у таблицю
-                arrange_approve(doc_request, True)
+                    # Автору оновлення ставимо галочку у таблицю
+                    arrange_approve(doc_request, True)
 
                 if mark_author == doc_request['doc_author_id']:
                     # Якщо автор оновлення = автор документа, відправляємо на першу фазу
@@ -1134,6 +1134,11 @@ def edms_mark(request):
 
                 if doc_request['doc_meta_type_id'] == 14:  # Проект наказу
                     change_decree_articles(doc_request['document'], json.loads(doc_request['decree_articles']))
+                elif doc_request['doc_meta_type_id'] == 11:  # Проект наказу
+                    change_client_requirements(doc_request['document'],
+                                               json.loads(doc_request['new_cr_list']),
+                                               json.loads(doc_request['new_ar_list']))
+
                 else:  # Зміна файлів у візуванні договору
                     # Опрацьовуємо оновлені файли AAA
                     if 'change__new_files' in request.FILES:
