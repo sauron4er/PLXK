@@ -450,6 +450,13 @@ def change_client_requirements(document_id, new_cr_list, new_ar_list):
     #      2. Редагування, видалення, додавання ar.
     #      3. Відправка документа на першу фазу або на нульову (погодження автором)
 
+    # 1. get document requirements.
+    #       save new list
+    # 2. get additional requirements.
+    #       save changes by id
+    #       create new ar
+    client_requirements_instance = Client_Requirements.objects.filter(document_id=document_id)
+
     pass
 
     # for article in decree_articles:
