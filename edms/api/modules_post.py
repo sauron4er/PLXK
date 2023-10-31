@@ -455,7 +455,15 @@ def change_client_requirements(document_id, new_cr_list, new_ar_list):
     # 2. get additional requirements.
     #       save changes by id
     #       create new ar
-    client_requirements_instance = Client_Requirements.objects.filter(document_id=document_id)
+
+    # client_requirements_instance = Client_Requirements(document_id=document_id)
+    client_requirements_instance = get_object_or_404(Client_Requirements, document_id=document_id)
+    for cr in new_cr_list:
+        if cr[0] not in ('document', 'type', 'is_active'):
+            name = cr[0]
+            value = cr[1]
+            setattr(client_requirements_instance, name, value)
+    client_requirements_instance.save()
 
     pass
 
@@ -464,6 +472,7 @@ def change_client_requirements(document_id, new_cr_list, new_ar_list):
     #         change_article(article)
     #     else:
     #         post_article(document_id, article)
+
 
 
 @try_except
