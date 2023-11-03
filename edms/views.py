@@ -1107,6 +1107,11 @@ def edms_mark(request):
                 # Деактивуємо всі MarkDemands даної фази
                 deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
 
+                # Позначаємо документ непогодженим
+                doc_instance = get_object_or_404(Document, id=doc_request['document'])
+                doc_instance.approved = None
+                doc_instance.save()
+
                 # Якщо в документі використовується doc_approval, треба скасувати всі візування:
                 if is_approval_module_used(doc_request['document_type']):
                     doc_approvals = Doc_Approval.objects.values('id', 'approved', 'emp_seat_id')\
@@ -1134,7 +1139,7 @@ def edms_mark(request):
 
                 if doc_request['doc_meta_type_id'] == 14:  # Проект наказу
                     change_decree_articles(doc_request['document'], json.loads(doc_request['decree_articles']))
-                elif doc_request['doc_meta_type_id'] == 11:  # Проект наказу
+                elif doc_request['doc_meta_type_id'] == 11:  # Вимоги клієнта
                     change_client_requirements(doc_request['document'],
                                                json.loads(doc_request['new_cr_list']),
                                                json.loads(doc_request['new_ar_list']))

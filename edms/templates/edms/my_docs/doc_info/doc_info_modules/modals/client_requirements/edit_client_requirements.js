@@ -34,13 +34,14 @@ function EditClientRequirements(props) {
   function onARNameChange(e, index) {
     const ar_list = [...newARList];
     ar_list[index].name = e.target.value;
+    if (ar_list[index].status === 'old') ar_list[index].status = 'changed';
     setNewARList(ar_list);
   }
 
   function onARRequirementChange(e, index) {
     const ar_list = [...newARList];
     ar_list[index].requirement = e.target.value;
-    ar_list[index].status = 'changed';
+    if (ar_list[index].status === 'old') ar_list[index].status = 'changed';
     setNewARList(ar_list);
   }
 

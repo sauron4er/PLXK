@@ -446,17 +446,6 @@ def change_decree_articles(document_id, decree_articles):
 
 @try_except
 def change_client_requirements(document_id, new_cr_list, new_ar_list):
-    # TODO 1. Запис нових значень у cr.
-    #      2. Редагування, видалення, додавання ar.
-    #      3. Відправка документа на першу фазу або на нульову (погодження автором)
-
-    # 1. get document requirements.
-    #       save new list
-    # 2. get additional requirements.
-    #       save changes by id
-    #       create new ar
-
-    # client_requirements_instance = Client_Requirements(document_id=document_id)
     client_requirements_instance = get_object_or_404(Client_Requirements, document_id=document_id)
     for cr in new_cr_list:
         if cr[0] not in ('document', 'type', 'is_active'):
@@ -465,14 +454,24 @@ def change_client_requirements(document_id, new_cr_list, new_ar_list):
             setattr(client_requirements_instance, name, value)
     client_requirements_instance.save()
 
-    pass
+    edit_additional_requirements(client_requirements_instance.id, new_ar_list)
 
-    # for article in decree_articles:
-    #     if 'id' in article:
-    #         change_article(article)
-    #     else:
-    #         post_article(document_id, article)
 
+@try_except
+def edit_additional_requirements(cr_id, new_ar_list):
+    for ar in new_ar_list:
+        if ar['status'] == 'changed':
+            ar_instance = get_object_or_404(Client_Requirement_Additional, id=ar['id'])
+            ar_instance.name = ar['name']
+            ar_instance.requirement = ar['requirement']
+            ar_instance.save()
+        elif ar['status'] == 'new':
+            new_ar = Client_Requirement_Additional(client_requirements_id=cr_id, name=ar['name'], requirement=ar['requirement'])
+            new_ar.save()
+        elif ar['status'] == 'delete':
+            ar_instance = get_object_or_404(Client_Requirement_Additional, id=ar['id'])
+            ar_instance.is_active = False
+            ar_instance.save()
 
 
 @try_except
