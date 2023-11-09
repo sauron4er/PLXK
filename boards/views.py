@@ -73,6 +73,7 @@ def get_bds():
         .filter(employee__birthday__month=today.month, employee__birthday__day=today.day)
         .filter(is_main=True)
         .filter(is_active=True)
+        .filter(employee__delete_from_noms=False)
         .filter(employee__is_active=True)]
 
     # Позбавляємось дублікатів:
