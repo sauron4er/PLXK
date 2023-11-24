@@ -181,7 +181,8 @@
 .css_my_navbar {
   padding-top: 2px;
   padding-bottom: 1px;
-  background-color: #3eacba;
+  /*background-color: #3eacba;*/
+  background-color: #3e6eba;
 }
 
 .css_sticky_back_button {
