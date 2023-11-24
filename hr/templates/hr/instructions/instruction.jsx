@@ -14,6 +14,7 @@ class Instruction extends React.Component {
   state = {
     loading: true,
     disabled: !window.edit_enabled,
+    type: 'seat', // , 'work'
     name: '',
     number: '',
     version: '',
@@ -48,6 +49,17 @@ class Instruction extends React.Component {
     this.setState({[field]: e.target.value});
   };
 
+  onTypeChange = (e) => {
+    this.setState({type: e.target.value});
+    if (e.target.value === 'work') {
+      this.setState({
+        seat: 0,
+        seat_name: '',
+        chief_seat_name: ''
+      });
+    }
+  };
+
   getDepChiefSeat = (dep_id) => {
     axiosGetRequest('get_dep_chief_seat/' + dep_id + '/')
       .then((response) => {
@@ -63,11 +75,14 @@ class Instruction extends React.Component {
     this.getDepSeats(e.id);
     this.setState({
       department: e.id,
-      department_name: e.name
+      department_name: e.name,
+      seat: 0,
+      seat_name: '',
+      chief_seat_name: ''
     });
     this.getDepChiefSeat(e.id);
   };
-  
+
   getDepSeats = (dep_id) => {
     axiosGetRequest(`get_dep_seats_for_instruction/${dep_id}`)
       .then((response) => {
@@ -85,14 +100,19 @@ class Instruction extends React.Component {
   };
 
   postInstruction = () => {
-    const {name, number, version, staff_units, old_files, new_files, seat, date_start, date_revision} = this.state;
+    const {type, name, number, version, staff_units, old_files, new_files, department, seat, date_start, date_revision} = this.state;
 
     let formData = new FormData();
     formData.append('name', name);
     formData.append('number', number);
     formData.append('version', version);
     formData.append('staff_units', staff_units);
-    formData.append('seat', seat);
+    if (type === 'seat') {
+      formData.append('seat', seat);
+    } else {
+      formData.append('department', department);
+    }
+
     formData.append('date_start', date_start);
     formData.append('date_revision', date_revision);
     formData.append('old_files', JSON.stringify(old_files));
@@ -133,6 +153,7 @@ class Instruction extends React.Component {
     const {
       loading,
       disabled,
+      type,
       name,
       number,
       version,
@@ -152,7 +173,21 @@ class Instruction extends React.Component {
     return (
       <Choose>
         <When condition={!loading}>
-          <h4>Посадова інструкція</h4>
+          <h4>{type === 'seat' ? 'Посадова інструкція' : 'Робоча інструкція'}</h4>
+          <hr />
+          <div className='mt-1'>
+            <label className='mr-1'>Тип інструкції:</label>
+            <input type='radio' name='type_radio' value='seat' id='seat' onChange={this.onTypeChange} checked={type === 'seat'} />
+            <label className='radio-inline mx-1' htmlFor='seat'>
+              {' '}
+              Посадова
+            </label>
+            <input type='radio' name='type_radio' value='work' id='work' onChange={this.onTypeChange} checked={type === 'work'} />
+            <label className='radio-inline mx-1' htmlFor='work'>
+              {' '}
+              Робоча
+            </label>
+          </div>
           <hr />
           <div className='row'>
             <div className='col-lg-6'>
@@ -169,17 +204,19 @@ class Instruction extends React.Component {
               </div>
             </div>
             <div className='col-lg-6'>
-              <SelectorWithFilter
-                list={seats}
-                fieldName='Посада'
-                selectId='seat_select'
-                value={{name: seat_name, id: seat}}
-                onChange={this.onSeatChange}
-                disabled={disabled || !department}
-              />
-              <div>
-                Начальник: <span className='font-weight-bold'>{chief_seat_name}</span>
-              </div>
+              <If condition={type === 'seat'}>
+                <SelectorWithFilter
+                  list={seats}
+                  fieldName='Посада'
+                  selectId='seat_select'
+                  value={{name: seat_name, id: seat}}
+                  onChange={this.onSeatChange}
+                  disabled={type === 'work' || disabled || !department}
+                />
+                <div>
+                  Начальник: <span className='font-weight-bold'>{chief_seat_name}</span>
+                </div>
+              </If>
             </div>
           </div>
           <hr />
@@ -256,7 +293,16 @@ class Instruction extends React.Component {
                 className='btn btn-outline-info'
                 onClick={() => this.postInstruction()}
                 text={'Зберегти'}
-                disabled={!seat || !name || !number || !version || !staff_units || !date_start || !(old_files.length || new_files.length)}
+                disabled={
+                  (type === 'seat' && !seat) ||
+                  (type === 'work' && !department) ||
+                  !name ||
+                  !number ||
+                  !version ||
+                  !staff_units ||
+                  !date_start ||
+                  !(old_files.length || new_files.length)
+                }
               />
               <SubmitButton className='btn btn-outline-danger ml-auto' onClick={() => this.deactivateInstruction()} text={'Видалити'} />
             </div>
