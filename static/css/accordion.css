@@ -7,7 +7,7 @@
 .css_accordion {
   background: #fffffe;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  border-top: 10px solid #3e6eba;
+  border-top: 10px solid #5a8dd9;
   margin-top: 10px;
   padding-bottom: 10px;
 }
@@ -22,7 +22,7 @@
 .css_accordion_title p {
   padding: 5px 20px;
   margin: 10px;
-  color: #1c5191;
+  color: black;
   font-weight: bold;
   font-size: 20px;
 }
@@ -30,7 +30,7 @@
 .css_accordion_title hr {
   width: 20%;
   margin: 0 30px 20px;
-  border: 1px solid #25646d;
+  border: 1px solid #5a8dd9;
 }
 
 .css_accordion_content {

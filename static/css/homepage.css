@@ -4,7 +4,7 @@
 }
 
 .css_homepage_button {
-  background: #3e6eba;
+  background: #5a8dd9;
   color: #fff;
   border: none;
   position: relative;
@@ -19,7 +19,7 @@
 
 .css_homepage_button:hover {
   background: #ffffff;
-  color: #3e6eba;
+  color: #5a8dd9;
 }
 
 .css_homepage_button:before,
@@ -30,7 +30,7 @@
   right: 0;
   height: 2px;
   width: 0;
-  background: #3e6eba;
+  background: #5a8dd9;
   transition: 400ms ease all;
 }
 
@@ -49,7 +49,7 @@
 
 .css_homepage_happy_birthday {
   font-family: 'Lobster', cursive;
-  color: #3e6eba;
+  color: #5a8dd9;
   font-size: 2vw;
   /*line-height: 20vw;*/
   font-weight: normal;
