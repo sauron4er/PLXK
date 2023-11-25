@@ -4,7 +4,7 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.files_query_to_list_converter import files_query_to_list
 from edms.api.getters import get_dep_chief
-from hr.models import Department_Regulation, Regulation_file
+from hr.models import Department_Regulation, Regulation_file, Instruction, Instruction_file
 from accounts.models import Department
 
 
@@ -133,6 +133,25 @@ def get_dep_regulation_files(dep_id):
 
 
 @try_except
+def get_dep_work_instructions_files(dep_id):
+    work_instructions = [{
+        'id': wi.id
+    } for wi in Instruction.objects.filter(department_id=dep_id).filter(is_active=True)]
+
+    wi_files = []
+    for wi in work_instructions:
+        work_instructions_files = get_work_instruction_files(wi['id'])
+        wi_files = wi_files + work_instructions_files
+    return wi_files
+
+
+@try_except
 def get_regulation_files(regulation_id):
     files = files_query_to_list(Regulation_file.objects.filter(regulation_id=regulation_id).filter(is_active=True))
+    return files
+
+
+@try_except
+def get_work_instruction_files(work_instruction_id):
+    files = files_query_to_list(Instruction_file.objects.filter(instruction_id=work_instruction_id).filter(is_active=True))
     return files

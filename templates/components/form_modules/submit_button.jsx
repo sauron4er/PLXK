@@ -24,10 +24,13 @@ function SubmitButton(props) {
   }, [props.requestSent])
 
   return (
-    <button className={'btn my-2 ' + props.className} onClick={onClick} disabled={state.clicked || props.disabled}>
+    <button className={'btn my-2 p-1 ' + props.className} onClick={onClick} disabled={state.clicked || props.disabled}>
       <Choose>
         <When condition={props.requestSent}>
           <LoaderMini />
+        </When>
+        <When condition={props.text === 'save_icon'}>
+          <img src={`${window.location.origin}/static/img/save.svg`} alt="Save" width='25px'/>
         </When>
         <Otherwise>{props.text}</Otherwise>
       </Choose>

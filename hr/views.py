@@ -9,6 +9,7 @@ from .api.instructions_api import get_instructions_list, post_instruction, post_
     change_instruction, get_instruction_api, deact_instruction_api, get_dep_seat_list_for_instruction, get_seat_instruction_files
 from .api.org_structure_api import get_org_structure, add_department
 from edms.api.getters import get_employees_by_seat
+from accounts.api.setters import dep_name_change_api
 
 
 @login_required(login_url='login')
@@ -128,3 +129,10 @@ def get_seat(request, pk):
     instruction_files = get_seat_instruction_files(pk)
     employees = get_employees_by_seat(pk)
     return HttpResponse(json.dumps({'instruction_files': instruction_files, 'employees': employees}))
+
+
+@login_required(login_url='login')
+@try_except
+def dep_name_change(request, pk, new_name):
+    dep_name_change_api(pk, new_name)
+    return HttpResponse(200)
