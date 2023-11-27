@@ -133,6 +133,6 @@ def get_seat(request, pk):
 
 @login_required(login_url='login')
 @try_except
-def dep_name_change(request, pk, new_name):
-    dep_name_change_api(pk, new_name)
+def dep_name_change(request, pk):
+    dep_name_change_api(pk, request.POST['new_name'])
     return HttpResponse(200)

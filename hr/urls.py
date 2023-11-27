@@ -26,6 +26,6 @@ urlpatterns = [
     # url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', get_seat_info, name='get_seat_info'),
     url(r'^org_structure/post_department/', post_department, name='post_department'),
     url(r'^org_structure/get_seat/(?P<pk>\d+)$', get_seat, name='get_seat'),
-    url(r'^org_structure/dep_name_change/(?P<pk>\d+)/(?P<new_name>\w+)$', dep_name_change, name='get_seat'),
+    url(r'^org_structure/dep_name_change/(?P<pk>\d+)$', dep_name_change, name='get_seat'),
     url(r'^org_structure/', org_structure, name='org_structure'),
 ]

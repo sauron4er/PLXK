@@ -2,14 +2,34 @@ import React, {useEffect} from 'react';
 import useSetState from 'templates/hooks/useSetState';
 import 'css/org_structure.css';
 import {Loader} from 'templates/components/loaders';
+import TextInput from 'templates/components/form_modules/text_input';
 
 function Seat(props) {
-  const [state, setState] = useSetState({});
+  const [state, setState] = useSetState({
+    name: props.seat_name
+  });
+
+  function onSeatNameChange(e) {
+    setState({name: e.target.value});
+  }
 
   return (
     <>
       <div className='modal-header'>
-        <h4>{props.seat_name}</h4>
+        <Choose>
+          <When condition={window.edit_access}>
+            <TextInput
+              text={state.name}
+              fieldName={'Юридична адреса'}
+              onChange={onSeatNameChange}
+              maxLength={200}
+              disabled={!edit_access}
+            />
+          </When>
+          <Otherwise>
+            <h4>{state.name}</h4>
+          </Otherwise>
+        </Choose>
       </div>
       <Choose>
         <When condition={!props.loading}>

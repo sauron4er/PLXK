@@ -100,11 +100,12 @@ function OrgStructure() {
         {/*<If condition={window.edit_enabled}>*/}
         {/*  <SubmitButton className='btn-outline-info' text='Додати новий відділ' onClick={openModal} timeout={0} />*/}
         {/*</If>*/}
-        <div className='ml-auto d-flex mt-2'>
-          <div>
+        <div className='d-flex mt-2 w-100'>
+          <SubmitButton className='btn-outline-primary ml-2' onClick={openModal} text='Додати відділ' />
+          <div className='ml-auto'>
             <CompanyChoose fieldName='Підприємство' onChange={onCompanyChange} company={state.company} both={true} id='org_str' />
           </div>
-          <div>
+          <div className='ml-auto'>
             <TextInput
               text={state.filter}
               disabled={false}

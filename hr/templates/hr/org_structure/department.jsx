@@ -34,6 +34,17 @@ function Department(props) {
     getSeat(seat);
   }
 
+  function openModalAddSeat(seat) {
+    setState({
+      opened_seat: 0,
+      opened_seat_name: '',
+      modal_opened: true,
+      instruction_files: [],
+      employees: [],
+      loading: false
+    });
+  }
+
   function getSeat(seat) {
     axiosGetRequest(`get_seat/${seat.id}`)
       .then((response) => {
@@ -55,9 +66,12 @@ function Department(props) {
   }
 
   function onDepNameSave(e) {
-    axiosPostRequest(`dep_name_change/${props.dep.id}/${state.dep_name}`)
+    let formData = new FormData();
+    formData.append('new_name', state.dep_name);
+
+    axiosPostRequest(`dep_name_change/${props.dep.id}`, formData)
       .then((response) => {
-        // location.reload();
+        location.reload();
       })
       .catch((error) => notify(error));
   }
@@ -73,7 +87,7 @@ function Department(props) {
         </div>
       </If>
       <DepRegulation files={props.dep.regulation_files} />
-      <SeatList seats={props.dep.seats} onSeatClick={openModal} />
+      <SeatList seats={props.dep.seats} onSeatClick={openModal} onSeatAddClick={openModalAddSeat} />
       <DepWorkInstructions files={props.dep.work_instructions_files} />
       <Modal
         open={state.modal_opened}

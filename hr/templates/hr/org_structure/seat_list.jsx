@@ -2,9 +2,20 @@ import React, {useEffect} from 'react';
 import useSetState from 'templates/hooks/useSetState';
 import 'css/org_structure.css';
 import Seat from 'hr/templates/hr/org_structure/seat';
+import SubmitButton from "templates/components/form_modules/submit_button";
 
 function SeatList(props) {
-  const [state, setState] = useSetState({});
+  const [state, setState] = useSetState({
+    modal_opened: false
+  });
+
+  function openModal() {
+    setState({modal_opened: true});
+  }
+
+  function closeModal() {
+    setState({modal_opened: false});
+  }
 
   return (
     <>
@@ -28,6 +39,7 @@ function SeatList(props) {
           </Choose>
         </div>
       </For>
+      <SubmitButton className='btn-outline-primary ml-2' onClick={(e) => props.onSeatAddClick()} text='Додати посаду' />
     </>
   );
 }
