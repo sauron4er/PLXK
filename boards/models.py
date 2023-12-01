@@ -39,6 +39,10 @@ class Phones(models.Model):
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
 
 
+class External_phone(models.Model):
+    owner = models.CharField(max_length=50)
+    number = models.CharField(max_length=50)
+
 class Ad(models.Model):
     ad = models.CharField(max_length=500)
     author = models.ForeignKey(UserProfile, related_name='ads', on_delete=models.RESTRICT)
