@@ -2,7 +2,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime, timedelta
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 import xml.etree.cElementTree as ET
 from django.core.files import File
 from django.utils import timezone
@@ -22,8 +22,8 @@ from edms.models import Employee_Seat, Foyer
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
 from plxk.api.try_except import try_except
-from .models import Board, Topic, Post, Ad
-from .forms import NewTopicForm
+from .models import Board, Topic, Post, Ad, Phone_External
+from .forms import NewTopicForm, NewPhoneExternalForm, DelPhoneExternalForm
 
 
 auto_functions_started = False
@@ -157,6 +157,7 @@ def phones(request):
 
     return render(request, 'boards/phones/phones.html', {'pam': pam})
 
+
 @try_except
 def change_pam(request):
     employee = json.loads(request.POST['employee'])
@@ -168,6 +169,42 @@ def change_pam(request):
     employee_instance.save()
 
     return HttpResponse(200)
+
+
+@login_required(login_url='login')
+@try_except
+def ex_phones(request):
+    ex_phones_list = get_ex_phones_list()
+    return render(request, 'boards/phones/ex_phones.html', {'ex_phones': ex_phones_list})
+
+
+@try_except
+def get_ex_phones_list():
+    ex_phones = [{
+        'id': phone.pk,
+        'owner': phone.owner,
+        'number': phone.number
+    } for phone in
+        Phone_External.objects.filter(is_active=True).order_by('owner')]
+
+    return ex_phones
+
+
+@try_except
+def new_ex_phone(request):
+    form = NewPhoneExternalForm(request.POST)
+    if form.is_valid():
+        form.save()
+    return HttpResponseRedirect('ex_phones.html')
+
+
+@try_except
+def del_ex_phone(request):
+    ex_phone = get_object_or_404(Phone_External, pk=request.POST.get('id'))
+    form = DelPhoneExternalForm(request.POST, instance=ex_phone)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect('ex_phones.html')
 
 
 def get_context_data():  # Exec 1st
