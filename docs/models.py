@@ -87,7 +87,7 @@ class File(models.Model):
 
 class Order_article(models.Model):
     order = models.ForeignKey(Order_doc, related_name='articles', on_delete=models.RESTRICT)
-    text = models.CharField(max_length=5000)
+    text = models.CharField(max_length=7000)
     term = models.CharField(max_length=8, default='term')  # 'term', 'constant', 'no_term'
     deadline = models.DateField(null=True, blank=True)
     periodicity = models.CharField(max_length=1, null=True, blank=True)  # null - одноразовий пункт, 'm' - щомісяця, 'y' - щороку
