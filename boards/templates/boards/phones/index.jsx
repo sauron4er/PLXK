@@ -5,6 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Modal from 'react-responsive-modal';
 import EmployeePAM from 'boards/templates/boards/phones/employee_pam';
 import PhonesIn from "boards/templates/boards/phones/phones_in";
+import PhonesOut from "boards/templates/boards/phones/phones_out";
 
 class Phones extends React.Component {
   state = {
@@ -19,8 +20,8 @@ class Phones extends React.Component {
     const {type} = this.state;
 
     return (
-      <div className='mt-3' style={{margin: 'auto', height: '90%', position: 'absolute'}}>
-        <div className='d-flex align-content-between'>
+      <div className='mt-3' style={{margin: 'auto', height: '90%', width: '95%', position: 'absolute'}}>
+        <div className='d-flex justify-content-between'>
           <h4>Телефонний та поштовий довідник</h4>
           <div>
             <input type='radio' name='type_radio' value='in' id='in' onChange={this.onTypeChange} checked={type === 'in'} />
@@ -40,7 +41,7 @@ class Phones extends React.Component {
             <PhonesIn />
           </When>
           <Otherwise>
-            out
+            <PhonesOut />
           </Otherwise>
         </Choose>
       </div>
