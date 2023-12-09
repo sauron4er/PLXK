@@ -3,7 +3,7 @@ import * as React from 'react';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Modal from 'react-responsive-modal';
-import ExternalPhoneEdit from "boards/templates/boards/phones/external_phone_edit";
+import ExternalPhoneEdit from 'boards/templates/boards/phones/external_phone_edit';
 
 class PhonesOut extends React.Component {
   state = {
@@ -25,19 +25,12 @@ class PhonesOut extends React.Component {
     const filter = e.target.value.toLowerCase();
     let external_phones = [...window.external_phones];
     external_phones = external_phones.filter((item) => {
-      return (
-        item.owner.toLowerCase().indexOf(filter) !== -1 ||
-        item.number.indexOf(filter) !== -1
-      );
+      return item.owner.toLowerCase().indexOf(filter) !== -1 || item.number.indexOf(filter) !== -1;
     });
     this.setState({
       filter: e.target.value,
       external_phones: [...external_phones]
     });
-  };
-
-  getMailto = (mail) => {
-    return `mailto:${mail}`;
   };
 
   onClick = (item) => {
@@ -47,12 +40,21 @@ class PhonesOut extends React.Component {
     });
   };
 
+  addPhoneModalOpen = (item) => {
+    this.setState({modal_opened: true});
+  };
+
+
+
   render() {
     const {external_phone, filter, external_phones, modal_opened} = this.state;
     return (
       <>
-        <label>Пошук</label>
-        <input className='ml-2' value={filter} onChange={this.filterChange} />
+        <div>
+          <label>Пошук</label>
+          <input className='ml-2' value={filter} onChange={this.filterChange} />
+          <button className='btn btn-sm btn-outline-primary float-right' onClick={this.addPhoneModalOpen}>Додати</button>
+        </div>
         <table className='table table-sm table-striped table-hover table-bordered'>
           <thead className='thead-light'>
             <tr>
@@ -67,7 +69,9 @@ class PhonesOut extends React.Component {
             <For each='item' of={external_phones} index='index'>
               <tr key={index}>
                 <td className='align-middle'>{item.owner}</td>
-                <td className='text-center align-middle' style={{width: '150px'}}>{item.number}</td>
+                <td className='text-center align-middle' style={{width: '150px'}}>
+                  {item.number}
+                </td>
                 <If condition={is_staff}>
                   <th style={{width: '35px'}}>
                     <button className='btn btn-sm' onClick={() => this.onClick(item)}>
