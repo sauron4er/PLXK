@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^ex_phones', views.ex_phones, name='ex_phones'),
     url(r'^new_ex_phone', views.new_ex_phone, name='new_ex_phone'),
     url(r'^del_ex_phone', views.del_ex_phone, name='del_ex_phone'),
+    url(r'^del_ex_phone', views.del_ex_phone, name='del_ex_phone'),
 
     url(r'^providers/get_providers/(?P<wood_only>\w+)/(?P<page>\d+)/$', views_counterparties.get_providers, name='get_providers'),
     url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_provider'),

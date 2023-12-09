@@ -173,6 +173,27 @@ def change_pam(request):
     return HttpResponse(200)
 
 
+@try_except
+def add_external_phone(request):
+    pass
+
+
+@try_except
+def edit_external_phone(request):
+    phone = json.loads(request.POST['phone'])
+
+    if phone['id'] != 0:
+        phone_instance = get_object_or_404(Phone_External, pk=phone['id'])
+    else:
+        phone_instance = Phone_External()
+
+    phone_instance.owner = phone['owner']
+    phone_instance.number = phone['number']
+    phone_instance.save()
+
+    return HttpResponse(200)
+
+
 @login_required(login_url='login')
 @try_except
 def ex_phones(request):

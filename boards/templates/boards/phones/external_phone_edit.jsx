@@ -22,6 +22,12 @@ class ExternalPhoneEdit extends React.Component {
     }
   }
 
+  onOwnerChange = (e) => {
+    let phone = {...this.state.phone};
+    phone.owner = e.target.value;
+    this.setState({phone});
+  };
+
   onNumberChange = (e) => {
     let phone = {...this.state.phone};
     phone.number = e.target.value;
@@ -42,7 +48,17 @@ class ExternalPhoneEdit extends React.Component {
     const {phone} = this.state;
     return (
       <>
-        <h4 className='mt-4'>{phone.owner}</h4>
+        <label className='mt-2' htmlFor='owner'>
+          Власник:
+        </label>
+        <input
+          className='form-control'
+          type='text'
+          name='owner'
+          id='owner'
+          value={phone.owner}
+          onChange={this.onOwnerChange}
+        />
 
         <label className='mt-2' htmlFor='number'>
           № телефону:
@@ -51,7 +67,7 @@ class ExternalPhoneEdit extends React.Component {
           className='form-control'
           type='text'
           name='number'
-          id={'number'}
+          id='number'
           value={phone.number}
           onChange={this.onNumberChange}
         />
