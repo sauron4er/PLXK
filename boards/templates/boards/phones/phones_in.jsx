@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import Modal from 'react-responsive-modal';
 import EmployeePAM from 'boards/templates/boards/phones/employee_pam';
 
-class Phones extends React.Component {
+class PhonesIn extends React.Component {
   state = {
     employee: {
       id: 0,
@@ -26,10 +26,12 @@ class Phones extends React.Component {
     const filter = e.target.value.toLowerCase();
     let pam = [...window.pam];
     pam = pam.filter((item) => {
-      return item.pip.toLowerCase().indexOf(filter) !== -1 ||
+      return (
+        item.pip.toLowerCase().indexOf(filter) !== -1 ||
         item.phone.indexOf(filter) !== -1 ||
         item.mail.indexOf(filter) !== -1 ||
-        item.seats.filter(seat => seat.toLowerCase().indexOf(filter) !== -1).length;
+        item.seats.filter((seat) => seat.toLowerCase().indexOf(filter) !== -1).length
+      );
     });
     this.setState({
       filter: e.target.value,
@@ -51,8 +53,7 @@ class Phones extends React.Component {
   render() {
     const {employee, filter, pam, modal_opened} = this.state;
     return (
-      <div className='mt-3' style={{margin: 'auto', height: '90%', position: 'absolute'}}>
-        <h4>Телефонний та поштовий довідник</h4>
+      <>
         <label>Пошук</label>
         <input className='ml-2' value={filter} onChange={this.filterChange} />
         <table className='table table-sm table-striped table-hover table-bordered'>
@@ -99,9 +100,9 @@ class Phones extends React.Component {
         >
           <EmployeePAM employee={employee} />
         </Modal>
-      </div>
+      </>
     );
   }
 }
 
-export default Phones;
+export default PhonesIn;

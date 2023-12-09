@@ -155,7 +155,9 @@ def phones(request):
                   for emp_seat in item.positions.filter(is_active=True)],
     } for item in phones_and_mails]
 
-    return render(request, 'boards/phones/phones.html', {'pam': pam})
+    external_phones = get_ex_phones_list()
+
+    return render(request, 'boards/phones/phones.html', {'pam': pam, 'external_phones': external_phones})
 
 
 @try_except
