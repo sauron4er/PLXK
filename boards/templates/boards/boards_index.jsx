@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 // import Fireworks from './plhk_ads/fireworks';
 // import Reloader from './plhk_ads/reloader';
 // import {Calendar} from 'templates/components/calendar';
-import Phones from 'boards/templates/boards/phones/phones';
+import Phones from 'boards/templates/boards/phones';
 import 'react-responsive-modal/styles.css';
 
 class Boards extends React.Component {
