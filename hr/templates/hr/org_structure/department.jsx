@@ -10,6 +10,7 @@ import DepRegulation from 'hr/templates/hr/org_structure/dep_regulation';
 import DepWorkInstructions from 'hr/templates/hr/org_structure/dep_work_instructions';
 import TextInput from 'templates/components/form_modules/text_input';
 import SubmitButton from 'templates/components/form_modules/submit_button';
+import NewSeat from "hr/templates/hr/org_structure/new_seat";
 
 function Department(props) {
   const [state, setState] = useSetState({
@@ -96,8 +97,15 @@ function Department(props) {
         closeOnOverlayClick={true}
         styles={{modal: {marginTop: 100, width: '700px'}}}
       >
-        <Seat seat_name={state.opened_seat_name} loading={state.loading} files={state.instruction_files} employees={state.employees} />
-      </Modal>
+        <Choose>
+          <When condition={state.opened_seat_name}>
+            <Seat seat_name={state.opened_seat_name} loading={state.loading} files={state.instruction_files} employees={state.employees} />
+          </When>
+          <Otherwise>
+            <NewSeat department={props.dep.id}/>
+          </Otherwise>
+        </Choose>
+        </Modal>
     </>
   );
 }
