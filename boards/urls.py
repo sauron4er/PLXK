@@ -40,6 +40,11 @@ urlpatterns = [
     url(r'^.+post_letter', views_counterparties.post_letter, name='post_letter'),
     url(r'^.+del_letter', views_counterparties.del_letter, name='del_letter'),
 
+    url(r'^ex_phones', views.ex_phones, name='ex_phones'),
+    url(r'^new_ex_phone', views.new_ex_phone, name='new_ex_phone'),
+    url(r'^del_ex_phone', views.del_ex_phone, name='del_ex_phone'),
+    url(r'^del_ex_phone', views.del_ex_phone, name='del_ex_phone'),
+
     url(r'^providers/get_providers/(?P<wood_only>\w+)/(?P<page>\d+)/$', views_counterparties.get_providers, name='get_providers'),
     url(r'^providers/get_provider/(?P<pk>\d+)/$', views_counterparties.get_provider, name='get_provider'),
     url(r'^providers/post_provider/', views_counterparties.post_provider, name='post_provider'),

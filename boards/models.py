@@ -30,13 +30,19 @@ class Post(models.Model):
 
 
 class Phones(models.Model):
-    name = models.ForeignKey(User, related_name='pones', on_delete=models.RESTRICT)
+    name = models.ForeignKey(User, related_name='phones', on_delete=models.RESTRICT)
     n_main = models.CharField(max_length=4, null=True, blank=True)
     n_second = models.CharField(max_length=4, null=True, blank=True)
     n_mobile = models.CharField(max_length=4, null=True, blank=True)
     n_out = models.CharField(max_length=11, null=True, blank=True)
     mobile1 = models.CharField(max_length=11, null=True, blank=True)
     mobile2 = models.CharField(max_length=11, null=True, blank=True)
+
+
+class Phone_External(models.Model):
+    owner = models.CharField(max_length=50)
+    number = models.CharField(max_length=15)
+    is_active = models.BooleanField(default=True)
 
 
 class Ad(models.Model):

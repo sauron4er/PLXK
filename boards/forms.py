@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic, Ad, Counterparty
+from .models import Topic, Ad, Phone_External
 
 
 class NewTopicForm(forms.ModelForm):
@@ -13,6 +13,18 @@ class NewTopicForm(forms.ModelForm):
     class Meta:
         model = Topic
         fields = ['subject', 'message']
+
+
+class NewPhoneExternalForm(forms.ModelForm):
+    class Meta:
+        model = Phone_External
+        fields = ['owner', 'number']
+
+
+class DelPhoneExternalForm(forms.ModelForm):
+    class Meta:
+        model = Phone_External
+        fields = ['is_active']
 
 
 class NewAdForm(forms.ModelForm):

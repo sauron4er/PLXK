@@ -66,6 +66,8 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
 
     url(r'^phones/change_pam', board_views.change_pam, name='change_pam'),
+    url(r'^phones/add_external_phone', board_views.add_external_phone, name='add_external_phone'),
+    url(r'^phones/edit_external_phone', board_views.edit_external_phone, name='edit_external_phone'),
     url(r'^phones/', board_views.phones, name='phones'),
 
     url(r'^foyer/get_foyer_data/(?P<page>\d+)/$', board_views.get_foyer_data, name='get_foyer_data'),

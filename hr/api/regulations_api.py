@@ -15,7 +15,6 @@ def get_dep_list_for_regulations():
         'name': department.name,
     } for department in Department.objects.only('id', 'name')\
         .filter(is_active=True)\
-        .filter(regulations__isnull=True)\
         .order_by('name')]
 
     return departments
