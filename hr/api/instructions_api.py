@@ -16,7 +16,6 @@ def get_dep_seat_list_for_instruction(dep_id):
         'chief_seat_name': seat.chief.seat if seat.chief else 'Посаду начальника не внесено в базу'
     } for seat in Seat.objects
         .filter(department_id=dep_id)
-        .filter(instructions__isnull=True)
         .filter(is_active=True)
         .order_by('seat')]
 
@@ -45,7 +44,7 @@ def get_instructions_list():
 def get_instruction_api(pk):
     instruction = get_object_or_404(Instruction, pk=pk)
     instr = {'name': instruction.name}
-    instr.update({'type': 'seat' if instruction.seat else 'work'})
+    instr.update({'type': instruction.type})
     instr.update({'number': instruction.number})
     instr.update({'version': instruction.version})
     instr.update({'staff_units': instruction.staff_units or ''})
@@ -94,6 +93,7 @@ def deact_instruction_api(pk):
 @try_except
 def post_instruction(request):
     instruction = Instruction(name=request.POST['name'],
+                              type=request.POST['type'],
                               number=request.POST['number'],
                               version=request.POST['version'],
                               date_start=request.POST['date_start'])
@@ -113,6 +113,7 @@ def post_instruction(request):
 def change_instruction(request, pk):
     instruction = get_object_or_404(Instruction, pk=pk)
 
+    instruction.type = request.POST['type']
     instruction.name = request.POST['name']
     instruction.number = request.POST['number']
     instruction.version = request.POST['version']

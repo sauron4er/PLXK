@@ -19,6 +19,7 @@ class Instruction(models.Model):
     name = models.CharField(max_length=100)
     number = models.CharField(max_length=12)
     version = models.CharField(max_length=3)
+    type = models.CharField(max_length=4)  # 'work' or 'seat' (робоча чи посадова)
 
     # If department_id saved - this is work instruction, that not linked to a seat but only to department.
     # If seat_id saved - this is seat instruction, that linked to the seat.

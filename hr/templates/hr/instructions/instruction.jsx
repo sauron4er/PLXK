@@ -51,13 +51,6 @@ class Instruction extends React.Component {
 
   onTypeChange = (e) => {
     this.setState({type: e.target.value});
-    if (e.target.value === 'work') {
-      this.setState({
-        seat: 0,
-        seat_name: '',
-        chief_seat_name: ''
-      });
-    }
   };
 
   getDepChiefSeat = (dep_id) => {
@@ -103,11 +96,13 @@ class Instruction extends React.Component {
     const {type, name, number, version, staff_units, old_files, new_files, department, seat, date_start, date_revision} = this.state;
 
     let formData = new FormData();
+    formData.append('type', type);
     formData.append('name', name);
     formData.append('number', number);
     formData.append('version', version);
     formData.append('staff_units', staff_units);
-    if (type === 'seat') {
+
+    if (seat !== 0) {
       formData.append('seat', seat);
     } else {
       formData.append('department', department);
@@ -170,6 +165,7 @@ class Instruction extends React.Component {
       date_start,
       date_revision
     } = this.state;
+
     return (
       <Choose>
         <When condition={!loading}>
@@ -204,19 +200,17 @@ class Instruction extends React.Component {
               </div>
             </div>
             <div className='col-lg-6'>
-              <If condition={type === 'seat'}>
-                <SelectorWithFilter
-                  list={seats}
-                  fieldName='Посада'
-                  selectId='seat_select'
-                  value={{name: seat_name, id: seat}}
-                  onChange={this.onSeatChange}
-                  disabled={type === 'work' || disabled || !department}
-                />
-                <div>
-                  Начальник: <span className='font-weight-bold'>{chief_seat_name}</span>
-                </div>
-              </If>
+              <SelectorWithFilter
+                list={seats}
+                fieldName={type === 'seat' ? 'Посада' : "Посада (не обов'язково)"}
+                selectId='seat_select'
+                value={{name: seat_name, id: seat}}
+                onChange={this.onSeatChange}
+                disabled={disabled || !department}
+              />
+              <div>
+                Начальник: <span className='font-weight-bold'>{chief_seat_name}</span>
+              </div>
             </div>
           </div>
           <hr />
