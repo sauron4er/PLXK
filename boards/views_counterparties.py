@@ -46,7 +46,7 @@ def get_providers(request, wood_only, page):
         providers_list = providers_list.filter(product__meta_type_id=1)
 
     providers_list = filter_query_set(providers_list, json.loads(request.POST['filtering']))
-    providers_list = sort_query_set(providers_list, request.POST['sort_name'], request.POST['sort_direction'])
+    providers_list = sort_query_set(providers_list, request.POST['sort_name'] or 'name', request.POST['sort_direction'] or 'asc')
 
     paginator = Paginator(providers_list, 23)
     try:
@@ -301,7 +301,7 @@ def clients(request):
 def get_clients(request, page):
     clients_list = Counterparty.objects.filter(is_provider=False).filter(is_active=True)
     clients_list = filter_query_set(clients_list, json.loads(request.POST['filtering']))
-    clients_list = sort_query_set(clients_list, request.POST['sort_name'], request.POST['sort_direction'])
+    clients_list = sort_query_set(clients_list, request.POST['sort_name'] or 'name', request.POST['sort_direction'] or 'asc')
 
     paginator = Paginator(clients_list, 23)
     try:
