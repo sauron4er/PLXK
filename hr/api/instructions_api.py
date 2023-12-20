@@ -151,11 +151,11 @@ def post_instruction_file(files, request_post):
 
     for file in old_files:
         if file['status'] == 'delete':
-            deactivate_instruction_file(request_post, file)
+            deactivate_instruction_file(file)
 
 
 @try_except
-def deactivate_instruction_file(post_request, file):
+def deactivate_instruction_file(file):
     file = get_object_or_404(Instruction_file, pk=file['id'])
     file.is_active = False
     file.save()

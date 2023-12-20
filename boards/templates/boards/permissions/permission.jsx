@@ -4,17 +4,17 @@ import 'static/css/files_uploader.css';
 import 'static/css/loader_style.css';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import {getIndex, getItemById, isBlankOrZero, notify, uniqueArray} from 'templates/components/my_extras';
+import {isBlankOrZero, notify} from 'templates/components/my_extras';
 import {Loader} from 'templates/components/loaders';
 import {view, store} from '@risingstack/react-easy-state';
 import {axiosPostRequest, axiosGetRequest} from 'templates/components/axios_requests';
 import TextInput from 'templates/components/form_modules/text_input';
 import DateInput from 'templates/components/form_modules/date_input';
-// import Files from 'templates/components/form_modules/files';
 import SubmitButton from 'templates/components/form_modules/submit_button';
 import permissionsStore from 'boards/templates/boards/permissions/permissions_store';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import MultiSelectorWithAxios from 'templates/components/form_modules/selectors/multi_selector_with_axios';
+import Files from "templates/components/form_modules/files";
 
 class Permission extends React.Component {
   state = {
@@ -78,13 +78,13 @@ class Permission extends React.Component {
       let formData = new FormData();
       formData.append('permission', JSON.stringify(permission));
       // formData.append('old_files', JSON.stringify(permission.old_files)); // Файли додаємо окремо для простоти обробки на сервері
-      // if (permission.new_files?.length > 0) {
-      //   permission.new_files.map((file) => {
-      //     formData.append('new_files', file);
-      //   });
-      // }
+      if (permission.new_files?.length > 0) {
+        permission.new_files.map((file) => {
+          formData.append('new_files', file);
+        });
+      }
 
-      axiosPostRequest('add_permission/', formData)
+      axiosPostRequest('post_permission/', formData)
         .then((response) => {
           window.location.reload()
           // permissionsStore.permission.id = response;
@@ -132,25 +132,23 @@ class Permission extends React.Component {
     permissionsStore.permission.responsibles = list;
   };
 
-  // onFilesChange = (e) => {
-  //   const contract = {...this.state.contract};
-  //   contract.new_files = e.target.value;
-  //   this.setState({contract});
-  // };
-  //
-  // onFilesDelete = (id) => {
-  //   const contract = {...this.state.contract};
-  //   // Необхідно проводити зміни через додаткову перемінну, бо  react-easy-state не помічає змін глибоко всередині перемінних, як тут.
-  //   let old_files = [...this.state.contract.old_files];
-  //   for (const i in old_files) {
-  //     if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
-  //       old_files[i].status = 'delete';
-  //       break;
-  //     }
-  //   }
-  //   contract.old_files = [...old_files];
-  //   this.setState({contract});
-  // };
+  onFilesChange = (e) => {
+    permissionsStore.permission.new_files = e.target.value
+  };
+
+  onFilesDelete = (id) => {
+    const permission = {...permissionsStore.permission};
+    // Необхідно проводити зміни через додаткову перемінну, бо  react-easy-state не помічає змін глибоко всередині перемінних, як тут.
+    let old_files = [...permissionsStore.permission.old_files];
+    for (const i in old_files) {
+      if (old_files.hasOwnProperty(i) && old_files[i].id === id) {
+        old_files[i].status = 'delete';
+        break;
+      }
+    }
+    permission.old_files = [...old_files];
+    permissionsStore.permission = { ...permission }
+  };
 
   render() {
     const {permission} = permissionsStore;
@@ -191,8 +189,16 @@ class Permission extends React.Component {
               maxLength={5000}
               disabled={false}
             />
-            <hr />
-
+            <hr/>
+            <Files
+              oldFiles={permission.old_files}
+              newFiles={permission.new_files}
+              fieldName={'Скан-копії'}
+              onChange={this.onFilesChange}
+              onDelete={this.onFilesDelete}
+              disabled={false}
+            />
+            <hr/>
             <MultiSelectorWithAxios
               defaultSelected={permissionsStore.permission.responsibles}
               fieldName={'Відповідальні'}
@@ -215,15 +221,7 @@ class Permission extends React.Component {
               onChange={this.onDateNextChange}
               disabled={false}
             />
-
-            {/*<Files*/}
-            {/*  oldFiles={contract.old_files}*/}
-            {/*  newFiles={contract.new_files}*/}
-            {/*  fieldName={'* Підписані файли'}*/}
-            {/*  onChange={this.onFilesChange}*/}
-            {/*  onDelete={this.onFilesDelete}*/}
-            {/*/>*/}
-            {/*<hr />*/}
+            <hr />
           </div>
           <div className='modal-footer'>
             <If condition={this.props.id !== 0}>

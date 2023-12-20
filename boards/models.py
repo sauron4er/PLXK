@@ -254,11 +254,11 @@ class Permission(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# class Permission_File(models.Model):
-#     file = models.FileField(upload_to='permissions/letters/%Y/%m')
-#     name = models.CharField(max_length=100)
-#     permission = models.ForeignKey(Permission, related_name='files', on_delete=models.RESTRICT)
-#     is_active = models.BooleanField(default=True)
+class Permission_File(models.Model):
+    file = models.FileField(upload_to='permissions/%Y/%m')
+    name = models.CharField(max_length=100)
+    permission = models.ForeignKey(Permission, related_name='files', on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
 
 
 class Permission_Responsible(models.Model):

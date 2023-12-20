@@ -14,7 +14,8 @@ const permissionsStore = store({
     responsibles: [],
     dates: [],
     date_next: '',
-    files: [],
+    old_files: [],
+    new_files: []
   },
   permissions: [],
 
