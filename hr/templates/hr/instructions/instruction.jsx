@@ -188,7 +188,7 @@ class Instruction extends React.Component {
           <div className='row'>
             <div className='col-lg-6'>
               <SelectorWithFilterAndAxios
-                listNameForUrl='departments'
+                listNameForUrl='departments/all'
                 fieldName='Відділ/служба'
                 selectId='department_select'
                 value={{name: department_name, id: department}}
