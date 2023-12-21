@@ -7,6 +7,7 @@ import {axiosPostRequest} from "templates/components/axios_requests";
 import {notify} from "templates/components/my_extras";
 import Files from "templates/components/form_modules/files";
 import SelectorWithFilterAndAxios from "templates/components/form_modules/selectors/selector_with_filter_and_axios";
+import Radio from "templates/components/form_modules/radio";
 
 
 function NewSeat(props) {
@@ -51,11 +52,19 @@ function NewSeat(props) {
       .catch((error) => notify(error));
   }
 
+  function onIsChiefChange(selected_option) {
+    setState({is_dep_chief: selected_option === 'yes'})
+  }
+
   return (
     <>
       <div className='modal-body'>
         <TextInput fieldName='Назва' text={state.name} disabled={false} maxLength={200} onChange={onNameChange} />
         <hr />
+        <Radio fieldName='Це керівник відділу' options={[
+          { name: 'yes', value: "Так" },
+          { name: 'no', value: "Ні" }]} defaultOption='no' onChange={onIsChiefChange} />
+        <hr/>
         <SelectorWithFilterAndAxios
           listNameForUrl='seats_for_select'
           fieldName='Керівник цієї посади'
