@@ -8,7 +8,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from accounts import views as accounts_views
 from boards import views as board_views
 from boards.views_counterparties import get_counterparties, get_clients_for_product_type
-from boards.views_permissions import permissions, get_permissions, get_permission, add_permission
+from boards.views_permissions import permissions, get_permissions, get_permission, post_permission
 from boards.views_proposals import proposals, get_proposals, post_proposal, get_proposal
 from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from docs.views_contracts import edit_contract, get_additional_contracts
@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^.+/get_userprofiles', board_views.get_userprofiles, name='get_userprofiles_list'),
     url(r'^.+/.+/get_dep_seats/(?P<dep_id>\d+)', get_dep_seats, name='get_dep_seats'),
     url(r'^.+/.+/get_seats_for_select', get_seats_for_select, name='get_seats_for_select'),
+    url(r'^.+/.+/get_departments/(?P<company>\w+)', accounts_views.get_departments, name='get_departments_for_select'),
     url(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     url(r'^.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     url(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
@@ -77,7 +78,7 @@ urlpatterns = [
     url(r'^permissions/get_permission_categories', get_permission_categories, name='get_permission_categories'),
     url(r'^permissions/get_permissions/(?P<page>\d+)/$', get_permissions, name='get_permissions'),
     url(r'^permissions/get_permission/(?P<pk>\d+)/$', get_permission, name='get_permissions'),
-    url(r'^permissions/add_permission/$', add_permission, name='add_permissions'),
+    url(r'^permissions/post_permission/$', post_permission, name='post_permission'),
     url(r'^permissions/', permissions, name='permissions'),
 
     url(r'^proposals/get_proposals/(?P<page>\d+)/$', get_proposals, name='get_proposals'),

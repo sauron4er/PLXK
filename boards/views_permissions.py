@@ -10,7 +10,7 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import date_to_json
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
-from .models import Permission, Permission_Responsible
+from .models import Permission, Permission_Responsible, Permission_File
 
 
 
@@ -42,7 +42,14 @@ def get_permissions(request, page):
         'category': permission.category.name,
         'department': permission.department.name,
         'name': permission.name,
-        'date_next': convert_to_localtime(permission.date_next, 'day')
+        'date_next': convert_to_localtime(permission.date_next, 'day'),
+        'files': [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name
+        } for file in Permission_File.objects
+        .filter(permission=permission.id)
+        .filter(is_active=True)]
     } for permission in permissions_page.object_list]
 
     response = {'rows': permissions_list, 'pagesCount': paginator.num_pages}
@@ -70,13 +77,13 @@ def get_permission(request, pk):
             'id': responsible.employee.id,
             'value': responsible.employee.pip,
             'status': 'old',
-        } for responsible in Permission_Responsible.objects.filter(permission=permission).filter(is_active=True)]
+        } for responsible in Permission_Responsible.objects.filter(permission=permission).filter(is_active=True)],
 
-        # 'old_files': [{
-        #     'id': file.id,
-        #     'file': file.file.name,
-        #     'name': file.name,
-        # } for file in Reclamation_file.objects.filter(reclamation_id=reclamation.id).filter(is_active=True)],
+        'old_files': [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+        } for file in Permission_File.objects.filter(permission_id=permission.id).filter(is_active=True)],
     }
 
     return HttpResponse(json.dumps(permission_fields))
@@ -84,7 +91,7 @@ def get_permission(request, pk):
 @transaction.atomic
 @login_required(login_url='login')
 @try_except
-def add_permission(request):
+def post_permission(request):
     data = json.loads(request.POST.copy()['permission'])
 
     if data['id'] == 0:
@@ -104,19 +111,30 @@ def add_permission(request):
     if data['responsibles']:
         post_responsibles(permission, data['responsibles'])
 
-    # post_files(permission, request.FILES, data['old_files'])
+    post_files(permission, request.FILES, data['old_files'])
 
     return HttpResponse(permission.id)
 
 
-# @try_except
-# def post_files(permission, new_files, old_files):
-#     for file in new_files.getlist('new_files'):
-#         Permission_File.objects.create(
-#             permission=permission,
-#             file=file,
-#             name=file.name
-#         )
+@try_except
+def post_files(permission, new_files, old_files):
+    for file in new_files.getlist('new_files'):
+        Permission_File.objects.create(
+            permission=permission,
+            file=file,
+            name=file.name
+        )
+
+    for file in old_files:
+        if file['status'] == 'delete':
+            deactivate_permission_file(file)
+
+
+@try_except
+def deactivate_permission_file(file):
+    file = get_object_or_404(Permission_File, pk=file['id'])
+    file.is_active = False
+    file.save()
 
 @try_except
 def post_responsibles(permission, responsibles):

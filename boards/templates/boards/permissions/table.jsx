@@ -9,16 +9,16 @@ const columns = [
   {name: 'category', title: 'Категорія'},
   {name: 'department', title: 'Підрозділ'},
   {name: 'name', title: 'Назва'},
+  {name: 'files', title: 'Файли'},
   {name: 'date_next', title: 'Перегляд'},
-  // {name: 'files', title: 'Файли'},
 ];
 
 const col_width = [
   {columnName: 'category', width: 150},
   {columnName: 'department', width: 150},
   // {columnName: 'name', width: 200},
+  {columnName: 'files', width: 200},
   {columnName: 'date_next', width: 100},
-  // {columnName: 'files', width: 100}
 ];
 
 class PermissionsTable extends React.Component {
