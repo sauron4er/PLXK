@@ -34,6 +34,10 @@ function NewSeat(props) {
     setState({instructions_files: e.target.value});
   }
 
+  function onIsChiefChange(selected_option) {
+    setState({is_dep_chief: selected_option === 'yes'})
+  }
+
   // TODO Перевірка, чи вже обраний начальник відділу і повернення помилки
 
   function addSeat() {
@@ -52,12 +56,11 @@ function NewSeat(props) {
       .catch((error) => notify(error));
   }
 
-  function onIsChiefChange(selected_option) {
-    setState({is_dep_chief: selected_option === 'yes'})
-  }
-
   return (
     <>
+      <div className="modal-header">
+        <h4>Нова посада</h4>
+      </div>
       <div className='modal-body'>
         <TextInput fieldName='Назва' text={state.name} disabled={false} maxLength={200} onChange={onNameChange} />
         <hr />
@@ -67,7 +70,7 @@ function NewSeat(props) {
         <hr/>
         <SelectorWithFilterAndAxios
           listNameForUrl='seats_for_select'
-          fieldName='Керівник цієї посади'
+          fieldName='Керівник для цієї посади'
           selectId='chief_select'
           value={{name: state.chief_name, id: state.chief}}
           onChange={onChiefChange}
@@ -76,14 +79,14 @@ function NewSeat(props) {
         <hr/>
         <Files
           newFiles={state.instructions_files}
-          fieldName='Завантажити посадову інструкцію'
+          fieldName='Додати посадову інструкцію'
           onChange={onFileChange}
           disabled={false}
         />
       </div>
       <div className='modal-footer'>
         <SubmitButton className='btn-outline-info' text='Зберегти' onClick={addSeat} disabled={
-          !state.name || !state.chief_id} />
+          !state.name || !state.chief} />
       </div>
     </>
   );

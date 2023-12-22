@@ -20,7 +20,7 @@ function Seat(props) {
           <When condition={window.edit_access}>
             <TextInput
               text={state.name}
-              fieldName={'Юридична адреса'}
+              fieldName={'Назва'}
               onChange={onSeatNameChange}
               maxLength={200}
               disabled={!edit_access}
