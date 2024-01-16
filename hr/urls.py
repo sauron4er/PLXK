@@ -1,7 +1,7 @@
 ﻿from django.conf.urls import url
 from hr.views import get_regulations, get_instructions, instructions, add_or_change_regulation, deact_regulation, \
     add_or_change_instruction, get_regulation, get_instruction, get_deps_for_regulations, get_dep_seats_for_instruction, \
-    deact_instruction, org_structure, post_department, get_seat, dep_name_change
+    deact_instruction, org_structure, post_department, get_seat, dep_name_change, post_seat
 # from hr.views_org_structure import get_seat_info, post_instruction, org_structure
 
 app_name = 'hr'
@@ -26,6 +26,7 @@ urlpatterns = [
 
     # url(r'^org_structure/get_seat_info/(?P<pk>\d+)/$', get_seat_info, name='get_seat_info'),
     url(r'^org_structure/post_department/', post_department, name='post_department'),
+    url(r'^org_structure/post_seat/', post_seat, name='post_seat'),
     url(r'^org_structure/get_seat/(?P<pk>\d+)$', get_seat, name='get_seat'),
     url(r'^org_structure/dep_name_change/(?P<pk>\d+)$', dep_name_change, name='get_seat'),
     url(r'^org_structure/', org_structure, name='org_structure'),

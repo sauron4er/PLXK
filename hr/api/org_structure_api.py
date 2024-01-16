@@ -88,3 +88,17 @@ def add_department(request):
     new_dep.is_tdv = request.POST['company'] == 'ТДВ'
     new_dep.save()
     return new_dep.id
+
+
+@try_except
+def add_seat(request):
+    new_seat = Seat(seat=request.POST['name'])
+    new_seat.department_id = request.POST['department_id']
+    new_seat.chief_id = request.POST['chief_id']
+
+    # is_dep_chief = models.BooleanField(default=False)
+    # instructions_file
+
+    # new_seat.save()
+    # return new_seat.id
+    return 0

@@ -47,7 +47,10 @@ function NewSeat(props) {
     formData.append('department_id', props.department);
     formData.append('chief_id', state.chief);
     formData.append('is_dep_chief', state.is_dep_chief);
-    formData.append('instructions_file', state.instructions_files);
+
+    state.instructions_files.map((file) => {
+        formData.append('instructions_files', file);
+      });
 
     axiosPostRequest(`post_seat/`, formData)
       .then((response) => {

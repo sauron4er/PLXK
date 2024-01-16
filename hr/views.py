@@ -7,7 +7,7 @@ from .api.regulations_api import get_regulations_list, post_regulation, post_reg
     change_regulation, get_regulation_api, deact_regulation_api, get_dep_list_for_regulations
 from .api.instructions_api import get_instructions_list, post_instruction, post_instruction_file, \
     change_instruction, get_instruction_api, deact_instruction_api, get_dep_seat_list_for_instruction, get_seat_instruction_files
-from .api.org_structure_api import get_org_structure, add_department
+from .api.org_structure_api import get_org_structure, add_department, add_seat
 from edms.api.getters import get_employees_by_seat
 from accounts.api.setters import dep_name_change_api
 
@@ -120,6 +120,13 @@ def org_structure(request):
 @try_except
 def post_department(request):
     new_dep_id = add_department(request)
+    return HttpResponse(200)
+
+
+@login_required(login_url='login')
+@try_except
+def post_seat(request):
+    new_seat_id = add_seat(request)
     return HttpResponse(200)
 
 
