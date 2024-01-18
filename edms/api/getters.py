@@ -830,7 +830,8 @@ def get_doc_modules(doc, responsible_id=0):
         'field_name': None if type_module.field_name is None else type_module.field_name,
         'is_editable': type_module.is_editable,
         'queue': type_module.queue,
-        'doc_type_version': type_module.doc_type_version_id
+        'doc_type_version': type_module.doc_type_version_id,
+        'additional_info': type_module.additional_info  # for showing in non-editable module
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)
         .filter(is_active=True)

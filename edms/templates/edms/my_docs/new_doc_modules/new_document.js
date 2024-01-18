@@ -56,6 +56,7 @@ import EmployeeSeat from 'edms/templates/edms/my_docs/new_doc_modules/employee_s
 import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/decree_articles';
 import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
 import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose';
+import NonEditable from "edms/templates/edms/my_docs/new_doc_modules/non_editable";
 
 class NewDocument extends React.Component {
   state = {
@@ -740,6 +741,9 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'decree_articles'}>
                           <DecreeArticles module_info={module} />
+                        </When>
+                        <When condition={module.module === 'non_editable'}>
+                          <NonEditable module_info={module} />
                         </When>
                         <When
                           condition={
