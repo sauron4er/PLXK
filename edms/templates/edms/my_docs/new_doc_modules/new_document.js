@@ -57,6 +57,8 @@ import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_a
 import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
 import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose';
 import NonEditable from "edms/templates/edms/my_docs/new_doc_modules/non_editable";
+import Integer from "edms/templates/edms/my_docs/new_doc_modules/integer";
+import Decimal from "edms/templates/edms/my_docs/new_doc_modules/decimal";
 
 class NewDocument extends React.Component {
   state = {
@@ -744,6 +746,12 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'non_editable'}>
                           <NonEditable module_info={module} />
+                        </When>
+                        <When condition={module.module === 'integer'}>
+                          <Integer module_info={module} />
+                        </When>
+                        <When condition={module.module === 'decimal'}>
+                          <Decimal module_info={module} />
                         </When>
                         <When
                           condition={

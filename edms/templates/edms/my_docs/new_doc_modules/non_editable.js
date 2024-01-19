@@ -3,8 +3,6 @@ import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 
 function NonEditable(props) {
-  console.log(props);
-
   return (
     <>
       <div>{props.module_info.field_name}</div>
