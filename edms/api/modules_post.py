@@ -8,7 +8,8 @@ from plxk.api.try_except import try_except
 from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty, Doc_Registration, \
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
     Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
-    Doc_Contract_Subject, Doc_Deadline, Doc_Recipient, Decree_Article, Decree_Article_Responsible
+    Doc_Contract_Subject, Doc_Deadline, Doc_Recipient, Decree_Article, Decree_Article_Responsible, \
+    Doc_Integer, Doc_Decimal
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -28,6 +29,22 @@ def post_text(doc_request, text_list):
                 text_form.save()
             else:
                 raise ValidationError('post_modules/post_text/text_form invalid')
+
+
+@try_except
+def post_integer(document_id, integer):
+    new_doc_integer = Doc_Integer(document_id=document_id)
+    new_doc_integer.integer = integer['value']
+    new_doc_integer.queue_in_doc = integer['queue']
+    new_doc_integer.save()
+
+
+@try_except
+def post_decimal(document_id, decimal):
+    new_doc_decimal = Doc_Decimal(document_id=document_id)
+    new_doc_decimal.decimal = decimal['value']
+    new_doc_decimal.queue_in_doc = decimal['queue']
+    new_doc_decimal.save()
 
 
 @try_except

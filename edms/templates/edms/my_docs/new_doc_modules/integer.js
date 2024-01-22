@@ -1,17 +1,18 @@
 'use strict';
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
-import { getIndexByProperty } from "templates/components/my_extras";
-import newDocStore from "edms/templates/edms/my_docs/new_doc_modules/new_doc_store";
+import {getIndexByProperty} from 'templates/components/my_extras';
+import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
 
 function Integer(props) {
   function onIntegerChange(e) {
-    newDocStore.new_document.integer = e.target.value
+    const regex = /^\d*$/;
+    if (regex.test(e.target.value)) newDocStore.new_document.integer = e.target.value;
   }
 
   return (
-    <>
-      <div>{props.module_info.field_name}</div>
+    <label className='full_width' htmlFor={'integer' + props.module_info.queue}>
+      <If condition={props.module_info.required}>{'* '}</If> {props.module_info.field_name}:
       <input
         className='form-control'
         name='integer'
@@ -21,7 +22,7 @@ function Integer(props) {
         onChange={onIntegerChange}
         maxLength={9} // so there will be no possibility to save more than django's max for integer
       />
-    </>
+    </label>
   );
 }
 
