@@ -29,8 +29,6 @@ class Info extends React.Component {
   render() {
     const {info} = this.props;
 
-    console.log(info);
-
     if (info.path) {
       return (
         <div>
@@ -82,6 +80,12 @@ class Info extends React.Component {
                   </When>
                   <When condition={['text', 'dimensions', 'packaging_type', 'select'].includes(module.module)}>
                     <Text text={getTextByQueue(info.text_list, index)} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'integer'}>
+                    <Text text={info.integer} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'decimal'}>
+                    <Text text={info.decimal} text_info={module} doc_info={info} />
                   </When>
                   <When condition={module.module === 'non_editable'}>
                     <Text text={module.additional_info} text_info={module} doc_info={info} />

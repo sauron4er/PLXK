@@ -4,7 +4,7 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, \
-    Doc_Deadline, Doc_Recipient, Decree_Article
+    Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal
 
 
 @try_except
@@ -139,4 +139,26 @@ def get_decree_articles(doc):
 
         return decree_articles
     else:
+        return ''
+
+
+@try_except
+def get_integer(doc_id):
+    try:
+        integer_instance = Doc_Integer.objects.get(document_id=doc_id, is_active=True)
+        integer = integer_instance.integer
+
+        return integer
+    except Doc_Integer.DoesNotExist:
+        return ''
+
+
+@try_except
+def get_decimal(doc_id):
+    try:
+        decimal_instance = Doc_Decimal.objects.get(document_id=doc_id, is_active=True)
+        decimal = decimal_instance.decimal
+
+        return str(decimal)
+    except Doc_Decimal.DoesNotExist:
         return ''

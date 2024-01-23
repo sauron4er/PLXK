@@ -12,7 +12,7 @@ from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
-    get_employee_seat, get_decree_articles
+    get_employee_seat, get_decree_articles, get_integer, get_decimal
 
 testing = settings.STAS_DEBUG
 
@@ -852,6 +852,12 @@ def get_doc_modules(doc, responsible_id=0):
                 doc_modules.update({
                     'text_list': text_list,
                 })
+
+        elif module['module'] == 'integer':
+            doc_modules.update({'integer': get_integer(doc.id)})
+
+        elif module['module'] == 'decimal':
+            doc_modules.update({'decimal': get_decimal(doc.id)})
 
         elif module['module'] == 'articles':
             test = 'test'
