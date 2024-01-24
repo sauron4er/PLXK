@@ -55,7 +55,7 @@ class Info extends React.Component {
             <span className='font-italic'> {info.responsible}</span>
           </div>
 
-          {/* Модульна система */}
+          {/* Модулі */}
           <If condition={info.type_modules}>
             <For each='module' index='index' of={info.type_modules}>
               <div key={index}>
@@ -80,6 +80,15 @@ class Info extends React.Component {
                   </When>
                   <When condition={['text', 'dimensions', 'packaging_type', 'select'].includes(module.module)}>
                     <Text text={getTextByQueue(info.text_list, index)} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'integer'}>
+                    <Text text={info.integer} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'decimal'}>
+                    <Text text={info.decimal} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'non_editable'}>
+                    <Text text={module.additional_info} text_info={module} doc_info={info} />
                   </When>
                   <When condition={module.module === 'day'}>
                     <Day day={getDayByQueue(info.days, index)} fieldName={module.field_name} />

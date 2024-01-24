@@ -56,6 +56,9 @@ import EmployeeSeat from 'edms/templates/edms/my_docs/new_doc_modules/employee_s
 import DecreeArticles from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/decree_articles';
 import {areArticlesValid} from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/validation';
 import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_modules/client_requirements_choose';
+import NonEditable from 'edms/templates/edms/my_docs/new_doc_modules/non_editable';
+import Integer from 'edms/templates/edms/my_docs/new_doc_modules/integer';
+import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
 
 class NewDocument extends React.Component {
   state = {
@@ -339,7 +342,9 @@ class NewDocument extends React.Component {
             'law',
             'doc_type_version',
             'employee',
-            'employee_seat'
+            'employee_seat',
+            'integer',
+            'decimal'
           ].includes(module.module)
         ) {
           if (isBlankOrZero(newDocStore.new_document[module.module])) {
@@ -428,10 +433,17 @@ class NewDocument extends React.Component {
         let doc_modules = {};
         type_modules.map((module) => {
           if (
-            ['mockup_type', 'mockup_product_type', 'dimensions',
-              'client', 'packaging_type', 'contract_link', 'employee'].includes(
-              module.module
-            )
+            [
+              'mockup_type',
+              'mockup_product_type',
+              'dimensions',
+              'client',
+              'packaging_type',
+              'contract_link',
+              'employee',
+              'integer',
+              'decimal'
+            ].includes(module.module)
           ) {
             doc_modules[module.module] = {
               queue: module.queue,
@@ -440,8 +452,8 @@ class NewDocument extends React.Component {
           } else if ([16, 32].includes(module.module_id)) {
             // text, select
             doc_modules.text = newDocStore.new_document.text;
-          } else if ([2, 29, 33].includes(module.module_id)) {
-            // Модулі auto_approved, phases не створюються у браузері
+          } else if ([2, 29, 33, 48].includes(module.module_id)) {
+            // Модулі auto_approved, phases, non_editable не створюються у браузері
             // Модуль acquaint_list не обов'язковий
           } else if (module.module_id === 22) {
             // Погоджуючі (треба відправити хоча б пустий список)
@@ -475,7 +487,7 @@ class NewDocument extends React.Component {
               input: newDocStore.new_document.contract_subject_input
             };
           } else if (module.module === 'client_requirements_choose') {
-            doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement
+            doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }
@@ -740,6 +752,15 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'decree_articles'}>
                           <DecreeArticles module_info={module} />
+                        </When>
+                        <When condition={module.module === 'non_editable'}>
+                          <NonEditable module_info={module} />
+                        </When>
+                        <When condition={module.module === 'integer'}>
+                          <Integer module_info={module} />
+                        </When>
+                        <When condition={module.module === 'decimal'}>
+                          <Decimal module_info={module} />
                         </When>
                         <When
                           condition={

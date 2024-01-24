@@ -12,7 +12,7 @@ from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
-    get_employee_seat, get_decree_articles
+    get_employee_seat, get_decree_articles, get_integer, get_decimal
 
 testing = settings.STAS_DEBUG
 
@@ -830,7 +830,8 @@ def get_doc_modules(doc, responsible_id=0):
         'field_name': None if type_module.field_name is None else type_module.field_name,
         'is_editable': type_module.is_editable,
         'queue': type_module.queue,
-        'doc_type_version': type_module.doc_type_version_id
+        'doc_type_version': type_module.doc_type_version_id,
+        'additional_info': type_module.additional_info  # for showing in non-editable module
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)
         .filter(is_active=True)
@@ -851,6 +852,12 @@ def get_doc_modules(doc, responsible_id=0):
                 doc_modules.update({
                     'text_list': text_list,
                 })
+
+        elif module['module'] == 'integer':
+            doc_modules.update({'integer': get_integer(doc.id)})
+
+        elif module['module'] == 'decimal':
+            doc_modules.update({'decimal': get_decimal(doc.id)})
 
         elif module['module'] == 'articles':
             test = 'test'
@@ -1290,8 +1297,8 @@ def get_allowed_new_doc_types(request):
         free_doc_types = free_doc_types.filter(testing=False)
         dep_doc_types = dep_doc_types.filter(testing=False)
 
-    doc_types = free_doc_types.union(dep_doc_types) \
-        # .order_by('description')
+    doc_types = free_doc_types.union(dep_doc_types)  \
+        .order_by('description')
 
     return [{  # Список документів, які може створити юзер
         'id': doc_type.id,

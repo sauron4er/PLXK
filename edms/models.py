@@ -280,6 +280,22 @@ class Doc_Text(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Цифра ціла
+class Doc_Integer(models.Model):
+    document = models.ForeignKey(Document, related_name='integers', on_delete=models.RESTRICT)
+    integer = models.IntegerField(null=True)
+    queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Число десяткове з двома цифрами після коми (для курсів валют)
+class Doc_Decimal(models.Model):
+    document = models.ForeignKey(Document, related_name='decimals', on_delete=models.RESTRICT)
+    decimal = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
 # Дата, яка використовується у документі.
 class Doc_Day(models.Model):
     document = models.ForeignKey(Document, related_name='days', on_delete=models.RESTRICT)

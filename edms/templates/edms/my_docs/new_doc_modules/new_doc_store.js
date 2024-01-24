@@ -11,6 +11,8 @@ const newDocStore = store({
     doc_type_version_name: '',
     registration_number: '',
     text: [],
+    integer: '',
+    decimal: '',
     datetimes: [],
     foyer_ranges: [{out: '', in: ''}],
     mockup_type: 0,
