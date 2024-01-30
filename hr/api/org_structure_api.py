@@ -95,10 +95,9 @@ def add_seat(request):
     new_seat = Seat(seat=request.POST['name'])
     new_seat.department_id = request.POST['department_id']
     new_seat.chief_id = request.POST['chief_id']
+    new_seat.is_dep_chief = request.POST['is_dep_chief']
+    new_seat.save()
 
-    # is_dep_chief = models.BooleanField(default=False)
     # instructions_file
 
-    # new_seat.save()
-    # return new_seat.id
-    return 0
+    return new_seat.id

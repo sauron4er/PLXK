@@ -15,8 +15,7 @@ function NewSeat(props) {
     name: '',
     chief: 0,
     chief_name: '',
-    is_dep_chief: false,
-    instructions_files: ''
+    is_dep_chief: false
   });
 
   function onNameChange(e) {
@@ -28,10 +27,6 @@ function NewSeat(props) {
       chief: e.id,
       chief_name: e.name
     });
-  }
-
-  function onFileChange (e) {
-    setState({instructions_files: e.target.value});
   }
 
   function onIsChiefChange(selected_option) {
@@ -47,10 +42,6 @@ function NewSeat(props) {
     formData.append('department_id', props.department);
     formData.append('chief_id', state.chief);
     formData.append('is_dep_chief', state.is_dep_chief);
-
-    state.instructions_files.map((file) => {
-        formData.append('instructions_files', file);
-      });
 
     axiosPostRequest(`post_seat/`, formData)
       .then((response) => {
@@ -77,13 +68,6 @@ function NewSeat(props) {
           selectId='chief_select'
           value={{name: state.chief_name, id: state.chief}}
           onChange={onChiefChange}
-          disabled={false}
-        />
-        <hr/>
-        <Files
-          newFiles={state.instructions_files}
-          fieldName='Додати посадову інструкцію'
-          onChange={onFileChange}
           disabled={false}
         />
       </div>
