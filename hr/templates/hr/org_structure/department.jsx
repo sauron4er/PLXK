@@ -17,45 +17,23 @@ function Department(props) {
     modal_opened: false,
     opened_seat: 0,
     opened_seat_name: '',
-    instruction_files: [],
-    employees: [],
-    dep_name: props.dep.name,
-    loading: true
+    dep_name: props.dep.name
   });
 
   function openModal(seat) {
     setState({
       opened_seat: seat.id,
       opened_seat_name: seat.name,
-      modal_opened: true,
-      instruction_files: [],
-      employees: [],
-      loading: true
+      modal_opened: true
     });
-    getSeat(seat);
   }
 
   function openModalAddSeat(seat) {
     setState({
       opened_seat: 0,
       opened_seat_name: '',
-      modal_opened: true,
-      instruction_files: [],
-      employees: [],
-      loading: false
+      modal_opened: true
     });
-  }
-
-  function getSeat(seat) {
-    axiosGetRequest(`get_seat/${seat.id}`)
-      .then((response) => {
-        setState({
-          instruction_files: response.instruction_files,
-          employees: response.employees,
-          loading: false
-        });
-      })
-      .catch((error) => notify(error));
   }
 
   function closeModal() {
@@ -99,7 +77,7 @@ function Department(props) {
       >
         <Choose>
           <When condition={state.opened_seat_name}>
-            <Seat seat_name={state.opened_seat_name} loading={state.loading} files={state.instruction_files} employees={state.employees} />
+            <Seat id={state.opened_seat} seat_name={state.opened_seat_name} />
           </When>
           <Otherwise>
             <NewSeat department={props.dep.id}/>

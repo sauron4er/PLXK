@@ -95,9 +95,7 @@ def add_seat(request):
     new_seat = Seat(seat=request.POST['name'])
     new_seat.department_id = request.POST['department_id']
     new_seat.chief_id = request.POST['chief_id']
-    new_seat.is_dep_chief = request.POST['is_dep_chief']
+    new_seat.is_dep_chief = request.POST['is_dep_chief'] == 'true'
     new_seat.save()
-
-    # instructions_file
 
     return new_seat.id

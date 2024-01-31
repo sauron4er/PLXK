@@ -1513,3 +1513,18 @@ def get_doc_sub_product_name(doc_id):
         .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
     return doc_sub_product_name
 
+
+@try_except
+def is_this_dep_chief(seat_id):
+    seat_instance = Seat.objects.get(id=seat_id)
+    return seat_instance.is_dep_chief
+
+
+@try_except
+def get_chief_for_seat(seat_id):
+    seat_instance = Seat.objects.get(id=seat_id)
+    chief = {
+        'id': seat_instance.chief_id if seat_instance.chief else 0,
+        'name': seat_instance.chief.seat if seat_instance.chief else ''
+    }
+    return chief

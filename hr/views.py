@@ -8,7 +8,7 @@ from .api.regulations_api import get_regulations_list, post_regulation, post_reg
 from .api.instructions_api import get_instructions_list, post_instruction, post_instruction_file, \
     change_instruction, get_instruction_api, deact_instruction_api, get_dep_seat_list_for_instruction, get_seat_instruction_files
 from .api.org_structure_api import get_org_structure, add_department, add_seat
-from edms.api.getters import get_employees_by_seat
+from edms.api.getters import get_employees_by_seat, is_this_dep_chief, get_chief_for_seat
 from accounts.api.setters import dep_name_change_api
 
 
@@ -135,7 +135,14 @@ def post_seat(request):
 def get_seat(request, pk):
     instruction_files = get_seat_instruction_files(pk)
     employees = get_employees_by_seat(pk)
-    return HttpResponse(json.dumps({'instruction_files': instruction_files, 'employees': employees}))
+    is_dep_chief = is_this_dep_chief(pk)
+    chief = get_chief_for_seat(pk)
+    return HttpResponse(json.dumps({
+        'instruction_files': instruction_files,
+        'employees': employees,
+        'is_dep_chief': is_dep_chief,
+        'chief': chief
+    }))
 
 
 @login_required(login_url='login')
