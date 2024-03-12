@@ -1508,6 +1508,7 @@ def get_client_requirements_list(counterparty_id):
     return cr_list
 
 
+@try_except
 def get_doc_sub_product_name(doc_id):
     doc_sub_product_name = Doc_Sub_Product.objects\
         .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()

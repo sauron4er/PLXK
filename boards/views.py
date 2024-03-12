@@ -16,8 +16,6 @@ import json
 import os
 from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_userprofiles_list
-# from boards.api.auto_vacations import auto_arrange_vacations
-from boards.api.auto_orders import send_orders_reminders
 from edms.models import Employee_Seat, Foyer
 from accounts.models import UserProfile
 from django.contrib.auth.models import User
@@ -101,23 +99,6 @@ def about(request):
     return render(request, 'about.html')
 
 
-def auto_functions():
-    # auto_arrange_vacations()
-    send_orders_reminders()
-    print("auto_functions executed: ", datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-
-
-def start_auto_functions():
-    test = True
-    # global auto_functions_started
-    # auto_functions_started = True
-    #
-    # schedule.every().day.at("07:00").do(auto_functions)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(60)
-
-
 def home(request):
     if request.method == 'GET':
         return render(request, 'home.html', {
@@ -125,14 +106,6 @@ def home(request):
             'birthdays': get_bds(),
             'ads': get_ads(),
             'bg': random.randint(1, 10)})
-    # if request.method == 'POST':
-    #     t1 = threading.Thread(target=start_auto_functions(), args=(), kwargs={}, daemon=True)
-    #     t1.start()
-    #     return render(request, 'home.html', {
-    #         'auto_functions_started': auto_functions_started,
-    #         'birthdays': get_bds(),
-    #         'ads': get_ads(),
-    #         'bg': random.randint(1, 9)})
 
 
 @login_required(login_url='login')

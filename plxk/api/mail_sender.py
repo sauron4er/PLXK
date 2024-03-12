@@ -27,14 +27,15 @@ def send_email(mail, body):
         try:
             server = smtplib.SMTP(host, timeout=2000)
             server.login('it_lxk.com.ua', mail_pass)
+
             server.sendmail(sender, [mail], body)
             # server.sendmail(sender, 'sauron4er@gmail.com', body)
-            # server.sendmail(sender, 'it@lxk.com.ua', body)
+
             server.quit()
         except OSError as err:
             print(err)
             # TODO gmail заблокував цю можливість без використання двохфакторної авт.
-            # TODO треба повертати користувачу помилку про те, що лежить поштовий сервер і нема змогу відправити листи
+            # TODO треба повертати користувачу помилку про те, що лежить поштовий сервер і нема змоги відправити листи
             # Якщо внутрішня пошта it@lxk.com.ua лежить, відправляємо з gmail:
             # sender = "edms.lxk@gmail.com"
             # server = smtplib.SMTP('smtp.gmail.com:587', timeout=2000)
