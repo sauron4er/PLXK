@@ -998,7 +998,7 @@ def edms_mark(request):
                     # if next_phases_marks and 20 in next_phases_marks:
                     #     new_phase(doc_request, this_phase['phase'] + 1, [])
                     # else:
-                    post_auto_approve(doc_request)
+                    # post_auto_approve(doc_request)
                     # zero_phase_id = get_zero_phase_id(doc_request['document_type'])
                     post_mark_demand(doc_request, doc_request['doc_author_id'], this_phase['id'], 9)
                 elif doc_meta_type in [5, 6]:

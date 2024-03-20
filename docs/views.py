@@ -20,7 +20,7 @@ from plxk.api.global_getters import get_users_list, get_emp_seats_list
 from plxk.api.datetime_normalizers import normalize_day, normalize_month, normalize_date
 from .models import Document, Order_doc, Order_doc_type, Article_responsible
 from .forms import NewDocForm, ResponsibleDoneForm, ArticleDoneForm, OrderDoneForm
-from docs.api.orders_mail_sender import arrange_mail, send_reminders
+from docs.api.orders_mail_sender import arrange_mail, send_order_reminders
 from docs.api.orders_api import post_files, post_order, change_order, cancel_another_order, post_order_done, \
     deactivate_files, get_order_code_for_table, deactivate_order, get_order_info
 from docs.api.order_articles_api import post_articles, post_responsible_files
@@ -295,7 +295,7 @@ def get_deadline(article):
 @login_required(login_url='login')
 @try_except
 def reminders(request):
-    send_reminders()
+    send_order_reminders()
     return HttpResponse(200)
 
 

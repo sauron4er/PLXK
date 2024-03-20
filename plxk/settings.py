@@ -190,6 +190,7 @@ SESSION_COOKIE_SAMESITE_FORCE_ALL = True
 # ]
 
 SERVERLESS_CRONJOBS = [
+    # run 'python manage.py serverless_cron_run' to start auto_operations
     (
         '60_minutes',
         'plxk.auto_operations.do_automatic_stuff',
