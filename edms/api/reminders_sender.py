@@ -19,6 +19,7 @@ def send_contract_sign_reminders():
         .filter(document_type__meta_doc_type_id=5)
         .filter(is_active=True)
         .filter(closed=False)
+        .filter(is_template=False)
         .filter(approved__isnull=True)
         .filter(date__range=(january_first_2024, five_days_ago))]
 

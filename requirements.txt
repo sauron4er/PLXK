@@ -1,5 +1,5 @@
 django==3.1.14  # django 3.2 не підтримує mysql < 5.7, у нас зараз 5.5.56
-pillow==10.0.1  # 9.1.0 не ставиться на python 3.11, версії до 8.3.1 включно не підтримують пайтон 3.10
+pillow==9.1.0  # 9.1.0 не ставиться на python 3.11, версії до 8.3.1 включно не підтримують пайтон 3.10
 django-bootstrap4==21.1  # версії 21.2 і вище не підтримують django 3.1
 django-debug-toolbar==3.2.4  # версія 3.3 не підтримує джанго < 3.2
 # django-firebird==1.11 - не працює з django > 1.11
@@ -8,7 +8,7 @@ django-debug-toolbar==3.2.4  # версія 3.3 не підтримує джанго < 3.2
 django-webpack-loader==0.7.0
 django-widget-tweaks==1.4.12  # 1.4.8
 # fdb==2.0.1
-mysqlclient==2.2.1  # 2.2.0 for python 3.11, 2.2.2 - for python 3.12
+mysqlclient==2.1.1  # 2.2.0 for python 3.11, 2.2.2 - for python 3.12
 numpy==1.26.3  # 1.25.2 for python 3.11, 26.3 - for python 3.12
 olefile==0.46
 pyparsing==3.0.8  # 2.4.7
