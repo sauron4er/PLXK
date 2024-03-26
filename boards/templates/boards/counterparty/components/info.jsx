@@ -69,16 +69,14 @@ class CounterpartyInfo extends React.Component {
     return (
       <>
         <TextInput text={counterparty.name} fieldName={'* Назва'} onChange={this.onNameChange} maxLength={100} disabled={!edit_access} />
-        <If condition={type === 'client'}>
-          <hr />
-          <TextInput
-            text={counterparty.country}
-            fieldName={'Країна'}
-            onChange={this.onCountryChange}
-            maxLength={100}
-            disabled={!edit_access}
-          />
-        </If>
+        <hr />
+        <TextInput
+          text={counterparty.country}
+          fieldName={'Країна'}
+          onChange={this.onCountryChange}
+          maxLength={100}
+          disabled={!edit_access}
+        />
         <hr />
         <TextInput
           text={counterparty.legal_address}
