@@ -224,22 +224,6 @@ class Document_Type_Module(models.Model):
                                          on_delete=models.RESTRICT, null=True) # Якщо версія не вказана, модуль відноситься до всіх
 
 
-# пункти [наказу]
-# class Doc_Article(models.Model):
-#     document = models.ForeignKey(Document, related_name='document_articles')
-#     number = models.IntegerField(null=True)
-#     text = models.CharField(max_length=1000)
-#     deadline = models.DateTimeField(null=True, blank=True)
-#     is_active = models.BooleanField(default=True)
-
-
-# відповідальні відділи для пунктів [наказу]
-# class Doc_Article_Dep(models.Model):
-#     article = models.ForeignKey(Doc_Article, related_name='article_deps')
-#     department = models.ForeignKey(accounts.Department, related_name='articles_to_response')
-#     is_active = models.BooleanField(default=True)
-
-
 # Список отримувачів на ознайомлення.
 class Doc_Acquaint(models.Model):
     document = models.ForeignKey(Document, related_name='acquaint_list', on_delete=models.RESTRICT)
@@ -552,6 +536,49 @@ class Decree_Article(models.Model):
 class Decree_Article_Responsible(models.Model):
     article = models.ForeignKey(Decree_Article, related_name='responsibles', on_delete=models.RESTRICT)
     responsible = models.ForeignKey(Employee_Seat, related_name='responsible_for_decree_articles', null=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Тестування мішків (три моделі - саме тестування, коментарі і файли)
+class Bag_Test(models.Model):
+    provider = models.ForeignKey(Counterparty, related_name='provider_bag_tests', on_delete=models.RESTRICT)
+    client = models.ForeignKey(Counterparty, related_name='client_bag_tests', on_delete=models.RESTRICT)
+    length = models.CharField(max_length=3)
+    width = models.CharField(max_length=3)
+    depth = models.CharField(max_length=3)
+    density = models.CharField(max_length=3)
+    weight = models.CharField(max_length=3)
+    material = models.CharField(max_length=100)
+    layers = models.CharField(max_length=2)
+    color = models.CharField(max_length=20)
+    deadline = models.DateField()
+
+    # Наступні поля заповнюються лише якщо нема підв'язки до погоджених вимог клієнта
+    samples_available = models.BooleanField(default=True, null=True)
+    bag_name = models.CharField(max_length=100, null=True)
+    weight_kg = models.CharField(max_length=10, null=True)
+    mf_water = models.CharField(max_length=10, null=True)
+    mf_ash = models.CharField(max_length=10, null=True)
+    mf_evaporable = models.CharField(max_length=10, null=True)
+    mf_not_evaporable_carbon = models.CharField(max_length=10, null=True)
+    main_faction = models.CharField(max_length=10, null=True)
+    granulation_lt5 = models.CharField(max_length=10, null=True)
+    granulation_lt10 = models.CharField(max_length=10, null=True)
+    granulation_lt20 = models.CharField(max_length=10, null=True)
+    granulation_lt25 = models.CharField(max_length=10, null=True)
+    granulation_lt40 = models.CharField(max_length=10, null=True)
+    granulation_mt20 = models.CharField(max_length=10, null=True)
+    granulation_mt60 = models.CharField(max_length=10, null=True)
+    granulation_mt80 = models.CharField(max_length=10, null=True)
+
+    # Наступні поля заповнюються при позначці "взято у роботу" і при внесенні результатів
+    test_start = models.DateField(null=True)
+    test_end = models.DateField(null=True)
+    compliance_with_tech_specs = models.BooleanField(default=True, null=True)
+    compliance_with_certificate = models.BooleanField(default=True, null=True)
+
+
     is_active = models.BooleanField(default=True)
 
 # ---------------------------------------------------------------------------------------------------------------------
