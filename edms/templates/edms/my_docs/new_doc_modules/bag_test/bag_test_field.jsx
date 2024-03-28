@@ -10,6 +10,7 @@ function BagTestField(props) {
 
     return (
       <div className='col-md-4'>
+        <div className="">{props.name}</div>
         {/*<div className='css_edms_client_requirement'>*/}
         {/*  <label htmlFor={name}>*/}
         {/*    <small><If condition={!notRequired}>* </If>{label}</small>*/}
