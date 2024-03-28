@@ -109,6 +109,14 @@ const newDocStore = store({
       date_start: '',
       fields: [],
       additional_fields: []
+    },
+    bag_test_fields: {
+      length: '',
+      width: '',
+      depth: '',
+      density: '',
+      weight: '',
+      material: ''
     }
   },
   clean_fields: () => {

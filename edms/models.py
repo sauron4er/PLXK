@@ -542,20 +542,24 @@ class Decree_Article_Responsible(models.Model):
 # ----------------------------------------------------------------------------------------------------------------------
 # Тестування мішків (три моделі - саме тестування, коментарі і файли)
 class Bag_Test(models.Model):
+    document = models.ForeignKey(Document, related_name='bag_test', on_delete=models.RESTRICT)
     provider = models.ForeignKey(Counterparty, related_name='provider_bag_tests', on_delete=models.RESTRICT)
     client = models.ForeignKey(Counterparty, related_name='client_bag_tests', on_delete=models.RESTRICT)
+    test_type = models.CharField(max_length=30)
+    bag_type = models.CharField(max_length=45)
     length = models.CharField(max_length=3)
     width = models.CharField(max_length=3)
     depth = models.CharField(max_length=3)
     density = models.CharField(max_length=3)
     weight = models.CharField(max_length=3)
-    material = models.CharField(max_length=100)
+    material = models.CharField(max_length=400)
     layers = models.CharField(max_length=2)
     color = models.CharField(max_length=20)
     deadline = models.DateField()
+    author_comment = models.CharField(max_length=1000)
 
     # Наступні поля заповнюються лише якщо нема підв'язки до погоджених вимог клієнта
-    samples_available = models.BooleanField(default=True, null=True)
+    samples_are_available = models.BooleanField(default=True, null=True)
     bag_name = models.CharField(max_length=100, null=True)
     weight_kg = models.CharField(max_length=10, null=True)
     mf_water = models.CharField(max_length=10, null=True)
@@ -573,12 +577,31 @@ class Bag_Test(models.Model):
     granulation_mt80 = models.CharField(max_length=10, null=True)
 
     # Наступні поля заповнюються при позначці "взято у роботу" і при внесенні результатів
-    test_start = models.DateField(null=True)
-    test_end = models.DateField(null=True)
-    compliance_with_tech_specs = models.BooleanField(default=True, null=True)
-    compliance_with_certificate = models.BooleanField(default=True, null=True)
-
+    test_start_date = models.DateField(null=True)
+    test_end_date = models.DateField(null=True)
+    test_conclusion_date = models.DateField(null=True)
+    meets_tech_specs = models.BooleanField(default=True, null=True)
+    meets_certificate = models.BooleanField(default=True, null=True)
+    meets_dimensions = models.BooleanField(default=True, null=True)
+    meets_density = models.BooleanField(default=True, null=True)
+    meets_client_requirements = models.BooleanField(default=True, null=True)
+    tech_conditions_are_in_certificate = models.BooleanField(default=True, null=True)
+    test_conclusion = models.BooleanField(default=True, null=True)
 
     is_active = models.BooleanField(default=True)
 
+
+class Bag_Test_Comment(models.Model):
+    bag_test = models.ForeignKey(Bag_Test, related_name='comments', on_delete=models.RESTRICT)
+    field_name = models.CharField(max_length=35)  # Назва відповідного поля у таблиці Bag_Test
+    comment = models.CharField(max_length=1000)
+    is_active = models.BooleanField(default=True)
+
+
+class Bag_Test_File(models.Model):
+    bag_test = models.ForeignKey(Bag_Test, related_name='files', on_delete=models.RESTRICT)
+    field_name = models.CharField(max_length=35)  # Назва відповідного поля у таблиці Bag_Test
+    file = models.FileField(upload_to='edms_files/%Y/%m')
+    name = models.CharField(max_length=100, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 # ---------------------------------------------------------------------------------------------------------------------

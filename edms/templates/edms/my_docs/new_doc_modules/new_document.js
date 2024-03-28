@@ -59,6 +59,7 @@ import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_module
 import NonEditable from 'edms/templates/edms/my_docs/new_doc_modules/non_editable';
 import Integer from 'edms/templates/edms/my_docs/new_doc_modules/integer';
 import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
+import BagTest from "edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test";
 
 class NewDocument extends React.Component {
   state = {
@@ -768,6 +769,9 @@ class NewDocument extends React.Component {
                           }
                         >
                           <ClientRequirementsChoose module_info={module} counterparty={newDocStore.new_document.counterparty} />
+                        </When>
+                        <When condition={module.module === 'bag_test'}>
+                          <BagTest />
                         </When>
                         <Otherwise> </Otherwise>
                       </Choose>
