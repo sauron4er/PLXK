@@ -18,6 +18,9 @@ function BagTest(props) {
       <BagTestField name='density' label='Щільність, кг/м2' length={3} columns={6} />
       <BagTestField name='weight' label='Вага, кг' length={3} columns={6} />
       <BagTestField name='material' label='Матеріал виготовлення' length={400} columns={12} />
+      <BagTestField name='layers' label='Кількість шарів' length={1} columns={4} />
+      <BagTestField name='color' label='Колір' length={20} columns={4} />
+      <BagTestField name='color' label='ФАЙЛ' length={1} columns={4} />
     </div>
   );
 }
