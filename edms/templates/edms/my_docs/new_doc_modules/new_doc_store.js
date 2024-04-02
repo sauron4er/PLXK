@@ -111,12 +111,21 @@ const newDocStore = store({
       additional_fields: []
     },
     bag_test_fields: {
+      name: '',
+      tech_conditions_files: [],
+      sanitary_conclusion_tu_files: [],
+      sanitary_conclusion_product_files: [],
+      quality_certificate_files: [],
+      glue_certificate_files: [],
+      paint_certificate_files: [],
       length: '',
       width: '',
       depth: '',
       density: '',
       weight: '',
-      material: ''
+      material: '',
+      layers: '',
+      color: '',
     }
   },
   clean_fields: () => {
