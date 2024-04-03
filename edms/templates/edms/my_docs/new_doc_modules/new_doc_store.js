@@ -111,21 +111,37 @@ const newDocStore = store({
       additional_fields: []
     },
     bag_test_fields: {
+      test_type: 'Попереднє тестування',
+      provider: 0,
+      provider_name: '',
+      client: 0,
+      client_name: '',
+      bag_type: '',
       name: '',
-      tech_conditions_files: [],
-      sanitary_conclusion_tu_files: [],
-      sanitary_conclusion_product_files: [],
-      quality_certificate_files: [],
-      glue_certificate_files: [],
-      paint_certificate_files: [],
+      tech_conditions_file: [],
+      sanitary_conclusion_tu_file: [],
+      sanitary_conclusion_product_file: [],
+      quality_certificate_file: [],
+      glue_certificate_file: [],
+      paint_certificate_file: [],
       length: '',
       width: '',
       depth: '',
       density: '',
       weight: '',
       material: '',
+      material_certificate_file: [],
       layers: '',
       color: '',
+      sample_design_file: [],
+      deadline: '',
+      samples_are_available: false,
+      client_requirements: 0,
+      client_requirements_name: '',
+      add_manual_CR: false,
+
+
+      author_comment: ''
     }
   },
   clean_fields: () => {
@@ -232,6 +248,38 @@ const newDocStore = store({
         date_start: '',
         fields: [],
         additional_fields: []
+      },
+      bag_test_fields: {
+        test_type: 'Попереднє тестування',
+        provider: 0,
+        provider_name: '',
+        client: 0,
+        client_name: '',
+        bag_type: '',
+        name: '',
+        tech_conditions_file: [],
+        sanitary_conclusion_tu_file: [],
+        sanitary_conclusion_product_file: [],
+        quality_certificate_file: [],
+        glue_certificate_file: [],
+        paint_certificate_file: [],
+        length: '',
+        width: '',
+        depth: '',
+        density: '',
+        weight: '',
+        material: '',
+        material_certificate_file: [],
+        layers: '',
+        color: '',
+        sample_design_file: [],
+        deadline: '',
+        samples_are_available: false,
+        client_requirements: 0,
+        client_requirements_name: '',
+        add_manual_CR: false,
+
+        author_comment: ''
       }
     };
   },
@@ -345,7 +393,7 @@ const newDocStore = store({
   },
   addBlankAdditionalRequirement: () => {
     newDocStore.new_document.client_requirements.additional_requirements.push({id: 0, name: '', requirement: ''});
-  },
+  }
 });
 
 export default newDocStore;

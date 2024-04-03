@@ -556,10 +556,10 @@ class Bag_Test(models.Model):
     layers = models.CharField(max_length=2)
     color = models.CharField(max_length=20)
     deadline = models.DateField()
+    samples_are_available = models.BooleanField(default=True, null=True)
     author_comment = models.CharField(max_length=1000)
 
     # Наступні поля заповнюються лише якщо нема підв'язки до погоджених вимог клієнта
-    samples_are_available = models.BooleanField(default=True, null=True)
     bag_name = models.CharField(max_length=100, null=True)
     weight_kg = models.CharField(max_length=10, null=True)
     mf_water = models.CharField(max_length=10, null=True)

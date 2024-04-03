@@ -18,6 +18,7 @@ from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seat
 urlpatterns = [
     re_path(r'^.+/.+/get_product_types_flat/(?P<direction>\w+)', get_product_types_flat, name='get_product_types'),
     re_path(r'^.+/.+/get_products/(?P<product_type_id>\d+)', get_products_for_product_type, name='get_products_for_product_type'),
+    re_path(r'^.+/.+/get_clients/(?P<product_type>\d+)', get_clients_for_product_type, name='clients'),
     re_path(r'^.+/.+/get_clients$', get_clients_for_product_type, name='clients'),
     re_path(r'^.+/.+/get_counterparties/(?P<cp_type>\w+)', get_counterparties, name='get_counterparties'),
     re_path(r'^.+/.+/get_counterparties', get_counterparties, name='get_counterparties'),

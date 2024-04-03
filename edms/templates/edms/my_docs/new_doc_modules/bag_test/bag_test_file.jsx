@@ -7,13 +7,8 @@ import Files from 'react-files';
 import NewFilesList from "templates/components/files_uploader/new_files_list";
 
 function BagTestFile(props) {
-  // function onChange(e) {
-  //   newDocStore.new_document.bag_test_fields[props.name] = e.target.value;
-  // }
-
   function onChange(new_files) {
     newDocStore.new_document.bag_test_fields[props.name] = new_files;
-    console.log(newDocStore.new_document);
   }
 
   function onError(error, file) {
