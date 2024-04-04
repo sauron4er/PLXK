@@ -56,7 +56,6 @@ function BagTest(props) {
           onChange={onProviderChange}
           disabled={false}
         />
-        <small>Додати країну постачальника з посиланням якщо відсутня</small>
       </ModuleWrap>
 
       <ModuleWrap columns={6}>

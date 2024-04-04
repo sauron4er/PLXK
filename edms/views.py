@@ -1564,3 +1564,12 @@ def get_add_contract_reg_number(request, main_contract_id):
 @try_except
 def get_client_requirements_for_choose(request, counterparty_id):
     return HttpResponse(json.dumps(get_client_requirements_list(counterparty_id)))
+
+
+@login_required(login_url='login')
+@try_except
+def get_cr(request, cr_id):
+    cr_info = {
+        'id': cr_id
+    }
+    return HttpResponse(json.dumps(cr_info))

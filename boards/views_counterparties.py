@@ -77,6 +77,7 @@ def get_provider(request, pk):
     provider = {
         'id': provider_instance.id,
         'name': provider_instance.name,
+        'country': provider_instance.country,
         'legal_address': provider_instance.legal_address or '',
         'actual_address': provider_instance.actual_address or '',
         'edrpou': provider_instance.edrpou or '',
@@ -104,6 +105,7 @@ def post_provider(request):
         provider = get_object_or_404(Counterparty, pk=data['id'])
 
     provider.name = data['name']
+    provider.country = data['country']
     provider.legal_address = data['legal_address']
     provider.actual_address = data['actual_address']
     provider.edrpou = data['edrpou']
@@ -115,11 +117,6 @@ def post_provider(request):
         provider.commentary = data['commentary']
 
     provider.save()
-
-    # if data['id'] == 0:
-    #     send_provider_mail('new', provider)
-    # else:
-    #     send_provider_mail('change', provider)
 
     return HttpResponse(provider.pk)
 
