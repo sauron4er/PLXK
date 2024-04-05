@@ -64,7 +64,7 @@ urlpatterns = [
     re_path(r'^my_docs/get_add_contract_reg_number/(?P<main_contract_id>\d+)', get_add_contract_reg_number, name='get_add_contract_reg_number'),
     re_path(r'^my_docs/get_contract_subjects_select', contract_subjects_select, name='contract_subjects_select'),
     re_path(r'^my_docs/get_client_requirements_for_choose/(?P<counterparty_id>\d+)', get_client_requirements_for_choose, name='get_client_requirements_for_choose'),
-    re_path(r'^my_docs/get_cr/(?P<cr_id>\d+)', get_cr, name='get_cr'),
+    re_path(r'^my_docs/get_cr/(?P<doc_id>\d+)', get_cr, name='get_cr'),
     re_path(r'^my_docs/', edms_my_docs, name='my_docs'),
 
     re_path(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_archive, name='get_archive'),

@@ -13,8 +13,7 @@ function ModuleWrap(props) {
 }
 
 ModuleWrap.defaultProps = {
-  columns: 12,
-  module: ''
+  columns: 12
 };
 
 export default ModuleWrap;

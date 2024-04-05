@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
+import ModuleWrap from 'edms/templates/edms/my_docs/new_doc_modules/module_wrap';
 
 function BagTestField(props) {
   function onChange(e) {
@@ -9,29 +10,19 @@ function BagTestField(props) {
   }
 
   return (
-    <div className={`col-md-${props.columns}`}>
-      <div className='css_edms_client_requirement'>
-        <small>{props.label}</small>
-        <Choose>
-          <When condition={props.type === 'boolean'}>
-
-          </When>
-          <Otherwise>
-            {/* text or date */}
-            <input
-              className='form-control'
-              type={props.type}
-              name={props.name}
-              id={props.name}
-              value={newDocStore.new_document.bag_test_fields[props.name]}
-              onChange={onChange}
-              maxLength={props.length}
-              readOnly={props.read_only}
-            />
-          </Otherwise>
-        </Choose>
-      </div>
-    </div>
+    <ModuleWrap columns={props.columns}>
+      <small>{props.label}</small>
+      <input
+        className='form-control'
+        type={props.type}
+        name={props.name}
+        id={props.name}
+        value={newDocStore.new_document.bag_test_fields[props.name]}
+        onChange={onChange}
+        maxLength={props.length}
+        readOnly={props.read_only}
+      />
+    </ModuleWrap>
   );
 }
 

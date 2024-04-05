@@ -32,6 +32,8 @@ from .api.tables.free_time_table import get_free_times_table
 from .api.tables.it_tickets_table import get_it_tickets_table
 from .api.move_to_new_employee import move_docs, move_orders, move_approvals
 from .api.archives import get_archive_docs, get_work_archive_docs
+from .api.modules_getter import get_client_requirements_fields
+
 
 # При True у списках відображаться документи, які знаходяться в режимі тестування.
 from django.conf import settings
@@ -1568,8 +1570,5 @@ def get_client_requirements_for_choose(request, counterparty_id):
 
 @login_required(login_url='login')
 @try_except
-def get_cr(request, cr_id):
-    cr_info = {
-        'id': cr_id
-    }
-    return HttpResponse(json.dumps(cr_info))
+def get_cr(request, doc_id):
+    return HttpResponse(json.dumps(get_client_requirements_fields(doc_id)))

@@ -140,6 +140,21 @@ const newDocStore = store({
       client_requirements_name: '',
       add_manual_CR: false,
 
+      cr_bag_name: '',
+      cr_weight_kg: '',
+      cr_mf_water: '',
+      cr_mf_ash: '',
+      cr_mf_evaporable: '',
+      cr_mf_not_evaporable_carbon: '',
+      cr_main_faction: '',
+      cr_granulation_lt5: '',
+      cr_granulation_lt10: '',
+      cr_granulation_lt20: '',
+      cr_granulation_lt25: '',
+      cr_granulation_lt40: '',
+      cr_granulation_mt20: '',
+      cr_granulation_mt60: '',
+      cr_granulation_mt80: '',
 
       author_comment: ''
     }
@@ -278,6 +293,22 @@ const newDocStore = store({
         client_requirements: 0,
         client_requirements_name: '',
         add_manual_CR: false,
+
+        cr_bag_name: '',
+        cr_weight_kg: '',
+        cr_mf_water: '',
+        cr_mf_ash: '',
+        cr_mf_evaporable: '',
+        cr_mf_not_evaporable_carbon: '',
+        cr_main_faction: '',
+        cr_granulation_lt5: '',
+        cr_granulation_lt10: '',
+        cr_granulation_lt20: '',
+        cr_granulation_lt25: '',
+        cr_granulation_lt40: '',
+        cr_granulation_mt20: '',
+        cr_granulation_mt60: '',
+        cr_granulation_mt80: '',
 
         author_comment: ''
       }

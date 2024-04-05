@@ -59,7 +59,8 @@ import ClientRequirementsChoose from 'edms/templates/edms/my_docs/new_doc_module
 import NonEditable from 'edms/templates/edms/my_docs/new_doc_modules/non_editable';
 import Integer from 'edms/templates/edms/my_docs/new_doc_modules/integer';
 import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
-import BagTest from "edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test";
+import BagTest from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test';
+import {areBagTestFieldsFilled} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_validation';
 
 class NewDocument extends React.Component {
   state = {
@@ -370,6 +371,11 @@ class NewDocument extends React.Component {
             notify('Необхідно заповнити всі обов’язкові поля Вимог клієнта');
             return false;
           }
+        } else if (module.module === 'bag_test') {
+          if (!areBagTestFieldsFilled()) {
+            notify('Необхідно заповнити всі обов’язкові поля');
+            return false;
+          }
         } else if ([16, 32].includes(module.module_id)) {
           // text, select
           if (!this.isTextFieldFilled(module)) {
@@ -421,6 +427,7 @@ class NewDocument extends React.Component {
         }
       }
     }
+    console.log('all_fields_are_filled!');
     return true;
   };
 
@@ -489,6 +496,8 @@ class NewDocument extends React.Component {
             };
           } else if (module.module === 'client_requirements_choose') {
             doc_modules[module.module] = newDocStore.new_document.choosed_client_requirement;
+          } else if (module.module === 'bag_test') {
+            doc_modules[module.module] = newDocStore.new_document.bag_test_fields;
           } else if (this.state[module.module].length !== 0 && this.state[module.module].id !== 0) {
             doc_modules[module.module] = this.state[module.module];
           }

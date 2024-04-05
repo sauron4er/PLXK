@@ -1,16 +1,14 @@
 'use strict';
-import * as React from 'react';
+import *  as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
 import BagTestField from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_field';
 import BagTestFile from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_file';
 import ModuleWrap from 'edms/templates/edms/my_docs/new_doc_modules/module_wrap';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
-import BagTestClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_client_requirements';
+import BagTestClientRequirements from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_cr/bag_test_client_requirements';
 
 function BagTest(props) {
-  console.log(newDocStore.new_document.bag_test_fields);
-
   function onBagTypeChange(e) {
     newDocStore.new_document.bag_test_fields.bag_type = e.target.value;
   }
@@ -42,10 +40,10 @@ function BagTest(props) {
 
   return (
     <div className='row'>
-      <BagTestField name='test_type' label='Тип тестування' length={1000} columns={12} read_only={true} />
+      <BagTestField name='test_type' label='* Тип тестування' length={1000} columns={12} read_only={true} />
 
       <ModuleWrap columns={6}>
-        <small>Постачальник</small>
+        <small>* Постачальник</small>
         <SelectorWithFilterAndAxios
           listNameForUrl='counterparties/providers'
           selectId='provider'
@@ -59,7 +57,7 @@ function BagTest(props) {
       </ModuleWrap>
 
       <ModuleWrap columns={6}>
-        <small>Клієнт</small>
+        <small>* Клієнт</small>
         <SelectorWithFilterAndAxios
           listNameForUrl='clients/3'
           selectId='client'
@@ -75,7 +73,7 @@ function BagTest(props) {
       <ModuleWrap>
         <div className='form-group mb-0'>
           <label htmlFor='bag_types' className='full_width'>
-            <small>Тип макету</small>
+            <small>* Тип макету</small>
             <select name='bag_types' id='bag_types' className='form-control' onChange={onBagTypeChange}>
               <option value=''></option>
               <option value='paper_bag'>Паперовий мішок для деревного вугілля</option>
@@ -90,50 +88,50 @@ function BagTest(props) {
         </div>
       </ModuleWrap>
 
-      <BagTestField name='name' label='Назва макета, см.' length={100} columns={12} />
+      <BagTestField name='name' label='* Назва макета, см.' length={100} columns={12} />
       <BagTestFile
         name='tech_conditions_file'
-        label='Технічні умови до взірця ТУ У, ДСТУ *'
+        label='* Технічні умови до взірця ТУ У, ДСТУ'
         files={newDocStore.new_document.bag_test_fields.tech_conditions_file}
         columns={4}
       />
       <BagTestFile
         name='quality_certificate_file'
-        label='Сертифікат якості чи гарантійний лист *'
+        label='* Сертифікат якості чи гарантійний лист'
         files={newDocStore.new_document.bag_test_fields.quality_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='sanitary_conclusion_product_file'
-        label='Санітарний висновок на продукцію *'
+        label='* Санітарний висновок на продукцію'
         files={newDocStore.new_document.bag_test_fields.sanitary_conclusion_product_file}
         columns={4}
       />
       <BagTestFile
         name='glue_certificate_file'
-        label='Сертифікат безпечності на клей *'
+        label='* Сертифікат безпечності на клей'
         files={newDocStore.new_document.bag_test_fields.glue_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='paint_certificate_file'
-        label='Сертифікат безпечності на фарбу *'
+        label='* Сертифікат безпечності на фарбу'
         files={newDocStore.new_document.bag_test_fields.paint_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='sanitary_conclusion_tu_file'
-        label='Санітарний висновок на ТУ *'
+        label='* Санітарний висновок на ТУ'
         files={newDocStore.new_document.bag_test_fields.sanitary_conclusion_tu_file}
         columns={4}
       />
-      <BagTestField name='length' label='Довжина, см.' length={3} columns={2} />
-      <BagTestField name='width' label='Ширина, см.' length={3} columns={2} />
-      <BagTestField name='depth' label='Глибина, см.' length={3} columns={2} />
-      <BagTestField name='density' label='Щільність, кг/м2' length={3} columns={4} />
-      <BagTestField name='weight' label='Вага, кг' length={3} columns={2} />
+      <BagTestField name='length' label='* Довжина, см.' length={3} columns={3} />
+      <BagTestField name='width' label='* Ширина, см.' length={3} columns={3} />
+      <BagTestField name='depth' label='* Глибина, см.' length={3} columns={3} />
+      <BagTestField name='weight' label='* Вага, кг' length={3} columns={3} />
 
-      <BagTestField name='material' label='Матеріал виготовлення' length={400} columns={12} />
+      <BagTestField name='material' label='* Матеріал виготовлення' length={400} columns={9} />
+      <BagTestField name='density' label='* Щільність, кг/м2' length={3} columns={3} />
 
       <BagTestFile
         name='material_certificate_file'
@@ -148,15 +146,15 @@ function BagTest(props) {
         columns={6}
       />
 
-      <BagTestField name='layers' label='Кількість шарів' length={1} columns={3} />
-      <BagTestField name='color' label='Колір' length={20} columns={2} />
-      <BagTestField name='deadline' type='date' label='Бажані терміни проведення тестування' length={1} columns={5} />
+      <BagTestField name='layers' label='* Кількість шарів' length={1} columns={3} />
+      <BagTestField name='color' label='* Колір' length={20} columns={2} />
+      <BagTestField name='deadline' type='date' label='* Бажані терміни проведення тестування' length={1} columns={5} />
 
       <ModuleWrap columns={2}>
         <div className='form-group form-check'>
           <input type='checkbox' className='form-check-input' id='samples_are_available' onChange={onSamplesAreAvailableChange} />
           <label className='form-check-label' htmlFor='samples_are_available'>
-            <small>Наявні 20 взірців</small>
+            <small>* Наявні 20 взірців</small>
           </label>
         </div>
       </ModuleWrap>

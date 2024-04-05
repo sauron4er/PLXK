@@ -27,7 +27,7 @@ function BagTestFile(props) {
         <If condition={props.files.length > 0}>
           <NewFilesList files={props.files} fileRemove={fileRemove} />
         </If>
-        <Files
+        <If condition={props.files.length === 0}><Files
           // ref="new_files"
           className="btn btn-sm btn-outline-secondary"
           // className='files-dropzone-list'
@@ -39,13 +39,8 @@ function BagTestFile(props) {
           minFileSize={0}
           clickable
         >
-          Додати файл(и)
-        </Files>
-        {/*<FilesUpload*/}
-        {/*  onChange={onChange}*/}
-        {/*  files={props.files}*/}
-        {/*  module_info={{field_name: props.label}}*/}
-        {/*/>*/}
+          Додати файл
+        </Files></If>
       </div>
     </div>
   );
