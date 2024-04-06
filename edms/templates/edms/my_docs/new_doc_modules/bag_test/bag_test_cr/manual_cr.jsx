@@ -19,9 +19,9 @@ function ManualCR() {
         <BagTestField name='cr_granulation_lt20' label='Грануляційний склад, фракція, < 20 мм' length={10} columns={3} />
         <BagTestField name='cr_granulation_lt25' label='Грануляційний склад, фракція, < 25 мм' length={10} columns={3} />
         <BagTestField name='cr_granulation_lt40' label='Грануляційний склад, фракція, < 40 мм' length={10} columns={3} />
-        <BagTestField name='cr_granulation_mt_20' label='Грануляційний склад, фракція, > 20 мм' length={10} columns={3} />
-        <BagTestField name='cr_granulation_mt_60' label='Грануляційний склад, фракція, > 60 мм' length={10} columns={3} />
-        <BagTestField name='cr_granulation_mt_80' label='Грануляційний склад, фракція, > 80 мм' length={10} columns={3} />
+        <BagTestField name='cr_granulation_mt20' label='Грануляційний склад, фракція, > 20 мм' length={10} columns={3} />
+        <BagTestField name='cr_granulation_mt60' label='Грануляційний склад, фракція, > 60 мм' length={10} columns={3} />
+        <BagTestField name='cr_granulation_mt80' label='Грануляційний склад, фракція, > 80 мм' length={10} columns={3} />
       </div>
     </>
   );

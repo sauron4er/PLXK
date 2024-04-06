@@ -78,7 +78,9 @@ def post_document(request, doc_modules):
 # Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
 # Повертає список отримувачів документа (якщо використовуються модулі recipient або recipient_chief)
 @try_except
-def post_modules(doc_request, doc_files, new_path, new_doc):
+def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
+    if files is None:
+        files = []
     try:
         doc_modules = json.loads(doc_request['doc_modules'])
         recipients = []
@@ -177,6 +179,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc):
 
         if 'client_requirements_choose' in doc_modules:
             post_document_link(new_doc, doc_modules['client_requirements_choose'], 47)
+
+        if 'bag_test' in doc_modules:
+            post_bag_test(new_doc, doc_modules['bag_test'], files)
 
         # Записуємо main_field
         main_field = get_main_field(new_doc)
@@ -744,7 +749,7 @@ def edms_my_docs(request):
         # В деяких модулях прямо може бути вказано отримувачів,
         # тому post_modules повертає їх в array, який може бути і пустий
         # також post_modules зберігає main_field в документі і повертає оновлений документ
-        module_recipients, new_doc = post_modules(doc_request, doc_files, new_path, new_doc)
+        module_recipients, new_doc = post_modules(doc_request, doc_files, new_path, new_doc, request.FILES)
 
         # Запускаємо в роботу
         if doc_request['status'] in ['doc', 'change']:

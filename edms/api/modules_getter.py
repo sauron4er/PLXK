@@ -4,7 +4,7 @@ from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, \
-    Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements
+    Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements, Bag_Test
 
 
 @try_except
@@ -188,3 +188,48 @@ def get_client_requirements_fields(doc_id):
 
     return cr
 
+
+@try_except
+def get_bag_test_fields(doc_id):
+    bt_instance = Bag_Test.objects.get(document_id=doc_id, is_active=True)
+
+    bt_fields = {
+        'provider': bt_instance.provider.name,
+        'client': bt_instance.client.name,
+        'test_type': bt_instance.test_type,
+        'bag_type': bt_instance.bag_type,
+        'length': bt_instance.length,
+        'width': bt_instance.width,
+        'depth': bt_instance.depth,
+        'density': bt_instance.density,
+        'weight': bt_instance.weight,
+        'material': bt_instance.material,
+        'layers': bt_instance.layers,
+        'color': bt_instance.color,
+        'deadline': date.strftime(bt_instance.deadline, '%Y-%m-%d') if bt_instance.deadline else '',
+        'samples_are_available': bt_instance.samples_are_available,
+        'author_comment': bt_instance.author_comment
+    }
+
+    if bt_instance.client_requirements_doc:
+        pass
+    else:
+        bt_fields.update({
+            'bag_name': bt_instance.bag_name,
+            'weight_kg': bt_instance.weight_kg,
+            'mf_water': bt_instance.mf_water,
+            'mf_ash': bt_instance.mf_ash,
+            'mf_evaporable': bt_instance.mf_evaporable,
+            'mf_not_evaporable_carbon': bt_instance.mf_not_evaporable_carbon,
+            'main_faction': bt_instance.main_faction,
+            'granulation_lt5': bt_instance.granulation_lt5,
+            'granulation_lt10': bt_instance.granulation_lt10,
+            'granulation_lt20': bt_instance.granulation_lt20,
+            'granulation_lt25': bt_instance.granulation_lt25,
+            'granulation_lt40': bt_instance.granulation_lt40,
+            'granulation_mt20': bt_instance.granulation_mt20,
+            'granulation_mt60': bt_instance.granulation_mt60,
+            'granulation_mt80': bt_instance.granulation_mt80
+        })
+
+    return bt_fields

@@ -559,7 +559,8 @@ class Bag_Test(models.Model):
     samples_are_available = models.BooleanField(default=True, null=True)
     author_comment = models.CharField(max_length=1000)
 
-    # Наступні поля заповнюються лише якщо нема підв'язки до погоджених вимог клієнта
+    # З наступних заповнюється або перше поле, або всі інші
+    client_requirements_doc = models.ForeignKey(Document, related_name='bag_test_from_this_cr', on_delete=models.RESTRICT, null=True)
     bag_name = models.CharField(max_length=100, null=True)
     weight_kg = models.CharField(max_length=10, null=True)
     mf_water = models.CharField(max_length=10, null=True)

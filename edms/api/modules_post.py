@@ -9,7 +9,7 @@ from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
     Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
     Doc_Contract_Subject, Doc_Deadline, Doc_Recipient, Decree_Article, Decree_Article_Responsible, \
-    Doc_Integer, Doc_Decimal
+    Doc_Integer, Doc_Decimal, Bag_Test, Bag_Test_File, Bag_Test_Comment
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -366,6 +366,111 @@ def post_document_link(new_doc, document_id, module_id):
     if document_id != 0:
         new_doc_link = Doc_Doc_Link(document=new_doc, document_link_id=document_id, module_id=module_id)
         new_doc_link.save()
+
+
+@try_except
+def post_bag_test(new_doc, fields, files):
+    new_bag_test = Bag_Test(document=new_doc)
+
+    new_bag_test.provider_id = fields['provider']
+    new_bag_test.client_id = fields['client']
+    new_bag_test.test_type = fields['test_type']
+    new_bag_test.bag_type = fields['bag_type']
+    new_bag_test.length = fields['length']
+    new_bag_test.width = fields['width']
+    new_bag_test.depth = fields['depth']
+    new_bag_test.density = fields['density']
+    new_bag_test.weight = fields['weight']
+    new_bag_test.material = fields['material']
+    new_bag_test.layers = fields['layers']
+    new_bag_test.color = fields['color']
+    new_bag_test.deadline = fields['deadline']
+    new_bag_test.samples_are_available = fields['samples_are_available']
+    new_bag_test.author_comment = fields['author_comment']
+
+    if fields['client_requirements']:
+        new_bag_test.client_requirements_doc_id = fields['client_requirements']
+    else:
+        new_bag_test.bag_name = fields['cr_bag_name']
+        new_bag_test.weight_kg = fields['cr_weight_kg']
+        new_bag_test.mf_water = fields['cr_mf_water']
+        new_bag_test.mf_ash = fields['cr_mf_ash']
+        new_bag_test.mf_evaporable = fields['cr_mf_evaporable']
+        new_bag_test.mf_not_evaporable_carbon = fields['cr_mf_not_evaporable_carbon']
+        new_bag_test.main_faction = fields['cr_main_faction']
+        new_bag_test.granulation_lt5 = fields['cr_granulation_lt5']
+        new_bag_test.granulation_lt10 = fields['cr_granulation_lt10']
+        new_bag_test.granulation_lt20 = fields['cr_granulation_lt20']
+        new_bag_test.granulation_lt25 = fields['cr_granulation_lt25']
+        new_bag_test.granulation_lt40 = fields['cr_granulation_lt40']
+        new_bag_test.granulation_mt20 = fields['cr_granulation_mt20']
+        new_bag_test.granulation_mt60 = fields['cr_granulation_mt60']
+        new_bag_test.granulation_mt80 = fields['cr_granulation_mt80']
+        
+    new_bag_test.save()
+
+    post_bag_test_files(new_bag_test.id, files)
+
+
+@try_except
+def post_bag_test_files(bag_test_id, files):
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='tech_conditions_file',
+        file=files.getlist('bt_tech_conditions_file')[0],
+        name=files.getlist('bt_tech_conditions_file')[0].name
+    )
+
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='sanitary_conclusion_tu_file',
+        file=files.getlist('bt_sanitary_conclusion_tu_file')[0],
+        name=files.getlist('bt_sanitary_conclusion_tu_file')[0].name
+    )
+
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='sanitary_conclusion_product_file',
+        file=files.getlist('bt_sanitary_conclusion_product_file')[0],
+        name=files.getlist('bt_sanitary_conclusion_product_file')[0].name
+    )
+
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='quality_certificate_file',
+        file=files.getlist('bt_quality_certificate_file')[0],
+        name=files.getlist('bt_quality_certificate_file')[0].name
+    )
+
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='glue_certificate_file',
+        file=files.getlist('bt_glue_certificate_file')[0],
+        name=files.getlist('bt_glue_certificate_file')[0].name
+    )
+
+    Bag_Test_File.objects.create(
+        bag_test_id=bag_test_id,
+        field_name='paint_certificate_file',
+        file=files.getlist('bt_paint_certificate_file')[0],
+        name=files.getlist('bt_paint_certificate_file')[0].name
+    )
+
+    if 'bt_material_certificate_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='material_certificate_file',
+            file=files.getlist('bt_material_certificate_file')[0],
+            name=files.getlist('bt_material_certificate_file')[0].name
+        )
+
+    if 'bt_sample_design_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='sample_design_file',
+            file=files.getlist('bt_sample_design_file')[0],
+            name=files.getlist('bt_sample_design_file')[0].name
+        )
 
 
 @try_except

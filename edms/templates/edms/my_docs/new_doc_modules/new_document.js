@@ -61,6 +61,7 @@ import Integer from 'edms/templates/edms/my_docs/new_doc_modules/integer';
 import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
 import BagTest from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test';
 import {areBagTestFieldsFilled} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_validation';
+import {addBagTestFiles} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/add_bag_test_files';
 
 class NewDocument extends React.Component {
   state = {
@@ -427,7 +428,6 @@ class NewDocument extends React.Component {
         }
       }
     }
-    console.log('all_fields_are_filled!');
     return true;
   };
 
@@ -519,10 +519,13 @@ class NewDocument extends React.Component {
         formData.append('old_status', status); // Попередній статус - шаблон чи чернетка
 
         if (this.state.files.length > 0) {
+          console.log(this.state.files);
           this.state.files.map((file) => {
             formData.append('file', file);
           });
         }
+
+        formData = addBagTestFiles(formData);
 
         this.setState({
           post_request_sent: true
