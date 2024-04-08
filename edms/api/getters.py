@@ -859,9 +859,6 @@ def get_doc_modules(doc, responsible_id=0):
         elif module['module'] == 'decimal':
             doc_modules.update({'decimal': get_decimal(doc.id)})
 
-        elif module['module'] == 'articles':
-            test = 'test'
-
         elif module['module'] == 'recipient':
             recipient = [{
                 'id': item.recipient.id,
@@ -1098,6 +1095,7 @@ def get_doc_modules(doc, responsible_id=0):
                             'id': counterparty[0]['id'],
                             'name': counterparty[0]['input'],
                         }})
+
         elif module['module'] == 'contract_link':
             contract_link_id = Doc_Contract.objects.values_list('contract_id', flat=True) \
                 .filter(document_id=doc.id) \
@@ -1253,12 +1251,14 @@ def get_main_field(document):  # Знаходимо значення main_field 
                 return doc_counterparty[0]['name']
             else:
                 return doc_counterparty[0]['input']
-    elif main_field_data['module_id'] == 42:  # Версія документу
+    elif main_field_data['module_id'] == 42:  # Версія документа
         main_field = [document.doc_type_version.description if document.doc_type_version else '']
-    elif main_field_data['module__module'] == 'cost_rates':  # Версія документу
-        # main_field = [document.doc_type_version.description if document.doc_type_version else '']
+    elif main_field_data['module__module'] == 'cost_rates':  # Норми витрат
         cost_rates = get_object_or_404(Cost_Rates, document=document)
         main_field = [cost_rates.product.name]
+    elif main_field_data['module__module'] == 'bag_test':  # Тестування упаковки
+        bag_test = get_object_or_404(Bag_Test, document=document)
+        main_field = [bag_test.client.name]
 
     if len(main_field) > 0:
         return main_field[0]

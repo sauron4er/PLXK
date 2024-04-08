@@ -3,8 +3,9 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
-from edms.models import Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject, \
-    Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements, Bag_Test
+from edms.models import (Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject,
+                         Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements,
+                         Bag_Test, Bag_Test_File, Bag_Test_Comment)
 
 
 @try_except
@@ -229,7 +230,15 @@ def get_bag_test_fields(doc_id):
             'granulation_lt40': bt_instance.granulation_lt40,
             'granulation_mt20': bt_instance.granulation_mt20,
             'granulation_mt60': bt_instance.granulation_mt60,
-            'granulation_mt80': bt_instance.granulation_mt80
+            'granulation_mt80': bt_instance.granulation_mt80,
+            'files': [{
+                'id': file.id,
+                'file': file.file.name,
+                'name': file.name,
+                'field_name': file.field_name
+            } for file in Bag_Test_File.objects
+                .filter(bag_test=bt_instance)
+                .filter(is_active=True)]
         })
 
     return bt_fields

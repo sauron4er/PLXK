@@ -519,7 +519,6 @@ class NewDocument extends React.Component {
         formData.append('old_status', status); // Попередній статус - шаблон чи чернетка
 
         if (this.state.files.length > 0) {
-          console.log(this.state.files);
           this.state.files.map((file) => {
             formData.append('file', file);
           });
@@ -585,6 +584,9 @@ class NewDocument extends React.Component {
     }
     if (this.state.type_modules[this.state.main_field_queue].module === 'cost_rates') {
       return newDocStore.new_document.cost_rates.product_name;
+    }
+    if (this.state.type_modules[this.state.main_field_queue].module === 'bag_test') {
+      return newDocStore.new_document.client_name;
     }
     return 0;
   };
