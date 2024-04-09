@@ -144,6 +144,9 @@ def is_access_granted(user, author_emp_seat, doc):
         return True
     if user.userprofile.department_id == 50:  # Працівник юридичного-адміністративного відділу
         return True
+    if doc.employee_seat.seat.department_id == 2 and user.userprofile.id == 1302:
+        # Акаунт ВТК Гість має доступ до всіх створених працівниками ВТК документів
+        return True
 
     # Є дозвіл на перегляд усіх документів цього мета-типу
     is_view_granted = User_Doc_Type_View.objects \
