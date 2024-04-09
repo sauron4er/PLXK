@@ -88,7 +88,7 @@ function BagTest(props) {
         </div>
       </ModuleWrap>
 
-      <BagTestField name='name' label='* Назва макета, см.' length={100} columns={12} />
+      <BagTestField name='name' label='* Назва макета' length={100} columns={12} />
       <BagTestFile
         name='tech_conditions_file'
         label='* Технічні умови до взірця ТУ У, ДСТУ'

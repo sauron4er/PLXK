@@ -18,6 +18,7 @@ import EmployeeSeat from "edms/templates/edms/my_docs/doc_info/doc_info_modules/
 import DecreeArticles from "edms/templates/edms/my_docs/doc_info/doc_info_modules/decree_articles/decree_articles";
 import ClientRequirementsChoosed
   from "edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_choosed";
+import BagTest from "edms/templates/edms/my_docs/doc_info/doc_info_modules/bag_test";
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -187,6 +188,9 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'employee_seat'}>
                     <EmployeeSeat fieldName={module.field_name} emp_seat={info.employee_seat} />
+                  </When>
+                  <When condition={module.module === 'bag_test'}>
+                    <BagTest fields={info.bag_test} />
                   </When>
                 </Choose>
               </div>
