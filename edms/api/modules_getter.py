@@ -199,6 +199,7 @@ def get_bag_test_fields(doc_id):
         'client': bt_instance.client.name,
         'test_type': bt_instance.test_type,
         'bag_type': bt_instance.bag_type,
+        'name': bt_instance.name,
         'length': bt_instance.length,
         'width': bt_instance.width,
         'depth': bt_instance.depth,
@@ -209,7 +210,15 @@ def get_bag_test_fields(doc_id):
         'color': bt_instance.color,
         'deadline': date.strftime(bt_instance.deadline, '%Y-%m-%d') if bt_instance.deadline else '',
         'samples_are_available': bt_instance.samples_are_available,
-        'author_comment': bt_instance.author_comment
+        'author_comment': bt_instance.author_comment,
+        'files': [{
+            'id': file.id,
+            'file': file.file.name,
+            'name': file.name,
+            'field_name': file.field_name
+        } for file in Bag_Test_File.objects
+            .filter(bag_test=bt_instance)
+            .filter(is_active=True)]
     }
 
     if bt_instance.client_requirements_doc:
@@ -230,15 +239,7 @@ def get_bag_test_fields(doc_id):
             'granulation_lt40': bt_instance.granulation_lt40,
             'granulation_mt20': bt_instance.granulation_mt20,
             'granulation_mt60': bt_instance.granulation_mt60,
-            'granulation_mt80': bt_instance.granulation_mt80,
-            'files': [{
-                'id': file.id,
-                'file': file.file.name,
-                'name': file.name,
-                'field_name': file.field_name
-            } for file in Bag_Test_File.objects
-                .filter(bag_test=bt_instance)
-                .filter(is_active=True)]
+            'granulation_mt80': bt_instance.granulation_mt80
         })
 
     return bt_fields

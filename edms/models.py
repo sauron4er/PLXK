@@ -547,6 +547,7 @@ class Bag_Test(models.Model):
     client = models.ForeignKey(Counterparty, related_name='client_bag_tests', on_delete=models.RESTRICT)
     test_type = models.CharField(max_length=30)
     bag_type = models.CharField(max_length=45)
+    name = models.CharField(max_length=100)
     length = models.CharField(max_length=3)
     width = models.CharField(max_length=3)
     depth = models.CharField(max_length=3)
