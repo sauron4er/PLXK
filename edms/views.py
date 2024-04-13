@@ -24,8 +24,9 @@ from .api.getters import get_meta_doc_types, get_sub_emps, get_chiefs_list, is_a
     get_emp_seat_docs, get_emp_seat_and_doc_type_docs, get_all_subs_docs, get_doc_type_docs, \
     get_phase_info, get_phase_id, is_already_approved, is_mark_demand_exists, get_seats, get_dep_seats_list, \
     get_delegated_docs, is_reg_number_free, get_approvals_for_contract_subject, get_client_requirements_list
-from .api.setters import delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
-    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals, handle_doc_type_version
+from .api.setters import (delete_doc, post_mark_deactivate, deactivate_mark_demand, deactivate_doc_mark_demands, \
+    set_stage, post_mark_delete, save_foyer_ranges, set_doc_text_module, post_new_doc_approvals,
+    handle_doc_type_version, post_bag_test_results)
 from .api.phases_handler import new_phase
 from .api.edms_mail_sender import send_email_supervisor, send_email_lebedev
 from .api.tables.free_time_table import get_free_times_table
@@ -946,6 +947,10 @@ def edms_mark(request):
                     arrange_approve(doc_request, True)
 
                 if doc_request['mark'] == '11':  # Виконано
+                    if doc_request['doc_meta_type_id'] == 16:
+                        # Зберігаємо результати тестування упаковки
+                        post_bag_test_results(doc_request['document'], doc_request['bag_test_results'], request.FILES)
+
                     # Перетворюємо фазу документу на "Виконано"
                     set_stage(doc_request['document'], 'done')
 

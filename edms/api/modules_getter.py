@@ -260,4 +260,24 @@ def get_bag_test_fields(doc_id):
             'cr_granulation_mt80': bt_instance.granulation_mt80
         })
 
+    if bt_instance.test_date:
+        bt_fields.update({
+            'test_date': date.strftime(bt_instance.test_date, '%Y-%m-%d') if bt_instance.test_date else '',
+            'test_report_date': date.strftime(bt_instance.test_report_date, '%Y-%m-%d') if bt_instance.test_date else '',
+            'meets_tech_specs': bt_instance.meets_tech_specs,
+            'meets_certificate': bt_instance.meets_certificate,
+            'meets_dimensions': bt_instance.meets_dimensions,
+            'meets_density': bt_instance.meets_density,
+            'meets_client_requirements': bt_instance.meets_client_requirements,
+            'tech_conditions_are_in_certificate': bt_instance.tech_conditions_are_in_certificate,
+            'sample_is_compliant': bt_instance.sample_is_compliant,
+            'results_comments': [{
+                'id': comment.id,
+                'comment': comment.comment,
+                'field_name': comment.field_name
+            } for comment in Bag_Test_Comment.objects
+                .filter(bag_test=bt_instance)
+                .filter(is_active=True)],
+        })
+
     return bt_fields

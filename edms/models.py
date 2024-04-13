@@ -579,30 +579,29 @@ class Bag_Test(models.Model):
     granulation_mt80 = models.CharField(max_length=10, null=True)
 
     # Наступні поля заповнюються при позначці "взято у роботу" і при внесенні результатів
-    test_start_date = models.DateField(null=True)
-    test_end_date = models.DateField(null=True)
-    test_conclusion_date = models.DateField(null=True)
-    meets_tech_specs = models.BooleanField(default=True, null=True)
-    meets_certificate = models.BooleanField(default=True, null=True)
-    meets_dimensions = models.BooleanField(default=True, null=True)
-    meets_density = models.BooleanField(default=True, null=True)
-    meets_client_requirements = models.BooleanField(default=True, null=True)
-    tech_conditions_are_in_certificate = models.BooleanField(default=True, null=True)
-    test_conclusion = models.BooleanField(default=True, null=True)
+    test_date = models.DateField(null=True)
+    test_report_date = models.DateField(null=True)
+    meets_tech_specs = models.BooleanField(default=False, null=True)
+    meets_certificate = models.BooleanField(default=False, null=True)
+    meets_dimensions = models.BooleanField(default=False, null=True)
+    meets_density = models.BooleanField(default=False, null=True)
+    meets_client_requirements = models.BooleanField(default=False, null=True)
+    tech_conditions_are_in_certificate = models.BooleanField(default=False, null=True)
+    sample_is_compliant = models.BooleanField(default=False, null=True)
 
     is_active = models.BooleanField(default=True)
 
 
 class Bag_Test_Comment(models.Model):
     bag_test = models.ForeignKey(Bag_Test, related_name='comments', on_delete=models.RESTRICT)
-    field_name = models.CharField(max_length=35)  # Назва відповідного поля у таблиці Bag_Test
-    comment = models.CharField(max_length=1000)
+    field_name = models.CharField(max_length=45)  # Назва відповідного поля у таблиці Bag_Test
+    comment = models.CharField(max_length=500)
     is_active = models.BooleanField(default=True)
 
 
 class Bag_Test_File(models.Model):
     bag_test = models.ForeignKey(Bag_Test, related_name='files', on_delete=models.RESTRICT)
-    field_name = models.CharField(max_length=35)  # Назва відповідного поля у таблиці Bag_Test
+    field_name = models.CharField(max_length=45)  # Назва відповідного поля у таблиці Bag_Test
     file = models.FileField(upload_to='edms_files/%Y/%m')
     name = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)

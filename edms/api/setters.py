@@ -6,8 +6,9 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_email_answer,\
     send_email_deleted_from_approvals, send_email_remind
-from edms.models import Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
-    Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work, Document_Type_Version
+from edms.models import (Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
+    Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work, Document_Type_Version,
+    Bag_Test, Bag_Test_Comment, Bag_Test_File)
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from edms.api.vacations import vacation_check
 from edms.api.getters import get_doc_version_from_description_matching
@@ -280,3 +281,51 @@ def handle_doc_type_version(new_doc, doc_request, doc_modules):
         return new_doc
 
     return new_doc
+
+
+@try_except
+def post_bag_test_results(doc_id, results_json, files):
+    results = json.loads(results_json)
+    bag_test_instance = Bag_Test.objects.get(document_id=doc_id)
+    bag_test_instance.test_date = results['test_date']
+    bag_test_instance.meets_tech_specs = results['meets_tech_specs']
+    bag_test_instance.meets_certificate = results['meets_certificate']
+    bag_test_instance.meets_dimensions = results['meets_dimensions']
+    bag_test_instance.meets_density = results['meets_density']
+    bag_test_instance.meets_client_requirements = results['meets_client_requirements']
+    bag_test_instance.tech_conditions_are_in_certificate = results['tech_conditions_are_in_certificate']
+    bag_test_instance.sample_is_compliant = results['sample_is_compliant']
+    bag_test_instance.test_report_date = results['test_report_date']
+
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_tech_specs_comment', results['meets_tech_specs_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_certificate_comment', results['meets_certificate_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_dimensions_comment', results['meets_dimensions_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_density_comment', results['meets_density_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_client_requirements_comment', results['meets_client_requirements_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'meets_client_requirements_comment', results['meets_client_requirements_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'tech_conditions_are_in_certificate_comment', results['tech_conditions_are_in_certificate_comment'])
+    post_bag_test_result_comment(bag_test_instance.id, 'sample_is_compliant_comment', results['sample_is_compliant_comment'])
+
+    post_bag_test_result_files(bag_test_instance.id, 'meets_dimensions_files', files.getlist('meets_dimensions_files'))
+    post_bag_test_result_files(bag_test_instance.id, 'meets_density_files', files.getlist('meets_density_files'))
+    post_bag_test_result_files(bag_test_instance.id, 'tech_conditions_are_in_certificate_files', files.getlist('tech_conditions_are_in_certificate_files'))
+
+    bag_test_instance.save()
+
+
+@try_except
+def post_bag_test_result_comment(bag_test_id, field_name, comment):
+    if comment:
+        bag_test_result_comment = Bag_Test_Comment(bag_test_id=bag_test_id, field_name=field_name, comment=comment)
+        bag_test_result_comment.save()
+
+
+@try_except
+def post_bag_test_result_files(bag_test_id, field_name, files):
+    for file in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name=field_name,
+            file=file,
+            name=file.name
+        )

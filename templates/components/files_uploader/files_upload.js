@@ -24,13 +24,15 @@ class FilesUpload extends React.Component {
   };
 
   render() {
-    const {module_info, files, editable, multiple, field_name_uneditable} = this.props;
+    const {module_info, files, editable, multiple, className} = this.props;
     return (
-      <div className='mt-1'>
+      <div className={className || `mt-1`}>
         <Choose>
           <When condition={editable}>
             <If condition={module_info.required}>{'* '}</If>
-            <If condition={module_info.field_name.length > 0}><span className='mr-2'>{module_info.field_name}:</span></If>
+            <If condition={module_info.field_name.length > 0}>
+              <span className='mr-2'>{module_info.field_name}:</span>
+            </If>
           </When>
           <Otherwise>
             <span className='mr-2'>Файл(и):</span>
@@ -69,6 +71,7 @@ class FilesUpload extends React.Component {
       required: false,
       additional_info: null
     },
+    className: '',
     editable: true
   };
 }

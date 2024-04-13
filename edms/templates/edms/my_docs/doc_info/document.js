@@ -34,6 +34,11 @@ import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
 import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
 import EditClientRequirements from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements';
+import BagTestResults
+  from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/bag_test_results';
+import {
+  addBagTestResultFiles
+} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
 
 class Document extends React.Component {
   state = {
@@ -48,6 +53,7 @@ class Document extends React.Component {
     old_files: [],
     new_cr_list: [],
     new_ar_list: [],
+    bag_test_results: [], // для документу "Тестування упаковки"
     new_path_id: '', // для повернення в компонент Resolutions і посту резолюцій
     deletable: true,
     clicked_button: '', // ід натиснутої кнопки (для модульного вікна коментарю)
@@ -155,6 +161,9 @@ class Document extends React.Component {
     formData.append('decree_articles', JSON.stringify(decreeArticlesStore?.decree_articles));
     formData.append('new_cr_list', JSON.stringify(this.state.new_cr_list));
     formData.append('new_ar_list', JSON.stringify(this.state.new_ar_list));
+    formData.append('bag_test_results', JSON.stringify(this.state.bag_test_results));
+
+    formData = addBagTestResultFiles(formData, this.state.bag_test_results);
 
     axiosPostRequest('mark/', formData)
       .then((response) => {
@@ -209,6 +218,9 @@ class Document extends React.Component {
     } else if ([25, 27].includes(mark_id)) {
       // Вікно делегування чи реєстрації
       this.openModal(mark_id);
+    } else if (mark_id === 11 && this.state.info.meta_type_id === 16) {
+      // Кнопка "Виконано" у документі "Тестування упаковки" відкриває модальне вікно з результатами тестування
+      this.openModal(mark_id);
     } else {
       this.postMark(mark_id);
     }
@@ -242,6 +254,17 @@ class Document extends React.Component {
               onSubmit={this.handleResolutions}
               doc_id={this.props.doc_id}
               new_path_id={this.state.new_path_id}
+            />
+          ),
+          modal_open: true
+        });
+        break;
+      case 11:
+        this.setState({
+          modal: (
+            <BagTestResults
+              onSubmit={(bag_test_results) => this.handleBagTestResults(bag_test_results, mark_id)}
+              onCloseModal={this.onCloseModal}
             />
           ),
           modal_open: true
@@ -390,6 +413,13 @@ class Document extends React.Component {
 
   handleComment = (comment, mark) => {
     this.setState({comment: comment}, () => {
+      this.postMark(mark);
+      this.onCloseModal();
+    });
+  };
+
+  handleBagTestResults = (bag_test_results, mark) => {
+    this.setState({bag_test_results: bag_test_results}, () => {
       this.postMark(mark);
       this.onCloseModal();
     });

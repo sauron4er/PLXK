@@ -1,5 +1,5 @@
 'use strict';
-import *  as React from 'react';
+import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
 import BagTestField from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_field';
@@ -10,7 +10,32 @@ import BagTestClientRequirements from 'edms/templates/edms/my_docs/new_doc_modul
 
 function BagTest(props) {
   function onBagTypeChange(e) {
-    newDocStore.new_document.bag_test_fields.bag_type = e.target.value;
+    switch (e.target.value) {
+      case '':
+        newDocStore.new_document.bag_test_fields.bag_type = '';
+        break;
+      case 'paper_bag':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Паперовий мішок для деревного вугілля';
+        break;
+      case 'briquette_paper_bag':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Паперовий мішок для деревновугільних брикетів';
+        break;
+      case 'big_bag':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Біг-бег';
+        break;
+      case 'q_bag':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Q-бег';
+        break;
+      case 'pallet':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Піддон';
+        break;
+      case 'tray':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Лоток для одноразових грилів';
+        break;
+      case 'stand':
+        newDocStore.new_document.bag_test_fields.bag_type = 'Підставки для одноразових грилів';
+        break;
+    }
   }
 
   function onSamplesAreAvailableChange(e) {

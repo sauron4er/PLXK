@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {view, store} from '@risingstack/react-easy-state';
 import newDocStore from '../new_doc_store';
-import FilesUpload from 'templates/components/files_uploader/files_upload';
 import Files from 'react-files';
 import NewFilesList from "templates/components/files_uploader/new_files_list";
 
