@@ -222,24 +222,42 @@ def get_bag_test_fields(doc_id):
     }
 
     if bt_instance.client_requirements_doc:
-        pass
+        cr_fields = get_client_requirements_fields(bt_instance.client_requirements_doc)
+        bt_fields.update({
+            'client_requirements_id': bt_instance.client_requirements_doc.id,
+            'cr_bag_name': cr_fields['bag_name'],
+            'cr_weight_kg': cr_fields['weight_kg'],
+            'cr_mf_water': cr_fields['mf_water'],
+            'cr_mf_ash': cr_fields['mf_ash'],
+            'cr_mf_evaporable': cr_fields['mf_evaporable'],
+            'cr_mf_not_evaporable_carbon': cr_fields['mf_not_evaporable_carbon'],
+            'cr_main_faction': cr_fields['main_faction'],
+            'cr_granulation_lt5': cr_fields['granulation_lt5'],
+            'cr_granulation_lt10': cr_fields['granulation_lt10'],
+            'cr_granulation_lt20': cr_fields['granulation_lt20'],
+            'cr_granulation_lt25': cr_fields['granulation_lt25'],
+            'cr_granulation_lt40': cr_fields['granulation_lt40'],
+            'cr_granulation_mt20': cr_fields['granulation_mt20'],
+            'cr_granulation_mt60': cr_fields['granulation_mt60'],
+            'cr_granulation_mt80': cr_fields['granulation_mt80']
+        })
     else:
         bt_fields.update({
-            'bag_name': bt_instance.bag_name,
-            'weight_kg': bt_instance.weight_kg,
-            'mf_water': bt_instance.mf_water,
-            'mf_ash': bt_instance.mf_ash,
-            'mf_evaporable': bt_instance.mf_evaporable,
-            'mf_not_evaporable_carbon': bt_instance.mf_not_evaporable_carbon,
-            'main_faction': bt_instance.main_faction,
-            'granulation_lt5': bt_instance.granulation_lt5,
-            'granulation_lt10': bt_instance.granulation_lt10,
-            'granulation_lt20': bt_instance.granulation_lt20,
-            'granulation_lt25': bt_instance.granulation_lt25,
-            'granulation_lt40': bt_instance.granulation_lt40,
-            'granulation_mt20': bt_instance.granulation_mt20,
-            'granulation_mt60': bt_instance.granulation_mt60,
-            'granulation_mt80': bt_instance.granulation_mt80
+            'cr_bag_name': bt_instance.bag_name,
+            'cr_weight_kg': bt_instance.weight_kg,
+            'cr_mf_water': bt_instance.mf_water,
+            'cr_mf_ash': bt_instance.mf_ash,
+            'cr_mf_evaporable': bt_instance.mf_evaporable,
+            'cr_mf_not_evaporable_carbon': bt_instance.mf_not_evaporable_carbon,
+            'cr_main_faction': bt_instance.main_faction,
+            'cr_granulation_lt5': bt_instance.granulation_lt5,
+            'cr_granulation_lt10': bt_instance.granulation_lt10,
+            'cr_granulation_lt20': bt_instance.granulation_lt20,
+            'cr_granulation_lt25': bt_instance.granulation_lt25,
+            'cr_granulation_lt40': bt_instance.granulation_lt40,
+            'cr_granulation_mt20': bt_instance.granulation_mt20,
+            'cr_granulation_mt60': bt_instance.granulation_mt60,
+            'cr_granulation_mt80': bt_instance.granulation_mt80
         })
 
     return bt_fields
