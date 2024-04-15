@@ -295,7 +295,7 @@ def clients(request):
 
 
 @try_except
-def get_clients(request, page):
+def get_clients_list(request, page):
     clients_list = Counterparty.objects.filter(is_provider=False).filter(is_active=True)
     clients_list = filter_query_set(clients_list, json.loads(request.POST['filtering']))
     clients_list = sort_query_set(clients_list, request.POST['sort_name'] or 'name', request.POST['sort_direction'] or 'asc')

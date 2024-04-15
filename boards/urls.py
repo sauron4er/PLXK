@@ -63,7 +63,7 @@ urlpatterns = [
     re_path(r'^providers/get_google_api', views_counterparties.get_google_api, name='get_google_api'),
     re_path(r'^providers/', views_counterparties.providers, name='providers'),
 
-    re_path(r'^clients/get_clients/(?P<page>\d+)/$', views_counterparties.get_clients, name='get_clients'),
+    re_path(r'^clients/get_clients_list/(?P<page>\d+)/$', views_counterparties.get_clients_list, name='get_clients_list'),
     re_path(r'^clients/get_client/(?P<pk>\d+)/$', views_counterparties.get_client, name='get_client'),
     re_path(r'^clients/post_client/', views_counterparties.post_client, name='post_client'),
     re_path(r'^clients/post_client_bag_schemes/', views_counterparties.post_client_bag_schemes, name='post_client_bag_schemes'),

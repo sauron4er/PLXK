@@ -38,7 +38,7 @@ class ClientsTable extends React.Component {
     return (
       <div ref={this.getMainDivRef}>
         <PaginatedTable
-          url={'get_clients'}
+          url={'get_clients_list'}
           columns={columns}
           defaultSorting={[{columnName: 'id', direction: 'desc'}]}
           colWidth={col_width}

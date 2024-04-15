@@ -41,6 +41,7 @@ class PaginatedTable extends React.Component {
 
       axiosPostRequest(url + '/' + page + '/', formData)
         .then((response) => {
+          console.log(response);
           this.setState({
             pagesCount: response.pagesCount,
             rows: response.rows,

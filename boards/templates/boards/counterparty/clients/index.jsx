@@ -19,7 +19,6 @@ class ClientsIndex extends React.Component {
     counterpartyStore.type = 'client';
   }
   
-  
   onRowClick = (clicked_row) => {
     this.setState({
       counterparty_id: clicked_row.id,
@@ -38,7 +37,7 @@ class ClientsIndex extends React.Component {
 
   render() {
     const {view, counterparty_id} = this.state;
-  
+
     return (
       <Choose>
         <When condition={view==='table'}>
