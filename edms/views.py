@@ -947,7 +947,7 @@ def edms_mark(request):
                     arrange_approve(doc_request, True)
 
                 if doc_request['mark'] == '11':  # Виконано
-                    if doc_request['doc_meta_type_id'] == 16:
+                    if doc_request['doc_meta_type_id'] == 17:
                         # Зберігаємо результати тестування упаковки
                         post_bag_test_results(doc_request['document'], doc_request['bag_test_results'], request.FILES)
 

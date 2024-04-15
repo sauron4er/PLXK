@@ -1,28 +1,24 @@
 'use strict';
 import * as React from 'react';
-import {getTextByQueue} from 'templates/components/my_extras';
 import Text from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/text';
 import Files from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/files';
-import BagTestField from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_field';
 
 function BagTest(props) {
-  console.log(props.fields);
 
   function getFileByFieldName(field_name, label) {
-    let file = [];
+    let files = [];
 
     for (let i = 0; i < props.fields.files.length; i++) {
       if (props.fields.files[i].field_name === field_name) {
-        file = [props.fields.files[i]];
-        break;
+        files.push(props.fields.files[i]);
       }
     }
 
     return (
       <Choose>
-        <When condition={file.length}>
-          <div className='css_note_text mt-2'>
-            <Files files={file} fieldName={label} />
+        <When condition={files.length}>
+          <div className='css_note_text mt-2 mb-1'>
+            <Files files={files} fieldName={label} />
           </div>
         </When>
         <Otherwise>
@@ -56,8 +52,6 @@ function BagTest(props) {
 
   return (
     <>
-      <div>ПЕРЕВІРИТИ ФАЙЛИ У РЕЗУЛЬТАТАХ ТЕСТУВАННЯ</div>
-      <div>ВІДПРАВИТИ ДОКУМЕНТ УСІМ НЕОБХІДНИМ НА ОЗНАЙОМЛЕННЯ</div>
       <Text text={props.fields.test_type} text_info={{field_name: 'Тип тестування'}} />
       <Text text={props.fields.provider} text_info={{field_name: 'Постачальник'}} />
       <Text text={props.fields.client} text_info={{field_name: 'Клієнт'}} />
@@ -135,12 +129,12 @@ function BagTest(props) {
           <div className='css_note_text mt-1'>
             {props.fields.meets_dimensions ? 'Відповідає розмірам' : 'Не відповідає розмірам'}
             {getCommentByFieldName('meets_dimensions_comment')}
-            {getFileByFieldName('meets_dimensions_file', '')}
+            {getFileByFieldName('meets_dimensions_files', '')}
           </div>
           <div className='css_note_text mt-1'>
             {props.fields.meets_density ? 'Відповідає щільності' : 'Не відповідає щільності'}
             {getCommentByFieldName('meets_density_comment')}
-            {getFileByFieldName('meets_density_file', '')}
+            {getFileByFieldName('meets_density_files', '')}
           </div>
           <div className='css_note_text mt-1'>
             {props.meets_client_requirements
@@ -153,7 +147,7 @@ function BagTest(props) {
               ? 'Зазначені технічні умови наявні у сертифікаті якості'
               : 'Зазначені технічні умови НЕ наявні у сертифікаті якості'}
             {getCommentByFieldName('tech_conditions_are_in_certificate_comment')}
-            {getFileByFieldName('tech_conditions_are_in_certificate_file', '')}
+            {getFileByFieldName('tech_conditions_are_in_certificate_files', '')}
           </div>
         </div>
       </If>

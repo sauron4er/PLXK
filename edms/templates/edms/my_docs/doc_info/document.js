@@ -34,11 +34,8 @@ import ToInform from './doc_info_modules/modals/to_inform';
 import EditDecreeArticles from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/edit_decree_articles';
 import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/decree_articles/store';
 import EditClientRequirements from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements';
-import BagTestResults
-  from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/bag_test_results';
-import {
-  addBagTestResultFiles
-} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
+import BagTestResults from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/bag_test_results';
+import {addBagTestResultFiles} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
 
 class Document extends React.Component {
   state = {
@@ -53,7 +50,11 @@ class Document extends React.Component {
     old_files: [],
     new_cr_list: [],
     new_ar_list: [],
-    bag_test_results: [], // для документу "Тестування упаковки"
+    bag_test_results: {
+      meets_dimensions_files: [],
+      meets_density_files: [],
+      tech_conditions_are_in_certificate_files: []
+    }, // для документу "Тестування упаковки"
     new_path_id: '', // для повернення в компонент Resolutions і посту резолюцій
     deletable: true,
     clicked_button: '', // ід натиснутої кнопки (для модульного вікна коментарю)
@@ -218,7 +219,7 @@ class Document extends React.Component {
     } else if ([25, 27].includes(mark_id)) {
       // Вікно делегування чи реєстрації
       this.openModal(mark_id);
-    } else if (mark_id === 11 && this.state.info.meta_type_id === 16) {
+    } else if (mark_id === 11 && this.state.info.meta_type_id === 17) {
       // Кнопка "Виконано" у документі "Тестування упаковки" відкриває модальне вікно з результатами тестування
       this.openModal(mark_id);
     } else {

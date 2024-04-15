@@ -7,7 +7,9 @@ class Files extends React.Component {
   
     return (
       <>
-        <div>{fieldName}:</div>
+        <If condition={fieldName}>
+          <div>{fieldName}:</div>
+        </If>
         <For each='file' index='id' of={files}>
           <If condition={!only_first_path || file.first_path}>
             <div key={file.id}>

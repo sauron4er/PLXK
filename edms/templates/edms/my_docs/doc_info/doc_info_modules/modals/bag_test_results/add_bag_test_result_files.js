@@ -1,4 +1,5 @@
 export const addBagTestResultFiles = (formData, bag_test_results) => {
+
   bag_test_results.meets_dimensions_files.map((file) => {
     formData.append('meets_dimensions_files', file);
   });
