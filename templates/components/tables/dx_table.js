@@ -228,7 +228,9 @@ class DxTable extends React.PureComponent {
 
     // status
     if (this.props.coloredStatus && props.column.name === 'status') {
-      const color = ['in progress', 'paused'].includes(props.value) ? 'yellow' : props.value === 'ok' ? 'lightgreen' : 'red';
+      const color = ['in progress', 'paused', 'in work'].includes(props.value) ? 'yellow' :
+        props.value === 'ok' ? 'lightgreen' :
+          props.value === '' ? '' : 'red';
       style = {
         backgroundColor: color,
         color: color

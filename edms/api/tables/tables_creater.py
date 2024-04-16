@@ -2,7 +2,7 @@ from django.conf import settings
 from plxk.api.try_except import try_except
 from django.shortcuts import get_object_or_404
 from plxk.api.datetime_normalizers import normalize_date
-from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline
+from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline, Bag_Test
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 
@@ -40,12 +40,13 @@ def get_column_widths(modules):
         {'columnName': 'type', 'width': 200},
         {'columnName': 'accounting', 'width': 200},
         {'columnName': 'product_type', 'width': 200},
-        {'columnName': 'date_start', 'width': 200},
+        {'columnName': 'date_start', 'width': 100},
         {'columnName': 'client', 'width': 250},
         {'columnName': 'choose_company', 'width': 85},
         {'columnName': 'day', 'width': 160},
         {'columnName': 'deadline', 'width': 130},
-        {'columnName': 'datetime', 'width': 160}]
+        {'columnName': 'datetime', 'width': 160},
+    ]
 
     if any(module['module_id'] == 27 for module in modules):  # packaging_type
         column_widths.append({'columnName': 'packaging_type', 'width': 35})
@@ -74,6 +75,21 @@ def get_column_widths(modules):
             column_widths.append({'columnName': 'sub_product_type', 'width': 160})
         elif module['field'] == 'scope':
             column_widths.append({'columnName': 'scope', 'width': 160})
+        elif module['field'] == 'bag_test':
+            column_widths = [
+                {'columnName': 'id', 'width': 40},
+                {'columnName': 'added_date', 'width': 70},
+                {'columnName': 'test_type', 'width': 100},
+                {'columnName': 'bag_type', 'width': 100},
+                {'columnName': 'provider', 'width': 150},
+                {'columnName': 'provider_country', 'width': 100},
+                {'columnName': 'client', 'width': 150},
+                # {'columnName': 'bag_name', 'width': 100},
+                {'columnName': 'dimensions', 'width': 100},
+                {'columnName': 'weight', 'width': 70},
+                {'columnName': 'status', 'width': 70},
+                {'columnName': 'report_date', 'width': 100}
+            ]
 
     return column_widths
 
@@ -123,6 +139,22 @@ def get_table_header(modules):
             header.append({'name': 'product_type', 'title': 'Тип продукції'})
             header.append({'name': 'date_start', 'title': 'Дата введення в дію'})
             header.append({'name': 'client', 'title': 'Клієнт'})
+        elif module['module'] == 'bag_test':
+            header = [
+                {'name': 'added_date', 'title': 'Дата заявки'},
+                {'name': 'test_type', 'title': 'Тип тесту'},
+                {'name': 'bag_type', 'title': 'Тип упаковки'},
+                {'name': 'provider', 'title': 'Постачальник'},
+                {'name': 'provider_country', 'title': 'Країна'},
+                {'name': 'client', 'title': 'Клієнт'},
+                {'name': 'bag_name', 'title': 'Назва'},
+                {'name': 'dimensions', 'title': 'Розміри'},
+                {'name': 'weight', 'title': 'Вага'},
+                {'name': 'status', 'title': 'Статус'},
+                {'name': 'report_date', 'title': 'Дата звіту'},
+                # is_compliant
+            ]
+            pass
         elif module['module_id'] == 1:
             # Відсортовуємо модуль files
             a = 1
@@ -195,6 +227,20 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
             document.update({'date_start': convert_to_localtime(cost_rates.date_start, 'day')})
             document.update({'client': cost_rates.client.name if cost_rates.client else ''})
 
+    if any(module['module'] == 'bag_test' for module in modules):
+        for document in documents_arranged:
+            bag_test = get_object_or_404(Bag_Test, document_id=document['id'])
+            document.update({'test_type': bag_test.test_type})
+            document.update({'bag_type': bag_test.bag_type})
+            document.update({'provider': bag_test.provider.name})
+            document.update({'provider_country': bag_test.provider.country})
+            document.update({'client': bag_test.client.name})
+            document.update({'bag_name': bag_test.bag_name})
+            document.update({'dimensions': bag_test.length + '*' + bag_test.width + '*' + bag_test.depth})
+            document.update({'weight': bag_test.weight})
+            document.update({'status': get_bag_test_status(bag_test, document['stage'])})
+            document.update({'report_date': date_to_json(bag_test.test_report_date)})
+
     return documents_arranged
 
 
@@ -209,6 +255,26 @@ def get_approved(doc):
             return 'Не актуальний'
         return 'Відмовлено'
     return 'Не актуальний' if not doc.is_active or doc.closed else 'В процесі'
+
+
+@try_except
+def get_bag_test_status(bag_test, doc_stage):
+    # 1. Тестування не було - in_process. 2. Є позначка "взято у роботу". 3. Протестовано - ок. 4. Протестовано - не ок.
+    if bag_test.test_report_date:
+        if bag_test.sample_is_compliant:
+            return 'ok'
+        if not bag_test.sample_is_compliant:
+            return 'not ok'
+    elif doc_stage == 'В роботі':
+        return 'in work'
+    return ''
+    # elif doc.approved is False:
+    #     if doc.path.filter(mark=26).exists():
+    #         return 'Деактив.'
+    #     elif not doc.is_active:
+    #         return 'Не актуальний'
+    #     return 'Відмовлено'
+    # return 'Не актуальний' if not doc.is_active or doc.closed else 'В процесі'
 
 
 @try_except
