@@ -414,47 +414,53 @@ def post_bag_test(new_doc, fields, files):
 
 @try_except
 def post_bag_test_files(bag_test_id, files):
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='tech_conditions_file',
-        file=files.getlist('bt_tech_conditions_file')[0],
-        name=files.getlist('bt_tech_conditions_file')[0].name
-    )
+    if 'bt_tech_conditions_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='tech_conditions_file',
+            file=files.getlist('bt_tech_conditions_file')[0],
+            name=files.getlist('bt_tech_conditions_file')[0].name
+        )
 
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='sanitary_conclusion_tu_file',
-        file=files.getlist('bt_sanitary_conclusion_tu_file')[0],
-        name=files.getlist('bt_sanitary_conclusion_tu_file')[0].name
-    )
+    if 'sanitary_conclusion_tu_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='sanitary_conclusion_tu_file',
+            file=files.getlist('bt_sanitary_conclusion_tu_file')[0],
+            name=files.getlist('bt_sanitary_conclusion_tu_file')[0].name
+        )
 
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='sanitary_conclusion_product_file',
-        file=files.getlist('bt_sanitary_conclusion_product_file')[0],
-        name=files.getlist('bt_sanitary_conclusion_product_file')[0].name
-    )
+    if 'bt_sanitary_conclusion_product_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='sanitary_conclusion_product_file',
+            file=files.getlist('bt_sanitary_conclusion_product_file')[0],
+            name=files.getlist('bt_sanitary_conclusion_product_file')[0].name
+        )
 
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='quality_certificate_file',
-        file=files.getlist('bt_quality_certificate_file')[0],
-        name=files.getlist('bt_quality_certificate_file')[0].name
-    )
+    if 'bt_quality_certificate_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='quality_certificate_file',
+            file=files.getlist('bt_quality_certificate_file')[0],
+            name=files.getlist('bt_quality_certificate_file')[0].name
+        )
 
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='glue_certificate_file',
-        file=files.getlist('bt_glue_certificate_file')[0],
-        name=files.getlist('bt_glue_certificate_file')[0].name
-    )
+    if 'bt_glue_certificate_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='glue_certificate_file',
+            file=files.getlist('bt_glue_certificate_file')[0],
+            name=files.getlist('bt_glue_certificate_file')[0].name
+        )
 
-    Bag_Test_File.objects.create(
-        bag_test_id=bag_test_id,
-        field_name='paint_certificate_file',
-        file=files.getlist('bt_paint_certificate_file')[0],
-        name=files.getlist('bt_paint_certificate_file')[0].name
-    )
+    if 'paint_certificate_file' in files:
+        Bag_Test_File.objects.create(
+            bag_test_id=bag_test_id,
+            field_name='paint_certificate_file',
+            file=files.getlist('bt_paint_certificate_file')[0],
+            name=files.getlist('bt_paint_certificate_file')[0].name
+        )
 
     if 'bt_material_certificate_file' in files:
         Bag_Test_File.objects.create(

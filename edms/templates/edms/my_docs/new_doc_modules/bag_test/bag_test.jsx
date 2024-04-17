@@ -116,37 +116,37 @@ function BagTest(props) {
       <BagTestField name='name' label='* Назва макета' length={100} columns={12} />
       <BagTestFile
         name='tech_conditions_file'
-        label='* Технічні умови до взірця ТУ У, ДСТУ'
+        label='Технічні умови до взірця ТУ У, ДСТУ'
         files={newDocStore.new_document.bag_test_fields.tech_conditions_file}
         columns={4}
       />
       <BagTestFile
         name='quality_certificate_file'
-        label='* Сертифікат якості чи гарантійний лист'
+        label='Сертифікат якості чи гарантійний лист'
         files={newDocStore.new_document.bag_test_fields.quality_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='sanitary_conclusion_product_file'
-        label='* Санітарний висновок на продукцію'
+        label='Санітарний висновок на продукцію'
         files={newDocStore.new_document.bag_test_fields.sanitary_conclusion_product_file}
         columns={4}
       />
       <BagTestFile
         name='glue_certificate_file'
-        label='* Сертифікат безпечності на клей'
+        label='Сертифікат безпечності на клей'
         files={newDocStore.new_document.bag_test_fields.glue_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='paint_certificate_file'
-        label='* Сертифікат безпечності на фарбу'
+        label='Сертифікат безпечності на фарбу'
         files={newDocStore.new_document.bag_test_fields.paint_certificate_file}
         columns={4}
       />
       <BagTestFile
         name='sanitary_conclusion_tu_file'
-        label='* Санітарний висновок на ТУ'
+        label='Санітарний висновок на ТУ'
         files={newDocStore.new_document.bag_test_fields.sanitary_conclusion_tu_file}
         columns={4}
       />

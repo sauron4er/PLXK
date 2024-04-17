@@ -1,20 +1,12 @@
 import newDocStore from 'edms/templates/edms/my_docs/new_doc_modules/new_doc_store';
 
 export const areBagTestFieldsFilled = () => {
-  return true;
-
   const fields = newDocStore.new_document.bag_test_fields;
 
   if (!fields.provider ||
     !fields.client ||
     !fields.bag_type ||
     !fields.name ||
-    !fields.tech_conditions_file ||
-    !fields.sanitary_conclusion_tu_file ||
-    !fields.sanitary_conclusion_product_file ||
-    !fields.quality_certificate_file ||
-    !fields.glue_certificate_file ||
-    !fields.paint_certificate_file ||
     !fields.length ||
     !fields.width ||
     !fields.depth ||
