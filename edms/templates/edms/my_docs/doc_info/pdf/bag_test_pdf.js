@@ -40,7 +40,7 @@ function BagTestPDF(props) {
 
       <div style={hideStyle}>
         <div ref={(el) => (componentRef = el)}>
-          <img src='../../../../../static/img/blank_header.png' alt='Italian Trulli' style={{width: '100%'}} />
+          <img src='../../../../../../static/img/blank_header.png' alt='Italian Trulli' style={{width: '100%'}} />
           <div className='d-flex mt-3'>
             <div className='pl-2 mr-2'>{props.info.bag_test.test_type}</div>
             <div className='col-5 border border-dark rounded pl-2 mr-2'>

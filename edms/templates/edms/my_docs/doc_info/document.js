@@ -36,7 +36,8 @@ import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/dec
 import EditClientRequirements from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements';
 import BagTestResults from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/bag_test_results';
 import {addBagTestResultFiles} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
-import BagTestPDF from 'edms/templates/edms/my_docs/doc_info/bag_test_pdf';
+import BagTestPDF from 'edms/templates/edms/my_docs/doc_info/pdf/bag_test_pdf';
+import DocToPDF from "edms/templates/edms/my_docs/doc_info/pdf/doc_to_pdf";
 
 class Document extends React.Component {
   state = {
@@ -511,7 +512,8 @@ class Document extends React.Component {
                       </div>
                       <div>
                         <If condition={info.meta_type_id === 17}>
-                          <BagTestPDF info={info} />
+                          {/*<BagTestPDF info={info} />*/}
+                          <DocToPDF info={info} />
                         </If>
                         <DocumentPrint info={info} />
                       </div>
