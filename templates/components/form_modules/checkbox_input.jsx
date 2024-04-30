@@ -7,8 +7,8 @@ class CheckboxInput extends React.Component {
   
     return (
       <div>
-        <input type='checkbox' id={fieldName} checked={checked} onChange={onChange} disabled={disabled} />
-        <label className='ml-2 form-check-label' htmlFor={fieldName}>
+        <input type='checkbox' id={`checkbox-${fieldName}`} checked={checked} onChange={onChange} disabled={disabled} />
+        <label className='ml-2 form-check-label' htmlFor={`checkbox-${fieldName}`}>
           {' '}{fieldName}
         </label>
         <If condition={note}>

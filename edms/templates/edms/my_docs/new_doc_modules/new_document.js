@@ -62,6 +62,8 @@ import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
 import BagTest from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test';
 import {areBagTestFieldsFilled} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_validation';
 import {addBagTestFiles} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/add_bag_test_files';
+import Boolean from "edms/templates/edms/my_docs/new_doc_modules/boolean";
+import DepAndSeatChoose from "edms/templates/edms/my_docs/new_doc_modules/dep_and_seat_choose";
 
 class NewDocument extends React.Component {
   state = {
@@ -657,10 +659,10 @@ class NewDocument extends React.Component {
 
               <small>Обов’язкові поля позначені зірочкою</small>
 
-              <div className='modal-body p-0'>
+              <div className='css_module_row modal-body p-2 row'>
                 <For each='module' index='index' of={type_modules}>
                   <If condition={!module.hide && (module.doc_type_version === 0 || module.doc_type_version === doc_type_version)}>
-                    <div key={module.id} className='css_new_doc_module mt-1'>
+                    <div key={module.id} className={`css_new_doc_module mt-1 col-md-${module.columns}`}>
                       <Choose>
                         <When condition={module.module === 'text'}>
                           <Text module_info={module} rows={rows} />
@@ -776,6 +778,12 @@ class NewDocument extends React.Component {
                         </When>
                         <When condition={module.module === 'decimal'}>
                           <Decimal module_info={module} />
+                        </When>
+                        <When condition={module.module === 'boolean'}>
+                          <Boolean module_info={module} />
+                        </When>
+                        <When condition={module.module === 'dep_seat'}>
+                          <DepAndSeatChoose module_info={module} />
                         </When>
                         <When
                           condition={

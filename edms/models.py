@@ -217,11 +217,12 @@ class Document_Type_Module(models.Model):
     is_active = models.BooleanField(default=True)
     is_editable = models.BooleanField(default=False)
     table_view = models.BooleanField(default=False)  # True - показує це поле як колонку у зведеній таблиці
-    additional_info = models.CharField(max_length=200, null=True)  # Додаткова інфа про модуль, яка показується користувачу
+    additional_info = models.CharField(max_length=500, null=True)  # Додаткова інфа про модуль, яка показується користувачу
     hide = models.BooleanField(default=False)  # True ховає модуль з вікна створення нового документа (наприклад модуль stage)
     doc_type_version = models.ForeignKey(Document_Type_Version,
                                          related_name='type_modules',
                                          on_delete=models.RESTRICT, null=True) # Якщо версія не вказана, модуль відноситься до всіх
+    columns = models.CharField(max_length=2, null=True)  # Скільки колонок займає модуль у рядку при відображенні документа
 
 
 # Список отримувачів на ознайомлення.

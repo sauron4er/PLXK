@@ -51,6 +51,8 @@ const newDocStore = store({
     approval_list: [],
     to_work_list: [],
     decree_articles: [],
+    booleans: [],
+    dep_seat: {department: 0, seat: 0},
     client_requirements: {
       bag_name: '',
       weight_kg: '',
@@ -203,6 +205,8 @@ const newDocStore = store({
       approval_list: [],
       to_work_list: [],
       decree_articles: [],
+      booleans: [],
+      dep_seat: {department: 0, seat: 0},
       client_requirements: {
         bag_name: '',
         weight_kg: '',

@@ -378,7 +378,8 @@ def get_doc_type_modules(doc_type):
         'additional_info': type_module.additional_info,
         'hide': type_module.hide,
         'doc_type_version': type_module.doc_type_version_id if type_module.doc_type_version else 0,
-        'defines_doc_version': type_module.defines_doc_version
+        'defines_doc_version': type_module.defines_doc_version,
+        'columns': type_module.columns if type_module.columns else 12
     } for type_module in doc_type_modules_query]
 
     return doc_type_modules
