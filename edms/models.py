@@ -273,10 +273,26 @@ class Doc_Integer(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+# Чекбокс
+class Doc_Boolean(models.Model):
+    document = models.ForeignKey(Document, related_name='booleans', on_delete=models.RESTRICT)
+    boolean = models.BooleanField(default=False)
+    queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
 # Число десяткове з двома цифрами після коми (для курсів валют)
 class Doc_Decimal(models.Model):
     document = models.ForeignKey(Document, related_name='decimals', on_delete=models.RESTRICT)
     decimal = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    queue_in_doc = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+
+
+# Посада
+class Doc_Seat(models.Model):
+    document = models.ForeignKey(Document, related_name='seats', on_delete=models.RESTRICT)
+    seat = models.ForeignKey(Seat, related_name='documents', on_delete=models.RESTRICT)
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
