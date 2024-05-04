@@ -276,7 +276,7 @@ class Doc_Integer(models.Model):
 # Чекбокс
 class Doc_Boolean(models.Model):
     document = models.ForeignKey(Document, related_name='booleans', on_delete=models.RESTRICT)
-    boolean = models.BooleanField(default=False)
+    checked = models.BooleanField(default=False)
     queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 

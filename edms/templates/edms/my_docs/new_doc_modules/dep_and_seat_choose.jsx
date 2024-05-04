@@ -58,7 +58,7 @@ function DepAndSeatChoose(props) {
     });
     newDocStore.new_document.dep_seat = {
       department: state.department,
-      seat: state.seat
+      seat: e.id
     }
   }
 

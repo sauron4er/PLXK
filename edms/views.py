@@ -98,6 +98,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
         if 'decimal' in doc_modules:
             post_decimal(doc_request['document'], doc_modules['decimal'])
 
+        if 'booleans' in doc_modules:
+            post_booleans(doc_request['document'], doc_modules['booleans'])
+
         if 'packaging_type' in doc_modules:
             packaging_type = [{
                 'queue': doc_modules['packaging_type']['queue'],

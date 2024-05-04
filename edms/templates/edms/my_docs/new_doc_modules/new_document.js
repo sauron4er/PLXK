@@ -379,6 +379,11 @@ class NewDocument extends React.Component {
             notify('Необхідно заповнити всі обов’язкові поля');
             return false;
           }
+        } else if (module.module === 'dep_seat') {
+          if (!newDocStore.new_document.dep_seat.seat) {
+            notify('Необхідно обрати посаду');
+            return false;
+          }
         } else if ([16, 32].includes(module.module_id)) {
           // text, select
           if (!this.isTextFieldFilled(module)) {
@@ -442,7 +447,12 @@ class NewDocument extends React.Component {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
         type_modules.map((module) => {
-          if (
+
+          if (!!module.hide || [2, 29, 33, 48].includes(module.module_id)) {
+            // Приховані модулі будуть використовуватися в наступних фазах
+            // Модулі auto_approved, phases, non_editable не створюються у браузері
+            // Модуль acquaint_list не обов'язковий
+          } else if (
             [
               'mockup_type',
               'mockup_product_type',
@@ -462,9 +472,6 @@ class NewDocument extends React.Component {
           } else if ([16, 32].includes(module.module_id)) {
             // text, select
             doc_modules.text = newDocStore.new_document.text;
-          } else if ([2, 29, 33, 48].includes(module.module_id)) {
-            // Модулі auto_approved, phases, non_editable не створюються у браузері
-            // Модуль acquaint_list не обов'язковий
           } else if (module.module_id === 22) {
             // Погоджуючі (треба відправити хоча б пустий список)
             doc_modules.approval_list = this.state.approval_list;
@@ -472,8 +479,12 @@ class NewDocument extends React.Component {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'datetime') {
             doc_modules['datetimes'] = newDocStore.new_document.datetimes;
+          } else if (module.module === 'boolean') {
+            doc_modules['booleans'] = newDocStore.new_document.booleans;
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
+          } else if (module.module === 'dep_seat') {
+            doc_modules['dep_seat'] = newDocStore.new_document.dep_seat.seat;
           } else if (module.module === 'counterparty') {
             doc_modules['counterparty'] = newDocStore.new_document.counterparty;
             doc_modules['counterparty_input'] = newDocStore.new_document.counterparty_input;
