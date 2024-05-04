@@ -75,6 +75,12 @@ export const getTextByQueue = (text_list, queue) => {
   }
 };
 
+export const getBooleanByQueue = (boolean_list, queue) => {
+  for (const i of boolean_list) {
+    if (i && i.queue === queue) return i;
+  }
+};
+
 export const getDayByQueue = (days, queue) => {
   for (const i of days) {
     if (i && i.queue === queue) return i.day;

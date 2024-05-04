@@ -9,7 +9,7 @@ from ..models import File, Document_Path, Doc_Type_Phase_Queue, Doc_Counterparty
     Doc_Sub_Product, Doc_Scope, Doc_Law, Client_Requirements, Client_Requirement_Additional, Doc_Doc_Link, \
     Doc_Foyer_Range, Doc_Employee, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, \
     Doc_Contract_Subject, Doc_Deadline, Doc_Recipient, Decree_Article, Decree_Article_Responsible, \
-    Doc_Integer, Doc_Decimal, Bag_Test, Bag_Test_File, Doc_Boolean
+    Doc_Integer, Doc_Decimal, Bag_Test, Bag_Test_File, Doc_Boolean, Doc_Seat
 from ..forms import NewTextForm, NewRecipientForm, NewAcquaintForm, NewDayForm, NewGateForm, CarryOutItemsForm, \
     FileNewPathForm, NewMockupTypeForm, NewMockupProductTypeForm, NewDocContractForm, Employee_Seat
 from .vacations import vacation_check
@@ -34,11 +34,16 @@ def post_text(doc_request, text_list):
 @try_except
 def post_booleans(doc_id, booleans):
     for boolean in booleans:
-        if 'queue' in booleans.keys():
-            new_boolean = Doc_Boolean(document_id=doc_id)
-            new_boolean.queue_in_doc = boolean['queue']
-            new_boolean.checked = boolean['checked']
-            new_boolean.save()
+        new_boolean = Doc_Boolean(document_id=doc_id)
+        new_boolean.queue_in_doc = boolean['queue']
+        new_boolean.checked = boolean['checked']
+        new_boolean.save()
+
+
+@try_except
+def post_seat(doc_id, seat_id):
+    new_doc_seat = Doc_Seat(document_id=doc_id, seat_id=seat_id)
+    new_doc_seat.save()
 
 
 @try_except

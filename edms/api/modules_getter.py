@@ -5,7 +5,7 @@ from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 from edms.models import (Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject,
                          Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements,
-                         Bag_Test, Bag_Test_File, Bag_Test_Comment)
+                         Bag_Test, Bag_Test_File, Bag_Test_Comment, Doc_Boolean, Doc_Seat, Document_Type_Module)
 
 
 @try_except
@@ -163,6 +163,28 @@ def get_decimal(doc_id):
         return str(decimal)
     except Doc_Decimal.DoesNotExist:
         return ''
+
+
+@try_except
+def get_booleans(doc_id, doc_type_id):
+    booleans = Doc_Boolean.objects.all().filter(document_id=doc_id, is_active=True)
+    booleans_list = [{
+        'id': bl.id,
+        'queue': bl.queue_in_doc,
+        'field_name': Document_Type_Module.objects.get(document_type_id=doc_type_id, queue=bl.queue_in_doc, is_active=True).field_name,
+        'checked': bl.checked
+    } for bl in booleans]
+    return booleans_list
+
+
+@try_except
+def get_seat(doc_id):
+    seat_instance = Doc_Seat.objects.get(document_id=doc_id, is_active=True)
+    seat = {
+        'dep_name': seat_instance.seat.department.name,
+        'seat_name': seat_instance.seat.seat
+    }
+    return seat
 
 
 @try_except

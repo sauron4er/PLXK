@@ -101,6 +101,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
         if 'booleans' in doc_modules:
             post_booleans(doc_request['document'], doc_modules['booleans'])
 
+        if 'dep_seat' in doc_modules:
+            post_seat(doc_request['document'], doc_modules['dep_seat'])
+
         if 'packaging_type' in doc_modules:
             packaging_type = [{
                 'queue': doc_modules['packaging_type']['queue'],

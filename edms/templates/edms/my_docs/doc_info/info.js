@@ -19,6 +19,7 @@ import DecreeArticles from "edms/templates/edms/my_docs/doc_info/doc_info_module
 import ClientRequirementsChoosed
   from "edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_choosed";
 import BagTest from "edms/templates/edms/my_docs/doc_info/doc_info_modules/bag_test";
+import Boolean from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/boolean';
 
 class Info extends React.Component {
   isFoyerRangesEditable = () => {
@@ -87,6 +88,9 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'decimal'}>
                     <Text text={info.decimal} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'boolean'}>
+                    <Boolean {...getBooleanByQueue(info.booleans, index)} />
                   </When>
                   <When condition={module.module === 'non_editable'}>
                     <Text text={module.additional_info} text_info={module} doc_info={info} />

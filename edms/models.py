@@ -293,7 +293,6 @@ class Doc_Decimal(models.Model):
 class Doc_Seat(models.Model):
     document = models.ForeignKey(Document, related_name='seats', on_delete=models.RESTRICT)
     seat = models.ForeignKey(Seat, related_name='documents', on_delete=models.RESTRICT)
-    queue_in_doc = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
 
