@@ -8,7 +8,7 @@ import CarryOut from './doc_info_modules/carry_out';
 import Files from './doc_info_modules/files';
 import ContractInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/contract_info';
 import Stage from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/stage';
-import {getTextByQueue, getDayByQueue, getDatetimeByQueue} from 'templates/components/my_extras';
+import {getTextByQueue, getDayByQueue, getDatetimeByQueue, getBooleanByQueue} from 'templates/components/my_extras';
 import ClientRequirementsInfo from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/client_requirements_info';
 import DocumentLink from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/document_link';
 import FoyerRanges from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/foyer_ranges';
@@ -88,6 +88,9 @@ class Info extends React.Component {
                   </When>
                   <When condition={module.module === 'decimal'}>
                     <Text text={info.decimal} text_info={module} doc_info={info} />
+                  </When>
+                  <When condition={module.module === 'dep_seat'}>
+                    <Text text={info.dep_seat.seat_name} text_info={module} doc_info={info} />
                   </When>
                   <When condition={module.module === 'boolean'}>
                     <Boolean {...getBooleanByQueue(info.booleans, index)} />

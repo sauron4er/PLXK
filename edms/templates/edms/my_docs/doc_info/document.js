@@ -492,7 +492,6 @@ class Document extends React.Component {
       // якщо не вибрано жоден документ
       return <div> </div>;
     }
-    console.log(info.meta_type_id);
 
     return (
       <Choose>
@@ -511,7 +510,7 @@ class Document extends React.Component {
                         <div>Обраний документ:</div>
                       </div>
                       <div>
-                        <If condition={info.meta_type_id === 17}>
+                        <If condition={info.meta_type_id >= 17}>
                           {/*<BagTestPDF info={info} />*/}
                           <DocToPDF info={info} />
                         </If>

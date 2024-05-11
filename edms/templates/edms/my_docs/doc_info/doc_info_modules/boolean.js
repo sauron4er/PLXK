@@ -1,22 +1,16 @@
 'use strict';
 import React from 'react';
+import CheckboxInput from 'templates/components/form_modules/checkbox_input';
 
 function Boolean(props) {
-  console.log(props);
-  return (
-    <>
-      <div>{fieldName}:</div>
-      <div></div>
-    </>
-  );
+  return <CheckboxInput className='mt-1' checked={props.checked} fieldName={props.field_name} />;
 }
 
 Boolean.defaultProps = {
-  fieldName: '---',
-  data: {
-    fieldName: '---',
-    checked: false
-  }
+  id: 0,
+  queue: 0,
+  field_name: '---',
+  checked: false
 };
 
-export default Day;
+export default Boolean;

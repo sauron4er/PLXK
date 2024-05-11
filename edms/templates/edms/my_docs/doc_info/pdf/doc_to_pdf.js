@@ -1,9 +1,9 @@
-'use strict';
 import * as React from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faFilePdf} from '@fortawesome/free-solid-svg-icons';
 import ReactToPrint from 'react-to-print';
-import PDFRow from "edms/templates/edms/my_docs/doc_info/pdf/pdf_row";
+import PDFRow from 'edms/templates/edms/my_docs/doc_info/pdf/pdf_row';
+import PDFCell from "edms/templates/edms/my_docs/doc_info/pdf/pdf_cell";
 
 function DocToPDF(props) {
   let componentRef = null;
@@ -12,9 +12,7 @@ function DocToPDF(props) {
     display: 'none'
   };
 
-  const printWindowStyle = {
-    padding: '10px'
-  };
+  console.log(props.info.type_modules);
 
   return (
     <>
@@ -25,13 +23,19 @@ function DocToPDF(props) {
           </a>
         )}
         content={() => componentRef}
-        pageStyle={printWindowStyle}
+        pageStyle={''}
       />
 
       <div style={hideStyle}>
         <div ref={(el) => (componentRef = el)}>
           <img src='../../../../../../static/img/blank_header.png' alt='Italian Trulli' style={{width: '100%'}} />
-          <PDFRow />
+          {/*<PDFRow>*/}
+          <div className={`row mt-3 ml-1`}>
+            <For each='module' index='index' of={props.info.type_modules}>
+              <PDFCell key={index}>{module.module}</PDFCell>
+            </For>
+          </div>
+          {/*</PDFRow>*/}
         </div>
       </div>
     </>

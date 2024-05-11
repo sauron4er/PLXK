@@ -835,6 +835,7 @@ def get_doc_modules(doc, responsible_id=0):
         'is_editable': type_module.is_editable,
         'queue': type_module.queue,
         'doc_type_version': type_module.doc_type_version_id,
+        'columns': type_module.columns if  type_module.columns else '12',
         'additional_info': type_module.additional_info  # for showing in non-editable module
     } for type_module in Document_Type_Module.objects
         .filter(document_type_id=doc.document_type_id)

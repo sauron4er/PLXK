@@ -3,13 +3,12 @@ import * as React from 'react';
 
 class CheckboxInput extends React.Component {
   render() {
-    const {fieldName, checked, onChange, disabled, note} = this.props;
-  
+    const {fieldName, checked, onChange, disabled, note, className} = this.props;
+
     return (
-      <div>
-        <input type='checkbox' id={`checkbox-${fieldName}`} checked={checked} onChange={onChange} disabled={disabled} />
-        <label className='ml-2 form-check-label' htmlFor={`checkbox-${fieldName}`}>
-          {' '}{fieldName}
+      <div className={className}>
+        <label className={`ml-2 form-check-label ${checked ? '' : 'text-muted'}`} htmlFor={`checkbox-${fieldName}`}>
+          <input type='checkbox' id={`checkbox-${fieldName}`} checked={checked} onChange={onChange} disabled={disabled} /> {fieldName}
         </label>
         <If condition={note}>
           <small> ({note})</small>
@@ -23,7 +22,8 @@ class CheckboxInput extends React.Component {
     fieldName: '-',
     onChange: () => {},
     disabled: false,
-    note: ''
+    note: '',
+    className: ''
   };
 }
 
