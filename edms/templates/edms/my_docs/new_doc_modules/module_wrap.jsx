@@ -5,7 +5,7 @@ function ModuleWrap(props) {
 
   return (
     <div className={`col-md-${props.columns} mb-0`}>
-      <div className='css_edms_client_requirement'>
+      <div className='css_edms_doc_module'>
         {props.children}
       </div>
     </div>

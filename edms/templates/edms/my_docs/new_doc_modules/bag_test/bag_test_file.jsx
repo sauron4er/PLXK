@@ -21,7 +21,7 @@ function BagTestFile(props) {
 
   return (
     <div className={`col-md-${props.columns}`}>
-      <div className="css_edms_client_requirement">
+      <div className="css_edms_doc_module">
         <small>{props.label}</small>
         <If condition={props.files.length > 0}>
           <NewFilesList files={props.files} fileRemove={fileRemove} />

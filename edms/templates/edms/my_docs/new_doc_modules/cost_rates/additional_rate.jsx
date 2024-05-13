@@ -58,7 +58,7 @@ class AdditionalCostRate extends React.Component {
     const acrs_length = newDocStore.new_document.cost_rates.additional_fields.length;
 
     return (
-      <div className='css_edms_client_requirement'>
+      <div className='css_edms_doc_module'>
         <div className='d-flex mb-1'>
           <input
             className='form-control mr-1'

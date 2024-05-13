@@ -14,7 +14,7 @@ class ClientRequirementsItem extends React.Component {
 
     return (
       <div className='col-md-4'>
-        <div className='css_edms_client_requirement'>
+        <div className='css_edms_doc_module'>
           <label htmlFor={name}>
             <small><If condition={!notRequired}>* </If>{label}</small>
           </label>

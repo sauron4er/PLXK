@@ -23,7 +23,7 @@ class CostRatesItem extends React.Component {
     const {name, unit, isRequired} = this.props;
 
     return (
-      <div className='css_edms_client_requirement'>
+      <div className='css_edms_doc_module'>
         <div>
           <small>
             <If condition={isRequired}>* </If>

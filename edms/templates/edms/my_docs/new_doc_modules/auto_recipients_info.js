@@ -15,7 +15,7 @@ class AutoRecipientsInfo extends React.Component {
     return (
       <>
         <If condition={auto_recipients.length > 0 || approval_list.length > 0 || to_work_list.length > 0}>
-          <div className='css_new_doc_module mt-1 mb-3'>
+          <div className='css_new_doc_module mt-1 mb-3 col-12'>
             <small>
               <div>
                 <span className='font-weight-bold'>Зверніть увагу!</span> Новий документ автоматично піде на розгляд до наступних

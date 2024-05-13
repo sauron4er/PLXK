@@ -3,18 +3,20 @@ import * as React from 'react';
 function PDFCell(props) {
   return (
     <>
-      <div className={`p-2 mt-1 col-${props.columns} ${props.className}`}>
-        {props.children}
+      <div className={`border p-2 mb-2 col-${props.columns} ${props.className}`}>
+        <div>{props.label}:</div>
+        <h5>{props.value}</h5>
       </div>
-      <hr/>
+      <hr />
     </>
-
   );
 }
 
 PDFCell.defaultProps = {
   columns: 12,
-  className: ''
+  className: '',
+  label: '',
+  value: ''
 };
 
 export default PDFCell;

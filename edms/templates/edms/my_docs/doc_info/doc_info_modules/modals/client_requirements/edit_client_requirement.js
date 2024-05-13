@@ -24,7 +24,7 @@ function EditClientRequirement(props) {
 
   return (
     <>
-      <div className='css_edms_client_requirement'>
+      <div className='css_edms_doc_module'>
         <TextInput text={props.value} fieldName={props.label} onChange={onChange} maxLength={getMaxLength} disabled={false} />
       </div>
     </>
