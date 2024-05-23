@@ -4,8 +4,8 @@ function PDFCell(props) {
   return (
     <>
       <div className={`border p-2 mb-2 col-${props.columns} ${props.className}`}>
-        <div>{props.label}:</div>
-        <h5>{props.value}</h5>
+        <div style={{ fontSize: '1.1rem' }}>{props.label}:</div>
+        <div style={{ whiteSpace: 'pre-wrap', fontSize: '1.3rem' }}>{props.value}</div>
       </div>
       <hr />
     </>

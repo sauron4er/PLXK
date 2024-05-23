@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from plxk.api.try_except import try_except
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
-from edms.models import (Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject,
+from edms.models import (Document, Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject,
                          Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements,
                          Bag_Test, Bag_Test_File, Bag_Test_Comment, Doc_Boolean, Doc_Seat, Document_Type_Module)
 
@@ -303,3 +303,10 @@ def get_bag_test_fields(doc_id):
         })
 
     return bt_fields
+
+
+@try_except
+def get_info_on_print(doc_id):
+    doc_instance = Document.objects.get(id=doc_id)
+    info_on_print = Document_Type_Module.objects.get(document_type=doc_instance.document_type, module_id=8)
+    return info_on_print.additional_info

@@ -111,7 +111,6 @@ class Doc_Type_Phase_Queue(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-
 class Document(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='type', on_delete=models.RESTRICT)
     title = models.CharField(max_length=100, null=True, blank=True)

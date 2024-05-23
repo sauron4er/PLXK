@@ -12,7 +12,8 @@ from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
-    get_employee_seat, get_decree_articles, get_integer, get_decimal, get_bag_test_fields, get_booleans, get_seat
+    get_employee_seat, get_decree_articles, get_integer, get_decimal, get_bag_test_fields, get_booleans, get_seat, \
+    get_info_on_print
 
 testing = settings.STAS_DEBUG
 
@@ -1201,6 +1202,9 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'bag_test':
             doc_modules.update({'bag_test': get_bag_test_fields(doc.id)})
+
+        elif module['module'] == 'info_on_print':
+            doc_modules.update({'info_on_print': get_info_on_print(doc.id)})
 
         # doc_type_version module підтягуємо для всіх документів
         dtv = {
