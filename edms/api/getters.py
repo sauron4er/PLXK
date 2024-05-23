@@ -848,7 +848,7 @@ def get_doc_modules(doc, responsible_id=0):
 
     # збираємо з використовуваних модулів інфу про документ
     for module in type_modules:
-        if module['module'] in ['text', 'dimensions', 'packaging_type', 'select']:
+        if module['module'] in ['text', 'dimensions', 'packaging_type', 'select', 'text_on_flight']:
             # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
             if 'text_list' not in doc_modules.keys():
                 text_list = [{
