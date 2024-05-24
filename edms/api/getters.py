@@ -1,6 +1,7 @@
+import re
+import json
 from django.conf import settings
 from django.db.models import FilteredRelation, Q
-import json
 from django.core import serializers
 from django.utils.timezone import datetime
 from django.db.models import Exists, OuterRef
@@ -393,7 +394,7 @@ def get_auto_recipients(doc_type_id):
     # else:
     doc_type_phases = Doc_Type_Phase.objects \
         .filter(document_type=doc_type_id) \
-        .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24]) \
+        .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24, 34]) \
         .filter(is_active=True)
 
     if not doc_type_phases:
@@ -1532,3 +1533,16 @@ def get_doc_sub_product_name(doc_id):
         .filter(document_id=doc_id).values_list('sub_product_type__name', flat=True).first()
     return doc_sub_product_name
 
+
+@try_except
+def get_fields_on_flight(doc):
+    doc_type_modules = get_doc_type_modules(doc.document_type)
+    fields_on_flight = []
+    for module in doc_type_modules:
+        if module['module'] == 'field_on_flight':
+            fields_on_flight.append({
+                'queue': module['queue'],
+                'field_name': module['field_name'],
+                'phase_id': re.compile('(\d+)').findall(module['additional_info'])[0],
+            })
+    return fields_on_flight

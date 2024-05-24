@@ -38,6 +38,7 @@ import BagTestResults from 'edms/templates/edms/my_docs/doc_info/doc_info_module
 import {addBagTestResultFiles} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
 import BagTestPDF from 'edms/templates/edms/my_docs/doc_info/pdf/bag_test_pdf';
 import DocToPDF from "edms/templates/edms/my_docs/doc_info/pdf/doc_to_pdf";
+import FieldsOnFlight from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/fields_on_flight";
 
 class Document extends React.Component {
   state = {
@@ -209,17 +210,12 @@ class Document extends React.Component {
       docInfoStore.button_clicked = false;
 
       // Відкриваємо модуль
-    } else if ([10, 15, 18, 21, 22, 28, 31].includes(mark_id)) {
+    } else if ([10, 15, 18, 21, 22, 25, 27, 28, 31, 34].includes(mark_id)) {
       this.openModal(mark_id);
-
-      // Кнопка "Відмовити" відкриває модальне вікно з проханням внести коментар
     } else if ([3, 5].includes(mark_id) && this.state.comment === '') {
       this.openModal(mark_id);
     } else if (mark_id === 17 && this.state.comment !== '') {
       // Віза з коментарем: признак відмови при натисканні візи
-      this.openModal(mark_id);
-    } else if ([25, 27].includes(mark_id)) {
-      // Вікно делегування чи реєстрації
       this.openModal(mark_id);
     } else if (mark_id === 11 && this.state.info.meta_type_id === 17) {
       // Кнопка "Виконано" у документі "Тестування упаковки" відкриває модальне вікно з результатами тестування
@@ -365,6 +361,12 @@ class Document extends React.Component {
       case 31:
         this.setState({
           modal: <ToInform onCloseModal={this.onCloseModal} onSubmit={this.handleToInform} doc_id={this.props.doc_id} />,
+          modal_open: true
+        });
+        break;
+      case 34:
+        this.setState({
+          modal: <FieldsOnFlight onSubmit={this.handleFieldsOnFlight} onCloseModal={this.onCloseModal} />,
           modal_open: true
         });
         break;

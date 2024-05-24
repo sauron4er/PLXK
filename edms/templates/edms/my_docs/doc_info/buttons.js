@@ -121,6 +121,12 @@ class Buttons extends React.Component {
                 Оригінали отримано
               </button>
             </When>
+            <When condition={info.expected_mark === 34}>
+              {/* Додаткові дані (text_on_flight) */}
+              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(34)} disabled={button_clicked}>
+                Додаткові дані
+              </button>
+            </When>
           </Choose>
         </If>
 

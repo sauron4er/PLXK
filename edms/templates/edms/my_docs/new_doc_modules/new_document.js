@@ -838,7 +838,7 @@ class NewDocument extends React.Component {
             </If>
           </div>
           {/*Вспливаюче повідомлення*/}
-          <ToastContainer />
+          {/*<ToastContainer />*/}
         </Modal>
         <Modal
           open={newDocStore.additional_modal_opened}
