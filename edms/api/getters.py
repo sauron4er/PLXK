@@ -1544,5 +1544,9 @@ def get_fields_on_flight(doc):
                 'queue': module['queue'],
                 'field_name': module['field_name'],
                 'phase_id': re.compile('(\d+)').findall(module['additional_info'])[0],
+                'text': Doc_Text.objects
+                    .filter(document=doc)
+                    .filter(queue_in_doc=module['queue'])
+                    .filter(is_active=True).first() or ''
             })
     return fields_on_flight

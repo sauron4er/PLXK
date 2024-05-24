@@ -36,7 +36,6 @@ import decreeArticlesStore from 'edms/templates/edms/my_docs/new_doc_modules/dec
 import EditClientRequirements from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/client_requirements/edit_client_requirements';
 import BagTestResults from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/bag_test_results';
 import {addBagTestResultFiles} from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/bag_test_results/add_bag_test_result_files';
-import BagTestPDF from 'edms/templates/edms/my_docs/doc_info/pdf/bag_test_pdf';
 import DocToPDF from "edms/templates/edms/my_docs/doc_info/pdf/doc_to_pdf";
 import FieldsOnFlight from "edms/templates/edms/my_docs/doc_info/doc_info_modules/modals/fields_on_flight";
 
@@ -118,6 +117,7 @@ class Document extends React.Component {
 
   // відправляємо позначку до бд
   postMark = (mark_id) => {
+    console.log(mark_id);
     const {info, new_files, comment, resolutions, acquaints, approvals} = this.state;
     const {doc_id, removeRow, opened_in_modal} = this.props;
     let all_good = true;
@@ -166,6 +166,9 @@ class Document extends React.Component {
     formData.append('new_cr_list', JSON.stringify(this.state.new_cr_list));
     formData.append('new_ar_list', JSON.stringify(this.state.new_ar_list));
     formData.append('bag_test_results', JSON.stringify(this.state.bag_test_results));
+    formData.append('fields_on_flight', JSON.stringify(docInfoStore.info.fields_on_flight));
+
+    console.log(1);
 
     formData = addBagTestResultFiles(formData, this.state.bag_test_results);
 
@@ -453,6 +456,11 @@ class Document extends React.Component {
 
   handleSimpleModalSubmit = (mark) => {
     this.postMark(mark);
+  };
+
+  handleFieldsOnFlight = () => {
+    this.postMark(34);
+    this.onCloseModal();
   };
 
   onNewFiles = (new_files) => {

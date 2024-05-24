@@ -1331,26 +1331,31 @@ def edms_mark(request):
                     new_mail('new', [{'id': recipient}], doc_request)
 
             # Нагадати про строки
-            elif doc_request['mark'] == '34':
-                remaining_required_mds = Mark_Demand.objects \
-                    .filter(document_id=doc_request['document']) \
-                    .exclude(mark_id=8) \
-                    .filter(is_active=True)
-
-                remaining_required_mds = [{
-                    'id': md.id,
-                    'emp_seat_id': md.recipient.id
-                } for md in remaining_required_mds]
-
-                for md in remaining_required_mds:
-                    recipient = vacation_check(md['emp_seat_id'])
-                    new_mail('remind', [{'id': recipient}], doc_request)
+            # elif doc_request['mark'] == '34':
+            #     remaining_required_mds = Mark_Demand.objects \
+            #         .filter(document_id=doc_request['document']) \
+            #         .exclude(mark_id=8) \
+            #         .filter(is_active=True)
+            #
+            #     remaining_required_mds = [{
+            #         'id': md.id,
+            #         'emp_seat_id': md.recipient.id
+            #     } for md in remaining_required_mds]
+            #
+            #     for md in remaining_required_mds:
+            #         recipient = vacation_check(md['emp_seat_id'])
+            #         new_mail('remind', [{'id': recipient}], doc_request)
 
             # Оригінали отримано
             elif doc_request['mark'] == '33':
                 check_lawyers_received(doc_request['document'])
                 deactivate_doc_mark_demands(doc_request, doc_request['document'], 33)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
+
+            # Додаткові дані "на льоту"
+            elif doc_request['mark'] == '34':
+                # Записуємо дані з field_on_flight.text у модель Doc_Text
+                a=1
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)

@@ -183,7 +183,7 @@ class Docs extends React.Component {
         answer = 'Позначку "Оригінали документів отримано" додано';
         break;
       case 34:
-        answer = 'Нагадування розіслано';
+        answer = 'Додаткові дані записано';
         break;
     }
     this.setState({opened_doc_id: 0});

@@ -4,64 +4,57 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes} from '@fortawesome/free-solid-svg-icons';
 import {view, store} from '@risingstack/react-easy-state';
 import docInfoStore from '../doc_info_store';
+import TextInput from "templates/components/form_modules/text_input";
+import SubmitButton from "templates/components/form_modules/submit_button";
 
-class FieldsOnFlight extends React.Component {
-  state = {
-    comment: ''
-  };
-
-  onChange = (event) => {
-    this.setState({[event.target.name]: event.target.value});
-  };
-
-  onClick = (e) => {
-    e.preventDefault();
-    this.props.onSubmit(this.state.comment);
-  };
-
-  render() {
-  
-    const {onCloseModal} = this.props;
-    const {comment} = this.state;
-    return (
-      <>
-        <div className='modal-header d-flex justify-content-between'>
-          <h5 className='modal-title font-weight-bold'>
-            Введіть текст відповіді
-          </h5>
-          <button className='btn btn-link' onClick={onCloseModal}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-        <div className='modal-body'>
-          <blockquote>
-            <div className='font-italic'>{docInfoStore.comment_to_answer.author}</div>
-            <div>{docInfoStore.comment_to_answer.text}</div>
-          </blockquote>
-          <label htmlFor='comment_modal'>Текст відповіді:</label>
-          <textarea
-            name='comment'
-            className='form-control'
-            rows='3'
-            id='comment_modal'
-            onChange={this.onChange}
-            value={comment}
-          />
-        </div>
-        <div className='modal-footer'>
-          <button className='btn btn-outline-info' onClick={this.onClick}>
-            Відправити
-          </button>
-        </div>
-      </>
-    );
+function FieldsOnFlight(props) {
+  function onChange(e, index) {
+    docInfoStore.info.fields_on_flight[index].text = e.target.value
   }
 
-  static defaultProps = {
-    originalComment: '',
-    onCloseModal: {},
-    onSubmit: {}
-  };
+  function onClick() {
+    props.onSubmit();
+  }
+
+  function areAllFieldsFilled() {
+    for (const field of docInfoStore.info.fields_on_flight) {
+      if (field.text === '') return false;
+    }
+    return true;
+  }
+
+  return (
+    <>
+      <div className='modal-header d-flex justify-content-between'>
+        <h5 className='modal-title font-weight-bold'>Додаткові дані</h5>
+        <button className='btn btn-link' onClick={props.onCloseModal}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+      </div>
+      <div className='modal-body'>
+        <For each='field' of={docInfoStore.info.fields_on_flight} index='index'>
+          <If condition={parseInt(field.phase_id) === docInfoStore.info.phase_id}>
+            <TextInput
+              key={index}
+              text={field.text}
+              fieldName={field.field_name}
+              onChange={e => onChange(e, index)}
+              maxLength={500}
+              disabled={false}
+            />
+          </If>
+        </For>
+      </div>
+      <div className='modal-footer'>
+        <SubmitButton className='btn-info' text='Відправити' onClick={onClick} disabled={!areAllFieldsFilled()} />
+      </div>
+    </>
+  );
 }
+
+FieldsOnFlight.defaultProps = {
+  onCloseModal: {},
+  onSubmit: {}
+};
 
 export default view(FieldsOnFlight);
