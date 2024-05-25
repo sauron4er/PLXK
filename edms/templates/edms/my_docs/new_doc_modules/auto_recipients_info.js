@@ -13,9 +13,9 @@ class AutoRecipientsInfo extends React.Component {
     const {doc_type_version, approval_list, to_work_list} = newDocStore.new_document; //approval_list, to_work_list підтягуємося, щоб обновлялося componentDidUpdate
 
     return (
-      <>
+      <div className='px-1 mt-1 mb-3 col-12'>
         <If condition={auto_recipients.length > 0 || approval_list.length > 0 || to_work_list.length > 0}>
-          <div className='css_new_doc_module mt-1 mb-3 col-12'>
+          <div className='css_new_doc_module'>
             <small>
               <div>
                 <span className='font-weight-bold'>Зверніть увагу!</span> Новий документ автоматично піде на розгляд до наступних
@@ -70,7 +70,7 @@ class AutoRecipientsInfo extends React.Component {
             </small>
           </div>
         </If>
-      </>
+      </div>
     );
   }
 

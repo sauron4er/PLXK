@@ -64,7 +64,7 @@ function BagTest(props) {
   }
 
   return (
-    <div className='row'>
+    <div className='row px-2'>
       <BagTestField name='test_type' label='* Тип тестування' length={1000} columns={12} read_only={true} />
 
       <ModuleWrap columns={6}>

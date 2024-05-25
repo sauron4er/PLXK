@@ -670,144 +670,149 @@ class NewDocument extends React.Component {
 
               <small>Обов’язкові поля позначені зірочкою</small>
 
-              <div className='css_module_row modal-body p-2 row'>
+              <div className='modal-body p-2 row css_module_row'>
                 <For each='module' index='index' of={type_modules}>
                   <If condition={!module.hide && (module.doc_type_version === 0 || module.doc_type_version === doc_type_version)}>
-                    <div key={module.id} className={`css_new_doc_module mt-1 col-md-${module.columns}`}>
-                      <Choose>
-                        <When condition={module.module === 'text'}>
-                          <Text module_info={module} rows={rows} />
-                        </When>
-                        <When condition={module.module === 'day'}>
-                          <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
-                        </When>
-                        <When condition={module.module === 'datetime'}>
-                          <Datetime
-                            module_info={module}
-                            datetime={getDatetimeByQueue(newDocStore.new_document.datetimes, index)}
-                            onChange={this.onChangeDatetime}
-                          />
-                        </When>
-                        <When condition={module.module === 'recipient'}>
-                          <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'recipient_chief'}>
-                          <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'files'}>
-                          <FilesUpload onChange={this.onChange} files={files} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'acquaint_list'}>
-                          <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'approval_list'}>
-                          <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'sign_list'}>
-                          <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'gate'}>
-                          <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'carry_out_items'}>
-                          <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'mockup_type'}>
-                          <MockupType module_info={module} />
-                        </When>
-                        <When condition={module.module === 'mockup_product_type'}>
-                          <MockupProductType module_info={module} />
-                        </When>
-                        <When condition={module.module === 'client'}>
-                          <Client module_info={module} docType={doc.type_id} />
-                        </When>
-                        <When condition={module.module === 'counterparty'}>
-                          <Counterparty module_info={module} />
-                        </When>
-                        <When condition={module.module === 'dimensions'}>
-                          <Text module_info={module} rows={rows} type='dimensions' />
-                        </When>
-                        <When condition={module.module === 'packaging_type'}>
-                          <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'contract_link'}>
-                          <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
-                        </When>
-                        <When condition={module.module === 'choose_company'}>
-                          <ChooseCompany module_info={module} />
-                        </When>
-                        <When condition={module.module === 'select'}>
-                          <CustomSelect module_info={module} />
-                        </When>
-                        <When condition={module.module === 'product_type_sell'}>
-                          <ProductType module_info={module} direction='sell' />
-                        </When>
-                        <When condition={module.module === 'scope'}>
-                          <Scope module_info={module} />
-                        </When>
-                        <When condition={module.module === 'law'}>
-                          <Law module_info={module} scope={newDocStore.new_document.scope} />
-                        </When>
-                        <When condition={module.module === 'client_requirements'}>
-                          <ClientRequirements module_info={module} />
-                        </When>
-                        <When condition={module.module === 'document_link'}>
-                          <DocumentLink moduleInfo={module} documentLink={doc.document_link} mainField={doc.main_field} />
-                        </When>
-                        <When condition={module.module === 'registration'}>
-                          <Registration moduleInfo={module} />
-                        </When>
-                        <When condition={module.module === 'doc_type_version'}>
-                          <DocTypeVersion module_info={module} />
-                        </When>
-                        <When condition={module.module === 'employee'}>
-                          <EmployeesAll module_info={module} />
-                        </When>
-                        <When condition={module.module === 'foyer_ranges'}>
-                          <FoyerRanges module_info={module} />
-                        </When>
-                        <When condition={module.module === 'cost_rates'}>
-                          <CostRates module_info={module} />
-                        </When>
-                        <When condition={module.module === 'deadline'}>
-                          <Deadline module_info={module} />
-                        </When>
-                        <When condition={module.module === 'contract_subject'}>
-                          <ContractSubject module_info={module} />
-                        </When>
-                        <When condition={module.module === 'employee_seat'}>
-                          <EmployeeSeat module_info={module} />
-                        </When>
-                        <When condition={module.module === 'decree_articles'}>
-                          <DecreeArticles module_info={module} />
-                        </When>
-                        <When condition={module.module === 'non_editable'}>
-                          <NonEditable module_info={module} />
-                        </When>
-                        <When condition={module.module === 'integer'}>
-                          <Integer module_info={module} />
-                        </When>
-                        <When condition={module.module === 'decimal'}>
-                          <Decimal module_info={module} />
-                        </When>
-                        <When condition={module.module === 'boolean'}>
-                          <Boolean module_info={module} />
-                        </When>
-                        <When condition={module.module === 'dep_seat'}>
-                          <DepAndSeatChoose module_info={module} />
-                        </When>
-                        <When
-                          condition={
-                            newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'
-                          }
-                        >
-                          <ClientRequirementsChoose module_info={module} counterparty={newDocStore.new_document.counterparty} />
-                        </When>
-                        <When condition={module.module === 'bag_test'}>
-                          <BagTest />
-                        </When>
-                        <Otherwise> </Otherwise>
-                      </Choose>
+                    <div key={module.id} className={`px-1 mt-1 col-md-${module.columns}`}>
+                      <div className={`css_new_doc_module`}>
+                        <Choose>
+                          <When condition={module.module === "text"}>
+                            <Text module_info={module} rows={rows} />
+                          </When>
+                          <When condition={module.module === "day"}>
+                            <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
+                          </When>
+                          <When condition={module.module === "datetime"}>
+                            <Datetime
+                              module_info={module}
+                              datetime={getDatetimeByQueue(newDocStore.new_document.datetimes, index)}
+                              onChange={this.onChangeDatetime}
+                            />
+                          </When>
+                          <When condition={module.module === "recipient"}>
+                            <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
+                          </When>
+                          <When condition={module.module === "recipient_chief"}>
+                            <RecipientChief onChange={this.onChange} recipientChief={recipient_chief}
+                                            module_info={module} />
+                          </When>
+                          <When condition={module.module === "files"}>
+                            <FilesUpload onChange={this.onChange} files={files} module_info={module} />
+                          </When>
+                          <When condition={module.module === "acquaint_list"}>
+                            <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
+                          </When>
+                          <When condition={module.module === "approval_list"}>
+                            <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
+                          </When>
+                          <When condition={module.module === "sign_list"}>
+                            <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
+                          </When>
+                          <When condition={module.module === "gate"}>
+                            <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
+                          </When>
+                          <When condition={module.module === "carry_out_items"}>
+                            <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
+                          </When>
+                          <When condition={module.module === "mockup_type"}>
+                            <MockupType module_info={module} />
+                          </When>
+                          <When condition={module.module === "mockup_product_type"}>
+                            <MockupProductType module_info={module} />
+                          </When>
+                          <When condition={module.module === "client"}>
+                            <Client module_info={module} docType={doc.type_id} />
+                          </When>
+                          <When condition={module.module === "counterparty"}>
+                            <Counterparty module_info={module} />
+                          </When>
+                          <When condition={module.module === "dimensions"}>
+                            <Text module_info={module} rows={rows} type="dimensions" />
+                          </When>
+                          <When condition={module.module === "packaging_type"}>
+                            <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
+                          </When>
+                          <When condition={module.module === "contract_link"}>
+                            <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
+                          </When>
+                          <When condition={module.module === "choose_company"}>
+                            <ChooseCompany module_info={module} />
+                          </When>
+                          <When condition={module.module === "select"}>
+                            <CustomSelect module_info={module} />
+                          </When>
+                          <When condition={module.module === "product_type_sell"}>
+                            <ProductType module_info={module} direction="sell" />
+                          </When>
+                          <When condition={module.module === "scope"}>
+                            <Scope module_info={module} />
+                          </When>
+                          <When condition={module.module === "law"}>
+                            <Law module_info={module} scope={newDocStore.new_document.scope} />
+                          </When>
+                          <When condition={module.module === "client_requirements"}>
+                            <ClientRequirements module_info={module} />
+                          </When>
+                          <When condition={module.module === "document_link"}>
+                            <DocumentLink moduleInfo={module} documentLink={doc.document_link}
+                                          mainField={doc.main_field} />
+                          </When>
+                          <When condition={module.module === "registration"}>
+                            <Registration moduleInfo={module} />
+                          </When>
+                          <When condition={module.module === "doc_type_version"}>
+                            <DocTypeVersion module_info={module} />
+                          </When>
+                          <When condition={module.module === "employee"}>
+                            <EmployeesAll module_info={module} />
+                          </When>
+                          <When condition={module.module === "foyer_ranges"}>
+                            <FoyerRanges module_info={module} />
+                          </When>
+                          <When condition={module.module === "cost_rates"}>
+                            <CostRates module_info={module} />
+                          </When>
+                          <When condition={module.module === "deadline"}>
+                            <Deadline module_info={module} />
+                          </When>
+                          <When condition={module.module === "contract_subject"}>
+                            <ContractSubject module_info={module} />
+                          </When>
+                          <When condition={module.module === "employee_seat"}>
+                            <EmployeeSeat module_info={module} />
+                          </When>
+                          <When condition={module.module === "decree_articles"}>
+                            <DecreeArticles module_info={module} />
+                          </When>
+                          <When condition={module.module === "non_editable"}>
+                            <NonEditable module_info={module} />
+                          </When>
+                          <When condition={module.module === "integer"}>
+                            <Integer module_info={module} />
+                          </When>
+                          <When condition={module.module === "decimal"}>
+                            <Decimal module_info={module} />
+                          </When>
+                          <When condition={module.module === "boolean"}>
+                            <Boolean module_info={module} />
+                          </When>
+                          <When condition={module.module === "dep_seat"}>
+                            <DepAndSeatChoose module_info={module} />
+                          </When>
+                          <When
+                            condition={
+                              newDocStore.new_document.counterparty_type === "client" && module.module === "client_requirements_choose"
+                            }
+                          >
+                            <ClientRequirementsChoose module_info={module}
+                                                      counterparty={newDocStore.new_document.counterparty} />
+                          </When>
+                          <When condition={module.module === "bag_test"}>
+                            <BagTest />
+                          </When>
+                          <Otherwise> </Otherwise>
+                        </Choose>
+                      </div>
                     </div>
                   </If>
                 </For>

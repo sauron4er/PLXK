@@ -32,6 +32,8 @@ class CustomSelect extends React.Component {
           'КФК 82%',
           'Переробка деревини'
         ];
+      case 'sex':
+        return ['Чоловік', 'Жінка', 'Неважливо'];
       default:
         return [];
     }

@@ -20,7 +20,7 @@ function BagTestFile(props) {
   }
 
   return (
-    <div className={`col-md-${props.columns}`}>
+    <div className={`col-md-${props.columns} px-1`}>
       <div className="css_edms_doc_module">
         <small>{props.label}</small>
         <If condition={props.files.length > 0}>
