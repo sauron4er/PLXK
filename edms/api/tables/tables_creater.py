@@ -3,6 +3,7 @@ from plxk.api.try_except import try_except
 from django.shortcuts import get_object_or_404
 from plxk.api.datetime_normalizers import normalize_date
 from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline, Bag_Test
+from edms.api.modules_getter import get_seat
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 
@@ -11,11 +12,11 @@ testing = settings.STAS_DEBUG
 
 @try_except
 # Повертає перші 23 рядки з таблиці
-def create_table_first(doc_type, counterparty):
-    modules_list = get_modules_list(doc_type)
+def create_table_first(meta_doc_type, counterparty):
+    modules_list = get_modules_list(meta_doc_type)
     column_widths = get_column_widths(modules_list)
     table_header = get_table_header(modules_list)
-    table_rows = get_table_rows(doc_type, modules_list, 23, counterparty)
+    table_rows = get_table_rows(meta_doc_type, modules_list, 23, counterparty)
     table = {'column_widths': column_widths, 'header': table_header, 'rows': table_rows}
     return table
 
@@ -90,7 +91,6 @@ def get_column_widths(modules):
                 {'columnName': 'status', 'width': 70},
                 {'columnName': 'report_date', 'width': 100}
             ]
-
     return column_widths
 
 
@@ -208,7 +208,8 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         'added_date': normalize_whole_date(
             Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
         'done_date': get_done_date(doc),
-        'deadline': get_deadline(modules, doc)
+        'deadline': get_deadline(modules, doc),
+        'dep_seat': get_dep_seat(modules, doc.id),
     } for doc in documents]
 
     for document in documents_arranged:
@@ -412,3 +413,10 @@ def get_deadline(modules, doc):
             return normalize_date(deadline_instance.deadline)
         except Doc_Deadline.DoesNotExist:
             return ''
+
+
+@try_except
+def get_dep_seat(modules, doc_id):
+    if any(module['module'] == 'dep_seat' for module in modules):
+        seat = get_seat(doc_id)
+        return seat['dep_name'] + ' – ' + seat['seat_name']
