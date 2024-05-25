@@ -82,7 +82,7 @@ class Info extends React.Component {
                       fieldName={module.field_name}
                     />
                   </When>
-                  <When condition={['text', 'dimensions', 'packaging_type', 'select', 'text_on_flight'].includes(module.module)}>
+                  <When condition={['text', 'dimensions', 'packaging_type', 'select', 'field_on_flight'].includes(module.module)}>
                     <Text text={getTextByQueue(info.text_list, index)} text_info={module} doc_info={info} />
                   </When>
                   <When condition={module.module === 'integer'}>

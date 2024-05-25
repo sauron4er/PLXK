@@ -849,7 +849,7 @@ def get_doc_modules(doc, responsible_id=0):
 
     # збираємо з використовуваних модулів інфу про документ
     for module in type_modules:
-        if module['module'] in ['text', 'dimensions', 'packaging_type', 'select', 'text_on_flight']:
+        if module['module'] in ['text', 'dimensions', 'packaging_type', 'select', 'field_on_flight']:
             # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
             if 'text_list' not in doc_modules.keys():
                 text_list = [{
@@ -1543,10 +1543,6 @@ def get_fields_on_flight(doc):
             fields_on_flight.append({
                 'queue': module['queue'],
                 'field_name': module['field_name'],
-                'phase_id': re.compile('(\d+)').findall(module['additional_info'])[0],
-                'text': Doc_Text.objects
-                    .filter(document=doc)
-                    .filter(queue_in_doc=module['queue'])
-                    .filter(is_active=True).first() or ''
+                'phase_id': re.compile('(\d+)').findall(module['additional_info'])[0]
             })
     return fields_on_flight

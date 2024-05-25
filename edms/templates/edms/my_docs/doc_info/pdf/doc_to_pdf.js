@@ -16,6 +16,8 @@ function DocToPDF(props) {
     switch (module.module) {
       case 'text':
         return getTextByQueue(props.info.text_list, index);
+      case 'field_on_flight':
+        return getTextByQueue(props.info.text_list, index);
       case 'day':
         return getDayByQueue(props.info.days, index);
       case 'dep_seat':

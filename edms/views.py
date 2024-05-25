@@ -12,7 +12,7 @@ from docs.api.orders_save_from_edms_api import post_order_from_edms
 from docs.models import Article_responsible, Contract_File
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
-from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type, Document_Type_Version
+from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type, Document_Type_Version, Doc_Text
 from .forms import DepartmentForm, SeatForm, UserProfileForm, EmployeeSeatForm, NewPathForm, NewAnswerForm
 from .api.vacations import arrange_vacations, add_vacation, deactivate_vacation
 from .api.tables.tables_creater import create_table_first, create_table_all
@@ -1355,7 +1355,18 @@ def edms_mark(request):
             # Додаткові дані "на льоту"
             elif doc_request['mark'] == '34':
                 # Записуємо дані з field_on_flight.text у модель Doc_Text
-                a=1
+                # (наразі щоразу створює новий запис, а не редагує старий)
+                fields_on_flight = json.loads(doc_request['fields_on_flight'])
+
+                for field in fields_on_flight:
+                    if field['phase_id'] == doc_request['phase_id']:
+                        new_doc_text = Doc_Text(document_id=doc_request['document'],
+                                                text=field['text'],
+                                                queue_in_doc=field['queue'])
+                        new_doc_text.save()
+
+                deactivate_doc_mark_demands(doc_request, doc_request['document'], 34)
+                new_phase(doc_request, this_phase['phase'] + 1, [])
 
             if 'new_files' in request.FILES:
                 post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
