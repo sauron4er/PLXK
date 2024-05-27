@@ -14,7 +14,7 @@ from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
     get_employee_seat, get_decree_articles, get_integer, get_decimal, get_bag_test_fields, get_booleans, get_seat, \
-    get_info_on_print
+    get_department, get_info_on_print
 
 testing = settings.STAS_DEBUG
 
@@ -868,6 +868,9 @@ def get_doc_modules(doc, responsible_id=0):
 
         elif module['module'] == 'boolean':
             doc_modules.update({'booleans': get_booleans(doc.id, doc.document_type_id)})
+
+        elif module['module'] == 'department':
+            doc_modules.update({'department': get_department(doc.id)})
 
         elif module['module'] == 'dep_seat':
             doc_modules.update({'dep_seat': get_seat(doc.id)})

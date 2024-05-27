@@ -102,6 +102,9 @@ def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
         if 'booleans' in doc_modules:
             post_booleans(doc_request['document'], doc_modules['booleans'])
 
+        if 'department' in doc_modules:
+            post_department(doc_request['document'], doc_modules['department'])
+
         if 'dep_seat' in doc_modules:
             post_seat(doc_request['document'], doc_modules['dep_seat'])
 

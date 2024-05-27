@@ -5,7 +5,8 @@ from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 from edms.models import (Document, Doc_Foyer_Range, Cost_Rates, Cost_Rates_Rate, Cost_Rates_Additional, Doc_Contract_Subject,
                          Doc_Deadline, Doc_Recipient, Decree_Article, Doc_Integer, Doc_Decimal, Client_Requirements,
-                         Bag_Test, Bag_Test_File, Bag_Test_Comment, Doc_Boolean, Doc_Seat, Document_Type_Module)
+                         Bag_Test, Bag_Test_File, Bag_Test_Comment, Doc_Boolean, Doc_Department, Doc_Seat,
+                         Document_Type_Module)
 
 
 @try_except
@@ -175,6 +176,12 @@ def get_booleans(doc_id, doc_type_id):
         'checked': bl.checked
     } for bl in booleans]
     return booleans_list
+
+
+@try_except
+def get_department(doc_id):
+    department_instance = Doc_Department.objects.get(document_id=doc_id, is_active=True)
+    return department_instance.department.name
 
 
 @try_except
