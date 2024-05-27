@@ -13,7 +13,7 @@ from edms.api.vacations import vacation_check
 from ..models import *
 from docs.models import Contract
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
-    get_employee_seat, get_decree_articles, get_integer, get_decimal, get_bag_test_fields, get_booleans, get_seat, \
+    get_employee_seat, get_decree_articles, get_integers, get_decimal, get_bag_test_fields, get_booleans, get_seat, \
     get_department, get_info_on_print
 
 testing = settings.STAS_DEBUG
@@ -861,7 +861,9 @@ def get_doc_modules(doc, responsible_id=0):
                 })
 
         elif module['module'] == 'integer':
-            doc_modules.update({'integer': get_integer(doc.id)})
+            # Шукаємо список текстових полів тільки для першого текстового модуля, щоб не брати ту ж інфу ще раз
+            if 'integers' not in doc_modules.keys():
+                doc_modules.update({'integers': get_integers(doc.id)})
 
         elif module['module'] == 'decimal':
             doc_modules.update({'decimal': get_decimal(doc.id)})

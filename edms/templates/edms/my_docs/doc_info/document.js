@@ -520,8 +520,8 @@ class Document extends React.Component {
                         <div>Обраний документ:</div>
                       </div>
                       <div>
-                        <If condition={info.meta_type_id >= 17}>
-                          {/*<BagTestPDF info={info} />*/}
+                        <If condition={[17, 18].includes(info.meta_type_id)}>
+                          {/* Поки тільки для картки користувача та тестування упаковки */}
                           <DocToPDF info={info} />
                         </If>
                         <DocumentPrint info={info} />

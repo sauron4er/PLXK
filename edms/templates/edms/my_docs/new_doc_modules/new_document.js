@@ -64,6 +64,7 @@ import {areBagTestFieldsFilled} from 'edms/templates/edms/my_docs/new_doc_module
 import {addBagTestFiles} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/add_bag_test_files';
 import Boolean from "edms/templates/edms/my_docs/new_doc_modules/boolean";
 import DepAndSeatChoose from "edms/templates/edms/my_docs/new_doc_modules/dep_and_seat_choose";
+import Department from "edms/templates/edms/my_docs/new_doc_modules/department";
 
 class NewDocument extends React.Component {
   state = {
@@ -239,8 +240,11 @@ class NewDocument extends React.Component {
           newDocStore.new_document.datetimes = response?.datetimes || [];
           newDocStore.new_document.foyer_ranges = response?.datetimes || [];
           newDocStore.new_document.text = response?.text_list || [];
+          newDocStore.new_document.integers = response?.integers || [];
           newDocStore.new_document.client = response?.client?.id;
           newDocStore.new_document.client_name = response?.client?.name;
+          newDocStore.new_document.department = response?.department?.id;
+          newDocStore.new_document.department_name = response?.department?.name;
           newDocStore.new_document.mockup_type = response?.mockup_type?.id || 0;
           newDocStore.new_document.mockup_type_name = response?.mockup_type?.name || '';
           newDocStore.new_document.mockup_product_type = response?.mockup_product_type?.id;
@@ -287,6 +291,15 @@ class NewDocument extends React.Component {
     for (const i in newDocStore.new_document.text) {
       if (newDocStore.new_document.text.hasOwnProperty(i) && newDocStore.new_document.text[i].queue === module.queue) {
         return !isBlankOrZero(newDocStore.new_document.text[i].text);
+      }
+    }
+    return false;
+  };
+
+  isIntegerFieldFilled = (module) => {
+    for (const i in newDocStore.new_document.integers) {
+      if (newDocStore.new_document.integers.hasOwnProperty(i) && newDocStore.new_document.integers[i].queue === module.queue) {
+        return !isBlankOrZero(newDocStore.new_document.integers[i].value);
       }
     }
     return false;
@@ -348,7 +361,6 @@ class NewDocument extends React.Component {
             'doc_type_version',
             'employee',
             'employee_seat',
-            'integer',
             'decimal'
           ].includes(module.module)
         ) {
@@ -379,6 +391,11 @@ class NewDocument extends React.Component {
             notify('Необхідно заповнити всі обов’язкові поля');
             return false;
           }
+        } else if (module.module === 'department') {
+          if (!newDocStore.new_document.department) {
+            notify('Необхідно обрати відділ');
+            return false;
+          }
         } else if (module.module === 'dep_seat') {
           if (!newDocStore.new_document.dep_seat.seat) {
             notify('Необхідно обрати посаду');
@@ -387,6 +404,11 @@ class NewDocument extends React.Component {
         } else if ([16, 32].includes(module.module_id)) {
           // text, select
           if (!this.isTextFieldFilled(module)) {
+            notify('Поле "' + module.field_name + '" необхідно заповнити');
+            return false;
+          }
+        } else if (module.module === 'integer') {
+          if (!this.isIntegerFieldFilled(module)) {
             notify('Поле "' + module.field_name + '" необхідно заповнити');
             return false;
           }
@@ -461,7 +483,6 @@ class NewDocument extends React.Component {
               'packaging_type',
               'contract_link',
               'employee',
-              'integer',
               'decimal'
             ].includes(module.module)
           ) {
@@ -479,10 +500,14 @@ class NewDocument extends React.Component {
             doc_modules['days'] = this.state.days;
           } else if (module.module === 'datetime') {
             doc_modules['datetimes'] = newDocStore.new_document.datetimes;
+          } else if (module.module === 'integer') {
+            doc_modules['integers'] = newDocStore.new_document.integers;
           } else if (module.module === 'boolean') {
             doc_modules['booleans'] = newDocStore.new_document.booleans;
           } else if (module.module === 'choose_company') {
             doc_modules['choose_company'] = newDocStore.new_document.company;
+          } else if (module.module === 'department') {
+            doc_modules['department'] = newDocStore.new_document.department;
           } else if (module.module === 'dep_seat') {
             doc_modules['dep_seat'] = newDocStore.new_document.dep_seat.seat;
           } else if (module.module === 'counterparty') {
@@ -796,8 +821,11 @@ class NewDocument extends React.Component {
                           <When condition={module.module === "boolean"}>
                             <Boolean module_info={module} />
                           </When>
+                          <When condition={module.module === "department"}>
+                            <Department />
+                          </When>
                           <When condition={module.module === "dep_seat"}>
-                            <DepAndSeatChoose module_info={module} />
+                            <DepAndSeatChoose />
                           </When>
                           <When
                             condition={

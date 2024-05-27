@@ -145,14 +145,13 @@ def get_decree_articles(doc):
 
 
 @try_except
-def get_integer(doc_id):
-    try:
-        integer_instance = Doc_Integer.objects.get(document_id=doc_id, is_active=True)
-        integer = integer_instance.integer
+def get_integers(doc_id):
+    integers = [{
+        'queue': item.queue_in_doc,
+        'value': item.integer if item.integer else '---'
+    } for item in Doc_Integer.objects.filter(document_id=doc_id).filter(is_active=True)]
 
-        return integer
-    except Doc_Integer.DoesNotExist:
-        return ''
+    return integers
 
 
 @try_except

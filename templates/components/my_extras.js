@@ -87,6 +87,13 @@ export const getDayByQueue = (days, queue) => {
   }
 };
 
+export const getIntegerByQueue = (days, queue) => {
+  for (const i of days) {
+    if (i && i.queue === queue) return i.value;
+  }
+  return ''
+};
+
 export const getDatetimeByQueue = (datetimes, queue) => {
   for (const i of datetimes) {
     if (i && i.queue === queue) return i.datetime;

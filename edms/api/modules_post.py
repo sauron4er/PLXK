@@ -53,11 +53,12 @@ def post_seat(doc_id, seat_id):
 
 
 @try_except
-def post_integer(document_id, integer):
-    new_doc_integer = Doc_Integer(document_id=document_id)
-    new_doc_integer.integer = integer['value']
-    new_doc_integer.queue_in_doc = integer['queue']
-    new_doc_integer.save()
+def post_integers(document_id, integers):
+    for integer in integers:
+        new_doc_integer = Doc_Integer(document_id=document_id)
+        new_doc_integer.integer = integer['value']
+        new_doc_integer.queue_in_doc = integer['queue']
+        new_doc_integer.save()
 
 
 @try_except

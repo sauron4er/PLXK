@@ -290,7 +290,7 @@ class Doc_Decimal(models.Model):
 
 # Посада
 class Doc_Department(models.Model):
-    document = models.ForeignKey(Document, related_name='seats', on_delete=models.RESTRICT)
+    document = models.ForeignKey(Document, related_name='departments', on_delete=models.RESTRICT)
     department = models.ForeignKey(accounts.Department, related_name='documents', on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
 

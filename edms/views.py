@@ -93,8 +93,8 @@ def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
         if 'text' in doc_modules:
             post_text(doc_request, doc_modules['text'])
 
-        if 'integer' in doc_modules:
-            post_integer(doc_request['document'], doc_modules['integer'])
+        if 'integers' in doc_modules:
+            post_integers(doc_request['document'], doc_modules['integers'])
 
         if 'decimal' in doc_modules:
             post_decimal(doc_request['document'], doc_modules['decimal'])
