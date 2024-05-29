@@ -872,7 +872,7 @@ def get_doc_modules(doc, responsible_id=0):
             doc_modules.update({'booleans': get_booleans(doc.id, doc.document_type_id)})
 
         elif module['module'] == 'department':
-            doc_modules.update({'department': get_department(doc.id)})
+            doc_modules.update({'doc_department': get_department(doc.id)})
 
         elif module['module'] == 'dep_seat':
             doc_modules.update({'dep_seat': get_seat(doc.id)})

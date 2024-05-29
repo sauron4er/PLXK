@@ -97,6 +97,9 @@ class Info extends React.Component {
                   <When condition={module.module === 'decimal'}>
                     <Text text={info.decimal} text_info={module} doc_info={info} />
                   </When>
+                  <When condition={module.module === 'department'}>
+                    <Text text={info.doc_department} text_info={module} doc_info={info} />
+                  </When>
                   <When condition={module.module === 'dep_seat'}>
                     <Text text={info.dep_seat.seat_name} text_info={module} doc_info={info} />
                   </When>
