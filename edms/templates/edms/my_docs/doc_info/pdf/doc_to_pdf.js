@@ -4,6 +4,7 @@ import {faFilePdf} from '@fortawesome/free-solid-svg-icons';
 import ReactToPrint from 'react-to-print';
 import PDFCell from 'edms/templates/edms/my_docs/doc_info/pdf/pdf_cell';
 import {getBooleanByQueue, getDayByQueue, getTextByQueue} from 'templates/components/my_extras';
+import BagTestPDF from "edms/templates/edms/my_docs/doc_info/pdf/bag_test_pdf";
 
 function DocToPDF(props) {
   let componentRef = null;
@@ -53,7 +54,14 @@ function DocToPDF(props) {
             <h3 className='text-center mb-5'>{props.info.type}</h3>
             <div className='row'>
               <For each='module' index='index' of={props.info.type_modules}>
-                <PDFCell key={index} label={module.field_name} value={getModuleValue(module, index)} columns={module.columns} />
+                <Choose>
+                  <When condition={module.module === 'bag_test'}>
+                    <BagTestPDF key={index} fields={props.info.bag_test} />
+                  </When>
+                  <Otherwise>
+                    <PDFCell key={index} label={module.field_name} value={getModuleValue(module, index)} columns={module.columns} />
+                  </Otherwise>
+                </Choose>
               </For>
             </div>
             <div className='float-right'>

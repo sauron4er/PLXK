@@ -398,6 +398,7 @@ def post_bag_test(new_doc, fields, files):
     new_bag_test.client_id = fields['client']
     new_bag_test.test_type = fields['test_type']
     new_bag_test.bag_type = fields['bag_type']
+    new_bag_test.name = fields['name']
     new_bag_test.length = fields['length']
     new_bag_test.width = fields['width']
     new_bag_test.depth = fields['depth']

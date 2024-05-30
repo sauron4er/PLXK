@@ -77,7 +77,7 @@ def get_provider(request, pk):
     provider = {
         'id': provider_instance.id,
         'name': provider_instance.name,
-        'country': provider_instance.country,
+        'country': provider_instance.country or '',
         'legal_address': provider_instance.legal_address or '',
         'actual_address': provider_instance.actual_address or '',
         'edrpou': provider_instance.edrpou or '',

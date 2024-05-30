@@ -1,64 +1,37 @@
 'use strict';
 import * as React from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faFilePdf} from '@fortawesome/free-solid-svg-icons';
-import useSetState from 'templates/hooks/useSetState';
-import ReactToPrint from 'react-to-print';
+import PDFCell from "edms/templates/edms/my_docs/doc_info/pdf/pdf_cell";
 
 function BagTestPDF(props) {
-  let componentRef = null;
+  console.log(props.fields);
 
-  console.log(props.info.bag_test);
-
-  const hideStyle = {
-    display: 'none'
-  };
-
-  const printWindowStyle = {
-    padding: '10px'
-  };
-
-  const [state, setState] = useSetState({
-    modal_open: false
-  });
-
-  function toggleModal() {
-    setState({modal_open: !state.modal_open});
-  }
+  const fields = props.fields
 
   return (
     <>
-      <ReactToPrint
-        trigger={() => (
-          <a href='#' className='text-dark mr-2'>
-            <FontAwesomeIcon icon={faFilePdf} />
-          </a>
-        )}
-        content={() => componentRef}
-        pageStyle={printWindowStyle}
-      />
+      <PDFCell label={'Тип тестування'} value={fields.test_type} columns={12} />
+      <PDFCell label={'Постачальник'} value={fields.provider} columns={6} />
+      <PDFCell label={'Клієнт'} value={fields.client} columns={6} />
+      <PDFCell label={'Тип макета'} value={fields.bag_type} columns={6} />
+      <PDFCell label={'Назва макета'} value={fields.name} columns={6} />
+      <PDFCell label={'Довжина, см'} value={fields.length} columns={3} />
+      <PDFCell label={'Ширина, см'} value={fields.width} columns={3} />
+      <PDFCell label={'Глибина, см'} value={fields.depth} columns={3} />
+      <PDFCell label={'Вага, кг'} value={fields.weight} columns={3} />
+      <PDFCell label={'Матеріал виготовлення'} value={fields.material} columns={5} />
+      <PDFCell label={'Колір'} value={fields.color} columns={3} />
+      <PDFCell label={'Кількість шарів'} value={fields.layers} columns={2} />
+      <PDFCell label={'Щільність, кг\\м2'} value={fields.density} columns={2} />
+      <PDFCell label={'Вимоги клієнта'} value={'Вимоги клієнта'} columns={12} />
+      <PDFCell label={'Результати тестування'} value={'Результати тестування'} columns={12} />
+      <PDFCell label={'У info'} value={'Неправильно показує &mt у вимогах клієнта'} columns={12} />
 
-      <div style={hideStyle}>
-        <div ref={(el) => (componentRef = el)}>
-          <img src='../../../../../../static/img/blank_header.png' alt='Italian Trulli' style={{width: '100%'}} />
-          <div className='d-flex mt-3'>
-            <div className='pl-2 mr-2'>{props.info.bag_test.test_type}</div>
-            <div className='col-5 border border-dark rounded pl-2 mr-2'>
-              Постачальник: <div className='h3'>{props.info.bag_test.provider}</div>
-            </div>
-            <div className='col-5 border border-dark rounded pl-2 '>
-              Клієнт: <div className='h3'>{props.info.bag_test.client}</div>
-            </div>
-          </div>
-          <div className='border border-dark rounded mt-3 mr-2 p-1 '>{props.info.bag_test.test_type}</div>
-        </div>
-      </div>
     </>
   );
 }
 
 BagTestPDF.defaultProps = {
-  info: []
+  fields: {}
 };
 
 export default BagTestPDF;

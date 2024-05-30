@@ -223,7 +223,7 @@ def get_bag_test_fields(doc_id):
     bt_instance = Bag_Test.objects.get(document_id=doc_id, is_active=True)
 
     bt_fields = {
-        'provider': bt_instance.provider.name,
+        'provider': bt_instance.provider.name + ' (' + (bt_instance.provider.country or '') + ')',
         'client': bt_instance.client.name,
         'test_type': bt_instance.test_type,
         'bag_type': bt_instance.bag_type,
