@@ -87,21 +87,21 @@ function BagTest(props) {
 
       <div className='mt-1'>Вимоги клієнта</div>
       <div className='css_note_text'>
-        <div>Назва мішка, ТМ: {props.fields.cr_bag_name}</div>
-        <div>Вага, кг: {props.fields.cr_weight_kg}</div>
-        <div>Масова частка води, W,%: {props.fields.cr_mf_water}</div>
-        <div>Основна фракція: {props.fields.cr_main_faction}</div>
-        <div>Масова частка золи в перерахунку на суху речовину, %: {props.fields.cr_mf_ash}</div>
-        <div>Масова частка летких в перерахунку на суху речовину, %: {props.fields.cr_mf_evaporable}</div>
-        <div>Масова частка нелеткого вуглецю в перерахунку на суху речовину, %: {props.fields.cr_mf_not_evaporable_carbon}</div>
-        <div>Грануляційний склад, фракція, &lt; 5 мм: {props.fields.cr_granulation_lt5}</div>
-        <div>Грануляційний склад, фракція, &lt; 10 мм: {props.fields.cr_granulation_lt10}</div>
-        <div>Грануляційний склад, фракція, &lt; 20 мм: {props.fields.cr_granulation_lt20}</div>
-        <div>Грануляційний склад, фракція, &lt; 25 мм: {props.fields.cr_granulation_lt25}</div>
-        <div>Грануляційний склад, фракція, &lt; 40 мм: {props.fields.cr_granulation_lt40}</div>
-        <div>Грануляційний склад, фракція, &mt; 20 мм: {props.fields.cr_granulation_mt20}</div>
-        <div>Грануляційний склад, фракція, &mt; 60 мм: {props.fields.cr_granulation_mt60}</div>
-        <div>Грануляційний склад, фракція, &mt; 80 мм: {props.fields.cr_granulation_mt80}</div>
+        <div>Назва мішка, ТМ: {props.fields.cr_bag_name || '---'}</div>
+        <div>Вага, кг: {props.fields.cr_weight_kg || '---'}</div>
+        <div>Масова частка води, W,%: {props.fields.cr_mf_water || '---'}</div>
+        <div>Основна фракція: {props.fields.cr_main_faction || '---'}</div>
+        <div>Масова частка золи в перерахунку на суху речовину, %: {props.fields.cr_mf_ash || '---'}</div>
+        <div>Масова частка летких в перерахунку на суху речовину, %: {props.fields.cr_mf_evaporable || '---'}</div>
+        <div>Масова частка нелеткого вуглецю в перерахунку на суху речовину, %: {props.fields.cr_mf_not_evaporable_carbon || '---'}</div>
+        <div>Грануляційний склад, фракція, &lt; 5 мм: {props.fields.cr_granulation_lt5 || '---'}</div>
+        <div>Грануляційний склад, фракція, &lt; 10 мм: {props.fields.cr_granulation_lt10 || '---'}</div>
+        <div>Грануляційний склад, фракція, &lt; 20 мм: {props.fields.cr_granulation_lt20 || '---'}</div>
+        <div>Грануляційний склад, фракція, &lt; 25 мм: {props.fields.cr_granulation_lt25 || '---'}</div>
+        <div>Грануляційний склад, фракція, &lt; 40 мм: {props.fields.cr_granulation_lt40 || '---'}</div>
+        <div>Грануляційний склад, фракція, &gt; 20 мм: {props.fields.cr_granulation_mt20 || '---'}</div>
+        <div>Грануляційний склад, фракція, &gt; 60 мм: {props.fields.cr_granulation_mt60 || '---'}</div>
+        <div>Грануляційний склад, фракція, &gt; 80 мм: {props.fields.cr_granulation_mt80 || '---'}</div>
       </div>
 
       <If condition={props.fields.test_date}>
