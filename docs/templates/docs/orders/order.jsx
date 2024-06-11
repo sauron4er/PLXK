@@ -365,7 +365,7 @@ class Order extends React.Component {
               text={order.preamble}
               fieldName={'Преамбула'}
               onChange={(e) => this.onInputChange(e, 'preamble')}
-              maxLength={500}
+              maxLength={5000}
               disabled={!is_orders_admin}
             />
 
