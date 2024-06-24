@@ -65,6 +65,7 @@ import {addBagTestFiles} from 'edms/templates/edms/my_docs/new_doc_modules/bag_t
 import Boolean from "edms/templates/edms/my_docs/new_doc_modules/boolean";
 import DepAndSeatChoose from "edms/templates/edms/my_docs/new_doc_modules/dep_and_seat_choose";
 import Department from "edms/templates/edms/my_docs/new_doc_modules/department";
+import Section from "edms/templates/edms/my_docs/new_doc_modules/section";
 
 class NewDocument extends React.Component {
   state = {
@@ -837,6 +838,9 @@ class NewDocument extends React.Component {
                           </When>
                           <When condition={module.module === "bag_test"}>
                             <BagTest />
+                          </When>
+                          <When condition={module.module === "section"}>
+                            <Section name={module.field_name} />
                           </When>
                           <Otherwise> </Otherwise>
                         </Choose>

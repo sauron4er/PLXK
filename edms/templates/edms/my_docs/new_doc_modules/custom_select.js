@@ -5,8 +5,8 @@ import * as React from 'react';
 import {getIndexByProperty} from 'templates/components/my_extras';
 
 class CustomSelect extends React.Component {
-  getSelectOptions = (module) => {
-    switch (module) {
+  getSelectOptions = (field_name) => {
+    switch (field_name) {
       case 'accounting':
         return ['Бухгалтерський облік', 'Управлінський облік', 'Податковий облік', 'Загальний'];
       case 'type':
@@ -34,6 +34,14 @@ class CustomSelect extends React.Component {
         ];
       case 'sex':
         return ['Чоловік', 'Жінка', 'Неважливо'];
+      case 'production':
+        return ['Вугілля', 'Брикети', 'ОГ'];
+      case 'packing_type':
+        return ['Мішки паперові', 'Біг-беги'];
+      case 'pallet_dimensions':
+        return ['110*110', '120*100', '120*80EPAL', '120*80Укр', 'Інше'];
+      case 'top_or_bottom':
+        return ['Верх', 'Низ', 'Ніде'];
       default:
         return [];
     }
