@@ -6,8 +6,13 @@ import NewFilesList from 'templates/components/files_uploader/new_files_list';
 
 class FilesUpload extends React.Component {
   onFilesChange = (new_files) => {
+    new_files.forEach((file) => {
+      file.queue = this.props.module_info.queue
+    })
+
     const changed_event = {
       target: {
+        queue: this.props.module_info.queue,
         name: 'files',
         value: new_files
       }
@@ -25,6 +30,7 @@ class FilesUpload extends React.Component {
 
   render() {
     const {module_info, files, editable, multiple, className} = this.props;
+
     return (
       <div className={className || `mt-1`}>
         <Choose>

@@ -125,7 +125,7 @@ class Info extends React.Component {
                     <CarryOut carryOutItems={info.carry_out_items} fieldName={module.field_name} />
                   </When>
                   <When condition={module.module === 'files' && info.old_files.length > 0}>
-                    <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} only_first_path />
+                    <Files files={info.old_files} fieldName={module.field_name} is_editable={module.is_editable} queue={module.queue} only_first_path />
                   </When>
                   <When condition={module.module === 'approval_list'}>
                     <Approvals info={info} postMark={this.props.postMark} />

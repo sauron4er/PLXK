@@ -62,10 +62,10 @@ import Decimal from 'edms/templates/edms/my_docs/new_doc_modules/decimal';
 import BagTest from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test';
 import {areBagTestFieldsFilled} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/bag_test_validation';
 import {addBagTestFiles} from 'edms/templates/edms/my_docs/new_doc_modules/bag_test/add_bag_test_files';
-import Boolean from "edms/templates/edms/my_docs/new_doc_modules/boolean";
-import DepAndSeatChoose from "edms/templates/edms/my_docs/new_doc_modules/dep_and_seat_choose";
-import Department from "edms/templates/edms/my_docs/new_doc_modules/department";
-import Section from "edms/templates/edms/my_docs/new_doc_modules/section";
+import Boolean from 'edms/templates/edms/my_docs/new_doc_modules/boolean';
+import DepAndSeatChoose from 'edms/templates/edms/my_docs/new_doc_modules/dep_and_seat_choose';
+import Department from 'edms/templates/edms/my_docs/new_doc_modules/department';
+import Section from 'edms/templates/edms/my_docs/new_doc_modules/section';
 
 class NewDocument extends React.Component {
   state = {
@@ -126,6 +126,30 @@ class NewDocument extends React.Component {
       this.setState({[event.target.name]: event.target.value});
     }
   };
+
+  onChangeFiles = (event) => {
+    console.log('---');
+    console.log(this.state.files);
+    console.log(event.target.queue);
+    console.log('---');
+    this.setState({files: this.state.files.filter((file) => file.queue !== event.target.queue)}, () => {
+      // видаляємо старий список файлів за цим queue
+      console.log('1');
+      console.log(this.state.files);
+      this.setState({
+        files: [...this.state.files, ...event.target.value] // додаємо новий список файлів за цим queue
+      }, () => {
+        console.log('2');
+        console.log(this.state.files);
+      });
+    })
+
+    console.log('---')
+
+    // TODO вроді працює. Тепер запис у базу з queue і підтягування в показ документа з queue і без
+
+    // this.setState({files: event.target.value});
+  }
 
   onChangeContract = (contract) => {
     newDocStore.new_document.contract_link = contract.id;
@@ -470,7 +494,6 @@ class NewDocument extends React.Component {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
         type_modules.map((module) => {
-
           if (!!module.hide || [2, 29, 33, 48].includes(module.module_id)) {
             // Приховані модулі будуть використовуватися в наступних фазах
             // Модулі auto_approved, phases, non_editable не створюються у браузері
@@ -667,6 +690,8 @@ class NewDocument extends React.Component {
       post_request_sent
     } = this.state;
 
+    // console.log(files);
+
     const {doc_type_version} = newDocStore.new_document;
 
     // Визначаємо, наскільки великим буде текстове поле:
@@ -702,144 +727,146 @@ class NewDocument extends React.Component {
                     <div key={module.id} className={`px-1 mt-1 col-md-${module.columns}`}>
                       <div className={`css_new_doc_module`}>
                         <Choose>
-                          <When condition={module.module === "text"}>
+                          <When condition={module.module === 'text'}>
                             <Text module_info={module} rows={rows} />
                           </When>
-                          <When condition={module.module === "day"}>
+                          <When condition={module.module === 'day'}>
                             <Day module_info={module} day={getDayByQueue(days, index)} onChange={this.onChangeDay} />
                           </When>
-                          <When condition={module.module === "datetime"}>
+                          <When condition={module.module === 'datetime'}>
                             <Datetime
                               module_info={module}
                               datetime={getDatetimeByQueue(newDocStore.new_document.datetimes, index)}
                               onChange={this.onChangeDatetime}
                             />
                           </When>
-                          <When condition={module.module === "recipient"}>
+                          <When condition={module.module === 'recipient'}>
                             <Recipient onChange={this.onChange} recipient={recipient} module_info={module} />
                           </When>
-                          <When condition={module.module === "recipient_chief"}>
-                            <RecipientChief onChange={this.onChange} recipientChief={recipient_chief}
-                                            module_info={module} />
+                          <When condition={module.module === 'recipient_chief'}>
+                            <RecipientChief onChange={this.onChange} recipientChief={recipient_chief} module_info={module} />
                           </When>
-                          <When condition={module.module === "files"}>
-                            <FilesUpload onChange={this.onChange} files={files} module_info={module} />
+                          <When condition={module.module === 'files'}>
+                            <FilesUpload
+                              onChange={this.onChangeFiles}
+                              files={files.filter((file) => file.queue === index)}
+                              module_info={module}
+                            />
+                            {/*<FilesUpload onChange={this.onChange} files={files} module_info={module} />*/}
                           </When>
-                          <When condition={module.module === "acquaint_list"}>
+                          <When condition={module.module === 'acquaint_list'}>
                             <AcquaintList onChange={this.onChange} acquaintList={acquaint_list} module_info={module} />
                           </When>
-                          <When condition={module.module === "approval_list"}>
+                          <When condition={module.module === 'approval_list'}>
                             <ApprovalList onChange={this.onChange} approvalList={approval_list} module_info={module} />
                           </When>
-                          <When condition={module.module === "sign_list"}>
+                          <When condition={module.module === 'sign_list'}>
                             <SignList onChange={this.onChange} signList={sign_list} module_info={module} />
                           </When>
-                          <When condition={module.module === "gate"}>
+                          <When condition={module.module === 'gate'}>
                             <Gate checkedGate={gate} onChange={this.onChange} module_info={module} />
                           </When>
-                          <When condition={module.module === "carry_out_items"}>
+                          <When condition={module.module === 'carry_out_items'}>
                             <CarryOut carryOutItems={carry_out_items} onChange={this.onChange} module_info={module} />
                           </When>
-                          <When condition={module.module === "mockup_type"}>
+                          <When condition={module.module === 'mockup_type'}>
                             <MockupType module_info={module} />
                           </When>
-                          <When condition={module.module === "mockup_product_type"}>
+                          <When condition={module.module === 'mockup_product_type'}>
                             <MockupProductType module_info={module} />
                           </When>
-                          <When condition={module.module === "client"}>
+                          <When condition={module.module === 'client'}>
                             <Client module_info={module} docType={doc.type_id} />
                           </When>
-                          <When condition={module.module === "counterparty"}>
+                          <When condition={module.module === 'counterparty'}>
                             <Counterparty module_info={module} />
                           </When>
-                          <When condition={module.module === "dimensions"}>
-                            <Text module_info={module} rows={rows} type="dimensions" />
+                          <When condition={module.module === 'dimensions'}>
+                            <Text module_info={module} rows={rows} type='dimensions' />
                           </When>
-                          <When condition={module.module === "packaging_type"}>
+                          <When condition={module.module === 'packaging_type'}>
                             <PackagingType packaging_type={getTextByQueue(text, index)} module_info={module} />
                           </When>
-                          <When condition={module.module === "contract_link"}>
+                          <When condition={module.module === 'contract_link'}>
                             <ChooseMainContract onChange={this.onChangeContract} module_info={module} />
                           </When>
-                          <When condition={module.module === "choose_company"}>
+                          <When condition={module.module === 'choose_company'}>
                             <ChooseCompany module_info={module} />
                           </When>
-                          <When condition={module.module === "select"}>
+                          <When condition={module.module === 'select'}>
                             <CustomSelect module_info={module} />
                           </When>
-                          <When condition={module.module === "product_type_sell"}>
-                            <ProductType module_info={module} direction="sell" />
+                          <When condition={module.module === 'product_type_sell'}>
+                            <ProductType module_info={module} direction='sell' />
                           </When>
-                          <When condition={module.module === "scope"}>
+                          <When condition={module.module === 'scope'}>
                             <Scope module_info={module} />
                           </When>
-                          <When condition={module.module === "law"}>
+                          <When condition={module.module === 'law'}>
                             <Law module_info={module} scope={newDocStore.new_document.scope} />
                           </When>
-                          <When condition={module.module === "client_requirements"}>
+                          <When condition={module.module === 'client_requirements'}>
                             <ClientRequirements module_info={module} />
                           </When>
-                          <When condition={module.module === "document_link"}>
-                            <DocumentLink moduleInfo={module} documentLink={doc.document_link}
-                                          mainField={doc.main_field} />
+                          <When condition={module.module === 'document_link'}>
+                            <DocumentLink moduleInfo={module} documentLink={doc.document_link} mainField={doc.main_field} />
                           </When>
-                          <When condition={module.module === "registration"}>
+                          <When condition={module.module === 'registration'}>
                             <Registration moduleInfo={module} />
                           </When>
-                          <When condition={module.module === "doc_type_version"}>
+                          <When condition={module.module === 'doc_type_version'}>
                             <DocTypeVersion module_info={module} />
                           </When>
-                          <When condition={module.module === "employee"}>
+                          <When condition={module.module === 'employee'}>
                             <EmployeesAll module_info={module} />
                           </When>
-                          <When condition={module.module === "foyer_ranges"}>
+                          <When condition={module.module === 'foyer_ranges'}>
                             <FoyerRanges module_info={module} />
                           </When>
-                          <When condition={module.module === "cost_rates"}>
+                          <When condition={module.module === 'cost_rates'}>
                             <CostRates module_info={module} />
                           </When>
-                          <When condition={module.module === "deadline"}>
+                          <When condition={module.module === 'deadline'}>
                             <Deadline module_info={module} />
                           </When>
-                          <When condition={module.module === "contract_subject"}>
+                          <When condition={module.module === 'contract_subject'}>
                             <ContractSubject module_info={module} />
                           </When>
-                          <When condition={module.module === "employee_seat"}>
+                          <When condition={module.module === 'employee_seat'}>
                             <EmployeeSeat module_info={module} />
                           </When>
-                          <When condition={module.module === "decree_articles"}>
+                          <When condition={module.module === 'decree_articles'}>
                             <DecreeArticles module_info={module} />
                           </When>
-                          <When condition={module.module === "non_editable"}>
+                          <When condition={module.module === 'non_editable'}>
                             <NonEditable module_info={module} />
                           </When>
-                          <When condition={module.module === "integer"}>
+                          <When condition={module.module === 'integer'}>
                             <Integer module_info={module} />
                           </When>
-                          <When condition={module.module === "decimal"}>
+                          <When condition={module.module === 'decimal'}>
                             <Decimal module_info={module} />
                           </When>
-                          <When condition={module.module === "boolean"}>
+                          <When condition={module.module === 'boolean'}>
                             <Boolean module_info={module} />
                           </When>
-                          <When condition={module.module === "department"}>
+                          <When condition={module.module === 'department'}>
                             <Department />
                           </When>
-                          <When condition={module.module === "dep_seat"}>
+                          <When condition={module.module === 'dep_seat'}>
                             <DepAndSeatChoose />
                           </When>
                           <When
                             condition={
-                              newDocStore.new_document.counterparty_type === "client" && module.module === "client_requirements_choose"
+                              newDocStore.new_document.counterparty_type === 'client' && module.module === 'client_requirements_choose'
                             }
                           >
-                            <ClientRequirementsChoose module_info={module}
-                                                      counterparty={newDocStore.new_document.counterparty} />
+                            <ClientRequirementsChoose module_info={module} counterparty={newDocStore.new_document.counterparty} />
                           </When>
-                          <When condition={module.module === "bag_test"}>
+                          <When condition={module.module === 'bag_test'}>
                             <BagTest />
                           </When>
-                          <When condition={module.module === "section"}>
+                          <When condition={module.module === 'section'}>
                             <Section name={module.field_name} />
                           </When>
                           <Otherwise> </Otherwise>

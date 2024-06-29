@@ -164,6 +164,7 @@ class File(models.Model):
     first_path = models.BooleanField(True)  # True - файл доданий при створенні документу. Такі файли показуються в основній інфі про документ.
     version = models.IntegerField(default=1)
     deactivate_path = models.ForeignKey(Document_Path, related_name='deactivate_files', null=True, on_delete=models.RESTRICT)
+    queue_in_doc = models.IntegerField(null=True)
     is_active = models.BooleanField(default=True)
 
 

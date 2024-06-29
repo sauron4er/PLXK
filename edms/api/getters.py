@@ -949,6 +949,7 @@ def get_doc_modules(doc, responsible_id=0):
                 'mark_id': file.document_path.mark.id,
                 'first_path': file.first_path,
                 'version': file.version,
+                'queue': file.queue_in_doc,
                 'status': ''  # Для таблиці в компоненті EditFiles
             } for file in File.objects
                 .filter(document_path__document_id=doc.id)
