@@ -309,7 +309,7 @@ def post_carry_out_items(doc_request, carry_out_items):
 
 
 @try_except
-def post_files(doc_request, files, new_path):
+def post_files(doc_request, new_path, files, doc_files_queue=None):
     # Додаємо файли зі старого варіанта файла:
     if 'old_files' in doc_request.keys():
         old_files = json.loads(doc_request['old_files'])
@@ -331,12 +331,18 @@ def post_files(doc_request, files, new_path):
             # Якщо у doc_request нема "Mark" - це створення нового документу, потрібно внести True у first_path:
             first_path = doc_request['mark'] == 1
 
-            for file in files:
+            for idx, file in enumerate(files):
+                if first_path:
+                    queue_in_doc = doc_files_queue[idx]
+                else:
+                    queue_in_doc = None
+
                 File.objects.create(
                     document_path=doc_path,
                     file=file,
                     name=file.name,
-                    first_path=first_path
+                    first_path=first_path,
+                    queue_in_doc=queue_in_doc
                 )
 
 

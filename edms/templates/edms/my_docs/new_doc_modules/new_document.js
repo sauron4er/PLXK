@@ -128,27 +128,13 @@ class NewDocument extends React.Component {
   };
 
   onChangeFiles = (event) => {
-    console.log('---');
-    console.log(this.state.files);
-    console.log(event.target.queue);
-    console.log('---');
     this.setState({files: this.state.files.filter((file) => file.queue !== event.target.queue)}, () => {
-      // видаляємо старий список файлів за цим queue
-      console.log('1');
-      console.log(this.state.files);
+      // видаляємо старий список файлів по цьому queue
       this.setState({
-        files: [...this.state.files, ...event.target.value] // додаємо новий список файлів за цим queue
-      }, () => {
-        console.log('2');
-        console.log(this.state.files);
+         // додаємо новий список файлів по цьому queue
+        files: [...this.state.files, ...event.target.value]
       });
     })
-
-    console.log('---')
-
-    // TODO вроді працює. Тепер запис у базу з queue і підтягування в показ документа з queue і без
-
-    // this.setState({files: event.target.value});
   }
 
   onChangeContract = (contract) => {
@@ -359,7 +345,7 @@ class NewDocument extends React.Component {
     for (const module of this.state.type_modules) {
       if (
         module.required &&
-        !['choose_company'].includes(module.module) &&
+        !['choose_company', 'section'].includes(module.module) &&
         (module.doc_type_version === 0 || module.doc_type_version === newDocStore.new_document.doc_type_version)
       ) {
         if (module.module === 'cost_rates') {
@@ -490,14 +476,17 @@ class NewDocument extends React.Component {
       const {type_modules, old_files} = this.state;
       const {doc, status} = this.props;
 
+
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
+        console.log(type_modules);
         type_modules.map((module) => {
-          if (!!module.hide || [2, 29, 33, 48].includes(module.module_id)) {
+          if (!!module.hide || [2, 15, 29, 33, 48].includes(module.module_id)) {
             // Приховані модулі будуть використовуватися в наступних фазах
             // Модулі auto_approved, phases, non_editable не створюються у браузері
             // Модуль acquaint_list не обов'язковий
+            // Модуль section (15) це лиш позначка розділу
           } else if (
             [
               'mockup_type',
@@ -580,11 +569,14 @@ class NewDocument extends React.Component {
         formData.append('status', type); // Документ, шаблон чи чернетка
         formData.append('old_status', status); // Попередній статус - шаблон чи чернетка
 
+        let files_queue = []
         if (this.state.files.length > 0) {
           this.state.files.map((file) => {
             formData.append('file', file);
+            files_queue.push(file.queue);
           });
         }
+        formData.append('files_queue', JSON.stringify(files_queue));
 
         formData = addBagTestFiles(formData);
 
@@ -598,7 +590,7 @@ class NewDocument extends React.Component {
               notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
               this.setState({post_request_sent: true});
             } else {
-              // опублікування документу оновлює таблицю документів:
+              // опублікування документа оновлює таблицю документів:
               this.props.addDoc(response, doc.type, this.getMainField(), getToday(), doc.type_id, type);
               newDocStore.clean_fields();
 
@@ -689,8 +681,6 @@ class NewDocument extends React.Component {
       carry_out_items,
       post_request_sent
     } = this.state;
-
-    // console.log(files);
 
     const {doc_type_version} = newDocStore.new_document;
 

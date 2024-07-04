@@ -80,7 +80,7 @@ def post_document(request, doc_modules):
 # Функція, яка перебирає список модулів і викликає необхідні функції для їх публікації
 # Повертає список отримувачів документа (якщо використовуються модулі recipient або recipient_chief)
 @try_except
-def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
+def post_modules(doc_request, doc_files, doc_files_queue, new_path, new_doc, files=None):
     if files is None:
         files = []
     try:
@@ -144,7 +144,7 @@ def post_modules(doc_request, doc_files, new_path, new_doc, files=None):
             post_counterparty(doc_request, doc_modules['counterparty'])
 
         if 'files' in doc_modules and doc_request['status'] in ['doc', 'change']:  # Файли чернетки і шаблону не записуємо
-            post_files(doc_request, doc_files, new_path.pk)
+            post_files(doc_request, new_path.pk, doc_files, doc_files_queue)
 
         if 'contract_link' in doc_modules:
             post_contract(doc_request, doc_modules['contract_link']['value'])
@@ -734,6 +734,7 @@ def edms_my_docs(request):
         doc_request = request.POST.copy()
 
         doc_files = request.FILES.getlist('file')
+        doc_files_queue = json.loads(request.POST['files_queue'])
 
         # Записуємо документ і отримуємо його ід, тип
         new_doc = post_document(request, doc_modules)
@@ -761,7 +762,7 @@ def edms_my_docs(request):
         # В деяких модулях прямо може бути вказано отримувачів,
         # тому post_modules повертає їх в array, який може бути і пустий
         # також post_modules зберігає main_field в документі і повертає оновлений документ
-        module_recipients, new_doc = post_modules(doc_request, doc_files, new_path, new_doc, request.FILES)
+        module_recipients, new_doc = post_modules(doc_request, doc_files, doc_files_queue, new_path, new_doc, request.FILES)
 
         # Запускаємо в роботу
         if doc_request['status'] in ['doc', 'change']:
@@ -1372,7 +1373,7 @@ def edms_mark(request):
                 new_phase(doc_request, this_phase['phase'] + 1, [])
 
             if 'new_files' in request.FILES:
-                post_files(doc_request, request.FILES.getlist('new_files'), new_path.pk)
+                post_files(doc_request, new_path.pk, request.FILES.getlist('new_files'))
 
             # Надсилаємо листа автору документа:
             if int(doc_request['employee_seat']) != doc_request['doc_author_id']:
