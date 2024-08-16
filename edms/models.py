@@ -82,9 +82,9 @@ class Mark(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# Стадії типа документа, із зазначенням черговості і типу позначки
-# Н-д:  звільнююча спочатку використовує "Не заперечую" керівника,
-# а потім одночасно "Погоджую" директора і "Ознайомлений" охорони
+# Стадії документа, із зазначенням черговості та типу позначки
+# Н-д: Прохідна спочатку використовує "Не заперечую" керівника,
+# а потім одночасно "Погоджую" директорів і "Ознайомлений" охорони
 class Doc_Type_Phase(models.Model):
     document_type = models.ForeignKey(Document_Type, related_name='dtm_types', on_delete=models.RESTRICT)
     mark = models.ForeignKey(Mark, related_name='dtm_marks', on_delete=models.RESTRICT)
@@ -94,6 +94,7 @@ class Doc_Type_Phase(models.Model):
         default=False
     )  # True - документ іде тільки одному зі списку Doc_Type_Phase_Queue (шукається найближчий відповідний керівник)
     is_approve_chained = models.BooleanField(default=False)  # True - вимагає погодження у кожного з ланки керівників аж до отримувача
+    only_first = models.BooleanField(default=False)  # True - достатньо погодити комусь одному, у інших в такому разі документ зникає
     plus_approval_by_chief = models.BooleanField(
         default=False)  # При True у цій фазі документ буде додатково направлятися безпосередньому начальнику
     doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='doc_type_phases', on_delete=models.RESTRICT)

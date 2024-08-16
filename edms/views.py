@@ -948,11 +948,12 @@ def edms_mark(request):
             # Погоджую, Ознайомлений, Доопрацьовано, Виконано, Підписано, Віза
             if int(doc_request['mark']) in [2, 9, 11, 14, 17]:
                 # Деактивуємо MarkDemand цієї позначки, якщо це не позначка від супер-менеджера
-                if doc_request['user_is_super_manager'] != 'true':
-                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
-                else:
-                    # Якщо це позначка від супер-менеджера, деактивуємо всі Mark_demand
+                if doc_request['user_is_super_manager'] == 'true' or this_phase['only_first']:
+                    # Якщо це позначка від супер-менеджера або only_first фаза, деактивуємо всі Mark_demand
                     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
+                else:
+                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
 
                 # Якщо в документі використовується doc_approval, треба буде поставити позначку у таблицю візування:
                 if is_approvals_used(doc_request['document_type']):
