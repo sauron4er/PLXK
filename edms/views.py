@@ -568,6 +568,11 @@ def edms_get_direct_subs(request, pk):
 
 @login_required(login_url='login')
 @try_except
+def edms_get_documents(request, counterparty_id):
+    return [1]
+
+@login_required(login_url='login')
+@try_except
 def edms_get_doc(request, pk):
 
     doc = get_object_or_404(Document, pk=pk)
