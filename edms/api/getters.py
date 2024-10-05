@@ -360,6 +360,17 @@ def get_chief_id(emp_seat_id):
     return 0
 
 
+# Функція, яка повертає ід посади безпосереднього керівника
+@try_except
+def get_chief_seat_id(emp_seat_id):
+    # Посада людинопосади:
+    seat_id = Employee_Seat.objects.values_list('seat_id', flat=True).filter(id=emp_seat_id)[0]
+    chief_id = Seat.objects.values_list('chief_id', flat=True).filter(id=seat_id)
+    if chief_id:
+        return chief_id[0]
+    return 0
+
+
 # Функція, яка вертає список модулів, що використовуються даним типом документу
 @try_except
 def get_doc_type_modules(doc_type):

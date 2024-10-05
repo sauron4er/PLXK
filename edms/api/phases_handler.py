@@ -4,7 +4,7 @@ from plxk.api.try_except import try_except
 from edms.forms import NewApprovalForm, ApprovedApprovalForm
 from edms.models import Doc_Type_Phase, Doc_Type_Phase_Queue, Doc_Approval, Employee_Seat, Document
 from edms.api.setters import post_mark_demand, new_mail
-from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_phase_recipient_list, \
+from edms.api.getters import get_zero_phase_id, get_chief_emp_seat, get_chief_seat_id, get_phase_recipient_list, \
     get_my_seats, get_phase_id_sole_recipients, get_to_work_for_contract_subject
 from edms.api.approvals_handler import is_approval_module_used, is_approvals_used, post_auto_approve, \
     add_zero_phase_auto_approvals, is_in_approval_list
@@ -247,6 +247,13 @@ def new_phase(doc_request, phase_number, modules_recipients=None):
                 # 1. Створюємо таблицю візування для новоствореного документа:
                 if phase_number == 1 and doc_request['mark'] == 1 and is_approvals_used(doc_request['document_type']):
                     add_zero_phase_auto_approvals(doc_request, phase_info)
+
+                if phase_info['mark_id'] == 6:
+                    # пропускаємо фазу "Не заперечую", якщо безпосередній начальник автора - генеральний директор
+                    # Такий документ і так піде генеральному директору десь в кінці
+                    my_chief_seat_id = get_chief_seat_id(doc_request['employee_seat'])
+                    if my_chief_seat_id == 16:
+                        new_phase(doc_request, phase_number+1)
 
                 if phase_info['mark_id'] == 20:
                     # автоматичне заповнення полей approved, approved_date
