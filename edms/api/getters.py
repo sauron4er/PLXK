@@ -1552,3 +1552,17 @@ def get_fields_on_flight(doc):
                 'phase_id': re.compile('(\d+)').findall(module['additional_info'])[0]
             })
     return fields_on_flight
+
+
+@try_except
+def get_docs_for_counterparty(counterparty_id):
+    documents = [{
+        'id': doc_counterparty.document.id,
+        'type': doc_counterparty.document.document_type.description
+    } for doc_counterparty in Doc_Counterparty.objects
+    .exclude(document__is_draft=True)
+    .filter(counterparty_id=counterparty_id)
+    .filter(document__testing=testing)
+    .filter(document__closed=False).order_by('-id')]
+
+    return documents
