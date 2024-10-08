@@ -23,6 +23,7 @@ import CounterpartyNonCompliances from 'boards/templates/boards/counterparty/com
 import CounterpartyCostRates from 'boards/templates/boards/counterparty/clients/cost_rates';
 import CounterpartyLetters from 'boards/templates/boards/counterparty/components/letters/letters';
 import CounterpartyBagScheme from 'boards/templates/boards/counterparty/clients/bag_scheme';
+import EDMSDocuments from "boards/templates/boards/counterparty/components/edms_docs";
 
 class Counterparty extends React.Component {
   state = {
@@ -126,7 +127,9 @@ class Counterparty extends React.Component {
                   <Tab>Схема укладки</Tab>
                 </If>
                 <Tab>Офіційні листи</Tab>
-                <Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>
+                <Tab>Візування договорів</Tab>
+                {/*<Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>*/}
+                <Tab>Мапа</Tab>
               </TabList>
 
               <TabPanel>
@@ -171,6 +174,9 @@ class Counterparty extends React.Component {
               </If>
               <TabPanel>
                 <CounterpartyLetters counterparty_id={this.props.id} />
+              </TabPanel>
+              <TabPanel>
+                <EDMSDocuments counterparty_id={this.props.id} />
               </TabPanel>
               <TabPanel>
                 <CounterpartyMap google_api_key={google_api_key} />

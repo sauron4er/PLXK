@@ -12,7 +12,7 @@ from boards.views_permissions import permissions, get_permissions, get_permissio
 from boards.views_proposals import proposals, get_proposals, post_proposal, get_proposal
 from production.views import get_products, get_product_types_flat, get_products_for_product_type, get_permission_categories
 from docs.views_contracts import edit_contract, get_additional_contracts
-from edms.views import edms_get_emp_seats, edms_get_doc, get_dep_seats, get_seats_for_select
+from edms.views import edms_get_emp_seats, edms_get_documents, edms_get_doc, get_dep_seats, get_seats_for_select
 
 
 urlpatterns = [
@@ -35,6 +35,7 @@ urlpatterns = [
     re_path(r'^.+/.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     re_path(r'^.+/get_departments', accounts_views.get_departments, name='get_departments_for_select'),
     re_path(r'^.+/.+/get_dep_chief_seat/(?P<dep_id>\d+)/$', accounts_views.get_dep_chief_seat, name='get_dep_chief_seat'),
+    re_path(r'^.+/.+/get_edms_documents/(?P<counterparty_id>\d+)/$', edms_get_documents, name='get_edms_documents'),
     re_path(r'^.+/.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
     re_path(r'^.+/get_doc/(?P<pk>\d+)/$', edms_get_doc, name='get_doc_info'),  # Запит на інформацію про документ
     re_path(r'^.+/.+/edit_contract', edit_contract, name='edit_contract'),
