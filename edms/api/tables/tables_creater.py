@@ -2,8 +2,9 @@ from django.conf import settings
 from plxk.api.try_except import try_except
 from django.shortcuts import get_object_or_404
 from plxk.api.datetime_normalizers import normalize_date
-from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline, Bag_Test
+from edms.models import Document_Type_Module, Document, File, Document_Path, Cost_Rates, Doc_Deadline, Bag_Test, Doc_Day, Doc_Contract_Subject
 from edms.api.modules_getter import get_seat
+from production.models import Contract_Subject
 from plxk.api.datetime_normalizers import date_to_json, datetime_to_json, normalize_whole_date
 from plxk.api.convert_to_local_time import convert_to_localtime
 
@@ -42,6 +43,7 @@ def get_column_widths(modules):
         {'columnName': 'accounting', 'width': 200},
         {'columnName': 'product_type', 'width': 200},
         {'columnName': 'date_start', 'width': 100},
+        {'columnName': 'date_end', 'width': 100},
         {'columnName': 'client', 'width': 250},
         {'columnName': 'choose_company', 'width': 85},
         {'columnName': 'day', 'width': 160},
@@ -131,6 +133,12 @@ def get_table_header(modules):
             header.append({'name': 'sub_product_type', 'title': 'Тип продукції'})
         elif module['module'] == 'dimensions':
             header.append(get_dimensions_header(module))
+        elif module['module'] == 'choose_company':
+            header.append({'name': 'choose_company', 'title': 'Підприємство'})
+        elif module['field'] == 'date_start':
+            header.append({'name': 'date_start', 'title': 'Початок дії'})
+        elif module['field'] == 'date_end':
+            header.append({'name': 'date_end', 'title': 'Кінець дії'})
         elif module['module'] == 'cost_rates':  # Норми витрат
             header.append({'name': 'product', 'title': 'Продукція'})
             header.append({'name': 'department', 'title': 'Підрозділ'})
@@ -189,6 +197,8 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
     documents_arranged = [{
         'id': doc.id,
         'author': doc.employee_seat.employee.pip,
+        'date_start': get_date_by_field(modules, doc, 'date_start'),
+        'date_end': get_date_by_field(modules, doc, 'date_end'),
         'day': get_day(modules, doc),
         'datetime': get_datetime(modules, doc),
         # 'date': datetime_to_json(Document_Path.objects.values('timestamp').filter(document_id=doc.id).filter(mark_id=1)[0]),
@@ -196,6 +206,7 @@ def get_table_rows(meta_doc_type, modules, rows_count, counterparty):
         # 'status': 'ok' if doc.approved is True else 'in progress' if doc.approved is None else '',
         'stage': get_stage(doc.stage),
         'texts': get_texts(modules, doc),
+        'contract_subject': get_contract_subject(modules, doc),
         'mockup_type': get_mockup_type(modules, doc),
         'mockup_product_type': get_mockup_product_type(modules, doc),
         'sub_product_type': get_sub_product_type(modules, doc),
@@ -308,6 +319,15 @@ def get_dimensions_header(module):
 
 
 @try_except
+def get_contract_subject(modules, doc):
+    if any(module['module_id'] == 45 for module in modules):
+        subject = Doc_Contract_Subject.objects.filter(document=doc).filter(is_active=True)[0]
+        if subject:
+            return subject.text or subject.contract_subject.name
+    return None
+
+
+@try_except
 def get_mockup_type(modules, doc):
     if any(module['module_id'] == 24 for module in modules):
         return doc.mockup_type.all()[0].mockup_type.name if doc.mockup_type.all() else None
@@ -354,6 +374,23 @@ def get_packaging_type(modules, doc):
 def get_day(modules, doc):
     if any(module['module_id'] == 12 for module in modules):
         return date_to_json(doc.days.all()[0].day) if doc.days.all() else None
+    return None
+
+
+@try_except
+def get_date_by_field(modules, doc, field):
+    if any(module['field'] == field for module in modules):
+        queue = 0
+        for module in modules:
+            if module['field'] == field:
+                queue = module['queue']
+                break
+
+        value = Doc_Day.objects.values_list('day', flat=True).filter(document=doc).filter(queue_in_doc=queue).filter(is_active=True)[0]
+
+        if value:
+            return normalize_date(value)
+
     return None
 
 

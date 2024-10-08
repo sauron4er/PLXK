@@ -1,36 +1,13 @@
 'use strict';
 import * as React from 'react';
-import { useEffect, useState } from "react";
-import { axiosGetRequest } from "templates/components/axios_requests";
-
-const columns = [
-  {name: 'id', title: '№'},
-  {name: 'type', title: 'Тип'}
-];
-
-const col_width = [
-  {columnName: 'id', width: 70}
-];
+import Tables from 'edms/templates/edms/tables/tables';
 
 function EDMSDocuments(props) {
-  const [documents, setDocuments] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getDocuments();
-  }, [])
-
-  function getDocuments() {
-    axiosGetRequest(`get_edms_documents/${props.counterparty_id}/`)
-      .then((response) => {
-        console.log(response);
-        setDocuments(response);
-        setLoading(false)
-      })
-      .catch((error) => console.log(error));
-  }
-
-  return <div>{props.counterparty_id}</div>;
+  return (
+    <If condition={props.counterparty_id !== 0}>
+      <Tables doc_type_id={5} counterparty_id={props.counterparty_id} />
+    </If>
+  );
 }
 
 EDMSDocuments.defaultProps = {};

@@ -127,7 +127,7 @@ class Counterparty extends React.Component {
                   <Tab>Схема укладки</Tab>
                 </If>
                 <Tab>Офіційні листи</Tab>
-                <Tab>Електронні документи</Tab>
+                <Tab>Візування договорів</Tab>
                 {/*<Tab>{type === 'provider' ? 'Постачальник на мапі' : 'Клієнт на мапі'}</Tab>*/}
                 <Tab>Мапа</Tab>
               </TabList>
