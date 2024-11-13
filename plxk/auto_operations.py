@@ -10,6 +10,6 @@ def do_automatic_stuff():
     weekday = now.isoweekday()
     if weekday < 6 and current_hour == '06':
         send_order_reminders()
-        send_contract_sign_reminders()
+        # send_contract_sign_reminders()
         # send_reminders_about_permissions()
         arrange_vacations()
