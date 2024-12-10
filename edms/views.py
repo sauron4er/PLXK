@@ -472,14 +472,13 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
                             # -- Перегляньте документи на сторінці "Документи"
 
                             return HttpResponse('')
-                elif form.data['successor_old_emp'] != '':
+                elif form.data['successor_old_emp'] != '0':
                     form.data['successor'] = form.data['successor_old_emp']
                     if form.is_valid():
                         form.save()
-                        if form.data['successor_old_emp'] != '0':
-                            move_docs(pk, form.data['successor_old_emp'])
-                            move_approvals(pk, form.data['successor_old_emp'])
-                            move_orders(pk, form.data['successor_old_emp'])
+                        move_docs(pk, form.data['successor_old_emp'])
+                        move_approvals(pk, form.data['successor_old_emp'])
+                        move_orders(pk, form.data['successor_old_emp'])
                         return HttpResponse('')
                 else:
                     if form.is_valid():
