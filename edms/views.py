@@ -476,9 +476,10 @@ def edms_hr_emp_seat(request, pk):       # changes in emp_seat row
                     form.data['successor'] = form.data['successor_old_emp']
                     if form.is_valid():
                         form.save()
-                        move_docs(pk, form.data['successor_old_emp'])
-                        move_approvals(pk, form.data['successor_old_emp'])
-                        move_orders(pk, form.data['successor_old_emp'])
+                        if form.data['successor_old_emp'] != '0':
+                            move_docs(pk, form.data['successor_old_emp'])
+                            move_approvals(pk, form.data['successor_old_emp'])
+                            move_orders(pk, form.data['successor_old_emp'])
                         return HttpResponse('')
                 else:
                     if form.is_valid():
