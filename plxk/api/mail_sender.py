@@ -23,7 +23,7 @@ def send_email(mail, body):
     if mail != '':
     # if 1 == 2:
         sender = "it@lxk.com.ua"
-        host = "10.20.10.20"
+        host = "smtp.lxk.com.ua"
         try:
             server = smtplib.SMTP(host, timeout=2000)
             server.login('it_lxk.com.ua', mail_pass)
