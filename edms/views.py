@@ -627,6 +627,7 @@ def edms_get_doc(request, pk):
             doc_info.update({'path': get_path_steps(path)})
 
             flow_and_acquaints = get_doc_flow(doc.pk)
+            doc_info.update({'ready_to_upload_scan': flow_and_acquaints['ready_to_upload_scan']})
             if flow_and_acquaints['flow']:
                 doc_info.update({'flow': flow_and_acquaints['flow']})
 
@@ -1212,18 +1213,28 @@ def edms_mark(request):
 
             # Додано скан-копії підписаних документів
             elif doc_request['mark'] == '22':
-                # Деактивуємо MarkDemand цієї позначки
-                deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
-
-                add_contract_from_edms(doc_request, request.FILES)
-
-                if is_auto_approved_phase_used(doc_request['document_type']):
-                    completely_approved = is_doc_completely_approved(doc_request)
-                    if completely_approved:
-                        doc_request.update({'approved': completely_approved})
-                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                # ТИМЧАСОВО - на період виправлення відсутності договорів:
+                # Для суперменеджера - виключаємо всі наступні кроки
+                if doc_request['user_is_super_manager'] and doc_request['employee_seat'] != doc_request['doc_author_id']:
+                    deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
+                    add_contract_from_edms(doc_request, request.FILES)
+                    if is_auto_approved_phase_used(doc_request['document_type']):
+                        completely_approved = is_doc_completely_approved(doc_request)
+                        if completely_approved:
+                            doc_request.update({'approved': completely_approved})
                 else:
-                    new_phase(doc_request, this_phase['phase'] + 1, [])
+                    # Деактивуємо MarkDemand цієї позначки
+                    deactivate_mark_demand(doc_request, doc_request['mark_demand_id'])
+
+                    add_contract_from_edms(doc_request, request.FILES)
+
+                    if is_auto_approved_phase_used(doc_request['document_type']):
+                        completely_approved = is_doc_completely_approved(doc_request)
+                        if completely_approved:
+                            doc_request.update({'approved': completely_approved})
+                        new_phase(doc_request, this_phase['phase'] + 1, [])
+                    else:
+                        new_phase(doc_request, this_phase['phase'] + 1, [])
 
             # Взято у роботу
             elif doc_request['mark'] == '23':

@@ -1427,7 +1427,11 @@ def get_doc_flow(doc_id):
         'emp': demand.recipient.employee.pip,
         'seat': demand.recipient.seat.seat if demand.recipient.is_main else '(в.о.) ' + demand.recipient.seat.seat,
         'expected_mark': demand.mark_id,
+        'expected_mark_name': demand.mark.mark
     } for demand in Mark_Demand.objects.filter(document_id=doc_id).filter(is_active=True)]
+
+    # Показуємо, чи готовий документ до заливання скан-копій
+    ready_to_upload_scan = Mark_Demand.objects.filter(mark_id=22).filter(document_id=doc_id).filter(is_active=True).exists()
 
     # Розділяємо чергу на два потоки: "На ознайомлення" та "На черзі у"
     flow = []
@@ -1439,7 +1443,7 @@ def get_doc_flow(doc_id):
         else:
             flow.append(step)
 
-    return {'flow': flow, 'acquaints': acquaints}
+    return {'flow': flow, 'acquaints': acquaints, 'ready_to_upload_scan': ready_to_upload_scan}
 
 
 @try_except

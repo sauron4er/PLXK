@@ -16,6 +16,8 @@ class Buttons extends React.Component {
     const user_is_doc_responsible = info.responsible_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
 
+    console.log(info);
+
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
@@ -225,19 +227,21 @@ class Buttons extends React.Component {
         </If>
 
         {/*Якщо тип документа редагуємий (але не макет мішків, для якого ще не створена можливість редагуватися)*/}
-          <If condition={docInfoStore?.info?.is_changeable && docInfoStore?.info?.meta_type_id !== 6}>
-            <If condition={docInfoStore?.info?.expected_mark === 17 || docInfoStore?.viewer_is_author || docInfoStore?.info?.viewer_is_admin}>
-              {/*Ця кнопка лише для автора і візуючих*/}
-              <button
-                type='button'
-                className='btn btn-secondary mr-1 mb-1'
-                onClick={() => this.onClick(18)}
-                disabled={button_clicked}
-              >
-                Редагувати
-              </button>
-            </If>
+        <If condition={docInfoStore?.info?.is_changeable && docInfoStore?.info?.meta_type_id !== 6}>
+          <If condition={docInfoStore?.info?.expected_mark === 17 || docInfoStore?.viewer_is_author || docInfoStore?.info?.viewer_is_admin}>
+            {/*Ця кнопка лише для автора і візуючих*/}
+            <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(18)} disabled={button_clicked}>
+              Редагувати
+            </button>
           </If>
+        </If>
+
+        {/* Спеціально для договорів - доступ супер-менеджеру заливати скан-копії оригіналів */}
+        <If condition={info.user_is_super_manager}>
+          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(22)} disabled={button_clicked}>
+            Додати скан-копії підписаних документів
+          </button>
+        </If>
 
         {/* Кнопки "коментар", "на ознайомлення" та "файл" є завжди */}
         <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(4)} disabled={button_clicked}>

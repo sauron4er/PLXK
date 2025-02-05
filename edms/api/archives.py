@@ -5,7 +5,8 @@ import json
 from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import Department
-from edms.models import Document, Document_Path
+from docs.models import Contract
+from edms.models import Document, Document_Path, Doc_Registration
 from edms.api.getters import get_my_seats, get_sub_emps
 from django.shortcuts import get_object_or_404
 
@@ -134,6 +135,19 @@ def get_work_archive_docs(request, archive_type, meta_doc_type_id, page):
     # Фільтрація і сортування у таблиці
     work_archive = filter_work_archive_query(work_archive, json.loads(request.POST['filtering']))
     work_archive = sort_work_archive_query(work_archive, request.POST['sort_name'], request.POST['sort_direction'])
+
+
+    # ---------------------- ТИМЧАСОВО
+    # Показуємо в архіві виключно договори по ТОВ і виключно ті, яких нема у базі Договорів і у яких є реєстраційний номер
+    if meta_doc_type_id == '5':
+        contracts_from_edms = list(Contract.objects.values_list('edms_doc_id', flat=True).filter(edms_doc_id__isnull=False).filter(is_active=True))
+        registrated_contracts = list(Doc_Registration.objects.values_list('document_id', flat=True).filter(document__company='ТОВ').filter(is_active=True))
+
+        work_archive = work_archive.filter(company='ТОВ')
+        work_archive = work_archive.exclude(id__in=contracts_from_edms)
+        work_archive = work_archive.filter(id__in=registrated_contracts)
+    # ---------------------- ТИМЧАСОВО
+
 
     # Пажинація
     paginator = Paginator(work_archive, 25)

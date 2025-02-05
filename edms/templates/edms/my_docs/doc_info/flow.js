@@ -12,6 +12,7 @@ class Flow extends React.Component {
           <div key={flow.id} className='css_flow p-2 mt-1 mr-1'>
             <div className='font-weight-bold'>{flow.emp}</div>
             <div>{flow.seat}</div>
+            <div className='font-italic font-weight-bold text-secondary'>{flow.expected_mark_name}</div>
           </div>
         </For>
       </div>
