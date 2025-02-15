@@ -385,11 +385,12 @@ def get_date_by_field(modules, doc, field):
             if module['field'] == field:
                 queue = module['queue']
                 break
+        doc_day = Doc_Day.objects.values_list('day', flat=True).filter(document=doc).filter(queue_in_doc=queue).filter(is_active=True)
+        if len(doc_day):
+            value = Doc_Day.objects.values_list('day', flat=True).filter(document=doc).filter(queue_in_doc=queue).filter(is_active=True)[0]
 
-        value = Doc_Day.objects.values_list('day', flat=True).filter(document=doc).filter(queue_in_doc=queue).filter(is_active=True)[0]
-
-        if value:
-            return normalize_date(value)
+            if value:
+                return normalize_date(value)
 
     return None
 
