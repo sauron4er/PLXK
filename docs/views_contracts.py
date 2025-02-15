@@ -230,7 +230,7 @@ def contract_reg_numbers(request):
 @login_required(login_url='login')
 @try_except
 def contracts_reg_journal(request):
-    trim_spaces()  # TODO - comment after first use!
+    # trim_spaces()  # TODO - comment after first use!
     add_missing_contract_info()  # every time start function, that ties new contract numbers with contracts in database
     return render(request, 'docs/contracts/registration_journal/index.html')
 
