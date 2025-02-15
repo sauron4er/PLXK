@@ -144,3 +144,10 @@ class Contract_File(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     contract = models.ForeignKey(Contract, related_name='files', null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)
+
+
+class Contract_Reg_Number(models.Model):
+    number = models.CharField(max_length=20)
+    date = models.DateField(null=True)
+    contract = models.ForeignKey(Contract, related_name='reg_number', null=True, on_delete=models.RESTRICT)
+    is_active = models.BooleanField(default=True)

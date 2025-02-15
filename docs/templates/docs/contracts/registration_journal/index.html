@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Журнал реєстрації договорів{% endblock %}
+{% load render_bundle from webpack_loader %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+{% endblock %}
+
+{% block second_nav %}{% endblock %}
+
+{% block content %}
+    <script></script>
+    <div class="container-fluid" id="contracts_reg_journal">
+      {% render_bundle 'contracts_reg_journal' %}
+    </div>
+{% endblock %}
+
+

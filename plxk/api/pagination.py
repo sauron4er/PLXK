@@ -5,6 +5,9 @@ from plxk.api.try_except import try_except
 @try_except
 def sort_query_set(query_set, column, direction):
     if column:
+        if column == 'counterparty':
+            column = 'counterparty_link__name'
+
         if direction == 'asc':
             query_set = query_set.order_by(column)
         else:

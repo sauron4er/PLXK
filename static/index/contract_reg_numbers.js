@@ -1,1 +1,1 @@
-import 'docs/templates/docs/contracts/registration_numbers'
+import 'docs/templates/docs/contracts/registration_numbers_edms'

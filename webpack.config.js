@@ -24,6 +24,7 @@ module.exports = {
     corr_templates: './static/index/corr_templates.js',
     vacations: './static/index/vacations.js',
     contract_reg_numbers: './static/index/contract_reg_numbers.js',
+    contracts_reg_journal: './static/index/contracts_reg_journal.js',
     proposals: './static/index/proposals.js',
   },
   output: {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import ContractRegNumbers from 'docs/templates/docs/contracts/registration_numbers/contract_reg_numbers';
+import ContractRegNumbers from 'docs/templates/docs/contracts/registration_numbers_edms/contract_reg_numbers';
 
 function ContractRegNumbersApp() {
   return (

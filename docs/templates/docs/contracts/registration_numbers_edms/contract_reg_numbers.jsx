@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RegNumbersTable from 'docs/templates/docs/contracts/registration_numbers/table';
+import RegNumbersTable from 'docs/templates/docs/contracts/registration_numbers_edms/table';
 import Document from "edms/templates/edms/my_docs/doc_info/document";
 import Modal from "react-responsive-modal";
 import 'react-responsive-modal/styles.css';
