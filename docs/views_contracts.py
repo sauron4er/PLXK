@@ -7,9 +7,11 @@ import json
 from edms.models import Employee_Seat
 from edms.api.contract_reg_numbers import get_contract_reg_numbers_list
 from plxk.api.try_except import try_except
-from .models import Contract, Contract_File
+from .models import Contract, Contract_File, Contract_Reg_Number
+from .api.contracts_api import add_contract_api, edit_contract_api, deactivate_contract_api, post_files, \
+    arrange_reg_journal, add_missing_contract_info, trim_spaces
 from plxk.api.datetime_normalizers import date_to_json
-from docs.api import contracts_api, contracts_mail_sender
+from docs.api import contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
 from plxk.api.global_getters import get_users_list, get_departments_list, is_it_lawyer, is_this_my_sub
@@ -186,10 +188,10 @@ def get_contract(request, pk):
 def add_contract(request):
     doc_request = request.POST.copy()
 
-    new_contract_id = contracts_api.add_contract(request)
+    new_contract_id = add_contract_api(request)
     doc_request.update({'contract': new_contract_id})
 
-    contracts_api.post_files(request.FILES, doc_request)
+    post_files(request.FILES, doc_request)
     contracts_mail_sender.send_mail(doc_request)
 
     return HttpResponse(new_contract_id)
@@ -201,10 +203,10 @@ def add_contract(request):
 def edit_contract(request):
     doc_request = request.POST.copy()
 
-    contract_id = contracts_api.edit_contract(request)
+    contract_id = edit_contract_api(request)
     doc_request.update({'contract': contract_id})
 
-    contracts_api.post_files(request.FILES, doc_request)
+    post_files(request.FILES, doc_request)
 
     return HttpResponse(contract_id)
 
@@ -213,7 +215,7 @@ def edit_contract(request):
 @transaction.atomic
 @try_except
 def deactivate_contract(request, pk):
-    contracts_api.deactivate_contract(request, pk)
+    deactivate_contract_api(request, pk)
     return HttpResponse()
 
 
@@ -221,7 +223,44 @@ def deactivate_contract(request, pk):
 @login_required(login_url='login')
 @try_except
 def contract_reg_numbers(request):
-    return render(request, 'docs/contracts/registration_numbers/index.html')
+    return render(request, 'docs/contracts/registration_numbers_edms/index.html')
+
+
+# ----------------------------------------- Contract registration journal
+@login_required(login_url='login')
+@try_except
+def contracts_reg_journal(request):
+    trim_spaces()  # TODO - comment after first use!
+    add_missing_contract_info()  # every time start function, that ties new contract numbers with contracts in database
+    return render(request, 'docs/contracts/registration_journal/index.html')
+
+
+@try_except
+def get_reg_journal(request, page, company='ТОВ'):
+    reg_journal = arrange_reg_journal(request, page, company)
+    return HttpResponse(json.dumps(reg_journal))
+
+
+@try_except
+def edit_reg_journal_number(request, reg_id):
+    if reg_id != '0':
+        reg_number_instance = Contract_Reg_Number.objects.get(id=reg_id)
+    else:
+        reg_number_instance = Contract_Reg_Number()
+
+    reg_number_instance.number = request.POST['number']
+    reg_number_instance.date = request.POST['date']
+    reg_number_instance.contract = None  # let system tie contract again in case of changed number
+    reg_number_instance.save()
+    return HttpResponse('')
+
+
+@try_except
+def delete_reg_journal_number(request, reg_id):
+    reg_number_instance = Contract_Reg_Number.objects.get(id=reg_id)
+    reg_number_instance.is_active = False
+    reg_number_instance.save()
+    return HttpResponse('')
 
 
 # ----------------------------------------- Contract reg numbers

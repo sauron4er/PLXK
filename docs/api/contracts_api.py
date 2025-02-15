@@ -1,15 +1,18 @@
 import json
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.try_except import try_except
-from docs.models import Contract, Contract_File
+from docs.models import Contract, Contract_File, Contract_Reg_Number
 from docs.forms import NewContractForm, DeactivateContractForm, DeactivateContractFileForm
 from edms.models import Document, Document_Type_Module, Doc_Contract_Subject
 from docs.api.contracts_mail_sender import send_mail
 
 
 @try_except
-def add_contract(request):
+def add_contract_api(request):
     contract = json.loads(request.POST.get('contract'))
     contract.update({'edms_doc_id': None})
     return post_contract(request.user.id, contract)
@@ -134,7 +137,7 @@ def get_subject_from_edms(edms_doc, queue):
 
 
 @try_except
-def edit_contract(request):
+def edit_contract_api(request):
     contract = json.loads(request.POST.get('contract'))
     contract['basic_contract'] = None if not contract['is_additional_contract'] else contract['basic_contract']
     contract['counterparty_link'] = contract['counterparty']
@@ -163,7 +166,7 @@ def edit_contract(request):
 
 
 @try_except
-def deactivate_contract(request, pk):
+def deactivate_contract_api(request, pk):
     contract_instance = get_object_or_404(Contract, pk=pk)
     contract_form = DeactivateContractForm(request, instance=contract_instance, initial={'is_active': False})
     if contract_form.is_valid():
@@ -279,3 +282,100 @@ def check_lawyers_received(edms_doc_id):
             contract.save()
 
 
+#  -------------- Contract numbers journal
+@try_except
+def trim_spaces():
+    reg_journal = Contract_Reg_Number.objects \
+        .filter(is_active=True)
+    for reg in reg_journal:
+        reg.number = reg.number.strip()
+        reg.save()
+
+
+@try_except
+def add_missing_contract_info():
+    #  function, that ties new contract numbers with contracts in database
+    non_tied_reg_journal = Contract_Reg_Number.objects\
+        .filter(contract__isnull=True)\
+        .filter(is_active=True)
+
+    for reg in non_tied_reg_journal:
+        if not reg.contract_id:
+            contract = Contract.objects \
+                .filter(number=reg.number) \
+                .filter(is_active=True) \
+                .first()
+            if contract:
+                reg.contract_id = contract.id
+                if not reg.date:
+                    reg.date = contract.date_start
+                reg.save()
+
+
+@try_except
+def arrange_reg_journal(request, page, company):
+    reg_journal = Contract_Reg_Number.objects.filter(is_active=True)
+
+    # Фільтрація і сортування у таблиці
+    reg_journal = filter_reg_journal_query(reg_journal, json.loads(request.POST['filtering']))
+    reg_journal = sort_reg_journal_query(reg_journal, request.POST['sort_name'], request.POST['sort_direction'])
+
+    # Пажинація
+    paginator = Paginator(reg_journal, 25)
+    try:
+        reg_journal_page = paginator.page(int(page) + 1)
+    except PageNotAnInteger:
+        reg_journal_page = paginator.page(1)
+    except EmptyPage:
+        reg_journal_page = paginator.page(1)
+
+    # Формуємо остаточний список
+    reg_journal_list = [{
+        'id': reg.id,
+        'number': reg.number,
+        'date': normalize_date(reg.date),
+        'contract_id': reg.contract_id if reg.contract_id else '',
+        'contract_subject': reg.contract.subject if reg.contract_id else '',
+        'company': reg.contract.company if reg.contract_id else '',
+        'counterparty': get_contract_counterparty_name(reg) if reg.contract_id else '',
+    } for reg in reg_journal_page]
+
+    return {'rows': reg_journal_list, 'pagesCount': paginator.num_pages}
+
+
+@try_except
+def get_contract_counterparty_name(reg):
+    return reg.contract.counterparty_link.name if reg.contract.counterparty_link else (reg.contract.counterparty or '')
+
+@try_except
+def filter_reg_journal_query(query_set, filtering):
+    for filter in filtering:
+        if filter['columnName'] == 'id':
+            query_set = query_set.filter(id=filter['value'])
+        elif filter['columnName'] == 'number':
+            query_set = query_set.filter(number__icontains=filter['value'])
+        elif filter['columnName'] == 'date':
+            query_set = query_set.filter(date__year=filter['value'])
+        elif filter['columnName'] == 'counterparty':
+            query_set = query_set.filter(Q(contract__counterparty_link__name__icontains=filter['value']) |
+                                         Q(contract__counterparty__icontains=filter['value']))
+        elif filter['columnName'] == 'subject':
+            query_set = query_set.filter(contract__subject__icontains=filter['value'])
+    return query_set
+
+
+@try_except
+def sort_reg_journal_query(query_set, column, direction):
+    if column:
+        if column == 'counterparty':
+            column = 'contract__counterparty_link__name'
+        elif column == 'contract_subject':
+            column = 'contract__subject'
+
+        if direction == 'asc':
+            query_set = query_set.order_by(column)
+        else:
+            query_set = query_set.order_by('-' + column)
+    else:
+        query_set = query_set.order_by('-id')
+    return query_set
