@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from accounts.models import Department
+from accounts.models import Department, UserProfile
 import edms.models as edms
 from boards.models import Counterparty
 
@@ -148,6 +148,10 @@ class Contract_File(models.Model):
 
 class Contract_Reg_Number(models.Model):
     number = models.CharField(max_length=20)
+    type = models.CharField(max_length=15, null=True)
     date = models.DateField(null=True)
+    counterparty = models.ForeignKey(Counterparty, related_name='contracts_reg_numbers', on_delete=models.RESTRICT, null=True)
+    subject = models.CharField(max_length=1000, null=True)
+    responsible = models.ForeignKey(UserProfile, related_name='responsible_for_contract_reg_number', on_delete=models.RESTRICT, null=True)
     contract = models.ForeignKey(Contract, related_name='reg_number', null=True, on_delete=models.RESTRICT)
     is_active = models.BooleanField(default=True)

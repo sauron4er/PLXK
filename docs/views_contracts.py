@@ -230,9 +230,10 @@ def contract_reg_numbers(request):
 @login_required(login_url='login')
 @try_except
 def contracts_reg_journal(request):
-    # trim_spaces()  # TODO - comment after first use!
+    # trim_spaces()  # TODO - comment after first use for TDV! TOV is done
     add_missing_contract_info()  # every time start function, that ties new contract numbers with contracts in database
-    return render(request, 'docs/contracts/registration_journal/index.html')
+    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.department_id == 50
+    return render(request, 'docs/contracts/registration_journal/index.html', {'edit_access': json.dumps(edit_access)})
 
 
 @try_except
@@ -249,7 +250,11 @@ def edit_reg_journal_number(request, reg_id):
         reg_number_instance = Contract_Reg_Number()
 
     reg_number_instance.number = request.POST['number']
+    reg_number_instance.type = request.POST['type']
     reg_number_instance.date = request.POST['date']
+    reg_number_instance.counterparty_id = request.POST['counterparty_id']
+    reg_number_instance.subject = request.POST['subject']
+    reg_number_instance.responsible_id = request.POST['responsible_id']
     reg_number_instance.contract = None  # let system tie contract again in case of changed number
     reg_number_instance.save()
     return HttpResponse('')

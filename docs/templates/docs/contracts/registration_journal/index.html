@@ -11,7 +11,9 @@
 {% block second_nav %}{% endblock %}
 
 {% block content %}
-    <script></script>
+    <script>
+        window.edit_access = {{ edit_access|safe }};
+    </script>
     <div class="container-fluid" id="contracts_reg_journal">
       {% render_bundle 'contracts_reg_journal' %}
     </div>
