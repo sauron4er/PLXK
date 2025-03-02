@@ -255,6 +255,7 @@ def edit_reg_journal_number(request, reg_id):
     reg_number_instance.counterparty_id = request.POST['counterparty_id']
     reg_number_instance.subject = request.POST['subject']
     reg_number_instance.responsible_id = request.POST['responsible_id']
+    reg_number_instance.company = request.POST['company']
     reg_number_instance.contract = None  # let system tie contract again in case of changed number
     reg_number_instance.save()
     return HttpResponse('')

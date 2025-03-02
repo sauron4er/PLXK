@@ -5,15 +5,23 @@ import {useEffect, useRef, useState} from 'react';
 
 const columns = [
   {name: 'number', title: 'Номер'},
+  {name: 'type', title: 'Тип'},
   {name: 'date', title: 'Дата'},
+  {name: 'company', title: 'Підприємство'},
   {name: 'counterparty', title: 'Контрагент'},
-  {name: 'contract_subject', title: 'Предмет'},
+  {name: 'subject', title: 'Предмет'},
+  {name: 'responsible', title: 'Менеджер'},
+  {name: 'status', title: ' '},
 ];
 
 const col_width = [
   {columnName: 'number', width: 100},
   {columnName: 'date', width: 100},
+  {columnName: 'type', width: 250},
   {columnName: 'counterparty', width: 300},
+  {columnName: 'responsible', width: 250},
+  {columnName: 'company', width: 100},
+  {columnName: 'status', width: 35},
 ];
 
 function RegJournalTable(props) {
@@ -37,6 +45,7 @@ function RegJournalTable(props) {
         colWidth={col_width}
         onRowClick={onRowClick}
         height={mainDivHeight}
+        coloredStatus
         filter
       />
     </div>

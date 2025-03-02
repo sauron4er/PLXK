@@ -8,7 +8,7 @@ import SubmitButton from 'templates/components/form_modules/submit_button';
 import {getIndexByProperty, notify} from 'templates/components/my_extras';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import Selector from 'templates/components/form_modules/selectors/selector';
-import SelectorWithFilterAndAxios from "templates/components/form_modules/selectors/selector_with_filter_and_axios";
+import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 
 function ContractsRegJournal() {
   const [modalOpened, setModalOpened] = useState(false);
@@ -17,6 +17,7 @@ function ContractsRegJournal() {
     number: '',
     type: '',
     date: '',
+    company: '',
     counterparty_id: 0,
     counterparty_name: '',
     subject: '',
@@ -49,6 +50,14 @@ function ContractsRegJournal() {
     }));
   }
 
+  function onCompanyChange(e) {
+    const selectedIndex = e.target.options.selectedIndex;
+    setRegNumber((prevState) => ({
+      ...prevState,
+      company: e.target.options[selectedIndex].value
+    }));
+  }
+
   function onCounterpartyChange(e) {
     setRegNumber((prevState) => ({
       ...prevState,
@@ -70,6 +79,7 @@ function ContractsRegJournal() {
     formData.append('number', regNumber.number);
     formData.append('type', regNumber.type);
     formData.append('date', regNumber.date);
+    formData.append('company', regNumber.company);
     formData.append('counterparty_id', regNumber.counterparty_id);
     formData.append('subject', regNumber.subject);
     formData.append('responsible_id', regNumber.responsible_id);
@@ -88,8 +98,6 @@ function ContractsRegJournal() {
       })
       .catch((error) => notify(error));
   }
-
-  console.log(regNumber.type);
 
   return (
     <>
@@ -113,6 +121,17 @@ function ContractsRegJournal() {
             fieldName='Реєстраційний номер договору'
             onChange={(e) => onFieldChange(e, 'number')}
             maxLength={20}
+            disabled={false}
+          />
+          <Selector
+            list={[
+              {id: 1, company: 'ТДВ'},
+              {id: 2, company: 'ТОВ'}
+            ]}
+            selectedName={regNumber.company}
+            valueField={'company'}
+            fieldName={'Підприємство'}
+            onChange={onCompanyChange}
             disabled={false}
           />
           <SelectorWithFilterAndAxios
@@ -151,13 +170,29 @@ function ContractsRegJournal() {
             onChange={onResponsibleChange}
             disabled={false}
           />
+          <If condition={regNumber.contract_id}>
+            <hr />
+            <a href={`${window.location.origin}/docs/contracts/${regNumber.contract_id}`} target='_blank'>
+              <h6>Переглянути договір</h6>
+            </a>
+          </If>
         </div>
         <div className='modal-footer'>
           <SubmitButton
             className='btn-outline-primary'
             text='Зберегти'
             onClick={postChanges}
-            disabled={!regNumber.number || !regNumber.type || regNumber.type === '0' || !regNumber.date || !regNumber.counterparty_id || !regNumber.subject || !regNumber.responsible_id}
+            disabled={
+              !regNumber.number ||
+              !regNumber.type ||
+              regNumber.type === '0' ||
+              !regNumber.date ||
+              !regNumber.counterparty_id ||
+              !regNumber.subject ||
+              !regNumber.responsible_id ||
+              !regNumber.company ||
+              regNumber.company === '0'
+            }
           />
           <SubmitButton className='btn-outline-danger' text='Видалити' onClick={deleteReg} disabled={false} />
         </div>

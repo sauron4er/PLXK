@@ -296,20 +296,23 @@ def trim_spaces():
 def add_missing_contract_info():
     #  function, that ties new contract numbers with contracts in database
     non_tied_reg_journal = Contract_Reg_Number.objects\
-        .filter(contract__isnull=True)\
+        .filter(Q(contract__isnull=True) | Q(subject__isnull=True))\
         .filter(is_active=True)
 
     for reg in non_tied_reg_journal:
-        if not reg.contract_id:
-            contract = Contract.objects \
-                .filter(number=reg.number) \
-                .filter(is_active=True) \
-                .first()
-            if contract:
-                reg.contract_id = contract.id
-                if not reg.date:
-                    reg.date = contract.date_start
-                reg.save()
+        contract = Contract.objects \
+            .filter(number=reg.number) \
+            .filter(is_active=True) \
+            .first()
+        if contract:
+            reg.contract_id = contract.id
+            if not reg.date:
+                reg.date = contract.date_start
+            if not reg.counterparty and contract.counterparty_link:
+                reg.counterparty = contract.counterparty_link
+            if not reg.subject and contract.subject:
+                reg.subject = contract.subject
+            reg.save()
 
 
 @try_except
@@ -334,10 +337,13 @@ def arrange_reg_journal(request, page, company):
         'id': reg.id,
         'number': reg.number,
         'date': normalize_date(reg.date),
+        'company': reg.company,
+        'counterparty': reg.counterparty.name if reg.counterparty else '',
+        'type': reg.type or '',
+        'subject': reg.subject or '',
+        'responsible': reg.responsible.pip if reg.responsible else '',
         'contract_id': reg.contract_id if reg.contract_id else '',
-        'contract_subject': reg.contract.subject if reg.contract_id else '',
-        'company': reg.contract.company if reg.contract_id else '',
-        'counterparty': get_contract_counterparty_name(reg) if reg.contract_id else '',
+        'status': 'ok' if reg.contract_id else '',
     } for reg in reg_journal_page]
 
     return {'rows': reg_journal_list, 'pagesCount': paginator.num_pages}
