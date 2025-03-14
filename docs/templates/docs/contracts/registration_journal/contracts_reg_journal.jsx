@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Modal from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
 import RegJournalTable from 'docs/templates/docs/contracts/registration_journal/table';
@@ -9,13 +9,15 @@ import {getIndexByProperty, notify} from 'templates/components/my_extras';
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 import Selector from 'templates/components/form_modules/selectors/selector';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faEdit} from '@fortawesome/free-solid-svg-icons';
 
 function ContractsRegJournal() {
   const [modalOpened, setModalOpened] = useState(false);
-  const [regNumber, setRegNumber] = useState({
+  const [regInfo, setRegInfo] = useState({
     id: 0,
-    number: '',
     type: '',
+    number: '',
     date: '',
     company: '',
     counterparty_id: 0,
@@ -24,6 +26,53 @@ function ContractsRegJournal() {
     responsible_id: 0,
     responsible_name: ''
   });
+  const [autoTypeCode, setAutoTypeCode] = useState('')
+  const [autoCompanyCode, setAutoCompanyCode] = useState('')
+  const [autoNumber, setAutoNumber] = useState('')
+
+  const [manualNumber, setManualNumber] = useState('');
+
+  useEffect(() => {
+    if (!manualNumber && autoTypeCode && autoCompanyCode && regInfo.date) {
+      getLastNumberInJournal()
+    }
+  }, [autoTypeCode, autoCompanyCode, regInfo.date]);
+
+  useEffect(() => {
+    let type_code = '';
+    switch (regInfo.type) {
+      case 'Закупівля лісу':
+       setAutoTypeCode('00');
+        break;
+      case 'Купівля-продаж':
+       setAutoTypeCode('01');
+        break;
+      case 'Перевезення':
+       setAutoTypeCode('02');
+        break;
+      case 'Послуги та інше':
+        setAutoTypeCode('03');
+        break;
+    }
+  }, [regInfo.type]);
+
+  useEffect(() => {
+    switch (regInfo.company) {
+      case 'ТДВ':
+        setAutoCompanyCode('T');
+        break;
+      case 'ТОВ':
+        setAutoCompanyCode('P');
+        break;
+      case 'NorthlandChem':
+        setAutoCompanyCode('H');
+        break;
+    }
+  }, [regInfo.company]);
+
+  function getLastNumberInJournal() {
+    console.log(111);
+  }
 
   function openModal(clicked_row = {id: 0, number: '', date: ''}) {
     const clicked = {...clicked_row};
@@ -31,12 +80,20 @@ function ContractsRegJournal() {
       const parts = clicked.date.split('.');
       clicked.date = `${parts[2]}-${parts[1]}-${parts[0]}`;
     }
-    setRegNumber(clicked);
+    setRegInfo(clicked);
     setModalOpened(true);
   }
 
+  useEffect(() => {
+  }, [regInfo.type, regInfo.company, regInfo.date]);
+
+  function arrangeNumber() {
+    if (autoNumber) {
+    }
+  }
+
   function onFieldChange(e, field_name) {
-    setRegNumber((prevState) => ({
+    setRegInfo((prevState) => ({
       ...prevState,
       [field_name]: e.target.value
     }));
@@ -44,7 +101,7 @@ function ContractsRegJournal() {
 
   function onTypeChange(e) {
     const selectedIndex = e.target.options.selectedIndex;
-    setRegNumber((prevState) => ({
+    setRegInfo((prevState) => ({
       ...prevState,
       type: e.target.options[selectedIndex].value
     }));
@@ -52,14 +109,14 @@ function ContractsRegJournal() {
 
   function onCompanyChange(e) {
     const selectedIndex = e.target.options.selectedIndex;
-    setRegNumber((prevState) => ({
+    setRegInfo((prevState) => ({
       ...prevState,
       company: e.target.options[selectedIndex].value
     }));
   }
 
   function onCounterpartyChange(e) {
-    setRegNumber((prevState) => ({
+    setRegInfo((prevState) => ({
       ...prevState,
       counterparty_id: e.id,
       counterparty_name: e.name
@@ -67,7 +124,7 @@ function ContractsRegJournal() {
   }
 
   function onResponsibleChange(e) {
-    setRegNumber((prevState) => ({
+    setRegInfo((prevState) => ({
       ...prevState,
       responsible_id: e.id,
       responsible_name: e.name
@@ -76,15 +133,15 @@ function ContractsRegJournal() {
 
   function postChanges(e) {
     let formData = new FormData();
-    formData.append('number', regNumber.number);
-    formData.append('type', regNumber.type);
-    formData.append('date', regNumber.date);
-    formData.append('company', regNumber.company);
-    formData.append('counterparty_id', regNumber.counterparty_id);
-    formData.append('subject', regNumber.subject);
-    formData.append('responsible_id', regNumber.responsible_id);
+    formData.append('number', regInfo.number);
+    formData.append('type', regInfo.type);
+    formData.append('date', regInfo.date);
+    formData.append('company', regInfo.company);
+    formData.append('counterparty_id', regInfo.counterparty_id);
+    formData.append('subject', regInfo.subject);
+    formData.append('responsible_id', regInfo.responsible_id);
 
-    axiosPostRequest('edit_reg_journal_number/' + regNumber.id + '/', formData)
+    axiosPostRequest('edit_reg_journal_number/' + regInfo.id + '/', formData)
       .then((response) => {
         window.location.reload();
       })
@@ -92,7 +149,7 @@ function ContractsRegJournal() {
   }
 
   function deleteReg(e) {
-    axiosGetRequest('delete_reg_journal_number/' + regNumber.id + '/')
+    axiosGetRequest('delete_reg_journal_number/' + regInfo.id + '/')
       .then((response) => {
         window.location.reload();
       })
@@ -114,21 +171,27 @@ function ContractsRegJournal() {
         closeOnOverlayClick={true}
         styles={{modal: {marginTop: 75}}}
       >
-        <div className='modal-header'>{`${regNumber.id ? 'Редагування' : 'Додавання'} реєстраційного номеру договору`}</div>
+        <div className='modal-header'>{`${regInfo.id ? 'Редагування' : 'Додавання'} реєстраційного номеру договору`}</div>
         <div className='modal-body'>
-          <TextInput
-            text={regNumber.number}
-            fieldName='Реєстраційний номер договору'
-            onChange={(e) => onFieldChange(e, 'number')}
-            maxLength={20}
-            disabled={false}
-          />
+          <div className='d-flex'>
+            <TextInput
+              text={regInfo.number}
+              fieldName='Реєстраційний номер договору'
+              onChange={(e) => onFieldChange(e, 'number')}
+              maxLength={20}
+              disabled={autoNumber}
+            />
+            <button className='btn btn-sm btn-outline-dark ml-2 my-2' onClick={(e) => setAutoNumber(false)}>
+              <FontAwesomeIcon icon={faEdit} />
+            </button>
+          </div>
           <Selector
             list={[
               {id: 1, company: 'ТДВ'},
-              {id: 2, company: 'ТОВ'}
+              {id: 2, company: 'ТОВ'},
+              {id: 3, company: 'NorthlandChem'}
             ]}
-            selectedName={regNumber.company}
+            selectedName={regInfo.company}
             valueField={'company'}
             fieldName={'Підприємство'}
             onChange={onCompanyChange}
@@ -138,41 +201,42 @@ function ContractsRegJournal() {
             listNameForUrl='counterparties'
             fieldName='Контрагент'
             selectId='counterparty_select'
-            value={{name: regNumber.counterparty_name, id: regNumber.counterparty_id}}
+            value={{name: regInfo.counterparty_name, id: regInfo.counterparty_id}}
             onChange={onCounterpartyChange}
             disabled={false}
           />
           <Selector
             list={[
-              {id: 1, type: 'Купівля-продаж'},
-              {id: 2, type: 'Перевезення'},
-              {id: 3, type: 'Послуги та інше'}
+              {id: 1, type: 'Закупівля лісу'},
+              {id: 2, type: 'Купівля-продаж'},
+              {id: 3, type: 'Перевезення'},
+              {id: 4, type: 'Послуги та інше'}
             ]}
-            selectedName={regNumber.type}
+            selectedName={regInfo.type}
             valueField={'type'}
             fieldName={'Тип'}
             onChange={onTypeChange}
             disabled={false}
           />
           <TextInput
-            text={regNumber.subject}
+            text={regInfo.subject}
             fieldName='Предмет договору'
             onChange={(e) => onFieldChange(e, 'subject')}
             maxLength={20}
             disabled={false}
           />
-          <DateInput fieldName='Дата договору' date={regNumber.date} disabled={false} onChange={(e) => onFieldChange(e, 'date')} />
+          <DateInput fieldName='Дата договору' date={regInfo.date} disabled={false} onChange={(e) => onFieldChange(e, 'date')} />
           <SelectorWithFilterAndAxios
             listNameForUrl='userprofiles'
             fieldName='Відповідальний менеджер'
             selectId='responsible_select'
-            value={{name: regNumber.responsible_name, id: regNumber.responsible_id}}
+            value={{name: regInfo.responsible_name, id: regInfo.responsible_id}}
             onChange={onResponsibleChange}
             disabled={false}
           />
-          <If condition={regNumber.contract_id}>
+          <If condition={regInfo.contract_id}>
             <hr />
-            <a href={`${window.location.origin}/docs/contracts/${regNumber.contract_id}`} target='_blank'>
+            <a href={`${window.location.origin}/docs/contracts/${regInfo.contract_id}`} target='_blank'>
               <h6>Переглянути договір</h6>
             </a>
           </If>
@@ -183,15 +247,15 @@ function ContractsRegJournal() {
             text='Зберегти'
             onClick={postChanges}
             disabled={
-              !regNumber.number ||
-              !regNumber.type ||
-              regNumber.type === '0' ||
-              !regNumber.date ||
-              !regNumber.counterparty_id ||
-              !regNumber.subject ||
-              !regNumber.responsible_id ||
-              !regNumber.company ||
-              regNumber.company === '0'
+              !regInfo.number ||
+              !regInfo.type ||
+              regInfo.type === '0' ||
+              !regInfo.date ||
+              !regInfo.counterparty_id ||
+              !regInfo.subject ||
+              !regInfo.responsible_id ||
+              !regInfo.company ||
+              regInfo.company === '0'
             }
           />
           <SubmitButton className='btn-outline-danger' text='Видалити' onClick={deleteReg} disabled={false} />
