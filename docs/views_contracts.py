@@ -266,9 +266,17 @@ def get_last_reg_journal_number(request):
     last_number = (Contract_Reg_Number.objects
                    .filter(type=request.POST['type'])
                    .filter(company=request.POST['company'])
-                   .filter()  # фільтр по році з request.POST['date']
+                   .filter(date__year=request.POST['year'])  # фільтр по році з request.POST['date']
                    .filter(is_active=True)
+                   .order_by('number')
                    .first())
+    if last_number:
+        # add 1 to number and return
+        pass
+    else:
+        # create first number and return
+        pass
+
     pass
 
 @try_except

@@ -71,8 +71,8 @@ function ContractsRegJournal() {
 
   function getLastNumberInJournal() {
     let formData = new FormData();
-    formData.append('type_code', regInfo.type);
-    formData.append('company_code', regInfo.company);
+    formData.append('type', regInfo.type);
+    formData.append('company', regInfo.company);
     formData.append('year', regInfo.date.slice(0, 4));
 
     axiosPostRequest('get_last_reg_journal_number', formData)
