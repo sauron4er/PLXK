@@ -28,18 +28,17 @@ function ContractsRegJournal() {
   });
   const [autoTypeCode, setAutoTypeCode] = useState('')
   const [autoCompanyCode, setAutoCompanyCode] = useState('')
-  const [autoNumber, setAutoNumber] = useState('')
 
+  const [autoNumber, setAutoNumber] = useState('')
   const [manualNumber, setManualNumber] = useState('');
 
   useEffect(() => {
     if (!manualNumber && autoTypeCode && autoCompanyCode && regInfo.date) {
-      getLastNumberInJournal()
+      getLastNumberInJournal();
     }
   }, [autoTypeCode, autoCompanyCode, regInfo.date]);
 
   useEffect(() => {
-    let type_code = '';
     switch (regInfo.type) {
       case 'Закупівля лісу':
        setAutoTypeCode('00');
@@ -71,7 +70,22 @@ function ContractsRegJournal() {
   }, [regInfo.company]);
 
   function getLastNumberInJournal() {
-    console.log(111);
+    let formData = new FormData();
+    formData.append('type_code', regInfo.type);
+    formData.append('company_code', regInfo.company);
+    formData.append('year', regInfo.date.slice(0, 4));
+
+    axiosPostRequest('get_last_reg_journal_number', formData)
+      .then((response) => {
+        console.log(response);
+        setAutoNumber(response)
+      })
+      .catch(function (error) {
+        console.log(error);
+        notify('Щось пішло не так. Зверніться до адміністратора');
+      });
+
+    return ''
   }
 
   function openModal(clicked_row = {id: 0, number: '', date: ''}) {

@@ -262,6 +262,16 @@ def edit_reg_journal_number(request, reg_id):
 
 
 @try_except
+def get_last_reg_journal_number(request):
+    last_number = (Contract_Reg_Number.objects
+                   .filter(type=request.POST['type'])
+                   .filter(company=request.POST['company'])
+                   .filter()  # фільтр по році з request.POST['date']
+                   .filter(is_active=True)
+                   .first())
+    pass
+
+@try_except
 def delete_reg_journal_number(request, reg_id):
     reg_number_instance = Contract_Reg_Number.objects.get(id=reg_id)
     reg_number_instance.is_active = False

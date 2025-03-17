@@ -44,6 +44,7 @@ urlpatterns = [
     re_path(r'^contracts/contracts_reg_journal', views_contracts.contracts_reg_journal, name='contracts_reg_journal'),
     re_path(r'^contracts/get_contracts_reg_journal/(?P<page>\d+)/$', views_contracts.get_reg_journal, name='get_reg_journal'),
     re_path(r'^contracts/edit_reg_journal_number/(?P<reg_id>\d+)/$', views_contracts.edit_reg_journal_number, name='edit_reg_journal_number'),
+    re_path(r'^contracts/get_last_reg_journal_number$', views_contracts.get_last_reg_journal_number, name='get_last_reg_journal_number'),
     re_path(r'^contracts/delete_reg_journal_number/(?P<reg_id>\d+)/$', views_contracts.delete_reg_journal_number, name='delete_reg_journal_number'),
     re_path(r'^contracts/contract_reg_numbers', views_contracts.contract_reg_numbers, name='contract_reg_numbers'),
     re_path(r'^contracts/get_contract_reg_numbers/(?P<page>\d+)/$', views_contracts.get_contract_reg_numbers, name='get_contract_reg_numbers'),
