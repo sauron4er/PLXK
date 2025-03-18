@@ -17,7 +17,8 @@ function ContractsRegJournal() {
   const [regInfo, setRegInfo] = useState({
     id: 0,
     type: '',
-    number: '',
+    manual_number: '',
+    auto_number: '',
     date: '',
     company: '',
     counterparty_id: 0,
@@ -26,14 +27,12 @@ function ContractsRegJournal() {
     responsible_id: 0,
     responsible_name: ''
   });
-  const [autoTypeCode, setAutoTypeCode] = useState('')
-  const [autoCompanyCode, setAutoCompanyCode] = useState('')
-
-  const [autoNumber, setAutoNumber] = useState('')
-  const [manualNumber, setManualNumber] = useState('');
+  const [autoTypeCode, setAutoTypeCode] = useState('');
+  const [autoCompanyCode, setAutoCompanyCode] = useState('');
+  const [autoNumberMode, setAutoNumberMode] = useState(true);
 
   useEffect(() => {
-    if (!manualNumber && autoTypeCode && autoCompanyCode && regInfo.date) {
+    if (autoNumberMode && autoTypeCode && autoCompanyCode && regInfo.date) {
       getLastNumberInJournal();
     }
   }, [autoTypeCode, autoCompanyCode, regInfo.date]);
@@ -41,13 +40,13 @@ function ContractsRegJournal() {
   useEffect(() => {
     switch (regInfo.type) {
       case 'Закупівля лісу':
-       setAutoTypeCode('00');
+        setAutoTypeCode('00');
         break;
       case 'Купівля-продаж':
-       setAutoTypeCode('01');
+        setAutoTypeCode('01');
         break;
       case 'Перевезення':
-       setAutoTypeCode('02');
+        setAutoTypeCode('02');
         break;
       case 'Послуги та інше':
         setAutoTypeCode('03');
@@ -58,34 +57,47 @@ function ContractsRegJournal() {
   useEffect(() => {
     switch (regInfo.company) {
       case 'ТДВ':
-        setAutoCompanyCode('T');
+        setAutoCompanyCode('Т');
         break;
       case 'ТОВ':
-        setAutoCompanyCode('P');
+        setAutoCompanyCode('Р');
         break;
       case 'NorthlandChem':
-        setAutoCompanyCode('H');
+        setAutoCompanyCode('Н');
         break;
     }
   }, [regInfo.company]);
 
   function getLastNumberInJournal() {
     let formData = new FormData();
-    formData.append('type', regInfo.type);
-    formData.append('company', regInfo.company);
+    formData.append('type_code', autoTypeCode);
+    formData.append('company_code', autoCompanyCode);
     formData.append('year', regInfo.date.slice(0, 4));
 
     axiosPostRequest('get_last_reg_journal_number', formData)
       .then((response) => {
-        console.log(response);
-        setAutoNumber(response)
+        if (response) {
+          setRegInfo((prevState) => ({
+            ...prevState,
+            auto_number: `${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`
+          }));
+        }
+        // if (response) setAutoNumber(`${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`)
       })
       .catch(function (error) {
         console.log(error);
         notify('Щось пішло не так. Зверніться до адміністратора');
       });
 
-    return ''
+    return '';
+  }
+
+  function clearAutoNumber() {
+    setRegInfo((prevState) => ({
+      ...prevState,
+      auto_number: ''
+    }));
+    setAutoNumberMode(false);
   }
 
   function openModal(clicked_row = {id: 0, number: '', date: ''}) {
@@ -98,12 +110,24 @@ function ContractsRegJournal() {
     setModalOpened(true);
   }
 
-  useEffect(() => {
-  }, [regInfo.type, regInfo.company, regInfo.date]);
-
-  function arrangeNumber() {
-    if (autoNumber) {
-    }
+  function onCloseModal() {
+    setModalOpened(false);
+    setRegInfo({
+      id: 0,
+      type: '',
+      manual_number: '',
+      auto_number: '',
+      date: '',
+      company: '',
+      counterparty_id: 0,
+      counterparty_name: '',
+      subject: '',
+      responsible_id: 0,
+      responsible_name: ''
+    });
+    setAutoTypeCode('');
+    setAutoCompanyCode('');
+    setAutoNumberMode(true);
   }
 
   function onFieldChange(e, field_name) {
@@ -147,7 +171,8 @@ function ContractsRegJournal() {
 
   function postChanges(e) {
     let formData = new FormData();
-    formData.append('number', regInfo.number);
+    formData.append('auto_number', regInfo.auto_number);
+    formData.append('manual_number', regInfo.manual_number);
     formData.append('type', regInfo.type);
     formData.append('date', regInfo.date);
     formData.append('company', regInfo.company);
@@ -178,24 +203,18 @@ function ContractsRegJournal() {
         </div>
       </If>
       <RegJournalTable onRowClick={openModal} />
-      <Modal
-        open={modalOpened}
-        onClose={() => setModalOpened(false)}
-        showCloseIcon={true}
-        closeOnOverlayClick={true}
-        styles={{modal: {marginTop: 75}}}
-      >
+      <Modal open={modalOpened} onClose={onCloseModal} showCloseIcon={true} closeOnOverlayClick={true} styles={{modal: {marginTop: 75}}}>
         <div className='modal-header'>{`${regInfo.id ? 'Редагування' : 'Додавання'} реєстраційного номеру договору`}</div>
         <div className='modal-body'>
           <div className='d-flex'>
             <TextInput
-              text={regInfo.number}
+              text={regInfo.manual_number ? regInfo.manual_number : regInfo.auto_number}
               fieldName='Реєстраційний номер договору'
-              onChange={(e) => onFieldChange(e, 'number')}
+              onChange={(e) => onFieldChange(e, 'manual_number')}
               maxLength={20}
-              disabled={autoNumber}
+              disabled={autoNumberMode}
             />
-            <button className='btn btn-sm btn-outline-dark ml-2 my-2' onClick={(e) => setAutoNumber(false)}>
+            <button className='btn btn-sm btn-outline-dark ml-2 my-2' onClick={clearAutoNumber}>
               <FontAwesomeIcon icon={faEdit} />
             </button>
           </div>
@@ -261,7 +280,7 @@ function ContractsRegJournal() {
             text='Зберегти'
             onClick={postChanges}
             disabled={
-              !regInfo.number ||
+              (!regInfo.auto_number && !regInfo.manual_number) ||
               !regInfo.type ||
               regInfo.type === '0' ||
               !regInfo.date ||

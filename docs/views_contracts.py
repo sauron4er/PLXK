@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
 import json
+import re
 from edms.models import Employee_Seat
 from edms.api.contract_reg_numbers import get_contract_reg_numbers_list
 from plxk.api.try_except import try_except
@@ -249,7 +250,7 @@ def edit_reg_journal_number(request, reg_id):
     else:
         reg_number_instance = Contract_Reg_Number()
 
-    reg_number_instance.number = request.POST['number']
+    reg_number_instance.number = request.POST['auto_number'] if len(request.POST['auto_number']) else request.POST['manual_number']
     reg_number_instance.type = request.POST['type']
     reg_number_instance.date = request.POST['date']
     reg_number_instance.counterparty_id = request.POST['counterparty_id']
@@ -263,21 +264,24 @@ def edit_reg_journal_number(request, reg_id):
 
 @try_except
 def get_last_reg_journal_number(request):
-    last_number = (Contract_Reg_Number.objects
-                   .filter(type=request.POST['type'])
-                   .filter(company=request.POST['company'])
-                   .filter(date__year=request.POST['year'])  # фільтр по році з request.POST['date']
-                   .filter(is_active=True)
-                   .order_by('number')
-                   .first())
-    if last_number:
-        # add 1 to number and return
-        pass
-    else:
-        # create first number and return
-        pass
+    regex = r"^(^" + request.POST['type_code'] + r"-(\d{3})-" + request.POST['company_code'] + request.POST['year'][-2:] + ")"
 
-    pass
+    last_number_query = (Contract_Reg_Number.objects
+                         .filter(number__iregex=regex)
+                         .filter(is_active=True)
+                         .order_by('number')
+                         .first())
+
+    if last_number_query:
+        last_number_int = int(last_number_query.number[3:6])
+        next_number_str = str(last_number_int + 1)
+        if len(next_number_str) == 1:
+            next_number_str = '00' + next_number_str
+        elif len(next_number_str) == 2:
+            next_number_str = '0' + next_number_str
+        return HttpResponse(next_number_str)
+    return HttpResponse('')
+
 
 @try_except
 def delete_reg_journal_number(request, reg_id):
