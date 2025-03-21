@@ -280,7 +280,7 @@ def get_last_reg_journal_number(request):
         elif len(next_number_str) == 2:
             next_number_str = '0' + next_number_str
         return HttpResponse(next_number_str)
-    return HttpResponse('')
+    return HttpResponse('001')
 
 
 @try_except

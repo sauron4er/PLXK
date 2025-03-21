@@ -14,6 +14,7 @@ import {faEdit} from '@fortawesome/free-solid-svg-icons';
 
 function ContractsRegJournal() {
   const [modalOpened, setModalOpened] = useState(false);
+  const [editedToggle, setEditedToggle] = useState(false);
   const [regInfo, setRegInfo] = useState({
     id: 0,
     type: '',
@@ -25,48 +26,21 @@ function ContractsRegJournal() {
     counterparty_name: '',
     subject: '',
     responsible_id: 0,
-    responsible_name: ''
+    responsible_name: '',
+    contract_id: 0
   });
   const [autoTypeCode, setAutoTypeCode] = useState('');
   const [autoCompanyCode, setAutoCompanyCode] = useState('');
   const [autoNumberMode, setAutoNumberMode] = useState(true);
 
+  // TODO Відкриття з таблички запису.
+  //  відправляти запит при внесенні змін у уже існуючий запис
+
   useEffect(() => {
     if (autoNumberMode && autoTypeCode && autoCompanyCode && regInfo.date) {
       getLastNumberInJournal();
     }
-  }, [autoTypeCode, autoCompanyCode, regInfo.date]);
-
-  useEffect(() => {
-    switch (regInfo.type) {
-      case 'Закупівля лісу':
-        setAutoTypeCode('00');
-        break;
-      case 'Купівля-продаж':
-        setAutoTypeCode('01');
-        break;
-      case 'Перевезення':
-        setAutoTypeCode('02');
-        break;
-      case 'Послуги та інше':
-        setAutoTypeCode('03');
-        break;
-    }
-  }, [regInfo.type]);
-
-  useEffect(() => {
-    switch (regInfo.company) {
-      case 'ТДВ':
-        setAutoCompanyCode('Т');
-        break;
-      case 'ТОВ':
-        setAutoCompanyCode('Р');
-        break;
-      case 'NorthlandChem':
-        setAutoCompanyCode('Н');
-        break;
-    }
-  }, [regInfo.company]);
+  }, [editedToggle]);
 
   function getLastNumberInJournal() {
     let formData = new FormData();
@@ -108,6 +82,9 @@ function ContractsRegJournal() {
     }
     setRegInfo(clicked);
     setModalOpened(true);
+
+    arrangeAutoTypeCode(clicked_row.type)
+    arrangeAutoCompanyCode(clicked_row.company)
   }
 
   function onCloseModal() {
@@ -137,12 +114,42 @@ function ContractsRegJournal() {
     }));
   }
 
+  function onDateChange(e) {
+    setRegInfo((prevState) => ({
+      ...prevState,
+      date: e.target.value
+    }));
+
+    setEditedToggle(!editedToggle);
+  }
+
   function onTypeChange(e) {
     const selectedIndex = e.target.options.selectedIndex;
     setRegInfo((prevState) => ({
       ...prevState,
       type: e.target.options[selectedIndex].value
     }));
+
+    arrangeAutoTypeCode(e.target.options[selectedIndex].value)
+
+    setEditedToggle(!editedToggle);
+  }
+
+  function arrangeAutoTypeCode(type) {
+    switch (type) {
+      case 'Закупівля лісу':
+        setAutoTypeCode('00');
+        break;
+      case 'Купівля-продаж':
+        setAutoTypeCode('01');
+        break;
+      case 'Перевезення':
+        setAutoTypeCode('02');
+        break;
+      case 'Послуги та інше':
+        setAutoTypeCode('03');
+        break;
+    }
   }
 
   function onCompanyChange(e) {
@@ -151,6 +158,24 @@ function ContractsRegJournal() {
       ...prevState,
       company: e.target.options[selectedIndex].value
     }));
+
+    arrangeAutoCompanyCode(e.target.options[selectedIndex].value)
+
+    setEditedToggle(!editedToggle);
+  }
+
+  function arrangeAutoCompanyCode(company) {
+    switch (company) {
+      case 'ТДВ':
+        setAutoCompanyCode('Т');
+        break;
+      case 'ТОВ':
+        setAutoCompanyCode('Р');
+        break;
+      case 'NorthlandChem':
+        setAutoCompanyCode('Н');
+        break;
+    }
   }
 
   function onCounterpartyChange(e) {
@@ -258,7 +283,7 @@ function ContractsRegJournal() {
             maxLength={20}
             disabled={false}
           />
-          <DateInput fieldName='Дата договору' date={regInfo.date} disabled={false} onChange={(e) => onFieldChange(e, 'date')} />
+          <DateInput fieldName='Дата договору' date={regInfo.date} disabled={false} onChange={onDateChange} />
           <SelectorWithFilterAndAxios
             listNameForUrl='userprofiles'
             fieldName='Відповідальний менеджер'

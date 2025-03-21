@@ -335,10 +335,11 @@ def arrange_reg_journal(request, page, company):
     # Формуємо остаточний список
     reg_journal_list = [{
         'id': reg.id,
-        'number': reg.number,
+        'auto_number': reg.number,
         'date': normalize_date(reg.date),
         'company': reg.company,
-        'counterparty': reg.counterparty.name if reg.counterparty else '',
+        'counterparty_name': reg.counterparty.name if reg.counterparty else '',
+        'counterparty_id': reg.counterparty.id if reg.counterparty else '',
         'type': reg.type or '',
         'subject': reg.subject or '',
         'responsible': reg.responsible.pip if reg.responsible else '',
