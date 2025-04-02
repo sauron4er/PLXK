@@ -16,6 +16,6 @@ pyparsing==2.4.6
 python-dateutil==2.6.1
 pytz==2017.3
 schedule==0.6.0
-setuptools==28.8.0
+setuptools==65.5.1
 six==1.11.0
 sqlparse==0.2.4
