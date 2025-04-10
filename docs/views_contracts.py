@@ -250,7 +250,7 @@ def edit_reg_journal_number(request, reg_id):
     else:
         reg_number_instance = Contract_Reg_Number()
 
-    reg_number_instance.number = request.POST['auto_number'] if len(request.POST['auto_number']) else request.POST['manual_number']
+    reg_number_instance.number = request.POST['auto_number'] if len(request.POST['auto_number']) else request.POST['manual_number'].strip()
     reg_number_instance.type = request.POST['type']
     reg_number_instance.date = request.POST['date']
     reg_number_instance.counterparty_id = request.POST['counterparty_id']

@@ -7,7 +7,7 @@ from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.try_except import try_except
 from docs.models import Contract, Contract_File, Contract_Reg_Number
 from docs.forms import NewContractForm, DeactivateContractForm, DeactivateContractFileForm
-from edms.models import Document, Document_Type_Module, Doc_Contract_Subject
+from edms.models import Document, Document_Type_Module, Doc_Contract_Subject, Doc_Registration
 from docs.api.contracts_mail_sender import send_mail
 
 
@@ -291,6 +291,16 @@ def trim_spaces():
         reg.number = reg.number.strip()
         reg.save()
 
+    contracts = Contract.objects.all()
+    for contract in contracts:
+        contract.number = contract.number.strip()
+        contract.save()
+
+    edms_registrations = Doc_Registration.objects.all()
+    for reg in edms_registrations:
+        reg.registration_number = reg.registration_number.strip()
+        reg.save()
+
 
 @try_except
 def add_missing_contract_info():
@@ -359,12 +369,13 @@ def filter_reg_journal_query(query_set, filtering):
     for filter in filtering:
         if filter['columnName'] == 'id':
             query_set = query_set.filter(id=filter['value'])
-        elif filter['columnName'] == 'number':
+        elif filter['columnName'] == 'auto_number':
             query_set = query_set.filter(number__icontains=filter['value'])
         elif filter['columnName'] == 'date':
             query_set = query_set.filter(date__year=filter['value'])
-        elif filter['columnName'] == 'counterparty':
-            query_set = query_set.filter(Q(contract__counterparty_link__name__icontains=filter['value']) |
+        elif filter['columnName'] == 'counterparty_name':
+            query_set = query_set.filter(Q(counterparty__name__icontains=filter['value']) |
+                                         Q(contract__counterparty_link__name__icontains=filter['value']) |
                                          Q(contract__counterparty__icontains=filter['value']))
         elif filter['columnName'] == 'subject':
             query_set = query_set.filter(contract__subject__icontains=filter['value'])
@@ -374,10 +385,12 @@ def filter_reg_journal_query(query_set, filtering):
 @try_except
 def sort_reg_journal_query(query_set, column, direction):
     if column:
-        if column == 'counterparty':
+        if column == 'counterparty_name':
             column = 'contract__counterparty_link__name'
         elif column == 'contract_subject':
             column = 'contract__subject'
+        elif column == 'auto_number':
+            column = 'number'
 
         if direction == 'asc':
             query_set = query_set.order_by(column)
