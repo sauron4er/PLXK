@@ -238,8 +238,8 @@ def contracts_reg_journal(request):
 
 
 @try_except
-def get_reg_journal(request, page, company='ТОВ'):
-    reg_journal = arrange_reg_journal(request, page, company)
+def get_reg_journal(request, page):
+    reg_journal = arrange_reg_journal(request, page)
     return HttpResponse(json.dumps(reg_journal))
 
 

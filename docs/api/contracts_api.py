@@ -326,8 +326,15 @@ def add_missing_contract_info():
 
 
 @try_except
-def arrange_reg_journal(request, page, company):
+def arrange_reg_journal(request, page):
     reg_journal = Contract_Reg_Number.objects.filter(is_active=True)
+
+    if request.POST['company'] != '0':
+        reg_journal = reg_journal.filter(company=request.POST['company'])
+    if request.POST['type'] != '0':
+        reg_journal = reg_journal.filter(type=request.POST['type'])
+    if request.POST['year'] != '0':
+        reg_journal = reg_journal.filter(date__year=request.POST['year'])
 
     # Фільтрація і сортування у таблиці
     reg_journal = filter_reg_journal_query(reg_journal, json.loads(request.POST['filtering']))

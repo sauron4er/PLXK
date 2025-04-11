@@ -25,7 +25,7 @@ class PaginatedTable extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.url !== this.props.url) {
+    if (prevProps.url !== this.props.url || prevProps.formData !== this.props.formData) {
       this.getPage(this.state.page);
     }
   }
@@ -38,6 +38,10 @@ class PaginatedTable extends React.Component {
       formData.append('sort_name', sort_name);
       formData.append('sort_direction', sort_direction);
       formData.append('filtering', JSON.stringify(filtering));
+
+      for (const element of this.props.formData) {
+        formData.append(element.name, element.value);
+      }
 
       axiosPostRequest(url + '/' + page + '/', formData)
         .then((response) => {
@@ -139,6 +143,7 @@ class PaginatedTable extends React.Component {
 
   static defaultProps = {
     url: '',
+    formData: [],
     columns: [],
     defaultSorting: [],
     colWidth: [],

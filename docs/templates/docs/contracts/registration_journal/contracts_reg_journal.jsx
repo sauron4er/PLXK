@@ -11,6 +11,7 @@ import Selector from 'templates/components/form_modules/selectors/selector';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import counterpartyStore from "boards/templates/boards/counterparty/components/counterparty_store";
 
 function ContractsRegJournal() {
   const [modalOpened, setModalOpened] = useState(false);
@@ -32,9 +33,6 @@ function ContractsRegJournal() {
   const [autoTypeCode, setAutoTypeCode] = useState('');
   const [autoCompanyCode, setAutoCompanyCode] = useState('');
   const [autoNumberMode, setAutoNumberMode] = useState(true);
-
-  // TODO Відкриття з таблички запису.
-  //  відправляти запит при внесенні змін у уже існуючий запис
 
   useEffect(() => {
     if (autoNumberMode && autoTypeCode && autoCompanyCode && regInfo.date) {
@@ -167,10 +165,10 @@ function ContractsRegJournal() {
   function arrangeAutoCompanyCode(company) {
     switch (company) {
       case 'ТДВ':
-        setAutoCompanyCode('Т');
+        setAutoCompanyCode('Р');
         break;
       case 'ТОВ':
-        setAutoCompanyCode('Р');
+        setAutoCompanyCode('Т');
         break;
       case 'NorthlandChem':
         setAutoCompanyCode('Н');
@@ -222,11 +220,12 @@ function ContractsRegJournal() {
 
   return (
     <>
-      <If condition={window.edit_access}>
+        <If condition={window.edit_access}>
         <div className='btn btn-sm btn-outline-secondary mt-1' onClick={(e) => openModal()}>
           Додати
         </div>
       </If>
+
       <RegJournalTable onRowClick={openModal} />
       <Modal open={modalOpened} onClose={onCloseModal} showCloseIcon={true} closeOnOverlayClick={true} styles={{modal: {marginTop: 75}}}>
         <div className='modal-header'>{`${regInfo.id ? 'Редагування' : 'Додавання'} реєстраційного номеру договору`}</div>
