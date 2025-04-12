@@ -14,8 +14,8 @@ class PaginatedTable extends React.Component {
     rows: [],
     pagesCount: 0,
     page: 0,
-    sort_name: '',
-    sort_direction: '',
+    sort_name: this.props.defaultSorting.columnName || '',
+    sort_direction: this.props.defaultSorting.direction || '',
     filtering: [],
     loading: true
   };

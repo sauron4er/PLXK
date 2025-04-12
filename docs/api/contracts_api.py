@@ -1,3 +1,4 @@
+import re
 import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ValidationError
@@ -303,6 +304,16 @@ def trim_spaces():
 
 
 @try_except
+def write_sequence_numbers():
+    reg_journal = Contract_Reg_Number.objects \
+        .filter(Q(sequence_number__isnull=True) | Q(sequence_number='')) \
+        .filter(is_active=True)
+    for reg in reg_journal:
+        if re.search(r"^\d{2}-\d{3}-\D{1}\d{2}", reg.number):
+            reg.sequence_number = reg.number[3:6]
+            reg.save()
+
+@try_except
 def add_missing_contract_info():
     #  function, that ties new contract numbers with contracts in database
     non_tied_reg_journal = Contract_Reg_Number.objects\
@@ -324,6 +335,15 @@ def add_missing_contract_info():
                 reg.subject = contract.subject
             reg.save()
 
+
+@try_except
+def add_sequence_number(reg_number_instance, request_sequence_number):
+    if request_sequence_number and request_sequence_number != '':
+        reg_number_instance.sequence_number = request_sequence_number
+        reg_number_instance.save()
+    elif re.search(r"^\d{2}-\d{3}-\D{1}\d{2}", reg_number_instance.number):
+        reg_number_instance.sequence_number = reg_number_instance.number[3:6]
+        reg_number_instance.save()
 
 @try_except
 def arrange_reg_journal(request, page):
@@ -392,17 +412,21 @@ def filter_reg_journal_query(query_set, filtering):
 @try_except
 def sort_reg_journal_query(query_set, column, direction):
     if column:
-        if column == 'counterparty_name':
-            column = 'contract__counterparty_link__name'
-        elif column == 'contract_subject':
-            column = 'contract__subject'
-        elif column == 'auto_number':
-            column = 'number'
-
-        if direction == 'asc':
-            query_set = query_set.order_by(column)
+        if column == 'auto_number':
+            if direction == 'asc':
+                query_set = query_set.order_by('date__year', 'sequence_number', 'number')
+            else:
+                query_set = query_set.order_by('-date__year', '-sequence_number', '-number')
         else:
-            query_set = query_set.order_by('-' + column)
+            if column == 'counterparty_name':
+                column = 'contract__counterparty_link__name'
+            elif column == 'contract_subject':
+                column = 'contract__subject'
+
+            if direction == 'asc':
+                query_set = query_set.order_by(column)
+            else:
+                query_set = query_set.order_by('-' + column)
     else:
         query_set = query_set.order_by('-id')
     return query_set

@@ -148,9 +148,10 @@ class Contract_File(models.Model):
 
 class Contract_Reg_Number(models.Model):
     number = models.CharField(max_length=20)
+    sequence_number = models.CharField(max_length=3, null=True)
     type = models.CharField(max_length=15, null=True)
     date = models.DateField(null=True)
-    company = models.CharField(max_length=3)
+    company = models.CharField(max_length=15)
     counterparty = models.ForeignKey(Counterparty, related_name='contracts_reg_numbers', on_delete=models.RESTRICT, null=True)
     subject = models.CharField(max_length=1000, null=True)
     responsible = models.ForeignKey(UserProfile, related_name='responsible_for_contract_reg_number', on_delete=models.RESTRICT, null=True)

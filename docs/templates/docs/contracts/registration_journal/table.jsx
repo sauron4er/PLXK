@@ -5,13 +5,12 @@ import {useEffect, useRef, useState} from 'react';
 import Selector from 'templates/components/form_modules/selectors/selector';
 import counterpartyStore from 'boards/templates/boards/counterparty/components/counterparty_store';
 
-
 function RegJournalTable(props) {
   const refMainDiv = useRef(null); // Отримує ref основного div для визначення його висоти та передачі її у DxTable
   const [mainDivHeight, setMainDivHeight] = useState(0);
-  const [company, setCompany] = useState('ТДВ')
-  const [type, setType] = useState('Закупівля лісу')
-  const [year, setYear] = useState('2025')
+  const [company, setCompany] = useState('0');
+  const [type, setType] = useState('0');
+  const [year, setYear] = useState('0');
 
   useEffect(() => {
     refMainDiv ? setMainDivHeight(refMainDiv.current.clientHeight - 50) : null;
@@ -38,7 +37,14 @@ function RegJournalTable(props) {
 
   return (
     <>
-      <div className='d-flex'>
+      <div className='d-flex mt-2'>
+        <If condition={window.edit_access}>
+          <div>
+            <div className="btn btn-sm btn-outline-secondary" onClick={(e) => props.onRowClick()}>
+              Додати
+            </div>
+          </div>
+        </If>
         <div className='d-flex ml-auto'>
           <Selector
             list={[
@@ -71,7 +77,7 @@ function RegJournalTable(props) {
               {id: 3, name: '2022'},
               {id: 4, name: '2023'},
               {id: 5, name: '2024'},
-              {id: 6, name: '2025'},
+              {id: 6, name: '2025'}
             ]}
             selectedName={year}
             onChange={onYearChange}
@@ -85,10 +91,10 @@ function RegJournalTable(props) {
           formData={[
             {id: 0, name: 'company', value: company},
             {id: 0, name: 'type', value: type},
-            {id: 0, name: 'year', value: year},
+            {id: 0, name: 'year', value: year}
           ]}
           columns={columns}
-          defaultSorting={[{columnName: 'date', direction: 'desc'}]}
+          defaultSorting={{columnName: 'auto_number', direction: 'desc'}}
           colWidth={col_width}
           onRowClick={onRowClick}
           height={mainDivHeight}

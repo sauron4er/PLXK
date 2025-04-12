@@ -21,6 +21,7 @@ function ContractsRegJournal() {
     type: '',
     manual_number: '',
     auto_number: '',
+    sequence_number: '',
     date: '',
     company: '',
     counterparty_id: 0,
@@ -35,23 +36,24 @@ function ContractsRegJournal() {
   const [autoNumberMode, setAutoNumberMode] = useState(true);
 
   useEffect(() => {
-    if (autoNumberMode && autoTypeCode && autoCompanyCode && regInfo.date) {
-      getLastNumberInJournal();
+    if (autoNumberMode && regInfo.type && regInfo.company && regInfo.date) {
+      getNextSequenceNumber();
     }
   }, [editedToggle]);
 
-  function getLastNumberInJournal() {
+  function getNextSequenceNumber() {
     let formData = new FormData();
-    formData.append('type_code', autoTypeCode);
-    formData.append('company_code', autoCompanyCode);
+    formData.append('type', regInfo.type);
+    formData.append('company', regInfo.company);
     formData.append('year', regInfo.date.slice(0, 4));
 
-    axiosPostRequest('get_last_reg_journal_number', formData)
+    axiosPostRequest('get_next_sequence_number', formData)
       .then((response) => {
         if (response) {
           setRegInfo((prevState) => ({
             ...prevState,
-            auto_number: `${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`
+            auto_number: `${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`,
+            sequence_number: response
           }));
         }
         // if (response) setAutoNumber(`${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`)
@@ -67,7 +69,8 @@ function ContractsRegJournal() {
   function clearAutoNumber() {
     setRegInfo((prevState) => ({
       ...prevState,
-      auto_number: ''
+      auto_number: '',
+      sequence_number: ''
     }));
     setAutoNumberMode(false);
   }
@@ -92,6 +95,7 @@ function ContractsRegJournal() {
       type: '',
       manual_number: '',
       auto_number: '',
+      sequence_number: '',
       date: '',
       company: '',
       counterparty_id: 0,
@@ -195,6 +199,7 @@ function ContractsRegJournal() {
   function postChanges(e) {
     let formData = new FormData();
     formData.append('auto_number', regInfo.auto_number);
+    formData.append('sequence_number', regInfo.sequence_number);
     formData.append('manual_number', regInfo.manual_number);
     formData.append('type', regInfo.type);
     formData.append('date', regInfo.date);
@@ -220,12 +225,6 @@ function ContractsRegJournal() {
 
   return (
     <>
-        <If condition={window.edit_access}>
-        <div className='btn btn-sm btn-outline-secondary mt-1' onClick={(e) => openModal()}>
-          Додати
-        </div>
-      </If>
-
       <RegJournalTable onRowClick={openModal} />
       <Modal open={modalOpened} onClose={onCloseModal} showCloseIcon={true} closeOnOverlayClick={true} styles={{modal: {marginTop: 75}}}>
         <div className='modal-header'>{`${regInfo.id ? 'Редагування' : 'Додавання'} реєстраційного номеру договору`}</div>
