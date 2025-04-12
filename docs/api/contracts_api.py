@@ -289,18 +289,21 @@ def trim_spaces():
     reg_journal = Contract_Reg_Number.objects \
         .filter(is_active=True)
     for reg in reg_journal:
-        reg.number = reg.number.strip()
-        reg.save()
+        if reg.number:
+            reg.number = reg.number.strip()
+            reg.save()
 
     contracts = Contract.objects.all()
     for contract in contracts:
-        contract.number = contract.number.strip()
-        contract.save()
+        if contract.number:
+            contract.number = contract.number.strip()
+            contract.save()
 
     edms_registrations = Doc_Registration.objects.all()
     for reg in edms_registrations:
-        reg.registration_number = reg.registration_number.strip()
-        reg.save()
+        if reg.registration_number:
+            reg.registration_number = reg.registration_number.strip()
+            reg.save()
 
 
 @try_except

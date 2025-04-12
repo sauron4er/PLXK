@@ -230,8 +230,8 @@ def contract_reg_numbers(request):
 @login_required(login_url='login')
 @try_except
 def contracts_reg_journal(request):
-    trim_spaces()  # TODO - comment after first use after word import
-    write_sequence_numbers()  # TODO - comment after first use after word import
+    # trim_spaces()  # TODO - comment after first use after word import
+    # write_sequence_numbers()  # TODO - comment after first use after word import
     add_missing_contract_info()  # every time start function, that ties new contract numbers with contracts in database
     edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.department_id == 50
     return render(request, 'docs/contracts/registration_journal/index.html', {'edit_access': json.dumps(edit_access)})
