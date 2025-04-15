@@ -294,6 +294,16 @@ def delete_reg_journal_number(request, reg_id):
     return HttpResponse('')
 
 
+@try_except
+def get_last_ten_reg_numbers(request):
+    last_ten_numbers = (Contract_Reg_Number.objects
+                            .filter(type=request.POST['type'])
+                            .filter(company=request.POST['company'])
+                            .filter(date__year=request.POST['year'])
+                            .filter(is_active=True)
+                            .order_by('-sequence_number')) or '0'
+
+
 # ----------------------------------------- Contract reg numbers
 @login_required(login_url='login')
 @try_except

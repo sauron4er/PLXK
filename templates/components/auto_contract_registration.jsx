@@ -37,7 +37,7 @@ export async function getNextSequenceNumber(type, company, year) {
 
   let nextSequenceNumber = ''
 
-  await axiosPostRequest('get_next_sequence_number', formData)
+  await axiosPostRequest('get_next_sequence_number/', formData)
     .then((response) => {
       if (response) {
         nextSequenceNumber = response;

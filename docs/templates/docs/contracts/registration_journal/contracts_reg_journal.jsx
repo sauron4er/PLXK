@@ -50,31 +50,6 @@ function ContractsRegJournal() {
     }
   }, [editedToggle]);
 
-  function getNextSequenceNumber_OLD() {
-    let formData = new FormData();
-    formData.append('type', regInfo.type);
-    formData.append('company', regInfo.company);
-    formData.append('year', regInfo.date.slice(0, 4));
-
-    axiosPostRequest('get_next_sequence_number', formData)
-      .then((response) => {
-        if (response) {
-          setRegInfo((prevState) => ({
-            ...prevState,
-            auto_number: `${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`,
-            sequence_number: response
-          }));
-        }
-        // if (response) setAutoNumber(`${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`)
-      })
-      .catch(function (error) {
-        console.log(error);
-        notify('Щось пішло не так. Зверніться до адміністратора');
-      });
-
-    return '';
-  }
-
   function clearAutoNumber() {
     setRegInfo((prevState) => ({
       ...prevState,
