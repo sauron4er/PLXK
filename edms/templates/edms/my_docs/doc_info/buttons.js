@@ -16,8 +16,6 @@ class Buttons extends React.Component {
     const user_is_doc_responsible = info.responsible_seat_id === parseInt(localStorage.getItem('my_seat'));
     const {button_clicked} = docInfoStore;
 
-    console.log(info);
-
     return (
       <>
         {/*Якщо є очікувана позначка:*/}

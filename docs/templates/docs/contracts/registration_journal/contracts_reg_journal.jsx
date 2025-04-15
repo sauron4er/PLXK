@@ -11,7 +11,7 @@ import Selector from 'templates/components/form_modules/selectors/selector';
 import SelectorWithFilterAndAxios from 'templates/components/form_modules/selectors/selector_with_filter_and_axios';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
-import counterpartyStore from "boards/templates/boards/counterparty/components/counterparty_store";
+import {getCompanyCode, getNextSequenceNumber, getTypeCode} from 'templates/components/auto_contract_registration';
 
 function ContractsRegJournal() {
   const [modalOpened, setModalOpened] = useState(false);
@@ -37,11 +37,20 @@ function ContractsRegJournal() {
 
   useEffect(() => {
     if (autoNumberMode && regInfo.type && regInfo.company && regInfo.date) {
-      getNextSequenceNumber();
+      getNextSequenceNumber(regInfo.type, regInfo.company, regInfo.date.slice(0, 4)).then((response) => {
+        if (response) {
+          setRegInfo((prevState) => ({
+            ...prevState,
+            auto_number: `${autoTypeCode}-${response}-${autoCompanyCode}${regInfo.date.slice(2, 4)}`,
+            sequence_number: response
+          }));
+        } else notify('Щось пішло не так. Зверніться до адміністратора');
+      });
+      // getNextSequenceNumber();
     }
   }, [editedToggle]);
 
-  function getNextSequenceNumber() {
+  function getNextSequenceNumber_OLD() {
     let formData = new FormData();
     formData.append('type', regInfo.type);
     formData.append('company', regInfo.company);
@@ -84,8 +93,8 @@ function ContractsRegJournal() {
     setRegInfo(clicked);
     setModalOpened(true);
 
-    arrangeAutoTypeCode(clicked_row.type)
-    arrangeAutoCompanyCode(clicked_row.company)
+    setAutoTypeCode(getTypeCode(clicked_row.type));
+    setAutoCompanyCode(getCompanyCode(clicked_row.company));
   }
 
   function onCloseModal() {
@@ -132,26 +141,9 @@ function ContractsRegJournal() {
       type: e.target.options[selectedIndex].value
     }));
 
-    arrangeAutoTypeCode(e.target.options[selectedIndex].value)
+    setAutoTypeCode(getTypeCode(e.target.options[selectedIndex].value));
 
     setEditedToggle(!editedToggle);
-  }
-
-  function arrangeAutoTypeCode(type) {
-    switch (type) {
-      case 'Закупівля лісу':
-        setAutoTypeCode('00');
-        break;
-      case 'Купівля-продаж':
-        setAutoTypeCode('01');
-        break;
-      case 'Перевезення':
-        setAutoTypeCode('02');
-        break;
-      case 'Послуги та інше':
-        setAutoTypeCode('03');
-        break;
-    }
   }
 
   function onCompanyChange(e) {
@@ -161,23 +153,9 @@ function ContractsRegJournal() {
       company: e.target.options[selectedIndex].value
     }));
 
-    arrangeAutoCompanyCode(e.target.options[selectedIndex].value)
+    setAutoCompanyCode(getCompanyCode(e.target.options[selectedIndex].value));
 
     setEditedToggle(!editedToggle);
-  }
-
-  function arrangeAutoCompanyCode(company) {
-    switch (company) {
-      case 'ТДВ':
-        setAutoCompanyCode('Р');
-        break;
-      case 'ТОВ':
-        setAutoCompanyCode('Т');
-        break;
-      case 'NorthlandChem':
-        setAutoCompanyCode('Н');
-        break;
-    }
   }
 
   function onCounterpartyChange(e) {
