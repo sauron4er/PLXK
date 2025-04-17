@@ -287,6 +287,20 @@ def get_next_sequence_number(request):
 
 
 @try_except
+def get_next_additional_contract_number(request, basic_contract_id):
+    new_number = ''
+    basic_and_siblings = []
+    basic_contract_number = Contract.objects.values_list('number', flat=True).filter(id=basic_contract_id)
+    if basic_contract_number:
+        number_of_additionals = Contract.objects\
+            .filter(basic_contract_id=basic_contract_id)\
+            .filter(is_active=True).count()
+        new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals+1)
+
+    return HttpResponse(json.dumps({'new_number': new_number, 'basic_and_siblings': basic_and_siblings}))
+
+
+@try_except
 def delete_reg_journal_number(request, reg_id):
     reg_number_instance = Contract_Reg_Number.objects.get(id=reg_id)
     reg_number_instance.is_active = False
@@ -305,7 +319,7 @@ def get_last_ten_reg_numbers(request):
 
     last_ten_numbers_list = [{
         'id': entry.id,
-        'contract_id': entry.contract_id,
+        'contract_id': entry.contract_id or '',
         'number': entry.number,
         'counterparty': entry.counterparty.name,
         'subject': entry.subject,

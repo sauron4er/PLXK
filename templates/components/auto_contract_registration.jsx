@@ -29,11 +29,12 @@ export const getCompanyCode = (company) => {
   }
 };
 
-export async function getNextSequenceNumber(type, company, year) {
+export async function getNextSequenceNumber(type, company, year, primary_contract_id=0) {
   let formData = new FormData();
   formData.append('type', type);
   formData.append('company', company);
   formData.append('year', year);
+  formData.append('primary_contract_id', primary_contract_id);
 
   let nextSequenceNumber = ''
 

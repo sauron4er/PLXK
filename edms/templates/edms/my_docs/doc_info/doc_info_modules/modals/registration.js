@@ -36,13 +36,16 @@ function RegistrationModal(props) {
   useEffect(() => {
     if (type) {
       if (type === '0') docInfoStore.info.registration_number = '';
-      else arrangeAutoRegistration().then((r) => {});
+      else {
+        if (docInfoStore.info.contract_link?.id) getNextAdditionalContractNumber()
+        else getNextPrimaryContractNumber().then((r) => {});
+      }
     }
   }, [type]);
 
-  async function arrangeAutoRegistration() {
+  async function getNextPrimaryContractNumber() {
     const year = new Date().getFullYear();
-    const nextSeqNumber = await getNextSequenceNumber(type, docInfoStore.info.company, year);
+    const nextSeqNumber = await getNextSequenceNumber(type, docInfoStore.info.company, year, docInfoStore.info.contract_link?.id);
 
     const type_code = getTypeCode(type);
     const company_code = getCompanyCode(docInfoStore.info.company);
@@ -50,6 +53,15 @@ function RegistrationModal(props) {
     docInfoStore.info.registration_number = `${type_code}-${nextSeqNumber}-${company_code}${year_code}`;
 
     setNextSequenceNumber(nextSeqNumber);
+  }
+
+  function getNextAdditionalContractNumber() {
+    axiosGetRequest(`get_next_additional_contract_number/${docInfoStore.info.contract_link.id}/`)
+      .then((response) => {
+        console.log(response);
+        docInfoStore.info.registration_number = response.new_number
+      })
+      .catch((error) => console.log(error));
   }
 
   function getLastTenNumbers() {
@@ -113,9 +125,11 @@ function RegistrationModal(props) {
               <For each='entry' of={lastTenNumbers} index='index'>
                 <li key={index}>
                   {entry.number} | {entry.date} | {entry.counterparty}
-                  <a href={`${window.location.origin}/docs/contracts/${entry.contract_id}`} target='_blank'>
-                    <h6>Переглянути договір</h6>
-                  </a>
+                  <If condition={entry.contract_id}>
+                    <a href={`${window.location.origin}/docs/contracts/${entry.contract_id}`} target='_blank'>
+                      <h6>Переглянути договір</h6>
+                    </a>
+                  </If>
                 </li>
               </For>
             </ul>
@@ -123,7 +137,7 @@ function RegistrationModal(props) {
         </If>
       </div>
       <div className='modal-footer'>
-        <button className='btn btn-outline-info' onClick={onSubmit}>
+        <button className='btn btn-outline-info' onClick={onSubmit} disabled={!type || !docInfoStore.info.registration_number}>
           Зберегти
         </button>
       </div>

@@ -8,11 +8,9 @@ function Registration(props) {
     newDocStore.new_document.registration_number = e.target.value;
   }
 
-  newDocStore.new_document.log;
-
   return (
     <>
-      <div className='mt-1'>{this.props.moduleInfo.field_name}:</div>
+      <div className='mt-1'>{props.moduleInfo.field_name}:</div>
       <div className='d-flex align-items-center mt-1'>
         <input
           className='form-control mr-1'
