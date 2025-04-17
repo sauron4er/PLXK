@@ -11,7 +11,7 @@ from plxk.api.try_except import try_except
 from .models import Contract, Contract_File, Contract_Reg_Number
 from .api.contracts_api import add_contract_api, edit_contract_api, deactivate_contract_api, post_files, \
     arrange_reg_journal, add_missing_contract_info, trim_spaces, write_sequence_numbers, add_sequence_number
-from plxk.api.datetime_normalizers import date_to_json
+from plxk.api.datetime_normalizers import date_to_json, normalize_date
 from docs.api import contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.pagination import sort_query_set, filter_query_set
@@ -301,7 +301,18 @@ def get_last_ten_reg_numbers(request):
                             .filter(company=request.POST['company'])
                             .filter(date__year=request.POST['year'])
                             .filter(is_active=True)
-                            .order_by('-sequence_number')) or '0'
+                            .order_by('-sequence_number'))[:10]
+
+    last_ten_numbers_list = [{
+        'id': entry.id,
+        'contract_id': entry.contract_id,
+        'number': entry.number,
+        'counterparty': entry.counterparty.name,
+        'subject': entry.subject,
+        'date': normalize_date(entry.date)
+    } for entry in last_ten_numbers]
+
+    return HttpResponse(json.dumps(last_ten_numbers_list))
 
 
 # ----------------------------------------- Contract reg numbers

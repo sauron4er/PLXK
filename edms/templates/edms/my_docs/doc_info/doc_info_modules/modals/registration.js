@@ -8,7 +8,7 @@ import docInfoStore from 'edms/templates/edms/my_docs/doc_info/doc_info_modules/
 import Selector from 'templates/components/form_modules/selectors/selector';
 import {useEffect, useState} from 'react';
 import {getCompanyCode, getNextSequenceNumber, getTypeCode} from 'templates/components/auto_contract_registration';
-import { axiosGetRequest, axiosPostRequest } from "templates/components/axios_requests";
+import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 
 function RegistrationModal(props) {
   const [type, setType] = useState(null);
@@ -30,7 +30,7 @@ function RegistrationModal(props) {
   function onTypeChange(e) {
     const selectedIndex = e.target.options.selectedIndex;
     setType(e.target.options[selectedIndex].value);
-    if (e.target.options[selectedIndex].value === '0') setNextSequenceNumber(null)
+    if (e.target.options[selectedIndex].value === '0') setNextSequenceNumber(null);
   }
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function RegistrationModal(props) {
     const year_code = new Date().getFullYear().toString().slice(2, 4);
     docInfoStore.info.registration_number = `${type_code}-${nextSeqNumber}-${company_code}${year_code}`;
 
-    setNextSequenceNumber(nextSeqNumber)
+    setNextSequenceNumber(nextSeqNumber);
   }
 
   function getLastTenNumbers() {
@@ -62,10 +62,14 @@ function RegistrationModal(props) {
 
     axiosPostRequest(`get_last_ten_reg_numbers/`, formData)
       .then((response) => {
-        setLastTenNumbers(response)
+        console.log(response);
+        setLastTenNumbers(response);
       })
       .catch((error) => console.log(error));
   }
+
+  // TODO реєстрація ДУ - робимо запит у базу про номер оригінальної угоди і кількість уже зареєстрованих додаткових.
+  //  Пропонуємо наступний номер ДУ - наприклад "ДУ 01-001-Т00/1"
 
   return (
     <>
@@ -99,7 +103,23 @@ function RegistrationModal(props) {
           maxLength={50}
         />
         <If condition={nextSequenceNumber}>
-          <div className='mt-1'><a href="#" onClick={getLastTenNumbers}>Переглянути останні 10 номерів</a></div>
+          <div className='mt-1'>
+            <a href='#' onClick={getLastTenNumbers}>
+              Переглянути останні 10 номерів
+            </a>
+          </div>
+          <If condition={lastTenNumbers}>
+            <ul>
+              <For each='entry' of={lastTenNumbers} index='index'>
+                <li key={index}>
+                  {entry.number} | {entry.date} | {entry.counterparty}
+                  <a href={`${window.location.origin}/docs/contracts/${entry.contract_id}`} target='_blank'>
+                    <h6>Переглянути договір</h6>
+                  </a>
+                </li>
+              </For>
+            </ul>
+          </If>
         </If>
       </div>
       <div className='modal-footer'>

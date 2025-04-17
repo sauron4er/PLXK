@@ -30,6 +30,8 @@ class Counterparty extends React.Component {
   onSelectChange = (e) => {
     newDocStore.new_document.counterparty = e.id;
     newDocStore.new_document.counterparty_name = e.name;
+    newDocStore.new_document.contract_link = 0;
+    newDocStore.new_document.contract_link_name = '';
   };
 
   filterCounterparties = (type) => {
