@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.db import transaction
+from django.db.models import Q
 import json
 import re
 from edms.models import Employee_Seat
@@ -296,6 +297,8 @@ def get_next_additional_contract_number(request, basic_contract_id):
             .filter(basic_contract_id=basic_contract_id)\
             .filter(is_active=True).count()
         new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals+1)
+
+        basic_and_siblings = Contract.objects.filter(Q(id=basic_contract_id) | Q(basic_contract_id=basic_contract_id))
 
     return HttpResponse(json.dumps({'new_number': new_number, 'basic_and_siblings': basic_and_siblings}))
 

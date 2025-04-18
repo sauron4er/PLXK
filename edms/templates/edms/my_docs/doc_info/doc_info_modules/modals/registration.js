@@ -14,6 +14,7 @@ function RegistrationModal(props) {
   const [type, setType] = useState(null);
   const [nextSequenceNumber, setNextSequenceNumber] = useState(null);
   const [lastTenNumbers, setLastTenNumbers] = useState(null);
+  const [basicAndSiblings, setBasicAndSiblings] = useState(null);
 
   function onSubmit() {
     props.onSubmit();
@@ -80,9 +81,6 @@ function RegistrationModal(props) {
       .catch((error) => console.log(error));
   }
 
-  // TODO реєстрація ДУ - робимо запит у базу про номер оригінальної угоди і кількість уже зареєстрованих додаткових.
-  //  Пропонуємо наступний номер ДУ - наприклад "ДУ 01-001-Т00/1"
-
   return (
     <>
       <div className='modal-header d-flex justify-content-between'>
@@ -133,6 +131,9 @@ function RegistrationModal(props) {
                 </li>
               </For>
             </ul>
+          </If>
+          <If condition={basicAndSiblings}>
+
           </If>
         </If>
       </div>
