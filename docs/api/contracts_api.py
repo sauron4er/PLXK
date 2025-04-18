@@ -65,15 +65,8 @@ def get_days_from_edms(edms_doc, queue):
 @try_except
 def add_contract_from_edms(doc_request, files):
     edms_doc = get_object_or_404(Document, pk=doc_request['document'])
-    contract_fields_queue = list(Document_Type_Module.objects.values('field', 'queue')
-                                 .filter(document_type=edms_doc.document_type)
-                                 .exclude(field=None))
 
-    fields_queue = {}
-    for cf in contract_fields_queue:
-        fields_queue.update(
-            {cf['field']: cf['queue']}
-        )
+    fields_queue = get_doc_type_fields_queue(edms_doc.document_type)
 
     basic_contract = edms_doc.contract.values_list('contract_id', flat=True)
     basic_contract = basic_contract[0] if len(basic_contract) > 0 else None
@@ -112,6 +105,42 @@ def add_contract_from_edms(doc_request, files):
     send_mail(doc_request)
 
     return new_contract_id
+
+
+@try_except
+def get_doc_type_fields_queue(document_type_id):
+    contract_fields_queue = list(Document_Type_Module.objects.values('field', 'queue')
+                                 .filter(document_type_id=document_type_id)
+                                 .exclude(field=None))
+
+    fields_queue = {}
+    for cf in contract_fields_queue:
+        fields_queue.update(
+            {cf['field']: cf['queue']}
+        )
+
+    return fields_queue
+
+
+@try_except
+def add_contract_to_reg_number_journal(doc_request, contract_info):
+    edms_doc = get_object_or_404(Document, pk=doc_request['document'])
+    fields_queue = get_doc_type_fields_queue(edms_doc.document_type_id)
+
+    new_number_instance = Contract_Reg_Number(
+        number=doc_request['registration_number'],
+        type=contract_info['type'],
+        company=edms_doc.company,
+        date=get_days_from_edms(edms_doc, fields_queue['date_start']) or edms_doc.date,
+        subject=get_subject_from_edms(edms_doc, fields_queue['subject']),
+        counterparty_id=edms_doc.counterparty.get().counterparty_id,
+        responsible=edms_doc.employee_seat.employee
+    )
+
+    if contract_info['sequence_number'] != '':
+        new_number_instance.sequence_number = contract_info['sequence_number']
+
+    new_number_instance.save()
 
 
 @try_except
@@ -336,6 +365,10 @@ def add_missing_contract_info():
                 reg.counterparty = contract.counterparty_link
             if not reg.subject and contract.subject:
                 reg.subject = contract.subject
+            if not reg.company and contract.company:
+                reg.company = contract.company
+            if not reg.responsible and contract.responsible:
+                reg.responsible = contract.responsible.userprofile
             reg.save()
 
 
@@ -393,6 +426,7 @@ def arrange_reg_journal(request, page):
 @try_except
 def get_contract_counterparty_name(reg):
     return reg.contract.counterparty_link.name if reg.contract.counterparty_link else (reg.contract.counterparty or '')
+
 
 @try_except
 def filter_reg_journal_query(query_set, filtering):

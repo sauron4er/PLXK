@@ -11,8 +11,6 @@ import {getCompanyCode, getNextSequenceNumber, getTypeCode} from 'templates/comp
 import {axiosGetRequest, axiosPostRequest} from 'templates/components/axios_requests';
 
 function RegistrationModal(props) {
-  const [type, setType] = useState(null);
-  const [nextSequenceNumber, setNextSequenceNumber] = useState(null);
   const [lastTenNumbers, setLastTenNumbers] = useState(null);
   const [basicAndSiblings, setBasicAndSiblings] = useState(null);
 
@@ -30,37 +28,36 @@ function RegistrationModal(props) {
 
   function onTypeChange(e) {
     const selectedIndex = e.target.options.selectedIndex;
-    setType(e.target.options[selectedIndex].value);
-    if (e.target.options[selectedIndex].value === '0') setNextSequenceNumber(null);
+    docInfoStore.contract_info.type = e.target.options[selectedIndex].value;
+    if (e.target.options[selectedIndex].value === '0') docInfoStore.contract_info.sequence_number = null;
   }
 
   useEffect(() => {
-    if (type) {
-      if (type === '0') docInfoStore.info.registration_number = '';
+    if (docInfoStore.contract_info.type) {
+      if (docInfoStore.contract_info.type === '0') docInfoStore.info.registration_number = '';
       else {
-        if (docInfoStore.info.contract_link?.id) getNextAdditionalContractNumber()
+        if (docInfoStore.info.contract_link?.id) getNextAdditionalContractNumber();
         else getNextPrimaryContractNumber().then((r) => {});
       }
     }
-  }, [type]);
+  }, [docInfoStore.contract_info.type]);
 
   async function getNextPrimaryContractNumber() {
     const year = new Date().getFullYear();
-    const nextSeqNumber = await getNextSequenceNumber(type, docInfoStore.info.company, year, docInfoStore.info.contract_link?.id);
+    const nextSeqNumber = await getNextSequenceNumber(docInfoStore.contract_info.type, docInfoStore.info.company, year, docInfoStore.info.contract_link?.id);
 
-    const type_code = getTypeCode(type);
+    const type_code = getTypeCode(docInfoStore.contract_info.type);
     const company_code = getCompanyCode(docInfoStore.info.company);
     const year_code = new Date().getFullYear().toString().slice(2, 4);
     docInfoStore.info.registration_number = `${type_code}-${nextSeqNumber}-${company_code}${year_code}`;
-
-    setNextSequenceNumber(nextSeqNumber);
+    docInfoStore.contract_info.sequence_number = nextSeqNumber;
   }
 
   function getNextAdditionalContractNumber() {
     axiosGetRequest(`get_next_additional_contract_number/${docInfoStore.info.contract_link.id}/`)
       .then((response) => {
-        console.log(response);
-        docInfoStore.info.registration_number = response.new_number
+        docInfoStore.info.registration_number = response.new_number;
+        setBasicAndSiblings(response.basic_and_siblings);
       })
       .catch((error) => console.log(error));
   }
@@ -69,13 +66,12 @@ function RegistrationModal(props) {
     const year = new Date().getFullYear();
 
     let formData = new FormData();
-    formData.append('type', type);
+    formData.append('type', docInfoStore.contract_info.type);
     formData.append('company', docInfoStore.info.company);
     formData.append('year', year);
 
     axiosPostRequest(`get_last_ten_reg_numbers/`, formData)
       .then((response) => {
-        console.log(response);
         setLastTenNumbers(response);
       })
       .catch((error) => console.log(error));
@@ -97,7 +93,7 @@ function RegistrationModal(props) {
             {id: 3, type: 'Перевезення'},
             {id: 4, type: 'Послуги та інше'}
           ]}
-          selectedName={type}
+          selectedName={docInfoStore.contract_info.type}
           valueField={'type'}
           fieldName={'Тип'}
           onChange={onTypeChange}
@@ -112,10 +108,10 @@ function RegistrationModal(props) {
           onChange={onRegChange}
           maxLength={50}
         />
-        <If condition={nextSequenceNumber}>
+        <If condition={docInfoStore.contract_info.sequence_number}>
           <div className='mt-1'>
             <a href='#' onClick={getLastTenNumbers}>
-              Переглянути останні 10 номерів
+              Переглянути останні записи
             </a>
           </div>
           <If condition={lastTenNumbers}>
@@ -132,13 +128,24 @@ function RegistrationModal(props) {
               </For>
             </ul>
           </If>
-          <If condition={basicAndSiblings}>
-
-          </If>
+        </If>
+        <If condition={basicAndSiblings}>
+          <ul>
+            <For each='entry' of={basicAndSiblings} index='index'>
+              <li key={index}>
+                {entry.number} | {entry.date} | {entry.counterparty}
+                <If condition={entry.id}>
+                  <a href={`${window.location.origin}/docs/contracts/${entry.id}`} target='_blank'>
+                    <h6>Переглянути договір</h6>
+                  </a>
+                </If>
+              </li>
+            </For>
+          </ul>
         </If>
       </div>
       <div className='modal-footer'>
-        <button className='btn btn-outline-info' onClick={onSubmit} disabled={!type || !docInfoStore.info.registration_number}>
+        <button className='btn btn-outline-info' onClick={onSubmit} disabled={!docInfoStore.contract_info.type || !docInfoStore.info.registration_number}>
           Зберегти
         </button>
       </div>

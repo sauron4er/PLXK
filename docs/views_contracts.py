@@ -300,6 +300,14 @@ def get_next_additional_contract_number(request, basic_contract_id):
 
         basic_and_siblings = Contract.objects.filter(Q(id=basic_contract_id) | Q(basic_contract_id=basic_contract_id))
 
+        basic_and_siblings = [{
+            'id': entry.id,
+            'number': entry.number,
+            'counterparty': entry.counterparty_link.name if entry.counterparty_link else entry.counterparty,
+            'subject': entry.subject,
+            'date': normalize_date(entry.date_start)
+        } for entry in basic_and_siblings]
+
     return HttpResponse(json.dumps({'new_number': new_number, 'basic_and_siblings': basic_and_siblings}))
 
 

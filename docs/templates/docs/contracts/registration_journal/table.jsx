@@ -116,7 +116,7 @@ const columns = [
   {name: 'auto_number', title: 'Номер'},
   {name: 'type', title: 'Тип'},
   {name: 'date', title: 'Дата'},
-  {name: 'company', title: 'Підприємство'},
+  // {name: 'company', title: 'Підприємство'},
   {name: 'counterparty_name', title: 'Контрагент'},
   {name: 'subject', title: 'Предмет'},
   {name: 'responsible', title: 'Менеджер'},
@@ -129,6 +129,6 @@ const col_width = [
   {columnName: 'type', width: 250},
   {columnName: 'counterparty_name', width: 300},
   {columnName: 'responsible', width: 250},
-  {columnName: 'company', width: 100},
+  // {columnName: 'company', width: 100},
   {columnName: 'status', width: 35}
 ];
