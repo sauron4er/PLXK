@@ -298,15 +298,28 @@ def get_next_additional_contract_number(request, basic_contract_id):
             .filter(is_active=True).count()
         new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals+1)
 
-        basic_and_siblings = Contract.objects.filter(Q(id=basic_contract_id) | Q(basic_contract_id=basic_contract_id))
+        basic_query = Contract.objects.get(id=basic_contract_id, is_active=True)
+        siblings_query = Contract.objects.filter(basic_contract_id=basic_contract_id).filter(is_active=True)
 
-        basic_and_siblings = [{
+        basic = {
+            'id': basic_query.id,
+            'number': basic_query.number,
+            'counterparty': basic_query.counterparty_link.name if basic_query.counterparty_link else basic_query.counterparty,
+            'subject': basic_query.subject,
+            'date': normalize_date(basic_query.date_start),
+            'basic': True
+        }
+
+        siblings = [{
             'id': entry.id,
             'number': entry.number,
             'counterparty': entry.counterparty_link.name if entry.counterparty_link else entry.counterparty,
             'subject': entry.subject,
-            'date': normalize_date(entry.date_start)
-        } for entry in basic_and_siblings]
+            'date': normalize_date(entry.date_start),
+            'basic': False if entry.basic_contract else True
+        } for entry in siblings_query]
+
+        basic_and_siblings = [basic] + siblings
 
     return HttpResponse(json.dumps({'new_number': new_number, 'basic_and_siblings': basic_and_siblings}))
 

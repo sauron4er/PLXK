@@ -124,7 +124,7 @@ const columns = [
 ];
 
 const col_width = [
-  {columnName: 'auto_number', width: 100},
+  {columnName: 'auto_number', width: 115},
   {columnName: 'date', width: 100},
   {columnName: 'type', width: 250},
   {columnName: 'counterparty_name', width: 300},

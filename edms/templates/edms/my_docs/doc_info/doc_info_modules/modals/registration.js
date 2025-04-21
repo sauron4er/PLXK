@@ -130,6 +130,7 @@ function RegistrationModal(props) {
           </If>
         </If>
         <If condition={basicAndSiblings}>
+          <div className='mt-1'>Базовий договір та додаткові угоди:</div>
           <ul>
             <For each='entry' of={basicAndSiblings} index='index'>
               <li key={index}>
