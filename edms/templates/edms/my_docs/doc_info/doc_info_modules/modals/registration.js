@@ -108,7 +108,7 @@ function RegistrationModal(props) {
           onChange={onRegChange}
           maxLength={50}
         />
-        <If condition={docInfoStore.contract_info.sequence_number}>
+        <If condition={docInfoStore.contract_info.sequence_number && docInfoStore.contract_info.sequence_number !== '001'}>
           <div className='mt-1'>
             <a href='#' onClick={getLastTenNumbers}>
               Переглянути останні записи
