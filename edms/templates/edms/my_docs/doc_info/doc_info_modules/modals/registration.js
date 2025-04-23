@@ -43,12 +43,12 @@ function RegistrationModal(props) {
   }, [docInfoStore.contract_info.type]);
 
   async function getNextPrimaryContractNumber() {
-    const year = new Date().getFullYear();
+    const year = docInfoStore.info.date.slice(6, 10);
     const nextSeqNumber = await getNextSequenceNumber(docInfoStore.contract_info.type, docInfoStore.info.company, year, docInfoStore.info.contract_link?.id);
 
     const type_code = getTypeCode(docInfoStore.contract_info.type);
     const company_code = getCompanyCode(docInfoStore.info.company);
-    const year_code = new Date().getFullYear().toString().slice(2, 4);
+    const year_code = docInfoStore.info.date.slice(8, 10);
     docInfoStore.info.registration_number = `${type_code}-${nextSeqNumber}-${company_code}${year_code}`;
     docInfoStore.contract_info.sequence_number = nextSeqNumber;
   }

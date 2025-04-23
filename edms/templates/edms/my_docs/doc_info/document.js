@@ -477,6 +477,8 @@ class Document extends React.Component {
     this.setState({modal_open: false});
     docInfoStore.button_clicked = false;
     docInfoStore.info.registration_number = '';
+    docInfoStore.contract_info.type = '',
+    docInfoStore.contract_info.sequence_number = ''
   };
 
   addDoc = () => {
@@ -485,7 +487,7 @@ class Document extends React.Component {
 
   onHrefClick = () => {
     navigator.clipboard.writeText(`http://plhk.com.ua/edms/my_docs/${this.props.doc_id}`);
-    alert('Посилання на наказ скопійовано.');
+    alert('Посилання на документи скопійовано.');
   };
 
   render() {
