@@ -480,7 +480,7 @@ class NewDocument extends React.Component {
       if (type === 'template' || this.requiredFieldsFilled()) {
         // Створюємо список для відправки у бд:
         let doc_modules = {};
-        console.log(type_modules);
+
         type_modules.map((module) => {
           if (!!module.hide || [2, 15, 29, 33, 48].includes(module.module_id)) {
             // Приховані модулі будуть використовуватися в наступних фазах
@@ -892,7 +892,7 @@ class NewDocument extends React.Component {
             </If>
           </div>
           {/*Вспливаюче повідомлення*/}
-          {/*<ToastContainer />*/}
+          <ToastContainer />
         </Modal>
         <Modal
           open={newDocStore.additional_modal_opened}

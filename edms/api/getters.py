@@ -11,7 +11,7 @@ from plxk.api.convert_to_local_time import convert_to_localtime
 from plxk.api.datetime_normalizers import date_to_json
 from edms.api.vacations import vacation_check
 from ..models import *
-from docs.models import Contract
+from docs.models import Contract, Contract_Reg_Number
 from edms.api.modules_getter import get_foyer_ranges, get_cost_rates, get_contract_subject, get_deadline, \
     get_employee_seat, get_decree_articles, get_integers, get_decimal, get_bag_test_fields, get_booleans, get_seat, \
     get_department, get_info_on_print
@@ -1448,11 +1448,15 @@ def get_doc_flow(doc_id):
 
 @try_except
 def is_reg_number_free(reg_number):
-    is_taken = Doc_Registration.objects \
-        .filter(registration_number=reg_number) \
+    is_taken_in_journal = Contract_Reg_Number.objects \
+        .filter(number=reg_number) \
         .filter(is_active=True) \
         .exists()
-    return not is_taken
+    is_taken_in_contracts = Contract.objects \
+        .filter(number=reg_number) \
+        .filter(is_active=True) \
+        .exists()
+    return not (is_taken_in_journal or is_taken_in_contracts)
 
 
 @try_except
