@@ -16,18 +16,11 @@ function Registration(props) {
           className='form-control mr-1'
           name='registration'
           id='registration'
-          value={newDocStore.new_document.registration_number !== 'not unique' ? newDocStore.new_document.registration_number : ''}
+          value={newDocStore.new_document.registration_number}
           onChange={onChange}
           maxLength={50}
         />
       </div>
-      <If condition={newDocStore.new_document.registration_number === 'not unique'}>
-        <div>
-          <small className='text-danger'>
-            Автоматично згенерований номер не унікальний. Залиште поле пустим для опрацювання юридичним відділом
-          </small>
-        </div>
-      </If>
       <If condition={props.moduleInfo.additional_info}>
         <small className='text-danger'>{props.moduleInfo.additional_info}</small>
       </If>

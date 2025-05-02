@@ -99,6 +99,7 @@ function RegJournalTable(props) {
           onRowClick={onRowClick}
           height={mainDivHeight}
           coloredStatus
+          listTypeColumn='additionals_for_table'
           filter
         />
       </div>
@@ -120,6 +121,7 @@ const columns = [
   {name: 'counterparty_name', title: 'Контрагент'},
   {name: 'subject', title: 'Предмет'},
   {name: 'responsible', title: 'Менеджер'},
+  {name: 'additionals_for_table', title: 'ДУ'},
   {name: 'status', title: ' '}
 ];
 

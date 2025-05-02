@@ -57,6 +57,7 @@ function RegistrationModal(props) {
     axiosGetRequest(`get_next_additional_contract_number/${docInfoStore.info.contract_link.id}/`)
       .then((response) => {
         docInfoStore.info.registration_number = response.new_number;
+        docInfoStore.contract_info.sequence_number = response.sequence_number;
         setBasicAndSiblings(response.basic_and_siblings);
       })
       .catch((error) => console.log(error));
@@ -134,7 +135,7 @@ function RegistrationModal(props) {
           <ul>
             <For each='entry' of={basicAndSiblings} index='index'>
               <li key={index}>
-                {entry.number} | {entry.date} | {entry.counterparty}
+                {entry.number} | {entry.date}}
                 <If condition={entry.id}>
                   <a href={`${window.location.origin}/docs/contracts/${entry.id}`} target='_blank'>
                     <h6>Переглянути договір</h6>

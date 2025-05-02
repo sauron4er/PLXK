@@ -586,8 +586,12 @@ class NewDocument extends React.Component {
 
         axiosPostRequest('post_doc', formData)
           .then((response) => {
-            if (response === 'reg_number_taken') {
-              notify('Цей реєстраційний номер вже використовується. Оберіть інший.');
+            if (response === 'taken_in_journal') {
+              notify('Цей реєстраційний номер вже використовується в реєстраційному журналі Договорів. Оберіть інший.');
+
+              this.setState({post_request_sent: true});
+            } else if (response === 'taken_in_contracts') {
+              notify('Цей реєстраційний номер вже використовується в базі Договорів. Оберіть інший.');
               this.setState({post_request_sent: true});
             } else {
               // опублікування документа оновлює таблицю документів:

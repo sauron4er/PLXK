@@ -376,13 +376,18 @@ def add_missing_contract_info():
 def link_additional_contracts_to_basic():
     non_linked_additional_contracts = Contract_Reg_Number.objects \
         .filter(number__startswith='ДУ ') \
+        .filter(basic_contract_number__isnull=True) \
         .filter(is_active=True)
-    # TODO 1. Додати поле "basic_contract", записувати туди значення так:
-    #  - шукаємо ід основного контракту виходячи з ід прив'язаного контракту в базі договорів
-    #  - якщо такого нема - тоді на основі regex.
-    #  Запускати цю процедуру при оновленні сторінки для автоматичного опрацювання вручну внесених записів
-    #  2. Записувати туди значення при реєстрації договору.
-    pass
+
+    for additional_contract in non_linked_additional_contracts:
+        basic_number = additional_contract.number[3:13]  # Прибираємо "ДУ " спочатку і все, що після "/"
+        basic_contract = Contract_Reg_Number.objects \
+            .filter(number=basic_number) \
+            .filter(is_active=True).first()
+        if basic_contract:
+            additional_contract.basic_contract_number_id = basic_contract.id
+            additional_contract.sequence_number = basic_contract.sequence_number
+            additional_contract.save()
 
 
 @try_except
@@ -394,9 +399,12 @@ def add_sequence_number(reg_number_instance, request_sequence_number):
         reg_number_instance.sequence_number = reg_number_instance.number[3:6]
         reg_number_instance.save()
 
+
 @try_except
 def arrange_reg_journal(request, page):
-    reg_journal = Contract_Reg_Number.objects.filter(is_active=True)
+    reg_journal = Contract_Reg_Number.objects\
+        .filter(basic_contract_number__isnull=True)\
+        .filter(is_active=True)
 
     if request.POST['company'] != '0':
         reg_journal = reg_journal.filter(company=request.POST['company'])
@@ -430,6 +438,13 @@ def arrange_reg_journal(request, page):
         'subject': reg.subject or '',
         'responsible': reg.responsible.pip if reg.responsible else '',
         'contract_id': reg.contract_id if reg.contract_id else '',
+        'additionals_for_table': [entry.number for entry in reg.additional_contract_numbers.all()],
+        'additionals_for_card': [{
+            'id': entry.contract_id,
+            'name': entry.number,
+            'subject': entry.subject,
+            'date': normalize_date(entry.date)
+        } for entry in reg.additional_contract_numbers.all()],
         'status': 'ok' if reg.contract_id else '',
     } for reg in reg_journal_page]
 

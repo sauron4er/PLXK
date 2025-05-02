@@ -1452,11 +1452,19 @@ def is_reg_number_free(reg_number):
         .filter(number=reg_number) \
         .filter(is_active=True) \
         .exists()
+
+    if is_taken_in_journal:
+        return False, 'journal'
+
     is_taken_in_contracts = Contract.objects \
         .filter(number=reg_number) \
         .filter(is_active=True) \
         .exists()
-    return not (is_taken_in_journal or is_taken_in_contracts)
+
+    if is_taken_in_contracts:
+        return False, 'contracts'
+
+    return True, ''
 
 
 @try_except

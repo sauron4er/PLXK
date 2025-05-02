@@ -11,7 +11,7 @@ from accounts.models import UserProfile, Department
 from docs.api.contracts_api import add_contract_from_edms, get_additional_contract_reg_number, get_main_contracts, \
     check_lawyers_received, add_contract_to_reg_number_journal
 from docs.api.orders_save_from_edms_api import post_order_from_edms
-from docs.models import Article_responsible, Contract_File
+from docs.models import Article_responsible, Contract_File, Contract_Reg_Number
 from production.api.getters import get_cost_rates_product_list, get_cost_rates_fields_list
 
 from .models import Seat, Vacation, User_Doc_Type_View, Doc_Recipient, Document_Type, Document_Meta_Type, Document_Type_Version, Doc_Text
@@ -737,10 +737,10 @@ def edms_my_docs(request):
 
     elif request.method == 'POST':
         doc_modules = json.loads(request.POST['doc_modules'])
-        if 'registration' in doc_modules \
-                and not doc_modules['registration'] == '' \
-                and not is_reg_number_free(doc_modules['registration']):
-            return HttpResponse('reg_number_taken')
+        if 'registration' in doc_modules and not doc_modules['registration'] == '':
+            free, where_taken = is_reg_number_free(doc_modules['registration'])
+            if not free:
+                return HttpResponse('taken_in_' + where_taken)
 
         doc_request = request.POST.copy()
 
@@ -1310,11 +1310,13 @@ def edms_mark(request):
                     # document_query = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
                     post_order_from_edms(doc_request['document'], doc_request['registration_number'])
                 else:
-                    registered = change_registration_number(doc_request['document'], doc_request['registration_number'].strip())
-                    if registered:
-                        add_contract_to_reg_number_journal(doc_request, contract_info)
-                    else:
+                    is_taken_in_journal = Contract_Reg_Number.objects \
+                        .filter(number=doc_request['registration_number']) \
+                        .filter(is_active=True) \
+                        .exists()
+                    if is_taken_in_journal:
                         return HttpResponse('reg_unique_fail')
+                    add_contract_to_reg_number_journal(doc_request, contract_info)
 
                 deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])

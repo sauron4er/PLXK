@@ -11,20 +11,8 @@
  * Компонент відображає список файлів у комірці, якщо ця комірка має name = files*
  * */
 import * as React from 'react';
-import {
-  Grid,
-  Table,
-  VirtualTable,
-  TableHeaderRow,
-  TableFilterRow
-} from '@devexpress/dx-react-grid-material-ui';
-import {
-  SortingState,
-  FilteringState,
-  EditingState,
-  SelectionState,
-  IntegratedSelection
-} from '@devexpress/dx-react-grid';
+import {Grid, Table, VirtualTable, TableHeaderRow, TableFilterRow} from '@devexpress/dx-react-grid-material-ui';
+import {SortingState, FilteringState, EditingState, SelectionState, IntegratedSelection} from '@devexpress/dx-react-grid';
 
 import './dx_table_styles.css';
 
@@ -140,7 +128,7 @@ class DxTable extends React.PureComponent {
           const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
           const yyyy = today.getFullYear();
           today = yyyy + '-' + mm + '-' + dd;
-  
+
           return {
             ...style,
             // ...styles[row.date_canceled !== '']
@@ -181,6 +169,16 @@ class DxTable extends React.PureComponent {
     );
   };
 
+  arrangeList = (list, style) => {
+    return (
+      <td style={style}>
+        <For each='item' of={list} index='index'>
+          <div key={index} >{item}</div>
+        </For>
+      </td>
+    );
+  };
+
   autoActuality = (date_start, date_end) => {
     if (new Date(date_start) > this.state.today) return 'yellow';
     if (date_end !== '' && new Date(date_end) < this.state.today) return 'red';
@@ -210,10 +208,10 @@ class DxTable extends React.PureComponent {
       };
       cell_value = '';
     }
-    
+
     // stage
     if (this.props.coloredStage && props.column.name === 'stage') {
-      let color = ''
+      let color = '';
       switch (props.value) {
         case 'В роботі':
           color = 'yellow';
@@ -250,6 +248,15 @@ class DxTable extends React.PureComponent {
       cell_value = '';
     }
 
+    // column with list in it
+    if (this.props.listTypeColumn === props.column.name) {
+      if (props.value.length) {
+        return this.arrangeList(props.value, style);
+      } else {
+        cell_value = '';
+      }
+    }
+
     // files
     if (props.column.name === 'files' && Array.isArray(props.row.files)) {
       return this.arrangeFiles(props.row.files, style);
@@ -257,8 +264,6 @@ class DxTable extends React.PureComponent {
 
     return <Table.Cell onClick={() => this.onRowClick(props.row)} {...props} value={cell_value} style={style} />;
   };
-
-
 
   HeaderCellComponent = (props) => (
     <TableHeaderRow.Cell
@@ -272,7 +277,7 @@ class DxTable extends React.PureComponent {
       }}
     />
   );
-  
+
   FilterCellComponent = (props) => (
     <TableFilterRow.Cell
       {...props}
@@ -295,22 +300,16 @@ class DxTable extends React.PureComponent {
     const {height, columns, changeSorting, changeFiltering, colWidth, filters} = this.props;
 
     const table_height = height ? height : 750;
-  
+
     return (
-      <Grid
-        rows={rows}
-        columns={columns}
-        getRowId={getRowId}
-        style={'100%'}
-        hoverStateEnabled={true}
-      >
+      <Grid rows={rows} columns={columns} getRowId={getRowId} style={'100%'} hoverStateEnabled={true}>
         <SortingState onSortingChange={changeSorting} />
         <FilteringState filters={filters} onFiltersChange={changeFiltering} defaultFilters={[]} />
         <EditingState onCommitChanges={this.commitChanges} />
         <SelectionState />
-        
+
         <IntegratedSelection />
-        
+
         <VirtualTable
           cellComponent={this.CellComponent}
           rowComponent={this.TableRow}
@@ -318,13 +317,9 @@ class DxTable extends React.PureComponent {
           messages={{noData: 'Немає даних'}}
           height={table_height}
         />
-        
-        <TableHeaderRow
-          cellComponent={this.HeaderCellComponent}
-          showSortingControls
-          messages={{sortingHint: 'Сортувати'}}
-        />
-        
+
+        <TableHeaderRow cellComponent={this.HeaderCellComponent} showSortingControls messages={{sortingHint: 'Сортувати'}} />
+
         <TableFilterRow rowHeight={1} messages={{filterPlaceholder: 'Фільтр'}} cellComponent={this.FilterCellComponent} />
       </Grid>
     );

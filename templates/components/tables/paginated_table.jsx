@@ -111,6 +111,7 @@ class PaginatedTable extends React.Component {
               changeFiltering={this.changeFiltering}
               coloredStatus
               coloredStage
+              listTypeColumn={this.props.listTypeColumn}
             />
             <If condition={pagesCount > 1}>
               <div className='mt-2'>
@@ -150,7 +151,8 @@ class PaginatedTable extends React.Component {
     onRowClick: () => {},
     height: '100%',
     redRow: '',
-    filter: true
+    filter: true,
+    listTypeColumn: ''
   };
 }
 

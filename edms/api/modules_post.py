@@ -516,13 +516,14 @@ def post_registration(new_doc, registration_number):
 
 
 @try_except
-def change_registration_number(doc_id, registration_number):
+def change_registration_number(doc_id, registration_number, sequence_number):
     try:
         doc_registration_instance = Doc_Registration.objects.get(document_id=doc_id)
     except Doc_Registration.DoesNotExist:
         doc_registration_instance = Doc_Registration(document_id=doc_id)
 
     doc_registration_instance.registration_number = registration_number
+    doc_registration_instance.sequence_number = sequence_number
 
     try:
         doc_registration_instance.save()

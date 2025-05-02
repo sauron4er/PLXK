@@ -292,38 +292,43 @@ def get_next_sequence_number(request):
 @try_except
 def get_next_additional_contract_number(request, basic_contract_id):
     new_number = ''
+    sequence_number = ''
     basic_and_siblings = []
+
     basic_contract_number = Contract.objects.values_list('number', flat=True).filter(id=basic_contract_id)
-    if basic_contract_number:
-        number_of_additionals = Contract.objects\
-            .filter(basic_contract_id=basic_contract_id)\
-            .filter(is_active=True).count()
-        new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals+1)
+    basic_contract_reg_instance = Contract_Reg_Number.objects.get(contract_id=basic_contract_id)
 
-        basic_query = Contract.objects.get(id=basic_contract_id, is_active=True)
-        siblings_query = Contract.objects.filter(basic_contract_id=basic_contract_id).filter(is_active=True)
-
+    if basic_contract_reg_instance:
         basic = {
-            'id': basic_query.id,
-            'number': basic_query.number,
-            'counterparty': basic_query.counterparty_link.name if basic_query.counterparty_link else basic_query.counterparty,
-            'subject': basic_query.subject,
-            'date': normalize_date(basic_query.date_start),
+            'id': basic_contract_reg_instance.contract_id,
+            'number': basic_contract_reg_instance.number,
+            'subject': basic_contract_reg_instance.subject,
+            'date': normalize_date(basic_contract_reg_instance.date),
             'basic': True
         }
 
+        sequence_number = basic_contract_reg_instance.sequence_number
+
+        number_of_additionals = Contract_Reg_Number.objects \
+            .filter(basic_contract_number=basic_contract_reg_instance) \
+            .filter(is_active=True).count()
+        new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals + 1)
+
+        siblings_query = Contract_Reg_Number.objects.filter(basic_contract_number=basic_contract_reg_instance).filter(is_active=True)
+
         siblings = [{
-            'id': entry.id,
+            'id': entry.contract_id,
             'number': entry.number,
-            'counterparty': entry.counterparty_link.name if entry.counterparty_link else entry.counterparty,
             'subject': entry.subject,
-            'date': normalize_date(entry.date_start),
-            'basic': False if entry.basic_contract else True
+            'date': normalize_date(entry.date),
+            'basic': False
         } for entry in siblings_query]
 
         basic_and_siblings = [basic] + siblings
 
-    return HttpResponse(json.dumps({'new_number': new_number, 'basic_and_siblings': basic_and_siblings}))
+    return HttpResponse(json.dumps({'new_number': new_number,
+                                    'sequence_number': sequence_number,
+                                    'basic_and_siblings': basic_and_siblings}))
 
 
 @try_except
@@ -347,7 +352,7 @@ def get_last_ten_reg_numbers(request):
         'id': entry.id,
         'contract_id': entry.contract_id or '',
         'number': entry.number,
-        'counterparty': entry.counterparty.name,
+        'counterparty': entry.counterparty.name if entry.counterparty else '',
         'subject': entry.subject,
         'date': normalize_date(entry.date)
     } for entry in last_ten_numbers]
