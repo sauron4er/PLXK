@@ -273,25 +273,6 @@ def get_main_contracts(company, counterparty_id):
 
 
 @try_except
-def get_additional_contract_reg_number(main_contract_id):
-    # Отримуємо номер договору і очищаємо його від лишніх символів
-    main_contract = get_object_or_404(Contract, pk=main_contract_id)
-    main_contract_number = " ".join(main_contract.number.split())
-    main_contract_number = main_contract_number.replace("№", "")
-
-    # Знаходимо кількість уже погоджених додаткових угод до цього договору, додаємо нумерацію
-    add_contracts_count = Contract.objects.filter(basic_contract=main_contract).count()
-    new_number = 'ДУ ' + main_contract_number + '/' + str(add_contracts_count + 1)
-
-    # Перевіряємо унікальність цього номеру
-    new_number_is_not_unique = Contract.objects.filter(number=new_number)
-    if new_number_is_not_unique:
-        return 'not unique'
-    else:
-        return new_number
-
-
-@try_except
 def check_lawyers_received(edms_doc_id):
     contract_instances = Contract.objects\
         .filter(edms_doc_id=edms_doc_id)\
@@ -336,6 +317,25 @@ def trim_spaces():
 
 
 @try_except
+def get_additional_contract_reg_number(main_contract_id):
+    # Отримуємо номер договору і очищаємо його від лишніх символів
+    main_contract = get_object_or_404(Contract, pk=main_contract_id)
+    main_contract_number = " ".join(main_contract.number.split())
+    main_contract_number = main_contract_number.replace("№", "")
+
+    # Знаходимо кількість уже погоджених додаткових угод до цього договору, додаємо нумерацію
+    add_contracts_count = Contract.objects.filter(basic_contract=main_contract).count()
+    new_number = 'ДУ ' + main_contract_number + '/' + str(add_contracts_count + 1)
+
+    # Перевіряємо унікальність цього номеру
+    new_number_is_not_unique = Contract.objects.filter(number=new_number)
+    if new_number_is_not_unique:
+        return 'not unique'
+    else:
+        return new_number
+
+
+@try_except
 def write_sequence_numbers():
     reg_journal = Contract_Reg_Number.objects \
         .filter(Q(sequence_number__isnull=True) | Q(sequence_number='')) \
@@ -370,6 +370,19 @@ def add_missing_contract_info():
             if not reg.responsible and contract.responsible:
                 reg.responsible = contract.responsible.userprofile
             reg.save()
+
+
+@try_except
+def link_additional_contracts_to_basic():
+    non_linked_additional_contracts = Contract_Reg_Number.objects \
+        .filter(number__startswith='ДУ ') \
+        .filter(is_active=True)
+    # TODO 1. Додати поле "basic_contract", записувати туди значення так:
+    #  - шукаємо ід основного контракту виходячи з ід прив'язаного контракту в базі договорів
+    #  - якщо такого нема - тоді на основі regex.
+    #  Запускати цю процедуру при оновленні сторінки для автоматичного опрацювання вручну внесених записів
+    #  2. Записувати туди значення при реєстрації договору.
+    pass
 
 
 @try_except
