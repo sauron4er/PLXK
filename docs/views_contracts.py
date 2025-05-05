@@ -296,35 +296,44 @@ def get_next_additional_contract_number(request, basic_contract_id):
     basic_and_siblings = []
 
     basic_contract_number = Contract.objects.values_list('number', flat=True).filter(id=basic_contract_id)
-    basic_contract_reg_instance = Contract_Reg_Number.objects.get(contract_id=basic_contract_id)
+    try:
+        basic_contract_reg_instance = Contract_Reg_Number.objects.get(contract_id=basic_contract_id)
 
-    if basic_contract_reg_instance:
-        basic = {
-            'id': basic_contract_reg_instance.contract_id,
-            'number': basic_contract_reg_instance.number,
-            'subject': basic_contract_reg_instance.subject,
-            'date': normalize_date(basic_contract_reg_instance.date),
-            'basic': True
-        }
+        # Якщо не знайшло оригінал - не стирати уже існуючу запис у клієнті!
+        # Показувати напис "не знайдено оригінал".
+        # ПОСТИРАТИ УСІ СИМВОЛИ № У БАЗІ ДОГОВОРІВ!
 
-        sequence_number = basic_contract_reg_instance.sequence_number
+        if basic_contract_reg_instance:
+            basic = {
+                'id': basic_contract_reg_instance.contract_id,
+                'number': basic_contract_reg_instance.number,
+                'subject': basic_contract_reg_instance.subject,
+                'date': normalize_date(basic_contract_reg_instance.date),
+                'basic': True
+            }
 
-        number_of_additionals = Contract_Reg_Number.objects \
-            .filter(basic_contract_number=basic_contract_reg_instance) \
-            .filter(is_active=True).count()
-        new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals + 1)
+            sequence_number = basic_contract_reg_instance.sequence_number
 
-        siblings_query = Contract_Reg_Number.objects.filter(basic_contract_number=basic_contract_reg_instance).filter(is_active=True)
+            number_of_additionals = Contract_Reg_Number.objects \
+                .filter(basic_contract_number=basic_contract_reg_instance) \
+                .filter(is_active=True).count()
+            new_number = 'ДУ ' + str(basic_contract_number[0]) + '/' + str(number_of_additionals + 1)
 
-        siblings = [{
-            'id': entry.contract_id,
-            'number': entry.number,
-            'subject': entry.subject,
-            'date': normalize_date(entry.date),
-            'basic': False
-        } for entry in siblings_query]
+            siblings_query = Contract_Reg_Number.objects.filter(basic_contract_number=basic_contract_reg_instance).filter(is_active=True)
 
-        basic_and_siblings = [basic] + siblings
+            siblings = [{
+                'id': entry.contract_id,
+                'number': entry.number,
+                'subject': entry.subject,
+                'date': normalize_date(entry.date),
+                'basic': False
+            } for entry in siblings_query]
+
+            basic_and_siblings = [basic] + siblings
+    except Contract_Reg_Number.DoesNotExist:
+        new_number = ''
+        sequence_number = ''
+        basic_and_siblings = []
 
     return HttpResponse(json.dumps({'new_number': new_number,
                                     'sequence_number': sequence_number,
