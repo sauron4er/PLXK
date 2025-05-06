@@ -11,8 +11,8 @@ from edms.api.contract_reg_numbers import get_contract_reg_numbers_list
 from plxk.api.try_except import try_except
 from .models import Contract, Contract_File, Contract_Reg_Number
 from .api.contracts_api import add_contract_api, edit_contract_api, deactivate_contract_api, post_files, \
-    arrange_reg_journal, add_missing_contract_info, trim_spaces, write_sequence_numbers, add_sequence_number, \
-    link_additional_contracts_to_basic
+    arrange_reg_journal, add_missing_contract_info, trim_spaces, delete_number_symbol, write_sequence_numbers, \
+    add_sequence_number, link_additional_contracts_to_basic
 from plxk.api.datetime_normalizers import date_to_json, normalize_date
 from docs.api import contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
@@ -232,8 +232,9 @@ def contract_reg_numbers(request):
 @login_required(login_url='login')
 @try_except
 def contracts_reg_journal(request):
-    # trim_spaces()  # TODO - comment after first use after word import
     # write_sequence_numbers()  # TODO - comment after first use after word import
+    trim_spaces()
+    delete_number_symbol()
     link_additional_contracts_to_basic()
     add_missing_contract_info()  # every time start function, that ties new contract numbers with contracts in database
     edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.department_id == 50
@@ -298,10 +299,6 @@ def get_next_additional_contract_number(request, basic_contract_id):
     basic_contract_number = Contract.objects.values_list('number', flat=True).filter(id=basic_contract_id)
     try:
         basic_contract_reg_instance = Contract_Reg_Number.objects.get(contract_id=basic_contract_id)
-
-        # Якщо не знайшло оригінал - не стирати уже існуючу запис у клієнті!
-        # Показувати напис "не знайдено оригінал".
-        # ПОСТИРАТИ УСІ СИМВОЛИ № У БАЗІ ДОГОВОРІВ!
 
         if basic_contract_reg_instance:
             basic = {

@@ -296,24 +296,36 @@ def check_lawyers_received(edms_doc_id):
 #  -------------- Contract numbers journal
 @try_except
 def trim_spaces():
-    reg_journal = Contract_Reg_Number.objects \
-        .filter(is_active=True)
+    reg_journal = (Contract_Reg_Number.objects
+                   .filter(Q(number__startswith=' ')|Q(number__endswith=' '))
+                   .filter(is_active=True))
     for reg in reg_journal:
         if reg.number:
             reg.number = reg.number.strip()
             reg.save()
 
-    contracts = Contract.objects.all()
+    contracts = (Contract.objects
+                 .filter(Q(number__startswith=' ')|Q(number__endswith=' ')))
     for contract in contracts:
         if contract.number:
             contract.number = contract.number.strip()
             contract.save()
 
-    edms_registrations = Doc_Registration.objects.all()
+    edms_registrations = (Doc_Registration.objects
+                          .filter(Q(registration_number__startswith=' ')|Q(registration_number__endswith=' ')))
     for reg in edms_registrations:
         if reg.registration_number:
             reg.registration_number = reg.registration_number.strip()
             reg.save()
+
+
+@try_except
+def delete_number_symbol():
+    contracts_startswith_number_symbol = Contract.objects.filter(number__startswith='№')
+    for contract in contracts_startswith_number_symbol:
+        contract.number = contract.number.replace('№', "")
+        contract.number = contract.number.strip()
+        contract.save()
 
 
 @try_except
