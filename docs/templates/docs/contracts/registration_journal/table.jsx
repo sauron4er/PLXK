@@ -120,7 +120,7 @@ const columns = [
   // {name: 'company', title: 'Підприємство'},
   {name: 'counterparty_name', title: 'Контрагент'},
   {name: 'subject', title: 'Предмет'},
-  {name: 'responsible', title: 'Менеджер'},
+  {name: 'responsible_name', title: 'Менеджер'},
   {name: 'additionals_for_table', title: 'ДУ'},
   {name: 'status', title: ' '}
 ];
@@ -130,7 +130,7 @@ const col_width = [
   {columnName: 'date', width: 100},
   {columnName: 'type', width: 250},
   {columnName: 'counterparty_name', width: 300},
-  {columnName: 'responsible', width: 250},
+  {columnName: 'responsible_name', width: 250},
   // {columnName: 'company', width: 100},
   {columnName: 'status', width: 35}
 ];

@@ -305,14 +305,17 @@ def trim_spaces():
             reg.save()
 
     contracts = (Contract.objects
-                 .filter(Q(number__startswith=' ')|Q(number__endswith=' ')))
+                 .filter(Q(number__startswith=' ')|Q(number__endswith=' '))
+                 .filter(is_active=True))
     for contract in contracts:
         if contract.number:
             contract.number = contract.number.strip()
             contract.save()
 
     edms_registrations = (Doc_Registration.objects
-                          .filter(Q(registration_number__startswith=' ')|Q(registration_number__endswith=' ')))
+                          .filter(Q(registration_number__startswith=' ')|Q(registration_number__endswith=' '))
+                          .filter(document__is_active=True)
+                          .filter(is_active=True))
     for reg in edms_registrations:
         if reg.registration_number:
             reg.registration_number = reg.registration_number.strip()
@@ -321,11 +324,26 @@ def trim_spaces():
 
 @try_except
 def delete_number_symbol():
-    contracts_startswith_number_symbol = Contract.objects.filter(number__startswith='№')
-    for contract in contracts_startswith_number_symbol:
-        contract.number = contract.number.replace('№', "")
+    contracts = Contract.objects.filter(number__startswith='№').filter(is_active=True)
+    for contract in contracts:
+        contract.number = contract.number.replace('№', "", 1)
         contract.number = contract.number.strip()
         contract.save()
+
+    contract_journal = Contract_Reg_Number.objects.filter(number__startswith='№').filter(is_active=True)
+    for reg in contract_journal:
+        reg.number = reg.number.replace('№', "", 1)
+        reg.number = reg.number.strip()
+        reg.save()
+
+    edms_registrations = (Doc_Registration.objects
+                          .filter(registration_number__startswith='№')
+                          .filter(document__is_active=True)
+                          .filter(is_active=True))
+    for entry in edms_registrations:
+        entry.registration_number = entry.registration_number.replace('№', "", 1)
+        entry.registration_number = entry.registration_number.strip()
+        entry.save()
 
 
 @try_except
@@ -444,11 +462,12 @@ def arrange_reg_journal(request, page):
         'auto_number': reg.number,
         'date': normalize_date(reg.date),
         'company': reg.company,
-        'counterparty_name': reg.counterparty.name if reg.counterparty else '',
         'counterparty_id': reg.counterparty.id if reg.counterparty else '',
+        'counterparty_name': reg.counterparty.name if reg.counterparty else '',
         'type': reg.type or '',
         'subject': reg.subject or '',
-        'responsible': reg.responsible.pip if reg.responsible else '',
+        'responsible_id': reg.responsible.id if reg.responsible else '',
+        'responsible_name': reg.responsible.pip if reg.responsible else '',
         'contract_id': reg.contract_id if reg.contract_id else '',
         'additionals_for_table': [entry.number for entry in reg.additional_contract_numbers.all()],
         'additionals_for_card': [{

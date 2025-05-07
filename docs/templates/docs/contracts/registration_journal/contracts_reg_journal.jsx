@@ -152,8 +152,8 @@ function ContractsRegJournal() {
   function postChanges(e) {
     let formData = new FormData();
     formData.append('auto_number', regInfo.auto_number);
-    formData.append('sequence_number', regInfo.sequence_number);
-    formData.append('manual_number', regInfo.manual_number);
+    formData.append('sequence_number', regInfo.sequence_number || '');
+    formData.append('manual_number', regInfo.manual_number || '');
     formData.append('type', regInfo.type);
     formData.append('date', regInfo.date);
     formData.append('company', regInfo.company);
