@@ -47,7 +47,8 @@ class Archive extends React.Component {
     main_div_height: 0, // розмір головного div, з якого вираховується розмір таблиць
     doc_type_id: 0,
     doc_type_name: '',
-    archive_type: 'my' //, 'subs', 'dep' (dep показується лише начальнику відділу)
+    archive_type: 'my', //, 'subs', 'dep' (dep показується лише начальнику відділу)
+    contract_phase: 'all' // 'scan', 'registration', 'visa'
   };
 
   // Отримує ref основного div для визначення його висоти і передачі її у DxTable
@@ -93,17 +94,21 @@ class Archive extends React.Component {
     docInfoStore.answer = answer;
   };
 
-  onRadioChange = (e) => {
+  onArchiveRadioChange = (e) => {
     this.setState({archive_type: e.target.name});
   };
 
+  onContractRadioChange = (e) => {
+    this.setState({contract_phase: e.target.name});
+  };
+
   render() {
-    const {main_div_height, doc_type_id, doc_type_name, opened_doc_id, archive_type} = this.state;
+    const {main_div_height, doc_type_id, doc_type_name, opened_doc_id, archive_type, contract_phase} = this.state;
 
     return (
       <>
         <div className='d-flex'>
-          <div className='form-group'>
+          <div className='d-flex'>
             <Selector
               list={window.doc_types}
               selectedName={doc_type_name}
@@ -113,6 +118,20 @@ class Archive extends React.Component {
               disabled={false}
             />
           </div>
+          <If condition={doc_type_id === '5'}>
+            <div className='d-flex ml-3'>
+              <FancyRadio
+                items={[
+                  ['all', 'Всі'],
+                  ['scan', 'Сканкопії'],
+                  ['registration', 'Реєстрація'],
+                  ['visa', 'Візування']
+                ]}
+                active={contract_phase}
+                onChange={this.onContractRadioChange}
+              />
+            </div>
+          </If>
           <div className='d-flex ml-auto'>
             <FancyRadio
               items={[
@@ -121,7 +140,7 @@ class Archive extends React.Component {
                 ['subs', 'Документи підлеглих']
               ]}
               active={archive_type}
-              onChange={this.onRadioChange}
+              onChange={this.onArchiveRadioChange}
             />
           </div>
         </div>
@@ -130,7 +149,7 @@ class Archive extends React.Component {
             <div className='col-lg-4'>
               {`Створені ${archive_type === 'my' ? 'вами' : archive_type === 'dep' ? 'працівниками відділу' : 'підлеглими'}  документи`}
               <PaginatedTable
-                url={`get_archive/${archive_type}/${doc_type_id}`}
+                url={`get_archive/${archive_type}/${doc_type_id}/${contract_phase}`}
                 columns={archive_columns}
                 defaultSorting={[{columnName: 'id', direction: 'desc'}]}
                 colWidth={archive_col_width}
@@ -142,7 +161,7 @@ class Archive extends React.Component {
             <div className='col-lg-4'>
               Документи, що були у роботі
               <PaginatedTable
-                url={`get_work_archive/${archive_type}/${doc_type_id}`}
+                url={`get_work_archive/${archive_type}/${doc_type_id}/${contract_phase}`}
                 columns={work_archive_columns}
                 defaultSorting={[{columnName: 'id', direction: 'desc'}]}
                 colWidth={work_archive_col_width}

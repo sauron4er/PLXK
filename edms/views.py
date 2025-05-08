@@ -890,14 +890,14 @@ def edms_archive(request):
 
 
 @login_required(login_url='login')
-def get_archive(request, archive_type, meta_doc_id, page):
-    archive = get_archive_docs(request, archive_type, meta_doc_id, page)
+def get_archive(request, archive_type, meta_doc_id, contract_phase, page):
+    archive = get_archive_docs(request, archive_type, meta_doc_id, contract_phase, page)
     return HttpResponse(json.dumps(archive))
 
 
 @login_required(login_url='login')
-def get_work_archive(request, archive_type, meta_doc_id, page):
-    archive = get_work_archive_docs(request, archive_type, meta_doc_id, page)
+def get_work_archive(request, archive_type, meta_doc_id, contract_phase, page):
+    archive = get_work_archive_docs(request, archive_type, meta_doc_id, contract_phase, page)
     return HttpResponse(json.dumps(archive))
 
 

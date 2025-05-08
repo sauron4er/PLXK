@@ -70,8 +70,8 @@ urlpatterns = [
     re_path(r'^my_docs/get_next_additional_contract_number/(?P<basic_contract_id>\d+)/$', get_next_additional_contract_number, name='get_next_additional_contract_number'),
     re_path(r'^my_docs/', edms_my_docs, name='my_docs'),
 
-    re_path(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_archive, name='get_archive'),
-    re_path(r'^archive/get_work_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<page>\d+)/$', get_work_archive, name='get_work_archive'),
+    re_path(r'^archive/get_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<contract_phase>\w+)/(?P<page>\d+)/$', get_archive, name='get_archive'),
+    re_path(r'^archive/get_work_archive/(?P<archive_type>\w+)/(?P<meta_doc_id>\d+)/(?P<contract_phase>\w+)/(?P<page>\d+)/$', get_work_archive, name='get_work_archive'),
     re_path(r'^archive/', edms_archive, name='archive'),
 
     re_path(r'^sub_docs/get/(?P<emp_seat>\d+)/(?P<doc_meta_type>\d+)/(?P<sub_emp>\d+)/$', edms_get_sub_docs, name='get_sub_docs'),

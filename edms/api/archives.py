@@ -6,7 +6,7 @@ from plxk.api.try_except import try_except
 from plxk.api.convert_to_local_time import convert_to_localtime
 from accounts.models import Department
 from docs.models import Contract
-from edms.models import Document, Document_Path, Doc_Registration
+from edms.models import Document, Document_Path, Doc_Registration, Mark_Demand
 from edms.api.getters import get_my_seats, get_sub_emps
 from django.shortcuts import get_object_or_404
 
@@ -15,7 +15,7 @@ testing = settings.STAS_DEBUG
 
 # --------------------------------------- archive
 @try_except
-def get_archive_docs(request, archive_type, meta_doc_type_id, page):
+def get_archive_docs(request, archive_type, meta_doc_type_id, contract_phase, page):
     # Архів документів, створених даним юзером
     archive = Document_Path.objects \
         .filter(document__document_type__meta_doc_type_id=meta_doc_type_id) \
@@ -34,6 +34,9 @@ def get_archive_docs(request, archive_type, meta_doc_type_id, page):
     # Фільтрація і сортування у таблиці
     archive = filter_archive_query(archive, json.loads(request.POST['filtering']))
     archive = sort_archive_query(archive, request.POST['sort_name'], request.POST['sort_direction'])
+
+    if meta_doc_type_id == '5':
+        archive = filter_archive_by_contract_phase(archive, contract_phase)
 
     # Пажинація
     paginator = Paginator(archive, 25)
@@ -105,7 +108,7 @@ def filter_archive_subs(request, archive):
 
 # --------------------------------------- work archive
 @try_except
-def get_work_archive_docs(request, archive_type, meta_doc_type_id, page):
+def get_work_archive_docs(request, archive_type, meta_doc_type_id, contract_phase, page):
     # Документи, з якими мав справу користувач:
     # Додаємо автора з першого path через annotate
     work_archive = Document.objects\
@@ -136,18 +139,8 @@ def get_work_archive_docs(request, archive_type, meta_doc_type_id, page):
     work_archive = filter_work_archive_query(work_archive, json.loads(request.POST['filtering']))
     work_archive = sort_work_archive_query(work_archive, request.POST['sort_name'], request.POST['sort_direction'])
 
-
-    # ---------------------- ТИМЧАСОВО
-    # Показуємо в архіві виключно договори по ТОВ і виключно ті, яких нема у базі Договорів і у яких є реєстраційний номер
-    # if meta_doc_type_id == '5':
-    #     contracts_from_edms = list(Contract.objects.values_list('edms_doc_id', flat=True).filter(edms_doc_id__isnull=False).filter(is_active=True))
-    #     registrated_contracts = list(Doc_Registration.objects.values_list('document_id', flat=True).filter(document__company='ТОВ').filter(is_active=True))
-    #
-    #     work_archive = work_archive.filter(company='ТОВ')
-    #     work_archive = work_archive.exclude(id__in=contracts_from_edms)
-    #     work_archive = work_archive.filter(id__in=registrated_contracts)
-    # ---------------------- ТИМЧАСОВО
-
+    if meta_doc_type_id == '5':
+        work_archive = filter_archive_by_contract_phase(work_archive, contract_phase)
 
     # Пажинація
     paginator = Paginator(work_archive, 25)
@@ -225,6 +218,45 @@ def filter_work_archive_subs(request, work_archive):
 
     return work_archive
 
+
+@try_except
+def filter_archive_by_contract_phase(archive, contract_phase):
+    if contract_phase == 'scan':  # Очікує на додавання скан-копій
+        contracts_on_scan_add = list(Mark_Demand.objects.values_list('document_id', flat=True)
+                                        .filter(mark_id=22)
+                                        .filter(is_active=True)
+                                        .filter(document__is_active=True)
+                                        .filter(document__closed=False))
+        archive = archive.filter(id__in=contracts_on_scan_add)
+
+    elif contract_phase == 'registration':  # Очікує на реєстрацію
+        contracts_on_registration = list(Mark_Demand.objects.values_list('document_id', flat=True)
+                                        .filter(mark_id=27)
+                                        .filter(is_active=True)
+                                        .filter(document__is_active=True)
+                                        .filter(document__closed=False))
+        archive = archive.filter(id__in=contracts_on_registration)
+
+    elif contract_phase == 'visa':  # Очікує на візування
+        contracts_on_visa = list(Mark_Demand.objects.values_list('document_id', flat=True)
+                                        .filter(mark_id=17)
+                                        .filter(is_active=True)
+                                        .filter(document__is_active=True)
+                                        .filter(document__closed=False))
+        archive = archive.filter(id__in=contracts_on_visa)
+
+    return archive
+
+    # ---------------------- ТИМЧАСОВО
+    # Показуємо в архіві виключно договори по ТОВ і виключно ті, яких нема у базі Договорів і у яких є реєстраційний номер
+    # if meta_doc_type_id == '5':
+    #     contracts_from_edms = list(Contract.objects.values_list('edms_doc_id', flat=True).filter(edms_doc_id__isnull=False).filter(is_active=True))
+    #     registrated_contracts = list(Doc_Registration.objects.values_list('document_id', flat=True).filter(document__company='ТОВ').filter(is_active=True))
+    #
+    #     work_archive = work_archive.filter(company='ТОВ')
+    #     work_archive = work_archive.exclude(id__in=contracts_from_edms)
+    #     work_archive = work_archive.filter(id__in=registrated_contracts)
+    # ---------------------- ТИМЧАСОВО
 
 @try_except
 def get_subs_userprofile_ids(my_seats_ids):

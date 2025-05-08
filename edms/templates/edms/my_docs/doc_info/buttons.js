@@ -19,7 +19,7 @@ class Buttons extends React.Component {
     return (
       <>
         {/*Якщо є очікувана позначка:*/}
-        <If condition={info.expected_mark}>
+        <If condition={!archived && info.expected_mark}>
           {/* Дивимось, яку позначку очікує flow і показуємо відповідні кнопки */}
           <Choose>
             <When condition={info.expected_mark === 6}>
@@ -40,12 +40,6 @@ class Buttons extends React.Component {
               </button>
               <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(3)} disabled={button_clicked}>
                 {info.meta_type_id === 5 ? 'Запит на зміни' : 'Відмовити'}
-              </button>
-            </When>
-            <When condition={info.expected_mark === 8}>
-              {/* Ознайомлений */}
-              <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(8)} disabled={button_clicked}>
-                Ознайомлений
               </button>
             </When>
             <When condition={info.expected_mark === 11}>
@@ -128,6 +122,13 @@ class Buttons extends React.Component {
               </button>
             </When>
           </Choose>
+        </If>
+
+        <If condition={info.expected_mark === 8}>
+          {/* Ознайомлений */}
+          <button type='button' className='btn btn-secondary mr-1 mb-1' onClick={() => this.onClick(8)} disabled={button_clicked}>
+            Ознайомлений
+          </button>
         </If>
 
         {/*<If condition={info.user_is_super_manager}>*/}
