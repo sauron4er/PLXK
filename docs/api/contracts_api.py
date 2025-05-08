@@ -358,12 +358,17 @@ def get_additional_contract_reg_number(main_contract_id):
     new_number = 'ДУ ' + main_contract_number + '/' + str(add_contracts_count + 1)
 
     # Перевіряємо унікальність цього номеру
-    new_number_is_not_unique = Contract.objects.filter(number=new_number)
-    if new_number_is_not_unique:
-        return 'not unique'
-    else:
-        return new_number
+    new_number = get_unique_next_additional_contract_number(new_number)
+    return new_number
 
+
+@try_except
+def get_unique_next_additional_contract_number(number):
+    if Contract.objects.filter(number=number).filter(is_active=True).exists():
+        head, sep, tail = number.partition('/')
+        new_number = head + '/' + str(int(tail) + 1)
+        number = get_unique_next_additional_contract_number(new_number)
+    return number
 
 @try_except
 def write_sequence_numbers():
