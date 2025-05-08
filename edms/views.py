@@ -1316,7 +1316,10 @@ def edms_mark(request):
                         .exists()
                     if is_taken_in_journal:
                         return HttpResponse('reg_unique_fail')
-                    add_contract_to_reg_number_journal(doc_request, contract_info)
+                    else:
+                        registered = change_registration_number(doc_request['document'], doc_request['registration_number'].strip())
+                        if registered:
+                            add_contract_to_reg_number_journal(doc_request, contract_info)
 
                 deactivate_doc_mark_demands(doc_request, doc_request['document'], 27)
                 new_phase(doc_request, this_phase['phase'] + 1, [])
