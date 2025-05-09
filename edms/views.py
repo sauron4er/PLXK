@@ -677,6 +677,60 @@ def edms_get_doc(request, pk):
 def edms_my_docs(request):
     if request.method == 'GET':
 
+        # --------------- temp
+
+        import datetime as DT
+        from .models import Doc_Day
+        from docs.models import Contract_Reg_Number
+        today = DT.date.today()
+        week_ago = today - DT.timedelta(days=7)
+
+        mark_demands = list(Mark_Demand.objects.values_list('document_id', flat=True)
+                            .filter(mark_id=22)
+                            .filter(document_path__timestamp__gte=week_ago)
+                            .filter(is_active=True))
+
+        for md in mark_demands:
+            doc_reg_exists = Doc_Registration.objects.filter(document_id=md).exists()
+            if not doc_reg_exists:
+                try:
+                    print(md)
+                    counterparty_id = (Doc_Counterparty.objects
+                                       .values_list('counterparty_id', flat=True)
+                                       .filter(document_id=md)
+                                       .filter(is_active=True)
+                                       .first())
+                    start_date = (Doc_Day.objects.values_list('day', flat=True)
+                                  .filter(document_id=md)
+                                  .filter(queue_in_doc=9)
+                                  .filter(is_active=True)
+                                  .first())
+
+                    reg_number_instance = (Contract_Reg_Number.objects
+                                  .filter(date=start_date)
+                                  .filter(counterparty_id=counterparty_id)
+                                  .filter(is_active=True)
+                                  .first())
+
+                    if not reg_number_instance:
+                        print('no reg_number_instance!!!')
+                    else:
+                        doc_reg_exists = Doc_Registration.objects.filter(registration_number=reg_number_instance.number).exists()
+                        if doc_reg_exists:
+                            print('EXISTS - ' + reg_number_instance.number)
+                        else:
+                            doc_reg_instance = Doc_Registration(document_id=md, registration_number=reg_number_instance.number)
+                            doc_reg_instance.save()
+
+                            reg_number_instance.edms_doc_id = md
+                            reg_number_instance.save()
+                except Exception as e:
+                    print('error-- ' + str(md))
+                    break
+
+
+        # --------------- temp
+
         my_seats = get_my_seats(request.user.userprofile.id)
 
         new_docs = get_allowed_new_doc_types(request)
