@@ -157,4 +157,6 @@ class Contract_Reg_Number(models.Model):
     responsible = models.ForeignKey(UserProfile, related_name='responsible_for_contract_reg_number', on_delete=models.RESTRICT, null=True)
     contract = models.ForeignKey(Contract, related_name='reg_number', null=True, on_delete=models.RESTRICT)
     basic_contract_number = models.ForeignKey('self', related_name='additional_contract_numbers', null=True, blank=True, on_delete=models.RESTRICT)
+    edms_doc = models.ForeignKey(edms.Document, related_name='contract_reg_number', null=True, blank=True, on_delete=models.RESTRICT)
+
     is_active = models.BooleanField(default=True)
