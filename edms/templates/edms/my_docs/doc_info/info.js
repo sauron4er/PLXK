@@ -47,7 +47,7 @@ class Info extends React.Component {
             <span className='font-weight-bold'>{info.type}</span>
           </div>
           <If condition={info.closed}>
-            <div className='font-weight-bold text-danger'>Документ позначений автором як неактуальний</div>
+            <div className='font-weight-bold text-danger'>Документ позначений як неактуальний</div>
           </If>
           <div>
             <span>

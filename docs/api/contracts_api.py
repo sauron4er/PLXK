@@ -134,7 +134,8 @@ def add_contract_to_reg_number_journal(doc_request, contract_info):
         date=get_days_from_edms(edms_doc, fields_queue['date_start']) or edms_doc.date,
         subject=get_subject_from_edms(edms_doc, fields_queue['subject']),
         counterparty_id=edms_doc.counterparty.get().counterparty_id,
-        responsible=edms_doc.employee_seat.employee
+        responsible=edms_doc.employee_seat.employee,
+        edms_doc=edms_doc
     )
 
     if contract_info['sequence_number'] != '':

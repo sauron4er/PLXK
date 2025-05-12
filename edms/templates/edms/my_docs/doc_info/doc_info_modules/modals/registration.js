@@ -135,7 +135,7 @@ function RegistrationModal(props) {
           <ul>
             <For each='entry' of={basicAndSiblings} index='index'>
               <li key={index}>
-                {entry.number} | {entry.date}}
+                {entry.number} | {entry.date}
                 <If condition={entry.id}>
                   <a href={`${window.location.origin}/docs/contracts/${entry.id}`} target='_blank'>
                     <h6>Переглянути договір</h6>
