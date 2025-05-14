@@ -365,10 +365,16 @@ def get_additional_contract_reg_number(main_contract_id):
 
 @try_except
 def get_unique_next_additional_contract_number(number):
-    if Contract.objects.filter(number=number).filter(is_active=True).exists():
+    not_unique = (Contract.objects.filter(number=number).filter(is_active=True).exists()
+                  or Contract_Reg_Number.objects.filter(number=number).filter(is_active=True).exists()
+                  or Doc_Registration.objects.filter(registration_number=number).filter(is_active=True).exists())
+
+    if not_unique:
         head, sep, tail = number.partition('/')
         new_number = head + '/' + str(int(tail) + 1)
         number = get_unique_next_additional_contract_number(new_number)
+
+
     return number
 
 @try_except
