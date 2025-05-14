@@ -125,7 +125,7 @@ class Document(models.Model):
     company = models.CharField(max_length=3, null=True, blank=True, default='ТДВ')  # ТОВ або ТДВ
     testing = models.BooleanField(default=False)
     stage = models.CharField(max_length=7, null=True)  # 'in work', 'denied', 'done', 'confirm' None (created)
-    closed = models.BooleanField(default=False)  # Закриті документи попадають в архів
+    closed = models.BooleanField(default=False)  # Такі документи вважаються видаленими і не показуються ніде
     # doc_type_version = models.CharField(max_length=2, null=True)  # Підтип документу
     doc_type_version = models.ForeignKey(Document_Type_Version, null=True, related_name='documents', on_delete=models.RESTRICT)  # Підтип документу
 
@@ -133,7 +133,7 @@ class Document(models.Model):
     #  При пошуку документа для таблиці беремо дані з цього поля
     main_field = models.CharField(max_length=50, null=True)  # Записуємо сюди перші 50 символів Змісту, для легкого пошуку і фільтрації
 
-    is_active = models.BooleanField(default=True)  # Неактивні документи вважаються видаленими і не показуються ніде
+    is_active = models.BooleanField(default=True)  # false - документи попадають в архів
 
 
 class Document_Path(models.Model):

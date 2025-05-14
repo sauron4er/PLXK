@@ -1101,7 +1101,7 @@ def edms_mark(request):
                     if remaining_required_md == 0:
                         new_phase(doc_request, this_phase['phase'] + 1, [])
 
-            # Закрито
+            # В архів
             elif doc_request['mark'] == '7':
                 post_mark_deactivate(doc_request)
 
