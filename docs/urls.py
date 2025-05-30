@@ -48,6 +48,8 @@ urlpatterns = [
     re_path(r'^contracts/delete_reg_journal_number/(?P<reg_id>\d+)/$', views_contracts.delete_reg_journal_number, name='delete_reg_journal_number'),
     re_path(r'^contracts/contract_reg_numbers', views_contracts.contract_reg_numbers, name='contract_reg_numbers'),
     re_path(r'^contracts/get_contract_reg_numbers/(?P<page>\d+)/$', views_contracts.get_contract_reg_numbers, name='get_contract_reg_numbers'),
+    re_path(r'^contracts/create_excel', views_contracts.create_excel, name='create_excel'),
+
     re_path(r'^contracts/', views_contracts.index, name='contracts'),
 
     # re_path(r'^order/new/$', views.new_order, name='new_order'),

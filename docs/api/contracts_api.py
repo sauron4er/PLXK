@@ -538,3 +538,33 @@ def sort_reg_journal_query(query_set, column, direction):
     else:
         query_set = query_set.order_by('-id')
     return query_set
+
+
+@try_except
+def reg_journal_create_excel():
+    cars_inside_query_set = Car_Inside.objects.filter(is_active=True)
+
+    cars_inside_list = [[
+        entry.id,
+        entry.plate_number,
+        entry.color or '',
+        entry.employee or '',
+        entry.company.name or '',
+        'Так' if entry.without_checkup else 'Ні',
+    ] for entry in cars_inside_query_set]
+
+    header = [['id', 'Номер', 'Колір', 'Водій', 'Компанія', 'Без догляду']]
+
+    workbook = Workbook()
+    ws = workbook.new_sheet("Автомобілі", data=header + cars_inside_list)
+    ws.set_col_style(1, Style(size=5))
+    ws.set_col_style(2, Style(size=15))
+    ws.set_col_style(3, Style(size=15))
+    ws.set_col_style(4, Style(size=40))
+    ws.set_col_style(5, Style(size=25))
+    ws.set_col_style(6, Style(size=12))
+
+    filename = 'cars_inside_' + str(datetime.today().strftime('%d.%m.%Y')) + '.xlsx'
+    workbook.save('files/media/' + filename)
+
+    return filename
