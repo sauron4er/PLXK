@@ -57,7 +57,7 @@ function RegJournalTable(props) {
         </If>
         <Choose>
             <When condition={excelLink}>
-              <a href={`../../media/${excelLink}`} download>
+              <a href={`../../media/docs/${excelLink}`} download>
                 <button className='btn btn-sm btn-primary ml-1'>Завантажити Excel файл</button>
               </a>
             </When>

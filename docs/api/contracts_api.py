@@ -1,9 +1,11 @@
 import re
 import json
+from django.utils.timezone import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from pyexcelerate import Workbook, Color, Style, Fill
 from plxk.api.datetime_normalizers import normalize_date
 from plxk.api.try_except import try_except
 from docs.models import Contract, Contract_File, Contract_Reg_Number
@@ -542,21 +544,28 @@ def sort_reg_journal_query(query_set, column, direction):
 
 @try_except
 def reg_journal_create_excel():
-    cars_inside_query_set = Car_Inside.objects.filter(is_active=True)
+    reg_journal_query_set = (Contract_Reg_Number.objects
+                             .filter(basic_contract_number__isnull=True)
+                             .filter(is_active=True)
+                             .order_by('-date'))
 
-    cars_inside_list = [[
+    reg_journal_list = [[
         entry.id,
-        entry.plate_number,
-        entry.color or '',
-        entry.employee or '',
-        entry.company.name or '',
-        'Так' if entry.without_checkup else 'Ні',
-    ] for entry in cars_inside_query_set]
+        entry.number or '',
+        entry.type or '',
+        normalize_date(entry.date) if entry.date else '',
+        entry.company or '',
+        entry.counterparty.name if entry.counterparty else '',
+        entry.subject or '',
+        entry.responsible.pip if entry.responsible else '',
+        get_additional_numbers_for_excel(entry.id),
+    ] for entry in reg_journal_query_set]
 
-    header = [['id', 'Номер', 'Колір', 'Водій', 'Компанія', 'Без догляду']]
+
+    header = [['id', 'Номер', 'Тип', 'Дата', 'Компанія', 'Контрагент', 'Предмет', 'Менеджер', 'ДУ']]
 
     workbook = Workbook()
-    ws = workbook.new_sheet("Автомобілі", data=header + cars_inside_list)
+    ws = workbook.new_sheet("Реєстраційні номери", data=header + reg_journal_list)
     ws.set_col_style(1, Style(size=5))
     ws.set_col_style(2, Style(size=15))
     ws.set_col_style(3, Style(size=15))
@@ -564,7 +573,14 @@ def reg_journal_create_excel():
     ws.set_col_style(5, Style(size=25))
     ws.set_col_style(6, Style(size=12))
 
-    filename = 'cars_inside_' + str(datetime.today().strftime('%d.%m.%Y')) + '.xlsx'
-    workbook.save('files/media/' + filename)
+    filename = 'registration_journal_' + str(datetime.today().strftime('%d.%m.%Y')) + '.xlsx'
+    workbook.save('files/media/docs/' + filename)
 
     return filename
+
+
+@try_except
+def get_additional_numbers_for_excel(main_number_id):
+    additional_numbers = Contract_Reg_Number.objects.filter(is_active=True, basic_contract_number=main_number_id)
+    additional_numbers_list = [item.number for item in additional_numbers]
+    return additional_numbers_list
