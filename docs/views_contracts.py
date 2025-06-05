@@ -12,7 +12,7 @@ from plxk.api.try_except import try_except
 from .models import Contract, Contract_File, Contract_Reg_Number
 from .api.contracts_api import add_contract_api, edit_contract_api, deactivate_contract_api, post_files, \
     arrange_reg_journal, add_missing_contract_info, trim_spaces, delete_number_symbol, write_sequence_numbers, \
-    add_sequence_number, link_additional_contracts_to_basic
+    add_sequence_number, link_additional_contracts_to_basic, reg_journal_create_excel
 from plxk.api.datetime_normalizers import date_to_json, normalize_date
 from docs.api import contracts_mail_sender
 from plxk.api.convert_to_local_time import convert_to_localtime
@@ -364,6 +364,15 @@ def get_last_ten_reg_numbers(request):
     } for entry in last_ten_numbers]
 
     return HttpResponse(json.dumps(last_ten_numbers_list))
+
+
+@try_except
+@login_required()
+def create_excel(request):
+    edit_access = request.user.userprofile.is_it_admin or request.user.userprofile.department_id == 50
+    if edit_access:
+        filename = reg_journal_create_excel()
+        return HttpResponse(filename)
 
 
 # ----------------------------------------- Contract reg numbers
