@@ -3,8 +3,8 @@ import * as React from 'react';
 import PaginatedTable from 'templates/components/tables/paginated_table';
 import {useEffect, useRef, useState} from 'react';
 import Selector from 'templates/components/form_modules/selectors/selector';
-import SubmitButton from "templates/components/form_modules/submit_button";
-import { axiosGetRequest } from "templates/components/axios_requests";
+import SubmitButton from 'templates/components/form_modules/submit_button';
+import {axiosGetRequest} from 'templates/components/axios_requests';
 
 function RegJournalTable(props) {
   const refMainDiv = useRef(null); // Отримує ref основного div для визначення його висоти та передачі її у DxTable
@@ -13,6 +13,7 @@ function RegJournalTable(props) {
   const [type, setType] = useState('0');
   const [year, setYear] = useState('0');
   const [excelLink, setExcelLink] = useState(false);
+  const [loadingExcel, setLoadingExcel] = useState(false);
 
   useEffect(() => {
     refMainDiv ? setMainDivHeight(refMainDiv.current.clientHeight - 50) : null;
@@ -38,6 +39,7 @@ function RegJournalTable(props) {
   }
 
   function createExcel() {
+    setLoadingExcel(true);
     axiosGetRequest(`create_excel`)
       .then((response) => {
         setExcelLink(response);
@@ -50,23 +52,31 @@ function RegJournalTable(props) {
       <div className='d-flex mt-2'>
         <If condition={window.edit_access}>
           <div>
-            <div className="btn btn-sm btn-outline-secondary" onClick={(e) => props.onRowClick()}>
+            <div className='btn btn-sm btn-outline-secondary' onClick={(e) => props.onRowClick()}>
               Додати
             </div>
           </div>
         </If>
+
         <Choose>
-            <When condition={excelLink}>
-              <a href={`../../media/docs/${excelLink}`} download>
-                <button className='btn btn-sm btn-primary ml-1'>Завантажити Excel файл</button>
-              </a>
-            </When>
-            <Otherwise>
-              <a onClick={createExcel}>
-                <button className='btn btn-sm btn-outline-secondary ml-1'>Створити Excel файл</button>
-              </a>
-            </Otherwise>
-          </Choose>
+          <When condition={excelLink}>
+            <a href={`../../media/docs/${excelLink}`} download>
+              <button className='btn btn-sm btn-primary ml-1'>Завантажити Excel файл</button>
+            </a>
+          </When>
+          <When condition={loadingExcel}>
+            <a>
+              <button className='btn btn-sm btn-secondary ml-1' disabled={true}>
+                Створення Excel файлу...
+              </button>
+            </a>
+          </When>
+          <Otherwise>
+            <a onClick={createExcel}>
+              <button className='btn btn-sm btn-outline-secondary ml-1'>Сформувати Excel файл</button>
+            </a>
+          </Otherwise>
+        </Choose>
         <div className='d-flex ml-auto'>
           <Selector
             list={[

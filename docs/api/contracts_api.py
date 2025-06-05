@@ -550,7 +550,6 @@ def reg_journal_create_excel():
                              .order_by('-date'))
 
     reg_journal_list = [[
-        entry.id,
         entry.number or '',
         entry.type or '',
         normalize_date(entry.date) if entry.date else '',
@@ -561,19 +560,31 @@ def reg_journal_create_excel():
         get_additional_numbers_for_excel(entry.id),
     ] for entry in reg_journal_query_set]
 
-
-    header = [['id', 'Номер', 'Тип', 'Дата', 'Компанія', 'Контрагент', 'Предмет', 'Менеджер', 'ДУ']]
+    header = [['Номер', 'Тип', 'Дата', 'Компанія', 'Контрагент', 'Предмет', 'Менеджер', 'ДУ']]
 
     workbook = Workbook()
     ws = workbook.new_sheet("Реєстраційні номери", data=header + reg_journal_list)
-    ws.set_col_style(1, Style(size=5))
-    ws.set_col_style(2, Style(size=15))
-    ws.set_col_style(3, Style(size=15))
-    ws.set_col_style(4, Style(size=40))
-    ws.set_col_style(5, Style(size=25))
-    ws.set_col_style(6, Style(size=12))
+    ws.range("A1", "H1").style.font.bold = True
+
+    last_used_cell = "H" + str(len(reg_journal_list)+1)
+    ws.range("A1", last_used_cell).style.alignment.wrap_text = True
+    ws.range("A1", last_used_cell).style.alignment.vertical = "center"
+    ws.range("A1", last_used_cell).style.borders.top.color = Color(50, 50, 50)
+    ws.range("A1", last_used_cell).style.borders.bottom.color = Color(50, 50, 50)
+    ws.range("A1", last_used_cell).style.borders.left.color = Color(50, 50, 50)
+    ws.range("A1", last_used_cell).style.borders.right.color = Color(50, 50, 50)
+
+    ws.set_col_style(1, Style(size=21))
+    ws.set_col_style(2, Style(size=16))
+    ws.set_col_style(3, Style(size=10))
+    ws.set_col_style(4, Style(size=10))
+    ws.set_col_style(5, Style(size=50))
+    ws.set_col_style(6, Style(size=50))
+    ws.set_col_style(7, Style(size=40))
+    ws.set_col_style(8, Style(size=50))
 
     filename = 'registration_journal_' + str(datetime.today().strftime('%d.%m.%Y')) + '.xlsx'
+    # workbook.save('c:/' + filename)
     workbook.save('files/media/docs/' + filename)
 
     return filename
@@ -582,5 +593,8 @@ def reg_journal_create_excel():
 @try_except
 def get_additional_numbers_for_excel(main_number_id):
     additional_numbers = Contract_Reg_Number.objects.filter(is_active=True, basic_contract_number=main_number_id)
-    additional_numbers_list = [item.number for item in additional_numbers]
-    return additional_numbers_list
+    if additional_numbers:
+        additional_numbers_list = [item.number for item in additional_numbers]
+        additional_numbers_string = '\n'.join(additional_numbers_list)
+        return additional_numbers_string
+    return ''
