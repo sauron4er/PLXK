@@ -932,15 +932,6 @@ def edms_get_sub_docs(request, emp_seat, doc_meta_type, sub_emp):
 def edms_mark(request):
     try:
         if request.method == 'POST':
-            # Якщо документ намагаються видалити, шукаємо, чи хтось не відреагував на нього
-            # Якщо позначки від інших користувачів є - відмовляємо у видаленні
-            if request.POST['mark'] == '13':
-                deletable = Document_Path.objects \
-                    .filter(document_id=request.POST['document']) \
-                    .exclude(employee_seat_id=request.POST['employee_seat'])
-                if len(deletable) > 0:
-                    return HttpResponse('not deletable')
-
             doc_request = request.POST.copy()
             doc_request = get_additional_doc_info(doc_request)
             this_phase = get_phase_info(doc_request)
@@ -1127,6 +1118,9 @@ def edms_mark(request):
 
             # Видалено
             elif doc_request['mark'] == '13':
+                # Якщо документ намагаються видалити, шукаємо, чи хтось не відреагував на нього
+                # Якщо позначки від інших користувачів є - відмовляємо у видаленні
+
                 deletable = Document_Path.objects \
                     .filter(document_id=doc_request['document']) \
                     .exclude(employee_seat_id=doc_request['employee_seat'])

@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -8,13 +9,12 @@ from edms.api.edms_mail_sender import send_email_new, send_email_mark, send_emai
     send_email_deleted_from_approvals, send_email_remind
 from edms.models import (Employee_Seat, Mark_Demand, Document, Doc_Text, Doc_Foyer_Range, Doc_Employee, Foyer, Doc_Approval, \
     Document_Type, Doc_Type_Phase, Document_Path, Contract_Subject_Approval, Contract_Subject_To_Work, Document_Type_Version,
-    Bag_Test, Bag_Test_Comment, Bag_Test_File)
+    Bag_Test, Bag_Test_Comment, Bag_Test_File, Doc_Registration)
 from edms.forms import MarkDemandForm, DeleteDocForm, DeactivateDocForm, DeactivateMarkDemandForm
 from edms.api.vacations import vacation_check
 from edms.api.getters import get_doc_version_from_description_matching
 
 from django.conf import settings
-
 testing = settings.STAS_DEBUG
 
 
@@ -130,6 +130,7 @@ def set_doc_text_module(request):
 def post_mark_delete(doc_request):
     delete_doc(doc_request, int(doc_request['document']))
     deactivate_doc_mark_demands(doc_request, int(doc_request['document']))
+    delete_registration_number(doc_request['document']) # for avoiding duplicates with new docs
 
 
 @try_except
@@ -329,3 +330,12 @@ def post_bag_test_result_files(bag_test_id, field_name, files):
             file=file,
             name=file.name
         )
+
+
+@try_except
+def delete_registration_number(doc_id):
+    doc_reg = Doc_Registration.objects.filter(document=doc_id)
+    if doc_reg:
+        now = datetime.now()
+        doc_reg[0].registration_number = doc_reg[0].registration_number + '_closed_' + now.strftime('%Y%m%d%H%M%S')
+        doc_reg[0].save()
