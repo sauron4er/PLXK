@@ -249,6 +249,16 @@ function ContractsRegJournal() {
               <h6>Переглянути договір</h6>
             </a>
           </If>
+          <If condition={regInfo.additionals_for_card}>
+            Додаткові угоди:
+            <ul>
+              <For each='additional' of={regInfo.additionals_for_card} index='index'>
+                <a href={`${window.location.origin}/docs/contracts/${additional.id}`} target='_blank'>
+                  <h6>{additional.name}</h6>
+                </a>
+              </For>
+            </ul>
+          </If>
         </div>
         <div className='modal-footer'>
           <SubmitButton
