@@ -249,7 +249,7 @@ function ContractsRegJournal() {
               <h6>Переглянути договір</h6>
             </a>
           </If>
-          <If condition={regInfo.additionals_for_card}>
+          <If condition={regInfo.additionals_for_card.length > 0}>
             Додаткові угоди:
             <ul>
               <For each='additional' of={regInfo.additionals_for_card} index='index'>

@@ -400,9 +400,6 @@ def get_doc_type_modules(doc_type):
 
 @try_except
 def get_auto_recipients(doc_type_id):
-    # if doc_type_id == '20':
-    #     recipients = get_contract_recipients()
-    # else:
     doc_type_phases = Doc_Type_Phase.objects \
         .filter(document_type=doc_type_id) \
         .filter(mark_id__in=[2, 6, 8, 11, 17, 23, 24, 34]) \
@@ -551,7 +548,9 @@ def get_phase_recipient_list(phase_id, doc_type_version=0):
     recipients_emp_seat_list = []
     for recipient in recipients:
         if recipient['seat_id']:
-            recipients_emp_seat_list.append(get_actual_emp_seat_from_seat(recipient['seat_id']))
+            recipient_emp_seat = get_actual_emp_seat_from_seat(recipient['seat_id'])
+            if recipient_emp_seat:
+                recipients_emp_seat_list.append(get_actual_emp_seat_from_seat(recipient['seat_id']))
         elif recipient['employee_seat_id']:
             recipients_emp_seat_list.append(int(recipient['employee_seat_id']))
 
@@ -580,15 +579,17 @@ def get_phase_recipients_and_doc_type_version(phase):
 
     recipients = []
     for recipient in phase_recipients:
-        seat = recipient['seat_id']
-
         if recipient['seat_id']:
             emp_seat_id = get_actual_emp_seat_from_seat(recipient['seat_id'])
         else:
             emp_seat_id = recipient['employee_seat_id']
 
-        employee_seat = Employee_Seat.objects.filter(id=emp_seat_id)[0]
-        employee_seat_info = employee_seat.employee.pip + ', ' + employee_seat.seat.seat
+        if emp_seat_id:
+            employee_seat = Employee_Seat.objects.filter(id=emp_seat_id)[0]
+            employee_seat_info = employee_seat.employee.pip + ', ' + employee_seat.seat.seat
+        else:
+            seat_name = Seat.objects.get(id=recipient['seat_id']).seat
+            employee_seat_info = seat_name + ': дану посаду наразі не зайнято'
 
         recipients.append({
             'emp_seat': employee_seat_info,
