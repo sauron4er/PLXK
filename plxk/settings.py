@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from my_config import db_address, db_name, db_user, db_pass, secret_key
+from my_config import db_address, db_name, db_user, db_prod_pass, db_dev_pass, secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -104,7 +104,7 @@ if STAS_DEBUG:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': db_name,
             'USER': db_user,
-            'PASSWORD': db_pass,
+            'PASSWORD': db_dev_pass,
             'HOST': 'localhost',
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,
@@ -117,7 +117,7 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': db_name,
             'USER': db_user,
-            'PASSWORD': db_pass,
+            'PASSWORD': db_prod_pass,
             'HOST': db_address,
             'PORT': '3306',
             'ATOMIC_REQUESTS': True,

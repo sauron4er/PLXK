@@ -1304,11 +1304,11 @@ def edms_mark(request):
                     # document_query = Document.objects.prefetch_related('decree_articles', 'decree_articles__responsibles')
                     post_order_from_edms(doc_request['document'], doc_request['registration_number'])
                 else:
-                    is_taken_in_journal = Contract_Reg_Number.objects \
+                    is_number_already_used_in_journal = Contract_Reg_Number.objects \
                         .filter(number=doc_request['registration_number']) \
                         .filter(is_active=True) \
                         .exists()
-                    if is_taken_in_journal:
+                    if is_number_already_used_in_journal:
                         return HttpResponse('reg_unique_fail')
                     else:
                         registered = change_registration_number(doc_request['document'], doc_request['registration_number'].strip())
