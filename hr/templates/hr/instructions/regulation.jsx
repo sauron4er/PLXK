@@ -126,6 +126,11 @@ class Regulation extends React.Component {
       <Choose>
         <When condition={!loading}>
           <h4>Положення про відділ</h4>
+          <If condition={!disabled}>
+            <small className='font-italic mb-5'>
+              Зверніть увагу! В списку не відображаються відділи, для яких в систему вже внесено положення! Для оновлення положення
+              знайдіть його у таблиці і замініть дані на нові.</small>
+          </If>
           <hr />
           <SelectorWithFilterAndAxios
             listNameForUrl='deps_for_regulations'
@@ -135,7 +140,6 @@ class Regulation extends React.Component {
             onChange={this.onDepartmentChange}
             disabled={disabled}
           />
-
           <div>
             Керівник служби/відділу: <span className='font-weight-bold'>{dep_chief_seat_name}</span>
           </div>

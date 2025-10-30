@@ -10,11 +10,14 @@ from accounts.models import Department
 
 @try_except
 def get_dep_list_for_regulations():
+
     departments = [{
         'id': department.pk,
         'name': department.name,
-    } for department in Department.objects.only('id', 'name')\
-        .filter(is_active=True)\
+    } for department in Department.objects
+        .only('id', 'name')\
+        .filter(is_active=True)
+        .exclude(regulations__is_active=True)
         .order_by('name')]
 
     return departments
@@ -124,7 +127,7 @@ def deactivate_regulation_file(post_request, file):
 
 @try_except
 def get_dep_regulation_files(dep_id):
-    regulation = Department_Regulation.objects.filter(department_id=dep_id).filter(is_active=True).first()
+    regulation = Department_Regulation.objects.filter(department_id=dep_id).filter(is_active=True).last()
     if regulation:
         regulation_files = get_regulation_files(regulation.id)
         return regulation_files
