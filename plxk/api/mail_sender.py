@@ -48,3 +48,18 @@ def send_email(mail, body):
             # server.quit()
         except Exception as err:
             print(err)
+
+
+def send_test_mail():
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Тестовий лист"
+    message["From"] = 'it@lxk.com.ua'
+    message["To"] = 'sauron4er@gmail.com'
+    text = 'Текст тестового повідомлення'
+
+    message.attach(MIMEText(text, "plain"))
+
+    send_email('sauron4er@gmail.com', message.as_string())

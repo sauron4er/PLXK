@@ -681,22 +681,9 @@ def edms_my_docs(request):
 
         new_docs = get_allowed_new_doc_types(request)
 
-        # my_docs = [{  # Список документів, за якими користувач є відповідальний (створив його або отримав у спадок)
-        #     'id': path.document.id,
-        #     'type': path.document.document_type.description,
-        #     'type_id': path.document.document_type.id,
-        #     'date': convert_to_localtime(path.timestamp, 'day'),
-        #     'emp_seat_id': path.employee_seat.id,
-        #     'author': request.user.userprofile.pip,
-        #     'author_seat_id': path.employee_seat.id,
-        #     'main_field': get_main_field(path.document),
-        #     'status': 'draft' if path.document.is_draft else ('template' if path.document.is_template else 'doc'),
-        # } for path in Document_Path.objects
-        #     .filter(mark__in=[1, 16, 19])
-        #     .filter(employee_seat__employee_id=request.user.userprofile.id)
-        #     .filter(document__testing=testing)
-        #     .filter(document__is_active=True)
-        #     .filter(document__closed=False).order_by('-id')]
+        # Тестовий лист для перевірки працездатності поштового серверу
+        # from plxk.api.mail_sender import send_test_mail
+        # send_test_mail()
 
         my_docs = [{  # Список документів, за якими користувач є відповідальний (створив його або отримав у спадок)
             'id': doc.id,
@@ -729,7 +716,8 @@ def edms_my_docs(request):
         } for demand in Mark_Demand.objects
             .filter(recipient_id__employee_id=request.user.userprofile.id)
             .filter(document__testing=testing)
-            .filter(is_active=True).filter(document__closed=False)
+            .filter(is_active=True)
+            .filter(document__closed=False)
             .order_by('document_id')]
         return render(request, 'edms/my_docs/my_docs.html', {
             'new_docs': new_docs, 'my_docs': my_docs, 'my_seats': my_seats, 'work_docs': work_docs
